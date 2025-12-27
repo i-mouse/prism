@@ -1,16 +1,14 @@
-// using Microsoft.AspNetCore.Builder;
- using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Mvc;
 using TenderAI.ApiService.Data;
-// using Microsoft.AspNetCore.Http;
+using TenderAI.ApiService.Services;
 
 namespace TenderAI.ApiService.Features.RfpSubmission;
 
 public static class SubmitRfpEndpoint
 {
+
     public static void MapRfpEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/rfp", async (SubmitRfpRequest request,TenderDBContext dBContext  ) =>
+        app.MapPost("/rfp", async (SubmitRfpRequest request,TenderDBContext dBContext, IfileUploader fileUploader) =>
         {
             var result = new
             {
@@ -18,6 +16,7 @@ public static class SubmitRfpEndpoint
               File = request.File.Name,
               UserId = request.UserId  
             };
+           await fileUploader.UploadFileAsync(request.File);
 
             return Results.Ok(result);
 
