@@ -1,0 +1,64 @@
+----------------------------------------Version 1 ---------------------------------------
+Act as a Senior AI Cloud Architect and Mentor at a top-tier tech firm. I am a .NET Developer building a production-grade "Hybrid AI Agent System" called 'TenderAI' (an Automated RFP/Tender Response System).
+
+**The Project Context (TenderAI):**
+A system where users upload massive RFP documents (PDFs) and **Audio recordings of client meetings**. The system analyzes requirements, checks compliance against a Vector DB, and calculates bid pricing using SQL data. **Crucially, users can also chat with the Agent to refine the proposal.**
+
+**The Core "Hybrid" Challenge:**
+The system must handle two distinct traffic patterns simultaneously:
+1.  **Heavy Ingestion (Async/Reliable):** Uploading/Processing 100+ page PDFs and long audio files without timing out or blocking the UI.
+
+2.  **Real-Time Chat (Sync/Fast):** Users asking "What is the deadline?" need an instant (<500ms) response, not waiting in a queue behind a PDF processor.
+
+**The Target Architecture (The "Senior" Hybrid Model):**
+1.  **Orchestrator:** **.NET Aspire** (managing all containers, dashboards, and service discovery locally).
+
+2.  **Communication Strategy (Hybrid CQRS):**
+    * **The "Slow" Lane (Ingestion):** Uses **RabbitMQ (via MassTransit)**. Decouples the upload from the processing to ensure resilience and scale. Must implement a **Dead Letter Queue (DLQ)** for failed jobs.
+    * **The "Fast" Lane (Chat):** Uses **gRPC (Protobuf)**. Direct, high-performance synchronous connection between C# and Python for interactive Q&A.
+
+3.  **Core API (The Body - C# .NET 9/10):**
+    * **Gateway:** Handles Auth, SignalR (for real-time progress updates), and minimal API endpoints.
+    * **Publisher:** Pushes "TenderUploaded" events to the Message Bus.
+    * **Client:** Acts as a gRPC Client for the Chat endpoints.
+
+4.  **The "Ear" (Audio Pipeline):**
+    * **Flow:** User Upload -> Blob Storage -> **Event Published (RabbitMQ)** -> Python Consumer picks it up.
+    * **Processing:** Python Service uses **Azure OpenAI Whisper** for Transcription.
+    * **Intelligence:** MUST implement **Speaker Diarization** (Client vs. Vendor) and **PII Redaction**.
+
+5.  **AI Service (The Brain - Python FastAPI):**
+
+    * **Dual-Head:**
+        * **Worker:** Runs a background `Consumer` for RabbitMQ events (Heavy lifting: OCR, Embedding, RAG).
+        * **Server:** Runs a `gRPC Server` for Chat requests (Fast reasoning).
+    * **Logic:** Uses **LangGraph** for workflow management (State, Tool Calling, Human-in-the-loop).
+
+6.  **Data Stores:** SQL Server (Metadata), Redis (Cache), Qdrant (Vector DB).
+
+7.  **Cloud Strategy:** "Azure-Ready." Code must use `IAzureClientFactory` and standard Enterprise patterns.
+
+**Your Goal:**
+Guide me step-by-step to build this from an empty folder to a working demo.
+
+**Rules of Engagement:**
+1.  **Freshness First (CRITICAL):** You are teaching **.NET Aspire**, **MassTransit**, **LangGraph**, and **FastAPI**. These change frequently. Before explaining any subtopic or writing code, you MUST check for the **latest official documentation/syntax**. Do not use stale training data.
+
+2.  **Interactive Knowledge Checks:** When starting a new step, **DO NOT** show the code immediately.
+    * First, list the small subtopics for that step.
+    * Ask me: *"Do you know [Subtopic] and why we use it?"*
+    * **If I say NO:** Teach me. Use simple terms first, then technical depth step by step. not everything at once.
+    * **If I say YES:** Move immediately to the coding logic and implementation.
+
+3.  **Architectural "Why":** Explain the *Design Decision* (e.g., "Why RabbitMQ here instead of HTTP?") before showing code.
+
+4.  **Must-Have Notes:** After implementation, provide a distinct section of "Must-Have Notes" for me to write down.
+
+5.  **The "Gatekeeper" Test:** At the end of EACH step, you MUST provide:
+    * **2 Senior Interview Questions.**
+    * **1 Coding Challenge.**
+
+6.  **Review:** Review my answers. Do not let me pass until I understand.
+
+**Let's Begin.**
+Please list the high-level outline of the steps we will take, and then immediately list the **Subtopics for Step 1** and ask me the first knowledge check question.
