@@ -6,6 +6,7 @@ using TenderAI.ApiService.Data;
 using TenderAI.ApiService.Features.RfpSubmission;
 using TenderAI.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 // Use the Action<ConfigurationOptions> delegate directly
@@ -18,6 +19,7 @@ builder.Services.AddMassTransit(busConfiguration =>
 
     busConfiguration.UsingRabbitMq((context,config) =>
     {
+        // we dont ahve apss cred n username because c# handle its own and MasTransit follow AMQP Standard.eg - amqp://user:password@localhost:5672
         var connctionString = builder.Configuration.GetConnectionString("messaging");
         config.Host(connctionString);
 
@@ -40,6 +42,14 @@ builder.Services.AddDbContext<TenderDBContext>(options =>
     
 });
 
+builder.Services.AddMinio(configureClient =>
+{
+    // we have to pass cred n username because AddMinio follow HTTP Standard. eg - http://localhost:9000
+    var connectionString = builder.Configuration.GetConnectionString("storage");
+configureClient.WithEndpoint(connectionString).WithCredentials("","");
+
+}  );
+builder.Services.AddScoped<MinioStorageService>();
 var app = builder.Build();
 
 app.MapRfpEndPoint();

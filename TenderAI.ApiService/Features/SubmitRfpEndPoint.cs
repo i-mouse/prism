@@ -20,7 +20,7 @@ public static class SubmitRfpEndpoint
               UserId = request.UserId  
             };
             await fileUploader.UploadFileAsync(request.File);
-            var contract = new TenderUploaded(Guid.NewGuid(),request.UserId,request.File.Name);
+            var contract = new TenderUploaded(Guid.NewGuid(),request.UserId,request.File.FileName);
             await publishEndpoint.Publish(contract);
          
 
