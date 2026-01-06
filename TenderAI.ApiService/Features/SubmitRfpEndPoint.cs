@@ -11,7 +11,7 @@ public static class SubmitRfpEndpoint
 
     public static void MapRfpEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/rfp", async ([FromForm] SubmitRfpRequest request,TenderDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint) =>
+        app.MapPost("/rfp", async ([FromForm] SubmitRfpRequest request,TenderDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,MinioStorageService storageService) =>
         {
             var result = new
             {
@@ -19,7 +19,10 @@ public static class SubmitRfpEndpoint
               File = request.File.Name,
               UserId = request.UserId  
             };
-            await fileUploader.UploadFileAsync(request.File);
+
+            var stream = request.File.OpenReadStream();
+            await storageService.UploadFileAsync(stream,request.File.FileName,request.File.ContentType);
+            // await fileUploader.UploadFileAsync(request.File);
             var contract = new TenderUploaded(Guid.NewGuid(),request.UserId,request.File.FileName);
             await publishEndpoint.Publish(contract);
          

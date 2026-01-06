@@ -42,15 +42,27 @@ builder.Services.AddDbContext<TenderDBContext>(options =>
     
 });
 
-builder.Services.AddMinio(configureClient =>
+builder.Services.AddMinio(configureClient =>    
 {
     // we have to pass cred n username because AddMinio follow HTTP Standard. eg - http://localhost:9000
     var connectionString = builder.Configuration.GetConnectionString("storage");
-configureClient.WithEndpoint(connectionString).WithCredentials("","");
+    var settings = connectionString!.Split(";").Select(part=> part.Split("=")).ToDictionary(split => split[0], split => split[1]);
+    var endpointUrl = new Uri(settings["Endpoint"]);
+    var accessKey = settings["AccessKey"];
+    var secretKey = settings["SecretKey"];
 
+    bool useSSL = endpointUrl.Scheme == "https";
+    configureClient.WithEndpoint(endpointUrl.Authority).WithCredentials(accessKey,secretKey).WithSSL(useSSL);
 }  );
-builder.Services.AddScoped<MinioStorageService>();
+
+ builder.Services.AddScoped<MinioStorageService>();
 var app = builder.Build();
+
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var service = scope.ServiceProvider.GetRequiredService<MinioStorageService>();
+    await service.EnsureBucketExistAsync("tender-uploads");
+}
 
 app.MapRfpEndPoint();
 
