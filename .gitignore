@@ -29,3 +29,6 @@ appsettings.Development.json
 secrets.json
 *.pem
 *.key
+
+#-----Folders -----
+/downloads
