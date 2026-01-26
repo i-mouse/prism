@@ -1,19 +1,21 @@
 import os,pika,json,sys,fitz
 from minio import Minio
 from ai_service import AIService
+from RAGService import RAGService
 import asyncio
 
 def main():
 
     service = AIService()
+    rag_service = RAGService()
     # Establising the connection and channel
     credential = pika.PlainCredentials(username='guest',password='1AVWTEyHt77pH7dBsj140P')
-    connection_parameters = pika.ConnectionParameters(host='localhost',port=59264,credentials=credential)
+    connection_parameters = pika.ConnectionParameters(host='localhost',port=59040,credentials=credential)
     connection = pika.BlockingConnection(parameters=connection_parameters)
     channel = connection.channel()
 
     minio_client = Minio(
-        endpoint= "localhost:59272",
+        endpoint= "localhost:59038",
         access_key= "minioadmin",
         secret_key="F7gmz*p~v)5uEN{Kc~7UqP",
         secure=False
@@ -50,16 +52,24 @@ def main():
             minio_client.fget_object(bucket_name='tender-uploads',object_name=file_name,file_path=local_path)
             print(f'\nFile downloaded successfully {file_name}')
 
-            final_text = ''
-            with fitz.open(local_path) as doc:
-                first_page = doc[0]
-                text =first_page.get_text()
-                final_text += text
-
-            summary = asyncio.run(service.analyize_text(text=final_text))
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-
             base_name,extension = os.path.splitext(local_path)
+            
+            if extension.lower() == ".pdf":           
+                final_text = ''
+                with fitz.open(local_path) as doc:
+                    first_page = doc[0]
+                    text =first_page.get_text()
+                    final_text += text
+
+                summary = asyncio.run(service.analyize_text(text=final_text))
+                rag_service.add_document_to_qdrant(filename=file_name,doctext=summary)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+
+            else:
+                audio_text = asyncio.run( service.transcribe_audio(file_path=local_path))
+                print(audio_text)   
+
+            
             text_file_path = f"{base_name}_summary.txt"
             
             with open(text_file_path,mode="w",encoding="utf-8") as f:
