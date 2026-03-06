@@ -25,7 +25,7 @@ var sqlDB = builder.AddSqlServer ("sql").AddDatabase("tender-db");
 var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 
  var pythonAPI = builder.AddPythonApp("tender-ai-pythonAPI","../TenderAI.PythonService","api.py")
-                        .WithHttpEndpoint(port:8000,name: "pythonAPI")
+                        .WithHttpEndpoint(port:8000,name: "pythonapi",env: "PORT")
                         .WithReference(qdrantDB)
                         .WithEnvironment("AI_API_KEY",apiKey)
                         .WithUv();

@@ -7,10 +7,10 @@ using TenderAI.ApiService.Features.RfpSubmission;
 using TenderAI.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
 using Minio;
+using TenderAI.ApiService.Features.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 // Use the Action<ConfigurationOptions> delegate directly
-
 // Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddMassTransit(busConfiguration =>
@@ -56,6 +56,19 @@ builder.Services.AddMinio(configureClient =>
 }  );
 
  builder.Services.AddScoped<MinioStorageService>();
+
+    builder.Services.AddHttpClient("pythonapi", client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["services:tender-ai-pythonAPI:pythonapi:0"]!);
+    });
+
+// Console.WriteLine("=== ALL CONFIG KEYS ===");
+// foreach (var kvp in builder.Configuration.AsEnumerable()
+//                             .Where(k => k.Value != null))
+// {
+//     Console.WriteLine($"{kvp.Key} = {kvp.Value}");
+// }
+// Console.WriteLine("=== END CONFIG ===");
 var app = builder.Build();
 
 using (var scope = app.Services.CreateAsyncScope())
@@ -65,6 +78,7 @@ using (var scope = app.Services.CreateAsyncScope())
 }
 
 app.MapRfpEndPoint();
+app.MapChatEndPoint();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

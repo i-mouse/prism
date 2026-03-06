@@ -8,7 +8,8 @@ load_dotenv()
 class AIService:
     def __init__(self):
 
-        self.client = AsyncOpenAI(api_key= os.getenv("AI_API_KEY"),base_url= os.getenv("AI_BASE_URL"))
+        AI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai/'
+        self.client = AsyncOpenAI(api_key= os.getenv("AI_API_KEY"),base_url= AI_BASE_URL)
         genai.configure(api_key=os.getenv("AI_API_KEY"))
         print("Available Models:")
         for m in genai.list_models():

@@ -2,12 +2,13 @@ from fastapi import FastAPI, HTTPException
 from langchain_core.messages import HumanMessage
 from agent_service import app as agent_app
 from pydantic import BaseModel
+import os
 
 app = FastAPI(title="TenderAI python agent")
 
 class QueryRequest(BaseModel):
     question : str
-    thread_id : str = "default thread Id"
+    thread_id : str = "default_thread"
 
 @app.post("/ask")
 async def ask_agent(request :QueryRequest):
@@ -32,5 +33,5 @@ async def ask_agent(request :QueryRequest):
     
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app,host= "0.0.0.0",port= 8000)    
+    porta = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app,host= "0.0.0.0",port= porta)    
