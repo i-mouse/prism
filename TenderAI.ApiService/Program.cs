@@ -21,7 +21,7 @@ builder.Services.AddMassTransit(busConfiguration =>
     {
         // we dont ahve apss cred n username because c# handle its own and MasTransit follow AMQP Standard.eg - amqp://user:password@localhost:5672
         var connctionString = builder.Configuration.GetConnectionString("messaging");
-        config.Host(connctionString);
+         config.Host(connctionString);
 
     });
 

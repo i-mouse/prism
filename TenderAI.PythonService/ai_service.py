@@ -55,7 +55,7 @@ class AIService:
         
         # We use generate_content_async for non-blocking AI
         response = await model.generate_content_async(
-            [audio_file, "Please transcribe this audio and provide  result in proper format without missing any detail from the audio."]
+            [audio_file, "Please transcribe this audio and provide  result in proper format without missing any detail from the audio.Need word-for-word transcription"]
         )
         
         print(" [✅] Audio processed successfully.")

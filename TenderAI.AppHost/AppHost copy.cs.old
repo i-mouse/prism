@@ -1,0 +1,64 @@
+using YamlDotNet.Serialization;
+
+var builder = DistributedApplication.CreateBuilder(args);
+
+//add Redis
+var cache = builder.AddRedis("redis-cache");
+
+var apiKey = builder.Configuration["AI_API_KEY"];
+var qdrantSecretKey = builder.Configuration["QDRANT_SECRET_KEY"];
+var miniioSecretKey = builder.Configuration["MINIIO_SECRET_KEY"];
+var miniioUser = builder.Configuration["MINIIO_USER"];
+var rabbitmqSecretKey = builder.Configuration["RABBITMQ_SECRET_KEY"];
+var rabbitmqUser = builder.Configuration["RABBITMQ_USER"];
+
+var rabbitMQ = builder.AddRabbitMQ ("messaging").WithDataVolume().WithManagementPlugin()
+                     .WithEnvironment("RABBITMQ_DEFAULT_PASS",rabbitmqSecretKey)
+                     .WithEnvironment("RABBITMQ_DEFAULT_USER",rabbitmqUser);
+
+var miniIO = builder.AddMinioContainer("storage").WithDataVolume()
+                     .WithEnvironment("MINIO_ROOT_PASSWORD",miniioSecretKey)
+                     .WithEnvironment("MINIO_ROOT_USER",miniioUser);
+
+var miniIOConnectionString = ReferenceExpression.Create($"Endpoint={miniIO.GetEndpoint("http")};AccessKey={miniioUser};SecretKey={miniioSecretKey}");
+
+var sqlDB = builder.AddSqlServer ("sql").AddDatabase("tender-db");
+
+
+var qdrantDB = builder.AddQdrant ("qdrant").WithDataVolume()
+                      .WithEnvironment("QDRANT__SERVICE__API_KEY", qdrantSecretKey);
+
+ var pythonAPI = builder.AddPythonApp("tender-ai-pythonAPI","../TenderAI.PythonService","api.py")
+                        .WithHttpEndpoint(port:8000,name: "pythonAPI")
+                        .WithReference(qdrantDB)
+                        .WithEnvironment("AI_API_KEY",apiKey)
+                        .WithEnvironment("QDRANT_URL", qdrantDB.GetEndpoint("http"))
+                        .WithEnvironment("QDRANT_SECRET_KEY",qdrantSecretKey)
+                        .WithUv();
+
+  var pythonWorker = builder.AddPythonApp("tender-ai-pythonWorker","../TenderAI.PythonService","main.py")
+                        .WithReference(miniIO)
+                        .WithReference(rabbitMQ)
+                        .WithReference(qdrantDB)
+                        .WithEnvironment("AI_API_KEY",apiKey)
+                        .WithEnvironment("QDRANT_URL", qdrantDB.GetEndpoint("http"))
+                        .WithEnvironment("QDRANT_SECRET_KEY",qdrantSecretKey)
+                        .WithEnvironment("MINIIO_SECRET_KEY",miniioSecretKey)
+                        .WithEnvironment("MINIIO_USER",miniioUser)
+                        .WithEnvironment("RABBITMQ_SECRET_KEY",rabbitmqSecretKey)
+                        .WithEnvironment("RABBITMQ_USER",rabbitmqUser)
+                        .WithEnvironment("MINIO_ENDPOINT", miniIO.GetEndpoint("http"))
+                        .WithEnvironment("RABBITMQ_ENDPOINT", rabbitMQ.GetEndpoint("amqp"))
+                        .WithUv();
+
+       // adding Services
+       builder.AddProject<Projects.TenderAI_ApiService>("apiservice")
+              .WithEnvironment("DEPLOYMENT_REGION","US-East")
+              .WithReference(cache)
+              .WithReference(sqlDB)
+               .WithReference(rabbitMQ)
+              .WithReference(qdrantDB)
+              // .WithReference(miniIO)
+              .WithReference(pythonAPI)
+              .WithEnvironment("ConnectionStrings__storage", miniIOConnectionString);
+builder.Build().Run();

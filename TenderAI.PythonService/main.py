@@ -3,23 +3,44 @@ from minio import Minio
 from ai_service import AIService
 from RAGService import RAGService
 import asyncio
+import traceback # Add this import
+import time      # Add this import
+
+
+def parse_aspire_minio(conn_str):
+    parts = {k: v for k, v in (item.split('=') for item in conn_str.split(';'))}
+    endpoint = parts['Endpoint'].replace("http://", "").replace("https://", "").rstrip('/')
+    return endpoint, parts['AccessKey'], parts['SecretKey']
 
 def main():
 
     service = AIService()
     rag_service = RAGService()
-    # Establising the connection and channel
-    credential = pika.PlainCredentials(username='guest',password='1AVWTEyHt77pH7dBsj140P')
-    connection_parameters = pika.ConnectionParameters(host='localhost',port=59040,credentials=credential)
-    connection = pika.BlockingConnection(parameters=connection_parameters)
+
+    connection_string = os.getenv("ConnectionStrings__messaging")
+    connection_string_miniio = os.getenv("ConnectionStrings__storage")
+
+    if not connection_string_miniio:
+        print("Error: MinIO connection string not found!")
+        sys.exit(1) # This will show as a failure in Aspire
+
+    if not connection_string:
+        print("Error: RabbitMQ connection string not found!")
+        sys.exit(1) # This will show as a failure in Aspire
+
+    params = pika.URLParameters(connection_string)
+    connection = pika.BlockingConnection(params)
     channel = connection.channel()
 
+    endpoint, user, password = parse_aspire_minio(connection_string_miniio)
+        
     minio_client = Minio(
-        endpoint= "localhost:59038",
-        access_key= "minioadmin",
-        secret_key="F7gmz*p~v)5uEN{Kc~7UqP",
-        secure=False
-    )
+            endpoint=endpoint, # e.g., "localhost:9000"
+            access_key=user,
+            secret_key=password,
+            secure=False
+        )
+    print("Connected to MinIO with custom credentials!")
 
 
     #Setting up exchnage
@@ -61,19 +82,19 @@ def main():
                     text =first_page.get_text()
                     final_text += text
 
-                summary = asyncio.run(service.analyize_text(text=final_text))
-                rag_service.add_document_to_qdrant(filename=file_name,doctext=summary)
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-
+                text_summary = asyncio.run(service.analyize_text(text=final_text))
+             
             else:
-                audio_text = asyncio.run( service.transcribe_audio(file_path=local_path))
-                print(audio_text)   
+                text_summary = asyncio.run( service.transcribe_audio(file_path=local_path))
 
-            
+            rag_service.add_document_to_qdrant(filename=file_name,doctext=text_summary)      
+            print(text_summary)               
             text_file_path = f"{base_name}_summary.txt"
             
             with open(text_file_path,mode="w",encoding="utf-8") as f:
-                f.write(summary)
+                f.write(text_summary)
+
+            ch.basic_ack(delivery_tag=method.delivery_tag)    
 
             
 
@@ -88,6 +109,10 @@ def main():
 if __name__== '__main__':
     try:
         main()
+    except Exception :
+        error_msg = traceback.format_exc()
+        print(error_msg)
+        time.sleep(60) # Keep container alive so you can see the file
     except KeyboardInterrupt :
         try:
             print(f'\nKeyboard Intereption')

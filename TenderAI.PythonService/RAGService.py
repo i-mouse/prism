@@ -1,11 +1,15 @@
 from qdrant_client import QdrantClient ,models
 from fastembed import TextEmbedding
-
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 class RAGService:
     def __init__(self):
-        self.client = QdrantClient(url="http://localhost:59045",api_key="HncA3JsngY2bDMFRDzwtT8")
+
+        url = os.getenv("QDRANT_HTTPURI") 
+        api_key = os.getenv("QDRANT_APIKEY")
+        self.client = QdrantClient(url=url,api_key=api_key)
         self.collection_name = "tender_docs"
         print(f"Qdrant initiated")
 
@@ -56,12 +60,12 @@ class RAGService:
 
         hits = self.client.query_points(collection_name = self.collection_name,query=query_vector,limit = limit)
 
-        for hit in hits.points:
-            score = hit.score
-            file_name = hit.payload.get("filename","Unknown")
-            content = hit.payload.get("text","")[:100]
+        # for hit in hits.points:
+        #     score = hit.score
+        #     file_name = hit.payload.get("filename","Unknown")
+        #     content = hit.payload.get("text","")[:100]
 
-            print(f"score : {score}\nfile name : {file_name}\nContent : {content}")
+        #     print(f"score : {score}\nfile name : {file_name}\nContent : {content}")
 
         return hits.points    
 
