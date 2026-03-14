@@ -25,7 +25,7 @@ class AIService:
                 model="gemini-2.5-flash",
                 messages=[
                     {"role":"system","content" : "You are a helpful Tender analyst."},
-                    {"role":"user","content":"Summarize this tender doc : \n\n{text[:2000]}"}
+                    {"role":"user","content":f"Summarize this tender doc : \n\n{text[:2000]}"}
                 ],
                 temperature=0.7
             )

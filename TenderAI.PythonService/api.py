@@ -20,7 +20,7 @@ async def ask_agent(request :QueryRequest):
         result = await agent_app.ainvoke(input=input_message,config=input_config) 
         final_raw_answer = result["messages"][-1].content
 
-        if isinstance(result,list):
+        if isinstance(final_raw_answer,list):
             final_answer = final_raw_answer[0].get("text", str(final_raw_answer))
         else:
             final_answer  = final_raw_answer

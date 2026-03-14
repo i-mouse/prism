@@ -8,4 +8,7 @@ public class TenderDBContext : DbContext
     {
         
     }
+
+    public DbSet<TenderDocument> tenderDocuments    {get;set;}
+    public DbSet<PricingHistory> pricingHistories {get;set;}
 }

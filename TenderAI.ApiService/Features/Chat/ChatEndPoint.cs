@@ -11,7 +11,7 @@ public static class ChatEndPoint
 
     public static void MapChatEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/chat", async ([FromForm] ChatRequest request, IHttpClientFactory httpClientFactory,ILogger<ChatRequest> logger) =>
+        app.MapPost("/api/chat", async ([FromBody] ChatRequest request, IHttpClientFactory httpClientFactory,ILogger<ChatRequest> logger) =>
         {
 
            try
@@ -22,12 +22,12 @@ public static class ChatEndPoint
  
              if(!result.IsSuccessStatusCode)
              {
-               var error = result.Content.ReadAsStringAsync();
+               var error =  await result.Content.ReadAsStringAsync();
                logger.LogError($"Python chat API error: {error}\n");
                return Results.Problem($"Python chat API error: {error}");
              }
  
-             var ans = result.Content.ReadFromJsonAsync<ChatResponse>();
+             var ans =  await result.Content.ReadFromJsonAsync<ChatResponse>();
              return Results.Ok(ans);
            }
            catch (Exception ex)

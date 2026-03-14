@@ -6,8 +6,11 @@ from langgraph.graph import StateGraph,END
 from langchain_core.tools import tool
 from langgraph.prebuilt import tools_condition,ToolNode
 from langchain_core.messages import HumanMessage
+from langgraph.checkpoint.memory import MemorySaver
 from RAGService import RAGService
 import time
+
+memory = MemorySaver()
 
 class AgentState(TypedDict):
     messages : Annotated[list,add_messages]
@@ -71,7 +74,7 @@ workflow.set_entry_point("agent")
 workflow.add_conditional_edges("agent",tools_condition)
 workflow.add_edge("tools","agent")
 
-app = workflow.compile()
+app = workflow.compile(checkpointer=memory)
 
 print(" [✅] Agent Workflow Compiled!")
 

@@ -8,6 +8,9 @@ using TenderAI.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using TenderAI.ApiService.Features.Chat;
+using TenderAI.ApiService.Hubs;
+using Microsoft.AspNetCore.Connections;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 // Use the Action<ConfigurationOptions> delegate directly
@@ -34,13 +37,14 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IfileUploader,FakeFileUploader>();
 
-builder.Services.AddDbContext<TenderDBContext>(options =>
-{
+builder.AddNpgsqlDbContext<TenderDBContext>("tender-db");
+// builder.Services.AddDbContext<TenderDBContext>(options =>
+// {
 
-    var connectionString = builder.Configuration.GetConnectionString("tender-db");
-        options.UseSqlServer(connectionString);
+//     var connectionString = builder.Configuration.GetConnectionString("tender-db");
+//         options.UseNpgsql(connectionString);
     
-});
+// });
 
 builder.Services.AddMinio(configureClient =>    
 {
@@ -55,20 +59,36 @@ builder.Services.AddMinio(configureClient =>
     configureClient.WithEndpoint(endpointUrl.Authority).WithCredentials(accessKey,secretKey).WithSSL(useSSL);
 }  );
 
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp => {
+      var connctionString = builder.Configuration.GetConnectionString("messaging");
+
+        return new ConnectionFactory
+        {
+            Uri = new Uri(connctionString!)
+        };
+});
+
  builder.Services.AddScoped<MinioStorageService>();
+ 
+ builder.Services.AddHostedService<RabbitMqListenerService>();
 
     builder.Services.AddHttpClient("pythonapi", client =>
     {
         client.BaseAddress = new Uri(builder.Configuration["services:tender-ai-pythonAPI:pythonapi:0"]!);
     });
 
-// Console.WriteLine("=== ALL CONFIG KEYS ===");
-// foreach (var kvp in builder.Configuration.AsEnumerable()
-//                             .Where(k => k.Value != null))
-// {
-//     Console.WriteLine($"{kvp.Key} = {kvp.Value}");
-// }
-// Console.WriteLine("=== END CONFIG ===");
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SignalRPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:7000") // The exact URL from your screenshot error
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // <-- THIS IS THE MAGIC WORD SIGNALR NEEDS
+    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateAsyncScope())
@@ -76,9 +96,14 @@ using (var scope = app.Services.CreateAsyncScope())
     var service = scope.ServiceProvider.GetRequiredService<MinioStorageService>();
     await service.EnsureBucketExistAsync("tender-uploads");
 }
-
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var service = scope.ServiceProvider.GetRequiredService<TenderDBContext>();
+    await service.Database.MigrateAsync();
+}
 app.MapRfpEndPoint();
 app.MapChatEndPoint();
+app.MapChatHistoryEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -87,7 +112,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("SignalRPolicy");
+app.MapHub<DocumentHub>("/hubs/document");
 app.UseHttpsRedirection();
 app.Run();
 

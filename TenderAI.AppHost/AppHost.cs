@@ -19,8 +19,10 @@ var qdrantKey = builder.AddParameter("QdrantApiKey", secret: true);
 var rabbitMQ = builder.AddRabbitMQ ("messaging",userName : userrabbitmq,password:passrabbitmq).WithDataVolume().WithManagementPlugin();
 var miniIO = builder.AddMinioContainer("storage",rootUser:minioUser,rootPassword:minioPass).WithDataVolume();
 
-var sqlDB = builder.AddSqlServer ("sql").AddDatabase("tender-db");
-
+var postgres = builder.AddPostgres("postgres")
+                        .WithPgAdmin()
+                        .WithDataVolume()
+                      .AddDatabase("tender-db");
 
 var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 
@@ -38,13 +40,18 @@ var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
                         .WithUv()
                         .WithDebugging();
 
-       // adding Services
-       builder.AddProject<Projects.TenderAI_ApiService>("apiservice")
-              .WithEnvironment("DEPLOYMENT_REGION","US-East")
-              .WithReference(cache)
-              .WithReference(sqlDB)
-              .WithReference(rabbitMQ)
-              .WithReference(qdrantDB)
-              .WithReference(miniIO)
-              .WithReference(pythonAPI);
+var apiservice =     builder.AddProject<Projects.TenderAI_ApiService>("apiservice")
+                     .WithEnvironment("DEPLOYMENT_REGION","US-East")
+                     .WithReference(cache)
+                     .WithReference(postgres)
+                     .WithReference(rabbitMQ)
+                     .WithReference(qdrantDB)
+                     .WithReference(miniIO)
+                     .WithReference(pythonAPI);
+
+var reactUI  =       builder.AddNpmApp("tender-ai-reactUI","../TenderAI.Web")
+                     .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
+                     .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
+                     .WithReference(apiservice);              
+
 builder.Build().Run();

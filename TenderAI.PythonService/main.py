@@ -64,6 +64,7 @@ def main():
 
             file_name = actual_message['fileName']
             file_id = actual_message['fileId']
+            connectionId = actual_message['connectionId']
             print(f'[x] File Name : {file_name} \n[x] File Id : {file_id}')
 
             download_folder ="downloads"
@@ -74,26 +75,31 @@ def main():
             print(f'\nFile downloaded successfully {file_name}')
 
             base_name,extension = os.path.splitext(local_path)
-            
-            if extension.lower() == ".pdf":           
-                final_text = ''
+            final_text = ''
+            if extension.lower() == ".pdf":            
                 with fitz.open(local_path) as doc:
-                    first_page = doc[0]
-                    text =first_page.get_text()
-                    final_text += text
+                    for page in doc:
+                        first_page = page
+                        text =first_page.get_text()
+                        final_text += text
 
-                text_summary = asyncio.run(service.analyize_text(text=final_text))
-             
             else:
-                text_summary = asyncio.run( service.transcribe_audio(file_path=local_path))
+                final_text = asyncio.run( service.transcribe_audio(file_path=local_path))
 
-            rag_service.add_document_to_qdrant(filename=file_name,doctext=text_summary)      
-            print(text_summary)               
-            text_file_path = f"{base_name}_summary.txt"
-            
-            with open(text_file_path,mode="w",encoding="utf-8") as f:
-                f.write(text_summary)
+            text_summary = asyncio.run(service.analyize_text(text=final_text))
+            rag_service.add_document_to_qdrant(filename=file_name,doctext=final_text)      
+            print(final_text) 
 
+            completion_message  = {
+                "fileId" : file_id,
+                "fileName" : file_name,
+                "connectionId" : connectionId,
+                "status" : "Completed",
+                "summary" : text_summary
+                }    
+
+            # Publish it back to RabbitMQ on a NEW queue
+            channel.basic_publish(exchange='',routing_key='document_processed_queue',body=json.dumps(completion_message))      
             ch.basic_ack(delivery_tag=method.delivery_tag)    
 
             
