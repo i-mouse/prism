@@ -74,28 +74,6 @@ workflow.set_entry_point("agent")
 workflow.add_conditional_edges("agent",tools_condition)
 workflow.add_edge("tools","agent")
 
-app = workflow.compile(checkpointer=memory)
+agent_app = workflow.compile(checkpointer=memory)
 
 print(" [✅] Agent Workflow Compiled!")
-
-if __name__ == "__main__":
-    print(f"Agennt testing -----------\n")
-
-    # We use a config to give this specific conversation an ID (Thread ID)
-    # This is required for LangGraph memory to work properly.
-    config = {"configurable": {"thread_id": "1"}}
-
-    input_message = {"messages" :[HumanMessage(content= "What is the anticipated completion period for the works on the C706 road?")] }
-    result = app.invoke(input=input_message,config=config)
-
-    final_raw_answer = result["messages"][-1].content
-
-    # Check if Gemini returned a list of dictionaries instead of a string
-    if isinstance(final_raw_answer, list):
-        # Extract just the text from the first dictionary item
-        final_answer = final_raw_answer[0].get("text", str(final_raw_answer))
-    else:
-        final_answer = final_raw_answer
-
-    print(f"\n [🤖] Agent: {final_answer}")
-    print("\n" + "="*50)

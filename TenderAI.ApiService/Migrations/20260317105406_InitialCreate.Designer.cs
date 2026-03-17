@@ -12,7 +12,7 @@ using TenderAI.ApiService.Data;
 namespace TenderAI.ApiService.Migrations
 {
     [DbContext(typeof(TenderDBContext))]
-    [Migration("20260313130017_InitialCreate")]
+    [Migration("20260317105406_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,32 @@ namespace TenderAI.ApiService.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("TenderAI.ApiService.Data.FileRecords", b =>
+                {
+                    b.Property<string>("FileId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChatId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Summary")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("FileId");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("fileRecords");
+                });
 
             modelBuilder.Entity("TenderAI.ApiService.Data.PricingHistory", b =>
                 {
@@ -50,7 +76,7 @@ namespace TenderAI.ApiService.Migrations
 
             modelBuilder.Entity("TenderAI.ApiService.Data.TenderDocument", b =>
                 {
-                    b.Property<string>("FileId")
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<string>("ChatId")
@@ -61,15 +87,15 @@ namespace TenderAI.ApiService.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Summary")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UploadedAt")
@@ -79,9 +105,25 @@ namespace TenderAI.ApiService.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("FileId");
+                    b.HasKey("Id");
 
                     b.ToTable("tenderDocuments");
+                });
+
+            modelBuilder.Entity("TenderAI.ApiService.Data.FileRecords", b =>
+                {
+                    b.HasOne("TenderAI.ApiService.Data.TenderDocument", "Chat")
+                        .WithMany("Files")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+                });
+
+            modelBuilder.Entity("TenderAI.ApiService.Data.TenderDocument", b =>
+                {
+                    b.Navigation("Files");
                 });
 #pragma warning restore 612, 618
         }

@@ -50,13 +50,12 @@ public class RabbitMqListenerService : BackgroundService
        using (var scope = _serviceScopeFactory.CreateScope())
        {
         var dbContext = scope.ServiceProvider.GetRequiredService<TenderDBContext>();
-        int totalRecords = await dbContext.tenderDocuments.CountAsync();
-        var obj = await dbContext.tenderDocuments.FindAsync(fileId);
+
+        var obj = await dbContext.fileRecords.FindAsync(fileId);
         if(obj!=null)
             {
                 obj.Summary = summary;
                 obj.UploadedAt = DateTime.UtcNow;
-                obj.Status = status;
                 await dbContext.SaveChangesAsync();
             }
        }

@@ -11,4 +11,5 @@ public class TenderDBContext : DbContext
 
     public DbSet<TenderDocument> tenderDocuments    {get;set;}
     public DbSet<PricingHistory> pricingHistories {get;set;}
+    public DbSet<FileRecords> fileRecords {get;set;}
 }

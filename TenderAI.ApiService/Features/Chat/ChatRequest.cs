@@ -4,7 +4,9 @@ namespace TenderAI.ApiService.Features.Chat
     public class ChatRequest
     {
         public required string question { get; set; }
-        public string thread_id { get; set; } = "default_thread";
+        
+        public required string userId { get; set; }
+        public string chatId { get; set; } = "default_thread";
     }
 
     public class ChatResponse

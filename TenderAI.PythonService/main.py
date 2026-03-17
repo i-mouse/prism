@@ -1,16 +1,87 @@
+import sys
+import asyncio
+# --- BUG 1 FIX: Tell Windows to use the correct Async Event Loop for Psycopg ---
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+# -----------------------------------------------------------------------------
+
 import os,pika,json,sys,fitz
 from minio import Minio
 from ai_service import AIService
 from RAGService import RAGService
-import asyncio
 import traceback # Add this import
 import time      # Add this import
+from memory_db import create_db_connection_pool
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from agent_service import workflow
+from langchain_core.messages import AIMessage
+
+
 
 
 def parse_aspire_minio(conn_str):
     parts = {k: v for k, v in (item.split('=') for item in conn_str.split(';'))}
     endpoint = parts['Endpoint'].replace("http://", "").replace("https://", "").rstrip('/')
     return endpoint, parts['AccessKey'], parts['SecretKey']
+
+async def save_summary_memory(chatId: str, summary_text: str):
+    """Explicitly saving summary as memory in postgres"""
+    try:
+        import psycopg
+        conninfo = (
+            f"host={os.environ['TENDER_DB_HOST']} "
+            f"port={os.environ.get('TENDER_DB_PORT', '5432')} "
+            f"dbname={os.environ['TENDER_DB_DATABASENAME']} "
+            f"user={os.environ['TENDER_DB_USERNAME']} "
+            f"password={os.environ['TENDER_DB_PASSWORD']}"
+        )
+
+        # Setup with autocommit connection (required for CREATE INDEX CONCURRENTLY)
+        async with await psycopg.AsyncConnection.connect(conninfo, autocommit=True) as setup_conn:
+            checkpointer = AsyncPostgresSaver(setup_conn)
+            await checkpointer.setup()
+
+        # Now use pool for actual state update
+        pool = create_db_connection_pool()
+        await pool.open()
+
+        try:
+            checkpointer = AsyncPostgresSaver(pool)
+            agent_app = workflow.compile(checkpointer=checkpointer)
+            config = {"configurable": {"thread_id": chatId}}  # ← lowercase "configurable"!
+
+            msg = AIMessage(
+                content=f"**Processing completed** \n\n **Summary:** \n\n{summary_text} \n\n You can now ask questions about this document."
+            )
+            await agent_app.aupdate_state(config=config, values={"messages": [msg]})
+        finally:
+            await pool.close()
+
+    except Exception as e:
+        print(f"Failed to save memory: {e}")
+
+async def save_summary_memory2(chatId : str ,summary_text :str):
+
+    "Explicitly saving summary as memopry in postgeg"
+    try:
+        pool = create_db_connection_pool()
+
+        await pool.open()
+
+        async with AsyncPostgresSaver(pool) as checkpointer:
+            agent_app = workflow.compile(checkpointer= checkpointer)
+            config = {"Configurable" : {"thread_id" : chatId}}
+
+            msg =  AIMessage( content=f"**Processing completed** \n\n **Summary:** \n\n{summary_text} \n\n You can now ask question about this document.")
+
+            await agent_app.update_state({"messages" : [msg]},config=config)
+
+    except Exception as e:
+        print(f"Failed to save memory: {e}")
+    finally:
+        await pool.close()
+
+
 
 def main():
 
@@ -64,6 +135,7 @@ def main():
 
             file_name = actual_message['fileName']
             file_id = actual_message['fileId']
+            chat_id = actual_message['chatId']
             connectionId = actual_message['connectionId']
             print(f'[x] File Name : {file_name} \n[x] File Id : {file_id}')
 
@@ -89,7 +161,7 @@ def main():
             text_summary = asyncio.run(service.analyize_text(text=final_text))
             rag_service.add_document_to_qdrant(filename=file_name,doctext=final_text)      
             print(final_text) 
-
+            asyncio.run(save_summary_memory(chat_id, text_summary))
             completion_message  = {
                 "fileId" : file_id,
                 "fileName" : file_name,

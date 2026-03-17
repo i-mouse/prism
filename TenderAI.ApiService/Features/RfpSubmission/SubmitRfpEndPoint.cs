@@ -34,7 +34,7 @@ public static class SubmitRfpEndpoint
             await storageService.UploadFileAsync(stream,request.File.FileName,request.File.ContentType);
 
            await AddToDatabase(request,dBContext);
-            var contract = new TenderUploaded(request.FileId,request.UserId,request.File.FileName,request.ConnectionId);
+            var contract = new TenderUploaded(request.FileId,request.UserId,request.File.FileName,request.ConnectionId,request.ChatId);
             await publishEndpoint.Publish(contract);
          
 
@@ -74,16 +74,35 @@ public static class SubmitRfpEndpoint
 
     public static async Task AddToDatabase(SubmitRfpRequest request,TenderDBContext tenderDBContext)
     {
+       var existingRecord =  tenderDBContext.tenderDocuments.FirstOrDefault(a=>a.ChatId==request.ChatId);
+       if (existingRecord!=null)
+       {
+          var entry = new FileRecords{
+            FileName = request.File.FileName,
+            UploadedAt = DateTime.UtcNow,
+            ChatId = request.ChatId,
+            FileId = request.FileId!
+        };
+        existingRecord.UploadedAt = DateTime.Now;
+        existingRecord.Status = "In progress";
+
+        tenderDBContext.fileRecords.Add(entry);
+       }
+       else
+       {
         var entry = new TenderDocument{
+            Id = Guid.NewGuid().ToString(),
             UserId = request.UserId,
-            FileId = request.FileId!,
             FileName = request.File.FileName,
             ChatTitle = $"Chat: {request.File.FileName}",
             UploadedAt = DateTime.UtcNow,
-            Status = "In progress"
+            CreatedAt = DateTime.UtcNow,
+            Status = "In progress",
+            ChatId = request.ChatId
         };
 
         tenderDBContext.tenderDocuments.Add(entry);
+       }
        await tenderDBContext.SaveChangesAsync();
     }
 }
