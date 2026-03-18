@@ -17,7 +17,7 @@ interface Message {
 
 function App() {
   // --- State ---
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploadStatus, setUploadStatus] = useState<'ready' | 'uploading' | 'success' | 'error'>('ready');
   const [statusMessage, setStatusMessage] = useState('Ready to upload.');
   const [connectionId, setConnectionId] = useState<string>("");
@@ -36,6 +36,7 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
+  const pendingFilesCount = useRef<number>(0);
 
   // Auto-scroll logic
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -90,7 +91,7 @@ function App() {
   const handleNewChat = () => {
     // Generating a new UUID automatically triggers the useEffect to clear the screen!
     setActiveChatId(crypto.randomUUID()); 
-    setFile(null); // Clear the upload box
+    setFiles([]); // Clear the upload box
     setUploadStatus('ready');
     setStatusMessage('Ready to upload.');
   };
@@ -117,21 +118,42 @@ function App() {
       .withAutomaticReconnect(jitterRetryPolicy)
       .build();
 
-   connection.on("DocumentProcessed", (data) => {
-    console.log("⚡ SignalR Message Received:", data);
+connection.on("DocumentProcessed", (data) => {
+      console.log("⚡ SignalR Message Received:", data);
 
-    if (data.status === 'Completed') {
-        setUploadStatus('success');
-        setStatusMessage('Analysis Complete!');
-        setIsThinking(false);
-        addMessage('ai', `✅ **Processing Complete for ${data.fileName}!**\n\n**Summary:**\n${data.summary}\n\nYou can now ask me questions about this document.`);
-    } else if (data.status === 'Error') {
-        setUploadStatus('error');
-        setStatusMessage('Processing Failed.');
-        setIsThinking(false);
-        addMessage('ai', `❌ Sorry, I encountered an error while analyzing the document: ${data.errorMessage}`);
-    }
-   });
+      // 1. A file finished! Reduce our pending count by 1
+      pendingFilesCount.current -= 1;
+      const remaining = pendingFilesCount.current;
+
+      if (data.status === 'Completed') {
+          
+          // 2. Output the summary for this specific file
+          addMessage('ai', `✅ **Processing Complete for ${data.fileName}!**\n\n**Summary:**\n${data.summary}`);
+          
+          // 3. Are we completely done, or still waiting on others?
+          if (remaining > 0) {
+              // Still waiting! Keep spinning and update the status text
+              setStatusMessage(`Analyzed ${data.fileName}. ${remaining} file(s) remaining...`);
+          } else {
+              // All done! Turn off the animations
+              setUploadStatus('success');
+              setStatusMessage('All files processed successfully!');
+              setIsThinking(false); 
+              addMessage('ai', `🎉 **All documents have been indexed!** You can now ask me questions across all of them.`);
+          }
+          
+      } else if (data.status === 'Error') {
+          addMessage('ai', `❌ Error analyzing ${data.fileName}: ${data.errorMessage}`);
+          
+          if (remaining > 0) {
+              setStatusMessage(`Error on ${data.fileName}. ${remaining} file(s) remaining...`);
+          } else {
+              setUploadStatus('error');
+              setStatusMessage('Processing finished with errors.');
+              setIsThinking(false);
+          }
+      }
+    });
 
     connection.start()
       .then(() => {console.log("✅ Connected to SignalR Hub!");   setConnectionId(connection.connectionId ?? "");})
@@ -160,17 +182,19 @@ function App() {
   }, [userId]); 
 
   // --- 1. HANDLE FILE SELECTION ---
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      // Convert the FileList object into a standard Array
+      const selectedFiles = Array.from(e.target.files);
+      setFiles(selectedFiles);
       setUploadStatus('ready');
-      setStatusMessage('File selected. Click "Upload" to start.');
+      setStatusMessage(`${selectedFiles.length} file(s) selected. Click "Upload" to start.`);
     }
   };
 
   // --- 2. REAL API UPLOAD (/rfp) ---
   const handleUpload = async () => {
-    if (!file) return;
+    if (files.length==0) return;
 
   if (!connectionId) {
     setUploadStatus('error');
@@ -182,11 +206,14 @@ function App() {
     setStatusMessage('Uploading to Secure Storage...');
 
     const formData = new FormData();
-    formData.append('File', file);
     formData.append('UserId', 'demo-user-01'); 
     formData.append('ConnectionId',connectionId);
     formData.append('ChatId', activeChatId);
 
+    files.forEach((file) => {
+      formData.append('Files', file); // Note: 'Files' must match the C# property name
+    });
+    pendingFilesCount.current = files.length;
     try {
       const response = await fetch('/rfp', {
         method: 'POST',
@@ -199,7 +226,7 @@ function App() {
 
       setUploadStatus('success');
       setStatusMessage('Upload Complete. Processing in background...');
-      addMessage('ai', `I have received **${file.name}**. \n\nMy brain is now reading and indexing it. This usually takes about 10-20 seconds. You can start asking questions shortly!`);
+      addMessage('ai', `I have received **${files.length} files**. \n\nMy brain is now reading and indexing it. I will notify you as each one finishes!.You can start asking questions shortly!`);
 
     } catch (error) {
       console.error("Upload Error:", error);
@@ -283,6 +310,7 @@ function App() {
             type="file" 
             id="fileInput" 
             hidden 
+            multiple 
             onChange={handleFileChange} 
             accept=".pdf,.docx,.txt"
           />
@@ -290,15 +318,15 @@ function App() {
             <FiUploadCloud />
           </div>
           <div style={{fontWeight: 500, color: 'var(--text-primary)'}}>
-            {file ? "Change File" : "Select RFP/Tender"}
+            {files.length>0 ? "Change File" : "Select RFP/Tender"}
           </div>
           <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px'}}>
             Supports PDF, DOCX
           </div>
-          {file && (
+          {files.length>0 && (
             <div className="file-name">
               <FiFileText style={{marginRight: '8px', verticalAlign: 'middle'}}/>
-              {file.name}
+              {files.length} file(s) ready
             </div>
           )}
         </div>
@@ -306,7 +334,7 @@ function App() {
         <button 
           className="primary-btn"
           onClick={handleUpload}
-          disabled={!file || uploadStatus === 'uploading'}
+          disabled={files.length==0 || uploadStatus === 'uploading'}
         >
           {uploadStatus === 'uploading' ? 'Uploading...' : 'Upload & Analyze'}
         </button>

@@ -12,7 +12,7 @@ using TenderAI.ApiService.Data;
 namespace TenderAI.ApiService.Migrations
 {
     [DbContext(typeof(TenderDBContext))]
-    [Migration("20260317105406_InitialCreate")]
+    [Migration("20260318065814_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

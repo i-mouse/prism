@@ -53,7 +53,13 @@ async def save_summary_memory(chatId: str, summary_text: str):
             msg = AIMessage(
                 content=f"**Processing completed** \n\n **Summary:** \n\n{summary_text} \n\n You can now ask questions about this document."
             )
-            await agent_app.aupdate_state(config=config, values={"messages": [msg]})
+                        # Assuming your AI node is called "agent" in your agent_service.py
+            await agent_app.aupdate_state(
+                config=config, 
+                values={"messages": [msg]}, 
+                as_node="agent"  # <--- THE FIX: Tell LangGraph who is updating the state
+            )
+            # await agent_app.aupdate_state(config=config, values={"messages": [msg]})
         finally:
             await pool.close()
 
