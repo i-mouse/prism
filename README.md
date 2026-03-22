@@ -11,7 +11,10 @@ The entire distributed system is locally orchestrated using **.NET Aspire**, ens
 
 ---
 
-![architecture.png](architecture.jpg)
+### 🏗️ Complete System Architecture (Current State)
+
+![System Architecture](ProjectDoc/architecture.png)
+*(This diagram represents the currently implemented, asynchronous event-driven workflow.)*
 
 ---
 
@@ -67,3 +70,16 @@ dotnet user-secrets set "Parameters:rabbitmqpass" "your-secure-password"
 dotnet user-secrets set "Parameters:MinioUser" "admin"
 dotnet user-secrets set "Parameters:MinioSecret" "your-secure-password"
 dotnet user-secrets set "Parameters:QdrantApiKey" "your-secure-qdrant-key"
+
+
+---
+
+## 🔮 Future Tasks
+
+These items are on the immediate roadmap to complete the full enterprise design spec and enhance system performance and reliability.
+
+- [ ] **🚀 Synchronous Direct Querying:** Implement **gRPC** to allow the frontend to bypass RabbitMQ and directly query the Python AI service for low-latency tasks (e.g., summarizing an already-opened document without searching).
+- [ ] **🛡️ Fault Tolerance:** Implement **Dead Letter Queues (DLQ)** in RabbitMQ to automatically capture and handle failed document processing jobs without data loss.
+- [ ] **⚡ Low-Latency Caching:** Implement **Redis** to cache common AI responses in the C# Gateway API, drastically reducing cost and latency for repeated user questions.
+
+---
