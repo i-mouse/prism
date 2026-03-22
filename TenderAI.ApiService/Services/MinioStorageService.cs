@@ -3,6 +3,7 @@ using Minio;
 using Minio.DataModel.Args;
 using TenderAI.ApiService.Services;
 
+namespace TenderAI.ApiService.Services;
 public class MinioStorageService(IMinioClient minioClient) 
 {
   public async Task EnsureBucketExistAsync(string bucket = "tender-uploads" )

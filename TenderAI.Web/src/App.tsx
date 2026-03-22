@@ -8,11 +8,21 @@ import remarkGfm from 'remark-gfm';
 import rehypeHighlight from "rehype-highlight"
 import * as signalR from '@microsoft/signalr';
 
-interface Message {
+interface ChatSource {
+  filename: string;
+  score: number;
+  content: string;
+}
+
+interface ChatMessage {
   id: string;
   role: 'user' | 'ai';
   content: string;
   timestamp: Date;
+  caveat?: string;
+  isTrusted?: boolean;
+  intent?: string;
+  sources?: ChatSource[];
 }
 
 function App() {
@@ -32,8 +42,6 @@ function App() {
   });
   
   const userId = "demo-user-01"; // Hardcoded for demo
-
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const pendingFilesCount = useRef<number>(0);
@@ -43,6 +51,8 @@ function App() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   useEffect(() => { scrollToBottom(); }, [messages, isThinking]);
 
   // 🔥 NEW: Auto-sync sessionStorage and fetch history whenever activeChatId changes!
@@ -78,15 +88,13 @@ function App() {
   }, [activeChatId]); 
 
   // --- Helper: Add Message ---
-  const addMessage = (role: 'user' | 'ai', content: string) => {
+const addMessage = (msg: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     setMessages(prev => [...prev, { 
+      ...msg,
       id: Date.now().toString(), 
-      role, 
-      content, 
       timestamp: new Date() 
     }]);
   };
-
   // --- CHAT NAVIGATION ---
   const handleNewChat = () => {
     // Generating a new UUID automatically triggers the useEffect to clear the screen!
@@ -128,7 +136,7 @@ connection.on("DocumentProcessed", (data) => {
       if (data.status === 'Completed') {
           
           // 2. Output the summary for this specific file
-          addMessage('ai', `✅ **Processing Complete for ${data.fileName}!**\n\n**Summary:**\n${data.summary}`);
+          addMessage({ role: 'ai', content: `✅ **Processing Complete for ${data.fileName}!**\n\n**Summary:**\n${data.summary}` });
           
           // 3. Are we completely done, or still waiting on others?
           if (remaining > 0) {
@@ -139,11 +147,11 @@ connection.on("DocumentProcessed", (data) => {
               setUploadStatus('success');
               setStatusMessage('All files processed successfully!');
               setIsThinking(false); 
-              addMessage('ai', `🎉 **All documents have been indexed!** You can now ask me questions across all of them.`);
+              addMessage({ role: 'ai', content: `🎉 **All documents have been indexed!** You can now ask me questions across all of them.` });
           }
           
       } else if (data.status === 'Error') {
-          addMessage('ai', `❌ Error analyzing ${data.fileName}: ${data.errorMessage}`);
+          addMessage({ role: 'ai', content: `❌ Error analyzing ${data.fileName}: ${data.errorMessage}` });
           
           if (remaining > 0) {
               setStatusMessage(`Error on ${data.fileName}. ${remaining} file(s) remaining...`);
@@ -199,7 +207,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   if (!connectionId) {
     setUploadStatus('error');
     setStatusMessage('Realtime connection not ready. Please wait a moment.');
-    addMessage('ai', '⚠️ Realtime connection is not ready yet. Please wait a few seconds and try again.');
+    addMessage({ role: 'ai', content: '⚠️ Realtime connection is not ready yet. Please wait a few seconds and try again.' });
     return;
   }
     setUploadStatus('uploading');
@@ -226,13 +234,12 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
       setUploadStatus('success');
       setStatusMessage('Upload Complete. Processing in background...');
-      addMessage('ai', `I have received **${files.length} files**. \n\nMy brain is now reading and indexing it. I will notify you as each one finishes!.You can start asking questions shortly!`);
-
+      addMessage({ role: 'ai', content: `I have received **${files.length} files**. \n\nMy brain is now reading and indexing it. I will notify you as each one finishes!.You can start asking questions shortly!` });
     } catch (error) {
       console.error("Upload Error:", error);
       setUploadStatus('error');
       setStatusMessage('Upload Failed. Check console.');
-      addMessage('ai', '❌ I failed to upload the file. Please check if the Backend API is running.');
+      addMessage({ role: 'ai', content: '❌ I failed to upload the file. Please check if the Backend API is running.' });
     }
   };
 
@@ -241,7 +248,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!input.trim()) return;
 
     const userMsg = input;
-    addMessage('user', userMsg);
+    addMessage({ role: 'user', content: userMsg }); // Updated call
     setInput('');
     setIsThinking(true);
 
@@ -256,16 +263,23 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      if (!response.ok) throw new Error('Network response was not ok');
 
       const data = await response.json();
-      addMessage('ai', data.answer || "I received a response, but it was empty.");
+      
+      // 🔥 NEW: Pass ALL the enterprise metrics to the UI state
+      addMessage({ 
+        role: 'ai', 
+        content: data.answer || "I received a response, but it was empty.",
+        caveat: data.caveat,
+        isTrusted: data.isTrusted,
+        intent: data.intent,
+        sources: data.sources
+      });
 
     } catch (error) {
       console.error("Chat Error:", error);
-      addMessage('ai', "⚠️ I'm having trouble connecting to the brain. Is the Python Service running?");
+      addMessage({ role: 'ai', content: "⚠️ I'm having trouble connecting to the brain. Is the Python Service running?" });
     } finally {
       setIsThinking(false);
     }
@@ -396,15 +410,47 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 </div>
               )}
               
-                <div className="bubble">
-                  {/* 🔥 FIX: The Markdown Crash Shield! Safely stringifies objects to prevent white-screens */}
-                  {msg.role === 'ai' ? (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}  rehypePlugins={[rehypeHighlight]} >
-                      {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content, null, 2)}
-                    </ReactMarkdown>
-                  ) : (
-                    typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)
+                <div className="bubble" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  
+                  {/* The Answer Text */}
+                  <div className="markdown-body">
+                    {msg.role === 'ai' ? (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
+                        {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content, null, 2)}
+                      </ReactMarkdown>
+                    ) : (
+                      typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)
+                    )}
+                  </div>
+
+                  {/* 🔥 THE GOLD STANDARD: Inline Sources */}
+                  {msg.sources && msg.sources.length > 0 && (
+                    <div style={{ marginTop: '8px', paddingTop: '12px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                        SOURCES CITED:
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>                     
+                        {Array.from(new Map(msg.sources.map(s => [s.filename, s])).values()).map((src, idx) => (
+                          <span 
+                            key={idx} 
+                            title={src.content} 
+                            style={{ fontSize: '0.75rem', padding: '4px 10px', backgroundColor: '#e0f2fe', color: '#0369a1', borderRadius: '12px', cursor: 'help', border: '1px solid #bae6fd' }}
+                          >
+                            📄 {src.filename} ({(src.score * 100).toFixed(0)}% match)
+                          </span>
+                        ))}
+
+                      </div>
+                    </div>
                   )}
+                  {/* 🔥 THE HALLUCINATION GUARD: Caveat Banner */}
+                  {msg.caveat && (
+                    <div style={{ marginTop: '4px', padding: '10px 12px', backgroundColor: '#fffbeb', borderLeft: '4px solid #f59e0b', color: '#92400e', fontSize: '0.85rem', borderRadius: '4px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                      <FiAlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <span>{msg.caveat}</span>
+                    </div>
+                  )}
+
                 </div>
 
               {msg.role === 'user' && (

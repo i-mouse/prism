@@ -1,0 +1,5 @@
+﻿H:\Work projects\TenderAI\TenderAI.AppHost\AppHost.cs
+H:\Work projects\TenderAI\TenderAI.AppHost\AppHost copy.cs.old
+H:\Work projects\TenderAI\TenderAI.AppHost\appsettings.Development.json
+H:\Work projects\TenderAI\TenderAI.AppHost\appsettings.json
+H:\Work projects\TenderAI\TenderAI.AppHost\Properties\launchSettings.json

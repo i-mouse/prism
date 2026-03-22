@@ -20,17 +20,17 @@ public class RabbitMqListenerService : BackgroundService
         _hubContext = hubContext;   
         _serviceScopeFactory = serviceScopeFactory;
     }
-    protected override async Task ExecuteAsync(CancellationToken _stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-      var connection =  await _connectionFactory.CreateConnectionAsync(_stoppingToken);
-      var channel =  await connection.CreateChannelAsync(cancellationToken: _stoppingToken);
+      var connection =  await _connectionFactory.CreateConnectionAsync(stoppingToken);
+      var channel =  await connection.CreateChannelAsync(cancellationToken: stoppingToken);
       
       await channel.QueueDeclareAsync(
             queue: "document_processed_queue",
             durable:true,
             exclusive:false,
             autoDelete:false,
-            cancellationToken:_stoppingToken
+            cancellationToken:stoppingToken
        );
 
     var consumer = new AsyncEventingBasicConsumer(channel);
@@ -43,7 +43,6 @@ public class RabbitMqListenerService : BackgroundService
 
         var dataObject = JsonSerializer.Deserialize<JsonElement>(message);
         var fileId = dataObject.GetProperty("fileId").ToString();
-        var status = dataObject.GetProperty("status").ToString();
         var connectionId = dataObject.GetProperty("connectionId").ToString();
         var summary = dataObject.GetProperty("summary").ToString();
       
@@ -62,7 +61,7 @@ public class RabbitMqListenerService : BackgroundService
       
         await _hubContext.Clients.Client(connectionId).DocumentProcessed(dataObject);
 
-        await channel.BasicAckAsync(ea.DeliveryTag,false,_stoppingToken);
+        await channel.BasicAckAsync(ea.DeliveryTag,false,stoppingToken);
 
     };
 
@@ -70,10 +69,10 @@ public class RabbitMqListenerService : BackgroundService
         queue:"document_processed_queue",
         autoAck:false,
         consumer:consumer,
-        cancellationToken:_stoppingToken
+        cancellationToken:stoppingToken
     );
 
         // keep the aaplication  running forver and close it  when user stop the appl;ication like stop the debugging
-      await Task.Delay(-1,_stoppingToken);
+      await Task.Delay(-1,stoppingToken);
     }
 }

@@ -2,6 +2,8 @@ from qdrant_client import QdrantClient ,models
 from fastembed import TextEmbedding
 from dotenv import load_dotenv
 import os
+import uuid
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 load_dotenv()
 
 class RAGService:
@@ -31,42 +33,35 @@ class RAGService:
 
     def add_document_to_qdrant(self,filename:str,doctext:str):
 
-        chunk_size =500
-        chunks =[]
-        for i in range(0, len(doctext),chunk_size):
-            chunk = doctext[i:i+chunk_size]
-            chunks.append(chunk)
+        text_splitter = RecursiveCharacterTextSplitter(
+            separators=["\n\n", "\n", "(?<=\. )", " ", ""],
+            chunk_size = 1200,
+            chunk_overlap=200,
+            length_function=len
+        )
+
+        chunks = text_splitter.split_text(doctext)
+        print(f"[{filename}] Split into {len(chunks)} semantic chunks.")
 
         embeddings = list(self.embedding_model.embed(chunks))
-
         points = []
-        for i, (chunk,vector) in enumerate(zip(chunks,embeddings)):
+        for i, (chunk, vector) in enumerate(zip(chunks, embeddings)):
             points.append(models.PointStruct(
-                id=i,
-                vector= vector,
-                payload={
-                    "filename":filename,
-                    "text": chunk,
-                    "chunk_index" : i
-                }
+               id=str(uuid.uuid4()), 
+               vector=vector,       
+               payload={            
+                   "filename": filename,
+                   "text": chunk,
+                   "chunk_index" : i
+               }
             ))
 
         self.client.upsert(collection_name=self.collection_name,points=points)
         print(f"Saved vector into qdrant")   
 
     def search_db(self, user_query, limit:int = 3):
-
         query_vector = list(self.embedding_model.embed(user_query))[0]
-
         hits = self.client.query_points(collection_name = self.collection_name,query=query_vector,limit = limit)
-
-        # for hit in hits.points:
-        #     score = hit.score
-        #     file_name = hit.payload.get("filename","Unknown")
-        #     content = hit.payload.get("text","")[:100]
-
-        #     print(f"score : {score}\nfile name : {file_name}\nContent : {content}")
-
         return hits.points    
 
 

@@ -13,8 +13,6 @@ using Microsoft.AspNetCore.Connections;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
-// Use the Action<ConfigurationOptions> delegate directly
-// Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddMassTransit(busConfiguration =>
 {
@@ -38,13 +36,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IfileUploader,FakeFileUploader>();
 
 builder.AddNpgsqlDbContext<TenderDBContext>("tender-db");
-// builder.Services.AddDbContext<TenderDBContext>(options =>
-// {
-
-//     var connectionString = builder.Configuration.GetConnectionString("tender-db");
-//         options.UseNpgsql(connectionString);
-    
-// });
 
 builder.Services.AddMinio(configureClient =>    
 {
@@ -82,10 +73,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("SignalRPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:7000") // The exact URL from your screenshot error
+        policy.WithOrigins("http://localhost:7000")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // <-- THIS IS THE MAGIC WORD SIGNALR NEEDS
+              .AllowCredentials();
     });
 });
 

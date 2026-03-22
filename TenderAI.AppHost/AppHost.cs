@@ -6,9 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 //add Redis
 var cache = builder.AddRedis("redis-cache");
 
-var apiKey = builder.Configuration["AI_API_KEY"];
-var qdrantSecretKey = builder.Configuration["QDRANT_SECRET_KEY"];
-
+var apiKey = builder.Configuration["GoogleApiKey"];
 var userrabbitmq = builder.AddParameter( name:"rabbitmquser",secret :true);
 var passrabbitmq = builder.AddParameter( name:"rabbitmqpass",secret :true);
 
@@ -27,14 +25,6 @@ var postgres = builder.AddPostgres("postgres")
 
 var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 
-//  var pythonAPI = builder.AddPythonApp("tender-ai-pythonAPI","../TenderAI.PythonService","api.py")
-//                         .WithHttpEndpoint(port:8000,name: "pythonapi",env: "PORT")
-//                         .WithReference(qdrantDB)
-//                         .WithEnvironment("AI_API_KEY",apiKey)
-//                         .WithReference(postgres)
-//                         .WithUv();
-
-
 var pythonAPI = builder.AddDockerfile("tender-ai-pythonAPI", "../TenderAI.PythonService")
     .WithHttpEndpoint(targetPort: 8000, name: "pythonapi", env: "PORT")
     .WithReference(qdrantDB)
@@ -42,9 +32,7 @@ var pythonAPI = builder.AddDockerfile("tender-ai-pythonAPI", "../TenderAI.Python
     .WithReference(postgres)
     .WaitFor(postgres);
                 
-
-
-  var pythonWorker = builder.AddPythonApp("tender-ai-pythonWorker","../TenderAI.PythonService","main.py")
+ builder.AddPythonApp("tender-ai-pythonWorker","../TenderAI.PythonService","main.py")
                         .WithReference(miniIO)
                         .WithReference(rabbitMQ)
                         .WithReference(qdrantDB)
@@ -65,7 +53,7 @@ var apiservice =     builder.AddProject<Projects.TenderAI_ApiService>("apiservic
                      .WithReference(miniIO)
                     .WithReference(pythonAPI.GetEndpoint("pythonapi"));
 
-var reactUI  =       builder.AddNpmApp("tender-ai-reactUI","../TenderAI.Web")
+ builder.AddNpmApp("tender-ai-reactUI","../TenderAI.Web")
                      .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
                      .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
                      .WithReference(apiservice);              
