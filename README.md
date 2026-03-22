@@ -71,6 +71,14 @@ dotnet user-secrets set "Parameters:MinioUser" "admin"
 dotnet user-secrets set "Parameters:MinioSecret" "your-secure-password"
 dotnet user-secrets set "Parameters:QdrantApiKey" "your-secure-qdrant-key"
 
+**2. Setup LangSmith Observability (Optional but Recommended):**
+Create a `.env` file in the root of your `TenderAI.PythonService` directory to enable LangGraph tracing:
+```env
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=[https://api.smith.langchain.com](https://api.smith.langchain.com)
+LANGSMITH_API_KEY=your_langsmith_key
+LANGSMITH_PROJECT="TenderAI"
+
 ```
 ---
 
