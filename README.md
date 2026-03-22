@@ -11,6 +11,10 @@ The entire distributed system is locally orchestrated using **.NET Aspire**, ens
 
 ---
 
+![architecture.png](architecture.jpg)
+
+---
+
 ## ✨ Enterprise Features
 
 * **🛡️ Hallucination Safeguards (Grounding Checker):** A dedicated LangGraph node audits the Agent's final response against the retrieved source chunks. If a claim cannot be verified, the UI actively warns the user with a "Caveat Banner."
