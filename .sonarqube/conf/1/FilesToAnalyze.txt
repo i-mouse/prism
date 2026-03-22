@@ -1,1 +1,0 @@
-﻿H:\Work projects\TenderAI\TenderAI.ServiceDefaults\Extensions.cs
