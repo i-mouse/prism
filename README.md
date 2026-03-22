@@ -71,7 +71,7 @@ dotnet user-secrets set "Parameters:MinioUser" "admin"
 dotnet user-secrets set "Parameters:MinioSecret" "your-secure-password"
 dotnet user-secrets set "Parameters:QdrantApiKey" "your-secure-qdrant-key"
 
-
+```
 ---
 
 ## 🔮 Future Tasks
