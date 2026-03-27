@@ -24,8 +24,10 @@ The entire distributed system is locally orchestrated using **.NET Aspire**, ens
 * **⚡ Event-Driven Ingestion:** Uploaded documents are securely saved to **MinIO**, which triggers background extraction and embedding via **RabbitMQ**. The React UI receives real-time progress updates via **SignalR** websockets.
 * **🎯 Intent Classification & HyDE:** A fast LLM acts as a "Bouncer," classifying user intent before executing costly searches. Queries are automatically rewritten into optimized keyword strings to maximize vector retrieval accuracy.
 * **🧠 Persistent Native Memory:** Conversation state and tool-call history are natively managed and persisted using LangGraph's PostgreSQL Checkpointer.
+* **⚙️ Fault-Tolerant Asynchronous Workers:** Built-in Dead Letter Queue (DLQ) architecture using RabbitMQ. The system distinguishes between Terminal Errors (e.g., corrupted PDFs), which are safely isolated into auto-purging queues and broadcasted as real-time UI errors via SignalR, and Transient Errors (e.g., LLM network blips), which trigger intelligent requeuing and delayed retries without failing the user experience.
 * **🥇 Traceability & Observability:** Full LLM call tracing via **LangSmith** and system-wide orchestration logging via the .NET Aspire Dashboard.
 * **✅ Code Quality:** Integrated **SonarQube** analysis in the build pipeline to maintain high enterprise coding standards.
+
 
 ---
 
@@ -39,7 +41,7 @@ The entire distributed system is locally orchestrated using **.NET Aspire**, ens
 | **AI Services** | `Python 3.13`, `FastAPI`, `uv` | Runs the LangGraph state graph and asynchronous background workers. |
 | **LLM Engine** | `Google Gemini` | Tool-calling (Flash) and fast classification tasks (Flash-Lite). |
 | **Infrastructure** | `PostgreSQL`, `Qdrant`, `MinIO` | Relational data/memory, Vector storage, and S3-compatible Blob storage. |
-| **Message Broker** | `RabbitMQ` | Decouples document uploads from heavy AI embedding tasks. |
+| **Message Broker** | `RabbitMQ` | Decouples document uploads from heavy AI embedding tasks, featuring custom Direct/Fanout exchanges and automated DLQ routing. |
 | **Caching** | `Redis` | High-speed data caching. |
 
 ---
@@ -87,7 +89,6 @@ LANGSMITH_PROJECT="TenderAI"
 These items are on the immediate roadmap to complete the full enterprise design spec and enhance system performance and reliability.
 
 - [ ] **🚀 Synchronous Direct Querying:** Implement **gRPC** to allow the frontend to bypass RabbitMQ and directly query the Python AI service for low-latency tasks (e.g., summarizing an already-opened document without searching).
-- [ ] **🛡️ Fault Tolerance:** Implement **Dead Letter Queues (DLQ)** in RabbitMQ to automatically capture and handle failed document processing jobs without data loss.
 - [ ] **⚡ Low-Latency Caching:** Implement **Redis** to cache common AI responses in the C# Gateway API, drastically reducing cost and latency for repeated user questions.
 
 ---
