@@ -51,7 +51,8 @@ builder.Services.AddMinio(configureClient =>
 }  );
 
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp => {
+builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp => 
+{
       var connctionString = builder.Configuration.GetConnectionString("messaging");
 
         return new ConnectionFactory
@@ -92,9 +93,19 @@ using (var scope = app.Services.CreateAsyncScope())
     var service = scope.ServiceProvider.GetRequiredService<TenderDBContext>();
     await service.Database.MigrateAsync();
 }
+using (var scope = app.Services.CreateAsyncScope())
+{
+    var connectionFactory = scope.ServiceProvider.GetRequiredService<RabbitMQ.Client.IConnectionFactory>();
+    var connection = await connectionFactory.CreateConnectionAsync();
+    var channel = await connection.CreateChannelAsync();
+
+     var rabbitMqSetupService = new RabbitMqSetupService();
+     await rabbitMqSetupService.SetupQueuesAsync(channel);
+}
 app.MapRfpEndPoint();
 app.MapChatEndPoint();
 app.MapChatHistoryEndpoints();
+app.MapSystemEndPoint();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

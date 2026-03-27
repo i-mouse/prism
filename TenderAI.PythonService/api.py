@@ -1,12 +1,13 @@
 from fastapi import FastAPI, HTTPException, Request
 from langchain_core.messages import HumanMessage
-from agent_service import  workflow
+from agent_service import  workflow,ragservice
 from pydantic import BaseModel
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from memory_db import create_db_connection_pool
 import os
 from contextlib import asynccontextmanager
 import json
+import psycopg
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -125,7 +126,28 @@ async def get_chat_history(chatid: str, http_request: Request):
         print(f"Error while processing get chat history: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail=str(e))
 
+# --- SYSTEM RESET (NUCLEAR OPTION) ---
+@pythonAPI.delete("/api/system/reset")
+async def wipe_ai_system(http_request: Request): # 🛡️ ADD Request parameter
+    try:
+        # 1. WIPE QDRANT (Vector Database)
+        try:
+            ragservice.client.delete_collection(collection_name="tender_collection")
+        except Exception as e:
+            print(f" [⚠️] Qdrant wipe warning: {e}")
 
+        # 2. WIPE LANGGRAPH MEMORY (Using existing connection pool)
+        # 🛡️ This guarantees it works with Aspire's injected database
+        async with await http_request.app.state.pool.getconn() as conn:
+            await conn.execute("TRUNCATE TABLE checkpoints, checkpoint_blobs, checkpoint_writes CASCADE;")
+            await conn.commit() # Don't forget to commit the wipe!
+                
+        print(" [🧨] NUCLEAR WIPE COMPLETE: Vectors and Memory erased.")
+        return {"status": "success", "message": "AI Brain wiped."}
+        
+    except Exception as e:
+        print(f" [❌] Nuclear Wipe Failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))     
 if __name__ == "__main__":
     import uvicorn
     porta = int(os.environ.get("PORT", 8000))

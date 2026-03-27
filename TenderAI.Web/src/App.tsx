@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './App.css';
 // Icons
-import { FiUploadCloud, FiFileText, FiSend, FiCpu, FiUser, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { FiUploadCloud, FiFileText, FiSend, FiCpu, FiUser, FiCheckCircle, FiAlertCircle,FiTrash2 } from 'react-icons/fi';
 import { BiBot } from 'react-icons/bi';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -150,8 +150,8 @@ connection.on("DocumentProcessed", (data) => {
               addMessage({ role: 'ai', content: `🎉 **All documents have been indexed!** You can now ask me questions across all of them.` });
           }
           
-      } else if (data.status === 'Error') {
-          addMessage({ role: 'ai', content: `❌ Error analyzing ${data.fileName}: ${data.errorMessage}` });
+      } else if (data.status === 'Error' || data.status === 'Failed') {
+          addMessage({ role: 'ai', content: `❌ Error analyzing ${data.fileName}: ${data.summary}` });
           
           if (remaining > 0) {
               setStatusMessage(`Error on ${data.fileName}. ${remaining} file(s) remaining...`);
@@ -300,15 +300,54 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       default: return <FiFileText size={18} />;
     }
   };
+// --- THE NUCLEAR OPTION ---
+  const handleNukeSystem = async () => {
+    const isSure = window.confirm("⚠️ WARNING: This will permanently delete ALL chats, ALL documents, and ALL AI memory across Postgres, Qdrant, and MinIO. Are you absolutely sure?");
+    if (!isSure) return;
+
+    setUploadStatus('uploading');
+    setStatusMessage('Wiping entire system...');
+    setIsThinking(true);
+
+    try {
+      const response = await fetch('/api/system/reset', { method: 'DELETE' });
+      if (!response.ok) throw new Error("Failed to reset system");
+
+      // 1. Clear UI State completely
+      setMessages([]);
+      setSidebarChats([]);
+      setFiles([]);
+      
+      // 2. Force a fresh chat ID
+      sessionStorage.removeItem('tender_active_chat');
+      setActiveChatId(crypto.randomUUID());
+      
+      setUploadStatus('success');
+      setStatusMessage('System completely wiped.');
+      addMessage({ role: 'ai', content: "🧨 **System Wiped.**\n\nI have no memory of any documents or conversations prior to this exact moment. We are starting fresh. What would you like to do?" });
+    } catch (error) {
+      console.error(error);
+      setUploadStatus('error');
+      setStatusMessage('Failed to wipe databases.');
+    } finally {
+      setIsThinking(false);
+    }
+  };
 
   return (
     <div className="app-container">
      {/* --- SIDEBAR --- */}
+     
       <div className="sidebar">
         <div className="brand">
           <BiBot size={28} /> TenderAI
         </div>
-
+  {/* NUCLEAR BUTTON
+        <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
+          <button className="nuke-btn" onClick={handleNukeSystem}>
+            <FiTrash2 size={18} /> Nuke Entire System
+          </button>
+        </div> */}
         {/* NEW CHAT BUTTON */}
         <button className="primary-btn" onClick={handleNewChat} style={{ marginBottom: '20px', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }}>
           + New Chat
@@ -392,7 +431,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           )}
         </div>
       </div>
-    
+  
       {/* --- MAIN CHAT --- */}
       <div className="chat-area">
         <div className="chat-header">
