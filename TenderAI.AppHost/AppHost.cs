@@ -1,9 +1,8 @@
 using Microsoft.Extensions.Configuration;
-using YamlDotNet.Serialization;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-//add Redis
+// Redis provisioned for future response caching — caching logic NOT yet implemented (see README Roadmap)
 var cache = builder.AddRedis("redis-cache");
 
 var apiKey = builder.Configuration["GoogleApiKey"];

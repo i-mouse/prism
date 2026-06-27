@@ -1,0 +1,245 @@
+{
+  "metadata": {
+    "name": "TenderAI Golden Evaluation Set",
+    "version": "1.0",
+    "created": "2026-06-08",
+    "purpose": "Ground-truth contract for TenderAI. Run before and after the Azure/Foundry migration to prove parity, and as the regression gate in CI. Maps to AI-103 evaluation domain (groundedness, relevance, coherence).",
+    "regression_gate": {
+    "primary_metric": "correct_refusal_rate",
+    "pass_threshold": "100% on grounding_negative cases (Q15, Q20); zero hallucinated figures",
+    "run_policy": "Run before and after any model/retrieval change. A grounding_negative FAIL blocks the change."},
+    "source_documents": [
+      {
+        "doc_id": "AUDIT_EOI",
+        "title": "NBCC EOI for Empanelment of CA/Cost Accountant Firms for Internal Audit",
+        "ref": "NBCC/IAD/2023-24/Empanelment/967",
+        "pages": 22
+      },
+      {
+        "doc_id": "ADV_TENDER",
+        "title": "NBCC Tender for Empanelment of Advertising Agencies",
+        "ref": "NBCC/CC/Tender/01",
+        "pages": 18
+      },
+      {
+        "doc_id": "VALUATION_NIQ",
+        "title": "NBCC Notice Inviting Quotation for Valuation of Real Estate",
+        "ref": "NBCC/RE/Valuation/2026",
+        "pages": 8
+      }
+    ],
+    "question_type_distribution": {
+      "factual": 9,
+      "table_extraction": 5,
+      "reasoning_aggregation": 3,
+      "grounding_negative": 3
+    },
+    "scoring_guidance": {
+      "groundedness": "Answer must be traceable to the cited source_section. A correct-sounding answer with no source support fails.",
+      "relevance": "Answer addresses the specific question asked, not adjacent information.",
+      "negative_tests": "For grounding_negative items, the system MUST decline or state the information is not in the document. Inventing a plausible answer is a FAIL."
+    }
+  },
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "What performance guarantee must an audit firm submit after appointment, and within what time?",
+      "expected_answer": "5% of the audit fee (excluding GST), in the form of DD or NEFT, submitted within 10 days from the date of the appointment letter.",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure C, point 4 / Annexure G, point 12",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "State the percentage, the form (DD/NEFT), and the 10-day window."
+    },
+    {
+      "id": "Q02",
+      "question": "What is the minimum percentage of marks an audit firm must score to qualify for empanelment?",
+      "expected_answer": "At least 70% of the total 100 marks.",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure D, Note 2 / Annexure G, point 4",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "Return 70%."
+    },
+    {
+      "id": "Q03",
+      "question": "What is the fixed annual audit fee (exclusive of GST) for a Category A unit, defined as above 50 projects or the Corporate Office?",
+      "expected_answer": "Rs. 3,96,000 (exclusive of GST).",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure C, fee table (page 12)",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_behavior": "Read the correct row of the multi-column fee table and return Rs. 3,96,000."
+    },
+    {
+      "id": "Q04",
+      "question": "For a Category E unit (up to 20 projects), what is the minimum audit duration and the fixed annual audit fee?",
+      "expected_answer": "Minimum duration 10 days; fixed annual audit fee Rs. 1,32,000 (exclusive of GST).",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure C, fee table (page 12)",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_behavior": "Extract two correct cells from the same table row (duration and fee)."
+    },
+    {
+      "id": "Q05",
+      "question": "What penalty can NBCC levy for delay in submission of the audit reports?",
+      "expected_answer": "A penalty of 10% of the audit fee.",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure C, point 8 (Payment of Audit Fees)",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "Return 10% of audit fee."
+    },
+    {
+      "id": "Q06",
+      "question": "What is the last date and time for submission of the duly filled audit EOI?",
+      "expected_answer": "25.07.2023 up to 5:30 PM.",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure E, point i",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "Return the date and the 5:30 PM cutoff."
+    },
+    {
+      "id": "Q07",
+      "question": "How are audit firms with offices in Noida, Gr. Noida, Ghaziabad, Faridabad, and Gurgaon treated when allocating Local Presence marks?",
+      "expected_answer": "They are treated at par with Delhi while allocating Local Presence marks.",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure D, footnote on Local Presence (point 6)",
+      "question_type": "reasoning_aggregation",
+      "difficulty": "medium",
+      "expected_behavior": "Locate the footnote tied to the Local Presence criterion and state the at-par-with-Delhi rule."
+    },
+    {
+      "id": "Q08",
+      "question": "Can the audit EOI application be submitted by email or fax?",
+      "expected_answer": "No. Applications must be submitted in hard copy by hand, Registered Post, Speed Post, or Courier. Applications sent through Telegram, Telex, Fax, or E-mail will not be considered.",
+      "source_document": "AUDIT_EOI",
+      "source_section": "Annexure E, point g",
+      "question_type": "factual",
+      "difficulty": "medium",
+      "expected_behavior": "Clearly state email/fax are NOT accepted and name the accepted hard-copy channels."
+    },
+    {
+      "id": "Q09",
+      "question": "What minimum average annual turnover must an advertising agency have to qualify, and over what period?",
+      "expected_answer": "A minimum average annual turnover of Rs. 10 crore over the last three financial years (FY 2021-22, 2022-23, 2023-24; or FY 2022-23, 2023-24, 2024-25 if the latest is audited).",
+      "source_document": "ADV_TENDER",
+      "source_section": "Part IV, Essential Qualifying Criteria, item 02",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "Return Rs. 10 crore average over three financial years."
+    },
+    {
+      "id": "Q10",
+      "question": "How many dedicated personnel must an empanelled advertising agency deploy for NBCC, in which roles, and with what minimum experience?",
+      "expected_answer": "3 dedicated personnel: Client Servicing & Media (1), Copywriter (1), and Visualizer/Designer (1), each with a minimum of 12 years of advertising work experience.",
+      "source_document": "ADV_TENDER",
+      "source_section": "Part VI, Manpower (clause 6.1)",
+      "question_type": "factual",
+      "difficulty": "medium",
+      "expected_behavior": "List all three roles, the count, and the 12-year minimum."
+    },
+    {
+      "id": "Q11",
+      "question": "In the advertising agency evaluation (Table 1), how many marks are awarded for an average annual turnover above Rs. 20 crore?",
+      "expected_answer": "10 marks.",
+      "source_document": "ADV_TENDER",
+      "source_section": "Part V, Table 1, turnover scoring band",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_behavior": "Read the correct turnover band from the scoring sub-table and return 10 marks."
+    },
+    {
+      "id": "Q12",
+      "question": "What is the standard agency commission that constitutes the advertising agency's remuneration for releasing advertisements?",
+      "expected_answer": "15% (the standard Indian Newspaper Society agency commission) on gross rates allowed by media/publishers, or such other rate as prescribed by INS from time to time.",
+      "source_document": "ADV_TENDER",
+      "source_section": "Part VIII, Remuneration (clause 8.1)",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "Return 15% and reference INS rates."
+    },
+    {
+      "id": "Q13",
+      "question": "What is the estimated budget specified for the 3D exhibition-stall model in the advertising agency presentation evaluation?",
+      "expected_answer": "Rs. 15,00,000.",
+      "source_document": "ADV_TENDER",
+      "source_section": "Part V, Table 2, item 2",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_behavior": "Extract the estimated budget figure from the Table 2 presentation criterion."
+    },
+    {
+      "id": "Q14",
+      "question": "On what date was the advertising tender released, and by when must bids be submitted?",
+      "expected_answer": "Released on 03.06.2025 (5:30 PM); bids must be submitted by 17.06.2025 (4:00 PM).",
+      "source_document": "ADV_TENDER",
+      "source_section": "Bid Schedule (page 2)",
+      "question_type": "reasoning_aggregation",
+      "difficulty": "medium",
+      "expected_behavior": "Return both the release date and the submission deadline from the schedule table."
+    },
+    {
+      "id": "Q15",
+      "question": "What is the Earnest Money Deposit (EMD) or performance guarantee amount required in the advertising agency tender?",
+      "expected_answer": "The document does not specify any EMD or performance guarantee for the advertising agency empanelment. (Note: a 5% performance guarantee exists in the separate audit EOI, not in this tender.)",
+      "source_document": "ADV_TENDER",
+      "source_section": "Not present in document",
+      "question_type": "grounding_negative",
+      "difficulty": "hard",
+      "expected_behavior": "Decline / state that no EMD or performance guarantee is specified in this document. Inventing a figure (e.g. carrying over the 5% from the audit EOI) is a FAIL."
+    },
+    {
+      "id": "Q16",
+      "question": "What registration must a valuer hold to be eligible for the real estate valuation work?",
+      "expected_answer": "The valuer must be an IBBI (Insolvency and Bankruptcy Board of India) approved/registered valuer 'Entity', with a valid PAN and GST registration.",
+      "source_document": "VALUATION_NIQ",
+      "source_section": "Terms and Conditions, point a) and b)",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_behavior": "Return IBBI registered/approved valuer entity (PAN + GST also acceptable as supporting detail)."
+    },
+    {
+      "id": "Q17",
+      "question": "Within what time must the valuer submit the draft reports and the final reports?",
+      "expected_answer": "Draft reports within 15 days from the date of the Letter of Award (LOA); final reports within 3 days after confirmation from NBCC.",
+      "source_document": "VALUATION_NIQ",
+      "source_section": "Completion Period",
+      "question_type": "factual",
+      "difficulty": "medium",
+      "expected_behavior": "Return both timelines: 15 days (draft) and 3 days post-confirmation (final)."
+    },
+    {
+      "id": "Q18",
+      "question": "List all the properties located in Jaipur that are to be valued under this NIQ.",
+      "expected_answer": "Four Jaipur properties: (1) Group Housing Plot No.3 (Corner) at Kuber Complex, Gandhi Path [Z1779]; (2) Mix Use Plot No.2 (Corner) at Kuber Complex, Gandhi Path [Z1789]; (3) Plot No.3 in Lal Kothi Scheme near 22 Godam Bridge [Z1630]; (4) NBCC Centre, Sehkaar Marg, Lal Kothi Scheme [Z1565].",
+      "source_document": "VALUATION_NIQ",
+      "source_section": "Scope of Work tables A (land parcels) and C (completed projects)",
+      "question_type": "reasoning_aggregation",
+      "difficulty": "hard",
+      "expected_behavior": "Aggregate Jaipur entries across multiple tables (A and C). Missing the NBCC Centre Sehkaar Marg entry (in table C, not A) is a partial fail."
+    },
+    {
+      "id": "Q19",
+      "question": "What is the unsold inventory area of the Ghitorni land parcel in New Delhi?",
+      "expected_answer": "9,24,778.80 sq ft (the 21.23-acre NBCC land parcel at Ghitorni, New Delhi [Z2706]).",
+      "source_document": "VALUATION_NIQ",
+      "source_section": "Scope of Work table A, row 16",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_behavior": "Extract the correct unsold-inventory cell for the Ghitorni row."
+    },
+    {
+      "id": "Q20",
+      "question": "Is any advance or mobilization payment payable to the valuer before completing the work?",
+      "expected_answer": "No. The document states the valuer must undertake site visits at their own cost and that no advance or mobilization advance is payable for the job.",
+      "source_document": "VALUATION_NIQ",
+      "source_section": "Terms and Conditions, point d)",
+      "question_type": "grounding_negative",
+      "difficulty": "medium",
+      "expected_behavior": "State clearly that no advance/mobilization advance is payable. Do not invent a payment-on-start figure."
+    }
+  ]
+}

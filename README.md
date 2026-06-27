@@ -1,94 +1,97 @@
-# 🏢 TenderAI: Enterprise-Grade Document Intelligence Agent
+# 🏢 TenderAI — Document Intelligence Agent for Public Tenders
 
 ![Architecture: Microservices](https://img.shields.io/badge/Architecture-Microservices-success)
-![Orchestration: .NET Aspire](https://img.shields.io/badge/Orchestration-.NET_Aspire-purple)
+![Orchestration: .NET 8 Aspire](https://img.shields.io/badge/Orchestration-.NET_8_Aspire-purple)
 ![AI: LangGraph CRAG](https://img.shields.io/badge/AI-Corrective_RAG-blue)
-![Quality: SonarQube](https://img.shields.io/badge/Code_Quality-SonarQube-orange)
+![Status: Active Development](https://img.shields.io/badge/Status-Active_Development-yellow)
 
-TenderAI is a highly decoupled, event-driven AI Agent designed to analyze complex enterprise documents (RFPs, Tenders, Contracts). Moving beyond standard RAG wrappers, this system implements a **Corrective RAG (CRAG)** architecture with strict hallucination guardrails, intent routing, and real-time asynchronous document processing.
+TenderAI analyzes complex public-procurement documents (RFPs, tenders, contracts) and answers questions about them **without hallucinating**. It is built on a **Corrective RAG (CRAG)** pipeline with an explicit grounding checker: if a claim cannot be verified against the retrieved source chunks, the system declines or flags it rather than inventing a plausible answer.
 
-The entire distributed system is locally orchestrated using **.NET Aspire**, ensuring seamless container management, secure secret injection, and unified telemetry.
+The whole distributed system runs locally via **.NET 8 Aspire**, which handles container orchestration, secret injection, and unified telemetry.
+
+> **Honesty note for reviewers:** this README describes what is *actually implemented today*. Aspirational components are clearly separated under **Roadmap**. For a full current-vs-target breakdown including known gaps, see [`AI_HANDOFF.md`](AI_HANDOFF.md) §9.
 
 ---
 
-### 🏗️ Complete System Architecture (Current State)
-
-![System Architecture](ProjectDoc/architecture.png)
+![System Architecture](ProjectDoc/current.png)
 *(This diagram represents the currently implemented, asynchronous event-driven workflow.)*
 
----
+## ✨ What's Built (Current State)
 
-## ✨ Enterprise Features
-
-* **🛡️ Hallucination Safeguards (Grounding Checker):** A dedicated LangGraph node audits the Agent's final response against the retrieved source chunks. If a claim cannot be verified, the UI actively warns the user with a "Caveat Banner."
-* **⚡ Event-Driven Ingestion:** Uploaded documents are securely saved to **MinIO**, which triggers background extraction and embedding via **RabbitMQ**. The React UI receives real-time progress updates via **SignalR** websockets.
-* **🎯 Intent Classification & HyDE:** A fast LLM acts as a "Bouncer," classifying user intent before executing costly searches. Queries are automatically rewritten into optimized keyword strings to maximize vector retrieval accuracy.
-* **🧠 Persistent Native Memory:** Conversation state and tool-call history are natively managed and persisted using LangGraph's PostgreSQL Checkpointer.
-* **⚙️ Fault-Tolerant Asynchronous Workers:** Built-in Dead Letter Queue (DLQ) architecture using RabbitMQ. The system distinguishes between Terminal Errors (e.g., corrupted PDFs), which are safely isolated into auto-purging queues and broadcasted as real-time UI errors via SignalR, and Transient Errors (e.g., LLM network blips), which trigger intelligent requeuing and delayed retries without failing the user experience.
-* **🥇 Traceability & Observability:** Full LLM call tracing via **LangSmith** and system-wide orchestration logging via the .NET Aspire Dashboard.
-* **✅ Code Quality:** Integrated **SonarQube** analysis in the build pipeline to maintain high enterprise coding standards.
-
+* **🛡️ Grounding Checker (the core differentiator).** A dedicated LangGraph node audits the agent's answer against retrieved source chunks. If a fact isn't supported, the UI shows a caveat banner instead of presenting it as confirmed. This is the system's primary proof-of-value: **correct refusal over confident hallucination.**
+* **⚡ Event-Driven Ingestion.** Uploads are streamed to **MinIO**; **RabbitMQ** triggers background extraction and embedding; the React UI gets real-time progress via **SignalR**.
+* **🎯 Intent Classification + HyDE.** A fast LLM classifies user intent before any costly search, then rewrites the question into dense keywords to improve vector retrieval.
+* **🧠 Persistent Conversation Memory.** State and tool-call history are persisted via LangGraph's PostgreSQL checkpointer (keyed by chat/thread id).
+* **⚙️ Fault-Tolerant Workers.** RabbitMQ Dead Letter Queue handling. Terminal errors (e.g. corrupted PDFs) are isolated and surfaced to the UI; transient errors (e.g. network blips) are requeued with a delay.
+* **🎙️ Audio-to-Text Input.** Voice questions are transcribed via Gemini before entering the pipeline. *(Basic transcription only — no speaker diarization or PII redaction.)*
+* **📊 Golden Evaluation Set.** A 20-question regression gate (`golden_eval.json`) covering factual retrieval, table extraction, reasoning, and grounding-negative refusal cases.
 
 ---
 
-## 🏗️ Architecture Stack
+## 🏗️ Current Stack
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Orchestrator** | `.NET 8 Aspire` | Manages Docker containers, networking, and secure secret injection. |
-| **Frontend** | `React`, `TypeScript`, `Vite` | Real-time UI, Markdown rendering, Source citations. |
-| **API Gateway** | `C# .NET 8`, `SignalR` | Proxy routing, WebSocket management, EF Core database operations. |
-| **AI Services** | `Python 3.13`, `FastAPI`, `uv` | Runs the LangGraph state graph and asynchronous background workers. |
-| **LLM Engine** | `Google Gemini` | Tool-calling (Flash) and fast classification tasks (Flash-Lite). |
-| **Infrastructure** | `PostgreSQL`, `Qdrant`, `MinIO` | Relational data/memory, Vector storage, and S3-compatible Blob storage. |
-| **Message Broker** | `RabbitMQ` | Decouples document uploads from heavy AI embedding tasks, featuring custom Direct/Fanout exchanges and automated DLQ routing. |
-| **Caching** | `Redis` | High-speed data caching. |
+| **Orchestrator (local)** | `.NET 8 Aspire` | Manages containers, networking, secret injection |
+| **Frontend** | `React`, `TypeScript`, `Vite` | Real-time UI, Markdown rendering, source citations |
+| **API Gateway** | `C# .NET 8`, `SignalR` | Routing, WebSocket push, EF Core persistence |
+| **AI Service** | `Python 3.13`, `FastAPI`, `uv` | LangGraph CRAG state graph |
+| **Worker** | `Python 3.13` async | Document ingestion + embedding consumer |
+| **LLM** | `Google Gemini` | Tool-calling (Flash) + classification (Flash-Lite) |
+| **Relational / Memory** | `PostgreSQL` | App data + LangGraph checkpoints |
+| **Vector Store** | `Qdrant` | Cosine search, `bge-small-en-v1.5` (384-dim) |
+| **Blob Storage** | `MinIO` | S3-compatible document storage |
+| **Message Broker** | `RabbitMQ` | Decouples upload from embedding; custom exchanges + DLQ |
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-* **Docker Desktop** (Must be running to spin up Postgres, Qdrant, MinIO, RabbitMQ, and Redis)
+* **Docker Desktop** (for Postgres, Qdrant, MinIO, RabbitMQ)
 * **.NET 8.0 SDK**
-* **Python 3.13** (with `uv` package manager installed)
+* **Python 3.13** (with the `uv` package manager)
 * **Node.js** (v18+)
 
-### 🔐 Configuration & Secrets Management
-For enterprise security, API keys and database credentials are **not** stored in `.env` files. They are securely injected via .NET Aspire using the Secret Manager (`dotnet user-secrets`).
-
-**1. Setup Aspire Secrets:**
-Navigate to the `TenderAI.AppHost` project directory in your terminal and run the following commands, replacing the placeholders with your actual values:
+### 🔐 Secrets (via Aspire user-secrets, not `.env`)
+From the `TenderAI.AppHost` directory:
 
 ```bash
 cd TenderAI.AppHost
 
-# AI Keys
 dotnet user-secrets set "GoogleApiKey" "your-gemini-api-key"
-
-# Database & Infra Credentials (Create your own strong passwords)
 dotnet user-secrets set "Parameters:rabbitmquser" "admin"
 dotnet user-secrets set "Parameters:rabbitmqpass" "your-secure-password"
 dotnet user-secrets set "Parameters:MinioUser" "admin"
 dotnet user-secrets set "Parameters:MinioSecret" "your-secure-password"
 dotnet user-secrets set "Parameters:QdrantApiKey" "your-secure-qdrant-key"
+```
 
-**2. Setup LangSmith Observability (Optional but Recommended):**
-Create a `.env` file in the root of your `TenderAI.PythonService` directory to enable LangGraph tracing:
+### 🥇 Optional: LangSmith Tracing
+Tracing is *supported but not enforced by code*. To enable it, add a `.env` in `TenderAI.PythonService`:
+
 ```env
 LANGSMITH_TRACING=true
-LANGSMITH_ENDPOINT=[https://api.smith.langchain.com](https://api.smith.langchain.com)
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=your_langsmith_key
-LANGSMITH_PROJECT="TenderAI"
-
+LANGSMITH_PROJECT=TenderAI
 ```
+
 ---
 
-## 🔮 Future Tasks
+## 🔮 Roadmap (Not Yet Built)
 
-These items are on the immediate roadmap to complete the full enterprise design spec and enhance system performance and reliability.
+These are the target enterprise/Azure components. **None of these are implemented today** — they are listed here so the README never overstates the codebase.
 
-- [ ] **🚀 Synchronous Direct Querying:** Implement **gRPC** to allow the frontend to bypass RabbitMQ and directly query the Python AI service for low-latency tasks (e.g., summarizing an already-opened document without searching).
-- [ ] **⚡ Low-Latency Caching:** Implement **Redis** to cache common AI responses in the C# Gateway API, drastically reducing cost and latency for repeated user questions.
+- [ ] **Azure migration** — Azure OpenAI (LLM), Azure AI Search (vector + hybrid), Document Intelligence (layout-aware chunking), Blob Storage, Service Bus, Key Vault, Entra ID, Container Apps deploy.
+- [ ] **Structure-aware chunking** — replace fixed-size chunking; preserve tables (critical for the table-extraction eval cases).
+- [ ] **Bid Intelligence Brief** — verdict + reasons + hidden requirements + questions, derived from the uploaded tender.
+- [ ] **Compliance Matrix** — requirements rendered as a cited pass/fail checklist.
+- [ ] **Redis response caching** — container is provisioned by Aspire, but no caching logic exists yet.
+- [ ] **Multi-tenancy + RBAC** — `tenant_id` scaffold then Entra ID enforcement.
+- [ ] **Test suite + automated eval harness** in CI.
+- [ ] **gRPC** low-latency path (bypass RabbitMQ for already-open documents).
 
+![System Architecture](ProjectDoc/target.png)
+*(This diagram represents the future roadmap.)*
 ---
