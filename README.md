@@ -13,7 +13,7 @@ The whole distributed system runs locally via **.NET 8 Aspire**, which handles c
 
 ---
 
-![System Architecture](ProjectDoc/current.png)
+![System Architecture](docs/current.png)
 *(This diagram represents the currently implemented, asynchronous event-driven workflow.)*
 
 ## ✨ What's Built (Current State)
@@ -92,6 +92,6 @@ These are the target enterprise/Azure components. **None of these are implemente
 - [ ] **Test suite + automated eval harness** in CI.
 - [ ] **gRPC** low-latency path (bypass RabbitMQ for already-open documents).
 
-![System Architecture](ProjectDoc/target.png)
+![System Architecture](docs/target.png)
 *(This diagram represents the future roadmap.)*
 ---
