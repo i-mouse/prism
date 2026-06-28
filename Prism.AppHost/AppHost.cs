@@ -1,0 +1,60 @@
+using Microsoft.Extensions.Configuration;
+
+var builder = DistributedApplication.CreateBuilder(args);
+
+// Redis provisioned for future response caching — caching logic NOT yet implemented (see README Roadmap)
+var cache = builder.AddRedis("redis-cache");
+
+var apiKey = builder.Configuration["GoogleApiKey"];
+var userrabbitmq = builder.AddParameter( name:"rabbitmquser",secret :true);
+var passrabbitmq = builder.AddParameter( name:"rabbitmqpass",secret :true);
+
+var minioUser = builder.AddParameter("MinioUser");
+var minioPass = builder.AddParameter("MinioSecret", secret: true);
+
+var qdrantKey = builder.AddParameter("QdrantApiKey", secret: true);
+
+var rabbitMQ = builder.AddRabbitMQ ("messaging",userName : userrabbitmq,password:passrabbitmq).WithDataVolume().WithManagementPlugin();
+var miniIO = builder.AddMinioContainer("storage",rootUser:minioUser,rootPassword:minioPass).WithDataVolume();
+
+var postgres = builder.AddPostgres("postgres")
+                        .WithPgAdmin()
+                        .WithDataVolume()
+                      .AddDatabase("prism-db");
+
+var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
+
+var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonService")
+    .WithHttpEndpoint(targetPort: 8000, name: "pythonapi", env: "PORT")
+    .WithReference(qdrantDB)
+    .WithEnvironment("AI_API_KEY", apiKey)
+    .WithReference(postgres)
+    .WaitFor(postgres);
+                
+ builder.AddPythonApp("prism-ai-pythonWorker","../Prism.PythonService","main.py")
+                        .WithReference(miniIO)
+                        .WithReference(rabbitMQ)
+                        .WithReference(qdrantDB)
+                         .WithReference(postgres) 
+                        .WithEnvironment("AI_API_KEY",apiKey)
+                        .WithUv()
+                        .WithDebugging()
+                        .WaitFor(postgres).WaitFor(rabbitMQ);
+
+var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
+                     .WithEnvironment("DEPLOYMENT_REGION","US-East")
+                     .WithReference(cache)
+                     .WithReference(postgres)
+                     .WaitFor(postgres)
+                     .WithReference(rabbitMQ)
+                     .WaitFor(rabbitMQ)
+                     .WithReference(qdrantDB)
+                     .WithReference(miniIO)
+                    .WithReference(pythonAPI.GetEndpoint("pythonapi"));
+
+ builder.AddNpmApp("prism-ai-reactUI","../Prism.Web")
+                     .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
+                     .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
+                     .WithReference(apiservice);              
+
+builder.Build().Run();

@@ -1,6 +1,6 @@
 # Paper Intelligence — Product Brief
 
-> Domain pivot from tenders → research papers. **Architecture unchanged.** Only the extraction schema, golden eval cases, prompts, output views, and framing change. ~80% of the existing platform (PDF ingestion, Document Intelligence, CRAG, grounding checker, async pipeline + DLQ, eval harness, Azure stack) carries over untouched.
+> Domain pivot from tender_docs → research papers. **Architecture unchanged.** Only the extraction schema, golden eval cases, prompts, output views, and framing change. ~80% of the existing platform (PDF ingestion, Document Intelligence, CRAG, grounding checker, async pipeline + DLQ, eval harness, Azure stack) carries over untouched.
 >
 > *Working name: placeholder. Keep the repo name as-is until ship; candidates: ClaimCheck, GroundTruth, PaperAudit, Citeline.*
 

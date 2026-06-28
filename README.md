@@ -1,11 +1,11 @@
-# 🏢 TenderAI — Document Intelligence Agent for Public Tenders
+# 🏢 Prism — Document Intelligence Agent for Public Prisms
 
 ![Architecture: Microservices](https://img.shields.io/badge/Architecture-Microservices-success)
 ![Orchestration: .NET 8 Aspire](https://img.shields.io/badge/Orchestration-.NET_8_Aspire-purple)
 ![AI: LangGraph CRAG](https://img.shields.io/badge/AI-Corrective_RAG-blue)
 ![Status: Active Development](https://img.shields.io/badge/Status-Active_Development-yellow)
 
-TenderAI analyzes complex public-procurement documents (RFPs, tenders, contracts) and answers questions about them **without hallucinating**. It is built on a **Corrective RAG (CRAG)** pipeline with an explicit grounding checker: if a claim cannot be verified against the retrieved source chunks, the system declines or flags it rather than inventing a plausible answer.
+Prism analyzes complex public-procurement documents (RFPs, prisms, contracts) and answers questions about them **without hallucinating**. It is built on a **Corrective RAG (CRAG)** pipeline with an explicit grounding checker: if a claim cannot be verified against the retrieved source chunks, the system declines or flags it rather than inventing a plausible answer.
 
 The whole distributed system runs locally via **.NET 8 Aspire**, which handles container orchestration, secret injection, and unified telemetry.
 
@@ -54,10 +54,10 @@ The whole distributed system runs locally via **.NET 8 Aspire**, which handles c
 * **Node.js** (v18+)
 
 ### 🔐 Secrets (via Aspire user-secrets, not `.env`)
-From the `TenderAI.AppHost` directory:
+From the `Prism.AppHost` directory:
 
 ```bash
-cd TenderAI.AppHost
+cd Prism.AppHost
 
 dotnet user-secrets set "GoogleApiKey" "your-gemini-api-key"
 dotnet user-secrets set "Parameters:rabbitmquser" "admin"
@@ -68,13 +68,13 @@ dotnet user-secrets set "Parameters:QdrantApiKey" "your-secure-qdrant-key"
 ```
 
 ### 🥇 Optional: LangSmith Tracing
-Tracing is *supported but not enforced by code*. To enable it, add a `.env` in `TenderAI.PythonService`:
+Tracing is *supported but not enforced by code*. To enable it, add a `.env` in `Prism.PythonService`:
 
 ```env
 LANGSMITH_TRACING=true
 LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=your_langsmith_key
-LANGSMITH_PROJECT=TenderAI
+LANGSMITH_PROJECT=Prism
 ```
 
 ---
@@ -85,7 +85,7 @@ These are the target enterprise/Azure components. **None of these are implemente
 
 - [ ] **Azure migration** — Azure OpenAI (LLM), Azure AI Search (vector + hybrid), Document Intelligence (layout-aware chunking), Blob Storage, Service Bus, Key Vault, Entra ID, Container Apps deploy.
 - [ ] **Structure-aware chunking** — replace fixed-size chunking; preserve tables (critical for the table-extraction eval cases).
-- [ ] **Bid Intelligence Brief** — verdict + reasons + hidden requirements + questions, derived from the uploaded tender.
+- [ ] **Bid Intelligence Brief** — verdict + reasons + hidden requirements + questions, derived from the uploaded prism.
 - [ ] **Compliance Matrix** — requirements rendered as a cited pass/fail checklist.
 - [ ] **Redis response caching** — container is provisioned by Aspire, but no caching logic exists yet.
 - [ ] **Multi-tenancy + RBAC** — `tenant_id` scaffold then Entra ID enforcement.
