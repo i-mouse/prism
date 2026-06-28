@@ -33,3 +33,12 @@ secrets.json
 
 #-----Folders -----
 /downloads
+
+# Runtime / generated — never commit
+downloads/
+qdrant_storage/
+node_modules/
+**/bin/
+**/obj/
+.aspire/
+.sonarqube/
