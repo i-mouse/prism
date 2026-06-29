@@ -60,7 +60,7 @@ The golden eval (`docs/golden_eval.json`) currently provides a `regression_gate`
 
 ---
 
-## Buildable Scope (job-portfolio focus, in BUILD ORDER)
+## Build Order
 
 The spine is **test-first extraction**: the eval comes *with* the engine, not after the views.
 
