@@ -1,6 +1,0 @@
-@TenderAI.ApiService_HostAddress = http://localhost:5269
-
-GET {{TenderAI.ApiService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
