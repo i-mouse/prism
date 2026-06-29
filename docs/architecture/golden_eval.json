@@ -1,0 +1,241 @@
+{
+"metadata": {
+"name": "Prism Golden Evaluation Set",
+"version": "1.0",
+"purpose": "Regression gate for claim-auditing accuracy and hallucination prevention",
+"description": "Evaluates Prism's ability to extract facts, aggregate reasoning, and correctly refuse unsupported claims."
+},
+"regression_gate": {
+"primary_metric": "correct_refusal_rate",
+"pass_threshold": "100% on grounding_negative cases; zero fabricated evidence citations",
+"run_policy": "Run before and after any model/retrieval change. A grounding_negative FAIL blocks the change."
+},
+"source_papers": [
+{
+"id": "arXiv:1706.03762",
+"title": "Attention Is All You Need",
+"authors": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin",
+"domain": "ML/AI - Architecture",
+"selection_rationale": "Foundational, cleanly written paper with explicit parameters and clear results; ideal for positive factual and reasoning cases."
+},
+{
+"id": "arXiv:1907.11692",
+"title": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+"authors": "Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, Veselin Stoyanov",
+"domain": "ML/AI - NLP",
+"selection_rationale": "Extensive empirical study with rich quantitative ablation and benchmark tables; ideal for table_extraction cases."
+},
+{
+"id": "arXiv:2206.04615",
+"title": "Emergent Abilities of Large Language Models",
+"authors": "Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian Borgeaud, Dani Yogatama, Maarten Bosma, Denny Zhou, Donald Metzler, Ed H. Chi, Tatsunori Hashimoto, Oriol Vinyals, Percy Liang, Jeff Dean, William Fedus",
+"domain": "ML/AI - Model Analysis",
+"selection_rationale": "Discusses high-level capabilities with claims that are frequently overstated or misunderstood by the community; ideal for testing grounding_negative boundaries."
+}
+],
+"evaluation_set": [
+{
+"id": "fact_01",
+"question": "What is the dimension of the queries and keys (d_k) in the base Transformer model?",
+"expected_answer": "64",
+"source_paper": "arXiv:1706.03762",
+"source_section": "3.2.2 Multi-Head Attention",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact extraction of the value"
+},
+{
+"id": "fact_02",
+"question": "What dropout rate is applied to the output of each sub-layer in the base Transformer before it is added to the sub-layer input and normalized?",
+"expected_answer": "0.1",
+"source_paper": "arXiv:1706.03762",
+"source_section": "5.4 Regularization",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact extraction of the value"
+},
+{
+"id": "fact_03",
+"question": "Which optimizer was used to train the Transformer models?",
+"expected_answer": "Adam",
+"source_paper": "arXiv:1706.03762",
+"source_section": "5.3 Optimizer",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact string match or extraction"
+},
+{
+"id": "fact_04",
+"question": "What is the vocabulary size of the byte-level BPE used in RoBERTa?",
+"expected_answer": "50K",
+"source_paper": "arXiv:1907.11692",
+"source_section": "4.3 Text Encoding",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact extraction of the value"
+},
+{
+"id": "fact_05",
+"question": "What is the total size of the uncompressed text data used to pretrain RoBERTa?",
+"expected_answer": "160GB",
+"source_paper": "arXiv:1907.11692",
+"source_section": "3.2 Training Data",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact extraction of the value"
+},
+{
+"id": "fact_06",
+"question": "Which specific training objective from the original BERT pretraining did the RoBERTa authors remove?",
+"expected_answer": "Next Sentence Prediction (NSP)",
+"source_paper": "arXiv:1907.11692",
+"source_section": "4.2 Next Sentence Prediction Objective",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact string match or extraction"
+},
+{
+"id": "fact_07",
+"question": "How do the authors define an 'emergent ability' in large language models?",
+"expected_answer": "An ability is emergent if it is not present in smaller models but is present in larger models.",
+"source_paper": "arXiv:2206.04615",
+"source_section": "2. Definition of Emergent Abilities",
+"question_type": "factual",
+"difficulty": "medium",
+"expected_behavior": "semantic match of definition"
+},
+{
+"id": "fact_08",
+"question": "What is the name of the benchmark suite containing over 200 tasks that the authors analyze for emergent abilities?",
+"expected_answer": "BIG-bench",
+"source_paper": "arXiv:2206.04615",
+"source_section": "3.1 Emergent Abilities on Few-Shot Prompted Tasks",
+"question_type": "factual",
+"difficulty": "easy",
+"expected_behavior": "exact string match"
+},
+{
+"id": "fact_09",
+"question": "Whose definition of emergence from physics do the authors cite when framing their paper?",
+"expected_answer": "P.W. Anderson",
+"source_paper": "arXiv:2206.04615",
+"source_section": "1. Introduction",
+"question_type": "factual",
+"difficulty": "medium",
+"expected_behavior": "exact string match or extraction"
+},
+{
+"id": "table_01",
+"question": "In Table 2, what is the BLEU score of the Transformer (big) model on the English-to-German (EN-DE) translation task?",
+"expected_answer": "28.4",
+"source_paper": "arXiv:1706.03762",
+"source_section": "Table 2",
+"question_type": "table_extraction",
+"difficulty": "medium",
+"expected_behavior": "exact numeric extraction from table cell"
+},
+{
+"id": "table_02",
+"question": "According to Table 4, what is the BLEU score of the base Transformer model on the English-to-French translation task?",
+"expected_answer": "38.1",
+"source_paper": "arXiv:1706.03762",
+"source_section": "Table 4",
+"question_type": "table_extraction",
+"difficulty": "medium",
+"expected_behavior": "exact numeric extraction from table cell"
+},
+{
+"id": "table_03",
+"question": "In Table 2, what is the F1 score on the SQuAD 1.1 development set for the model trained with the SENTENCES (w/o NSP) objective?",
+"expected_answer": "90.4",
+"source_paper": "arXiv:1907.11692",
+"source_section": "Table 2",
+"question_type": "table_extraction",
+"difficulty": "hard",
+"expected_behavior": "cross-referencing row and column for exact numeric extraction"
+},
+{
+"id": "table_04",
+"question": "According to Table 3, what is the perplexity (ppl) of the RoBERTa model when trained with a batch size of 2K and 125K steps?",
+"expected_answer": "3.68",
+"source_paper": "arXiv:1907.11692",
+"source_section": "Table 3",
+"question_type": "table_extraction",
+"difficulty": "medium",
+"expected_behavior": "exact numeric extraction from table cell"
+},
+{
+"id": "table_05",
+"question": "In Table 5, what is the median accuracy of the RoBERTa model on the MNLI-m task on the development set?",
+"expected_answer": "90.2",
+"source_paper": "arXiv:1907.11692",
+"source_section": "Table 5",
+"question_type": "table_extraction",
+"difficulty": "medium",
+"expected_behavior": "exact numeric extraction from table cell"
+},
+{
+"id": "reasoning_01",
+"question": "How does the training cost of the base Transformer compare to ConvS2S in terms of total training FLOPs?",
+"expected_answer": "The base Transformer requires significantly fewer FLOPs (3.3e18) compared to ConvS2S (1.2e20), making it much more computationally efficient to train.",
+"source_paper": "arXiv:1706.03762",
+"source_section": "Table 2 and Section 6.1",
+"question_type": "reasoning_aggregation",
+"difficulty": "hard",
+"expected_behavior": "synthesize data from table and text to draw a comparative conclusion"
+},
+{
+"id": "reasoning_02",
+"question": "Synthesizing the ablation studies, what are the three main modifications to the training procedure that yield RoBERTa's improvements over the original BERT?",
+"expected_answer": "1) Training with larger batches. 2) Training for longer over more data. 3) Removing the Next Sentence Prediction (NSP) objective. (Dynamic masking is also an acceptable addition).",
+"source_paper": "arXiv:1907.11692",
+"source_section": "Abstract and Section 4",
+"question_type": "reasoning_aggregation",
+"difficulty": "hard",
+"expected_behavior": "extract and summarize multiple distinct points from across the ablation sections"
+},
+{
+"id": "reasoning_03",
+"question": "According to the discussion on why abilities might emerge suddenly, what explanation relates to the nature of the evaluation metric used?",
+"expected_answer": "If a task requires multiple steps of reasoning, and the evaluation metric is strict (like exact match), the model might only get a non-zero score when it successfully completes all steps, creating the illusion of a sudden jump in ability when it crosses a critical threshold.",
+"source_paper": "arXiv:2206.04615",
+"source_section": "5. Discussion",
+"question_type": "reasoning_aggregation",
+"difficulty": "hard",
+"expected_behavior": "synthesize the conceptual argument from the discussion section"
+},
+{
+"id": "neg_01",
+"question": "According to the paper, does the Transformer model achieve state-of-the-art performance on image classification benchmarks like ImageNet?",
+"expected_answer": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL",
+"source_paper": "arXiv:1706.03762",
+"source_section": "Entire Paper",
+"question_type": "grounding_negative",
+"difficulty": "medium",
+"expected_behavior": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL. RATIONALE: The paper only evaluates on machine translation and constituency parsing. It does not mention ImageNet or computer vision tasks.",
+"rationale": "The original paper evaluates on NLP tasks. Vision transformers (ViT) were published years later. Plausible-sounding hallucination trap."
+},
+{
+"id": "neg_02",
+"question": "Based on the ablation on batch sizes, does the paper demonstrate that batch sizes above 16K consistently degrade zero-shot generalization?",
+"expected_answer": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL",
+"source_paper": "arXiv:1907.11692",
+"source_section": "4.4 Training with large batches",
+"question_type": "grounding_negative",
+"difficulty": "hard",
+"expected_behavior": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL. RATIONALE: The authors only evaluate batch sizes up to 8K. They do not test or make claims about 16K or higher.",
+"rationale": "Large batch degradation is a known phenomenon in ML, but this specific paper stops testing at 8K and makes no claims about 16K+."
+},
+{
+"id": "neg_03",
+"question": "Does the paper conclude that emergent abilities will continue to appear at a predictable rate for models scaled beyond 10^24 FLOPs?",
+"expected_answer": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL",
+"source_paper": "arXiv:2206.04615",
+"source_section": "5. Discussion",
+"question_type": "grounding_negative",
+"difficulty": "medium",
+"expected_behavior": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL. RATIONALE: The paper explicitly states they cannot predict if, when, or what new abilities will emerge at larger scales.",
+"rationale": "Users often assume 'scaling laws' imply predictable emergence, but the paper explicitly states emergence is unpredictable by definition."
+}
+]
+}
