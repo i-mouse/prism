@@ -5,13 +5,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.4.6" />
     <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.2" />
-    <PackageReference Include="Aspire.Hosting.Python" Version="13.1.2" />
-    <PackageReference Include="Aspire.Hosting.Qdrant" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.0" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Minio" Version="13.0.0" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.4.6" />
+    <PackageReference Include="Aspire.Hosting.Python" Version="13.4.6" />
+    <PackageReference Include="Aspire.Hosting.Qdrant" Version="13.4.6" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.4.6" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="13.4.6" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Minio" Version="13.4.0" />
   </ItemGroup>
 
   <PropertyGroup>

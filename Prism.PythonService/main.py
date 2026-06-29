@@ -12,10 +12,7 @@ from RAGService import RAGService
 from memory_db import create_db_connection_pool
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from agent_service import workflow
-try:
-    from langchain_core.schema import AIMessage
-except ImportError:
-    from langchain.schema import AIMessage
+from langchain_core.messages import AIMessage
 
 def parse_aspire_minio(conn_str):
     parts = {k: v for k, v in (item.split('=') for item in conn_str.split(';'))}
