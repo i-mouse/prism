@@ -57,7 +57,6 @@ public static class SubmitRfpEndpoint
                 {
                     ChatId = doc.ChatId,
                     ChatTitle= doc.ChatTitle,
-                    FileName = doc.FileName,
                     Status = doc.Status,
                     UploadedAt = doc.UploadedAt
                 })
@@ -88,7 +87,6 @@ public static class SubmitRfpEndpoint
             var prismEntry = new PrismDocument{
                 Id = Guid.NewGuid().ToString(),
                 UserId = userId,
-                FileName =file.FileName,
                 ChatTitle = $"Chat: {file.FileName}",
                 UploadedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
@@ -115,11 +113,9 @@ public static class SubmitRfpEndpoint
        
        if (existingRecord == null)
        {
-           // 2. If it doesn't exist, create it and SAVE it immediately
            existingRecord = new PrismDocument{
                Id = Guid.NewGuid().ToString(),
                UserId = userId,
-               FileName = file.FileName, // Can act as the primary file name
                ChatTitle = $"Chat: {file.FileName}",
                UploadedAt = DateTime.UtcNow,
                CreatedAt = DateTime.UtcNow,
@@ -128,29 +124,26 @@ public static class SubmitRfpEndpoint
            };
 
            prismDBContext.prismDocuments.Add(existingRecord);
-           await prismDBContext.SaveChangesAsync(); // FORCE the parent to exist in PostgreSQL
+           await prismDBContext.SaveChangesAsync();
        }
        else
        {
-           // Just update the timestamp if it already existed
            existingRecord.UploadedAt = DateTime.UtcNow; 
            existingRecord.Status = "In progress";
        }
        
-       // 3. Create the file record
        var fileEntry = new FileRecords {
            FileName = file.FileName,
            UploadedAt = DateTime.UtcNow,
-           ChatId = chatId, // Link it by ID
+           ChatId = chatId,
            FileId = fileId
        };
        
-       // 4. 🔥 THE FIX: Attach it directly to the Parent Entity!
+       // THE FIX: Attach it directly to the Parent Entity!
        // This guarantees Entity Framework understands the relationship perfectly.
        if (existingRecord.Files == null) existingRecord.Files = new List<FileRecords>();
        existingRecord.Files.Add(fileEntry);
 
-       // 5. Final Save
        await prismDBContext.SaveChangesAsync();
     }
 }
