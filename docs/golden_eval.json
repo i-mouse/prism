@@ -1,241 +1,238 @@
 {
-"metadata": {
-"name": "Prism Golden Evaluation Set",
-"version": "1.0",
-"purpose": "Regression gate for claim-auditing accuracy and hallucination prevention",
-"description": "Evaluates Prism's ability to extract facts, aggregate reasoning, and correctly refuse unsupported claims."
-},
-"regression_gate": {
-"primary_metric": "correct_refusal_rate",
-"pass_threshold": "100% on grounding_negative cases; zero fabricated evidence citations",
-"run_policy": "Run before and after any model/retrieval change. A grounding_negative FAIL blocks the change."
-},
-"source_papers": [
-{
-"id": "arXiv:1706.03762",
-"title": "Attention Is All You Need",
-"authors": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin",
-"domain": "ML/AI - Architecture",
-"selection_rationale": "Foundational, cleanly written paper with explicit parameters and clear results; ideal for positive factual and reasoning cases."
-},
-{
-"id": "arXiv:1907.11692",
-"title": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
-"authors": "Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Mandar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, Veselin Stoyanov",
-"domain": "ML/AI - NLP",
-"selection_rationale": "Extensive empirical study with rich quantitative ablation and benchmark tables; ideal for table_extraction cases."
-},
-{
-"id": "arXiv:2206.04615",
-"title": "Emergent Abilities of Large Language Models",
-"authors": "Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian Borgeaud, Dani Yogatama, Maarten Bosma, Denny Zhou, Donald Metzler, Ed H. Chi, Tatsunori Hashimoto, Oriol Vinyals, Percy Liang, Jeff Dean, William Fedus",
-"domain": "ML/AI - Model Analysis",
-"selection_rationale": "Discusses high-level capabilities with claims that are frequently overstated or misunderstood by the community; ideal for testing grounding_negative boundaries."
-}
-],
-"evaluation_set": [
-{
-"id": "fact_01",
-"question": "What is the dimension of the queries and keys (d_k) in the base Transformer model?",
-"expected_answer": "64",
-"source_paper": "arXiv:1706.03762",
-"source_section": "3.2.2 Multi-Head Attention",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact extraction of the value"
-},
-{
-"id": "fact_02",
-"question": "What dropout rate is applied to the output of each sub-layer in the base Transformer before it is added to the sub-layer input and normalized?",
-"expected_answer": "0.1",
-"source_paper": "arXiv:1706.03762",
-"source_section": "5.4 Regularization",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact extraction of the value"
-},
-{
-"id": "fact_03",
-"question": "Which optimizer was used to train the Transformer models?",
-"expected_answer": "Adam",
-"source_paper": "arXiv:1706.03762",
-"source_section": "5.3 Optimizer",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact string match or extraction"
-},
-{
-"id": "fact_04",
-"question": "What is the vocabulary size of the byte-level BPE used in RoBERTa?",
-"expected_answer": "50K",
-"source_paper": "arXiv:1907.11692",
-"source_section": "4.3 Text Encoding",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact extraction of the value"
-},
-{
-"id": "fact_05",
-"question": "What is the total size of the uncompressed text data used to pretrain RoBERTa?",
-"expected_answer": "160GB",
-"source_paper": "arXiv:1907.11692",
-"source_section": "3.2 Training Data",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact extraction of the value"
-},
-{
-"id": "fact_06",
-"question": "Which specific training objective from the original BERT pretraining did the RoBERTa authors remove?",
-"expected_answer": "Next Sentence Prediction (NSP)",
-"source_paper": "arXiv:1907.11692",
-"source_section": "4.2 Next Sentence Prediction Objective",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact string match or extraction"
-},
-{
-"id": "fact_07",
-"question": "How do the authors define an 'emergent ability' in large language models?",
-"expected_answer": "An ability is emergent if it is not present in smaller models but is present in larger models.",
-"source_paper": "arXiv:2206.04615",
-"source_section": "2. Definition of Emergent Abilities",
-"question_type": "factual",
-"difficulty": "medium",
-"expected_behavior": "semantic match of definition"
-},
-{
-"id": "fact_08",
-"question": "What is the name of the benchmark suite containing over 200 tasks that the authors analyze for emergent abilities?",
-"expected_answer": "BIG-bench",
-"source_paper": "arXiv:2206.04615",
-"source_section": "3.1 Emergent Abilities on Few-Shot Prompted Tasks",
-"question_type": "factual",
-"difficulty": "easy",
-"expected_behavior": "exact string match"
-},
-{
-"id": "fact_09",
-"question": "Whose definition of emergence from physics do the authors cite when framing their paper?",
-"expected_answer": "P.W. Anderson",
-"source_paper": "arXiv:2206.04615",
-"source_section": "1. Introduction",
-"question_type": "factual",
-"difficulty": "medium",
-"expected_behavior": "exact string match or extraction"
-},
-{
-"id": "table_01",
-"question": "In Table 2, what is the BLEU score of the Transformer (big) model on the English-to-German (EN-DE) translation task?",
-"expected_answer": "28.4",
-"source_paper": "arXiv:1706.03762",
-"source_section": "Table 2",
-"question_type": "table_extraction",
-"difficulty": "medium",
-"expected_behavior": "exact numeric extraction from table cell"
-},
-{
-"id": "table_02",
-"question": "According to Table 4, what is the BLEU score of the base Transformer model on the English-to-French translation task?",
-"expected_answer": "38.1",
-"source_paper": "arXiv:1706.03762",
-"source_section": "Table 4",
-"question_type": "table_extraction",
-"difficulty": "medium",
-"expected_behavior": "exact numeric extraction from table cell"
-},
-{
-"id": "table_03",
-"question": "In Table 2, what is the F1 score on the SQuAD 1.1 development set for the model trained with the SENTENCES (w/o NSP) objective?",
-"expected_answer": "90.4",
-"source_paper": "arXiv:1907.11692",
-"source_section": "Table 2",
-"question_type": "table_extraction",
-"difficulty": "hard",
-"expected_behavior": "cross-referencing row and column for exact numeric extraction"
-},
-{
-"id": "table_04",
-"question": "According to Table 3, what is the perplexity (ppl) of the RoBERTa model when trained with a batch size of 2K and 125K steps?",
-"expected_answer": "3.68",
-"source_paper": "arXiv:1907.11692",
-"source_section": "Table 3",
-"question_type": "table_extraction",
-"difficulty": "medium",
-"expected_behavior": "exact numeric extraction from table cell"
-},
-{
-"id": "table_05",
-"question": "In Table 5, what is the median accuracy of the RoBERTa model on the MNLI-m task on the development set?",
-"expected_answer": "90.2",
-"source_paper": "arXiv:1907.11692",
-"source_section": "Table 5",
-"question_type": "table_extraction",
-"difficulty": "medium",
-"expected_behavior": "exact numeric extraction from table cell"
-},
-{
-"id": "reasoning_01",
-"question": "How does the training cost of the base Transformer compare to ConvS2S in terms of total training FLOPs?",
-"expected_answer": "The base Transformer requires significantly fewer FLOPs (3.3e18) compared to ConvS2S (1.2e20), making it much more computationally efficient to train.",
-"source_paper": "arXiv:1706.03762",
-"source_section": "Table 2 and Section 6.1",
-"question_type": "reasoning_aggregation",
-"difficulty": "hard",
-"expected_behavior": "synthesize data from table and text to draw a comparative conclusion"
-},
-{
-"id": "reasoning_02",
-"question": "Synthesizing the ablation studies, what are the three main modifications to the training procedure that yield RoBERTa's improvements over the original BERT?",
-"expected_answer": "1) Training with larger batches. 2) Training for longer over more data. 3) Removing the Next Sentence Prediction (NSP) objective. (Dynamic masking is also an acceptable addition).",
-"source_paper": "arXiv:1907.11692",
-"source_section": "Abstract and Section 4",
-"question_type": "reasoning_aggregation",
-"difficulty": "hard",
-"expected_behavior": "extract and summarize multiple distinct points from across the ablation sections"
-},
-{
-"id": "reasoning_03",
-"question": "According to the discussion on why abilities might emerge suddenly, what explanation relates to the nature of the evaluation metric used?",
-"expected_answer": "If a task requires multiple steps of reasoning, and the evaluation metric is strict (like exact match), the model might only get a non-zero score when it successfully completes all steps, creating the illusion of a sudden jump in ability when it crosses a critical threshold.",
-"source_paper": "arXiv:2206.04615",
-"source_section": "5. Discussion",
-"question_type": "reasoning_aggregation",
-"difficulty": "hard",
-"expected_behavior": "synthesize the conceptual argument from the discussion section"
-},
-{
-"id": "neg_01",
-"question": "According to the paper, does the Transformer model achieve state-of-the-art performance on image classification benchmarks like ImageNet?",
-"expected_answer": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL",
-"source_paper": "arXiv:1706.03762",
-"source_section": "Entire Paper",
-"question_type": "grounding_negative",
-"difficulty": "medium",
-"expected_behavior": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL. RATIONALE: The paper only evaluates on machine translation and constituency parsing. It does not mention ImageNet or computer vision tasks.",
-"rationale": "The original paper evaluates on NLP tasks. Vision transformers (ViT) were published years later. Plausible-sounding hallucination trap."
-},
-{
-"id": "neg_02",
-"question": "Based on the ablation on batch sizes, does the paper demonstrate that batch sizes above 16K consistently degrade zero-shot generalization?",
-"expected_answer": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL",
-"source_paper": "arXiv:1907.11692",
-"source_section": "4.4 Training with large batches",
-"question_type": "grounding_negative",
-"difficulty": "hard",
-"expected_behavior": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL. RATIONALE: The authors only evaluate batch sizes up to 8K. They do not test or make claims about 16K or higher.",
-"rationale": "Large batch degradation is a known phenomenon in ML, but this specific paper stops testing at 8K and makes no claims about 16K+."
-},
-{
-"id": "neg_03",
-"question": "Does the paper conclude that emergent abilities will continue to appear at a predictable rate for models scaled beyond 10^24 FLOPs?",
-"expected_answer": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL",
-"source_paper": "arXiv:2206.04615",
-"source_section": "5. Discussion",
-"question_type": "grounding_negative",
-"difficulty": "medium",
-"expected_behavior": "system must refuse / say the paper provides no evidence for this; inventing support is a FAIL. RATIONALE: The paper explicitly states they cannot predict if, when, or what new abilities will emerge at larger scales.",
-"rationale": "Users often assume 'scaling laws' imply predictable emergence, but the paper explicitly states emergence is unpredictable by definition."
-}
-]
+  "metadata": {
+    "name": "Prism Golden Evaluation Set",
+    "version": "2.0",
+    "domain": "AI research papers (agent architectures and reasoning)",
+    "purpose": "Ground-truth contract for Prism. The regression gate in CI; run before and after any model/retrieval/prompt change to prove parity. Maps to the correct-refusal engineering bet: extraction that refuses hallucinated support is preferred over confident but ungrounded extraction.",
+    "regression_gate": {
+      "primary_metric": "correct_refusal_rate",
+      "pass_threshold": "100% on grounding_negative cases; zero fabricated evidence citations across all cases",
+      "run_policy": "Run before and after any model, prompt, or retrieval change. A grounding_negative FAIL blocks the change."
+    },
+    "question_type_distribution": {
+      "factual": 9,
+      "table_extraction": 6,
+      "reasoning_aggregation": 3,
+      "grounding_negative": 3
+    },
+    "scoring_guidance": {
+      "groundedness": "Answer must be traceable to the cited source_section. A correct-sounding answer without source support fails.",
+      "relevance": "Answer addresses the specific question asked, not adjacent information.",
+      "negative_tests": "For grounding_negative items, the system MUST decline or state the information is not directly supported by the paper's experimental evidence. Inventing a plausible answer is a FAIL."
+    }
+  },
+  "source_papers": [
+    {
+      "paper_id": "arxiv-2303.11366v4",
+      "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+      "authors": "Shinn et al.",
+      "arxiv_url": "https://arxiv.org/abs/2303.11366",
+      "slot": "Foundational agent paper; grounding-negative tests implied sample-efficiency claim vs traditional RL"
+    },
+    {
+      "paper_id": "arxiv-2201.11903v6",
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "authors": "Wei et al.",
+      "arxiv_url": "https://arxiv.org/abs/2201.11903",
+      "slot": "Table-heavy foundational paper; grounding-negative tests implied broad length-generalization capability vs narrow toy-task evidence"
+    },
+    {
+      "paper_id": "arxiv-2210.03629v3",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "authors": "Yao et al.",
+      "arxiv_url": "https://arxiv.org/abs/2210.03629",
+      "slot": "Foundational agent paper; grounding-negative tests implied CoT-superiority claim on math/symbolic tasks vs missing experimental comparison"
+    }
+  ],
+  "questions": [
+    {
+      "id": "REFLEX-Q01",
+      "question": "What is the maximum number of unit tests sampled to produce a test suite T in the programming experiments?",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_answer": "6 unit tests",
+      "source_section": "Section 4.3 Programming",
+      "expected_behavior": "System extracts the maximum number of unit tests (6) mentioned in the programming task setup."
+    },
+    {
+      "id": "REFLEX-Q02",
+      "question": "By what absolute percentage did the Reflexion agents improve on decision-making AlfWorld tasks over baseline approaches in 12 iterative learning steps?",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_answer": "an absolute 22%",
+      "source_section": "Section 1 Introduction / Section 4.1",
+      "expected_behavior": "System extracts the 22% improvement statistic specifically associated with the AlfWorld tasks."
+    },
+    {
+      "id": "REFLEX-Q03",
+      "question": "What are the three distinct models that make up the modular formulation of the Reflexion framework?",
+      "question_type": "factual",
+      "difficulty": "medium",
+      "expected_answer": "an Actor (Ma), an Evaluator model (Me), and a Self-Reflection model (Msr)",
+      "source_section": "Section 3 Reflexion: reinforcement via verbal reflection",
+      "expected_behavior": "System identifies and lists the three specific models (Actor, Evaluator, Self-Reflection) that comprise the Reflexion process."
+    },
+    {
+      "id": "REFLEX-Q04",
+      "question": "What was the Pass@1 accuracy for Reflexion on the MBPP benchmark using the Rust (RS) language?",
+      "question_type": "table_extraction",
+      "difficulty": "easy",
+      "expected_answer": "75.4",
+      "source_section": "Table 1",
+      "expected_behavior": "System correctly extracts 75.4 from the 'MBPP (RS)' row and 'Reflexion Pass@1' column in Table 1."
+    },
+    {
+      "id": "REFLEX-Q05",
+      "question": "In the ablation study on the hardest HumanEval Rust problems, what is the Pass@1 accuracy of the Reflexion approach when self-reflection is omitted (Test Generation: True, Self-reflection: False)?",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_answer": "0.60",
+      "source_section": "Table 3",
+      "expected_behavior": "System correctly extracts 0.60 from the 'Self-reflection omission' row and 'Pass@1 (Acc)' column in Table 3."
+    },
+    {
+      "id": "REFLEX-Q06",
+      "question": "How does the Evaluator model differ in its method of computing rewards for reasoning tasks compared to decision-making tasks?",
+      "question_type": "reasoning_aggregation",
+      "difficulty": "hard",
+      "expected_answer": "For reasoning tasks, the Evaluator uses exact match (EM) grading. For decision-making tasks, it employs pre-defined heuristic functions or an LLM itself as an Evaluator.",
+      "source_section": "Section 3 (Evaluator component)",
+      "expected_behavior": "System synthesizes information across the methodology section to contrast the exact match grading of reasoning tasks against the heuristics/LLM grading of decision-making tasks."
+    },
+    {
+      "id": "REFLEX-Q07",
+      "question": "The abstract contrasts Reflexion with traditional reinforcement learning methods that require 'extensive training samples.' Does the paper's experimental section provide data showing that Reflexion achieves higher performance than a traditional RL agent (such as PPO or Q-learning) when both are restricted to the same small number of environment interactions?",
+      "question_type": "grounding_negative",
+      "difficulty": "hard",
+      "expected_answer": "N/A - system must refuse",
+      "source_section": "Abstract / Section 4 Experiments",
+      "expected_behavior": "System must refuse — the paper does not provide direct evidence for this claim. Inventing support is a FAIL. The abstract heavily implies Reflexion is more sample-efficient than traditional RL methods. However, the experiments section only compares Reflexion against other LLM-prompting baselines (like ReAct and CoT) and completely omits any direct empirical comparison against a traditional RL algorithm."
+    },
+    {
+      "id": "COT-Q01",
+      "question": "How many chain-of-thought exemplars were provided in the prompt for PaLM 540B to achieve state-of-the-art accuracy on the GSM8K benchmark?",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_answer": "eight chain-of-thought exemplars",
+      "source_section": "Abstract",
+      "expected_behavior": "System extracts the exact number of exemplars (eight) mentioned in the abstract."
+    },
+    {
+      "id": "COT-Q02",
+      "question": "Which five large language models were evaluated in the paper's experimental setup?",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_answer": "GPT-3, LaMDA, PaLM, UL2 20B, and Codex",
+      "source_section": "Section 3.1 Experimental Setup (Language models)",
+      "expected_behavior": "System lists the five specific language models explicitly named in the experimental setup."
+    },
+    {
+      "id": "COT-Q03",
+      "question": "In the out-of-domain evaluation for the last letter concatenation task, how many words are in the names that the model is tested on?",
+      "question_type": "factual",
+      "difficulty": "medium",
+      "expected_answer": "3 and 4 words",
+      "source_section": "Section 5 Symbolic Reasoning",
+      "expected_behavior": "System identifies that the out-of-domain testing for this specific symbolic task used names composed of 3 and 4 words."
+    },
+    {
+      "id": "COT-Q04",
+      "question": "According to the arithmetic reasoning results, what is the accuracy of standard prompting on the SVAMP benchmark using the PaLM 62B model?",
+      "question_type": "table_extraction",
+      "difficulty": "easy",
+      "expected_answer": "48.2",
+      "source_section": "Table 2",
+      "expected_behavior": "System successfully navigates Table 2 to intersect the 'PaLM 62B' row with the 'SVAMP standard' column."
+    },
+    {
+      "id": "COT-Q05",
+      "question": "According to the commonsense reasoning results, what is the accuracy of chain of thought (CoT) prompting on the StrategyQA benchmark using the GPT 175B model?",
+      "question_type": "table_extraction",
+      "difficulty": "medium",
+      "expected_answer": "65.4",
+      "source_section": "Table 4",
+      "expected_behavior": "System successfully navigates Table 4 to intersect the 'GPT 175B' row with the 'StrategyQA CoT' column."
+    },
+    {
+      "id": "COT-Q06",
+      "question": "According to the experimental results across arithmetic, commonsense, and symbolic reasoning tasks, at what approximate parameter scale does chain-of-thought prompting begin to positively impact performance compared to standard prompting?",
+      "question_type": "reasoning_aggregation",
+      "difficulty": "hard",
+      "expected_answer": "Chain-of-thought prompting is an emergent ability that only yields performance gains when used with sufficiently large models of ~100B parameters.",
+      "source_section": "Section 3.2 / Section 4 / Section 5 (and Figure 4)",
+      "expected_behavior": "System synthesizes the recurring finding across the three experimental sections that small models do not benefit from CoT, and performance gains only emerge at the ~100B parameter scale."
+    },
+    {
+      "id": "COT-Q07",
+      "question": "The paper claims that chain-of-thought prompting facilitates out-of-distribution (OOD) length generalization to longer sequence lengths. Does the experimental section demonstrate this length generalization capability on complex, real-world natural language tasks like reading comprehension or multi-hop question answering?",
+      "question_type": "grounding_negative",
+      "difficulty": "hard",
+      "expected_answer": "N/A - system must refuse",
+      "source_section": "Section 5 Symbolic Reasoning / Section 6 Discussion",
+      "expected_behavior": "System must refuse — the paper does not provide direct evidence for this claim. Inventing support is a FAIL. The paper implies length generalization is a broad capability, but it only provides experimental evidence for length generalization on two highly restricted, synthetic 'toy tasks' (last letter concatenation and coin flip). It never tests length generalization on complex, real-world natural language reasoning tasks."
+    },
+    {
+      "id": "REACT-Q01",
+      "question": "By what absolute success rate does ReAct outperform imitation learning methods on the ALFWorld benchmark?",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_answer": "34%",
+      "source_section": "Abstract",
+      "expected_behavior": "System extracts the 34% figure explicitly associated with imitation learning on ALFWorld in the abstract."
+    },
+    {
+      "id": "REACT-Q02",
+      "question": "Which specific frozen large language model is primarily used for the few-shot in-context prompting experiments?",
+      "question_type": "factual",
+      "difficulty": "easy",
+      "expected_answer": "PaLM-540B",
+      "source_section": "Section 2 ReAct: Synergizing Reasoning + Acting",
+      "expected_behavior": "System identifies PaLM-540B as the frozen LLM specified for the in-context learning setup."
+    },
+    {
+      "id": "REACT-Q03",
+      "question": "When combining ReAct and CoT-SC, what is the maximum number of steps set for ReAct on the HotpotQA and FEVER benchmarks before backing off to CoT-SC?",
+      "question_type": "factual",
+      "difficulty": "medium",
+      "expected_answer": "7 and 5 steps respectively",
+      "source_section": "Section 3.2 Methods (Combining Internal and External Knowledge)",
+      "expected_behavior": "System extracts the specific step limits (7 for HotpotQA, 5 for FEVER) used for the heuristic back-off strategy."
+    },
+    {
+      "id": "REACT-Q04",
+      "question": "According to Table 1, what is the exact match (EM) score for the ReAct prompting method on the HotpotQA benchmark?",
+      "question_type": "table_extraction",
+      "difficulty": "easy",
+      "expected_answer": "27.4",
+      "source_section": "Table 1",
+      "expected_behavior": "System navigates Table 1 to find the intersection of the 'ReAct' row and the 'HotpotQA (EM)' column."
+    },
+    {
+      "id": "REACT-Q05",
+      "question": "According to Table 4, what is the success rate (SR) of the ReAct method on the Webshop benchmark?",
+      "question_type": "table_extraction",
+      "difficulty": "easy",
+      "expected_answer": "40.0",
+      "source_section": "Table 4",
+      "expected_behavior": "System navigates Table 4 to find the intersection of the 'ReAct' row and the 'SR' column."
+    },
+    {
+      "id": "REACT-Q06",
+      "question": "Based on the error analysis of HotpotQA trajectories, what is the primary trade-off between the ReAct and CoT prompting methods?",
+      "question_type": "reasoning_aggregation",
+      "difficulty": "hard",
+      "expected_answer": "ReAct is more grounded and trustworthy with less hallucination, but its structural constraint reduces flexibility, leading to a higher reasoning error rate than CoT.",
+      "source_section": "Section 3.3 (ReAct vs. CoT) / Table 2",
+      "expected_behavior": "System synthesizes the behavioral differences and failure modes to explain that ReAct reduces hallucinations (via external grounding) but suffers from higher reasoning error rates due to reduced structural flexibility compared to CoT."
+    },
+    {
+      "id": "REACT-Q07",
+      "question": "The abstract presents ReAct as a paradigm that overcomes the error propagation issues of standard chain-of-thought (CoT) reasoning. Does the paper's experimental section demonstrate that ReAct outperforms CoT prompting on pure mathematical or symbolic reasoning benchmarks (such as GSM8K) where external API access is unnecessary?",
+      "question_type": "grounding_negative",
+      "difficulty": "hard",
+      "expected_answer": "N/A - system must refuse",
+      "source_section": "Abstract / Section 3 / Section 4",
+      "expected_behavior": "System must refuse — the paper does not provide direct evidence for this claim. Inventing support is a FAIL. While the abstract implies ReAct is a superior alternative to CoT by overcoming its error propagation issues, the paper only evaluates ReAct on knowledge-intensive retrieval and interactive environments. It completely omits any experimental comparison against CoT on pure mathematical or symbolic reasoning tasks where CoT is traditionally strongest."
+    }
+  ]
 }
