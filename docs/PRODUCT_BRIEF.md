@@ -54,9 +54,9 @@ The four sections run from pure extraction to pure inference. Hallucination risk
 
 **Built, running locally under Aspire (architecture — carries over unchanged):** CRAG pipeline, grounding checker, intent + HyDE routing, event-driven ingestion with DLQ, SignalR live updates, PostgreSQL checkpointer, audio-to-text input, golden eval scaffold.
 
-**Not built (domain content + views):** the Brief itself, Claim-Support Matrix, the paper-domain extraction schema + prompts, the paper-domain golden cases, automated eval reporting, tests, and the entire Azure stack. OSS-only today.
+**Not built (domain content + views):** the Brief itself, Claim-Support Matrix, the paper-domain extraction schema + prompts, automated eval reporting, tests, and the entire Azure stack. OSS-only today.
 
-The golden eval (`docs/golden_eval.json`) currently provides a `regression_gate` scaffold and question-type taxonomy. Full content rebuild against research papers is the prerequisite for Phase 1's extraction engine work.
+The golden evals are now committed against three agent papers, covering both chat and matrix scenarios (21 chat Qs, 37 matrix rows, 17 combined grounding-negative).
 
 ---
 
@@ -66,7 +66,7 @@ The spine is **test-first extraction**: the eval comes *with* the engine, not af
 
 **0. Doc cleanup (parallel, anytime).** Keep README and diagrams accurate to the codebase. Remove any false or aspirational claims so the repo stays unimpeachable.
 
-**1. Extend the golden set FIRST (test-first).** Before the engine, write grounding cases — positive *and* grounding-negative — for the **Claim-Support Matrix** (Tier 1). Define what "correct claim extraction" and "correct refusal" mean as concrete, scored assertions over real papers. This is the eval-asset seed and the engine's spec.
+**1. Extend the golden set FIRST (test-first).** Before the engine, write grounding cases — positive *and* grounding-negative — for the **Claim-Support Matrix** (Tier 1). Define what "correct claim extraction" and "correct refusal" mean as concrete, scored assertions over real papers. This is the eval-asset seed and the engine's spec. (DONE — committed as docs/qa_eval.json and docs/matrix_eval.json)
 
 **2. Build the extraction engine to PASS those cases.** One prompt → structured JSON (claims, methodology, results, limitations, evidence spans), grounding-checked. The JSON is the single source both views render from. Iterate against the golden set until Tier-1 is green.
 

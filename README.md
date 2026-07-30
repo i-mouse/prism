@@ -1,13 +1,13 @@
 # 🔬 Prism — Research Paper Claim-Auditing Agent
 
 ![Architecture: Microservices](https://img.shields.io/badge/Architecture-Microservices-success)
-![Orchestration: .NET 8 Aspire](https://img.shields.io/badge/Orchestration-.NET_8_Aspire-purple)
+![Orchestration: .NET 10 Aspire](https://img.shields.io/badge/Orchestration-.NET_10_Aspire-purple)
 ![AI: LangGraph CRAG](https://img.shields.io/badge/AI-Corrective_RAG-blue)
 ![Status: Active Development](https://img.shields.io/badge/Status-Active_Development-yellow)
 
 Prism analyzes research papers and audits whether their headline claims are supported by the paper's own evidence — **without hallucinating**. It is built on a **Corrective RAG (CRAG)** pipeline with an explicit grounding checker: if an assessment cannot be verified against the paper's own text, the system says *"the paper provides no evidence for this"* rather than fabricating support.
 
-The whole distributed system runs locally via **.NET 8 Aspire**, which handles container orchestration, secret injection, and unified telemetry.
+The whole distributed system runs locally via **.NET 10 Aspire**, which handles container orchestration, secret injection, and unified telemetry.
 
 > **Honesty note for reviewers:** this README describes what is *actually implemented today*. Aspirational components are clearly separated under **Roadmap**. For a full current-vs-target breakdown including known gaps, see [`docs/AI_HANDOFF.md`](docs/AI_HANDOFF.md) §9.
 
@@ -21,7 +21,7 @@ The whole distributed system runs locally via **.NET 8 Aspire**, which handles c
 * **🧠 Persistent Conversation Memory.** State and tool-call history are persisted via LangGraph's PostgreSQL checkpointer (keyed by chat/thread id).
 * **⚙️ Fault-Tolerant Workers.** RabbitMQ Dead Letter Queue handling. Terminal errors (e.g. corrupted PDFs) are isolated and surfaced to the UI; transient errors (e.g. network blips) are requeued with a delay.
 * **🎙️ Audio-to-Text Input.** Voice questions are transcribed via Gemini before entering the pipeline. *(Basic transcription only — no speaker diarization or PII redaction.)*
-* **📊 Golden Evaluation Set.** A regression gate (`docs/golden_eval.json`) covering factual retrieval, table extraction, reasoning, and grounding-negative refusal cases.
+* **📊 Golden Evaluation Set.** Two regression evals covering chat (`docs/qa_eval.json`) and matrix (`docs/matrix_eval.json`), with a combined 17 grounding-negative refusal cases.
 
 ---
 
@@ -29,9 +29,9 @@ The whole distributed system runs locally via **.NET 8 Aspire**, which handles c
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Orchestrator (local)** | `.NET 8 Aspire` | Manages containers, networking, secret injection |
+| **Orchestrator (local)** | `.NET 10 Aspire` | Manages containers, networking, secret injection |
 | **Frontend** | `React`, `TypeScript`, `Vite` | Real-time UI, Markdown rendering, source citations |
-| **API Gateway** | `C# .NET 8`, `SignalR` | Routing, WebSocket push, EF Core persistence |
+| **API Gateway** | `C# .NET 10`, `SignalR` | Routing, WebSocket push, EF Core persistence |
 | **AI Service** | `Python 3.13`, `FastAPI`, `uv` | LangGraph CRAG state graph |
 | **Worker** | `Python 3.13` async | Document ingestion + embedding consumer |
 | **LLM** | `Google Gemini` | Tool-calling (Flash) + classification (Flash-Lite) |
@@ -46,7 +46,7 @@ The whole distributed system runs locally via **.NET 8 Aspire**, which handles c
 
 ### Prerequisites
 * **Docker Desktop** (for Postgres, Qdrant, MinIO, RabbitMQ)
-* **.NET 8.0 SDK**
+* **.NET 10.0 SDK**
 * **Python 3.13** (with the `uv` package manager)
 * **Node.js** (v20+)
 
@@ -82,7 +82,7 @@ These are the target enterprise/Azure components. **None of these are implemente
 
 - [ ] **Paper Intelligence Brief** — verdict + overstated claims + questions to scrutinize, derived from the uploaded paper.
 - [ ] **Claim-Support Matrix** — every paper claim rendered as a cited supported/unsupported checklist.
-- [ ] **Paper-domain golden eval** — 20+ regression cases across factual, table extraction, reasoning, and grounding-negative categories, against 3 real research papers.
+- [x] **Paper-domain golden eval** — 20+ regression cases across factual, table extraction, reasoning, and grounding-negative categories, against 3 real research papers.
 - [ ] **Azure migration** — Azure OpenAI (LLM), Azure AI Search (vector + hybrid), Document Intelligence (layout-aware chunking), Blob Storage, Service Bus, Key Vault, Entra ID, Container Apps deploy.
 - [ ] **Structure-aware chunking** — replace fixed-size chunking; preserve tables (critical for results-table extraction).
 - [ ] **Redis response caching** — container is provisioned by Aspire, but no caching logic exists yet.
