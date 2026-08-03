@@ -1,0 +1,549 @@
+{
+  "metadata": {
+    "name": "Prism Claim-Support Matrix Golden Evaluation Set",
+    "version": "1.0",
+    "domain": "AI research papers (agent architectures and reasoning)",
+    "purpose": "Ground-truth Claim-Support Matrix contract for the Prism extraction engine. Regression gate; run before and after any change to extraction prompt, extraction model, or claim grounding-checker. Correct-refusal rate on rows with expected_label='not_supported' or grounding_negative=true is the headline metric.",
+    "regression_gate": {
+      "primary_metric": "correct_refusal_rate",
+      "definition": "For every row with expected_label='not_supported' OR grounding_negative=true, the extraction engine must either (a) not emit the claim as 'supported', OR (b) emit the claim with label 'not_supported' or 'partially_supported'. Emitting as 'supported' is a FAIL.",
+      "pass_threshold": "100% on grounding-negative and not_supported cases; zero fabricated evidence citations across all cases",
+      "run_policy": "Run before and after any model, prompt, or retrieval change to the extraction engine. A FAIL blocks the change."
+    },
+    "scoring_guidance": {
+      "claim_matching": "Actual engine rows are matched to expected rows via LLM-as-judge on claim_summary semantic equivalence — verbatim string match is not required.",
+      "evidence_matching": "Fuzzy check: any expected_evidence_sections entry present in the actual row's evidence field counts as a match. Exact section-string identity not required.",
+      "label_matching": "Exact match on the three-value vocabulary: supported | partially_supported | not_supported."
+    }
+  },
+  "papers": [
+    {
+      "paper_id": "arxiv-2303.11366v4",
+      "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+      "authors": "Shinn et al.",
+      "arxiv_url": "https://arxiv.org/abs/2303.11366",
+      "expected_matrix": [
+        {
+          "id": "REFLEX-M01",
+          "claim_text_verbatim": "Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4 that achieves 80%.",
+          "claim_summary": "Reflexion reaches 91% accuracy on the HumanEval benchmark, outperforming the baseline GPT-4.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.3",
+            "Table 1"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "The paper provides empirical results in Table 1 showing a 91.0% pass@1 accuracy for Reflexion on HumanEval (PY) using GPT-4, compared to the base GPT-4 accuracy of 80.1%.",
+          "why_this_case": "Core quantitative result in the abstract that reviewers would verify.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M02",
+          "claim_text_verbatim": "Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps",
+          "claim_summary": "Reflexion improves AlfWorld task success rates by 22% over baseline methods across 12 learning iterations.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.1",
+            "Figure 3"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Section 4.1 explicitly states 'ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks', mapping to the ~97% peak in Figure 3a versus the ~75% baseline peak, validating the 22% absolute improvement.",
+          "why_this_case": "Key performance claim for the decision-making domain.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M03",
+          "claim_text_verbatim": "We observe a notable discrepancy between the false positive labels produced by internal test execution... the false positive test execution rate for MBPP Python is 16.3% while the rate for HumanEval Python is a mere 1.4%",
+          "claim_summary": "Internal test execution yields a much higher false positive rate on MBPP Python compared to HumanEval Python.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.3"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Section 4.3 'Analysis' explicitly reports these exact false positive percentages (16.3% vs 1.4%) to explain performance discrepancies.",
+          "why_this_case": "Verifies detailed diagnostic statistics reported in the analysis text.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M04",
+          "claim_text_verbatim": "We evaluate the baseline and Reflexion approaches on Python and Rust code writing on MBPP [2], HumanEval [6], and LeetcodeHardGym, our new dataset.",
+          "claim_summary": "The authors test their methods on Python and Rust programming tasks across MBPP, HumanEval, and LeetcodeHardGym.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.3",
+            "Table 1"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Table 1 explicitly lists results for HumanEval and MBPP in both Python (PY) and Rust (RS), as well as Leetcode Hard in Python.",
+          "why_this_case": "Checks the scope of the experimental evaluation matches the text.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M05",
+          "claim_text_verbatim": "For the Reflexion agent, we implement the standard self-reflection step as a final pass. Intuitively, we test if the agent is iteratively learning more effectively... Figure 4c shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
+          "claim_summary": "Adding verbal self-reflection provides an 8% absolute accuracy improvement over using only episodic memory.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.2",
+            "Figure 4c"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Section 4.2 'Analysis' explicitly reports this 8% absolute boost derived from the ablation comparing CoT (GT) EPM vs CoT (GT) EPM + Reflexion, backed by Figure 4c.",
+          "why_this_case": "Verifies a specific quantitative ablation result.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M06",
+          "claim_text_verbatim": "Table 3 shows an inferior 52% vs 60% (baseline) accuracy, which suggests that the agent is unable to determine if the current implementation is correct without unit tests.",
+          "claim_summary": "Omitting internal test generation causes accuracy to drop to 52% from a 60% baseline.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.3",
+            "Table 3"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Table 3 shows the 'Test generation omission' row has a Pass@1 of 0.52, while the Base model is 0.60, confirming the text.",
+          "why_this_case": "Tests verification of ablation table data.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M07",
+          "claim_text_verbatim": "Next, we test self-reflection contribution by omitting the natural language explanation step following failed unit test suite evaluations. Interestingly, the compromised agent does not improve performance over the baseline run.",
+          "claim_summary": "Removing the natural language self-reflection step prevents the agent from improving over baseline performance.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4.3",
+            "Table 3"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Table 3 shows that 'Self-reflection omission' yields a Pass@1 of 0.60, identically matching the 'Base model' (0.60).",
+          "why_this_case": "Tests verification of a negative/null result in an ablation.",
+          "confidence": 0.95
+        },
+        {
+          "id": "REFLEX-M08",
+          "claim_text_verbatim": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers.",
+          "claim_summary": "Reflexion agents consistently demonstrate superior decision-making, reasoning, and programming abilities across all evaluated task types.",
+          "expected_label": "partially_supported",
+          "expected_evidence_sections": [
+            "Section 4",
+            "Appendix B.1"
+          ],
+          "grounding_negative": true,
+          "scoring_notes": "The introduction's phrasing generalizes beyond the three main tasks by claiming superiority across all three 'types of tasks' (including sequential decision-making broadly), and Appendix B.1's WebShop failure contradicts that generalization.",
+          "why_this_case": "Checks if the system catches contradictions buried in the appendix that weaken broad introductory claims.",
+          "confidence": 0.80
+        },
+        {
+          "id": "REFLEX-M09",
+          "claim_text_verbatim": "Reflexion improves performance over strong baselines by 22% in AlfWorld, 20% in HotPotQA, and 11% on HumanEval.",
+          "claim_summary": "Reflexion yields an 11% performance improvement on the HumanEval benchmark.",
+          "expected_label": "partially_supported",
+          "expected_evidence_sections": [
+            "Section 4",
+            "Table 1"
+          ],
+          "grounding_negative": true,
+          "scoring_notes": "The paper broadly claims an 11% improvement on 'HumanEval' in the text, but Table 1 shows this 11% boost (80.1% to 91.0%) only applies to HumanEval Python. On HumanEval Rust, the improvement is only 8% (60.0% to 68.0%).",
+          "why_this_case": "Catches overly broad reporting of a metric that only applies to a subset of the data.",
+          "confidence": 0.80
+        },
+        {
+          "id": "REFLEX-M11",
+          "claim_text_verbatim": "traditional reinforcement learning methods require extensive training samples and expensive model fine-tuning. We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback.",
+          "claim_summary": "Reflexion is more sample-efficient and computationally cheaper than traditional reinforcement learning methods.",
+          "expected_label": "not_supported",
+          "expected_evidence_sections": [],
+          "grounding_negative": true,
+          "scoring_notes": "Matches Pattern 1 (Comparative claim without the comparison). The abstract implies Reflexion is more sample-efficient than traditional RL methods (like PPO). However, the experiments section only compares Reflexion against other frozen LLM prompting techniques (ReAct, CoT) and NEVER benchmarks it against a traditional RL agent to prove superior sample efficiency.",
+          "why_this_case": "Classic unsupported comparative claim from the abstract.",
+          "confidence": 0.90
+        },
+        {
+          "id": "REFLEX-M12",
+          "claim_text_verbatim": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: ... 4) it provides more explicit hints for actions in future episodes.",
+          "claim_summary": "Reflexion's linguistic feedback provides functional advantages and better action hints compared to traditional policy or value-based RL.",
+          "expected_label": "not_supported",
+          "expected_evidence_sections": [],
+          "grounding_negative": true,
+          "scoring_notes": "Matches Pattern 1 (Comparative claim without the comparison). While the introduction claims Reflexion has these functional advantages over traditional RL approaches, there is no experimental baseline running a traditional RL algorithm to prove Reflexion's hints actually lead to better task performance or faster convergence than an RL policy.",
+          "why_this_case": "Tests detection of superiority claims that lack direct baseline comparisons in the experiments.",
+          "confidence": 0.90
+        },
+        {
+          "id": "REFLEX-M13",
+          "claim_text_verbatim": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback.",
+          "claim_summary": "Reflexion is a generalizable framework capable of reinforcing arbitrary language agents via linguistic feedback.",
+          "expected_label": "not_supported",
+          "expected_evidence_sections": [],
+          "grounding_negative": true,
+          "scoring_notes": "Matches Pattern 2 (generalization claim without the generalization test) — the abstract implies broad framework applicability to language agents generally, but the paper only tests three tightly-scoped, pre-configured agent setups (ReAct for AlfWorld, CoT+GT for HotpotQA, and a custom test-driven pipeline for HumanEval). There is no experiment testing generalization to arbitrary language agents.",
+          "why_this_case": "This row diversifies the grounding-negative coverage; M11 and M12 attack the 'vs traditional RL' gap, and this attacks the 'generalizable framework' gap — different rhetorical move, same failure pattern.",
+          "confidence": 0.85
+        }
+      ]
+    },   
+    {
+    "paper_id": "arxiv-2201.11903v6",
+    "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+    "authors": "Wei et al.",
+    "arxiv_url": "https://arxiv.org/abs/2201.11903",
+        "expected_matrix": [
+        {
+        "id": "COT-M01",
+        "claim_text_verbatim": "prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the GSM8K benchmark of math word problems, surpassing even finetuned GPT-3 with a verifier.",
+        "claim_summary": "PaLM 540B prompted with 8 chain-of-thought examples outperforms a finetuned GPT-3 model on the GSM8K dataset.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Section 3.2",
+            "Figure 4",
+            "Table 1"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Table 1 reports PaLM 540B with chain of thought scores 56.9% on GSM8K, outperforming the 'Prior best' of 55% (finetuned GPT-3).",
+        "why_this_case": "Core performance claim for arithmetic reasoning.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M02",
+        "claim_text_verbatim": "chain-of-thought prompting does not positively impact performance for small models, and only yields performance gains when used with models of ~100B parameters.",
+        "claim_summary": "Chain-of-thought prompting only improves reasoning accuracy on language models with approximately 100 billion parameters or more.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Section 3.2",
+            "Figure 4",
+            "Table 2"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Table 2 and Figure 4 show that smaller models (PaLM 8B, GPT 6.7B, LaMDA 8B) perform worse or similarly with CoT, while the ~100B+ models (PaLM 540B, GPT-3 175B, LaMDA 137B) show massive gains.",
+        "why_this_case": "Core finding regarding the emergent nature of chain-of-thought reasoning.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M03",
+        "claim_text_verbatim": "equation only prompting does not help much for GSM8K, which implies that the semantics of the questions in GSM8K are too challenging to directly translate into an equation without the natural language reasoning steps",
+        "claim_summary": "Prompting models to output only mathematical equations yields minimal performance improvement on the GSM8K benchmark.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Section 3.3",
+            "Figure 5",
+            "Table 6"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Table 6 shows 'equation only' scores 5.4% compared to standard prompting (6.5%) and CoT (14.3%) for LaMDA 137B on GSM8K.",
+        "why_this_case": "Verifies ablation results directly addressing the mechanism of CoT.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M04",
+        "claim_text_verbatim": "Although there is variance among different chain of thought annotations... all sets of chain of thought prompts outperform the standard baseline by a large margin.",
+        "claim_summary": "Chain-of-thought exemplars written by different annotators or in different styles consistently outperform standard prompting.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Section 3.4",
+            "Figure 6",
+            "Table 6"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Table 6 under 'Robustness' shows that prompts from different annotators (B, C) and in a concise style all score between 11.1% and 17.6% on GSM8K, cleanly beating the 6.5% standard baseline.",
+        "why_this_case": "Checks a key robustness claim about prompt sensitivity.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M05",
+        "claim_text_verbatim": "for SingleOp, the easiest subset of MAWPS which only requires a single step to solve, performance improvements were either negative or very small",
+        "claim_summary": "Chain-of-thought prompting provides little to no accuracy improvement on single-step arithmetic problems like those in MAWPS SingleOp.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Section 3.2",
+            "Table 3"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Table 3 shows SingleOp performance for PaLM 540B standard is 94.1% and CoT is 94.1%. For GPT 175B, standard is 90.9% and CoT is 88.8%, confirming negative or small gains.",
+        "why_this_case": "Verifies experimental bounds where the proposed method fails to help.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M06",
+        "claim_text_verbatim": "Scaling PaLM to 540B parameters fixed a substantial portion of errors in all three categories. Examples of semantic understanding and one-step missing errors that were fixed by scaling PaLM to 540B are given in Figure 10.",
+        "claim_summary": "Increasing the PaLM model size from 62B to 540B resolves a large fraction of semantic understanding, missing step, and other reasoning errors.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Appendix A.1",
+            "Figure 9",
+            "Figure 10"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Appendix A.1 describes this error analysis and Figure 9 visually quantifies the reduction in errors across the three categories when scaling from 62B to 540B.",
+        "why_this_case": "Verifies detailed error analysis claims made in the appendix.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M07",
+        "claim_text_verbatim": "chain-of-thought prompting improves performance across all three models (LaMDA, GPT-3, and PaLM) for all datasets except CSQA and StrategyQA for GPT-3",
+        "claim_summary": "With the exception of CSQA and StrategyQA for GPT-3, chain-of-thought prompting yields performance improvements on every evaluated dataset across the LaMDA, GPT-3, and PaLM models.",
+        "expected_label": "supported",
+        "expected_evidence_sections": [
+            "Appendix A.2",
+            "Table 1",
+            "Table 4",
+            "Table 5"
+        ],
+        "grounding_negative": false,
+        "scoring_notes": "Table 4 confirms that GPT-3 175B scores decreased for CoT on CSQA (79.5 to 73.5) and StrategyQA (65.9 to 65.4), while improving on everything else.",
+        "why_this_case": "Checks model-agnostic generalization claims verified across multiple tables.",
+        "confidence": 0.95
+        },
+        {
+        "id": "COT-M08",
+        "claim_text_verbatim": "we show that for symbolic reasoning, chain-of-thought prompting facilitates OOD generalization to longer sequence lengths",
+        "claim_summary": "Chain-of-thought prompting enables language models to successfully generalize out-of-distribution to inputs with longer sequence lengths.",
+        "expected_label": "partially_supported",
+        "expected_evidence_sections": [
+            "Section 5",
+            "Table 5",
+            "Figure 8"
+        ],
+        "grounding_negative": true,
+        "scoring_notes": "The paper broadly claims length generalization, but Section 5 and Table 5 reveal this was only tested on two extremely simple synthetic 'toy tasks' (concatenating 3-4 letters instead of 2, and tracking 3-4 coin flips). It was not demonstrated on complex natural language reasoning tasks.",
+        "why_this_case": "Classic generalization claim technically supported by toy experiments, but partially justified due to the limited scope.",
+        "confidence": 0.90
+        },
+        {
+        "id": "COT-M09",
+        "claim_text_verbatim": "chain-of-thought prompting can also improve performance on tasks requiring a range of commonsense reasoning abilities",
+        "claim_summary": "Chain-of-thought prompting improves the factual and logical commonsense reasoning abilities of the models.",
+        "expected_label": "partially_supported",
+        "expected_evidence_sections": [
+            "Section 4",
+            "Appendix D.1"
+        ],
+        "grounding_negative": true,
+        "scoring_notes": "REVIEW: While Section 4 shows improved final-answer accuracy on commonsense datasets, Appendix D.1 admits the authors never verified the factuality of the reasoning paths, noting models likely arrived at correct multiple-choice answers via incorrect reasoning paths. Thus, the claim that it improves commonsense *reasoning* is only partially supported.",
+        "why_this_case": "Exposes a major caveat buried in the appendix regarding whether the model is actually reasoning correctly on commonsense tasks.",
+        "confidence": 0.85
+        },
+        {
+        "id": "COT-M10",
+        "claim_text_verbatim": "chain-of-thought reasoning can be readily elicited in sufficiently large off-the-shelf language models simply by including examples of chain of thought sequences",
+        "claim_summary": "Language models can easily generate reasoning traces just by being provided with chain-of-thought exemplars, without needing complex prompt engineering.",
+        "expected_label": "partially_supported",
+        "expected_evidence_sections": [
+            "Section 2",
+            "Appendix A.2"
+        ],
+        "grounding_negative": true,
+        "scoring_notes": "While the intro claims CoT is 'readily elicited... simply by including examples', Appendix A.2 explicitly states 'Prompt engineering still matters, though', detailing an example (list reversal) where two authors failed to craft a working prompt. The appendix narrows but does not refute the readiness claim. If the extraction engine emits this claim as label=supported without acknowledging the Appendix A.2 caveat about prompt engineering, that is a FAIL \u2014 the engine has missed a directly contradicting passage in the same paper.",
+        "why_this_case": "Exposes the tension between the 'simple' marketing in the intro and the reality of prompt engineering admitted in the appendix.",
+        "confidence": 0.85
+        },
+        {
+        "id": "COT-M11",
+        "claim_text_verbatim": "For rationale-augmented training and finetuning methods, it is costly to create a large set of high quality rationales... In this paper, we combine the strengths of these two ideas in a way that avoids their limitations.",
+        "claim_summary": "Chain-of-thought prompting is significantly less costly and time-consuming than rationale-augmented finetuning methods.",
+        "expected_label": "not_supported",
+        "expected_evidence_sections": [],
+        "grounding_negative": true,
+        "scoring_notes": "Matches Pattern 1 (Comparative claim without comparison). The introduction implies CoT prompting avoids the high costs of finetuning. However, the experimental sections evaluate reasoning accuracy and never actually benchmark or quantify the annotation hours, training costs, or compute resources saved versus a finetuning baseline.",
+        "why_this_case": "Cost/efficiency claims in intros are often unbacked by actual measurements in the results section.",
+        "confidence": 0.90
+        },
+        {
+        "id": "COT-M12",
+        "claim_text_verbatim": "is potentially applicable (at least in principle) to any task that humans can solve via language.",
+        "claim_summary": "Chain-of-thought prompting can improve performance on any natural language task that human beings solve using language.",
+        "expected_label": "not_supported",
+        "expected_evidence_sections": [],
+        "grounding_negative": true,
+        "scoring_notes": "Matches Pattern 2 (Generalization without test). While the text broadly claims applicability to 'any task that humans can solve via language', the experiments are strictly limited to arithmetic, commonsense QA, and symbolic toy tasks. They do not test general NLP tasks like translation or summarization (which they admit is future work in Appendix A.3).",
+        "why_this_case": "A sweeping generalization claim in the intro/methodology that is not backed by the scope of the experiments.",
+        "confidence": 0.90
+        }
+    ]
+},{
+  "paper_id": "arxiv-2210.03629v3",
+  "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+  "authors": "Yao et al.",
+  "arxiv_url": "https://arxiv.org/abs/2210.03629",
+  "expected_matrix": [
+    {
+      "id": "REACT-M01",
+      "claim_text_verbatim": "With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate.",
+      "claim_summary": "ReAct achieves an absolute 10% higher success rate than the previous best methods on the WebShop benchmark.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 4",
+        "Table 4"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Table 4 shows ReAct achieving a 40.0% Success Rate (SR) on WebShop, which is ~10% higher than the previous best method Act (30.1%) and the IL baseline (29.1%).",
+      "why_this_case": "Verifies the core quantitative result on WebShop.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M02",
+      "claim_text_verbatim": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%).",
+      "claim_summary": "Chain-of-thought (CoT) prompting suffers heavily from hallucination, which accounts for 56% of its failure cases and causes a 14% false positive rate during successes, compared to ReAct's 6%.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 3.3",
+        "Table 2"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Table 2 exactly matches the 14% vs 6% false positive rate in 'Success' mode, and the 56% hallucination rate for CoT in 'Failure' mode.",
+      "why_this_case": "Verifies diagnostic statistics on hallucination rates between ReAct and CoT.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M03",
+      "claim_text_verbatim": "Table 1 shows HotpotQA and Fever results using PaLM-540B as the base model with different prompting methods. We note that ReAct is better than Act on both tasks",
+      "claim_summary": "ReAct achieves higher accuracy than the Act-only prompting method on both HotpotQA and FEVER tasks using the PaLM-540B model.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 3.3",
+        "Table 1"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Table 1 shows ReAct scoring 27.4 EM on HotpotQA and 60.9 Acc on Fever, both of which are higher than the Act method's 25.7 and 58.9, respectively.",
+      "why_this_case": "Confirms the baseline improvement of reasoning + acting over acting alone.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M05",
+      "claim_text_verbatim": "ReAct substantially outperforms IM-style prompting (ReAct-IM) (71 vs. 53 overall success rate), with consistent advantages on five out of six tasks.",
+      "claim_summary": "ReAct achieves a 71% success rate compared to 53% for an Inner Monologue (IM) style prompt, beating it on five of the six ALFWorld tasks.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 4",
+        "Table 3"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Table 3 shows ReAct (best of 6) at 71 'All' success rate and ReAct-IM (best of 6) at 53. It also shows ReAct scoring higher on Pick, Heat, Cool, Look, and Pick 2, while losing to ReAct-IM on Clean (58 vs 68).",
+      "why_this_case": "Verifies ablation results comparing ReAct to a dense-feedback baseline.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M06",
+      "claim_text_verbatim": "With PaLM-8/62B, prompting ReAct performs worst among four methods... However, when finetuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B finetuned ReAct outperforming all PaLM-62B prompting methods",
+      "claim_summary": "While ReAct prompting performs poorly on smaller models, finetuning an 8B model with ReAct on 3,000 examples makes it outperform all prompting methods on a 62B model.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 3.3",
+        "Figure 3"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Figure 3 visually confirms that under 'learning = prompt', the 8b red bar (ReAct) is the lowest. Under 'learning = finetune', the 8b red bar is the highest of the 8b group and is taller than all 62b bars in the 'learning = prompt' chart.",
+      "why_this_case": "Verifies detailed cross-chart comparisons for the finetuning scaling laws.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M07",
+      "claim_text_verbatim": "On Webshop, one-shot Act prompting already performs on par with IL and IL+RL methods.",
+      "claim_summary": "Using just a single in-context example, the Act prompting method matches the success rate of imitation and reinforcement learning models on WebShop.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 4",
+        "Table 4"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Table 4 shows 'Act' has a success rate of 30.1, which is on par with (and slightly exceeds) IL (29.1) and IL+RL (28.7).",
+      "why_this_case": "Verifies the performance of the baseline Act model against supervised RL approaches.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M08",
+      "claim_text_verbatim": "ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4).",
+      "claim_summary": "ReAct achieves higher accuracy than CoT on the FEVER dataset, but scores slightly lower than CoT on HotpotQA.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 3.3",
+        "Table 1"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Table 1 perfectly matches the exact numbers cited: ReAct 60.9 vs CoT 56.3 on Fever, and ReAct 27.4 vs CoT 29.4 on HotpotQA.",
+      "why_this_case": "Verifies a nuanced comparative result where the proposed method loses on one of the benchmarks.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M09",
+      "claim_text_verbatim": "Qualitatively, we saw that, without any thoughts at all, Act fails to correctly decompose goals into smaller subgoals, or loses track of the current state of the environment.",
+      "claim_summary": "The Act-only baseline frequently fails on ALFWorld because it cannot decompose high-level goals or remember the environment state without reasoning traces.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 4",
+        "Appendix D.2.2"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Section 4 explicitly states this qualitative finding, which is backed up by the comparative trajectory analysis provided in Appendix D.2.2 showing Act getting stuck.",
+      "why_this_case": "Validates a qualitative behavioral claim using the appendix trajectories.",
+      "confidence": 0.90
+    },
+    {
+      "id": "REACT-M10",
+      "claim_text_verbatim": "While two ReAct + CoT-SC methods are advantageous at one task each, they both significantly and consistently outperform CoT-SC across different number of samples, reaching CoT-SC performance with 21 samples using merely 3-5 samples.",
+      "claim_summary": "Both hybrid methods combining ReAct and CoT-SC consistently beat pure CoT-SC, regardless of how many samples are drawn for self-consistency.",
+      "expected_label": "supported",
+      "expected_evidence_sections": [
+        "Section 3.3",
+        "Figure 2"
+      ],
+      "grounding_negative": false,
+      "scoring_notes": "Figure 2 shows the lines for ReAct->CoT-SC and CoT-SC->ReAct remaining consistently above the pure CoT-SC line across the x-axis (#CoT-SC trials) on both HotpotQA and Fever.",
+      "why_this_case": "Verifies graphical data from line charts over a parameter sweep.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M11",
+      "claim_text_verbatim": "Concretely, on question answering (HotpotQA) and fact verification (Fever), ReAct overcomes prevalent issues of hallucination and error propagation in chain-of-thought reasoning",
+      "claim_summary": "ReAct resolves the hallucination and error propagation issues of CoT reasoning on HotpotQA and FEVER tasks.",
+      "expected_label": "partially_supported",
+      "expected_evidence_sections": [
+        "Section 3.3",
+        "Table 1",
+        "Table 2"
+      ],
+      "grounding_negative": true,
+      "scoring_notes": "While Table 2 shows ReAct eliminates the CoT hallucination failure mode (56% down to 0%), it also shows ReAct drastically INCREASES reasoning errors (16% to 47%). Furthermore, Table 1 shows ReAct actually performs WORSE overall than CoT on HotpotQA (27.4 vs 29.4). Therefore, claiming it 'overcomes' error propagation is partially supported at best, as it trades one error mode for another and loses overall accuracy on HotpotQA.",
+      "why_this_case": "Exposes a rhetorical framing in the abstract that obscures a performance regression on one of the two featured benchmarks.",
+      "confidence": 0.90
+    },
+    {
+      "id": "REACT-M12",
+      "claim_text_verbatim": "ReAct shows strong generalization to new task instances while learning solely from one to six in-context examples... and in Section 4 how ReAct performance is robust to prompt selections.",
+      "claim_summary": "ReAct's performance is highly robust and stable regardless of the specific in-context examples selected for the prompt.",
+      "expected_label": "partially_supported",
+      "expected_evidence_sections": [
+        "Section 4",
+        "Table 3"
+      ],
+      "grounding_negative": true,
+      "scoring_notes": "While the text claims ReAct is 'robust to prompt selections', Table 3 (ALFWorld) shows a massive 14% absolute variance between the 'best of 6' prompt permutations (71% success) and the 'avg' of the 6 permutations (57% success). Additionally, robustness to prompt selection was not evaluated at all for HotpotQA/FEVER in Section 3.",
+      "why_this_case": "Catches a rhetorical claim of 'robustness' that is heavily undermined by the high variance actually reported in the data table.",
+      "confidence": 0.90
+    },
+    {
+      "id": "REACT-M13",
+      "claim_text_verbatim": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines",
+      "claim_summary": "ReAct demonstrates superior performance compared to state-of-the-art baselines on the evaluated tasks.",
+      "expected_label": "not_supported",
+      "expected_evidence_sections": [],
+      "grounding_negative": true,
+      "scoring_notes": "Matches Pattern 5 (Superiority claim vs a class failed against). While ReAct outperforms certain few-shot prompting baselines, Table 1 explicitly shows ReAct (27.4 EM) being completely crushed by the 'Supervised SoTA' (67.5 EM) on HotpotQA, and similarly on FEVER (60.9 vs 89.5). The abstract's broad claim of demonstrating effectiveness 'over state-of-the-art baselines' is directly contradicted by their own tables.",
+      "why_this_case": "A classic case of an abstract inflating 'beats other zero/few-shot prompts' into 'beats state-of-the-art baselines', which is explicitly refuted in the results table.",
+      "confidence": 0.95
+    },
+    {
+      "id": "REACT-M14",
+      "claim_text_verbatim": "Recent results have hinted at the possibility of combining verbal reasoning with interactive decision making in autonomous systems... In this work, we present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks",
+      "claim_summary": "ReAct is a general paradigm applicable to combining reasoning and acting in physical autonomous systems.",
+      "expected_label": "not_supported",
+      "expected_evidence_sections": [],
+      "grounding_negative": true,
+      "scoring_notes": "Matches Pattern 2 (Generalization without test). While the introduction motivates the method using physical autonomous systems and real-world cooking examples, the experiments strictly evaluate ReAct on text-based API lookups (HotpotQA, FEVER), a text adventure game (ALFWorld), and a text-based shopping website (WebShop). There are no experiments deploying ReAct on physical robots or continuous-control systems.",
+      "why_this_case": "Tests whether the extraction engine can distinguish between broad motivating examples in the introduction and the actual scope of the experimental validation.",
+      "confidence": 0.90
+    }
+  ]
+}
+  ]
+}

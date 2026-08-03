@@ -384,3 +384,10 @@ Do not answer the question. Just output the keywords.
 User Question: {original_query}
 Optimized Keywords:
 ```
+
+### 13. Eval spec — current state
+- Both eval files exist and are committed
+- What each measures: `qa_eval.json` measures the chat pipeline, `matrix_eval.json` measures the extraction engine
+- Test papers location: `docs/research_papers/`
+- Total grounding-negative cases: 17
+- What is NOT YET BUILT: PaperClaims table, extraction engine, matrix grounding checker, matrix API endpoint, eval harness
