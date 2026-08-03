@@ -6,7 +6,7 @@ namespace Prism.ApiService.Data.Schemas;
 public class Domain
 {
     [Key]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public Guid Id { get; set; }
 
     [Required]
     public string Name { get; set; } = string.Empty;

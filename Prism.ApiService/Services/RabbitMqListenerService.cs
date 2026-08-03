@@ -42,7 +42,7 @@ public class RabbitMqListenerService : BackgroundService
         Console.WriteLine($"Listener recieved from python : {message}");
 
         var dataObject = JsonSerializer.Deserialize<JsonElement>(message);
-        var fileId = dataObject.GetProperty("fileId").ToString();
+        var fileIdStr = dataObject.GetProperty("fileId").ToString();
         var connectionId = dataObject.GetProperty("connectionId").ToString();
         var summary = dataObject.GetProperty("summary").ToString();
       
@@ -50,7 +50,7 @@ public class RabbitMqListenerService : BackgroundService
        {
         var dbContext = scope.ServiceProvider.GetRequiredService<PrismDBContext>();
 
-        var obj = await dbContext.fileRecords.FindAsync(fileId);
+        var obj = await dbContext.FileRecords.FindAsync(Guid.Parse(fileIdStr));
         if(obj!=null)
             {
                 obj.Summary = summary;

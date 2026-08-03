@@ -1,3 +1,12 @@
+import os
+
+if os.getenv("PRISM_DEBUG") == "1":
+    import debugpy
+    debugpy.listen(("0.0.0.0", 5678))
+    print("[debugpy] listening on 0.0.0.0:5678, waiting for client...")
+    debugpy.wait_for_client()
+    print("[debugpy] client attached")
+
 import sys
 import asyncio
 

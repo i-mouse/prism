@@ -6,13 +6,13 @@ namespace Prism.ApiService.Data.Schemas;
 public class DocumentExtractor
 {
     [Key]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public Guid Id { get; set; }
 
     [Required]
-    public string FileId { get; set; } = string.Empty;
+    public Guid FileId { get; set; }
 
     [Required]
-    public string DomainId { get; set; } = string.Empty;
+    public Guid DomainId { get; set; }
 
     [Required]
     [Column(TypeName = "jsonb")]
@@ -24,8 +24,12 @@ public class DocumentExtractor
 
     // Navigation
     [ForeignKey(nameof(FileId))]
-    public FileRecords? FileRecord { get; set; }
+    public FileRecord? FileRecord { get; set; }
 
     [ForeignKey(nameof(DomainId))]
     public Domain? Domain { get; set; }
+
+    public Guid? LatestRunId { get; set; }
+    
+    public ICollection<PaperClaim> PaperClaims { get; set; } = new List<PaperClaim>();
 }

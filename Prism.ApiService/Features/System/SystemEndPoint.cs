@@ -16,7 +16,7 @@ public static class SystemEndPoint
         {
             try 
             {
-                await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"prismDocuments\" CASCADE;");
+                await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"prism_documents\" CASCADE;");
                 
                 // 2. Command Python to wipe LangGraph and Qdrant
                 var pythonClient = httpClientFactory.CreateClient("pythonapi");
