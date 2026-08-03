@@ -37,6 +37,7 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
                         .WithReference(qdrantDB)
                          .WithReference(postgres) 
                         .WithEnvironment("AI_API_KEY",apiKey)
+                        .WithEnvironment("PRISM_DEBUG", "1") 
                         .WithUv()
                         .WithDebugging()
                         .WaitFor(postgres).WaitFor(rabbitMQ);

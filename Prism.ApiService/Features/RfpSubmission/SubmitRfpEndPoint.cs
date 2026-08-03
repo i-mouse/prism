@@ -30,11 +30,11 @@ public static class SubmitRfpEndpoint
             };
              foreach (var file in request.Files)
              {
-                var fileId = Guid.NewGuid().ToString();
+                var fileId = Guid.NewGuid();
                 var stream = file.OpenReadStream();
                 await storageService.UploadFileAsync(stream,file.FileName,file.ContentType);
                 await AddToDatabase(fileId,file, request.ChatId, request.UserId, dBContext);
-                var contract = new PrismUploaded(fileId,request.UserId,file.FileName,request.ConnectionId,request.ChatId);
+                var contract = new PrismUploaded(fileId.ToString(),request.UserId,file.FileName,request.ConnectionId,request.ChatId);
                 await publishEndpoint.Publish(contract);
          
              }
@@ -51,7 +51,7 @@ public static class SubmitRfpEndpoint
     {
         app.MapGet("/api/chats/{userId}", async (string userId, PrismDBContext dbContext) =>
         {
-            var userChats = await dbContext.prismDocuments
+            var userChats = await dbContext.PrismDocuments
                 .Where(doc => doc.UserId == userId)
                 .Select(doc => new 
                 {
@@ -73,77 +73,39 @@ public static class SubmitRfpEndpoint
         .WithName("GetUserChats");
     }
 
-    public static async Task AddToDatabase2(string fileId,IFormFile file,string chatId,string userId, PrismDBContext prismDBContext)
+    public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, PrismDBContext prismDBContext)
     {
-       var existingRecord = await prismDBContext.prismDocuments.FirstOrDefaultAsync(a=>a.ChatId==chatId);
-       if (existingRecord!=null)
-       {
-         
-            existingRecord.UploadedAt = DateTime.UtcNow;
-            existingRecord.Status = "In progress";
-       }
-       else
-       {
-            var prismEntry = new PrismDocument{
-                Id = Guid.NewGuid().ToString(),
+        var chatGuid = Guid.Parse(chatId);
+
+        var existingRecord = await prismDBContext.PrismDocuments
+            .FirstOrDefaultAsync(a => a.ChatId == chatGuid);
+
+        if (existingRecord == null)
+        {
+            prismDBContext.PrismDocuments.Add(new PrismDocument
+            {
                 UserId = userId,
                 ChatTitle = $"Chat: {file.FileName}",
                 UploadedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 Status = "In progress",
-                ChatId = chatId
-            };
-
-            prismDBContext.prismDocuments.Add(prismEntry);
-            await prismDBContext.SaveChangesAsync();
+                ChatId = chatGuid
+            });
         }
-            var recordEntry = new FileRecords{
-                FileName = file.FileName,
-                UploadedAt = DateTime.UtcNow,
-                ChatId = chatId,
-                FileId =fileId
-            };
-        prismDBContext.fileRecords.Add(recordEntry);
+        else
+        {
+            existingRecord.UploadedAt = DateTime.UtcNow;
+            existingRecord.Status = "In progress";
+        }
+
+        prismDBContext.FileRecords.Add(new FileRecord
+        {
+            FileId = fileId,
+            FileName = file.FileName,
+            UploadedAt = DateTime.UtcNow,
+            ChatId = chatGuid
+        });
+
         await prismDBContext.SaveChangesAsync();
-    }
-    public static async Task AddToDatabase(string fileId, IFormFile file, string chatId, string userId, PrismDBContext prismDBContext)
-    {
-       // 1. Grab the parent chat
-       var existingRecord = await prismDBContext.prismDocuments.FirstOrDefaultAsync(a => a.ChatId == chatId);
-       
-       if (existingRecord == null)
-       {
-           existingRecord = new PrismDocument{
-               Id = Guid.NewGuid().ToString(),
-               UserId = userId,
-               ChatTitle = $"Chat: {file.FileName}",
-               UploadedAt = DateTime.UtcNow,
-               CreatedAt = DateTime.UtcNow,
-               Status = "In progress",
-               ChatId = chatId
-           };
-
-           prismDBContext.prismDocuments.Add(existingRecord);
-           await prismDBContext.SaveChangesAsync();
-       }
-       else
-       {
-           existingRecord.UploadedAt = DateTime.UtcNow; 
-           existingRecord.Status = "In progress";
-       }
-       
-       var fileEntry = new FileRecords {
-           FileName = file.FileName,
-           UploadedAt = DateTime.UtcNow,
-           ChatId = chatId,
-           FileId = fileId
-       };
-       
-       // THE FIX: Attach it directly to the Parent Entity!
-       // This guarantees Entity Framework understands the relationship perfectly.
-       if (existingRecord.Files == null) existingRecord.Files = new List<FileRecords>();
-       existingRecord.Files.Add(fileEntry);
-
-       await prismDBContext.SaveChangesAsync();
     }
 }

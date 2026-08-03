@@ -35,7 +35,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IfileUploader,FakeFileUploader>();
 
-builder.AddNpgsqlDbContext<PrismDBContext>("prism-db");
+// builder.AddNpgsqlDbContext<PrismDBContext>("prism-db");
+builder.AddNpgsqlDbContext<PrismDBContext>("prism-db",
+    configureDbContextOptions: options => options.UseSnakeCaseNamingConvention());
 
 builder.Services.AddMinio(configureClient =>    
 {

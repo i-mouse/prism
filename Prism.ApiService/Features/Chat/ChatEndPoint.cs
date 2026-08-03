@@ -66,7 +66,7 @@ public static class ChatEndPoint
     }
     public static async Task AddToDatabase(ChatRequest request,PrismDBContext prismDBContext)
     {
-       var existingRecord =  prismDBContext.prismDocuments.FirstOrDefault(a=>a.ChatId==request.chatId);
+       var existingRecord =  prismDBContext.PrismDocuments.FirstOrDefault(a=>a.ChatId==Guid.Parse(request.chatId));
        if (existingRecord!=null)
        {
         existingRecord.Status = "In progress";
@@ -74,16 +74,15 @@ public static class ChatEndPoint
        else
        {
         var entry = new PrismDocument{
-            Id = Guid.NewGuid().ToString(),
             UserId = request.userId,
             ChatTitle = $"Chat: {request.question}",
             CreatedAt = DateTime.UtcNow,
             Status = "In progress",
-            ChatId = request.chatId
+            ChatId = Guid.Parse(request.chatId)
             ,UploadedAt =DateTime.UtcNow
         };
 
-        prismDBContext.prismDocuments.Add(entry);
+        prismDBContext.PrismDocuments.Add(entry);
        }
        await prismDBContext.SaveChangesAsync();
     }
