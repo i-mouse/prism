@@ -42,3 +42,5 @@ node_modules/
 **/obj/
 .aspire/
 .sonarqube/
+
+Prism.Web/.vite/
