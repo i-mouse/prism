@@ -122,3 +122,41 @@ def test_extraction_grounding(case):
 - Multi-agent workflows (Methodology Analyst vs. Results Verifier).
 - Cross-paper literature consistency.
 - UI View rendering (Verdict, Matrix). *We are only building the JSON extraction engine and the eval harness to prove it works.*
+
+## Model Routing
+
+Update these when model tiers change or when a specific call hits rate limits consistently.
+
+| Purpose | Model | Env var |
+|---|---|---|
+| Extraction Prompt 1 (paper metadata) | gemini-3.6-flash | LLM_EXTRACTION_MODEL |
+| Extraction Prompt 2 (stated claims) | gemini-3.6-flash | LLM_EXTRACTION_MODEL |
+| Per-claim grounding audit | gemini-3.1-flash-lite | LLM_AUDIT_MODEL |
+| Doc summary (ai_service.py) | gemini-3.1-flash-lite | LLM_SUMMARY_MODEL |
+| Chat: intent, rewriter, grounding checker, casual chat | gemini-3.1-flash-lite | LLM_FAST_MODEL |g
+| Chat: agent node | gemini-3.6-flash | LLM_AGENT_MODEL |
+
+Env vars injected via Aspire AppHost `WithEnvironment` calls. No hardcoded model strings in code.
+
+Fallback: on 429, log the failure, retry with exponential backoff (1s → 2s → 4s), max 3 retries, then downgrade to Flash Lite as the universal fallback.
+
+## Rate Limit Constraints
+
+Free-tier limits verified via ai.google.dev console:
+- gemini-3.6-flash: 5 RPM, 20 RPD
+- gemini-3.1-flash-lite: 15 RPM, 500 RPD
+
+**Extraction budget per paper:**
+- 2 Flash calls (Prompt 1 + Prompt 2)
+- ~13 Flash Lite calls (per-claim grounding audit)
+
+**Full eval set (3 papers, ~39 claims):**
+- Flash: 6/20 RPD (30% consumed)
+- Flash Lite: ~40/500 RPD (8% consumed)
+
+Eval can safely re-run ~3 times per day within Flash's daily cap.
+
+**Concurrency policy:**
+- Papers processed sequentially — avoids Flash 5-RPM ceiling
+- Per-claim audit within one paper uses `asyncio.Semaphore(5)`
+- Full-eval sequential run: ~2 minutes for 3 papers
