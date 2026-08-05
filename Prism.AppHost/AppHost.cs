@@ -28,6 +28,11 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
     .WithHttpEndpoint(targetPort: 8000, name: "pythonapi", env: "PORT")
     .WithReference(qdrantDB)
     .WithEnvironment("AI_API_KEY", apiKey)
+    .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
+    .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.1-flash-lite")
+    .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
+    .WithEnvironment("LLM_FAST_MODEL", "gemini-3.1-flash-lite")
+    .WithEnvironment("LLM_AGENT_MODEL", "gemini-3.6-flash")
     .WithReference(postgres)
     .WaitFor(postgres);
                 
@@ -37,6 +42,11 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
                         .WithReference(qdrantDB)
                          .WithReference(postgres) 
                         .WithEnvironment("AI_API_KEY",apiKey)
+                        .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
+                        .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.1-flash-lite")
+                        .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
+                        .WithEnvironment("LLM_FAST_MODEL", "gemini-3.1-flash-lite")
+                        .WithEnvironment("LLM_AGENT_MODEL", "gemini-3.6-flash")
                         .WithEnvironment("PRISM_DEBUG", "1") 
                         .WithUv()
                         .WithDebugging()

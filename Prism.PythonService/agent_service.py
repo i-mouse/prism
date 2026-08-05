@@ -40,14 +40,14 @@ class AgentState(TypedDict):
 
 # --- LLM Initialization ---
 llm = ChatGoogleGenerativeAI(
-    model="gemini-flash-latest",
+    model=os.getenv("LLM_AGENT_MODEL"),
     api_key=os.getenv("AI_API_KEY"),
     temperature=0.2 
 )
 
 fast_llm = ChatGoogleGenerativeAI(
     # model="gemini-flash-latest",
-    model="gemini-3.1-flash-lite-preview" ,
+    model=os.getenv("LLM_FAST_MODEL"),
     api_key=os.getenv("AI_API_KEY"),
     temperature=0.0
 )
@@ -84,7 +84,7 @@ async def casual_chat_node(state: AgentState):
     system_prompt = SystemMessage(content=(
         "You are a strict, professional Prism AI assistant. "
         "The user is making casual conversation. "
-        "Respond in ONE OR TWO sentences maximum. Be polite, but immediately guide them back to asking about their prism documents."
+        "Respond in ONE OR TWO sentences maximum. Be polite, but immediately guide them back to asking about their research papers."
     ))
     
     # Only passing last 3 messages to save tokens/money
@@ -99,7 +99,7 @@ async def query_rewriter_node(state: AgentState):
     print(" [⚙️] Node: Query Rewriter executing...")
     original_query = state["messages"][-1].content
     
-    rewrite_prompt = f"""You are an expert search query optimizer for legal and prism documents.
+    rewrite_prompt = f"""You are an expert search query optimizer for research papers.
     Convert the following user question into a dense string of keywords optimized for a vector database search.
     Do not answer the question. Just output the keywords.
     
@@ -117,7 +117,7 @@ async def query_rewriter_node(state: AgentState):
 
 @tool
 def search_prism_doc(query: str) -> str:
-    """Search the prism document database for relevant information.
+    """Search the research papers database for relevant information.
     Use specific keywords from the question."""
     print(f' [🔍] Agent searching database for: "{query}"')
     
@@ -141,7 +141,7 @@ async def agent_node(state: AgentState):
     rewritten_query = state.get("rewritten_query", "")
 
     if rewritten_query:
-        system_instruction = f"""You are a strict, helpful legal and prism assistant.
+        system_instruction = f"""You are a strict, helpful research papers assistant.
         CRITICAL RULE: Even if you see a summary of the document in your chat history, you MUST use the `search_prism_doc` tool to fetch the exact source chunks before answering. Do not answer from memory alone.
         
         You MUST use the following optimized keywords in your search tool:
@@ -167,7 +167,7 @@ async def grounding_checker_node(state: AgentState):
         return {"grounding_passed": True, "caveat": "No documents found to support or deny this."}
 
     context = "\n---\n".join(tool_messages)
-    grading_prompt = f"""You are a strict legal auditor. 
+    grading_prompt = f"""You are a strict auditor. 
     Look at the Proposed Answer, and check if it is completely supported by the Source Documents.
     If the Proposed Answer contains facts, numbers, or claims NOT found in the Source Documents, you must fail it.
     

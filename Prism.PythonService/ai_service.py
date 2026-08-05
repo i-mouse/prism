@@ -22,10 +22,10 @@ class AIService:
 
         try:
             response =await self.client.chat.completions.create(
-                model="gemini-2.5-flash",
+                model=os.getenv("LLM_SUMMARY_MODEL"),
                 messages=[
                     {"role":"system","content" : "You are a helpful Prism analyst."},
-                    {"role":"user","content":f"Summarize this prism doc : \n\n{text[:2000]}"}
+                    {"role":"user","content":f"Summarize this prism doc : \n\n{text[:100000]}"}
                 ],
                 temperature=0.7
             )
@@ -48,7 +48,7 @@ class AIService:
         
         print(f" [☁️] File uploaded: {audio_file.uri}")
 
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        model = genai.GenerativeModel(os.getenv("LLM_SUMMARY_MODEL"))
         response = await model.generate_content_async(
             [audio_file, "Please transcribe this audio and provide  result in proper format without missing any detail from the audio.Need word-for-word transcription"]
         )
