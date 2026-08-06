@@ -1,12 +1,3 @@
-import os
-
-if os.getenv("PRISM_DEBUG") == "1":
-    import debugpy
-    debugpy.listen(("0.0.0.0", 5678))
-    print("[debugpy] listening on 0.0.0.0:5678, waiting for client...")
-    debugpy.wait_for_client()
-    print("[debugpy] client attached")
-
 import sys
 import asyncio
 
@@ -146,6 +137,7 @@ async def main():
                             "fileId": file_id,
                             "fileName": file_name,
                             "connectionId": connection_id,
+                            "chatId": chat_id,
                             "status": "Completed",
                             "summary": text_summary
                         }
@@ -168,6 +160,7 @@ async def main():
                             "fileId": file_id,
                             "fileName": file_name,
                             "connectionId": connection_id,
+                            "chatId": chat_id,
                             "status": "Error", # Matches your React UI exactly
                             "summary": f"Could not process document. The file may be corrupted. Error: {str(e)}"
                         }

@@ -13,12 +13,15 @@ public class RabbitMqListenerService : BackgroundService
 {
     private readonly IConnectionFactory _connectionFactory;
     private readonly IHubContext<DocumentHub,IDocumentClient> _hubContext;
-      private readonly IServiceScopeFactory _serviceScopeFactory;
-    public RabbitMqListenerService(IConnectionFactory connectionFactory, IHubContext<DocumentHub, IDocumentClient> hubContext , IServiceScopeFactory serviceScopeFactory)
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ILogger<RabbitMqListenerService> _logger;
+
+    public RabbitMqListenerService(IConnectionFactory connectionFactory, IHubContext<DocumentHub, IDocumentClient> hubContext , IServiceScopeFactory serviceScopeFactory, ILogger<RabbitMqListenerService> logger)
     {
         _connectionFactory = connectionFactory;
         _hubContext = hubContext;   
         _serviceScopeFactory = serviceScopeFactory;
+        _logger = logger;
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -42,10 +45,22 @@ public class RabbitMqListenerService : BackgroundService
         Console.WriteLine($"Listener recieved from python : {message}");
 
         var dataObject = JsonSerializer.Deserialize<JsonElement>(message);
-        var fileIdStr = dataObject.GetProperty("fileId").ToString();
-        var connectionId = dataObject.GetProperty("connectionId").ToString();
-        var summary = dataObject.GetProperty("summary").ToString();
-      
+
+        _logger.LogInformation("Received message payload keys: {Keys}", string.Join(",", dataObject.EnumerateObject().Select(p => p.Name)));
+
+        if (!dataObject.TryGetProperty("fileId", out var fileIdProp) || 
+            !dataObject.TryGetProperty("chatId", out var chatIdProp) ||
+            !dataObject.TryGetProperty("summary", out var summaryProp))
+        {
+            _logger.LogWarning("Missing required properties in payload. Skipping message.");
+            await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
+            return;
+        }
+
+        var fileIdStr = fileIdProp.ToString();
+        var chatId = chatIdProp.ToString();
+        var summary = summaryProp.ToString();
+
        using (var scope = _serviceScopeFactory.CreateScope())
        {
         var dbContext = scope.ServiceProvider.GetRequiredService<PrismDBContext>();
@@ -58,8 +73,11 @@ public class RabbitMqListenerService : BackgroundService
                 await dbContext.SaveChangesAsync();
             }
        }
-      
-        await _hubContext.Clients.Client(connectionId).DocumentProcessed(dataObject);
+
+        // Broadcast to the ChatId-scoped group rather than a single ConnectionId,
+        // so the message still lands even if the client reconnected (new socket ID)
+        // since it was uploaded.
+        await _hubContext.Clients.Group($"chat-{chatId}").DocumentProcessed(dataObject);
 
         await channel.BasicAckAsync(ea.DeliveryTag,false,stoppingToken);
 
