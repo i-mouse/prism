@@ -287,6 +287,10 @@ namespace Prism.ApiService.Migrations
                             b1.Property<string>("GroundingStatus")
                                 .IsRequired();
 
+                            b1.Property<int?>("PageNumber");
+
+                            b1.Property<string>("SectionHeader");
+
                             b1.Property<string>("SourceSection")
                                 .IsRequired();
 
