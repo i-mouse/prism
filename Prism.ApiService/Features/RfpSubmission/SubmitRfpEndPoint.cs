@@ -71,6 +71,32 @@ public static class SubmitRfpEndpoint
             return Results.Ok(userChats);
         })
         .WithName("GetUserChats");
+
+        // Backfill endpoint: lets the client recover file summaries it may have
+        // missed via SignalR (closed tab, dropped connection, page never open).
+        app.MapGet("/api/chats/{chatId}/files", async (string chatId, PrismDBContext dbContext) =>
+        {
+            if (!Guid.TryParse(chatId, out var chatGuid))
+            {
+                return Results.BadRequest("Invalid chatId");
+            }
+
+            var files = await dbContext.FileRecords
+                .Where(f => f.ChatId == chatGuid)
+                .OrderBy(f => f.UploadedAt)
+                .Select(f => new
+                {
+                    FileId = f.FileId,
+                    FileName = f.FileName,
+                    Summary = f.Summary,
+                    UploadedAt = f.UploadedAt,
+                    Status = f.Summary != null ? "Completed" : "In progress"
+                })
+                .ToListAsync();
+
+            return Results.Ok(files);
+        })
+        .WithName("GetChatFiles");
     }
 
     public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, PrismDBContext prismDBContext)
