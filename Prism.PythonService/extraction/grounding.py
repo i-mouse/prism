@@ -32,25 +32,64 @@ LOGS_DIR = Path(__file__).parent.parent / "logs" / "grounding"
 RAPIDFUZZ_THRESHOLD = 88
 AUDIT_CONCURRENCY = 5
 
-AUDIT_PROMPT_TEMPLATE = """Claim: {claim_text}
-Evidence quote (from {span_source_section}): {span_source_text}
+AUDIT_CONTEXT_WINDOW_CHARS = 200
 
-Does the evidence quote directly support the claim as written?
-Answer PASS if the quote states or clearly implies the claim.
-Answer FAIL if the quote is unrelated, contradicts, or only weakly related.
+AUDIT_PROMPT_TEMPLATE = """Claim: {claim_text}
+
+Evidence quote (from {span_source_section}):
+"{span_source_text}"
+
+Surrounding paper context:
+"...{span_context}..."
+
+Does the evidence quote, understood in the surrounding context, directly support the claim as written?
+
+Answer PASS if the quote (with its surrounding context) states or clearly implies the claim. Table cell values are supportive if the surrounding context makes their meaning clear.
+
+Answer FAIL if the quote is unrelated to the claim, contradicts it, or the surrounding context does not clarify support.
 
 Reply with exactly one word: PASS or FAIL."""
+
+
+def _extract_context_window(
+    paper_text: str,
+    source_text: str,
+    window_chars: int = AUDIT_CONTEXT_WINDOW_CHARS,
+) -> str:
+    """Returns paper text surrounding the source_text quote.
+
+    Uses rapidfuzz.fuzz.partial_ratio_alignment to locate the best
+    match position of source_text within paper_text, then extracts
+    window_chars characters before and after that position.
+
+    If source_text cannot be located (should not happen since RapidFuzz
+    already validated it), returns just the source_text.
+    """
+    try:
+        alignment = fuzz.partial_ratio_alignment(source_text, paper_text)
+        if alignment.score < RAPIDFUZZ_THRESHOLD:
+            return source_text
+        start = max(0, alignment.dest_start - window_chars)
+        end = min(len(paper_text), alignment.dest_end + window_chars)
+        return paper_text[start:end]
+    except Exception:
+        return source_text
 
 
 async def _audit_span_with_llm(
     claim_text: str,
     span_source_text: str,
     span_source_section: str,
+    span_context: str,
     semaphore: asyncio.Semaphore,
     client: genai.Client,
     audit_model: str,
 ) -> GroundingStatus:
     """Asks Flash Lite whether the evidence quote supports the claim.
+
+    Receives the surrounding paper context (extracted via
+    _extract_context_window) so the LLM can interpret table cell values
+    and short quotes in their proper passage context.
 
     Defensive: any error (API failure, malformed response) is logged and
     treated as FAIL rather than propagated, since ambiguity here should
@@ -60,6 +99,7 @@ async def _audit_span_with_llm(
         claim_text=claim_text,
         span_source_section=span_source_section,
         span_source_text=span_source_text,
+        span_context=span_context,
     )
     async with semaphore:
         try:
@@ -101,10 +141,12 @@ async def _ground_span(
         )
         return final_span, False, False
 
+    span_context = _extract_context_window(paper_text, span.source_text)
     status = await _audit_span_with_llm(
         claim_text=claim_text,
         span_source_text=span.source_text,
         span_source_section=span.source_section,
+        span_context=span_context,
         semaphore=semaphore,
         client=client,
         audit_model=audit_model,
@@ -129,6 +171,7 @@ def _write_grounding_log(
     spans_passed_rapidfuzz: int,
     spans_passed_audit: int,
     spans_failed_audit: int,
+    audit_context_window_chars: int,
 ) -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     now = datetime.now(timezone.utc)
@@ -140,6 +183,7 @@ def _write_grounding_log(
         "chat_id": chat_id,
         "correlation_id": correlation_id,
         "prompt_version": get_prompt_version(),
+        "audit_context_window_chars": audit_context_window_chars,
         "total_claims": total_claims,
         "claims_passed": claims_passed,
         "claims_failed": claims_failed,
@@ -264,6 +308,7 @@ async def ground_extraction(
         spans_passed_rapidfuzz=spans_passed_rapidfuzz,
         spans_passed_audit=spans_passed_audit,
         spans_failed_audit=spans_failed_audit,
+        audit_context_window_chars=AUDIT_CONTEXT_WINDOW_CHARS,
     )
 
     return final_claims
