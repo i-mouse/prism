@@ -1,0 +1,19 @@
+[
+  {
+    "example_type": "positive_full",
+    "input_excerpt": "Abstract. Large language models (LLMs) have been increasingly used to interact with external environments (e.g., games, compilers, APIs) as goal-driven agents. However, it remains challenging for these language agents to quickly and efficiently learn from trial-and-error. In this work, we propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback. Specifically, Reflexion agents verbally reflect on task feedback signals, then maintain their own reflective text in an episodic memory buffer to induce better decision-making. Reflexion is flexible enough to incorporate various types of feedback signals across diverse tasks including sequential decision-making (AlfWorld), reasoning (HotPotQA), and programming (HumanEval), achieving significant improvements over strong baselines: 91.0% pass@1 accuracy on HumanEval and up to 22% absolute improvement on AlfWorld. Section 5 Limitations. Reflexion relies on the LLM's self-evaluation capabilities, which may propagate errors when the base model is weak. Additionally, our episodic memory is bounded and requires manual heuristics to decide what to retain. Section 6 Discussion. Our results suggest that verbal reinforcement is a viable alternative to gradient-based methods for improving language agents, with applications extending to any setting where models can articulate their errors.",
+    "output": {
+      "metadata": {
+        "research_objective": "Propose Reflexion, a framework that improves language agents through linguistic self-reflection stored in episodic memory, rather than through weight updates.",
+        "headline_conclusion": "Reflexion achieves 91.0% pass@1 accuracy on HumanEval and up to 22% absolute improvement on AlfWorld, demonstrating that verbal reinforcement is competitive with gradient-based improvement for language agents.",
+        "sample_characteristics": "Evaluated on three benchmarks: AlfWorld (sequential decision-making), HotPotQA (multi-hop reasoning), and HumanEval (164 coding problems).",
+        "baselines_compared": "Strong baselines including GPT-4 (for HumanEval), ReAct (for HotPotQA and AlfWorld), and imitation learning + reinforcement learning approaches (for AlfWorld).",
+        "ablation_studies": "None reported in the excerpt provided.",
+        "experimental_confounds": "None apparent from the excerpt.",
+        "author_acknowledged_limitations": "Reflexion relies on the LLM's self-evaluation capabilities, which may propagate errors when the base model is weak. Episodic memory is bounded and requires manual heuristics to decide what to retain.",
+        "extrapolated_implications": "Verbal reinforcement is a viable alternative to gradient-based methods for improving language agents, with applications extending to any setting where models can articulate their errors.",
+        "empirical_results": "Reflexion reaches 91.0% pass@1 on HumanEval versus 80% for GPT-4 (11-point improvement). On AlfWorld, achieves up to 22% absolute improvement over baselines. On HotPotQA, improves reasoning accuracy over ReAct."
+      }
+    }
+  }
+]

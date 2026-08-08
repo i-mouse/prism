@@ -10,6 +10,7 @@ Enum values match the C# HasConversion<string>() serialization
 in Prism.ApiService/Data/Schemas/ so Python writes cleanly to
 paper_claims and its jsonb-owned EvidenceSpans column.
 """
+from datetime import datetime
 from enum import Enum
 from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
@@ -127,3 +128,89 @@ class ClaimFinal(BaseModel):
     grounding_status: GroundingStatus
     missing: bool = False
     reason: Optional[str] = None
+
+
+# --- Metadata extraction (Prompt 1) — LLM layer ---
+
+class PaperMetadataLLM(BaseModel):
+    """Paper-level metadata filled by the LLM extractor from Prompt 1.
+
+    Empty strings are valid — the prompt instructs the LLM to return an
+    empty string when a field's information is not present in the paper,
+    rather than fabricate it.
+    """
+
+    research_objective: str = Field(
+        ...,
+        description="Primary research goal, one sentence, from the Abstract/Introduction"
+    )
+    headline_conclusion: str = Field(
+        ...,
+        description="The paper's main finding in one sentence"
+    )
+    sample_characteristics: str = Field(
+        ...,
+        description="Datasets, benchmarks, tasks, or subjects evaluated on, with sizes if reported"
+    )
+    baselines_compared: str = Field(
+        ...,
+        description="Alternative methods, models, or approaches the paper compared against"
+    )
+    ablation_studies: str = Field(
+        ...,
+        description="Component-removal experiments and what was learned; 'None reported' if none"
+    )
+    experimental_confounds: str = Field(
+        ...,
+        description="Conditions that might complicate interpretation of results; 'None apparent' if none"
+    )
+    author_acknowledged_limitations: str = Field(
+        ...,
+        description="Limitations the authors themselves call out"
+    )
+    extrapolated_implications: str = Field(
+        ...,
+        description="Broader claims the paper makes about what its results mean for the field"
+    )
+    empirical_results: str = Field(
+        ...,
+        description="High-level summary of the numerical/empirical results"
+    )
+
+
+class MetadataExtractionResponse(BaseModel):
+    """Top-level Gemini structured output response schema for Prompt 1.
+
+    Passed as response_schema to Gemini's structured output config when
+    extracting paper-level metadata.
+    """
+
+    metadata: PaperMetadataLLM = Field(
+        ...,
+        description="The 9 paper-level metadata fields extracted from the paper"
+    )
+
+
+# --- Metadata extraction (Prompt 1) — Final layer (pipeline-finalized) ---
+
+class PaperMetadataFinal(BaseModel):
+    """PaperMetadataLLM with pipeline-appended provenance fields.
+
+    This is the shape written to document_extractors.Fields as jsonb.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+    research_objective: str
+    headline_conclusion: str
+    sample_characteristics: str
+    baselines_compared: str
+    ablation_studies: str
+    experimental_confounds: str
+    author_acknowledged_limitations: str
+    extrapolated_implications: str
+    empirical_results: str
+
+    # Pipeline-set fields
+    prompt_version: str
+    model_used: str
+    extracted_at: datetime

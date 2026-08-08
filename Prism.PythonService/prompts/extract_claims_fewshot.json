@@ -3,21 +3,25 @@
     "example_type": "positive_supported",
     "input_excerpt": "Section 4.3 HumanEval Results. Reflexion achieves 91.0% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4, which achieves 80%. Table 1 reports pass@1 across benchmarks. On HumanEval, Reflexion reaches 91.0 compared to GPT-4's 80.1. This 11-point improvement is consistent across seeds.",
     "output": {
-      "claim_text_verbatim": "Reflexion achieves 91.0% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4, which achieves 80%.",
-      "claim_summary": "Reflexion reaches 91% on HumanEval, beating GPT-4",
-      "label": "supported",
-      "evidence_spans": [
+      "claims": [
         {
-          "source_text": "On HumanEval, Reflexion reaches 91.0 compared to GPT-4's 80.1.",
-          "source_section": "Table 1",
-          "section_header": "Table 1: pass@1 accuracy across benchmarks",
-          "page_number": null
-        },
-        {
-          "source_text": "This 11-point improvement is consistent across seeds.",
-          "source_section": "Section 4.3",
-          "section_header": "4.3 HumanEval Results",
-          "page_number": null
+          "claim_text_verbatim": "Reflexion achieves 91.0% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4, which achieves 80%.",
+          "claim_summary": "Reflexion reaches 91% on HumanEval, beating GPT-4",
+          "label": "supported",
+          "evidence_spans": [
+            {
+              "source_text": "On HumanEval, Reflexion reaches 91.0 compared to GPT-4's 80.1.",
+              "source_section": "Table 1",
+              "section_header": "Table 1: pass@1 accuracy across benchmarks",
+              "page_number": null
+            },
+            {
+              "source_text": "This 11-point improvement is consistent across seeds.",
+              "source_section": "Section 4.3",
+              "section_header": "4.3 HumanEval Results",
+              "page_number": null
+            }
+          ]
         }
       ]
     }
@@ -26,21 +30,25 @@
     "example_type": "positive_partially_supported",
     "input_excerpt": "Section 5.1 AlfWorld Generalization. Reflexion demonstrates strong out-of-distribution generalization on AlfWorld tasks. Our method achieves 25% higher success rates than baselines on held-out task categories. Table 3 shows the in-distribution results but does not include out-of-distribution numbers.",
     "output": {
-      "claim_text_verbatim": "Our method achieves 25% higher success rates than baselines on held-out task categories.",
-      "claim_summary": "Reflexion improves 25% over baselines on out-of-distribution AlfWorld",
-      "label": "partially_supported",
-      "evidence_spans": [
+      "claims": [
         {
-          "source_text": "Reflexion demonstrates strong out-of-distribution generalization on AlfWorld tasks.",
-          "source_section": "Section 5.1",
-          "section_header": "5.1 AlfWorld Generalization",
-          "page_number": null
-        },
-        {
-          "source_text": "Table 3 shows the in-distribution results but does not include out-of-distribution numbers.",
-          "source_section": "Table 3",
-          "section_header": "Table 3: AlfWorld task success rates",
-          "page_number": null
+          "claim_text_verbatim": "Our method achieves 25% higher success rates than baselines on held-out task categories.",
+          "claim_summary": "Reflexion improves 25% over baselines on out-of-distribution AlfWorld",
+          "label": "partially_supported",
+          "evidence_spans": [
+            {
+              "source_text": "Reflexion demonstrates strong out-of-distribution generalization on AlfWorld tasks.",
+              "source_section": "Section 5.1",
+              "section_header": "5.1 AlfWorld Generalization",
+              "page_number": null
+            },
+            {
+              "source_text": "Table 3 shows the in-distribution results but does not include out-of-distribution numbers.",
+              "source_section": "Table 3",
+              "section_header": "Table 3: AlfWorld task success rates",
+              "page_number": null
+            }
+          ]
         }
       ]
     }
@@ -48,8 +56,9 @@
   {
     "example_type": "negative_do_not_extract",
     "input_excerpt": "Section 1 Introduction. Language agents are an exciting frontier for AI research, and understanding how to make them reason more effectively is one of the most important challenges facing our field today. Reflexion offers a promising new paradigm for building agents that can learn from their mistakes and improve over time.",
+    "note": "This excerpt contains only motivational and interpretive statements, not empirical claims. Correct behavior is to extract nothing from this excerpt. In actual extraction, do not produce any entry for this content.",
     "output": {
-      "note": "This excerpt contains only motivational and interpretive statements, not empirical claims. Correct behavior is to extract nothing from this excerpt. In actual extraction, do not produce any entry for this content."
+      "claims": []
     }
   }
 ]

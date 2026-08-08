@@ -48,3 +48,6 @@ Prism.Web/.vite/
 Prism.Web/.vite/
 
 Prism.PythonService/logs/
+
+# Local smoke test scripts (may contain hardcoded API keys)
+Prism.PythonService/smoke_test_extraction.py
