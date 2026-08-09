@@ -35,6 +35,17 @@ public class PrismDBContext : DbContext
         modelBuilder.Entity<Domain>(entity =>
         {
             entity.HasIndex(d => d.Name).IsUnique();
+            entity.HasData(new Domain
+            {
+                // Fixed, greppable Guid — the Python extraction pipeline hardcodes this
+                // same value to satisfy document_extractors.domain_id (NOT NULL FK).
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                Name = "research-paper",
+                PromptSchema = "{}",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 8, 9, 0, 0, 0, DateTimeKind.Utc),
+                UpdatedAt = new DateTime(2026, 8, 9, 0, 0, 0, DateTimeKind.Utc),
+            });
         });
 
         modelBuilder.Entity<DocumentExtractor>(entity =>

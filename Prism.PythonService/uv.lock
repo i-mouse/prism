@@ -1504,7 +1504,7 @@ dependencies = [
     { name = "minio" },
     { name = "openai" },
     { name = "pika" },
-    { name = "psycopg" },
+    { name = "psycopg", extra = ["binary", "pool"] },
     { name = "psycopg-binary" },
     { name = "psycopg-pool" },
     { name = "pymupdf" },
@@ -1531,7 +1531,7 @@ requires-dist = [
     { name = "minio", specifier = ">=7.2.20" },
     { name = "openai", specifier = ">=2.15.0" },
     { name = "pika", specifier = ">=1.3.2" },
-    { name = "psycopg", specifier = ">=3.3.3" },
+    { name = "psycopg", extras = ["binary", "pool"], specifier = ">=3.3.3" },
     { name = "psycopg-binary", specifier = ">=3.3.3" },
     { name = "psycopg-pool", specifier = ">=3.3.0" },
     { name = "pymupdf", specifier = ">=1.26.7" },
@@ -1646,6 +1646,14 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d3/b6/379d0a960f8f435ec78720462fd94c4863e7a31237cf81bf76d0af5883bf/psycopg-3.3.3.tar.gz", hash = "sha256:5e9a47458b3c1583326513b2556a2a9473a1001a56c9efe9e587245b43148dd9", size = 165624, upload-time = "2026-02-18T16:52:16.546Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/5b/181e2e3becb7672b502f0ed7f16ed7352aca7c109cfb94cf3878a9186db9/psycopg-3.3.3-py3-none-any.whl", hash = "sha256:f96525a72bcfade6584ab17e89de415ff360748c766f0106959144dcbb38c698", size = 212768, upload-time = "2026-02-18T16:46:27.365Z" },
+]
+
+[package.optional-dependencies]
+binary = [
+    { name = "psycopg-binary", marker = "implementation_name != 'pypy'" },
+]
+pool = [
+    { name = "psycopg-pool" },
 ]
 
 [[package]]
