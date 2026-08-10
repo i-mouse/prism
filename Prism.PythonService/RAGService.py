@@ -1,4 +1,5 @@
 from qdrant_client import QdrantClient ,models
+from qdrant_client.http.models import Filter, FieldCondition, MatchValue
 from fastembed import TextEmbedding
 from dotenv import load_dotenv
 import os
@@ -31,10 +32,21 @@ class RAGService:
         else:
             print(f"Collection already exists")
 
-    def add_document_to_qdrant(self,filename:str,doctext:str):
+    def add_document_to_qdrant(self, filename: str, doctext: str, file_id: str):
+
+        # Delete any existing vectors for this file before inserting new ones.
+        # Combined with deterministic uuid5 chunk IDs, this makes the operation
+        # fully idempotent: re-processing the same file_id is safe.
+        self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=Filter(
+                must=[FieldCondition(key="file_id", match=MatchValue(value=file_id))]
+            )
+        )
+        print(f"[{filename}] Deleted existing Qdrant points for file_id={file_id}")
 
         text_splitter = RecursiveCharacterTextSplitter(
-            separators=["\n\n", "\n", "(?<=\. )", " ", ""],
+            separators=["\n\n", "\n", r"(?<=\. )", " ", ""],
             chunk_size = 1200,
             chunk_overlap=200,
             length_function=len
@@ -47,17 +59,18 @@ class RAGService:
         points = []
         for i, (chunk, vector) in enumerate(zip(chunks, embeddings)):
             points.append(models.PointStruct(
-               id=str(uuid.uuid4()), 
-               vector=vector,       
-               payload={            
+               id=str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{file_id}:{i}")),
+               vector=vector,
+               payload={
                    "filename": filename,
                    "text": chunk,
-                   "chunk_index" : i
+                   "chunk_index": i,
+                   "file_id": file_id,   # enables filtered delete on retry
                }
             ))
 
         self.client.upsert(collection_name=self.collection_name,points=points)
-        print(f"Saved vector into qdrant")   
+        print(f"Saved vector into qdrant")
 
     def search_db(self, user_query, limit:int = 3):
         query_vector = list(self.embedding_model.embed(user_query))[0]
