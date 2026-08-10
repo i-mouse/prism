@@ -1,92 +1,186 @@
-# 🔬 Prism — Research Paper Claim-Auditing Agent
+# Prism
 
-![Architecture: Microservices](https://img.shields.io/badge/Architecture-Microservices-success)
-![Orchestration: .NET 10 Aspire](https://img.shields.io/badge/Orchestration-.NET_10_Aspire-purple)
-![AI: LangGraph CRAG](https://img.shields.io/badge/AI-Corrective_RAG-blue)
-![Status: Active Development](https://img.shields.io/badge/Status-Active_Development-yellow)
+**Research-paper claim-auditing agent.**
 
-Prism analyzes research papers and audits whether their headline claims are supported by the paper's own evidence — **without hallucinating**. It is built on a **Corrective RAG (CRAG)** pipeline with an explicit grounding checker: if an assessment cannot be verified against the paper's own text, the system says *"the paper provides no evidence for this"* rather than fabricating support.
-
-The whole distributed system runs locally via **.NET 10 Aspire**, which handles container orchestration, secret injection, and unified telemetry.
-
-> **Honesty note for reviewers:** this README describes what is *actually implemented today*. Aspirational components are clearly separated under **Roadmap**. For a full current-vs-target breakdown including known gaps, see [`docs/AI_HANDOFF.md`](docs/AI_HANDOFF.md) §9.
+Prism extracts empirical claims from research papers and audits whether each claim is actually supported by evidence in that same paper. It is built for reviewers and researchers deciding whether to trust a paper's headline findings before citing them. Unlike Elicit, Consensus, and Scite — which help you *find and summarize* papers — Prism audits *one paper's claims against its own evidence*. That is the reviewer's job, not the searcher's. The measurable outcome is a correct-refusal rate on the Claim-Support Matrix across grounding-negative cases, reproducible from a committed eval harness.
 
 ---
 
-## ✨ What's Built (Current State)
+## What it produces
 
-* **🛡️ Grounding Checker (the core differentiator).** A dedicated LangGraph node audits the agent's answer against retrieved source chunks. If a claim isn't supported, the UI shows a caveat banner instead of presenting it as confirmed. This is the system's primary proof-of-value: **correct refusal over confident hallucination.**
-* **⚡ Event-Driven Ingestion.** Uploads are streamed to **MinIO**; **RabbitMQ** triggers background extraction and embedding; the React UI gets real-time progress via **SignalR**.
-* **🎯 Intent Classification + HyDE.** A fast LLM classifies user intent before any costly search, then rewrites the question into dense keywords to improve vector retrieval.
-* **🧠 Persistent Conversation Memory.** State and tool-call history are persisted via LangGraph's PostgreSQL checkpointer (keyed by chat/thread id).
-* **⚙️ Fault-Tolerant Workers.** RabbitMQ Dead Letter Queue handling. Terminal errors (e.g. corrupted PDFs) are isolated and surfaced to the UI; transient errors (e.g. network blips) are requeued with a delay.
-* **🎙️ Audio-to-Text Input.** Voice questions are transcribed via Gemini before entering the pipeline. *(Basic transcription only — no speaker diarization or PII redaction.)*
-* **📊 Golden Evaluation Set.** Two regression evals covering chat (`docs/qa_eval.json`) and matrix (`docs/matrix_eval.json`), with a combined 17 grounding-negative refusal cases.
+A **Paper Intelligence Brief** with four sections:
 
----
-
-## 🏗️ Current Stack
-
-| Layer | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Orchestrator (local)** | `.NET 10 Aspire` | Manages containers, networking, secret injection |
-| **Frontend** | `React`, `TypeScript`, `Vite` | Real-time UI, Markdown rendering, source citations |
-| **API Gateway** | `C# .NET 10`, `SignalR` | Routing, WebSocket push, EF Core persistence |
-| **AI Service** | `Python 3.13`, `FastAPI`, `uv` | LangGraph CRAG state graph |
-| **Worker** | `Python 3.13` async | Document ingestion + embedding consumer |
-| **LLM** | `Google Gemini` | Tool-calling (Flash) + classification (Flash-Lite) |
-| **Relational / Memory** | `PostgreSQL` | App data + LangGraph checkpoints |
-| **Vector Store** | `Qdrant` | Cosine search, `bge-small-en-v1.5` (384-dim) |
-| **Blob Storage** | `MinIO` | S3-compatible document storage |
-| **Message Broker** | `RabbitMQ` | Decouples upload from embedding; custom exchanges + DLQ |
+- **Verdict** — Supported / Not-Supported / Partially-Supported with 3 reasons
+- **Overstated Claims** — where the paper says more than its data shows
+- **Questions to Scrutinize** — what a careful reviewer should probe
+- **Claim-Support Matrix** — every empirical claim linked to (or explicitly failing to link to) the evidence
 
 ---
 
-## 🚀 Getting Started
+## Architecture
 
-### Prerequisites
-* **Docker Desktop** (for Postgres, Qdrant, MinIO, RabbitMQ)
-* **.NET 10.0 SDK**
-* **Python 3.13** (with the `uv` package manager)
-* **Node.js** (v20+)
+Aspire orchestrates the local stack. A React 19 + Vite frontend uploads papers via a C# .NET 10 API Gateway. A Python 3.13 worker consumes the RabbitMQ queue and runs the ingestion pipeline: parse, chunk+embed to Qdrant, extract metadata and claims with Gemini, ground each claim against the paper text, and persist to PostgreSQL. SignalR pushes completion events back to the UI.
 
-### 🔐 Secrets (via Aspire user-secrets, not `.env`)
-From the `Prism.AppHost` directory:
-
-```bash
-cd Prism.AppHost
-
-dotnet user-secrets set "GoogleApiKey" "your-gemini-api-key"
-dotnet user-secrets set "Parameters:rabbitmquser" "admin"
-dotnet user-secrets set "Parameters:rabbitmqpass" "your-secure-password"
-dotnet user-secrets set "Parameters:MinioUser" "admin"
-dotnet user-secrets set "Parameters:MinioSecret" "your-secure-password"
-dotnet user-secrets set "Parameters:QdrantApiKey" "your-secure-qdrant-key"
-```
-
-### 🥇 Optional: LangSmith Tracing
-Tracing is *supported but not enforced by code*. To enable it, add a `.env` in `Prism.PythonService`:
-
-```env
-LANGSMITH_TRACING=true
-LANGSMITH_ENDPOINT=https://api.smith.langchain.com
-LANGSMITH_API_KEY=your_langsmith_key
-LANGSMITH_PROJECT=Prism
+```mermaid
+flowchart LR
+    UI[React UI] -->|Upload PDF| API[C# API Gateway]
+    API -->|Enqueue| MQ1[(RabbitMQ<br/>main_prism_queue)]
+    MQ1 -->|Consume| Worker[Python Worker]
+    Worker -->|Download| MinIO[(MinIO)]
+    Worker -->|Chunk + Embed| Qdrant[(Qdrant)]
+    Worker -->|extract_metadata<br/>extract_claims<br/>ground_extraction| Gemini[Gemini API]
+    Worker -->|write_extraction_result| PG[(PostgreSQL)]
+    Worker -->|Publish| MQ2[(RabbitMQ<br/>document_processed_queue)]
+    MQ2 -->|Consume| API
+    API -->|SignalR| UI
 ```
 
 ---
 
-## 🔮 Roadmap (Not Yet Built)
+## Tech Stack
 
-These are the target enterprise/Azure components. **None of these are implemented today** — they are listed here so the README never overstates the codebase.
-
-- [ ] **Paper Intelligence Brief** — verdict + overstated claims + questions to scrutinize, derived from the uploaded paper.
-- [ ] **Claim-Support Matrix** — every paper claim rendered as a cited supported/unsupported checklist.
-- [x] **Paper-domain golden eval** — 20+ regression cases across factual, table extraction, reasoning, and grounding-negative categories, against 3 real research papers.
-- [ ] **Azure migration** — Azure OpenAI (LLM), Azure AI Search (vector + hybrid), Document Intelligence (layout-aware chunking), Blob Storage, Service Bus, Key Vault, Entra ID, Container Apps deploy.
-- [ ] **Structure-aware chunking** — replace fixed-size chunking; preserve tables (critical for results-table extraction).
-- [ ] **Redis response caching** — container is provisioned by Aspire, but no caching logic exists yet.
-- [ ] **Multi-tenancy + RBAC** — `tenant_id` scaffold then Entra ID enforcement.
-- [ ] **Test suite + automated eval harness** in CI.
+| Category | Technology | Version/Notes |
+|----------|-----------|---------------|
+| Backend runtime | .NET | 10 (via `global.json`) |
+| Backend framework | ASP.NET Core, Aspire | Aspire 13.4.6 |
+| Data access (C#) | EF Core | 10 |
+| Frontend | React + Vite + TypeScript | React 19 |
+| Real-time | SignalR | — |
+| AI worker runtime | Python | 3.13 |
+| AI worker packaging | uv | — |
+| Agent framework | LangGraph + FastAPI | — |
+| LLM client | google-genai | — |
+| LLM models | Gemini 3.6 Flash (extraction), Gemini 3.1 Flash Lite (audit) | Env-driven |
+| Vector store | Qdrant | 1.18 |
+| Relational DB | PostgreSQL | 18 |
+| Async queue | RabbitMQ | 4.3-management |
+| Object storage | MinIO | 2025-09-07 release |
+| Cache (provisioned) | Redis | 8 |
+| DB driver (Python) | psycopg3 async | binary + pool |
+| Observability | OpenTelemetry via Aspire | 1.16 |
 
 ---
+
+## Prerequisites
+
+- [ ] .NET 10 SDK (pinned via `global.json`)
+- [ ] Docker Desktop (for Postgres, Qdrant, RabbitMQ, MinIO, Redis containers)
+- [ ] `uv` (Python package manager)
+- [ ] Node.js 20+ (for React frontend)
+- [ ] Google Gemini API key (from https://aistudio.google.com/apikey)
+
+---
+
+## Quick Start
+
+1. **Clone and set up secrets**
+   ```powershell
+   git clone https://github.com/i-mouse/prism.git
+   cd prism
+   .\setup.ps1
+   ```
+
+2. **Configure your Gemini API key** — stored via .NET user secrets:
+   ```powershell
+   cd Prism.AppHost
+   dotnet user-secrets set "GoogleApiKey" "<your-key>"
+   cd ..
+   ```
+   `setup.ps1` will prompt for all other secrets (RabbitMQ, MinIO, Qdrant) interactively.
+
+3. **Start the local dev environment**
+   ```powershell
+   .\dev.ps1
+   ```
+
+4. **Open the Aspire dashboard** at the URL printed in the terminal. Wait for all resources to show "Running".
+
+5. **Open the Prism UI** at http://localhost:7000 and upload a research paper PDF.
+
+---
+
+## Local Service URLs
+
+| Service | URL |
+|---------|-----|
+| Aspire Dashboard | (printed at startup) |
+| React UI | http://localhost:7000 |
+| C# API Gateway | http://localhost:5269 |
+| Python API | (Aspire-assigned) |
+| pgAdmin | (Aspire-assigned) |
+| MinIO Console | (Aspire-assigned) |
+| Qdrant Dashboard | (Aspire-assigned) |
+| RabbitMQ Management | (Aspire-assigned) |
+
+---
+
+## Repository Structure
+
+```
+prism/
+├── Prism.AppHost/                  # Aspire orchestration
+├── Prism.ApiService/               # C# API Gateway + SignalR hub
+│   ├── Data/Schemas/               # EF Core entities
+│   ├── Migrations/                 # EF Core migrations
+│   ├── Services/                   # RabbitMQ setup + listener
+│   └── Hubs/                       # SignalR DocumentHub
+├── Prism.PythonService/            # Python worker + API
+│   ├── extraction/                 # Prompts 1+2, grounding, DB writer
+│   ├── prompts/                    # System prompts + few-shot JSONs
+│   ├── main.py                     # RabbitMQ consumer (ingestion pipeline)
+│   ├── api.py                      # FastAPI for chat endpoints
+│   ├── agent_service.py            # LangGraph agent
+│   ├── RAGService.py               # Qdrant embed + upsert
+│   └── memory_db.py                # Shared psycopg3 pool
+├── Prism.Web/                      # React 19 + Vite frontend
+├── Prism.ServiceDefaults/          # Aspire service defaults
+├── docs/
+│   ├── decisions.md                # Chronological technical decisions
+│   ├── diagrams/                   # current.png + target.png
+│   ├── evals/                      # matrix_eval.json + golden_eval.json
+│   └── research_papers/            # Sample PDFs for testing
+|   └── PRODUCT_BRIEF.md                # Product vision + build order
+
+├── README.md                       # This file
+├── dev.ps1                         # Start local dev
+├── setup.ps1                       # One-time setup
+├── global.json                     # .NET SDK pin
+└── Prism.sln
+```
+
+---
+
+## Documentation
+
+- **[Product Brief](docs/PRODUCT_BRIEF.md)** — vision, target user, wedge, build order
+- **[Decisions Log](docs/decisions.md)** — chronological technical decisions
+- **[Architecture diagrams](docs/diagrams/)** — current + target state
+- **[Evaluation datasets](docs/evals/)** — golden test sets for correct-refusal measurement
+
+---
+
+## Roadmap
+
+Not yet built:
+
+- Eval harness runner (loads `matrix_eval.json`, computes correct-refusal rate)
+- Paper Intelligence Brief UI (Verdict card, Overstated Claims, Matrix table)
+- C# API endpoints exposing `paper_claims` to the UI
+- Azure deployment (Container Apps, Postgres Flexible Server, AI Search)
+- Foundry Pattern C migration for the agent
+- Document Intelligence for structure-aware chunking
+- Auth / multi-tenancy
+- MCP wrapper
+- Unit + integration tests
+
+---
+
+## Status
+
+Portfolio project demonstrating Senior Azure AI Engineer capabilities: multi-service orchestration, async ingestion pipelines, LLM structured output, deterministic grounding, and evaluation-driven design. Not open to external contributions.
+
+---
+
+## License
+
+See [LICENSE](LICENSE).
