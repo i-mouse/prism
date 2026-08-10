@@ -139,7 +139,8 @@ prism/
 │   ├── diagrams/                   # current.png + target.png
 │   ├── evals/                      # matrix_eval.json + golden_eval.json
 │   └── research_papers/            # Sample PDFs for testing
-├── PRODUCT_BRIEF.md                # Product vision + build order
+|   └── PRODUCT_BRIEF.md                # Product vision + build order
+
 ├── README.md                       # This file
 ├── dev.ps1                         # Start local dev
 ├── setup.ps1                       # One-time setup
