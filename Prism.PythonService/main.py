@@ -6,6 +6,8 @@ if sys.platform == "win32":
 
 import os, json, fitz, traceback, time
 import aio_pika
+import psycopg
+from datetime import datetime, timezone
 from minio import Minio
 from ai_service import AIService
 from RAGService import RAGService
@@ -13,6 +15,29 @@ from memory_db import create_db_connection_pool
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from agent_service import workflow
 from langchain_core.messages import AIMessage
+from extraction.engine import extract_metadata, extract_claims
+from extraction.grounding import ground_extraction
+from extraction.writer import write_extraction_result, RESEARCH_PAPER_DOMAIN_ID
+from extraction.schemas import PaperMetadataFinal
+from extraction.prompt_version import get_prompt_version
+
+MAX_ATTEMPTS = 3
+
+def _get_attempt_count(message) -> int:
+    """Returns attempt count from message headers, defaulting to 1.
+
+    RabbitMQ 3.10+ auto-populates x-delivery-count (0-indexed) on requeues
+    of quorum/classic queues. Falls back to our own x-attempt header which
+    we set explicitly when republishing so the counter is portable across
+    RabbitMQ versions and queue types.
+    """
+    headers = message.headers or {}
+    # RabbitMQ 3.10+ auto-populates x-delivery-count on requeues (0-indexed)
+    delivery_count = headers.get("x-delivery-count")
+    if delivery_count is not None:
+        return int(delivery_count) + 1  # 0-indexed → 1-indexed
+    # Fallback: our own portable counter
+    return int(headers.get("x-attempt", 1))
 
 def parse_aspire_minio(conn_str):
     parts = {k: v for k, v in (item.split('=') for item in conn_str.split(';'))}
@@ -99,7 +124,9 @@ async def main():
                         file_id      = actual_message['fileId']
                         chat_id      = actual_message['chatId']
                         connection_id = actual_message['connectionId']
-                        print(f'\n[x] Received: {file_name}')
+
+                        attempt = _get_attempt_count(message)
+                        print(f'\n[x] Received {file_name} attempt={attempt}/{MAX_ATTEMPTS}')
 
                         # 1. Download file asynchronously using threads
                         local_path = os.path.join("downloads", file_name)
@@ -118,14 +145,59 @@ async def main():
                         text_summary = await service.analyize_text(text=final_text)
 
                         # 4. Save to Qdrant (wrap in thread since Qdrant native client is sync)
-                        await asyncio.to_thread(rag_service.add_document_to_qdrant, file_name, final_text)
+                        await asyncio.to_thread(rag_service.add_document_to_qdrant, file_name, final_text, file_id)
+
+                        # ============================================
+                        # NEW: Extraction pipeline (metadata + claims + grounding + DB write)
+                        # ============================================
+                        correlation_id = f"ingest-{file_id}"
+
+                        print(f'[extraction] chat_id={chat_id} starting metadata extraction')
+                        metadata_response = await extract_metadata(
+                            paper_text=final_text,
+                            chat_id=chat_id,
+                            correlation_id=correlation_id,
+                        )
+
+                        metadata_final = PaperMetadataFinal(
+                            **metadata_response.metadata.model_dump(),
+                            prompt_version=get_prompt_version(),
+                            model_used=os.getenv("LLM_EXTRACTION_MODEL", "unknown"),
+                            extracted_at=datetime.now(timezone.utc),
+                        )
+
+                        print(f'[extraction] chat_id={chat_id} starting claims extraction')
+                        extraction = await extract_claims(
+                            paper_text=final_text,
+                            chat_id=chat_id,
+                            correlation_id=correlation_id,
+                        )
+
+                        print(f'[extraction] chat_id={chat_id} starting grounding')
+                        grounded = await ground_extraction(
+                            extraction=extraction,
+                            paper_text=final_text,
+                            chat_id=chat_id,
+                            correlation_id=correlation_id,
+                        )
+
+                        print(f'[extraction] chat_id={chat_id} writing to DB')
+                        doc_extractor_id = await write_extraction_result(
+                            file_id=file_id,
+                            metadata=metadata_final,
+                            claims=grounded,
+                            chat_id=chat_id,
+                            correlation_id=correlation_id,
+                        )
+
+                        print(f'[extraction] chat_id={chat_id} document_extractor_id={doc_extractor_id} claims={len(grounded)}')
 
                         # 5. Inject memory using our globally compiled agent!
                         config = {"configurable": {"thread_id": chat_id}}
                         msg = AIMessage(
                             content=f"**Processing completed**\n\n**Summary:**\n\n{text_summary}\n\nYou can now ask questions about this document."
                         )
-                        
+
                         await agent_app.aupdate_state(
                             config=config,
                             values={"messages": [msg]},
@@ -173,17 +245,68 @@ async def main():
                         print(f'[☠️] Message {file_name} sent to Dead Letter Queue.')
 
                     # ==========================================
-                    # 2. TRANSIENT ERROR (LLM Timeout, Network Blip)
+                    # 2. TERMINAL ERROR (Postgres FK violation — bad file_id upstream)
+                    # ==========================================
+                    except psycopg.errors.ForeignKeyViolation as e:
+                        print(f'[\u2620\ufe0f] FK violation for {file_name} \u2014 file_id may be invalid: {e}')
+                        traceback.print_exc()
+
+                        error_message = {
+                            "fileId": file_id,
+                            "fileName": file_name,
+                            "connectionId": connection_id,
+                            "chatId": chat_id,
+                            "status": "Error",
+                            "summary": f"Database FK violation. Extraction cannot proceed: {str(e)}"
+                        }
+
+                        await channel.default_exchange.publish(
+                            aio_pika.Message(body=json.dumps(error_message).encode()),
+                            routing_key='document_processed_queue',
+                        )
+                        await message.reject(requeue=False)  # → DLQ
+                        print(f'[\u2620\ufe0f] Message {file_name} sent to Dead Letter Queue (FK violation).')
+
+                    # ==========================================
+                    # 3. TRANSIENT ERROR (LLM Timeout, Network Blip, Extraction JSON)
+                    #    Retry up to MAX_ATTEMPTS, then DLQ.
                     # ==========================================
                     except Exception as e:
-                        print(f'[⚠️] Network/AI issue for {file_name}. Retrying in 5 seconds... Error: {e}')
                         traceback.print_exc()
-                        
-                        await asyncio.sleep(5)
-                        
-                        # Put it BACK in the main queue! 
-                        # Do NOT send an error to the UI. Let it keep spinning.
-                        await message.reject(requeue=True)
+
+                        if attempt >= MAX_ATTEMPTS:
+                            print(f'[\u2620\ufe0f] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ')
+                            error_message = {
+                                "fileId": file_id,
+                                "fileName": file_name,
+                                "connectionId": connection_id,
+                                "chatId": chat_id,
+                                "status": "Error",
+                                "summary": f"Processing failed after {MAX_ATTEMPTS} attempts: {str(e)}"
+                            }
+                            await channel.default_exchange.publish(
+                                aio_pika.Message(body=json.dumps(error_message).encode()),
+                                routing_key='document_processed_queue',
+                            )
+                            await message.reject(requeue=False)  # → DLQ
+                        else:
+                            print(f'[\u26a0\ufe0f] {file_name} attempt {attempt} failed, retrying in 5s: {e}')
+                            await asyncio.sleep(5)
+                            # Republish with incremented x-attempt counter.
+                            # message.reject(requeue=True) cannot mutate headers, so we
+                            # republish-and-ack — the standard pattern for bounded retries
+                            # in aio-pika / RabbitMQ.
+                            new_headers = dict(message.headers or {})
+                            new_headers["x-attempt"] = attempt + 1
+                            await channel.default_exchange.publish(
+                                aio_pika.Message(
+                                    body=message.body,
+                                    headers=new_headers,
+                                    content_type=message.content_type,
+                                ),
+                                routing_key='main_prism_queue',
+                            )
+                            await message.ack()  # ack current delivery; new message is already queued
 
 if __name__ == '__main__':
     try:
