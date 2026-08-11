@@ -168,3 +168,17 @@ When adding a new decision: copy the template below, put it at the top, do not m
 - **LangGraph checkpointer race on startup** — `DuplicateObject` / `UniqueViolation` on the `CREATE INDEX` in checkpointer setup; cosmetic, does not block functionality.
 - **Rate limits** — Gemini free tier: Flash 20 RPD, Flash Lite 500 RPD. Extraction consumes 2 Flash + ~14 Flash Lite per paper, capping throughput at ~10 papers/day.
 - **Prompt-in-file coupling** — prompt hash changes if any byte of the `.md` or `.json` file changes, including whitespace; consequence of the auto-hash design (accepted trade-off).
+
+## Baseline correct-refusal rate: expected low — 2026-08-11
+Context: Antigravity data-shape audit revealed that the current
+extraction prompt produces "supported" as the label for every claim
+across all production runs. No "partially_supported" or "not_supported"
+labels observed in real data.
+Implication: initial correct-refusal rate will be low. This is expected
+and is what the harness is built to surface. Prompt iteration to drive
+the number up happens AFTER the harness is measuring it.
+
+- **Drop `document_extractors.latest_run_id`** — column is self-referential
+  and its name is misleading. Migration to drop it deferred until we touch
+  that schema for another reason. Documented so a future reader doesn't
+  trust the column name.
