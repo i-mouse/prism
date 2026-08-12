@@ -16,6 +16,20 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
+## Eval harness design — baked-in fixes for six known failure modes — 2026-08-11
+**Context:** Extraction engine is done. Scorer is done (PR merged). Building the rest of the eval harness: DB reader, matcher, CLI, fixture dumper, CI workflow. A hostile review of the harness design surfaced eight structural weaknesses. Six are being fixed inside the harness build. Two are deferred with honest labels.  
+**Decision:** Six fixes land inside the harness build itself:  
+1. Positive-hit floor gating (kills the "engine emits nothing, scores 100%" gaming path). Refusal rate only counts if positive hits meet a floor (e.g. 15/20).  
+2. Split PASS reporting into `refused_by_label` vs `refused_by_omission`. Today the engine has never emitted a refusal label, so every "pass" is omission — the split makes this visible.  
+3. Matcher `--repeat N` flag (3-5) reports spread across runs. Detects LLM noise in the judge.  
+4. Matcher gold set (`docs/evals/matcher_gold.json`, ~15 hand-authored known-correct pairs) as a unit-level eval for the LLM judge itself. Instrument calibration before the instrument is trusted.  
+5. Fixture header records `prompt_hash` + `model_name` + `generated_at`. CI verifies the current prompt hash matches the fixture's prompt hash. Mismatch = red X, blocks merge, requires fixture regen.  
+6. `README.md` + `docs/PRODUCT_BRIEF.md` scoped to "AI-research preprints," not "research papers." Honest genre scope.  
+**Alternatives:** Ship the harness without these fixes and address in v2. Rejected — problems 1 and 2 are metric-design bugs that would let a broken engine score high; fixing them post-hoc undermines the eval's credibility.  
+**Consequences:** Slightly more code in the scorer, matcher, and CI workflow than the original plan. All still shippable in the same 5-PR sequence (DB reader → matcher+scorer-v2+gold-set → CLI+repeat → fixture dumper → CI workflow). Fixture regeneration is now enforced by hash check — no silent fixture drift possible. The reported number now includes context (positive hits, label vs omission split) that makes it interpretable rather than a bare percentage.  
+
+---
+
 ## Tool routing convention — 2026-08-10
 **Context:** Three different tools (Claude chat, Claude Code, Antigravity) are used during development, and their roles were blurring.  
 **Decision:** Claude chat for design discussion and pushback; Claude Code / Sonnet 5 for agentic in-repo coding; Antigravity 2.0 for long-context reads, multi-file audits, and doc generation.  
@@ -159,6 +173,9 @@ When adding a new decision: copy the template below, put it at the top, do not m
 - **Content-hash file deduplication** — same PDF uploaded twice creates two `file_id`s and two extraction runs; correct behavior for portfolio (runs are the eval unit).
 - **Cross-file Qdrant isolation** — all papers share the `prism_docs` collection; add `filename` filter on search when it starts mattering.
 - **RabbitMQ prefetch tuning** — currently `prefetch_count=1` which caps throughput; fine until we care about upload rate.
+- **Grow `matrix_eval.json` beyond 17 negative cases** — Current set is a seed probe. Expansion (more adversarial rows, more rhetorical patterns) is deliberate, hand-authored, and slow. Belongs after the live URL + blog are shipped.
+- **Held-out obscure paper with sealed rows** — Reflexion, CoT, and ReAct are heavily represented in Gemini's training data, so "correct refusal" on them may reflect memorization rather than grounding. Author personally read all 17 rows during prompt design, so implicit test-set leakage exists. Both problems have the same fix: one obscure or post-cutoff paper with 4-6 hand-authored negative rows, sealed from prompt-iteration view, scored separately in the report. Belongs after the harness proves itself on the seen papers.
+- **Drop `document_extractors.latest_run_id` column** — Column is self-referential in the insert-only writer pattern; its name is misleading. Migration to drop it deferred until the schema is touched for another reason. Documented so a future reader doesn't trust the column name.
 
 ---
 
