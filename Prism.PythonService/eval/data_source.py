@@ -23,7 +23,7 @@ WITH latest AS (
     ORDER  BY de.created_at DESC
     LIMIT  1
 )
-SELECT pc.label
+SELECT pc.label, pc.claim_summary
 FROM   paper_claims pc
 JOIN   latest ON pc.document_extractor_id = latest.de_id
 ORDER  BY pc.created_at ASC;
@@ -54,7 +54,9 @@ async def read_from_db(filename: str) -> list[ActualClaim]:
             await cur.execute(_LATEST_CLAIMS_SQL, (filename,))
             rows = await cur.fetchall()
 
-    return [ActualClaim(index=i, label=row[0]) for i, row in enumerate(rows)]
+    return [
+        ActualClaim(index=i, label=row[0], claim_summary=row[1]) for i, row in enumerate(rows)
+    ]
 
 
 def read_from_fixture(path: str | Path) -> list[ActualClaim]:

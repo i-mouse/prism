@@ -13,6 +13,7 @@ class ExpectedRow(BaseModel):
     id: str
     expected_label: Literal["supported", "partially_supported", "not_supported"]
     grounding_negative: bool
+    claim_summary: str = ""
 
 
 class ActualClaim(BaseModel):
@@ -20,6 +21,7 @@ class ActualClaim(BaseModel):
 
     index: int
     label: Literal["supported", "partially_supported", "not_supported"]
+    claim_summary: str = ""
 
 
 class Match(BaseModel):
@@ -47,3 +49,9 @@ class EvalReport(BaseModel):
     positive_hits: int
     positive_total: int
     per_row: dict[str, RowOutcome]
+
+    refused_by_label: int
+    refused_by_omission: int
+    positive_hit_floor: int
+    refusal_rate_valid: bool
+    invalid_reason: Optional[str] = None

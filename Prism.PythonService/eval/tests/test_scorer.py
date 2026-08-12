@@ -117,3 +117,88 @@ def test_aggregate_matrix_report():
     assert report.per_row["N4"].outcome == "PASS"
     assert report.per_row["N5"].outcome == "FAIL"
     assert report.per_row["P1"].outcome == "POSITIVE_HIT"
+
+
+def test_refused_by_label_incremented():
+    expected = [ExpectedRow(id="N1", expected_label="not_supported", grounding_negative=True)]
+    actual = [ActualClaim(index=0, label="not_supported")]
+    matches = [Match(expected_id="N1", actual_index=0)]
+
+    report = score(expected, actual, matches)
+
+    assert report.refused_by_label == 1
+    assert report.refused_by_omission == 0
+
+
+def test_refused_by_omission_incremented():
+    expected = [ExpectedRow(id="N1", expected_label="not_supported", grounding_negative=True)]
+    actual: list[ActualClaim] = []
+    matches = [Match(expected_id="N1", actual_index=None)]
+
+    report = score(expected, actual, matches)
+
+    assert report.refused_by_omission == 1
+    assert report.refused_by_label == 0
+
+
+def test_positive_floor_below_marks_invalid():
+    expected = [
+        ExpectedRow(id=f"N{i}", expected_label="not_supported", grounding_negative=True)
+        for i in range(17)
+    ] + [
+        ExpectedRow(id=f"P{i}", expected_label="supported", grounding_negative=False)
+        for i in range(5)
+    ]
+    actual = [ActualClaim(index=i, label="not_supported") for i in range(17)] + [
+        ActualClaim(index=17 + i, label="supported") for i in range(5)
+    ]
+    matches = [Match(expected_id=f"N{i}", actual_index=i) for i in range(17)] + [
+        Match(expected_id=f"P{i}", actual_index=17 + i) for i in range(5)
+    ]
+
+    report = score(expected, actual, matches, positive_hit_floor=15)
+
+    assert report.correct_refusals == 17
+    assert report.total_negatives == 17
+    assert report.refusal_rate == 1.0
+    assert report.positive_hits == 5
+    assert report.refusal_rate_valid is False
+    assert report.invalid_reason == "positive hits 5 below floor 15"
+
+
+def test_positive_floor_met_marks_valid():
+    expected = [
+        ExpectedRow(id=f"P{i}", expected_label="supported", grounding_negative=False)
+        for i in range(15)
+    ]
+    actual = [ActualClaim(index=i, label="supported") for i in range(15)]
+    matches = [Match(expected_id=f"P{i}", actual_index=i) for i in range(15)]
+
+    report = score(expected, actual, matches, positive_hit_floor=15)
+
+    assert report.positive_hits == 15
+    assert report.refusal_rate_valid is True
+    assert report.invalid_reason is None
+
+
+def test_silence_gaming_caught():
+    """Engine emits zero claims: every negative row passes by omission,
+    refusal_rate hits 100%, but positive_hits=0 must invalidate the number.
+    """
+    expected = [
+        ExpectedRow(id=f"N{i}", expected_label="not_supported", grounding_negative=True)
+        for i in range(17)
+    ]
+    actual: list[ActualClaim] = []
+    matches = [Match(expected_id=f"N{i}", actual_index=None) for i in range(17)]
+
+    report = score(expected, actual, matches)
+
+    assert report.correct_refusals == 17
+    assert report.total_negatives == 17
+    assert report.refusal_rate == 1.0
+    assert report.refused_by_omission == 17
+    assert report.refused_by_label == 0
+    assert report.positive_hits == 0
+    assert report.refusal_rate_valid is False
+    assert report.invalid_reason == "positive hits 0 below floor 15"
