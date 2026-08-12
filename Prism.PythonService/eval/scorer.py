@@ -12,6 +12,7 @@ def score(
     expected_rows: list[ExpectedRow],
     actual_claims: list[ActualClaim],
     matches: list[Match],
+    positive_hit_floor: int = 15,
 ) -> EvalReport:
     actual_by_index = {claim.index: claim for claim in actual_claims}
     match_by_expected_id = {match.expected_id: match for match in matches}
@@ -21,6 +22,8 @@ def score(
     total_negatives = 0
     positive_hits = 0
     positive_total = 0
+    refused_by_label = 0
+    refused_by_omission = 0
 
     for row in expected_rows:
         is_negative = row.grounding_negative or row.expected_label == "not_supported"
@@ -33,9 +36,14 @@ def score(
 
         if is_negative:
             total_negatives += 1
-            if actual_claim is None or actual_claim.label in _REFUSAL_LABELS:
+            if actual_claim is None:
                 outcome = "PASS"
                 correct_refusals += 1
+                refused_by_omission += 1
+            elif actual_claim.label in _REFUSAL_LABELS:
+                outcome = "PASS"
+                correct_refusals += 1
+                refused_by_label += 1
             else:
                 outcome = "FAIL"
         else:
@@ -55,6 +63,13 @@ def score(
 
     refusal_rate = correct_refusals / total_negatives if total_negatives else 0.0
 
+    refusal_rate_valid = positive_hits >= positive_hit_floor
+    invalid_reason = (
+        None
+        if refusal_rate_valid
+        else f"positive hits {positive_hits} below floor {positive_hit_floor}"
+    )
+
     return EvalReport(
         correct_refusals=correct_refusals,
         total_negatives=total_negatives,
@@ -62,4 +77,9 @@ def score(
         positive_hits=positive_hits,
         positive_total=positive_total,
         per_row=per_row,
+        refused_by_label=refused_by_label,
+        refused_by_omission=refused_by_omission,
+        positive_hit_floor=positive_hit_floor,
+        refusal_rate_valid=refusal_rate_valid,
+        invalid_reason=invalid_reason,
     )

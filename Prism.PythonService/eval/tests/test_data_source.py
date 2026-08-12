@@ -17,9 +17,9 @@ def test_fixture_with_three_claims_parses(tmp_path):
         tmp_path,
         json.dumps(
             [
-                {"index": 0, "label": "supported"},
-                {"index": 1, "label": "not_supported"},
-                {"index": 2, "label": "partially_supported"},
+                {"index": 0, "label": "supported", "claim_summary": "Claim zero."},
+                {"index": 1, "label": "not_supported", "claim_summary": "Claim one."},
+                {"index": 2, "label": "partially_supported", "claim_summary": "Claim two."},
             ]
         ),
     )
@@ -28,8 +28,11 @@ def test_fixture_with_three_claims_parses(tmp_path):
 
     assert len(claims) == 3
     assert claims[0].index == 0 and claims[0].label == "supported"
+    assert claims[0].claim_summary == "Claim zero."
     assert claims[1].index == 1 and claims[1].label == "not_supported"
+    assert claims[1].claim_summary == "Claim one."
     assert claims[2].index == 2 and claims[2].label == "partially_supported"
+    assert claims[2].claim_summary == "Claim two."
 
 
 def test_empty_fixture_parses_to_empty_list(tmp_path):

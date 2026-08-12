@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "name": "Prism Matcher Gold Set",
+    "version": "1.0",
+    "purpose": "Ground-truth pairs for testing the eval harness's LLM matcher. Each row is one (expected, actual) pair with the correct match verdict already known by hand. Runs before trusting the matcher's output on real eval data.",
+    "pass_threshold": "13/15 (~87%). LLM noise makes 100% unrealistic; this threshold catches meaningful regressions."
+  },
+  "pairs": [
+    {
+      "id": "MG01",
+      "expected_claim_summary": "Reflexion reaches 91% accuracy on the HumanEval benchmark, outperforming the baseline GPT-4.",
+      "actual_claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, outperforming GPT-4's 80% baseline.",
+      "correct_match": true,
+      "difficulty": "easy",
+      "rationale": "Expected drawn from REFLEX-M01; actual claim from extraction log exhibits nearly identical phrasing and metrics for the HumanEval benchmark result."
+    },
+    {
+      "id": "MG02",
+      "expected_claim_summary": "PaLM 540B prompted with 8 chain-of-thought examples outperforms a finetuned GPT-3 model on the GSM8K dataset.",
+      "actual_claim_summary": "PaLM 540B using 8-shot chain-of-thought prompting surpasses finetuned GPT-3 on GSM8K math problems.",
+      "correct_match": true,
+      "difficulty": "easy",
+      "rationale": "Expected drawn from COT-M01; actual claim paraphrased for test coverage using near-identical terms for the GSM8K result."
+    },
+    {
+      "id": "MG03",
+      "expected_claim_summary": "ReAct achieves an absolute 10% higher success rate than the previous best methods on the WebShop benchmark.",
+      "actual_claim_summary": "ReAct improves WebShop success rate by an absolute 10% over prior top methods.",
+      "correct_match": true,
+      "difficulty": "easy",
+      "rationale": "Expected drawn from REACT-M01; actual claim paraphrased for test coverage with directly corresponding metrics on WebShop."
+    },
+    {
+      "id": "MG04",
+      "expected_claim_summary": "Internal test execution yields a much higher false positive rate on MBPP Python compared to HumanEval Python.",
+      "actual_claim_summary": "MBPP Python exhibits a 16.3% false positive rate versus 1.4% for HumanEval",
+      "correct_match": true,
+      "difficulty": "medium",
+      "rationale": "Expected drawn from REFLEX-M03; actual claim from extraction log uses explicit numeric figures (16.3% vs 1.4%) to state the same false-positive comparison."
+    },
+    {
+      "id": "MG05",
+      "expected_claim_summary": "Language models can easily generate reasoning traces just by being provided with chain-of-thought exemplars, without needing complex prompt engineering.",
+      "actual_claim_summary": "Sufficiently large LLMs produce step-by-step reasoning paths automatically when given simple chain-of-thought examples in-context.",
+      "correct_match": true,
+      "difficulty": "medium",
+      "rationale": "Expected drawn from grounding-negative COT-M10; actual claim paraphrased for test coverage using restructured language for automatic reasoning trace generation."
+    },
+    {
+      "id": "MG06",
+      "expected_claim_summary": "ReAct resolves the hallucination and error propagation issues of CoT reasoning on HotpotQA and FEVER tasks.",
+      "actual_claim_summary": "Synergizing action and thought eliminates hallucinations and reduces error compounding across FEVER and HotpotQA benchmarks.",
+      "correct_match": true,
+      "difficulty": "medium",
+      "rationale": "Expected drawn from grounding-negative REACT-M11; actual claim paraphrased for test coverage expressing the same hallucination/error mitigation claim in different terms."
+    },
+    {
+      "id": "MG07",
+      "expected_claim_summary": "Reflexion improves AlfWorld task success rates by 22% over baseline methods across 12 learning iterations.",
+      "actual_claim_summary": "Reflexion with ReAct solves 130 out of 134 AlfWorld tasks using heuristic evaluation.",
+      "correct_match": true,
+      "difficulty": "hard",
+      "rationale": "Expected drawn from REFLEX-M02; actual claim from extraction log uses raw task-count numbers (130/134) rather than percentage improvement for the same AlfWorld benchmark run."
+    },
+    {
+      "id": "MG08",
+      "expected_claim_summary": "Chain-of-thought prompting only improves reasoning accuracy on language models with approximately 100 billion parameters or more.",
+      "actual_claim_summary": "Table 2 demonstrates emergent CoT performance gains exclusively when model scale reaches ~100B parameters (PaLM 540B, GPT-3 175B, LaMDA 137B).",
+      "correct_match": true,
+      "difficulty": "hard",
+      "rationale": "Expected drawn from COT-M02; actual claim paraphrased for test coverage contrasting abstract scale-threshold wording against raw table-extraction model list formatting."
+    },
+    {
+      "id": "MG09",
+      "expected_claim_summary": "Reflexion improves AlfWorld task success rates by 22% over baseline methods across 12 learning iterations.",
+      "actual_claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, outperforming GPT-4's 80% baseline.",
+      "correct_match": false,
+      "difficulty": "easy",
+      "rationale": "Expected drawn from REFLEX-M02; actual claim from extraction log describes HumanEval programming results while expected is about AlfWorld decision-making."
+    },
+    {
+      "id": "MG10",
+      "expected_claim_summary": "Prompting models to output only mathematical equations yields minimal performance improvement on the GSM8K benchmark.",
+      "actual_claim_summary": "Chain-of-thought prompting facilitates out-of-distribution sequence length generalization on symbolic letter concatenation tasks.",
+      "correct_match": false,
+      "difficulty": "easy",
+      "rationale": "Expected drawn from COT-M03; actual claim paraphrased for test coverage covering symbolic sequence length generalization, which is completely distinct from math equation ablations."
+    },
+    {
+      "id": "MG11",
+      "expected_claim_summary": "ReAct achieves an absolute 10% higher success rate than the previous best methods on the WebShop benchmark.",
+      "actual_claim_summary": "Finetuning an 8B model on 3,000 ReAct trajectories enables it to outperform a 62B prompted baseline on HotpotQA.",
+      "correct_match": false,
+      "difficulty": "easy",
+      "rationale": "Expected drawn from REACT-M01; actual claim paraphrased for test coverage regarding model finetuning vs parameter scale, unrelated to WebShop benchmark success."
+    },
+    {
+      "id": "MG12",
+      "expected_claim_summary": "Omitting internal test generation causes accuracy to drop to 52% from a 60% baseline.",
+      "actual_claim_summary": "Omitting natural language self-reflection after failed unit tests yields no performance gain over the baseline.",
+      "correct_match": false,
+      "difficulty": "medium",
+      "rationale": "Expected drawn from REFLEX-M06; actual claim paraphrased for test coverage regarding self-reflection omission ablation, which is a distinct ablation arm from internal test generation omission."
+    },
+    {
+      "id": "MG13",
+      "expected_claim_summary": "PaLM 540B prompted with 8 chain-of-thought examples outperforms a finetuned GPT-3 model on the GSM8K dataset.",
+      "actual_claim_summary": "PaLM 540B using standard direct prompting achieves 17.9% accuracy on GSM8K without chain-of-thought rationales.",
+      "correct_match": false,
+      "difficulty": "medium",
+      "rationale": "Expected drawn from COT-M01; actual claim paraphrased for test coverage stating the standard baseline score on GSM8K rather than the CoT SOTA comparison."
+    },
+    {
+      "id": "MG14",
+      "expected_claim_summary": "ReAct achieves higher accuracy than the Act-only prompting method on both HotpotQA and FEVER tasks using the PaLM-540B model.",
+      "actual_claim_summary": "ReAct achieves higher accuracy than CoT on FEVER (60.9 vs 56.3) but lags slightly behind CoT on HotpotQA (27.4 vs 29.4).",
+      "correct_match": false,
+      "difficulty": "medium",
+      "rationale": "Expected drawn from REACT-M03; actual claim paraphrased for test coverage evaluating ReAct against CoT rather than against the Act-only baseline."
+    },
+    {
+      "id": "MG15",
+      "expected_claim_summary": "Reflexion reaches 91% accuracy on the HumanEval benchmark, outperforming the baseline GPT-4.",
+      "actual_claim_summary": "ReAct prompting on PaLM-540B achieves 91% success rate on multi-step task baselines, outperforming base GPT-4.",
+      "correct_match": false,
+      "difficulty": "hard",
+      "rationale": "Expected drawn from REFLEX-M01; actual claim paraphrased for test coverage from ReAct paper context sharing metric keywords (91%, GPT-4) to test cross-paper contamination isolation."
+    }
+  ]
+}
