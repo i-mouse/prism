@@ -10,6 +10,11 @@
       "pass_threshold": "100% on grounding-negative and not_supported cases; zero fabricated evidence citations across all cases",
       "run_policy": "Run before and after any model, prompt, or retrieval change to the extraction engine. A FAIL blocks the change."
     },
+    "pass_threshold": {
+      "refusal_rate": 0.80,
+      "positive_hit_floor": 15,
+      "notes": "refusal_rate is the minimum X/N ratio for a PASS. positive_hit_floor gates whether the refusal rate is considered VALID at all — if positive hits fall below this, the whole run is marked invalid regardless of refusal rate. Update deliberately; every change is a policy change."
+    },
     "scoring_guidance": {
       "claim_matching": "Actual engine rows are matched to expected rows via LLM-as-judge on claim_summary semantic equivalence — verbatim string match is not required.",
       "evidence_matching": "Fuzzy check: any expected_evidence_sections entry present in the actual row's evidence field counts as a match. Exact section-string identity not required.",
@@ -19,6 +24,7 @@
   "papers": [
     {
       "paper_id": "arxiv-2303.11366v4",
+      "filename": "reflexion.pdf",
       "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
       "authors": "Shinn et al.",
       "arxiv_url": "https://arxiv.org/abs/2303.11366",
@@ -184,11 +190,12 @@
       ]
     },   
     {
-    "paper_id": "arxiv-2201.11903v6",
-    "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
-    "authors": "Wei et al.",
-    "arxiv_url": "https://arxiv.org/abs/2201.11903",
-        "expected_matrix": [
+      "paper_id": "arxiv-2201.11903v6",
+      "filename": "cot.pdf",
+      "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+      "authors": "Wei et al.",
+      "arxiv_url": "https://arxiv.org/abs/2201.11903",
+      "expected_matrix": [
         {
         "id": "COT-M01",
         "claim_text_verbatim": "prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the GSM8K benchmark of math word problems, surpassing even finetuned GPT-3 with a verifier.",
@@ -361,11 +368,12 @@
         }
     ]
 },{
-  "paper_id": "arxiv-2210.03629v3",
-  "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
-  "authors": "Yao et al.",
-  "arxiv_url": "https://arxiv.org/abs/2210.03629",
-  "expected_matrix": [
+      "paper_id": "arxiv-2210.03629v3",
+      "filename": "react.pdf",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "authors": "Yao et al.",
+      "arxiv_url": "https://arxiv.org/abs/2210.03629",
+      "expected_matrix": [
     {
       "id": "REACT-M01",
       "claim_text_verbatim": "With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate.",
