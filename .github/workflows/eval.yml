@@ -1,0 +1,37 @@
+name: Eval Harness
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Prism.PythonService
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run offline eval tests
+        run: uv run pytest eval/tests/ -v
+
+      - name: Check fixture freshness
+        run: uv run python -m eval.check_fixture_freshness
+
+      - name: Run matrix eval (fixture mode)
+        run: uv run python -m eval.matrix_runner --source fixture
