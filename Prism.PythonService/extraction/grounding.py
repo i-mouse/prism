@@ -2,10 +2,10 @@
 
 Two-stage per-span check (RapidFuzz substring match, then an LLM audit
 on Flash Lite for spans that survive), rolled up into per-claim
-grounding_status/missing/reason. Failed claims stay in the output —
+grounding_status/missing/reason. Failed claims stay in the output -
 they are the correct-refusal artifact, not something to drop.
 
-No DB writes, no worker integration — this module only grounds and logs.
+No DB writes, no worker integration - this module only grounds and logs.
 """
 import asyncio
 import json

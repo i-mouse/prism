@@ -1,6 +1,6 @@
 """Writes finalized extraction results (metadata + grounded claims) to Postgres.
 
-Reuses the shared connection pool from memory_db.py — no duplicate pool,
+Reuses the shared connection pool from memory_db.py - no duplicate pool,
 no ORM, no migrations (schema is owned by C# EF Core). One connection,
 one transaction per write: either everything for a paper lands, or nothing
 does.
@@ -83,7 +83,7 @@ async def write_extraction_result(
     Inserts one document_extractors row (paper-level metadata as jsonb) and one
     paper_claims row per claim, all sharing a single extraction_run_id. On any
     failure the transaction rolls back automatically and the error is re-raised
-    with file_id/chat_id context — nothing is silently swallowed.
+    with file_id/chat_id context - nothing is silently swallowed.
 
     Returns the new document_extractor_id as a string.
     """

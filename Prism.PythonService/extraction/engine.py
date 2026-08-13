@@ -2,7 +2,7 @@
 
 Builds messages via prompt_loader, translates them into the google-genai
 SDK's system_instruction/contents format, and enforces a Pydantic schema
-via structured output. No grounding logic, no DB writes — downstream
+via structured output. No grounding logic, no DB writes - downstream
 stages (grounding, DB write) consume this module's output.
 
 Two extraction types share the same Gemini-calling machinery:

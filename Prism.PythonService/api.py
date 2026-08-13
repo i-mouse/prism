@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
     app.state.checkpointer = AsyncPostgresSaver(app.state.pool)
     app.state.compiled_agent = workflow.compile(checkpointer=app.state.checkpointer)
 
-    print("✅ Checkpointer and Agent ready", flush=True)
+    print("[OK] Checkpointer and Agent ready", flush=True)
 
     yield
 
@@ -102,7 +102,7 @@ async def get_chat_history(chatid: str, http_request: Request):
         for msg in state.values["messages"]:
             if msg.type in ["human", "ai"]:
                 
-                # --- 🛡️ THE FIX: Safely extract the string from the history object ---
+                # --- [FIX] Safely extract the string from the history object ---
                 raw_content = msg.content
                 if len(raw_content) > 0:
                     if isinstance(raw_content, list):
@@ -128,25 +128,25 @@ async def get_chat_history(chatid: str, http_request: Request):
 
 # --- SYSTEM RESET (NUCLEAR OPTION) ---
 @pythonAPI.delete("/api/system/reset")
-async def wipe_ai_system(http_request: Request): # 🛡️ ADD Request parameter
+async def wipe_ai_system(http_request: Request): # ADD Request parameter
     try:
         # 1. WIPE QDRANT (Vector Database)
         try:
             ragservice.client.delete_collection(collection_name="prism_collection")
         except Exception as e:
-            print(f" [⚠️] Qdrant wipe warning: {e}")
+            print(f" [WARN] Qdrant wipe warning: {e}")
 
         # 2. WIPE LANGGRAPH MEMORY (Using existing connection pool)
-        # 🛡️ This guarantees it works with Aspire's injected database
+        # This guarantees it works with Aspire's injected database
         async with await http_request.app.state.pool.getconn() as conn:
             await conn.execute("TRUNCATE TABLE checkpoints, checkpoint_blobs, checkpoint_writes CASCADE;")
             await conn.commit() # Don't forget to commit the wipe!
                 
-        print(" [🧨] NUCLEAR WIPE COMPLETE: Vectors and Memory erased.")
+        print(" [WIPE] NUCLEAR WIPE COMPLETE: Vectors and Memory erased.")
         return {"status": "success", "message": "AI Brain wiped."}
         
     except Exception as e:
-        print(f" [❌] Nuclear Wipe Failed: {e}")
+        print(f" [FAIL] Nuclear Wipe Failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))     
 if __name__ == "__main__":
     import uvicorn

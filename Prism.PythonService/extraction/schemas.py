@@ -24,7 +24,7 @@ class ClaimLabel(str, Enum):
 
 
 class GroundingStatus(str, Enum):
-    """Grounding pipeline verdict — set by pipeline, NOT by LLM.
+    """Grounding pipeline verdict - set by pipeline, NOT by LLM.
 
     Values match C# GroundingStatus enum HasConversion<string>()
     which serializes as PascalCase enum member names.
@@ -89,7 +89,7 @@ class ClaimsExtractionResponse(BaseModel):
     """Top-level Gemini structured output response.
 
     Contains a list of claims. Empty list is valid when the paper
-    has no groundable empirical claims — this is the correct-refusal
+    has no groundable empirical claims - this is the correct-refusal
     signal at extraction time.
     """
 
@@ -130,12 +130,12 @@ class ClaimFinal(BaseModel):
     reason: Optional[str] = None
 
 
-# --- Metadata extraction (Prompt 1) — LLM layer ---
+# --- Metadata extraction (Prompt 1) - LLM layer ---
 
 class PaperMetadataLLM(BaseModel):
     """Paper-level metadata filled by the LLM extractor from Prompt 1.
 
-    Empty strings are valid — the prompt instructs the LLM to return an
+    Empty strings are valid - the prompt instructs the LLM to return an
     empty string when a field's information is not present in the paper,
     rather than fabricate it.
     """
@@ -191,7 +191,7 @@ class MetadataExtractionResponse(BaseModel):
     )
 
 
-# --- Metadata extraction (Prompt 1) — Final layer (pipeline-finalized) ---
+# --- Metadata extraction (Prompt 1) - Final layer (pipeline-finalized) ---
 
 class PaperMetadataFinal(BaseModel):
     """PaperMetadataLLM with pipeline-appended provenance fields.
