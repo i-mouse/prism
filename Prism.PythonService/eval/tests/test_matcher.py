@@ -1,6 +1,6 @@
 """Integration test for the LLM-as-judge matcher against a hand-labeled gold set.
 
-Makes real Gemini calls — skipped by default (see pyproject.toml's
+Makes real Gemini calls - skipped by default (see pyproject.toml's
 `addopts = "-m 'not integration'"`). Run explicitly with:
   uv run pytest eval/tests/test_matcher.py -v -m integration
 """

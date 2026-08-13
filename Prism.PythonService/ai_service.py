@@ -39,20 +39,20 @@ class AIService:
             return "Error while analyzing the prism doc"
 
     async def transcribe_audio(self, file_path: str):
-        print(f" [👂] Uploading audio to Gemini: {file_path}...")
+        print(f" [AUDIO] Uploading audio to Gemini: {file_path}...")
         audio_file = await asyncio.to_thread(
             genai.upload_file, 
             path=file_path,
             mime_type="audio/mp3" 
         )
         
-        print(f" [☁️] File uploaded: {audio_file.uri}")
+        print(f" [CLOUD] File uploaded: {audio_file.uri}")
 
         model = genai.GenerativeModel(os.getenv("LLM_SUMMARY_MODEL"))
         response = await model.generate_content_async(
             [audio_file, "Please transcribe this audio and provide  result in proper format without missing any detail from the audio.Need word-for-word transcription"]
         )
         
-        print(" [✅] Audio processed successfully.")
+        print(" [OK] Audio processed successfully.")
         return response.text
 

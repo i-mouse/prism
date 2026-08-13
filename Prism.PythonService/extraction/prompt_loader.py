@@ -2,7 +2,7 @@
 
 Reads the system prompt and few-shot examples from Prism.PythonService/prompts/
 and turns them into the message list Gemini's structured output API expects.
-Contains no LLM-calling code — assembly only.
+Contains no LLM-calling code - assembly only.
 
 Two prompt kinds are supported:
   - "claims": Prompt 2, per-claim evidence extraction (build_gemini_messages_for_claims)
@@ -66,7 +66,7 @@ def build_gemini_messages_for_claims(paper_text: str) -> list[dict]:
 
     Order: system prompt, then for each few-shot example a user message
     (input_excerpt) followed by a model message (its output as a JSON
-    string — an empty claims array for the negative example), then a
+    string - an empty claims array for the negative example), then a
     final user message containing the paper text to extract from.
     """
     messages: list[dict] = [
@@ -91,7 +91,7 @@ def build_gemini_messages_for_metadata(paper_text: str) -> list[dict]:
     Order: system prompt, then for each few-shot example a user message
     (input_excerpt) followed by a model message (its output as a JSON
     string), then a final user message containing the paper text to
-    extract from. Unlike claims, metadata has no negative example — the
+    extract from. Unlike claims, metadata has no negative example - the
     LLM always returns all 9 fields.
     """
     messages: list[dict] = [

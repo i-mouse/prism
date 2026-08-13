@@ -35,7 +35,7 @@ def _get_attempt_count(message) -> int:
     # RabbitMQ 3.10+ auto-populates x-delivery-count on requeues (0-indexed)
     delivery_count = headers.get("x-delivery-count")
     if delivery_count is not None:
-        return int(delivery_count) + 1  # 0-indexed → 1-indexed
+        return int(delivery_count) + 1  # 0-indexed -> 1-indexed
     # Fallback: our own portable counter
     return int(headers.get("x-attempt", 1))
 
@@ -64,9 +64,9 @@ async def main():
         sys.exit(1)
 
     # -------------------------------------------------------------------------
-    # 🔥 THE ASYNC GRAIL: We create the Pool and Compile the Graph exactly ONCE
+    # THE ASYNC GRAIL: We create the Pool and Compile the Graph exactly ONCE
     # -------------------------------------------------------------------------
-    print("⏳ Initializing Database and AI Agent...", flush=True)
+    print("[...] Initializing Database and AI Agent...", flush=True)
     pool = create_db_connection_pool()
     await pool.open()
 
@@ -81,15 +81,15 @@ async def main():
         checkpointer=checkpointer,
         name="Prism Agent"
     )
-    print("✅ Database Pool & Agent Workflow Compiled and Ready!", flush=True)
+    print("[OK] Database Pool & Agent Workflow Compiled and Ready!", flush=True)
 
     # --- MinIO Setup ---
     endpoint, user, password = parse_aspire_minio(connection_string_minio)
     minio_client = Minio(endpoint=endpoint, access_key=user, secret_key=password, secure=False)
-    print("✅ Connected to MinIO", flush=True)
+    print("[OK] Connected to MinIO", flush=True)
 
     # --- aio-pika RabbitMQ Setup ---
-    print("⏳ Connecting to RabbitMQ...", flush=True)
+    print("[...] Connecting to RabbitMQ...", flush=True)
     connection = await aio_pika.connect_robust(connection_string)
     
     async with connection:
@@ -219,13 +219,13 @@ async def main():
                             routing_key='document_processed_queue',
                         )
                         await message.ack()
-                        print(f'[✅] Completed: {file_name}')
+                        print(f'[OK] Completed: {file_name}')
 
                     # ==========================================
                     # 1. TERMINAL ERROR (Corrupted PDF)
                     # ==========================================
                     except fitz.FileDataError as e:
-                        print(f'[☠️] Corrupted file detected: {file_name}')
+                        print(f'[CORRUPT] Corrupted file detected: {file_name}')
                         traceback.print_exc()
                         
                         error_message = {
@@ -242,13 +242,13 @@ async def main():
                             routing_key='document_processed_queue',
                         )
                         await message.reject(requeue=False)
-                        print(f'[☠️] Message {file_name} sent to Dead Letter Queue.')
+                        print(f'[DEAD] Message {file_name} sent to Dead Letter Queue.')
 
                     # ==========================================
-                    # 2. TERMINAL ERROR (Postgres FK violation — bad file_id upstream)
+                    # 2. TERMINAL ERROR (Postgres FK violation - bad file_id upstream)
                     # ==========================================
                     except psycopg.errors.ForeignKeyViolation as e:
-                        print(f'[\u2620\ufe0f] FK violation for {file_name} \u2014 file_id may be invalid: {e}')
+                        print(f'[DEAD] FK violation for {file_name} - file_id may be invalid: {e}')
                         traceback.print_exc()
 
                         error_message = {
@@ -264,8 +264,8 @@ async def main():
                             aio_pika.Message(body=json.dumps(error_message).encode()),
                             routing_key='document_processed_queue',
                         )
-                        await message.reject(requeue=False)  # → DLQ
-                        print(f'[\u2620\ufe0f] Message {file_name} sent to Dead Letter Queue (FK violation).')
+                        await message.reject(requeue=False)  # -> DLQ
+                        print(f'[DEAD] Message {file_name} sent to Dead Letter Queue (FK violation).')
 
                     # ==========================================
                     # 3. TRANSIENT ERROR (LLM Timeout, Network Blip, Extraction JSON)
@@ -275,7 +275,7 @@ async def main():
                         traceback.print_exc()
 
                         if attempt >= MAX_ATTEMPTS:
-                            print(f'[\u2620\ufe0f] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ')
+                            print(f'[DEAD] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ')
                             error_message = {
                                 "fileId": file_id,
                                 "fileName": file_name,
@@ -288,13 +288,13 @@ async def main():
                                 aio_pika.Message(body=json.dumps(error_message).encode()),
                                 routing_key='document_processed_queue',
                             )
-                            await message.reject(requeue=False)  # → DLQ
+                            await message.reject(requeue=False)  # -> DLQ
                         else:
-                            print(f'[\u26a0\ufe0f] {file_name} attempt {attempt} failed, retrying in 5s: {e}')
+                            print(f'[WARN] {file_name} attempt {attempt} failed, retrying in 5s: {e}')
                             await asyncio.sleep(5)
                             # Republish with incremented x-attempt counter.
                             # message.reject(requeue=True) cannot mutate headers, so we
-                            # republish-and-ack — the standard pattern for bounded retries
+                            # republish-and-ack - the standard pattern for bounded retries
                             # in aio-pika / RabbitMQ.
                             new_headers = dict(message.headers or {})
                             new_headers["x-attempt"] = attempt + 1

@@ -70,17 +70,17 @@ def get_safe_text(content) -> str:
 
 async def intent_decision_node(state: AgentState):
     """The Bouncer: Analyzes the question and decides which graph path to take.""" 
-    print(" [🚦] Node: Intent Router executing...")
+    print(" [ROUTER] Node: Intent Router executing...")
     last_message = state["messages"][-1].content
 
     structured_llm = fast_llm.with_structured_output(RouteIntent)
     response = await structured_llm.ainvoke(last_message)
     
-    print(f" [🛣️] Routing to: {response.intent}")
+    print(f" [ROUTE] Routing to: {response.intent}")
     return {"intent": response.intent, "original_query": last_message}
 
 async def casual_chat_node(state: AgentState):
-    print(" [👋] Node: Casual Chat executing...")
+    print(" [CHAT] Node: Casual Chat executing...")
     system_prompt = SystemMessage(content=(
         "You are a strict, professional Prism AI assistant. "
         "The user is making casual conversation. "
@@ -96,7 +96,7 @@ async def casual_chat_node(state: AgentState):
     return {"messages": [response]}
 
 async def query_rewriter_node(state: AgentState):
-    print(" [⚙️] Node: Query Rewriter executing...")
+    print(" [REWRITE] Node: Query Rewriter executing...")
     original_query = state["messages"][-1].content
     
     rewrite_prompt = f"""You are an expert search query optimizer for research papers.
@@ -108,7 +108,7 @@ async def query_rewriter_node(state: AgentState):
     
     response = await fast_llm.ainvoke(rewrite_prompt)
     optimized_query = get_safe_text(response.content).strip()
-    print(f" [🔄] Rewrote: '{original_query}' -> '{optimized_query}'")
+    print(f" [REWRITE] Rewrote: '{original_query}' -> '{optimized_query}'")
     
     return {
         "original_query": original_query,
@@ -119,7 +119,7 @@ async def query_rewriter_node(state: AgentState):
 def search_prism_doc(query: str) -> str:
     """Search the research papers database for relevant information.
     Use specific keywords from the question."""
-    print(f' [🔍] Agent searching database for: "{query}"')
+    print(f' [SEARCH] Agent searching database for: "{query}"')
     
     # FIX: Enterprise Fault Tolerance via Try/Except
     try:
@@ -130,13 +130,13 @@ def search_prism_doc(query: str) -> str:
         structured_results = [{"filename": hit.payload.get("filename", "Unknown"), "score": hit.score, "content": hit.payload.get("text", "")} for hit in results]
         return json.dumps(structured_results)
     except Exception as e:
-        print(f" [⚠️] Database Error: {e}")
+        print(f" [WARN] Database Error: {e}")
         return "DATABASE_ERROR: Could not retrieve documents at this time."
 
 
 async def agent_node(state: AgentState):
     """The core reasoning engine."""
-    print(" [🧠] Node: Agent thinking...")
+    print(" [THINK] Node: Agent thinking...")
     messages = state["messages"]
     rewritten_query = state.get("rewritten_query", "")
 
@@ -156,14 +156,14 @@ async def agent_node(state: AgentState):
     return {"messages": [response]}
 
 async def grounding_checker_node(state: AgentState):
-    print(" [🛡️] Node: Grounding Checker executing...")
+    print(" [GROUND] Node: Grounding Checker executing...")
     
     proposed_answer = get_safe_text(state["messages"][-1].content)
     
     tool_messages = [m.content for m in state["messages"] if m.type == "tool"]
     
     if not tool_messages or "NO_RESULTS_FOUND" in tool_messages or "DATABASE_ERROR" in str(tool_messages):
-        print(" [🛡️] No context used. Bypassing grounding check.")
+        print(" [GROUND] No context used. Bypassing grounding check.")
         return {"grounding_passed": True, "caveat": "No documents found to support or deny this."}
 
     context = "\n---\n".join(tool_messages)
@@ -184,11 +184,11 @@ async def grounding_checker_node(state: AgentState):
     grade = get_safe_text(response.content).strip().upper()
 
     if "PASS" in grade:
-        print(" [✅] Grounding Check: PASSED")
+        print(" [OK] Grounding Check: PASSED")
         return {"grounding_passed": True, "caveat": None}
     else:
-        print(" [❌] Grounding Check: FAILED (Hallucination Detected!)")
-        return {"grounding_passed": False, "caveat": "⚠️ Warning: Parts of this answer could not be verified in the uploaded documents."}
+        print(" [FAIL] Grounding Check: FAILED (Hallucination Detected!)")
+        return {"grounding_passed": False, "caveat": "[WARN] Warning: Parts of this answer could not be verified in the uploaded documents."}
     
 
 # --- Edges and Routing ---
@@ -235,4 +235,4 @@ workflow.add_edge("tools", "agent")
 workflow.add_edge("grounding_checker", END)
 
 app = workflow.compile()
-print(" [✅] Enterprise CRAG Workflow Compiled!")
+print(" [OK] Enterprise CRAG Workflow Compiled!")

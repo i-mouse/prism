@@ -3,7 +3,7 @@
 Pairs each expected row (from docs/evals/matrix_eval.json) with the
 semantically-closest actual claim emitted by the extraction engine, or
 None if no actual claim describes the same assertion. One Gemini call
-per paper — all expected + actual claims go in a single prompt, not
+per paper - all expected + actual claims go in a single prompt, not
 one call per pair, to stay inside the Flash Lite daily quota.
 
 Reuses the retry/backoff/fallback pattern from extraction/engine.py's
@@ -119,7 +119,7 @@ async def match(
 ) -> list[Match]:
     """LLM-as-judge matcher. One call per paper.
 
-    Returns exactly len(expected_rows) Match objects — one per expected
+    Returns exactly len(expected_rows) Match objects - one per expected
     row, with actual_index = None if no matching actual claim.
     """
     model_name = os.getenv("LLM_AUDIT_MODEL", DEFAULT_MODEL)

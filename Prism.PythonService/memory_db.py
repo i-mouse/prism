@@ -9,6 +9,6 @@ def create_db_connection_pool() -> AsyncConnectionPool:
     password = os.environ["PRISM_DB_PASSWORD"]
 
     conninfo = f"host={host} port={port} dbname={dbname} user={user} password={password}"
-    print(f"✅ Connecting to: {host}:{port}/{dbname}", flush=True)
+    print(f"[OK] Connecting to: {host}:{port}/{dbname}", flush=True)
 
     return AsyncConnectionPool(conninfo=conninfo, min_size=1, max_size=10, open=False)
