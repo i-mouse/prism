@@ -1,0 +1,62 @@
+{
+  "header": {
+    "prompt_hash": "b9734f204fc4",
+    "model_name": "gemini-3.6-flash",
+    "generated_at": "2026-08-13T09:26:28.388428+00:00",
+    "paper_id": "arxiv-2210.03629v3",
+    "filename": "react.pdf",
+    "extraction_run_id": "1a2ab2d1-deec-4db8-843c-730c8c731330"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "ReAct beats imitation and RL baselines on ALFWorld and WebShop by 34% and 10%."
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "ReAct beats CoT on Fever but slightly lags on HotpotQA."
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "Combined ReAct and CoT-SC methods yield top scores on HotpotQA and Fever."
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "ReAct + CoT-SC matches 21-sample CoT-SC accuracy using only 3-5 samples."
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "Finetuned ReAct on 3,000 samples outperforms prompting on much larger models."
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "Best ReAct trial reaches 71% success rate on ALFWorld vs baselines."
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "ReAct consistently outperforms Act across 6 trials with average 62% gain."
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "ReAct achieves an absolute 10% success rate improvement on WebShop."
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "ReAct outperforms Inner Monologue style prompting 71% vs 53% on ALFWorld."
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "GPT-3 with ReAct prompting outperforms PaLM-540B on HotpotQA and ALFWorld."
+    }
+  ]
+}
