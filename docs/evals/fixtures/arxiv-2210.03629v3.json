@@ -2,7 +2,8 @@
   "header": {
     "prompt_hash": "b9734f204fc4",
     "model_name": "gemini-3.6-flash",
-    "generated_at": "2026-08-13T09:26:28.388428+00:00",
+    "matcher_model": "gemini-3.1-flash-lite",
+    "generated_at": "2026-08-13T09:55:26.281868+00:00",
     "paper_id": "arxiv-2210.03629v3",
     "filename": "react.pdf",
     "extraction_run_id": "1a2ab2d1-deec-4db8-843c-730c8c731330"
@@ -57,6 +58,60 @@
       "index": 9,
       "label": "supported",
       "claim_summary": "GPT-3 with ReAct prompting outperforms PaLM-540B on HotpotQA and ALFWorld."
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "REACT-M01",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "REACT-M02",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M03",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M05",
+      "actual_index": 8
+    },
+    {
+      "expected_id": "REACT-M06",
+      "actual_index": 4
+    },
+    {
+      "expected_id": "REACT-M07",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M08",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "REACT-M09",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M10",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "REACT-M11",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M12",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M13",
+      "actual_index": 0
+    },
+    {
+      "expected_id": "REACT-M14",
+      "actual_index": null
     }
   ]
 }

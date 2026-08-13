@@ -8,7 +8,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from eval.data_source import get_fixture_header
+from eval.data_source import get_fixture_header, read_matches_from_fixture
 from eval.matrix_loader import MatrixSpec, load_matrix
 from extraction.prompt_version import get_prompt_version
 
@@ -36,6 +36,12 @@ def _check_paper(paper_id: str, fixture_dir: Path, current_hash: str) -> tuple[b
         return False, (
             f"{paper_id}: fixture prompt_hash={fixture_hash[:8]} does not match "
             f"current={current_hash[:8]}. Regenerate via "
+            f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
+        )
+
+    if not read_matches_from_fixture(fixture_path):
+        return False, (
+            f"{paper_id}: fixture missing frozen matches. Regenerate via "
             f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
         )
 

@@ -39,7 +39,12 @@ def _write_matrix(tmp_path: Path, paper_ids: list[str]) -> Path:
     return path
 
 
-def _write_fixture(fixture_dir: Path, paper_id: str, prompt_hash: str | None) -> Path:
+def _write_fixture(
+    fixture_dir: Path,
+    paper_id: str,
+    prompt_hash: str | None,
+    include_matches: bool = True,
+) -> Path:
     fixture_dir.mkdir(parents=True, exist_ok=True)
     path = fixture_dir / f"{paper_id}.json"
     claims = [{"index": 0, "label": "supported", "claim_summary": "x"}]
@@ -51,6 +56,7 @@ def _write_fixture(fixture_dir: Path, paper_id: str, prompt_hash: str | None) ->
             "header": {
                 "prompt_hash": prompt_hash,
                 "model_name": "gemini-3.6-flash",
+                "matcher_model": "gemini-3.1-flash-lite",
                 "generated_at": "2026-08-13T00:00:00+00:00",
                 "paper_id": paper_id,
                 "filename": f"{paper_id}.pdf",
@@ -58,6 +64,8 @@ def _write_fixture(fixture_dir: Path, paper_id: str, prompt_hash: str | None) ->
             },
             "claims": claims,
         }
+        if include_matches:
+            content["matches"] = [{"expected_id": f"{paper_id}-1", "actual_index": 0}]
 
     path.write_text(json.dumps(content), encoding="utf-8")
     return path
@@ -126,3 +134,17 @@ def test_all_papers_reported_when_multiple_fail(tmp_path, capsys):
     assert "paper-a" in out
     assert "paper-b" in out
     assert "paper-c" in out
+
+
+def test_fixture_missing_matches_key_fails(tmp_path, capsys):
+    matrix_path = _write_matrix(tmp_path, ["paper-a"])
+    fixture_dir = tmp_path / "fixtures"
+    _write_fixture(fixture_dir, "paper-a", CURRENT_HASH, include_matches=False)
+
+    exit_code = cff.check_freshness(matrix_path, fixture_dir)
+    out = capsys.readouterr().out
+
+    assert exit_code == 1
+    assert "paper-a" in out
+    assert "missing frozen matches" in out
+    assert "Regenerate via" in out
