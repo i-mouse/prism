@@ -60,9 +60,25 @@ async def read_from_db(filename: str) -> list[ActualClaim]:
 
 
 def read_from_fixture(path: str | Path) -> list[ActualClaim]:
-    """Reads actual claims from a fixture JSON file (list of index/label dicts)."""
+    """Reads actual claims from a fixture JSON file.
+
+    Accepts both the current {"header": {...}, "claims": [...]} shape
+    written by eval/dump_fixture.py and the legacy bare-array shape, kept
+    for one release cycle so older committed fixtures keep working.
+    """
     data = json.loads(Path(path).read_text(encoding="utf-8"))
-    return [ActualClaim.model_validate(item) for item in data]
+    claims = data["claims"] if isinstance(data, dict) else data
+    return [ActualClaim.model_validate(item) for item in claims]
+
+
+def get_fixture_header(path: str | Path) -> dict | None:
+    """Returns a fixture's header dict, or None for legacy bare-array fixtures.
+
+    Used by CI to check a fixture's prompt_hash isn't stale relative to the
+    current prompt files.
+    """
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    return data.get("header") if isinstance(data, dict) else None
 
 
 if __name__ == "__main__":

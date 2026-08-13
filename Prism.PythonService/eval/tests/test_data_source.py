@@ -35,6 +35,34 @@ def test_fixture_with_three_claims_parses(tmp_path):
     assert claims[2].claim_summary == "Claim two."
 
 
+def test_fixture_with_header_shape_parses(tmp_path):
+    path = _write_fixture(
+        tmp_path,
+        json.dumps(
+            {
+                "header": {
+                    "prompt_hash": "abcdef012345",
+                    "model_name": "gemini-2.5-flash",
+                    "generated_at": "2026-08-13T00:00:00+00:00",
+                    "paper_id": "arxiv-2303.11366v4",
+                    "filename": "reflexion.pdf",
+                    "extraction_run_id": "11111111-1111-1111-1111-111111111111",
+                },
+                "claims": [
+                    {"index": 0, "label": "supported", "claim_summary": "Claim zero."},
+                    {"index": 1, "label": "not_supported", "claim_summary": "Claim one."},
+                ],
+            }
+        ),
+    )
+
+    claims = read_from_fixture(path)
+
+    assert len(claims) == 2
+    assert claims[0].index == 0 and claims[0].label == "supported"
+    assert claims[1].index == 1 and claims[1].label == "not_supported"
+
+
 def test_empty_fixture_parses_to_empty_list(tmp_path):
     path = _write_fixture(tmp_path, "[]")
 
