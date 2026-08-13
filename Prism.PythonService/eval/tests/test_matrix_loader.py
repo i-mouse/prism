@@ -43,7 +43,7 @@ def test_loads_real_matrix_eval():
 
     assert len(spec.papers) == 3
     assert spec.pass_threshold_refusal_rate == 0.80
-    assert spec.pass_threshold_positive_floor == 15
+    assert spec.pass_threshold_positive_floor == 10
 
 
 def test_missing_pass_threshold_uses_defaults(tmp_path):
@@ -52,7 +52,7 @@ def test_missing_pass_threshold_uses_defaults(tmp_path):
     spec = load_matrix(path)
 
     assert spec.pass_threshold_refusal_rate == 0.80
-    assert spec.pass_threshold_positive_floor == 15
+    assert spec.pass_threshold_positive_floor == 10
 
 
 def test_malformed_json_raises(tmp_path):
