@@ -2,7 +2,8 @@
   "header": {
     "prompt_hash": "b9734f204fc4",
     "model_name": "gemini-3.6-flash",
-    "generated_at": "2026-08-13T08:57:56.529904+00:00",
+    "matcher_model": "gemini-3.1-flash-lite",
+    "generated_at": "2026-08-13T09:55:00.412572+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
     "extraction_run_id": "32138ba9-9cd4-49c5-81e8-bc2d142b9841"
@@ -57,6 +58,56 @@
       "index": 9,
       "label": "supported",
       "claim_summary": "Self-correction via Reflexion is an emergent capability seen in larger models."
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "REFLEX-M01",
+      "actual_index": 0
+    },
+    {
+      "expected_id": "REFLEX-M02",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M03",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "REFLEX-M04",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "REFLEX-M05",
+      "actual_index": 5
+    },
+    {
+      "expected_id": "REFLEX-M06",
+      "actual_index": 8
+    },
+    {
+      "expected_id": "REFLEX-M07",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M08",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M09",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M11",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M12",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M13",
+      "actual_index": null
     }
   ]
 }

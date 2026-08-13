@@ -1,9 +1,11 @@
 """CLI: dumps the latest Postgres extraction run per paper to a JSON fixture.
 
-Fixtures are what CI reads instead of the DB (eval/matrix_runner.py
---source fixture). Each fixture carries a header (prompt_hash, model_name,
-generated_at, paper_id, filename, extraction_run_id) so a freshness check
-can detect a fixture that no longer matches the current prompt.
+Fixtures are what CI reads instead of the DB and instead of Gemini
+(eval/matrix_runner.py --source fixture). Each fixture carries a header
+(prompt_hash, model_name, matcher_model, generated_at, paper_id, filename,
+extraction_run_id) so a freshness check can detect a fixture that no
+longer matches the current prompt, plus the frozen claims and the frozen
+matcher output (list[Match]) so CI never has to call Gemini to score.
 
 Run manually by developers after prompt iteration produces a
 high-performing extraction state worth freezing for CI:
@@ -21,7 +23,9 @@ from psycopg_pool import AsyncConnectionPool
 
 from memory_db import create_db_connection_pool
 from extraction.prompt_version import get_prompt_version
+from eval.matcher import DEFAULT_MODEL, match
 from eval.matrix_loader import MatrixSpec, PaperSpec, load_matrix
+from eval.types import ActualClaim
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 DEFAULT_MATRIX_PATH = REPO_ROOT / "docs" / "evals" / "matrix_eval.json"
@@ -99,7 +103,9 @@ def build_fixture(
     paper: PaperSpec,
     extraction_run_id: str,
     claims: list[dict],
+    matches: list[dict],
     model_name: str,
+    matcher_model: str,
     prompt_hash: str,
     generated_at: datetime,
 ) -> dict:
@@ -107,12 +113,14 @@ def build_fixture(
         "header": {
             "prompt_hash": prompt_hash,
             "model_name": model_name,
+            "matcher_model": matcher_model,
             "generated_at": generated_at.isoformat(),
             "paper_id": paper.paper_id,
             "filename": paper.filename,
             "extraction_run_id": extraction_run_id,
         },
         "claims": claims,
+        "matches": matches,
     }
 
 
@@ -122,6 +130,7 @@ async def _dump_paper(
     dry_run: bool,
     prompt_hash: str,
     model_name: str,
+    matcher_model: str,
 ) -> bool:
     """Returns True if the paper was (or, for --dry-run, would be) dumped."""
     result = await _fetch_latest_extraction(paper.filename)
@@ -130,20 +139,34 @@ async def _dump_paper(
         return False
 
     extraction_run_id, claims = result
-    fixture = build_fixture(paper, extraction_run_id, claims, model_name, prompt_hash, datetime.now(timezone.utc))
+    actual_claims = [ActualClaim(**claim) for claim in claims]
+
+    try:
+        matches = await match(paper.paper_id, paper.expected_rows, actual_claims)
+    except Exception as exc:
+        print(f"SKIPPED (matcher failed for {paper.filename}): {exc}")
+        return False
+
+    match_dicts = [m.model_dump() for m in matches]
+    fixture = build_fixture(
+        paper, extraction_run_id, claims, match_dicts, model_name, matcher_model, prompt_hash, datetime.now(timezone.utc)
+    )
     fixture_path = fixture_dir / f"{paper.paper_id}.json"
 
     if dry_run:
         print(
             f"[dry-run] would write {paper.filename} -> {fixture_path} "
-            f"({len(claims)} claims, prompt_hash={prompt_hash[:8]})"
+            f"({len(claims)} claims, {len(match_dicts)} matches, prompt_hash={prompt_hash[:8]})"
         )
         print(json.dumps(fixture, indent=2))
         return True
 
     fixture_dir.mkdir(parents=True, exist_ok=True)
     fixture_path.write_text(json.dumps(fixture, indent=2), encoding="utf-8")
-    print(f"wrote {paper.filename} -> {fixture_path} ({len(claims)} claims, prompt_hash={prompt_hash[:8]})")
+    print(
+        f"wrote {paper.filename} -> {fixture_path} "
+        f"({len(claims)} claims, {len(match_dicts)} matches, prompt_hash={prompt_hash[:8]})"
+    )
     return True
 
 
@@ -166,10 +189,11 @@ async def _run(args: argparse.Namespace) -> int:
 
     prompt_hash = get_prompt_version()
     model_name = os.getenv("LLM_EXTRACTION_MODEL", "")
+    matcher_model = os.getenv("LLM_AUDIT_MODEL", DEFAULT_MODEL)
 
     all_dumped = True
     for paper in papers:
-        dumped = await _dump_paper(paper, args.fixture_dir, args.dry_run, prompt_hash, model_name)
+        dumped = await _dump_paper(paper, args.fixture_dir, args.dry_run, prompt_hash, model_name, matcher_model)
         all_dumped = all_dumped and dumped
 
     return 0 if all_dumped else 1

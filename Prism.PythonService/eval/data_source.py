@@ -12,7 +12,7 @@ from pathlib import Path
 from psycopg_pool import AsyncConnectionPool
 
 from memory_db import create_db_connection_pool
-from eval.types import ActualClaim
+from eval.types import ActualClaim, Match
 
 _LATEST_CLAIMS_SQL = """
 WITH latest AS (
@@ -79,6 +79,22 @@ def get_fixture_header(path: str | Path) -> dict | None:
     """
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     return data.get("header") if isinstance(data, dict) else None
+
+
+def read_matches_from_fixture(path: str | Path) -> list[Match]:
+    """Reads the frozen matches from a fixture, written by eval/dump_fixture.py.
+
+    Returns [] for the legacy bare-array shape and for fixtures dumped
+    before matches were frozen (no "matches" key), so callers can treat
+    both as "no frozen matches" and fall back accordingly.
+    """
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return []
+    matches = data.get("matches")
+    if matches is None:
+        return []
+    return [Match.model_validate(item) for item in matches]
 
 
 if __name__ == "__main__":
