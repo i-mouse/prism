@@ -1,7 +1,7 @@
 
-namespace Prism.ApiService.Features.RfpSubmission
+namespace Prism.ApiService.Features.PaperSubmission
 {
-    public class SubmitRfpRequest
+    public class SubmitPaperRequest
     {
         public IFormFileCollection? Files { get; set; }
         public required string UserId { get; set; }

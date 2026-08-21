@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace Prism.ApiService.Features.RfpSubmission;
+namespace Prism.ApiService.Features.System;
 
 public static class SystemEndPoint
 {

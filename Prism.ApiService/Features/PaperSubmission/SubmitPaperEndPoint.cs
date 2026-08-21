@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace Prism.ApiService.Features.RfpSubmission;
+namespace Prism.ApiService.Features.PaperSubmission;
 
-public static class SubmitRfpEndpoint
+public static class SubmitPaperEndpoint
 {
 
-    public static void MapRfpEndPoint(this IEndpointRouteBuilder app)
+    public static void MapPaperEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/rfp", async ([FromForm] SubmitRfpRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,MinioStorageService storageService) =>
+        app.MapPost("/api/papers", async ([FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,MinioStorageService storageService) =>
         {
             if (request == null || request.Files == null || request.Files.Count == 0)
             {
@@ -25,8 +25,8 @@ public static class SubmitRfpEndpoint
             }
             var result = new
             {
-              Message = "RFP Received",
-              UserId = request.UserId  
+              Message = "Paper received",
+              UserId = request.UserId
             };
              foreach (var file in request.Files)
              {
@@ -42,7 +42,7 @@ public static class SubmitRfpEndpoint
 
             return Results.Ok(result);
 
-        }  ).WithName("SubmitRfp") .DisableAntiforgery();
+        }  ).WithName("SubmitPaper") .DisableAntiforgery();
 
 
     }
