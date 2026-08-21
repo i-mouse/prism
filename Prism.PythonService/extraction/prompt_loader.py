@@ -4,9 +4,11 @@ Reads the system prompt and few-shot examples from Prism.PythonService/prompts/
 and turns them into the message list Gemini's structured output API expects.
 Contains no LLM-calling code - assembly only.
 
-Two prompt kinds are supported:
-  - "claims": Prompt 2, per-claim evidence extraction (build_gemini_messages_for_claims)
+Four call kinds are supported:
   - "metadata": Prompt 1, paper-level metadata extraction (build_gemini_messages_for_metadata)
+  - extractor: Prompt 2 Call #2, claim-only extraction, no labels (build_gemini_messages_for_extractor)
+  - audit: Prompt 2 Call #3, per-claim free-text audit (build_gemini_messages_for_audit)
+  - structure: Prompt 2 Call #4, structures the audit into ClaimLLM JSON (build_gemini_messages_for_structure)
 """
 import json
 from pathlib import Path
@@ -61,8 +63,8 @@ def _is_negative_example(example: dict) -> bool:
     return False
 
 
-def build_gemini_messages_for_claims(paper_text: str) -> list[dict]:
-    """Assembles the full Gemini message list for a claim extraction call.
+def build_gemini_messages_for_extractor(paper_text: str) -> list[dict]:
+    """Assembles the full Gemini message list for the extractor call (Call #2).
 
     Order: system prompt, then for each few-shot example a user message
     (input_excerpt) followed by a model message (its output as a JSON
@@ -83,6 +85,59 @@ def build_gemini_messages_for_claims(paper_text: str) -> list[dict]:
 
     messages.append({"role": "user", "content": paper_text})
     return messages
+
+
+def _read_prompt_file(filename: str) -> str:
+    """Reads a prompt file by its exact filename (no extract_{kind}_ convention)."""
+    path = PROMPTS_DIR / filename
+    if not path.exists():
+        raise FileNotFoundError(f"Prompt file not found at {path}")
+    return path.read_text(encoding="utf-8")
+
+
+def build_gemini_messages_for_audit(
+    paper_text: str,
+    claim_text_verbatim: str,
+    claim_summary: str,
+) -> list[dict]:
+    """Assembles the Gemini message list for the auditor call (Call #3).
+
+    No few-shot examples. The user message carries the full paper text
+    plus the single claim to audit, clearly labeled so the auditor's
+    reasoning stays scoped to that one claim.
+    """
+    user_content = (
+        f"PAPER TEXT:\n{paper_text}\n\n"
+        "CLAIM TO AUDIT:\n"
+        f"CLAIM_TEXT_VERBATIM: {claim_text_verbatim}\n"
+        f"CLAIM_SUMMARY: {claim_summary}"
+    )
+    return [
+        {"role": "system", "content": _read_prompt_file("audit_claim_system.md")},
+        {"role": "user", "content": user_content},
+    ]
+
+
+def build_gemini_messages_for_structure(
+    claim_text_verbatim: str,
+    claim_summary: str,
+    audit_text: str,
+) -> list[dict]:
+    """Assembles the Gemini message list for the structurer call (Call #4).
+
+    No few-shot examples. The user message carries the three labeled
+    blocks the structurer expects: the claim's verbatim text, its
+    summary, and the auditor's full free-text audit from Call #3.
+    """
+    user_content = (
+        f"CLAIM_TEXT_VERBATIM: {claim_text_verbatim}\n"
+        f"CLAIM_SUMMARY: {claim_summary}\n"
+        f"AUDIT:\n{audit_text}"
+    )
+    return [
+        {"role": "system", "content": _read_prompt_file("structure_verdict_system.md")},
+        {"role": "user", "content": user_content},
+    ]
 
 
 def build_gemini_messages_for_metadata(paper_text: str) -> list[dict]:

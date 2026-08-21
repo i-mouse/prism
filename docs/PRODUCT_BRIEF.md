@@ -54,11 +54,11 @@ The four sections run from pure extraction to pure inference. Hallucination risk
 
 **Built, running locally under Aspire:** CRAG pipeline, grounding checker, intent + HyDE routing, event-driven ingestion with DLQ, SignalR live updates, PostgreSQL checkpointer, audio-to-text input, golden eval scaffold.
 
-**Extraction engine: DONE.** Prompt 1 (paper-level metadata, 9 fields) + Prompt 2 (per-claim evidence extraction) + two-stage grounding pipeline (RapidFuzz + Flash Lite audit) + DB writer (`document_extractors` + `paper_claims` tables) + worker integration. Retry cap and Qdrant idempotency also complete.
+**Extraction engine: DONE.** Prompt 1 (paper-level metadata, 9 fields) + a three-call claim extraction pipeline (extractor → auditor → structurer, decoupling claim finding from label judging) + two-stage grounding pipeline (RapidFuzz + Flash Lite audit) + DB writer (`document_extractors` + `paper_claims` tables) + worker integration. Retry cap and Qdrant idempotency also complete.
 
-**Not built (views + eval harness + cloud):** the Brief itself (Verdict card, Overstated Claims, Claim-Support Matrix UI), C# API endpoints exposing `paper_claims` to the UI, automated eval harness runner, tests, and the entire Azure stack.
+**Not built (views + cloud):** the Brief itself (Verdict card, Overstated Claims, Claim-Support Matrix UI), C# API endpoints exposing `paper_claims` to the UI, tests, and the entire Azure stack.
 
-The golden evals are committed against three agent papers (21 chat Qs, 37 matrix rows, 17 combined grounding-negative). **Next milestone: eval harness (Step 5/6)** — automated run emitting `correct-refusal rate: X% / N cases`.
+The golden evals are committed against three agent papers (21 chat Qs, 37 matrix rows, 17 combined grounding-negative). **Next milestone:** iterating the extractor prompt to improve trap-claim coverage on Reflexion and CoT papers (by_omission reduction), or building the Claim-Support Matrix UI (Tier 1), whichever comes first per the build order.
 
 ---
 
@@ -70,15 +70,15 @@ The spine is **test-first extraction**: the eval comes *with* the engine, not af
 
 **1. Extend the golden set FIRST (test-first).** Before the engine, write grounding cases — positive *and* grounding-negative — for the **Claim-Support Matrix** (Tier 1). Define what "correct claim extraction" and "correct refusal" mean as concrete, scored assertions over real papers. This is the eval-asset seed and the engine's spec. (DONE — committed as `docs/evals/matrix_eval.json`)
 
-**2. Build the extraction engine to PASS those cases.** Two prompts → structured JSON (metadata + claims with evidence spans), grounding-checked via two-stage RapidFuzz + LLM audit, written to `document_extractors` + `paper_claims`. (DONE — see `docs/decisions.md`)
+**2. Build the extraction engine to PASS those cases.** Multi-call pipeline → structured JSON (metadata + claims with evidence spans), grounding-checked via two-stage RapidFuzz + LLM audit, written to `document_extractors` + `paper_claims`. (DONE — see `docs/decisions.md`)
 
-**3. Render the Claim-Support Matrix (Tier 1).** First user-visible view, straight off the JSON. Most groundable → demo first.
+**3. Render the Claim-Support Matrix (Tier 1).** First user-visible view, straight off the JSON. Most groundable → demo first. (NEXT)
 
 **4. Render the Verdict (Tier 2).** Supported / Not-Supported / Partially-Supported + 3 reasons, each traceable to a cited matrix row. Extend golden cases to assert traceability.
 
 **5. Add Overstated Claims + Questions to Scrutinize (Tier 3) with ruthless grounding-negative eval.** Only after Tiers 1–2 are solid. Defer if the deadline is close.
 
-**6. Make the eval harness emit the number cleanly.** Automated run → `correct-refusal rate: X% / N cases`, reproducible from a committed command. (NEXT)
+**6. Make the eval harness emit the number cleanly.** Automated run → `correct-refusal rate: X% / N cases`, reproducible from a committed command. (DONE)
 
 **7. Azure deploy — AFTER the engine + eval are green locally.** Only the core services: Azure OpenAI, AI Search, Document Intelligence, Container Apps + Managed Identity + Key Vault. Do **not** interleave Azure with the spine.
 
