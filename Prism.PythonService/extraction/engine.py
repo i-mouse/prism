@@ -5,9 +5,16 @@ SDK's system_instruction/contents format, and enforces a Pydantic schema
 via structured output. No grounding logic, no DB writes - downstream
 stages (grounding, DB write) consume this module's output.
 
-Two extraction types share the same Gemini-calling machinery:
-  - extract_claims: Prompt 2, per-claim evidence extraction
-  - extract_metadata: Prompt 1, paper-level metadata extraction
+extract_metadata (Prompt 1) is a single structured-output call.
+
+extract_claims (Prompt 2) is a sequential three-call pipeline:
+  - Call #2, extractor: claim_text_verbatim + claim_summary only, no labels.
+  - Call #3, auditor (per claim, concurrent): free-text reasoning ending in
+    a VERDICT: line and QUOTE:/SECTION: pairs. No schema - the label isn't
+    committed until reasoning is done.
+  - Call #4, structurer (per claim, after its audit): turns the audit's
+    free text into a ClaimLLM JSON object. This is the only call in the
+    claims pipeline that uses response_schema.
 """
 import asyncio
 import json
@@ -19,9 +26,16 @@ from google import genai
 from google.genai import errors, types
 from pydantic import BaseModel
 
-from extraction.prompt_loader import build_gemini_messages_for_claims, build_gemini_messages_for_metadata
+from extraction.prompt_loader import (
+    build_gemini_messages_for_audit,
+    build_gemini_messages_for_extractor,
+    build_gemini_messages_for_metadata,
+    build_gemini_messages_for_structure,
+)
 from extraction.prompt_version import get_prompt_version
-from extraction.schemas import ClaimsExtractionResponse, MetadataExtractionResponse
+from extraction.schemas import ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
+
+AUDIT_STRUCTURE_CONCURRENCY = 5
 
 LOGS_DIR = Path(__file__).parent.parent / "logs"
 
@@ -107,6 +121,52 @@ def _write_structured_log(
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
 
 
+def _build_client() -> genai.Client:
+    api_key = os.getenv("AI_API_KEY")
+    if not api_key:
+        raise RuntimeError("AI_API_KEY environment variable is not set")
+    return genai.Client(api_key=api_key)
+
+
+async def _generate_with_fallback(
+    client: genai.Client,
+    contents: list[types.Content],
+    config: types.GenerateContentConfig,
+    chat_id: str,
+) -> tuple[types.GenerateContentResponse, str]:
+    """Calls Gemini on LLM_EXTRACTION_MODEL with retry/backoff, falling back to
+    LLM_AUDIT_MODEL for one final attempt if the primary model's retries are
+    exhausted. Returns (response, model_name_actually_used). Raises on
+    terminal failure (non-retryable error, or fallback attempt also fails).
+    """
+    model_name = os.getenv("LLM_EXTRACTION_MODEL")
+    if not model_name:
+        raise RuntimeError("LLM_EXTRACTION_MODEL environment variable is not set")
+
+    try:
+        response = await _call_gemini(client, model_name, contents, config, chat_id)
+        return response, model_name
+    except Exception as primary_exc:
+        if not _is_retryable(primary_exc):
+            raise
+        fallback_model = os.getenv("LLM_AUDIT_MODEL")
+        if not fallback_model:
+            raise RuntimeError(
+                f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
+                f"(chat_id={chat_id}) and LLM_AUDIT_MODEL is not set for fallback"
+            ) from primary_exc
+        try:
+            print(f"[extraction] chat_id={chat_id} falling back to model={fallback_model}")
+            response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
+            return response, fallback_model
+        except Exception as fallback_exc:
+            print(f"[extraction] chat_id={chat_id} fallback model={fallback_model} failed: {fallback_exc!r}")
+            raise RuntimeError(
+                f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
+                f"and fallback attempt on model={fallback_model} (chat_id={chat_id})"
+            ) from fallback_exc
+
+
 async def _call_gemini_structured(
     messages: list[dict],
     response_schema: type[BaseModel],
@@ -122,18 +182,10 @@ async def _call_gemini_structured(
     when response.parsed is None. Logs the request/response to
     logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
     """
-    model_name = os.getenv("LLM_EXTRACTION_MODEL")
-    if not model_name:
-        raise RuntimeError("LLM_EXTRACTION_MODEL environment variable is not set")
-
-    api_key = os.getenv("AI_API_KEY")
-    if not api_key:
-        raise RuntimeError("AI_API_KEY environment variable is not set")
-
+    client = _build_client()
     system_prompt = _extract_system_prompt(messages)
     contents = _to_gemini_contents(messages)
 
-    client = genai.Client(api_key=api_key)
     config = types.GenerateContentConfig(
         system_instruction=system_prompt,
         temperature=0,
@@ -141,29 +193,7 @@ async def _call_gemini_structured(
         response_schema=response_schema,
     )
 
-    used_model = model_name
-    try:
-        response = await _call_gemini(client, model_name, contents, config, chat_id)
-    except Exception as primary_exc:
-        if not _is_retryable(primary_exc):
-            raise
-        fallback_model = os.getenv("LLM_AUDIT_MODEL")
-        if not fallback_model:
-            raise RuntimeError(
-                f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
-                f"(chat_id={chat_id}) and LLM_AUDIT_MODEL is not set for fallback"
-            ) from primary_exc
-        used_model = fallback_model
-        try:
-            print(f"[extraction] chat_id={chat_id} falling back to model={fallback_model}")
-            response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
-        except Exception as fallback_exc:
-            print(f"[extraction] chat_id={chat_id} fallback model={fallback_model} failed: {fallback_exc!r}")
-            raise RuntimeError(
-                f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
-                f"and fallback attempt on model={fallback_model} (chat_id={chat_id})"
-            ) from fallback_exc
-
+    response, used_model = await _generate_with_fallback(client, contents, config, chat_id)
     raw_text = response.text
 
     parsed = response.parsed
@@ -204,21 +234,171 @@ async def _call_gemini_structured(
     return parsed
 
 
+async def _call_gemini_json(
+    messages: list[dict],
+    chat_id: str,
+    correlation_id: str | None,
+    log_subdir: str,
+) -> dict:
+    """Calls Gemini in JSON mode without a response_schema, parsing response.text
+    as JSON. Same retry/backoff/fallback-model behavior as _call_gemini_structured,
+    used for the extractor call where no schema should bias field ordering.
+    Logs the request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+    """
+    client = _build_client()
+    system_prompt = _extract_system_prompt(messages)
+    contents = _to_gemini_contents(messages)
+
+    config = types.GenerateContentConfig(
+        system_instruction=system_prompt,
+        temperature=0,
+        response_mime_type="application/json",
+    )
+
+    response, used_model = await _generate_with_fallback(client, contents, config, chat_id)
+    raw_text = response.text
+
+    try:
+        parsed = json.loads(raw_text)
+    except json.JSONDecodeError as parse_exc:
+        print(f"[extraction] chat_id={chat_id} malformed JSON response, raw={raw_text!r}")
+        _write_structured_log(
+            log_subdir=log_subdir,
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            model_used=used_model,
+            request_message_count=len(messages),
+            response_item_count=0,
+            response_raw=raw_text,
+        )
+        raise ValueError(f"Gemini response for chat_id={chat_id} was not valid JSON: {parse_exc}") from parse_exc
+
+    item_count = len(parsed.get("claims", [])) if isinstance(parsed, dict) else 0
+    _write_structured_log(
+        log_subdir=log_subdir,
+        chat_id=chat_id,
+        correlation_id=correlation_id,
+        model_used=used_model,
+        request_message_count=len(messages),
+        response_item_count=item_count,
+        response_raw=raw_text,
+    )
+
+    return parsed
+
+
+async def _call_gemini_freetext(
+    messages: list[dict],
+    chat_id: str,
+    correlation_id: str | None,
+    log_subdir: str,
+) -> str:
+    """Calls Gemini for plain free-text output - no JSON mode, no schema.
+
+    Used for the auditor call: reasoning happens in prose first, so the
+    label isn't committed to structure before the evidence is weighed.
+    Same retry/backoff/fallback-model behavior as _call_gemini_structured.
+    Logs the request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+    """
+    client = _build_client()
+    system_prompt = _extract_system_prompt(messages)
+    contents = _to_gemini_contents(messages)
+
+    config = types.GenerateContentConfig(
+        system_instruction=system_prompt,
+        temperature=0,
+    )
+
+    response, used_model = await _generate_with_fallback(client, contents, config, chat_id)
+    raw_text = response.text
+
+    _write_structured_log(
+        log_subdir=log_subdir,
+        chat_id=chat_id,
+        correlation_id=correlation_id,
+        model_used=used_model,
+        request_message_count=len(messages),
+        response_item_count=1,
+        response_raw=raw_text,
+    )
+
+    return raw_text
+
+
+async def _audit_and_structure_claim(
+    semaphore: asyncio.Semaphore,
+    paper_text: str,
+    claim: dict,
+    chat_id: str,
+    correlation_id: str | None,
+) -> ClaimLLM:
+    """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
+
+    Concurrency across claims is bounded by the shared semaphore.
+    """
+    claim_text_verbatim = claim["claim_text_verbatim"]
+    claim_summary = claim["claim_summary"]
+
+    async with semaphore:
+        audit_text = await _call_gemini_freetext(
+            messages=build_gemini_messages_for_audit(paper_text, claim_text_verbatim, claim_summary),
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            log_subdir="audit",
+        )
+
+        structured = await _call_gemini_structured(
+            messages=build_gemini_messages_for_structure(claim_text_verbatim, claim_summary, audit_text),
+            response_schema=ClaimLLM,
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            log_subdir="structure",
+        )
+
+    return structured
+
+
 async def extract_claims(
     paper_text: str,
     chat_id: str,
     correlation_id: str | None = None,
 ) -> ClaimsExtractionResponse:
-    """Extracts structured claims from paper_text via Gemini structured output."""
-    messages = build_gemini_messages_for_claims(paper_text)
-    result = await _call_gemini_structured(
-        messages=messages,
-        response_schema=ClaimsExtractionResponse,
+    """Extracts structured claims from paper_text via a sequential three-call pipeline.
+
+    Call #2 (extractor) runs once over the full paper. For each extracted
+    claim, Call #3 (audit) and Call #4 (structure) run in sequence, fanned
+    out across claims with a bounded semaphore. A claim whose audit or
+    structure call fails is logged and dropped rather than failing the
+    whole extraction - downstream grounding handles missing claims correctly.
+    """
+    extracted = await _call_gemini_json(
+        messages=build_gemini_messages_for_extractor(paper_text),
         chat_id=chat_id,
         correlation_id=correlation_id,
         log_subdir="extraction",
     )
-    return result
+    claims = extracted.get("claims", [])
+
+    semaphore = asyncio.Semaphore(AUDIT_STRUCTURE_CONCURRENCY)
+    results = await asyncio.gather(
+        *(
+            _audit_and_structure_claim(semaphore, paper_text, claim, chat_id, correlation_id)
+            for claim in claims
+        ),
+        return_exceptions=True,
+    )
+
+    structured_claims: list[ClaimLLM] = []
+    for claim, result in zip(claims, results):
+        if isinstance(result, Exception):
+            print(
+                f"[extraction] chat_id={chat_id} audit/structure pipeline failed for "
+                f"claim={claim.get('claim_text_verbatim', '')!r}: {result!r}"
+            )
+            continue
+        structured_claims.append(result)
+
+    return ClaimsExtractionResponse(claims=structured_claims)
 
 
 async def extract_metadata(
