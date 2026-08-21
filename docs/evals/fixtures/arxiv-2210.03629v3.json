@@ -1,85 +1,100 @@
 {
   "header": {
-    "prompt_hash": "b9734f204fc4",
+    "prompt_hash": "5acbc4f65ac1",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.1-flash-lite",
-    "generated_at": "2026-08-13T09:55:26.281868+00:00",
+    "generated_at": "2026-08-21T07:36:30.346379+00:00",
     "paper_id": "arxiv-2210.03629v3",
     "filename": "react.pdf",
-    "extraction_run_id": "1a2ab2d1-deec-4db8-843c-730c8c731330"
+    "extraction_run_id": "b79ebfc6-0fe8-4ef5-8a00-5f55a2246c3c"
   },
   "claims": [
     {
       "index": 0,
-      "label": "supported",
-      "claim_summary": "ReAct beats imitation and RL baselines on ALFWorld and WebShop by 34% and 10%."
+      "label": "partially_supported",
+      "claim_summary": "ReAct demonstrates effectiveness over state-of-the-art baselines while improving interpretability and trustworthiness."
     },
     {
       "index": 1,
-      "label": "supported",
-      "claim_summary": "ReAct beats CoT on Fever but slightly lags on HotpotQA."
+      "label": "partially_supported",
+      "claim_summary": "ReAct reduces hallucination and error propagation on HotpotQA and Fever via Wikipedia interaction."
     },
     {
       "index": 2,
       "label": "supported",
-      "claim_summary": "Combined ReAct and CoT-SC methods yield top scores on HotpotQA and Fever."
+      "claim_summary": "ReAct outperforms imitation and reinforcement learning on ALFWorld and WebShop by 34% and 10%."
     },
     {
       "index": 3,
       "label": "supported",
-      "claim_summary": "ReAct + CoT-SC matches 21-sample CoT-SC accuracy using only 3-5 samples."
+      "claim_summary": "ReAct outperforms action-only models and is competitive with CoT on HotpotQA and Fever."
     },
     {
       "index": 4,
       "label": "supported",
-      "claim_summary": "Finetuned ReAct on 3,000 samples outperforms prompting on much larger models."
+      "claim_summary": "Combining ReAct and CoT achieves top performance by merging internal and external knowledge."
     },
     {
       "index": 5,
       "label": "supported",
-      "claim_summary": "Best ReAct trial reaches 71% success rate on ALFWorld vs baselines."
+      "claim_summary": "Sparse reasoning in ReAct provides consistent advantages over action-only baselines in decision making."
     },
     {
       "index": 6,
       "label": "supported",
-      "claim_summary": "ReAct consistently outperforms Act across 6 trials with average 62% gain."
+      "claim_summary": "ReAct outperforms CoT on Fever but slightly lags behind CoT on HotpotQA."
     },
     {
       "index": 7,
       "label": "supported",
-      "claim_summary": "ReAct achieves an absolute 10% success rate improvement on WebShop."
+      "claim_summary": "CoT has a higher false positive hallucination rate (14%) compared to ReAct (6%)."
     },
     {
       "index": 8,
       "label": "supported",
-      "claim_summary": "ReAct outperforms Inner Monologue style prompting 71% vs 53% on ALFWorld."
+      "claim_summary": "ReAct combined with CoT-SC matches 21-sample CoT-SC performance using only 3-5 samples."
     },
     {
       "index": 9,
       "label": "supported",
-      "claim_summary": "GPT-3 with ReAct prompting outperforms PaLM-540B on HotpotQA and ALFWorld."
+      "claim_summary": "Finetuned ReAct outperforms prompt-based methods across smaller model scales."
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "ReAct achieves 71% success on ALFWorld, outperforming Act (45%) and BUTLER (37%)."
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "ReAct achieves a 10% absolute success rate improvement on WebShop over prior methods."
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "ReAct substantially outperforms Inner Monologue-style prompting with 71% vs 53% success on ALFWorld."
     }
   ],
   "matches": [
     {
       "expected_id": "REACT-M01",
-      "actual_index": 7
+      "actual_index": 11
     },
     {
       "expected_id": "REACT-M02",
-      "actual_index": null
+      "actual_index": 7
     },
     {
       "expected_id": "REACT-M03",
-      "actual_index": null
+      "actual_index": 3
     },
     {
       "expected_id": "REACT-M05",
-      "actual_index": 8
+      "actual_index": 12
     },
     {
       "expected_id": "REACT-M06",
-      "actual_index": 4
+      "actual_index": 9
     },
     {
       "expected_id": "REACT-M07",
@@ -87,19 +102,19 @@
     },
     {
       "expected_id": "REACT-M08",
-      "actual_index": 1
+      "actual_index": 6
     },
     {
       "expected_id": "REACT-M09",
-      "actual_index": null
+      "actual_index": 5
     },
     {
       "expected_id": "REACT-M10",
-      "actual_index": 2
+      "actual_index": 8
     },
     {
       "expected_id": "REACT-M11",
-      "actual_index": null
+      "actual_index": 1
     },
     {
       "expected_id": "REACT-M12",

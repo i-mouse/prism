@@ -1,9 +1,9 @@
 {
   "header": {
-    "prompt_hash": "b9734f204fc4",
+    "prompt_hash": "5acbc4f65ac1",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.1-flash-lite",
-    "generated_at": "2026-08-13T09:55:15.009540+00:00",
+    "generated_at": "2026-08-21T07:36:27.073042+00:00",
     "paper_id": "arxiv-2201.11903v6",
     "filename": "cot.pdf",
     "extraction_run_id": "2f1deb6c-05ab-4552-a997-25046d3e9ce8"

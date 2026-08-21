@@ -16,7 +16,6 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
-<<<<<<< HEAD
 ## Positive-hit floor lowered from 15 to 10 — 2026-08-13
 
 **Context:** First 3-paper baseline showed 12/23 positive hits — below the original floor of 15. Current extraction prompt has never emitted an explicit refusal label; all "correct refusals" are by omission. Locking main's CI at red until prompt iteration raises recall would freeze all unrelated PRs.
@@ -40,13 +39,11 @@ When adding a new decision: copy the template below, put it at the top, do not m
 **Alternatives:** Add AI_API_KEY as a GitHub secret. Rejected — reproducibility claim gets weaker ("clone and run, if you have a Gemini key"), CI burns quota on every push, fork PRs break on missing secrets.
 
 **Consequences:** Matcher changes require fixture regen (enforced by check_fixture_freshness). Fixture size grows slightly. Reproducibility now bit-perfect: same fixture, same number, forever.
-=======
 ## Three-call claim extraction pipeline — 2026-08-20
 **Context:** Single-call structured extraction never emitted refusal labels (by_label=0 across v1/v2/v3 despite three prompt rewrites, escalating MUST language, pattern-labeled few-shot, and audit-procedure prompts). The failure was architectural: schema-constrained generation commits to the label field before reasoning, and helpfulness-tuned models default to "supported" when the reasoning path is short-circuited.
 **Decision:** Split extract_claims() into three sequential Gemini calls: extractor (list claims, no labels), auditor (per-claim free-text reasoning ending in VERDICT: line + verbatim QUOTE:/SECTION: pairs, no schema), structurer (parse audit prose into ClaimLLM JSON — the only call using response_schema). Per-claim audit → structure runs concurrent with asyncio.Semaphore(5). schemas.py, writer.py, grounding pipeline, and all downstream code unchanged.
 **Alternatives:** (a) Two-pass "starve the model of Results tables" — rejected per Anchored Confabulation research (partial evidence increases confident-wrong rate). (b) Model swap to Gemini Pro — deferred; FACTS grounding benchmarks show Flash competitive with Pro for grounded tasks. (c) Add a refusal_assessment schema field — rejected; targets labeling, but failure was in extraction recall.
-**Consequences:** by_label went from 0 to 2 on full 3-paper eval; refusal rate 13/14 (93%); positive hits 15/23 (at floor). ~3× LLM calls per paper (extract + N×audit + N×structure vs single call). Grounding pipeline unchanged. Extractor still misses several Reflexion/CoT abstract-claim patterns; iteration deferred to v4.1.
->>>>>>> main
+**Consequences:** by_label went from 0 to 2 on full 3-paper eval; refusal rate 13/14 (93%); positive hits 15/23 (clears floor of 10). ~3× LLM calls per paper (extract + N×audit + N×structure vs single call). Grounding pipeline unchanged. Extractor still misses several Reflexion/CoT abstract-claim patterns; iteration deferred to v4.1.
 
 ---
 
