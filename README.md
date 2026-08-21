@@ -28,7 +28,7 @@ flowchart LR
     MQ1 -->|Consume| Worker[Python Worker]
     Worker -->|Download| MinIO[(MinIO)]
     Worker -->|Chunk + Embed| Qdrant[(Qdrant)]
-    Worker -->|extract_metadata<br/>extract_claims<br/>ground_extraction| Gemini[Gemini API]
+    Worker -->|extract_metadata<br/>extract_claims (3 calls)<br/>ground_extraction| Gemini[Gemini API]
     Worker -->|write_extraction_result| PG[(PostgreSQL)]
     Worker -->|Publish| MQ2[(RabbitMQ<br/>document_processed_queue)]
     MQ2 -->|Consume| API
@@ -50,7 +50,7 @@ flowchart LR
 | AI worker packaging | uv | — |
 | Agent framework | LangGraph + FastAPI | — |
 | LLM client | google-genai | — |
-| LLM models | Gemini 3.6 Flash (extraction), Gemini 3.1 Flash Lite (audit) | Env-driven |
+| LLM models | Gemini 3.6 Flash (extractor + per-claim auditor + per-claim structurer), Gemini 3.1 Flash Lite (grounding audit) | Env-driven |
 | Vector store | Qdrant | 1.18 |
 | Relational DB | PostgreSQL | 18 |
 | Async queue | RabbitMQ | 4.3-management |
@@ -125,8 +125,10 @@ prism/
 │   ├── Services/                   # RabbitMQ setup + listener
 │   └── Hubs/                       # SignalR DocumentHub
 ├── Prism.PythonService/            # Python worker + API
-│   ├── extraction/                 # Prompts 1+2, grounding, DB writer
+│   ├── extraction/                 # Extraction pipeline, grounding, DB writer
 │   ├── prompts/                    # System prompts + few-shot JSONs
+│   │   ├── audit_claim_system.md   # Per-claim reasoning auditor
+│   │   └── structure_verdict_system.md # Parses audit into JSON
 │   ├── main.py                     # RabbitMQ consumer (ingestion pipeline)
 │   ├── api.py                      # FastAPI for chat endpoints
 │   ├── agent_service.py            # LangGraph agent
@@ -136,7 +138,7 @@ prism/
 ├── Prism.ServiceDefaults/          # Aspire service defaults
 ├── docs/
 │   ├── decisions.md                # Chronological technical decisions
-│   ├── diagrams/                   # current.png + target.png
+│   ├── diagrams/                   # current.png + target.png (TODO: current.png is stale)
 │   ├── evals/                      # matrix_eval.json + golden_eval.json
 │   └── research_papers/            # Sample PDFs for testing
 |   └── PRODUCT_BRIEF.md                # Product vision + build order
@@ -154,7 +156,7 @@ prism/
 
 - **[Product Brief](docs/PRODUCT_BRIEF.md)** — vision, target user, wedge, build order
 - **[Decisions Log](docs/decisions.md)** — chronological technical decisions
-- **[Architecture diagrams](docs/diagrams/)** — current + target state
+- **[Architecture diagrams](docs/diagrams/)** — current + target state (<!-- TODO: current.png is stale and does not reflect the three-call extraction pipeline -->)
 - **[Evaluation datasets](docs/evals/)** — golden test sets for correct-refusal measurement
 
 ---
@@ -163,7 +165,6 @@ prism/
 
 Not yet built:
 
-- Eval harness runner (loads `matrix_eval.json`, computes correct-refusal rate)
 - Paper Intelligence Brief UI (Verdict card, Overstated Claims, Matrix table)
 - C# API endpoints exposing `paper_claims` to the UI
 - Azure deployment (Container Apps, Postgres Flexible Server, AI Search)
@@ -177,7 +178,7 @@ Not yet built:
 
 ## Status
 
-Portfolio project demonstrating Senior Azure AI Engineer capabilities: multi-service orchestration, async ingestion pipelines, LLM structured output, deterministic grounding, and evaluation-driven design. Not open to external contributions.
+Portfolio project demonstrating Senior Azure AI Engineer capabilities: multi-service orchestration, async ingestion pipelines, LLM structured output, deterministic grounding, and evaluation-driven design. The eval harness reports refusal-recall split into by_label and by_omission counts on a golden set of 17 grounding-negative cases across three papers. Not open to external contributions.
 
 ---
 
