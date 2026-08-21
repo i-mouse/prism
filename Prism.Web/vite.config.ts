@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
           // Removed rewrite unless your backend doesn't have /api in the route
         },
         // File Uploads
-        '/rfp': {
+        '/api/papers': {
           target: target,
           changeOrigin: true,
           secure: false

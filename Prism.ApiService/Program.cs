@@ -3,11 +3,12 @@ using System.Data.Common;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Prism.ApiService.Data;
-using Prism.ApiService.Features.RfpSubmission;
+using Prism.ApiService.Features.PaperSubmission;
 using Prism.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using Prism.ApiService.Features.Chat;
+using Prism.ApiService.Features.System;
 using Prism.ApiService.Hubs;
 using Microsoft.AspNetCore.Connections;
 using RabbitMQ.Client;
@@ -104,7 +105,7 @@ using (var scope = app.Services.CreateAsyncScope())
      var rabbitMqSetupService = new RabbitMqSetupService();
      await rabbitMqSetupService.SetupQueuesAsync(channel);
 }
-app.MapRfpEndPoint();
+app.MapPaperEndPoint();
 app.MapChatEndPoint();
 app.MapChatHistoryEndpoints();
 app.MapSystemEndPoint();

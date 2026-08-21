@@ -86,7 +86,7 @@ function App() {
           setMessages(historyMessages);
         } else {
           historyMessages = [
-            { id: 'welcome', role: 'ai', content: "Hello! I am your Prism assistant. \n\nPlease upload a Prism or RFP document in the sidebar so I can analyze it for you.", timestamp: new Date() }
+            { id: 'welcome', role: 'ai', content: "Hello! I am your Prism assistant.\n\nUpload a research paper in the sidebar and I'll audit its claims.", timestamp: new Date() }
           ];
           setMessages(historyMessages);
         }
@@ -226,7 +226,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }
   };
 
-  // --- 2. REAL API UPLOAD (/rfp) ---
+  // --- 2. REAL API UPLOAD (/api/papers) ---
   const handleUpload = async () => {
     if (files.length==0) return;
 
@@ -252,7 +252,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     });
     pendingFilesCount.current = files.length;
     try {
-      const response = await fetch('/rfp', {
+      const response = await fetch('/api/papers', {
         method: 'POST',
         body: formData,
       });
@@ -367,7 +367,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             <FiUploadCloud />
           </div>
           <div style={{fontWeight: 500, color: 'var(--text-primary)'}}>
-            {files.length>0 ? "Change File" : "Select RFP/Prism"}
+            {files.length>0 ? "Change File" : "Select paper"}
           </div>
           <div style={{fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '8px'}}>
             Supports PDF, DOCX
@@ -396,7 +396,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         {/* RECENT CHATS LIST */}
         <div className="section-title" style={{ marginTop: '30px' }}>
-          Recent RFPs
+          Recent papers
         </div>
         
         <div className="chat-list" style={{ overflowY: 'auto', flex: 1 }}>
