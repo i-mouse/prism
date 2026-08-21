@@ -1,0 +1,113 @@
+{
+  "header": {
+    "prompt_hash": "5acbc4f65ac1",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.1-flash-lite",
+    "generated_at": "2026-08-21T07:36:27.073042+00:00",
+    "paper_id": "arxiv-2201.11903v6",
+    "filename": "cot.pdf",
+    "extraction_run_id": "2f1deb6c-05ab-4552-a997-25046d3e9ce8"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with eight CoT exemplars achieves state-of-the-art accuracy on GSM8K."
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting more than doubled GSM8K solve rates for large models."
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "PaLM with chain-of-thought prompting reaches within 2% of SOTA on AQuA and ASDiv."
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "48 of 50 correct LaMDA 137B answers contained logically sound reasoning chains."
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "LaMDA 137B errors on GSM8K were 46% minor and 54% major semantic errors."
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with CoT beats prior SOTA on StrategyQA and human benchmark on Sports."
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with CoT achieves near 100% solve rates on in-domain symbolic tasks."
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "All CoT prompt variants from different annotators consistently outperform standard prompting baselines."
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "Post-hoc external calculator integration substantially improves chain-of-thought prompting performance."
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting enables length generalization on out-of-domain symbolic tasks."
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "COT-M01",
+      "actual_index": 0
+    },
+    {
+      "expected_id": "COT-M02",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M03",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M04",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "COT-M05",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M06",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M07",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M08",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "COT-M09",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M10",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M11",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M12",
+      "actual_index": null
+    }
+  ]
+}

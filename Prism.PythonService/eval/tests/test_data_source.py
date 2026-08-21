@@ -3,7 +3,7 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from eval.data_source import read_from_fixture
+from eval.data_source import read_from_fixture, read_matches_from_fixture
 
 
 def _write_fixture(tmp_path, content: str):
@@ -90,3 +90,63 @@ def test_missing_required_field_raises_validation_error(tmp_path):
 
     with pytest.raises(ValidationError):
         read_from_fixture(path)
+
+
+def test_read_matches_from_fixture_new_shape(tmp_path):
+    path = _write_fixture(
+        tmp_path,
+        json.dumps(
+            {
+                "header": {
+                    "prompt_hash": "abcdef012345",
+                    "model_name": "gemini-3.6-flash",
+                    "matcher_model": "gemini-3.1-flash-lite",
+                    "generated_at": "2026-08-13T00:00:00+00:00",
+                    "paper_id": "arxiv-2303.11366v4",
+                    "filename": "reflexion.pdf",
+                    "extraction_run_id": "11111111-1111-1111-1111-111111111111",
+                },
+                "claims": [{"index": 0, "label": "supported", "claim_summary": "Claim zero."}],
+                "matches": [
+                    {"expected_id": "M1", "actual_index": 0},
+                    {"expected_id": "M2", "actual_index": None},
+                ],
+            }
+        ),
+    )
+
+    matches = read_matches_from_fixture(path)
+
+    assert len(matches) == 2
+    assert matches[0].expected_id == "M1" and matches[0].actual_index == 0
+    assert matches[1].expected_id == "M2" and matches[1].actual_index is None
+
+
+def test_read_matches_from_fixture_legacy_shape_returns_empty(tmp_path):
+    path = _write_fixture(
+        tmp_path,
+        json.dumps([{"index": 0, "label": "supported", "claim_summary": "Claim zero."}]),
+    )
+
+    assert read_matches_from_fixture(path) == []
+
+
+def test_read_matches_from_fixture_missing_matches_key_returns_empty(tmp_path):
+    path = _write_fixture(
+        tmp_path,
+        json.dumps(
+            {
+                "header": {
+                    "prompt_hash": "abcdef012345",
+                    "model_name": "gemini-3.6-flash",
+                    "generated_at": "2026-08-13T00:00:00+00:00",
+                    "paper_id": "arxiv-2303.11366v4",
+                    "filename": "reflexion.pdf",
+                    "extraction_run_id": "11111111-1111-1111-1111-111111111111",
+                },
+                "claims": [{"index": 0, "label": "supported", "claim_summary": "Claim zero."}],
+            }
+        ),
+    )
+
+    assert read_matches_from_fixture(path) == []

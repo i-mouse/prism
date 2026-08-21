@@ -161,6 +161,28 @@ prism/
 
 ---
 
+## Eval harness — reproducing the number
+
+Local iteration (uses live Postgres via Aspire):
+```powershell
+cd Prism.PythonService
+uv run python -m eval.matrix_runner --source db
+```
+
+After a prompt change worth committing:
+```powershell
+uv run python -m eval.dump_fixture
+git add prompts/ docs/evals/fixtures/
+git commit -m "..."
+```
+
+CI runs `matrix_runner --source fixture` on every PR and blocks the merge
+on regression. Fixture freshness is checked separately — if the prompt
+files changed but the fixture wasn't regenerated, CI fails with a clear
+message telling you which paper to re-dump.
+
+---
+
 ## Roadmap
 
 Not yet built:

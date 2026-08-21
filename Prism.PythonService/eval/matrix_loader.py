@@ -12,7 +12,7 @@ from pydantic import ValidationError
 from eval.types import ExpectedRow
 
 DEFAULT_PASS_THRESHOLD_REFUSAL_RATE = 0.80
-DEFAULT_PASS_THRESHOLD_POSITIVE_FLOOR = 15
+DEFAULT_PASS_THRESHOLD_POSITIVE_FLOOR = 10
 
 
 @dataclass

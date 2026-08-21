@@ -1,9 +1,16 @@
 """CLI entry point for the Prism eval harness: matrix_eval.json runner.
 
-Loads the claim-support matrix, fetches actual claims per paper (Postgres
-or committed JSON fixtures), matches expected rows to actual claims via
-the LLM-as-judge matcher, scores each paper, aggregates into a single
-run, prints a report, writes a JSON log, and exits 0/1 for CI gating.
+Loads the claim-support matrix and fetches actual claims + matches per
+paper, then scores and aggregates into a single run, prints a report,
+writes a JSON log, and exits 0/1 for CI gating.
+
+Two sources, two very different cost profiles:
+  --source db       Reads Postgres, calls the LLM-as-judge matcher live
+                     (eval/matcher.py). Local dev only - needs AI_API_KEY.
+  --source fixture  Reads claims AND matches already frozen into the
+                     fixture by eval/dump_fixture.py. Zero LLM calls, so
+                     eval.matcher (and google.genai) is never imported -
+                     this is what CI runs, no API key required.
 """
 import argparse
 import asyncio
@@ -14,8 +21,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-from eval.data_source import read_from_db, read_from_fixture
-from eval.matcher import match
+from eval.data_source import read_from_db, read_from_fixture, read_matches_from_fixture
 from eval.matrix_loader import MatrixSpec, PaperSpec, load_matrix
 from eval.scorer import score
 from eval.types import EvalReport
@@ -72,27 +78,56 @@ async def _run_paper(
     repeat: int,
     positive_hit_floor: int,
 ) -> PaperRunResult:
-    try:
-        if source == "db":
-            claims = await read_from_db(paper.filename)
-        else:
-            claims = read_from_fixture(fixture_dir / f"{paper.paper_id}.json")
-    except Exception as exc:
-        return PaperRunResult(
-            paper_id=paper.paper_id,
-            filename=paper.filename,
-            status="SKIPPED",
-            reason=f"read failed: {exc}",
-        )
-
-    if not claims:
-        reason = "no DB data" if source == "db" else "fixture missing"
-        return PaperRunResult(paper_id=paper.paper_id, filename=paper.filename, status="SKIPPED", reason=reason)
-
     reports: list[EvalReport] = []
-    for _ in range(repeat):
-        matches = await match(paper.paper_id, paper.expected_rows, claims)
-        reports.append(score(paper.expected_rows, claims, matches, positive_hit_floor=positive_hit_floor))
+
+    if source == "db":
+        # Imported here, not at module scope, so a --source fixture run
+        # (CI, no AI_API_KEY) never imports eval.matcher or google.genai.
+        from eval.matcher import match
+
+        try:
+            claims = await read_from_db(paper.filename)
+        except Exception as exc:
+            return PaperRunResult(
+                paper_id=paper.paper_id, filename=paper.filename, status="SKIPPED", reason=f"read failed: {exc}"
+            )
+
+        if not claims:
+            return PaperRunResult(paper_id=paper.paper_id, filename=paper.filename, status="SKIPPED", reason="no DB data")
+
+        for _ in range(repeat):
+            matches = await match(paper.paper_id, paper.expected_rows, claims)
+            reports.append(score(paper.expected_rows, claims, matches, positive_hit_floor=positive_hit_floor))
+
+    else:  # source == "fixture"
+        fixture_path = fixture_dir / f"{paper.paper_id}.json"
+
+        try:
+            claims = read_from_fixture(fixture_path)
+        except Exception as exc:
+            return PaperRunResult(
+                paper_id=paper.paper_id, filename=paper.filename, status="SKIPPED", reason=f"read failed: {exc}"
+            )
+
+        if not claims:
+            return PaperRunResult(paper_id=paper.paper_id, filename=paper.filename, status="SKIPPED", reason="fixture missing")
+
+        matches = read_matches_from_fixture(fixture_path)
+        if not matches:
+            return PaperRunResult(
+                paper_id=paper.paper_id,
+                filename=paper.filename,
+                status="SKIPPED",
+                reason=(
+                    "legacy fixture missing 'matches' key; regenerate via "
+                    f"'uv run python -m eval.dump_fixture --paper {paper.paper_id}'"
+                ),
+            )
+
+        # Matches are frozen - re-scoring under --repeat is deterministic,
+        # so variance across runs is honestly zero.
+        for _ in range(repeat):
+            reports.append(score(paper.expected_rows, claims, matches, positive_hit_floor=positive_hit_floor))
 
     return PaperRunResult(
         paper_id=paper.paper_id,
