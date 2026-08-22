@@ -1,8 +1,6 @@
-# Prism daily runner — one command to start everything.
-
+﻿# Prism daily runner - one command to start everything.
 Push-Location $PSScriptRoot
 
-# Fail fast with a clear message if setup is incomplete
 $missing = @()
 if (-not (Get-Command uv     -ErrorAction SilentlyContinue)) { $missing += "uv" }
 if (-not (Get-Command node   -ErrorAction SilentlyContinue)) { $missing += "node" }
@@ -17,17 +15,14 @@ if ($missing.Count -gt 0) {
     exit 1
 }
 
-# Install React deps if node_modules is missing (first clone / after wipe)
 if (-not (Test-Path ".\Prism.Web\node_modules")) {
-    Write-Host "First run — installing React deps..." -ForegroundColor Cyan
+    Write-Host "First run - installing React deps..." -ForegroundColor Cyan
     Push-Location ".\Prism.Web"
     npm install
     Pop-Location
 }
 
-# Launch
 Push-Location ".\Prism.AppHost"
 dotnet run
 Pop-Location
-
 Pop-Location

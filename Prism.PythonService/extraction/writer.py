@@ -116,7 +116,7 @@ async def write_extraction_result(
                     ),
                 )
 
-                for claim in claims:
+                for position, claim in enumerate(claims):
                     evidence_spans_jsonb = Jsonb(
                         [span.model_dump(mode="json") for span in claim.evidence_spans]
                     )
@@ -125,8 +125,8 @@ async def write_extraction_result(
                         INSERT INTO paper_claims
                             (id, document_extractor_id, extraction_run_id, claim_text_verbatim,
                              claim_summary, label, grounding_status, missing, reason,
-                             evidence_spans, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                             evidence_spans, position, created_at, updated_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """,
                         (
                             uuid.uuid4(),
@@ -139,6 +139,7 @@ async def write_extraction_result(
                             claim.missing,
                             claim.reason,
                             evidence_spans_jsonb,
+                            position,
                             now,
                             now,
                         ),

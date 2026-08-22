@@ -1,10 +1,12 @@
 using Prism.ApiService.Data;
+using Prism.ApiService.Data.Schemas;
 using Prism.ApiService.Services;
 using MassTransit;
 using Prism.ApiService.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Prism.ApiService.Data.Converters;
 
 namespace Prism.ApiService.Features.PaperSubmission;
 
@@ -22,6 +24,10 @@ public static class SubmitPaperEndpoint
             else if(String.IsNullOrEmpty(request.ConnectionId))
             {
                  return Results.BadRequest("ConnectionId is blank. Please reconnect your signalR.");
+            }
+            else if (request.Files.Count != 1)
+            {
+                return Results.BadRequest("Prism audits one paper at a time. Upload a single PDF.");
             }
             var result = new
             {
@@ -44,6 +50,77 @@ public static class SubmitPaperEndpoint
 
         }  ).WithName("SubmitPaper") .DisableAntiforgery();
 
+        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, PrismDBContext dbContext) =>
+        {
+            var file = await dbContext.FileRecords
+                .Where(f => f.FileId == paperId)
+                .Select(f => new { f.FileId, f.FileName, f.Summary })
+                .FirstOrDefaultAsync();
+
+            if (file == null)
+            {
+                return Results.NotFound();
+            }
+            var labelConverter = new ClaimLabelConverter();
+            var statusConverter = new GroundingStatusConverter();
+            
+            var extractor = await dbContext.DocumentExtractors
+                .Where(e => e.FileId == paperId)
+                .OrderByDescending(e => e.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (extractor == null)
+            {
+                return Results.Ok(new PaperClaimsResponse(
+                    file.FileId,
+                    file.FileName,
+                    "Pending",
+                    null,
+                    new ClaimsSummary(0, 0, 0, 0),
+                    new List<ClaimDto>()));
+            }
+
+            var claims = await dbContext.PaperClaims
+                .Where(c => c.DocumentExtractorId == extractor.Id)
+                .OrderBy(c => c.Position)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var claimDtos = claims
+            .Select(c => new ClaimDto(
+                c.Id,
+                c.ClaimTextVerbatim,
+                c.ClaimSummary,
+                labelConverter.ConvertToProvider(c.Label) as string ?? "",
+                c.Missing,
+                c.Reason,
+                statusConverter.ConvertToProvider(c.GroundingStatus) as string ?? "",
+                c.Position,
+                c.EvidenceSpans
+                    .Select(s => new EvidenceSpanDto(
+                        s.SourceText,
+                        s.SourceSection,
+                        s.SectionHeader,
+                        s.PageNumber,
+                        statusConverter.ConvertToProvider(s.GroundingStatus) as string ?? ""))
+                    .ToList()))
+            .ToList();
+
+            var summary = new ClaimsSummary(
+                claims.Count,
+                claims.Count(c => c.Label == ClaimLabel.Supported),
+                claims.Count(c => c.Label == ClaimLabel.PartiallySupported),
+                claims.Count(c => c.Label == ClaimLabel.NotSupported));
+
+            return Results.Ok(new PaperClaimsResponse(
+                file.FileId,
+                file.FileName,
+                file.Summary != null ? "Completed" : "In progress",
+                extractor.CreatedAt,
+                summary,
+                claimDtos));
+        })
+        .WithName("GetPaperClaims");
 
     }
 
@@ -53,12 +130,22 @@ public static class SubmitPaperEndpoint
         {
             var userChats = await dbContext.PrismDocuments
                 .Where(doc => doc.UserId == userId)
-                .Select(doc => new 
+                .Where(doc => dbContext.FileRecords.Any(f => f.ChatId == doc.ChatId))
+                .Select(doc => new
                 {
                     ChatId = doc.ChatId,
-                    ChatTitle= doc.ChatTitle,
-                    Status = doc.Status,
+                    File = dbContext.FileRecords
+                        .Where(f => f.ChatId == doc.ChatId)
+                        .OrderByDescending(f => f.UploadedAt)
+                        .First(),
                     UploadedAt = doc.UploadedAt
+                })
+                .Select(x => new
+                {
+                    ChatId = x.ChatId,
+                    FileName = x.File.FileName,
+                    ExtractionStatus = x.File.Summary != null ? "Completed" : "In progress",
+                    UploadedAt = x.UploadedAt
                 })
                 .OrderByDescending(doc => doc.UploadedAt)
                 .ToListAsync();

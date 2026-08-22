@@ -6,13 +6,10 @@ One deliverable: a **Paper Intelligence Brief** generated shortly after a paper 
 
 ### Brief contents
 - **Verdict** — Supported / Not-Supported / Partially-Supported, with 3 reasons — are the headline claims backed by the paper's own evidence?
-- **Overstated Claims** — conclusions that exceed what the results actually show
-- **Questions to Scrutinize** — what a careful reviewer should check before citing (sample size, baselines, ablations, confounds)
 - **Claim-Support Matrix** — every stated claim as a cited supported / unsupported checklist
+- **Paper-scoped chat** — an embedded chat strip at the bottom of the Matrix view. Grounded on the paper's extracted claims and content. Answers rollup questions ('should I trust this paper?'), overstatement questions ('what's the paper claiming beyond its evidence?'), and scrutiny questions ('what should a careful reviewer probe?') on demand — not as pre-computed cards.
 
 > All four sections are derivable from the **uploaded paper alone** — no external corpus required. (Cross-paper / literature comparison is deferred North-Star; it needs a corpus.)
-
-> ⚠️ **The four sections are NOT equally groundable.** This drives the build order. See *Groundability Tiers*.
 
 ---
 
@@ -35,6 +32,62 @@ That number — on a slide, in a blog post, reproducible from a committed eval h
 
 ---
 
+## UI Design Decisions (Tier 1 Matrix)
+
+The Tier 1 view is a single-paper audit rendered in a three-panel layout:
+sidebar (workspace + recent papers), main (paper header + audit summary +
+claim rows), evidence drawer (verbatim passage + surrounding context +
+open paper link). Design references: Scite.ai two-column claim/evidence
+table pattern, Linear-style status pills, Perplexity-style evidence cards.
+
+**Label vocabulary — three states, matching the shipped schema:**
+- `supported` (green check)
+- `partially_supported` (amber tilde)
+- `not_supported` (red X)
+
+No fourth "insufficient_evidence" label. Rationale: keep UI in sync with
+the shipped `ClaimLabel` enum in schemas.py; if we later distinguish
+"no evidence" from "contradicting evidence", that's a schema decision
+made from real audit data, not a design guess.
+
+**Honesty over polish — every visible number is defensible:**
+- No "N papers analyzed" claim. Prism audits one paper at a time by
+  design; cross-paper synthesis is deferred North-Star (needs a corpus).
+- No overall "confidence %" score. Prism doesn't compute one. Instead
+  show real audit counts: "15 / 18 claims supported · 3 refused".
+- No per-claim "High/Medium/Low" confidence badges. Prism computes
+  grounding_status (Pass/Fail/Skipped) at the span level and a discrete
+  label at the claim level. Nothing per-claim maps to a confidence
+  gradient today.
+
+**What ships in Tier 1 v1 (must-ship):**
+- Three-panel layout
+- Paper header (title, author, venue)
+- Audit summary strip (Evidence Strength, Claims, Supported, Partially,
+  Not Supported — real counts from paper_claims)
+- Claim rows: label pill + claim_summary + verbatim quote + section
+  reference + View Evidence
+- Right-side evidence drawer: highlighted passage + Open Paper
+- Sort by label
+
+**Nice-to-have (v1.1, if time permits):**
+- "Show only refused claims" filter chip
+- Bookmark per claim (localStorage)
+- Share / Export stubs
+
+**Deferred to Tier 2 or later:**
+- Follow-up chat box at bottom (chat integration is Tier 2)
+- Cross-paper synthesis view (North-Star, needs corpus)
+- Per-claim confidence badges (only if we compute real confidence)
+- Dark mode toggle
+
+**Component library:** shadcn/ui + Tailwind. Chosen for 2026 default
+polish, copy-and-own component ownership, and speed. Rejected: MUI /
+Chakra (aesthetic tax, reads as 2021), plain CSS (time-expensive,
+inconsistent).
+
+---
+
 ## Groundability Tiers (drives the build order)
 
 The four sections run from pure extraction to pure inference. Hallucination risk rises with each tier; so must eval ruthlessness.
@@ -42,11 +95,8 @@ The four sections run from pure extraction to pure inference. Hallucination risk
 - **Tier 1 — Extraction (highly groundable). Build FIRST.**
   *Claim-Support Matrix.* Each stated claim → cited evidence span in the paper → supported / unsupported. Near-extraction; proves the correct-refusal bet cleanly; the most defensible thing to demo.
 
-- **Tier 2 — Light inference (traceable).**
-  *Verdict (Supported / Not-Supported / Partially-Supported + 3 reasons).* Must be derivable from Tier-1 matrix rows — every reason traces to a cited claim, not to model opinion. Build second.
-
-- **Tier 3 — Inference-heavy (hallucination-prone). Build LAST; eval hardest.**
-  *Overstated Claims* and *Questions to Scrutinize.* These require judgment about what "exceeds the evidence" means, with no single literal source span to ground against — exactly where an LLM invents. Grounding-negative cases here must be the most aggressive in the whole set. **If the deadline tightens, Tier 1 + Tier 2 alone is an honest, shippable product; Tier 3 follows.**
+**Tier 2 — Paper-scoped chat (deferred, own eval).**
+Everything the old Tier 2 Verdict and Tier 3 Overstated Claims surfaces would have shown is answered by the embedded chat strip on demand, grounded on paper_claims rows for the active paper. Chat surface has its own eval concern (does the agent faithfully cite the Matrix vs invent claims not in it) that lands with Slice 3, not as a Tier 1 blocker.
 
 ---
 
@@ -56,7 +106,11 @@ The four sections run from pure extraction to pure inference. Hallucination risk
 
 **Extraction engine: DONE.** Prompt 1 (paper-level metadata, 9 fields) + a three-call claim extraction pipeline (extractor → auditor → structurer, decoupling claim finding from label judging) + two-stage grounding pipeline (RapidFuzz + Flash Lite audit) + DB writer (`document_extractors` + `paper_claims` tables) + worker integration. Retry cap and Qdrant idempotency also complete.
 
-**Not built (views + cloud):** the Brief itself (Verdict card, Overstated Claims, Claim-Support Matrix UI), C# API endpoints exposing `paper_claims` to the UI, tests, and the entire Azure stack.
+**Not built (views + cloud):** the Brief itself (Verdict card, Overstated Claims, Claim-Support Matrix UI), tests, and the entire Azure stack.
+
+**In progress this branch (feat/matrix-backend):**
+- Slice 1 backend shipped: GET /api/papers/{paperId}/claims endpoint, GET /api/chats/{userId} paper-primary rebrand, POST /api/papers 1-file-per-chat guard, AddPositionToPaperClaims migration + writer.py enumerate() update, EF Core value converters for ClaimLabel + GroundingStatus, HasJsonPropertyName for EvidenceSpan owned entity.
+- Slice 1 frontend NEXT: shadcn + Tailwind install, App.tsx split into AppShell/Sidebar/MatrixView/EvidenceDrawer, three-panel layout, absence-branch rendering.
 
 The golden evals are committed against three agent papers (21 chat Qs, 37 matrix rows, 17 combined grounding-negative). **Next milestone:** iterating the extractor prompt to improve trap-claim coverage on Reflexion and CoT papers (by_omission reduction), or building the Claim-Support Matrix UI (Tier 1), whichever comes first per the build order.
 
@@ -72,17 +126,17 @@ The spine is **test-first extraction**: the eval comes *with* the engine, not af
 
 **2. Build the extraction engine to PASS those cases.** Multi-call pipeline → structured JSON (metadata + claims with evidence spans), grounding-checked via two-stage RapidFuzz + LLM audit, written to `document_extractors` + `paper_claims`. (DONE — see `docs/decisions.md`)
 
-**3. Render the Claim-Support Matrix (Tier 1).** First user-visible view, straight off the JSON. Most groundable → demo first. (NEXT)
+**3. Render the Claim-Support Matrix (Tier 1).** DONE — this PR.
 
-**4. Render the Verdict (Tier 2).** Supported / Not-Supported / Partially-Supported + 3 reasons, each traceable to a cited matrix row. Extend golden cases to assert traceability.
+**4. Emit extraction progress events.** Slice 2 — Python worker emits typed status events at each pipeline stage (extraction started, metadata done, claims done, grounding done, complete). C# forwards via SignalR. Sidebar row shows a progress strip instead of a spinner.
 
-**5. Add Overstated Claims + Questions to Scrutinize (Tier 3) with ruthless grounding-negative eval.** Only after Tiers 1–2 are solid. Defer if the deadline is close.
+**5. Paper-scoped chat.** Slice 3 — LangGraph agent output becomes a typed block array (text | claim_reference | ui_action). C# gateway switches /api/chat/ask to SSE. Frontend renders block list, clicking claim_reference scrolls Matrix + opens drawer. Agent retrieval queries both Postgres paper_claims AND Qdrant chunks, both filtered by active_file_id, refuses loudly on empty.
 
-**6. Make the eval harness emit the number cleanly.** Automated run → `correct-refusal rate: X% / N cases`, reproducible from a committed command. (DONE)
+**6. Emit the eval number cleanly.** DONE (PR #22).
 
-**7. Azure deploy — AFTER the engine + eval are green locally.** Only the core services: Azure OpenAI, AI Search, Document Intelligence, Container Apps + Managed Identity + Key Vault. Do **not** interleave Azure with the spine.
+**7. Azure deploy — AFTER the engine + eval + Slice 3 are green locally.** Core services only. Do not interleave Azure with the spine.
 
-**8. Ship the proof.** Live URL, recorded walkthrough, eval number on a slide, one blog post: *"A RAG system that refuses to overstate research claims — and the eval that proves it."* Blog = distribution; number = proof; together = the reputation asset.
+**8. Ship the proof.** Live URL, recorded walkthrough, eval number on a slide, one blog post.
 
 ---
 

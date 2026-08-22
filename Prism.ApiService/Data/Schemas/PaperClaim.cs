@@ -16,6 +16,7 @@ public class PaperClaim
     public GroundingStatus GroundingStatus { get; set; }
     public bool Missing { get; set; }
     public string? Reason { get; set; }
+    public int Position { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
