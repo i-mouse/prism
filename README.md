@@ -28,7 +28,7 @@ flowchart LR
     MQ1 -->|Consume| Worker[Python Worker]
     Worker -->|Download| MinIO[(MinIO)]
     Worker -->|Chunk + Embed| Qdrant[(Qdrant)]
-    Worker -->|extract_metadata<br/>extract_claims (3 calls)<br/>ground_extraction| Gemini[Gemini API]
+    Worker -->|extract_metadata<br/>extract_claims (3 calls)<br/>ground_extraction<br/>persist_with_position| Gemini[Gemini API]
     Worker -->|write_extraction_result| PG[(PostgreSQL)]
     Worker -->|Publish| MQ2[(RabbitMQ<br/>document_processed_queue)]
     MQ2 -->|Consume| API
@@ -187,13 +187,12 @@ message telling you which paper to re-dump.
 
 Not yet built:
 
-- Paper Intelligence Brief UI (Verdict card, Overstated Claims, Matrix table)
-- C# API endpoints exposing `paper_claims` to the UI
+- **Slice 1 Matrix UI (frontend).** Endpoint shipped this branch; React three-panel view + shadcn/Tailwind install + component split — NEXT.
+- **Slice 2 extraction progress events.** Python emits typed stage events, SignalR forwards, sidebar row shows a progress strip instead of a spinner.
+- **Slice 3 paper-scoped chat.** LangGraph agent output becomes a typed block array. /api/chat/ask returns SSE. Agent retrieval reads both paper_claims (Postgres) and Qdrant chunks, both scoped by active_file_id. Replaces the deleted Tier 2 (Verdict) and Tier 3 (Overstated Claims) surfaces.
 - Azure deployment (Container Apps, Postgres Flexible Server, AI Search)
-- Foundry Pattern C migration for the agent
 - Document Intelligence for structure-aware chunking
 - Auth / multi-tenancy
-- MCP wrapper
 - Unit + integration tests
 
 ---

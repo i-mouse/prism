@@ -16,6 +16,51 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
+## Tier 2 (Verdict view) and Tier 3 (Overstated Claims + Questions to Scrutinize) collapsed into paper-scoped chat — 2026-08-22
+
+**Context:** PRODUCT_BRIEF originally scoped four tiers with Tier 2 as a separate Verdict card and Tier 3 as pre-computed Overstated Claims + Questions to Scrutinize cards. During Slice 1 UI planning, the user reframed Tier 2 and Tier 3 as questions a reader would ask conversationally about the paper, not pre-computed cards.
+**Decision:** delete Tier 2 (Verdict view) and Tier 3 (Overstated Claims + Questions to Scrutinize) as UI surfaces. Their content is answered on-demand by the paper-scoped chat strip embedded in the Matrix view, grounded on paper_claims rows for the active paper. General chat becomes legacy; kept janky, deleted after paper-scoped chat lands.
+**Alternatives:** (a) build Tier 2 and Tier 3 as pre-computed cards as originally scoped — rejected; requires new prompts, new golden-eval rows, and cements LLM judgments as settled facts rather than probeable answers. (b) build Tier 2 only, defer Tier 3 — rejected; same argument, just delayed.
+**Consequences:** simpler product surface (Matrix + embedded chat). Two build slices eliminated (Verdict UI + Overstated cards + own eval sets). Paper-scoped chat retrieval must query both Postgres paper_claims AND Qdrant chunks every turn, both filtered by active_file_id, and refuse loudly when both return empty. Chat eval work moves to Slice 3.
+
+---
+
+## One paper per chat, enforced at upload endpoint — 2026-08-22
+
+**Context:** Schema allows N files per chat (file_records.chat_id FK with no UNIQUE constraint; POST /api/papers loops over request.Files). Product framing is "audit one paper at a time" (the wedge vs Elicit / Consensus / Scite). Sidebar rebrand to paper-primary rows requires a 1:1 chat-to-paper mapping to make each sidebar row unambiguous.
+**Decision:** reject uploads with Files.Count != 1 at the API boundary in POST /api/papers. Sidebar treats each chat as representing exactly one paper. Existing multi-file chats (if any exist in local DB) render only the most recent file.
+**Alternatives:** (a) UNIQUE constraint on file_records.chat_id at the schema level — rejected; schema migration adds risk with no additional guarantee vs the API-layer guard. (b) Sidebar shows chats-expandable-to-files — rejected; adds navigation clicks and bakes the legacy 1:N model into a demo surface. (c) Sidebar shows one row per file grouped visually under chats — rejected; loses the "one row = one paper" simplicity.
+**Consequences:** sidebar model is unambiguous. Frontend never needs to disambiguate which file to open for a chat. Legacy multi-file chats in local DB are visible only as their most recent file — no data migration.
+
+---
+
+## AddPositionToPaperClaims — explicit sort column instead of timestamp — 2026-08-22
+
+**Context:** paper_claims.created_at is written by Python's writer.py with a loop-invariant `now = datetime.now(timezone.utc)` assigned once before the batch (writer.py line 94). Every claim in a batch shares identical microsecond-precision timestamps. Sorting by created_at would collapse to id-order tiebreak, which is uuid4() random — nondeterministic sidebar order across page loads.
+**Decision:** add `position int NOT NULL` column to paper_claims, populated via enumerate() in the writer loop. Backfill existing rows via `row_number() OVER (PARTITION BY extraction_run_id ORDER BY id) - 1` in the migration Up(). Add composite index paper_claims(extraction_run_id, position) matching the new endpoint's read pattern. Matrix UI's default sort is Position (paper order).
+**Alternatives:** (a) sort by (created_at DESC, id) — rejected; timestamp is loop-invariant so tiebreak becomes the only sort key, and it's uuid4() random. Would need a comment explaining why timestamp-tiebreak-by-random-guid is "paper order." (b) fix writer.py to call datetime.now() per row inside the loop — rejected; couples semantic UI order to a Python timestamp precision that varies by platform (Windows historical ~15ms resolution).
+**Consequences:** sidebar and Matrix default sort are deterministic and semantically named. Future refactor to `DEFAULT now()` in the schema does not break the UI. Trivial writer.py change (enumerate). One-line migration + backfill SQL.
+
+---
+
+## EF Core enum ↔ string mapping via dedicated ValueConverter classes — 2026-08-22
+
+**Context:** Python writer stores paper_claims.label as snake_case ("supported", "partially_supported", "not_supported") and grounding_status as title-case ("Pass", "Fail", "Skipped"), matching schemas.py enum values. C# enum members are PascalCase (Supported, PartiallySupported, NotSupported). Default HasConversion<string>() uses Enum.ToString() which returns member names — reads throw InvalidOperationException("Cannot convert string value 'partially_supported' from the database to any value in the mapped 'ClaimLabel' enum").
+**Decision:** dedicated ValueConverter<TEnum, string> classes under Prism.ApiService/Data/Converters/, one per cross-language enum (ClaimLabelConverter, GroundingStatusConverter). Each uses a static readonly Dictionary for both directions (ToDb + FromDb). Applied in PrismDBContext.cs via HasConversion(new ClaimLabelConverter()). Same converters instantiated in the Matrix endpoint's DTO projection so the wire format matches Python's vocabulary — .Label.ToString() is a leak that bypasses the converter and must not appear in DTO mapping code.
+**Alternatives:** (a) inline expression-tree switch lambdas — rejected; CS8514/CS8188 (expression trees cannot contain switch or throw expressions). (b) EnumToStringConverter<T> built-in — rejected; uses Enum.ToString() so same PascalCase mismatch. (c) rename Python enum values to PascalCase — rejected; breaks all shipped paper_claims rows, eval fixtures, and prompt few-shot JSONs.
+**Consequences:** single source of truth for enum ↔ string mapping per enum. Dictionary indexer throws KeyNotFoundException on unmapped values — fail-loud on any future Python-side value addition without corresponding C# update. Pattern extends to any future cross-language enum.
+
+---
+
+## HasJsonPropertyName for jsonb owned-entity snake_case mapping — 2026-08-22
+
+**Context:** EvidenceSpan is an owned entity mapped to jsonb via OwnsMany(...).ToJson() on PaperClaim. Python writer stores JSON keys in snake_case (source_text, source_section, section_header, page_number, grounding_status) via [span.model_dump(mode="json") for span in claim.evidence_spans]. C# entity properties are PascalCase (SourceText, SourceSection, ...). EFCore.NamingConventions handles relational column names but does NOT extend to JSON keys inside owned entities (github.com/npgsql/efcore.pg#2998). EF read couldn't find PascalCase keys, defaulted every string field to null and every enum to first value (GroundingStatus.Pass).
+**Decision:** use EF Core 10's HasJsonPropertyName fluent API on each owned property to explicitly map the C# property name to the actual JSON key. Applied in PrismDBContext.cs inside the OwnsMany block for EvidenceSpan.
+**Alternatives:** (a) [JsonPropertyName] attribute — rejected; that attribute controls System.Text.Json for HTTP serialization, has no effect on EF Core's internal JSON layer for jsonb. (b) rename C# entity properties to snake_case — rejected; breaks C# naming convention across the codebase.
+**Consequences:** one line per owned property in the OnModelCreating fluent config. Explicit mapping visible at the entity configuration point. Any new EvidenceSpan property needs its HasJsonPropertyName added — enforced by convention, not by compiler. Pattern extends to any future owned-entity jsonb mapping where Python and C# vocabularies differ.
+
+---
+
 ## Positive-hit floor lowered from 15 to 10 — 2026-08-13
 
 **Context:** First 3-paper baseline showed 12/23 positive hits — below the original floor of 15. Current extraction prompt has never emitted an explicit refusal label; all "correct refusals" are by omission. Locking main's CI at red until prompt iteration raises recall would freeze all unrelated PRs.
@@ -207,6 +252,10 @@ When adding a new decision: copy the template below, put it at the top, do not m
 - **Grow `matrix_eval.json` beyond 17 negative cases** — Current set is a seed probe. Expansion (more adversarial rows, more rhetorical patterns) is deliberate, hand-authored, and slow. Belongs after the live URL + blog are shipped.
 - **Held-out obscure paper with sealed rows** — Reflexion, CoT, and ReAct are heavily represented in Gemini's training data, so "correct refusal" on them may reflect memorization rather than grounding. Author personally read all 17 rows during prompt design, so implicit test-set leakage exists. Both problems have the same fix: one obscure or post-cutoff paper with 4-6 hand-authored negative rows, sealed from prompt-iteration view, scored separately in the report. Belongs after the harness proves itself on the seen papers.
 - **Drop `document_extractors.latest_run_id` column** — Column is self-referential in the insert-only writer pattern; its name is misleading. Migration to drop it deferred until the schema is touched for another reason. Documented so a future reader doesn't trust the column name.
+- **Page-aware chunking + evidence-span provenance backfill.** evidence_spans.page_number and evidence_spans.section_header are null across all extracted claims because the LLM extractor has no page context — fitz page structure is lost when text is concatenated for the prompt. Fix requires: (a) parser keeps page number per chunk, (b) Qdrant payload adds page_number alongside file_id, (c) writer.py runs a post-extraction lookup that matches each source_text quote back to the page-aware chunk index and backfills page_number + section_header. Non-blocking for Tier 1 Matrix UI — source_section (e.g. "Section 3.3", "Table 1", "Abstract") is populated and sufficient for navigation. Backfill requires re-ingesting all papers.
+- **Investigate span-level grounding_status writeback confidence.** Every span in every paper_claims row currently shows grounding_status: "Fail" alongside claim-level grounding_status: "Fail" and missing: true, even for claims labeled supported/partially_supported. This is the correct behavior for the correct-refusal thesis (extractor optimism overridden by grounder verdict) but worth verifying the writer stores EvidenceSpanFinal (post-grounding) rather than EvidenceSpanLLM (pre-grounding) values. If the writer stores LLM-layer spans, span-level status is always the enum default.
+- **PDF extraction text-fusion artifacts.** fitz occasionally fuses words across line breaks in source_text ("muchhigher", "trustworthiness." with no preceding space). Not blocking; a text-normalization pass in the parser step would fix it.
+- **Chat-scoped retrieval for paper-scoped chat (Slice 3 dependency, not deferred).** When Slice 3 lands, the LangGraph agent must query BOTH paper_claims (Postgres, structured) AND Qdrant (semantic chunks) EVERY turn, both filtered by active_file_id, and refuse loudly when both return empty. This is the mechanism that makes paper-scoped chat replace the deleted Tier 2 + Tier 3 surfaces. Not deferred; naming here so it doesn't get lost.
 
 ---
 

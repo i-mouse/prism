@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Prism.ApiService.Data.Schemas;
-
+using Prism.ApiService.Data.Converters;
 namespace Prism.ApiService.Data;
 
 public class PrismDBContext : DbContext
@@ -62,22 +62,33 @@ public class PrismDBContext : DbContext
             entity.HasIndex(e => e.DomainId);
         });
 
-        modelBuilder.Entity<PaperClaim>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Label).HasConversion<string>();
-            entity.Property(x => x.GroundingStatus).HasConversion<string>();
-            entity.OwnsMany(x => x.EvidenceSpans, b =>
-            {
-                b.ToJson();
-                b.Property(s => s.GroundingStatus).HasConversion<string>();
-            });
-            entity.HasOne(x => x.DocumentExtractor)
-                  .WithMany(x => x.PaperClaims)
-                  .HasForeignKey(x => x.DocumentExtractorId)
-                  .OnDelete(DeleteBehavior.Cascade);
-            entity.HasIndex(x => new { x.DocumentExtractorId, x.Label });
-            entity.HasIndex(x => x.ExtractionRunId);
-        });
+       modelBuilder.Entity<PaperClaim>(entity =>
+{
+    entity.HasKey(x => x.Id);
+
+    entity.Property(x => x.Label).HasConversion(new ClaimLabelConverter());
+    entity.Property(x => x.GroundingStatus).HasConversion(new GroundingStatusConverter());
+
+    entity.OwnsMany(x => x.EvidenceSpans, b =>
+{
+    b.ToJson();
+    b.Property(s => s.SourceText).HasJsonPropertyName("source_text");
+    b.Property(s => s.SourceSection).HasJsonPropertyName("source_section");
+    b.Property(s => s.SectionHeader).HasJsonPropertyName("section_header");
+    b.Property(s => s.PageNumber).HasJsonPropertyName("page_number");
+    b.Property(s => s.GroundingStatus)
+     .HasJsonPropertyName("grounding_status")
+     .HasConversion(new GroundingStatusConverter());
+});
+
+    entity.HasOne(x => x.DocumentExtractor)
+          .WithMany(x => x.PaperClaims)
+          .HasForeignKey(x => x.DocumentExtractorId)
+          .OnDelete(DeleteBehavior.Cascade);
+
+    entity.HasIndex(x => new { x.DocumentExtractorId, x.Label });
+    entity.HasIndex(x => x.ExtractionRunId);
+    entity.HasIndex(x => new { x.ExtractionRunId, x.Position });
+});
     }
 }
