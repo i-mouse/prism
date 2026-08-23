@@ -24,17 +24,9 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg-app);
-  color: var(--text-primary);
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden; /* This stops the entire page from scrolling */
-}
+/* NOTE: this stylesheet is scoped to <ChatMode> (Slice 3, currently unrendered).
+   Global body/root rules were removed so they don't leak into the Tailwind-based
+   Matrix UI shell. */
 
 .app-container {
   display: flex;
