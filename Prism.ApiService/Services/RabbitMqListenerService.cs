@@ -48,7 +48,27 @@ public class RabbitMqListenerService : BackgroundService
 
         _logger.LogInformation("Received message payload keys: {Keys}", string.Join(",", dataObject.EnumerateObject().Select(p => p.Name)));
 
-        if (!dataObject.TryGetProperty("fileId", out var fileIdProp) || 
+        // ExtractionProgress events (stage events + grounding counter from the Python
+        // pipeline) share this queue with the DocumentProcessed completion message.
+        // They carry a "stage" field the completion message never has, so branch on
+        // that rather than adding a second queue/consumer.
+        if (dataObject.TryGetProperty("stage", out _))
+        {
+            if (!dataObject.TryGetProperty("fileId", out _) ||
+                !dataObject.TryGetProperty("chatId", out var progressChatIdProp))
+            {
+                _logger.LogWarning("Missing required properties in progress payload. Skipping message.");
+                await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
+                return;
+            }
+
+            var progressChatId = progressChatIdProp.ToString();
+            await _hubContext.Clients.Group($"chat-{progressChatId}").ExtractionProgress(dataObject);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
+            return;
+        }
+
+        if (!dataObject.TryGetProperty("fileId", out var fileIdProp) ||
             !dataObject.TryGetProperty("chatId", out var chatIdProp) ||
             !dataObject.TryGetProperty("summary", out var summaryProp))
         {

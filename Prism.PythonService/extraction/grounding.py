@@ -12,6 +12,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Awaitable, Callable, Optional
 
 from rapidfuzz import fuzz
 
@@ -200,6 +201,7 @@ async def ground_extraction(
     paper_text: str,
     chat_id: str,
     correlation_id: str | None = None,
+    on_progress: Optional[Callable[[int, int], Awaitable[None]]] = None,
 ) -> list[ClaimFinal]:
     """Grounds every claim's evidence spans and rolls up per-claim status.
 
@@ -207,6 +209,14 @@ async def ground_extraction(
     Lite audit, capped at 5 concurrent calls) judges the survivors.
     Stage 3 rolls per-span results into claim-level grounding_status,
     missing, and reason. Failed claims are kept, not dropped.
+
+    Grounding runs at the span level (one task per evidence span, fanned
+    out with the same semaphore), not per claim, so on_progress - a
+    per-claim counter - fires once a claim's last outstanding span
+    finishes rather than serializing claims. Counts are exact (tracked
+    with a plain counter; asyncio has no preemption between awaits) but
+    the order claims complete in is not guaranteed to match extraction
+    order.
     """
     audit_model = os.getenv("LLM_AUDIT_MODEL")
     if not audit_model:
@@ -219,20 +229,46 @@ async def ground_extraction(
     client = genai.Client(api_key=api_key)
     semaphore = asyncio.Semaphore(AUDIT_CONCURRENCY)
 
+    total_claims = len(extraction.claims)
+    remaining_spans_per_claim = [len(claim.evidence_spans) for claim in extraction.claims]
+    claims_done = sum(1 for count in remaining_spans_per_claim if count == 0)
+
+    async def _report_claim_done(claim_idx: int) -> None:
+        nonlocal claims_done
+        remaining_spans_per_claim[claim_idx] -= 1
+        if remaining_spans_per_claim[claim_idx] == 0:
+            claims_done += 1
+            if on_progress is not None:
+                try:
+                    await on_progress(claims_done, total_claims)
+                except Exception:
+                    pass  # progress emission never breaks grounding
+
+    async def _ground_span_tracked(claim_idx: int, claim_text: str, span: EvidenceSpanLLM):
+        result = await _ground_span(
+            claim_text=claim_text,
+            span=span,
+            paper_text=paper_text,
+            semaphore=semaphore,
+            client=client,
+            audit_model=audit_model,
+        )
+        await _report_claim_done(claim_idx)
+        return result
+
+    if on_progress is not None and claims_done:
+        try:
+            await on_progress(claims_done, total_claims)
+        except Exception:
+            pass
+
     span_tasks = []
     span_claim_indices: list[int] = []
     for claim_idx, claim in enumerate(extraction.claims):
         for span in claim.evidence_spans:
             span_claim_indices.append(claim_idx)
             span_tasks.append(
-                _ground_span(
-                    claim_text=claim.claim_text_verbatim,
-                    span=span,
-                    paper_text=paper_text,
-                    semaphore=semaphore,
-                    client=client,
-                    audit_model=audit_model,
-                )
+                _ground_span_tracked(claim_idx, claim.claim_text_verbatim, span)
             )
 
     span_results = await asyncio.gather(*span_tasks) if span_tasks else []

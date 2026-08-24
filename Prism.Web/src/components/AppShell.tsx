@@ -10,6 +10,7 @@ import { usePaperClaims } from "@/hooks/usePaperClaims";
 import { useSignalR } from "@/hooks/useSignalR";
 import { formatFileSize } from "@/lib/format";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
+import { cn } from "@/lib/utils";
 
 const USER_ID = "demo-user-01";
 
@@ -18,8 +19,9 @@ export function AppShell() {
   const { chats, refetch: refetchChats } = useChats(USER_ID);
   const { data: paperClaims, isLoading, refetch: refetchClaims } = usePaperClaims(activePaperId);
   const { joinChat, on, off, getConnectionId } = useSignalR();
-  const { setSelectedClaimId } = useSelectedClaim();
+  const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
   const [fileSizeLabels, setFileSizeLabels] = useState<Record<string, string>>({});
+  const drawerOpen = selectedClaimId !== null;
 
   useEffect(() => {
     joinChat(activeChatId).catch((err) => console.error("Failed to join chat group:", err));
@@ -69,7 +71,12 @@ export function AppShell() {
     <div className="flex h-screen flex-col">
       <Toaster />
       <TopBar />
-      <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)_400px]">
+      <div
+        className={cn(
+          "grid min-h-0 flex-1 grid-cols-1 transition-[grid-template-columns] duration-200 ease-smooth",
+          drawerOpen ? "md:grid-cols-[240px_minmax(0,1fr)_400px]" : "md:grid-cols-[240px_minmax(0,1fr)]"
+        )}
+      >
         <Sidebar
           activeChatId={activeChatId}
           chats={chats}
@@ -84,11 +91,11 @@ export function AppShell() {
           <MatrixView
             paperClaims={paperClaims}
             isLoading={isLoading}
-            hasActivePaper={activePaperId !== null}
+            activePaperId={activePaperId}
             onViewEvidence={setSelectedClaimId}
           />
         </main>
-        <EvidenceDrawer paperClaims={paperClaims} />
+        {drawerOpen && <EvidenceDrawer paperClaims={paperClaims} />}
       </div>
     </div>
   );

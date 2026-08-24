@@ -20,6 +20,7 @@ from extraction.grounding import ground_extraction
 from extraction.writer import write_extraction_result, RESEARCH_PAPER_DOMAIN_ID
 from extraction.schemas import PaperMetadataFinal
 from extraction.prompt_version import get_prompt_version
+from extraction.pipeline_events import ProgressEmitter, Stage
 
 MAX_ATTEMPTS = 3
 
@@ -44,13 +45,18 @@ def parse_aspire_minio(conn_str):
     endpoint = parts['Endpoint'].replace("http://", "").replace("https://", "").rstrip('/')
     return endpoint, parts['AccessKey'], parts['SecretKey']
 
-def extract_pdf_text_sync(local_path: str) -> str:
-    """Synchronous PDF extraction wrapper so it doesn't block the async loop"""
+def extract_pdf_text_sync(local_path: str) -> tuple[str, int]:
+    """Synchronous PDF extraction wrapper so it doesn't block the async loop.
+
+    Returns (text, page_count) - the page count feeds the "preparing" stage
+    detail message shown in the activity view.
+    """
     final_text = ''
     with fitz.open(local_path) as doc:
+        page_count = doc.page_count
         for page in doc:
             final_text += page.get_text()
-    return final_text
+    return final_text, page_count
 
 async def main():
     service = AIService()
@@ -116,6 +122,8 @@ async def main():
             async for message in queue_iter:
                 # message.process() automatically ACKs if the block succeeds, and NACKs if it crashes!
                 async with message.process(ignore_processed=True): # We set ignore_processed=True so we can manually ACK or REJECT
+                    emitter: ProgressEmitter | None = None
+                    current_stage: Stage = "preparing"
                     try:
                         data = json.loads(message.body.decode())
                         actual_message = data['message']
@@ -128,6 +136,9 @@ async def main():
                         attempt = _get_attempt_count(message)
                         print(f'\n[x] Received {file_name} attempt={attempt}/{MAX_ATTEMPTS}')
 
+                        emitter = ProgressEmitter(channel, file_id=file_id, chat_id=chat_id)
+                        await emitter.emit_stage("preparing")
+
                         # 1. Download file asynchronously using threads
                         local_path = os.path.join("downloads", file_name)
                         os.makedirs("downloads", exist_ok=True)
@@ -136,8 +147,10 @@ async def main():
                         # 2. Extract text asynchronously
                         _, extension = os.path.splitext(local_path)
                         final_text = ''
-                        if extension.lower() == ".pdf":
-                            final_text = await asyncio.to_thread(extract_pdf_text_sync, local_path)
+                        page_count: int | None = None
+                        is_pdf = extension.lower() == ".pdf"
+                        if is_pdf:
+                            final_text, page_count = await asyncio.to_thread(extract_pdf_text_sync, local_path)
                         else:
                             final_text = await service.transcribe_audio(file_path=local_path)
 
@@ -145,7 +158,18 @@ async def main():
                         text_summary = await service.analyize_text(text=final_text)
 
                         # 4. Save to Qdrant (wrap in thread since Qdrant native client is sync)
-                        await asyncio.to_thread(rag_service.add_document_to_qdrant, file_name, final_text, file_id)
+                        chunk_count = await asyncio.to_thread(
+                            rag_service.add_document_to_qdrant, file_name, final_text, file_id
+                        )
+
+                        if is_pdf:
+                            await emitter.emit_stage_detail(
+                                "preparing", f"Parsed {page_count} pages, {chunk_count} chunks"
+                            )
+                        else:
+                            await emitter.emit_stage_detail(
+                                "preparing", f"Transcribed audio, {chunk_count} chunks"
+                            )
 
                         # ============================================
                         # NEW: Extraction pipeline (metadata + claims + grounding + DB write)
@@ -166,21 +190,35 @@ async def main():
                             extracted_at=datetime.now(timezone.utc),
                         )
 
+                        await emitter.emit_stage_detail("preparing", "Extracted paper metadata")
+
+                        current_stage = "extracting"
+                        await emitter.emit_stage("extracting")
                         print(f'[extraction] chat_id={chat_id} starting claims extraction')
                         extraction = await extract_claims(
                             paper_text=final_text,
                             chat_id=chat_id,
                             correlation_id=correlation_id,
+                            on_detail=lambda d: emitter.emit_stage_detail("extracting", d),
                         )
 
+                        current_stage = "grounding"
+                        await emitter.emit_stage("grounding")
+                        await emitter.emit_stage_detail(
+                            "grounding", f"Verifying evidence spans for {len(extraction.claims)} claims"
+                        )
                         print(f'[extraction] chat_id={chat_id} starting grounding')
                         grounded = await ground_extraction(
                             extraction=extraction,
                             paper_text=final_text,
                             chat_id=chat_id,
                             correlation_id=correlation_id,
+                            on_progress=emitter.emit_grounding_progress,
                         )
 
+                        current_stage = "finalizing"
+                        await emitter.emit_stage("finalizing")
+                        await emitter.emit_stage_detail("finalizing", "Writing results")
                         print(f'[extraction] chat_id={chat_id} writing to DB')
                         doc_extractor_id = await write_extraction_result(
                             file_id=file_id,
@@ -191,6 +229,17 @@ async def main():
                         )
 
                         print(f'[extraction] chat_id={chat_id} document_extractor_id={doc_extractor_id} claims={len(grounded)}')
+
+                        supported = sum(1 for c in grounded if c.label.value == "supported" and not c.missing)
+                        partial = sum(1 for c in grounded if c.label.value == "partially_supported" and not c.missing)
+                        refused = sum(1 for c in grounded if c.missing)
+                        await emitter.emit_stage_detail(
+                            "finalizing",
+                            f"{len(grounded)} audited · {supported} supported · "
+                            f"{refused} refused · {partial} partial",
+                        )
+
+                        await emitter.emit_stage("done")
 
                         # 5. Inject memory using our globally compiled agent!
                         config = {"configurable": {"thread_id": chat_id}}
@@ -273,6 +322,12 @@ async def main():
                     # ==========================================
                     except Exception as e:
                         traceback.print_exc()
+
+                        if emitter is not None:
+                            try:
+                                await emitter.emit_failed(current_stage)
+                            except Exception:
+                                pass  # don't let failure emission mask the original error
 
                         if attempt >= MAX_ATTEMPTS:
                             print(f'[DEAD] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ')

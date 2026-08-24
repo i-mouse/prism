@@ -32,7 +32,7 @@ class RAGService:
         else:
             print(f"Collection already exists")
 
-    def add_document_to_qdrant(self, filename: str, doctext: str, file_id: str):
+    def add_document_to_qdrant(self, filename: str, doctext: str, file_id: str) -> int:
 
         # Delete any existing vectors for this file before inserting new ones.
         # Combined with deterministic uuid5 chunk IDs, this makes the operation
@@ -71,6 +71,7 @@ class RAGService:
 
         self.client.upsert(collection_name=self.collection_name,points=points)
         print(f"Saved vector into qdrant")
+        return len(chunks)
 
     def search_db(self, user_query, limit:int = 3):
         query_vector = list(self.embedding_model.embed(user_query))[0]

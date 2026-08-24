@@ -54,3 +54,21 @@ export interface FileListItem {
   uploadedAt: string;
   status: string;
 }
+
+export type ExtractionStage =
+  | "preparing"
+  | "extracting"
+  | "grounding"
+  | "finalizing"
+  | "done"
+  | "failed";
+
+export interface ExtractionProgressEvent {
+  fileId: string;
+  chatId: string;
+  stage: ExtractionStage;
+  completed?: number;
+  total?: number;
+  failedStage?: ExtractionStage;
+  detail?: string;
+}

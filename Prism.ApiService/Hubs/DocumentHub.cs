@@ -5,6 +5,7 @@ namespace Prism.ApiService.Hubs;
 public interface IDocumentClient
 {
     Task DocumentProcessed(object data);
+    Task ExtractionProgress(object data);
 }
 public class DocumentHub: Hub<IDocumentClient>
 {

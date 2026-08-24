@@ -21,6 +21,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Awaitable, Callable, Optional
 
 from google import genai
 from google.genai import errors, types
@@ -331,15 +332,29 @@ async def _audit_and_structure_claim(
     claim: dict,
     chat_id: str,
     correlation_id: str | None,
+    claim_number: int,
+    total_claims: int,
+    on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
 ) -> ClaimLLM:
     """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
 
-    Concurrency across claims is bounded by the shared semaphore.
+    Concurrency across claims is bounded by the shared semaphore. claim_number
+    is the claim's fixed position in the extracted list (1-indexed), not a
+    live completion count - claims run concurrently, so on_detail messages
+    may not appear in strict claim_number order.
     """
     claim_text_verbatim = claim["claim_text_verbatim"]
     claim_summary = claim["claim_summary"]
 
     async with semaphore:
+        if on_detail is not None:
+            summary = claim_summary or claim_text_verbatim
+            truncated = summary[:70] + "..." if len(summary) > 70 else summary
+            try:
+                await on_detail(f'Auditing claim {claim_number} of {total_claims}: "{truncated}"')
+            except Exception:
+                pass  # progress emission never breaks extraction
+
         audit_text = await _call_gemini_freetext(
             messages=build_gemini_messages_for_audit(paper_text, claim_text_verbatim, claim_summary),
             chat_id=chat_id,
@@ -362,6 +377,7 @@ async def extract_claims(
     paper_text: str,
     chat_id: str,
     correlation_id: str | None = None,
+    on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
 ) -> ClaimsExtractionResponse:
     """Extracts structured claims from paper_text via a sequential three-call pipeline.
 
@@ -379,11 +395,20 @@ async def extract_claims(
     )
     claims = extracted.get("claims", [])
 
+    if on_detail is not None:
+        try:
+            await on_detail(f"Extracted {len(claims)} claims from paper")
+        except Exception:
+            pass  # progress emission never breaks extraction
+
     semaphore = asyncio.Semaphore(AUDIT_STRUCTURE_CONCURRENCY)
     results = await asyncio.gather(
         *(
-            _audit_and_structure_claim(semaphore, paper_text, claim, chat_id, correlation_id)
-            for claim in claims
+            _audit_and_structure_claim(
+                semaphore, paper_text, claim, chat_id, correlation_id,
+                claim_number=i + 1, total_claims=len(claims), on_detail=on_detail,
+            )
+            for i, claim in enumerate(claims)
         ),
         return_exceptions=True,
     )
