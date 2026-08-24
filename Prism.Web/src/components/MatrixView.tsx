@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FileText } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -11,13 +12,14 @@ import {
 import { PaperHeader } from "@/components/matrix/PaperHeader";
 import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { ClaimList } from "@/components/matrix/ClaimList";
+import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
 interface MatrixViewProps {
   paperClaims: PaperClaimsResponse | null;
   isLoading: boolean;
-  hasActivePaper: boolean;
+  activePaperId: string | null;
   onViewEvidence: (claimId: string) => void;
 }
 
@@ -36,7 +38,7 @@ function sortBySupport(a: ClaimDto, b: ClaimDto) {
   return a.position - b.position;
 }
 
-export function MatrixView({ paperClaims, isLoading, hasActivePaper, onViewEvidence }: MatrixViewProps) {
+export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEvidence }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
 
   const claims = paperClaims?.claims ?? [];
@@ -58,7 +60,7 @@ export function MatrixView({ paperClaims, isLoading, hasActivePaper, onViewEvide
     return [...claims].sort((a, b) => a.position - b.position);
   }, [claims, sortMode]);
 
-  if (!hasActivePaper) {
+  if (!activePaperId) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center">
         <FileText className="h-12 w-12 text-ink-subtle" />
@@ -69,74 +71,84 @@ export function MatrixView({ paperClaims, isLoading, hasActivePaper, onViewEvide
     );
   }
 
-  const isProcessing =
-    !paperClaims || paperClaims.extractionStatus === "Pending" || paperClaims.extractionStatus === "In progress";
-  const hasClaims = claims.length > 0;
+  if (isLoading && !paperClaims) {
+    return (
+      <div className="px-8 py-6">
+        <MatrixSkeleton />
+      </div>
+    );
+  }
+
+  if (!paperClaims) {
+    return (
+      <div className="px-8 py-6">
+        <MatrixSkeleton />
+      </div>
+    );
+  }
 
   return (
-    <div className="px-8 py-6">
-      {paperClaims && (
-        <PaperHeader
-          fileName={paperClaims.fileName}
-          extractionStatus={paperClaims.extractionStatus}
-          completedAt={paperClaims.completedAt}
-        />
-      )}
-
-      {isLoading && !paperClaims ? (
-        <div className="mt-6">
-          <MatrixSkeleton />
-        </div>
-      ) : isProcessing && !hasClaims ? (
-        <div className="mt-6">
-          <MatrixSkeleton />
-        </div>
+    <AnimatePresence mode="wait">
+      {paperClaims.extractionStatus !== "Completed" ? (
+        <motion.div key="activity" exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }}>
+          <PaperActivityView fileId={activePaperId} fileName={paperClaims.fileName} />
+        </motion.div>
       ) : (
-        paperClaims && (
-          <>
-            <div className="mt-6">
-              <SummaryStrip summary={derivedSummary} />
-            </div>
+        <motion.div
+          key="matrix"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="px-8 py-6"
+        >
+          <PaperHeader
+            fileName={paperClaims.fileName}
+            extractionStatus={paperClaims.extractionStatus}
+            completedAt={paperClaims.completedAt}
+          />
 
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <h2 className="font-display text-lg font-semibold text-ink">Claims</h2>
-                  <span className="inline-flex h-6 items-center rounded-full bg-surface-sunken px-2 text-xs font-medium tabular-nums text-ink-muted">
-                    {derivedSummary.total} claims
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-ink-muted">Sort by:</span>
-                  <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-                    <SelectTrigger size="sm" className="border-border text-sm text-ink hover:border-border-strong">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="position" className="focus:bg-surface-sunken focus:text-ink">
-                        Position
-                      </SelectItem>
-                      <SelectItem value="support" className="focus:bg-surface-sunken focus:text-ink">
-                        Support
-                      </SelectItem>
-                      <SelectItem
-                        value="section"
-                        disabled
-                        className="cursor-not-allowed opacity-50 focus:bg-surface-sunken focus:text-ink"
-                      >
-                        Section
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+          <div className="mt-6">
+            <SummaryStrip summary={derivedSummary} />
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h2 className="font-display text-lg font-semibold text-ink">Claims</h2>
+                <span className="inline-flex h-6 items-center rounded-full bg-surface-sunken px-2 text-xs font-medium tabular-nums text-ink-muted">
+                  {derivedSummary.total} claims
+                </span>
               </div>
-
-              <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-ink-muted">Sort by:</span>
+                <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+                  <SelectTrigger size="sm" className="border-border text-sm text-ink hover:border-border-strong">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="position" className="focus:bg-surface-sunken focus:text-ink">
+                      Position
+                    </SelectItem>
+                    <SelectItem value="support" className="focus:bg-surface-sunken focus:text-ink">
+                      Support
+                    </SelectItem>
+                    <SelectItem
+                      value="section"
+                      disabled
+                      className="cursor-not-allowed opacity-50 focus:bg-surface-sunken focus:text-ink"
+                    >
+                      Section
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </>
-        )
+
+            <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
+          </div>
+        </motion.div>
       )}
-    </div>
+    </AnimatePresence>
   );
 }
 

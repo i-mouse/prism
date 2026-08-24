@@ -2,7 +2,6 @@ import { X, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
-import { DrawerEmptyState } from "@/components/drawer/DrawerEmptyState";
 import { EvidenceCard } from "@/components/drawer/EvidenceCard";
 import { claimLabelMeta } from "@/lib/claimMeta";
 import { displayLabel } from "@/lib/claim-display";
@@ -33,9 +32,7 @@ export function EvidenceDrawer({ paperClaims }: EvidenceDrawerProps) {
         </Button>
       </div>
 
-      {!claim ? (
-        <DrawerEmptyState />
-      ) : (
+      {claim && (
         <div key={claim.id} className="animate-prism-fade-in flex flex-1 flex-col overflow-y-auto">
           <div className="mt-6 flex items-center justify-between gap-3">
             <span className="truncate text-sm text-ink">{paperClaims?.fileName}</span>
