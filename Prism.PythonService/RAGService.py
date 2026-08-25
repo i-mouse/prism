@@ -73,10 +73,18 @@ class RAGService:
         print(f"Saved vector into qdrant")
         return len(chunks)
 
-    def search_db(self, user_query, limit:int = 3):
+    def search_db(self, user_query, limit:int = 3, file_id: str | None = None):
         query_vector = list(self.embedding_model.embed(user_query))[0]
-        hits = self.client.query_points(collection_name = self.collection_name,query=query_vector,limit = limit)
-        return hits.points    
+        query_filter = None
+        if file_id is not None:
+            query_filter = Filter(must=[FieldCondition(key="file_id", match=MatchValue(value=file_id))])
+        hits = self.client.query_points(
+            collection_name=self.collection_name,
+            query=query_vector,
+            query_filter=query_filter,
+            limit=limit,
+        )
+        return hits.points
 
 
 

@@ -42,6 +42,61 @@ public static class ChatEndPoint
 
         }  ).WithName("AskAgent") .DisableAntiforgery();
 
+      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, ILogger<ChatRequest> logger) =>
+        {
+            // Paper-scoped chat (Slice 3a): proxies the Python SSE stream through to the
+            // client unbuffered. Bypasses RabbitMQ - direct C# -> Python HTTP call.
+            var client = httpClientFactory.CreateClient("pythonapi");
+            client.Timeout = TimeSpan.FromMinutes(10);
+
+            using var pythonRequest = new HttpRequestMessage(HttpMethod.Post, "/api/chat/ask/stream")
+            {
+                Content = JsonContent.Create(request)
+            };
+
+            HttpResponseMessage pythonResponse;
+            try
+            {
+                pythonResponse = await client.SendAsync(
+                    pythonRequest, HttpCompletionOption.ResponseHeadersRead, httpContext.RequestAborted);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to reach python paper-chat stream endpoint.");
+                httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+                await httpContext.Response.WriteAsync(ex.Message);
+                return;
+            }
+
+            using (pythonResponse)
+            {
+                if (!pythonResponse.IsSuccessStatusCode)
+                {
+                    var error = await pythonResponse.Content.ReadAsStringAsync();
+                    logger.LogError($"Python paper-chat stream error: {error}");
+                    httpContext.Response.StatusCode = (int)pythonResponse.StatusCode;
+                    await httpContext.Response.WriteAsync(error);
+                    return;
+                }
+
+                httpContext.Response.ContentType = "text/event-stream";
+                httpContext.Response.Headers["Cache-Control"] = "no-cache";
+                httpContext.Response.Headers["Connection"] = "keep-alive";
+                httpContext.Response.Headers["X-Accel-Buffering"] = "no";
+
+                await using var stream = await pythonResponse.Content.ReadAsStreamAsync(httpContext.RequestAborted);
+                var buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = await stream.ReadAsync(buffer, httpContext.RequestAborted)) > 0)
+                {
+                    await httpContext.Response.Body.WriteAsync(buffer.AsMemory(0, bytesRead), httpContext.RequestAborted);
+                    await httpContext.Response.Body.FlushAsync(httpContext.RequestAborted);
+                }
+            }
+        })
+        .WithName("AskPaperChatStream")
+        .DisableAntiforgery();
+
       app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, ILogger<ChatRequest> logger )=>
         {
           try
