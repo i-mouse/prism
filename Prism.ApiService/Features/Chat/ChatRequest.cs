@@ -25,4 +25,11 @@ public class PrismSource
     public float Score { get; set; }
     public string Content { get; set; } = string.Empty;
 }
+
+public class PaperChatAskRequest
+{
+    public required string chat_id { get; set; }
+    public required string active_file_id { get; set; }
+    public required string message { get; set; }
+}
 }

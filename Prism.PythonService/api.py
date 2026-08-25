@@ -1,9 +1,12 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from langchain_core.messages import HumanMessage
 from agent_service import  workflow,ragservice
 from pydantic import BaseModel
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from memory_db import create_db_connection_pool
+from paper_chat.agent import build_paper_chat_graph
+from paper_chat.blocks import ClaimReferenceBlock, TextBlock, block_to_sse
 import os
 from contextlib import asynccontextmanager
 import json
@@ -25,6 +28,7 @@ async def lifespan(app: FastAPI):
     # Now create the real checkpointer using the pool for all requests
     app.state.checkpointer = AsyncPostgresSaver(app.state.pool)
     app.state.compiled_agent = workflow.compile(checkpointer=app.state.checkpointer)
+    app.state.paper_chat_graph = build_paper_chat_graph(app.state.checkpointer)
 
     print("[OK] Checkpointer and Agent ready", flush=True)
 
@@ -87,6 +91,77 @@ async def ask_agent_with_memory(request: QueryRequest, contextrequest: Request):
     except Exception as e:
         print(f"Error while processing ask agent API: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class ChatAskRequest(BaseModel):
+    chat_id: str
+    active_file_id: str
+    message: str
+
+
+def serialize_event_to_sse(event) -> str | None:
+    """Turns one (mode, data) tuple from graph.astream(stream_mode=[...]) into
+    an SSE frame. Only "custom" events (get_stream_writer emissions from the
+    agent's nodes) reach the client - see paper_chat/agent.py module docstring
+    for why raw "messages" token deltas are not forwarded."""
+    mode, data = event
+    if mode != "custom":
+        return None
+    try:
+        block_type = data.get("type")
+        if block_type == "text":
+            block = TextBlock(content=data["content"])
+        elif block_type == "claim_reference":
+            block = ClaimReferenceBlock(
+                claim_id=data["claim_id"],
+                claim_summary=data["claim_summary"],
+                display_label=data["display_label"],
+            )
+        else:
+            return None
+        return block_to_sse(block)
+    except Exception as exc:
+        print(f" [WARN] Failed to serialize custom stream event {data!r}: {exc!r}", flush=True)
+        return None
+
+
+@pythonAPI.post("/api/chat/ask/stream")
+async def paper_chat_ask(request: ChatAskRequest, contextrequest: Request):
+    """Paper-scoped chat: streams typed blocks (text / claim_reference) over SSE.
+
+    Named /api/chat/ask/stream rather than /api/chat/ask (the legacy path) so
+    it can coexist with the legacy general-chat endpoint above - legacy
+    deletion is Slice 3c, out of scope here.
+    """
+    async def event_stream():
+        try:
+            graph = contextrequest.app.state.paper_chat_graph
+            config = {"configurable": {"thread_id": request.chat_id}}
+            initial_state = {
+                "messages": [HumanMessage(content=request.message)],
+                "active_file_id": request.active_file_id,
+            }
+            async for event in graph.astream(
+                initial_state, config, stream_mode=["custom", "messages"]
+            ):
+                frame = serialize_event_to_sse(event)
+                if frame:
+                    yield frame
+            yield 'data: {"type": "done"}\n\n'
+        except Exception as exc:
+            print(f" [FAIL] paper chat stream error: {exc!r}", flush=True)
+            yield f'data: {{"type": "error", "message": {json.dumps(str(exc))}}}\n\n'
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
 
 @pythonAPI.get("/api/chat/{chatid}/history")
 async def get_chat_history(chatid: str, http_request: Request):
