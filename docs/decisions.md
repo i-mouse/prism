@@ -16,6 +16,58 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
+## Slice 3b.1 + 3b.2: Chat Polish & Density Cleanup — 2026-08-26
+**Context:** The initial chat UI lacked visual feedback for model thinking, had basic scrolling behaviors, lacked follow-up suggestions, and had high visual density (redundant "Claims" headings and unnecessary padding).
+**Decision:** Adapt 2026 AI-chat idioms to the research matrix context:
+1. Visual polish: Add animated thinking dots, a pill-shaped input box, stream cancellation via a stop button, hover states, scroll-to-bottom on new messages, and gradient surface borders.
+2. Density cleanup: Remove the redundant "Claims" section heading and the "N claims" pill from the Matrix header, tightening padding around the summary cards.
+3. Contextual follow-up suggestions: Display prompts dynamically at the end of assistant turns based on block outputs (e.g., suggesting "Explain further" when claims are referenced, and "What CAN this paper answer?" on refusals).
+**Alternatives:** Retain the verbose headings and basic inputs — rejected; failed to match standard AI application patterns and wasted vertical workspace screen space.
+**Consequences:** A polished, compact user interface that blends streaming chat directly into the matrix workspace. Follow-up buttons decrease user typing effort.
+
+## Slice 3b: Chat Strip UI in Matrix View — 2026-08-26
+**Context:** The React frontend needed to render token-by-token streaming chat responses, handle inline claim citations, allow claim highlight synchronization, and clear chat state on paper changes.
+**Decision:** 
+1. Use native `fetch` and `ReadableStream` reader loops to process SSE frames in a custom `useChatStream` hook.
+2. Configure a key-based remount pattern on `PaperChatStrip` using the active paper's `activeChatId` as the React key, forcing the component to completely reset its state and hook connections on paper switch.
+3. Parse claim citations in streamed prose into clickable inline buttons that highlight the corresponding row in the matrix and open the evidence drawer.
+**Alternatives:** 
+1. `EventSource` (SSE client) — rejected; doesn't support POST requests, which are required to send the user prompt in the request body.
+2. WebSockets — rejected; over-engineered for simple one-directional text streaming.
+**Consequences:** Low-latency streaming chat with deep inline Matrix integration. Zero state bleed when switching between papers due to key-based remount.
+
+## Slice 3a Bug Fixes: FTS fallback, check_empty OR logic, router tool bypass — 2026-08-25
+**Context:** Live testing of Slice 3a against `react.pdf` produced false refusals on conversational prompts (e.g., "What is the main contribution of this paper?") because FTS search on `query_paper_claims` was too strict and skipped chunk retrieval entirely.
+**Decision:** Implement three bug fixes identified in the Antigravity diagnosis:
+1. **FTS Fallback to Position:** In `query_paper_claims`, replace the broken ILIKE exact-phrase fallback query with a fallback that retrieves top claims by position (`ORDER BY position ASC`) for the active document extractor. Also upgrade the FTS query from `plainto_tsquery` to `websearch_to_tsquery`.
+2. **Router Bypass:** Force `execute_tools` to run both `query_paper_claims` and `query_paper_chunks` concurrently using `asyncio.gather` on every turn, ignoring any single-tool route decision from the noisy classifier.
+3. **Double Empty Check:** Confirm that `check_empty` requires both lists to be empty (`not claims and not chunks`) to refuse, ensuring any single tool hit bypasses refusal.
+**Alternatives:** Keep LLM-driven routing strict — rejected; classifier noise was high, leading to frequent false-positive refusals where chunk retrieval would have answered the question.
+**Consequences:** Considerably improved recall and conversational capabilities over metadata and high-level paper questions. Small increase in average token cost per query since both tools execute concurrently, which is acceptable for single-paper scope.
+
+## Slice 2 + 2.5: Ingestion Progress Events & PaperActivityView UI — 2026-08-23
+**Context:** Document ingestion takes up to 30 seconds, and a static loading spinner was poor UX that failed to indicate progress or failures.
+**Decision:** 
+1. Implement a 5-stage progress event pipeline in the Python worker (`preparing` → `extracting` → `grounding` → `finalizing` → `done`/`failed`).
+2. Emit granular sub-progression details (e.g., "Parsed N pages", "3 / 10 verified") over RabbitMQ and broadcast via C# SignalR groups.
+3. Design a three-panel `PaperActivityView` with an animated progress bar and detailed stage logs. Implement drawer collapse triggers.
+**Alternatives:** Keep simple spinner — rejected; poor visibility into slow LLM steps or DLQ-bound message failures.
+**Consequences:** Clear progress tracking for long-running ingestion runs. Grounding verification counts showcase the grounding checker's activity in real-time.
+
+## AnimatePresence popLayout Fix for PaperActivityView — 2026-08-23
+**Context:** During ingestion progress updates in the UI, transitioning between stage details caused distracting vertical layout jumps.
+**Decision:** Switch Framer Motion's `AnimatePresence` mode from `"wait"` to `"popLayout"` in `PaperActivityView.tsx`. This pops exiting detail elements out of the normal DOM flow, enabling entering items to slide in smoothly.
+**Alternatives:** Use `"wait"` mode — rejected; waits for exit animation to complete, causing a visual collapse/expand loop.
+**Consequences:** Fluid, non-disruptive transitions during active progress events.
+
+## Postgres Container Password Drift Workaround — 2026-08-23
+**Context:** On local container restart, Aspire's database volumes occasionally fail to authenticate due to transient password generation mismatches.
+**Decision:** Document a developer workaround to delete the Docker volume (forcing password recreation) in `docs/RUNBOOK.md`. Defer permanent removal of `.WithDataVolume()` on Postgres in `Prism.AppHost/AppHost.cs` to prevent ephemeral-only data losses in standard environments.
+**Alternatives:** Remove `.WithDataVolume()` from AppHost directly — rejected; databases would lose all extracted paper data on every container shut down, which hampers UI debugging.
+**Consequences:** Minor developer overhead when volume authentication drifts; simple command workaround documented.
+
+---
+
 ## Slice 3a: paper-scoped LangGraph chat agent, SSE transport, block output — 2026-08-25
 
 **Context:** [[Tier 2 and Tier 3 collapsed into paper-scoped chat]] committed the product to answering follow-up questions conversationally, grounded on paper_claims + Qdrant chunks for the active paper, refusing loudly on empty retrieval. Slice 3a is the backend build for that: a new LangGraph agent replacing the general-purpose `agent_service.py` graph, scoped to a single paper via `active_file_id`. Frontend chat strip (3b) and legacy agent deletion (3c) are separate slices.

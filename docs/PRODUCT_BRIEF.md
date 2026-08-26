@@ -90,53 +90,49 @@ inconsistent).
 
 ## Groundability Tiers (drives the build order)
 
-The four sections run from pure extraction to pure inference. Hallucination risk rises with each tier; so must eval ruthlessness.
+The tiers represent the transition from deterministic extraction to conversational reasoning:
 
-- **Tier 1 — Extraction (highly groundable). Build FIRST.**
-  *Claim-Support Matrix.* Each stated claim → cited evidence span in the paper → supported / unsupported. Near-extraction; proves the correct-refusal bet cleanly; the most defensible thing to demo.
+- **Tier 1 — Claim-Support Matrix & Paper-scoped Chat (V1 Scope).**
+  - *Claim-Support Matrix (Extraction):* Stated claim → cited evidence span → verdict. Evaluates the core "correct refusal" capability.
+  - *Paper-scoped Chat:* Inline conversational strip answering questions grounded on paper claims + vector chunks, replacing pre-computed verdict cards. Refuses loudly on out-of-scope prompts.
 
-**Tier 2 — Paper-scoped chat (deferred, own eval).**
-Everything the old Tier 2 Verdict and Tier 3 Overstated Claims surfaces would have shown is answered by the embedded chat strip on demand, grounded on paper_claims rows for the active paper. Chat surface has its own eval concern (does the agent faithfully cite the Matrix vs invent claims not in it) that lands with Slice 3, not as a Tier 1 blocker.
+- **Tier 2 — Multi-paper Chat (Post-V1).**
+  Cross-paper retrieval and synthesis across multiple files, requiring a reworked Matrix layout and literature search capabilities.
+
+- **Tier 3 — Web-grounded Chat (Post-V1).**
+  Chat with web search engine tool routing to cross-reference paper claims against the broader scientific literature.
 
 ---
 
 ## Current State (ground truth: `docs/decisions.md`)
 
-**Built, running locally under Aspire:** CRAG pipeline, grounding checker, intent + HyDE routing, event-driven ingestion with DLQ, SignalR live updates, PostgreSQL checkpointer, audio-to-text input, golden eval scaffold.
+**Built, running locally under Aspire:** 
+- Ingestion pipeline with RabbitMQ job-atomic retries, MinIO upload store, Qdrant vector database, and PostgreSQL rel-db.
+- Three-call claim extraction pipeline (extractor → auditor → structurer) and two-stage grounding (RapidFuzz + Gemini Flash Lite).
+- Real-time stage-based ingestion events (preparing, extracting, auditing, finalizing, done) broadcasted over C# SignalR.
+- React 19 Claim-Support Matrix three-panel UI with collapsible evidence drawer and smooth stage progress tracking.
+- Paper-scoped LangGraph chat agent backend (SSE transport) with Postgres checkpoints.
+- React Chat Strip with native streaming fetch, claim highlighting hook-ups, dynamic follow-ups, and UX polish.
 
-**Extraction engine: DONE.** Prompt 1 (paper-level metadata, 9 fields) + a three-call claim extraction pipeline (extractor → auditor → structurer, decoupling claim finding from label judging) + two-stage grounding pipeline (RapidFuzz + Flash Lite audit) + DB writer (`document_extractors` + `paper_claims` tables) + worker integration. Retry cap and Qdrant idempotency also complete.
-
-**Not built (views + cloud):** the Brief itself (Verdict card, Overstated Claims, Claim-Support Matrix UI), tests, and the entire Azure stack.
-
-**In progress this branch (feat/matrix-backend):**
-- Slice 1 backend shipped: GET /api/papers/{paperId}/claims endpoint, GET /api/chats/{userId} paper-primary rebrand, POST /api/papers 1-file-per-chat guard, AddPositionToPaperClaims migration + writer.py enumerate() update, EF Core value converters for ClaimLabel + GroundingStatus, HasJsonPropertyName for EvidenceSpan owned entity.
-- Slice 1 frontend NEXT: shadcn + Tailwind install, App.tsx split into AppShell/Sidebar/MatrixView/EvidenceDrawer, three-panel layout, absence-branch rendering.
-
-The golden evals are committed against three agent papers (21 chat Qs, 37 matrix rows, 17 combined grounding-negative). **Next milestone:** iterating the extractor prompt to improve trap-claim coverage on Reflexion and CoT papers (by_omission reduction), or building the Claim-Support Matrix UI (Tier 1), whichever comes first per the build order.
+**Pending V1 Milestones:**
+- Slice 2.8: Grounding tuning (wider context window, 3-tier verdict rubric, false-rejection metrics).
+- Slice 3c: Deprecation/deletion of legacy general chat pipeline (`ai_service.py`, `agent_service.py`, and `/api/chat/ask` endpoint).
+- Azure Deployment (Container Apps, Postgres Flexible Server, Azure AI Search, Key Vault, Managed Identity).
 
 ---
 
 ## Build Order
 
-The spine is **test-first extraction**: the eval comes *with* the engine, not after the views.
-
-**0. Doc cleanup (parallel, anytime).** Keep README and diagrams accurate to the codebase. Remove any false or aspirational claims so the repo stays unimpeachable.
-
-**1. Extend the golden set FIRST (test-first).** Before the engine, write grounding cases — positive *and* grounding-negative — for the **Claim-Support Matrix** (Tier 1). Define what "correct claim extraction" and "correct refusal" mean as concrete, scored assertions over real papers. This is the eval-asset seed and the engine's spec. (DONE — committed as `docs/evals/matrix_eval.json`)
-
-**2. Build the extraction engine to PASS those cases.** Multi-call pipeline → structured JSON (metadata + claims with evidence spans), grounding-checked via two-stage RapidFuzz + LLM audit, written to `document_extractors` + `paper_claims`. (DONE — see `docs/decisions.md`)
-
-**3. Render the Claim-Support Matrix (Tier 1).** DONE — this PR.
-
-**4. Emit extraction progress events.** Slice 2 — Python worker emits typed status events at each pipeline stage (extraction started, metadata done, claims done, grounding done, complete). C# forwards via SignalR. Sidebar row shows a progress strip instead of a spinner.
-
-**5. Paper-scoped chat.** Slice 3 — LangGraph agent output becomes a typed block array (text | claim_reference | ui_action). C# gateway switches /api/chat/ask to SSE. Frontend renders block list, clicking claim_reference scrolls Matrix + opens drawer. Agent retrieval queries both Postgres paper_claims AND Qdrant chunks, both filtered by active_file_id, refuses loudly on empty.
-
-**6. Emit the eval number cleanly.** DONE (PR #22).
-
-**7. Azure deploy — AFTER the engine + eval + Slice 3 are green locally.** Core services only. Do not interleave Azure with the spine.
-
-**8. Ship the proof.** Live URL, recorded walkthrough, eval number on a slide, one blog post.
+**1. Extend the golden set (test-first).** Define matrix cases and grounding-negative assertions. (DONE — `docs/evals/matrix_eval.json`)
+**2. Build extraction engine to PASS cases.** Multi-call pipeline with structured JSON + RapidFuzz + LLM audit. (DONE)
+**3. Render the Claim-Support Matrix (Tier 1).** Layout panels, status pills, and detail drawer. (DONE)
+**4. Ingestion progress events (Slice 2 + 2.5).** Granular progress updates and sub-progression logs via SignalR. (DONE)
+**5. Paper-scoped chat (Slice 3a + 3b + 3b.1 + 3b.2).** Chat agent with Postgres checkpoints, fetch streaming, citations, dynamic follow-ups, and density cleanup. (DONE)
+**6. Eval harness verification.** Running evaluations locally and locking CI on regression. (DONE — PR #22)
+**7. Grounding Tuning (Slice 2.8).** Iterating grounding prompt + validation window to reduce false rejections. (PENDING V1)
+**8. Code cleanup (Slice 3c).** Drop legacy chat python services and HTTP endpoints. (PENDING V1)
+**9. Azure deployment.** Set up cloud infrastructure mirroring local Aspire resources. (PENDING V1)
+**10. Ship the V1 proof.** Live URL, blog post, recorded walkthrough. (PENDING V1)
 
 ---
 
