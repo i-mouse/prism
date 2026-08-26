@@ -33,7 +33,7 @@ export function SummaryStrip({ summary }: SummaryStripProps) {
   }
 
   return (
-    <div className="space-y-6 rounded-lg border border-border bg-surface p-6">
+    <div className="space-y-4 rounded-lg border border-border bg-surface p-5">
       {sumMismatch && (
         <div className="rounded-lg border border-refused bg-refused-bg p-3 text-sm text-refused">
           Warning: claim counts do not sum to the total ({supported} + {partiallySupported} + {notSupported} ≠ {total}).
@@ -49,14 +49,14 @@ export function SummaryStrip({ summary }: SummaryStripProps) {
           <p className="font-display text-3xl font-bold tabular-nums tracking-[-0.03em] text-supported">
             {supported} / {total}
           </p>
-          <p className="mt-1 text-sm text-ink-muted">Claims supported</p>
+          <p className="mt-1 text-sm text-ink-muted">Supported</p>
           {notSupported > 0 && (
             <p className="mt-2 text-sm tabular-nums text-refused">{notSupported} refused</p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-8 border-t border-border pt-6">
+      <div className="flex items-center justify-between gap-8 border-t border-border pt-4">
         <SummaryCell icon={FileText} iconClass="bg-surface-sunken text-ink-muted" label="Claims" value={total} />
         <SummaryCell
           icon={CheckCircle2}

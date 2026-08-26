@@ -12,12 +12,7 @@ interface PaperChatStripProps {
   activeFileId: string;
 }
 
-const SUGGESTED_PROMPTS = [
-  "What are the main claims of this paper?",
-  "Show me the strongest refusals",
-  "Explain the grounding methodology",
-  "Which claims are only partially supported?",
-];
+const SUGGESTED_PROMPTS = ["What are the main claims?", "Show me the strongest refusals"];
 
 // Approximates "the agent declined to answer" from block shape alone —
 // there's no explicit refusal flag on the wire, so this is a best-effort
@@ -47,7 +42,7 @@ function turnToPlainText(turn: ChatTurn): string {
 function followUpsFor(turn: ChatTurn): string[] {
   const claimRefs = turn.blocks.filter((b): b is ClaimReferenceBlock => b.type === "claim_reference");
   if (claimRefs.length > 0) {
-    return ["Explain that further", "Why were those claims refused?", "Show me stronger evidence"];
+    return ["Explain further", "Why were those claims refused?"];
   }
   const text = turn.blocks
     .filter((b): b is Extract<ChatBlock, { type: "text" }> => b.type === "text")
@@ -127,17 +122,15 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
       className="flex shrink-0 flex-col border-t border-border bg-gradient-to-b from-surface-alt/60 to-surface-alt/90 backdrop-blur-sm"
     >
       {turns.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 px-6 py-6">
-          <p className="text-center text-sm text-ink-muted">
-            Ask Prism about this paper&rsquo;s claims, evidence, or audit.
-          </p>
+        <div className="flex flex-col items-center gap-2.5 px-6 py-4">
+          <p className="text-center text-xs text-ink-muted">Ask about this paper</p>
           <div className="flex max-w-lg flex-wrap justify-center gap-2">
             {SUGGESTED_PROMPTS.map((prompt) => (
               <button
                 key={prompt}
                 type="button"
                 onClick={() => sendMessage(prompt)}
-                className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-ink-muted transition-all hover:border-border-strong hover:bg-surface-sunken"
+                className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-muted transition-all hover:border-border-strong hover:bg-surface-sunken"
               >
                 {prompt}
               </button>
@@ -149,7 +142,7 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="max-h-96 overflow-y-auto px-6 py-6"
+            className="max-h-96 overflow-y-auto px-6 py-4"
           >
             {turns.map((turn, i) =>
               turn.role === "user" ? (
@@ -359,7 +352,7 @@ function ChatInput({
   };
 
   return (
-    <div className="px-6 pb-6">
+    <div className="px-6 pb-4">
       <div
         className={cn(
           "flex items-end gap-2 rounded-2xl border border-border bg-surface p-2",
