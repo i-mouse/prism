@@ -34,6 +34,42 @@
   animation: prism-fade-in 200ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+/* --- Slice 3b: paper chat strip streaming cursor --- */
+
+.streaming-cursor::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: currentColor;
+  margin-left: 2px;
+  animation: prism-blink 0.8s infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes prism-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes thinking-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+.animate-thinking-dot {
+  animation: thinking-dot 1.2s ease-in-out infinite;
+}
+
 body {
   margin: 0;
   min-width: 320px;

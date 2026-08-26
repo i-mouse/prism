@@ -87,11 +87,12 @@ export function AppShell() {
           onUploaded={handleUploaded}
           onSelectChat={handleSelectChat}
         />
-        <main className="min-w-0 overflow-y-auto bg-surface">
+        <main className="flex min-h-0 min-w-0 flex-col bg-surface">
           <MatrixView
             paperClaims={paperClaims}
             isLoading={isLoading}
             activePaperId={activePaperId}
+            activeChatId={activeChatId}
             onViewEvidence={setSelectedClaimId}
           />
         </main>

@@ -13,6 +13,7 @@ import { PaperHeader } from "@/components/matrix/PaperHeader";
 import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { ClaimList } from "@/components/matrix/ClaimList";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
+import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
@@ -20,6 +21,7 @@ interface MatrixViewProps {
   paperClaims: PaperClaimsResponse | null;
   isLoading: boolean;
   activePaperId: string | null;
+  activeChatId: string;
   onViewEvidence: (claimId: string) => void;
 }
 
@@ -38,7 +40,13 @@ function sortBySupport(a: ClaimDto, b: ClaimDto) {
   return a.position - b.position;
 }
 
-export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEvidence }: MatrixViewProps) {
+export function MatrixView({
+  paperClaims,
+  isLoading,
+  activePaperId,
+  activeChatId,
+  onViewEvidence,
+}: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
 
   const claims = paperClaims?.claims ?? [];
@@ -73,7 +81,7 @@ export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEviden
 
   if (isLoading && !paperClaims) {
     return (
-      <div className="px-8 py-6">
+      <div className="h-full overflow-y-auto px-8 py-6">
         <MatrixSkeleton />
       </div>
     );
@@ -81,7 +89,7 @@ export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEviden
 
   if (!paperClaims) {
     return (
-      <div className="px-8 py-6">
+      <div className="h-full overflow-y-auto px-8 py-6">
         <MatrixSkeleton />
       </div>
     );
@@ -90,7 +98,12 @@ export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEviden
   return (
     <AnimatePresence mode="wait">
       {paperClaims.extractionStatus !== "Completed" ? (
-        <motion.div key="activity" exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }}>
+        <motion.div
+          key="activity"
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.2 }}
+          className="h-full overflow-y-auto"
+        >
           <PaperActivityView fileId={activePaperId} fileName={paperClaims.fileName} />
         </motion.div>
       ) : (
@@ -99,20 +112,20 @@ export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEviden
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="px-8 py-6"
+          className="flex h-full min-h-0 flex-col"
         >
-          <PaperHeader
-            fileName={paperClaims.fileName}
-            extractionStatus={paperClaims.extractionStatus}
-            completedAt={paperClaims.completedAt}
-          />
+          <div className="shrink-0 px-8 pt-6">
+            <PaperHeader
+              fileName={paperClaims.fileName}
+              extractionStatus={paperClaims.extractionStatus}
+              completedAt={paperClaims.completedAt}
+            />
 
-          <div className="mt-6">
-            <SummaryStrip summary={derivedSummary} />
-          </div>
+            <div className="mt-6">
+              <SummaryStrip summary={derivedSummary} />
+            </div>
 
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center justify-between">
+            <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <h2 className="font-display text-lg font-semibold text-ink">Claims</h2>
                 <span className="inline-flex h-6 items-center rounded-full bg-surface-sunken px-2 text-xs font-medium tabular-nums text-ink-muted">
@@ -143,9 +156,13 @@ export function MatrixView({ paperClaims, isLoading, activePaperId, onViewEviden
                 </Select>
               </div>
             </div>
+          </div>
 
+          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-8 pb-6 pt-2">
             <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
           </div>
+
+          <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} />
         </motion.div>
       )}
     </AnimatePresence>

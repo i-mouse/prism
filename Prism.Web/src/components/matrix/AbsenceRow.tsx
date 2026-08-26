@@ -14,15 +14,18 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
   const meta = claimLabelMeta[displayLabel(claim)];
   const Icon = meta.Icon;
   const firstSpan = claim.evidenceSpans[0];
-  const { selectedClaimId } = useSelectedClaim();
+  const { selectedClaimId, highlightedClaimId } = useSelectedClaim();
   const isSelected = selectedClaimId === claim.id;
+  const isHighlighted = highlightedClaimId === claim.id;
 
   return (
     <div
+      data-claim-id={claim.id}
       className={cn(
         "flex items-start gap-4 rounded-r-md rounded-l-none border border-border border-l-4 px-6 py-4",
         meta.borderClass,
-        meta.cardBgClass
+        meta.cardBgClass,
+        isHighlighted && "ring-2 ring-accent ring-offset-2 ring-offset-surface transition-all duration-300"
       )}
     >
       <div className="flex w-40 shrink-0 flex-col items-start">
