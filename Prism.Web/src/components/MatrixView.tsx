@@ -114,7 +114,7 @@ export function MatrixView({
           transition={{ duration: 0.3, delay: 0.1 }}
           className="flex h-full min-h-0 flex-col"
         >
-          <div className="shrink-0 px-8 pt-6">
+          <div className="shrink-0 px-8 pt-4">
             <PaperHeader
               fileName={paperClaims.fileName}
               extractionStatus={paperClaims.extractionStatus}
@@ -125,13 +125,7 @@ export function MatrixView({
               <SummaryStrip summary={derivedSummary} />
             </div>
 
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="font-display text-lg font-semibold text-ink">Claims</h2>
-                <span className="inline-flex h-6 items-center rounded-full bg-surface-sunken px-2 text-xs font-medium tabular-nums text-ink-muted">
-                  {derivedSummary.total} claims
-                </span>
-              </div>
+            <div className="mt-3 flex items-center justify-end">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-ink-muted">Sort by:</span>
                 <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
