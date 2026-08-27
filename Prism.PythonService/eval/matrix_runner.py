@@ -53,8 +53,11 @@ class MatrixReport:
     refusal_rate: float
     refused_by_label: int
     refused_by_omission: int
+    refused_by_grounding: int
     positive_hits: int
     positive_total: int
+    false_rejections: int
+    false_rejection_rate: float
     positive_hit_floor: int
     refusal_rate_valid: bool
     scored_papers: int
@@ -159,17 +162,22 @@ def _variance_summary(reports: list[EvalReport]) -> dict:
 def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> MatrixReport:
     scored = [r for r in results if r.status == "SCORED"]
 
-    # Worst-case across --repeat runs: each metric is independently minimized
-    # per paper, then summed. A partially-invalid variance run must fail the
-    # gate, so we never let a lucky run mask a bad one.
+    # Worst-case across --repeat runs: each metric is independently pushed to
+    # its worst value per paper, then summed. A partially-invalid variance
+    # run must fail the gate, so we never let a lucky run mask a bad one.
+    # "Worst" is min() for metrics where higher is better (hits, correct
+    # refusals) and max() for false_rejections, where higher is worse.
     correct_refusals = sum(min(r.correct_refusals for r in result.reports) for result in scored)
     total_negatives = sum(result.reports[0].total_negatives for result in scored)
     refused_by_label = sum(min(r.refused_by_label for r in result.reports) for result in scored)
     refused_by_omission = sum(min(r.refused_by_omission for r in result.reports) for result in scored)
+    refused_by_grounding = sum(min(r.refused_by_grounding for r in result.reports) for result in scored)
     positive_hits = sum(min(r.positive_hits for r in result.reports) for result in scored)
     positive_total = sum(result.reports[0].positive_total for result in scored)
+    false_rejections = sum(max(r.false_rejections for r in result.reports) for result in scored)
 
     refusal_rate = correct_refusals / total_negatives if total_negatives else 0.0
+    false_rejection_rate = false_rejections / positive_total if positive_total else 0.0
     refusal_rate_valid = positive_hits >= positive_hit_floor
 
     return MatrixReport(
@@ -178,12 +186,41 @@ def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> Matrix
         refusal_rate=refusal_rate,
         refused_by_label=refused_by_label,
         refused_by_omission=refused_by_omission,
+        refused_by_grounding=refused_by_grounding,
         positive_hits=positive_hits,
         positive_total=positive_total,
+        false_rejections=false_rejections,
+        false_rejection_rate=false_rejection_rate,
         positive_hit_floor=positive_hit_floor,
         refusal_rate_valid=refusal_rate_valid,
         scored_papers=len(scored),
     )
+
+
+def _print_verbose_false_rejections(results: list[PaperRunResult]) -> list[str]:
+    """One block per false-rejected positive-support row: paper, claim
+    summary, extractor label, grounder verdict, and the golden expected
+    label - everything needed to eyeball whether Slice 2.8 fixed it."""
+    lines = ["", "False rejections (positive-support rows the grounder refused):"]
+    found_any = False
+
+    for result in results:
+        if result.status == "SKIPPED":
+            continue
+        for report in result.reports[:1]:  # first run is representative; --repeat variance shown separately
+            for outcome in report.per_row.values():
+                if outcome.outcome != "FALSE_REJECTION":
+                    continue
+                found_any = True
+                lines.append(f"  [{_display_name(result)}] {outcome.expected_id}")
+                lines.append(f"    claim summary:    {outcome.actual_claim_summary or '(none)'}")
+                lines.append(f"    extractor label:  {outcome.actual_label}")
+                lines.append(f"    grounder verdict: {outcome.actual_grounding_status}")
+                lines.append(f"    golden expected:  {outcome.expected_label}")
+
+    if not found_any:
+        lines.append("  (none)")
+    return lines
 
 
 def _print_report(
@@ -192,6 +229,7 @@ def _print_report(
     threshold_refusal_rate: float,
     log_relpath: Path,
     exit_code: int,
+    verbose: bool = False,
 ) -> None:
     lines = ["Prism eval - matrix run", "======================="]
 
@@ -216,21 +254,38 @@ def _print_report(
 
     lines.append("")
 
-    pct = round(aggregate.refusal_rate * 100)
+    refusal_pct = round(aggregate.refusal_rate * 100)
     threshold_pct = round(threshold_refusal_rate * 100)
     refusal_tag = "PASS" if aggregate.refusal_rate >= threshold_refusal_rate else "FAIL"
-    lines.append(
-        f"Refusal rate:   {aggregate.correct_refusals}/{aggregate.total_negatives}  ({pct}%)   "
-        f"[{refusal_tag} vs {threshold_pct}% threshold]"
-    )
-    lines.append(f"  by label:        {aggregate.refused_by_label}")
-    lines.append(f"  by omission:     {aggregate.refused_by_omission}")
-
+    positive_pct = round(aggregate.positive_hits / aggregate.positive_total * 100) if aggregate.positive_total else 0
+    false_rejection_pct = round(aggregate.false_rejection_rate * 100)
     floor_tag = "OK" if aggregate.refusal_rate_valid else "BELOW FLOOR - mark invalid"
+
+    lines.append("=" * 64)
+    lines.append("Prism Eval Results")
+    lines.append("=" * 64)
     lines.append(
-        f"Positive hits:  {aggregate.positive_hits}/{aggregate.positive_total}  "
-        f"(floor: {aggregate.positive_hit_floor})   [{floor_tag}]"
+        f"Refusal rate:         {aggregate.correct_refusals}/{aggregate.total_negatives} ({refusal_pct}%) "
+        f"[{refusal_tag} vs {threshold_pct}% threshold] "
+        "— grounder correctly refused claims paper doesn't support"
     )
+    lines.append(f"  by label:            {aggregate.refused_by_label}")
+    lines.append(f"  by omission:         {aggregate.refused_by_omission}")
+    lines.append(f"  by grounding reject: {aggregate.refused_by_grounding}")
+    lines.append(
+        f"Positive hits:        {aggregate.positive_hits}/{aggregate.positive_total} ({positive_pct}%) "
+        f"(floor: {aggregate.positive_hit_floor}) [{floor_tag}] "
+        "— grounder correctly affirmed claims paper does support"
+    )
+    lines.append(
+        f"False rejection rate: {aggregate.false_rejections}/{aggregate.positive_total} ({false_rejection_pct}%) "
+        "— grounder incorrectly refused claims paper does support"
+    )
+    lines.append("=" * 64)
+
+    if verbose:
+        lines.extend(_print_verbose_false_rejections(results))
+
     lines.append("")
     lines.append(f"Wrote {log_relpath}")
     lines.append(f"Exit {exit_code}")
@@ -281,6 +336,9 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repeat", type=int, default=1, help="matcher runs per paper; reports variance")
     parser.add_argument("--matrix-path", type=Path, default=DEFAULT_MATRIX_PATH)
     parser.add_argument("--fixture-dir", type=Path, default=DEFAULT_FIXTURE_DIR)
+    parser.add_argument(
+        "--verbose", action="store_true", help="list each false-rejection (positive-support row the grounder refused)"
+    )
     return parser
 
 
@@ -317,7 +375,9 @@ async def _run(args: argparse.Namespace) -> int:
     log_path = _write_log(args, results, aggregate, timestamp)
     log_relpath = log_path.relative_to(Path(__file__).parent.parent)
 
-    _print_report(results, aggregate, matrix_spec.pass_threshold_refusal_rate, log_relpath, exit_code)
+    _print_report(
+        results, aggregate, matrix_spec.pass_threshold_refusal_rate, log_relpath, exit_code, verbose=args.verbose
+    )
 
     return exit_code
 

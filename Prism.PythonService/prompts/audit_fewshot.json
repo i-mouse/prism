@@ -1,0 +1,36 @@
+{
+  "examples": [
+    {
+      "reasoning": "The claim asserts ReAct outperforms baselines by 34 percentage points on ALFWorld. The quoted table rows show ReAct at 71%, Act at 45%, and BUTLER at 37% task success rate. In the surrounding context this is Table 3's ALFWorld comparison, the exact benchmark the claim references, and the gap between ReAct (71%) and BUTLER (37%) is precisely 34 points. The quote directly and quantitatively substantiates the claimed margin, so this is a clear Pass.",
+      "claim": "ReAct outperforms baselines by 34% on ALFWorld.",
+      "quote": "ReAct | 71%\nAct | 45%\nBUTLER | 37%",
+      "context": "Table 3 shows results on ALFWorld task success rate. Higher is better. ReAct | 71%\nAct | 45%\nBUTLER | 37%\nSee Section 4 for full analysis.",
+      "verdict": "Pass",
+      "reason": "The 71% vs 37% margin in the table matches the claimed 34% delta on ALFWorld."
+    },
+    {
+      "reasoning": "The claim asserts that combining ReAct with chain-of-thought achieves the best overall performance among the approaches compared. The quote states the combination 'delivers the best of both,' describing a qualitative benefit — CoT's reasoning plus ReAct's grounded action — but cites no performance numbers. The surrounding context points to a separate ablation study as where such a comparison would be quantitatively verified, and that data isn't present in this passage. Because the passage supports the claim's direction but not its 'best overall' magnitude without the ablation numbers, this is a Partial.",
+      "claim": "Combining ReAct with chain-of-thought achieves best overall performance.",
+      "quote": "combining ReAct and CoT delivers the best of both",
+      "context": "In our experiments, we observed that combining ReAct and CoT delivers the best of both — the reasoning of CoT combined with the grounded action of ReAct. See ablation study for details.",
+      "verdict": "Partial",
+      "reason": "The passage asserts the combination is beneficial but does not verify the 'best overall' claim quantitatively; adjacent ablation table would be needed."
+    },
+    {
+      "reasoning": "The claim asserts a specific mechanism — Wikipedia interaction — reducing hallucination specifically on the HotpotQA benchmark. The quote and its surrounding context only describe the diversity of training tasks and a zero-shot evaluation setup, with no mention of HotpotQA, hallucination, or Wikipedia interaction anywhere in the passage. Nothing here connects training-task diversity to the claim's specific hallucination-reduction mechanism or benchmark. Since the passage is topically unrelated to what the claim asserts, this is a Fail.",
+      "claim": "ReAct reduces hallucination on HotpotQA via Wikipedia interaction.",
+      "quote": "our approach is trained on a diverse set of tasks",
+      "context": "our approach is trained on a diverse set of tasks including language modeling, question answering, and decision making. We evaluate zero-shot performance across benchmarks.",
+      "verdict": "Fail",
+      "reason": "The passage discusses training diversity, not hallucination reduction or Wikipedia interaction."
+    },
+    {
+      "reasoning": "The claim asserts ReAct outperforms action-only models specifically on decision-making tasks. The quote directly states that even the lowest ReAct configuration outperforms the best action-only baseline, and the surrounding context confirms this comparison comes from Figure 4's decision-making category breakdown across ALFWorld and WebShop. The passage's scope (decision-making tasks) and comparison (ReAct vs. action-only) match the claim precisely, including a strong-form guarantee that the weakest ReAct setup still beats the strongest baseline. This directly and unambiguously supports the claim, so this is a Pass.",
+      "claim": "ReAct beats action-only models on decision-making tasks.",
+      "quote": "even the lowest ReAct configuration outperforms the best action-only baseline",
+      "context": "Figure 4 breaks down performance by task category. In the decision-making category, even the lowest ReAct configuration outperforms the best action-only baseline. This holds across both ALFWorld and WebShop.",
+      "verdict": "Pass",
+      "reason": "The passage directly asserts ReAct outperforming action-only baselines on decision-making tasks with figure reference."
+    }
+  ]
+}

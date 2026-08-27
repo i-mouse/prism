@@ -17,11 +17,19 @@ class ExpectedRow(BaseModel):
 
 
 class ActualClaim(BaseModel):
-    """One claim extracted by the engine."""
+    """One claim extracted by the engine.
+
+    missing/grounding_status default to the pre-Slice-2.8 blind spot
+    (False / None) so fixtures dumped before these columns were added
+    to the SELECT still validate - they just can't contribute to
+    false_rejection_rate, which is the whole point of that metric.
+    """
 
     index: int
     label: Literal["supported", "partially_supported", "not_supported"]
     claim_summary: str = ""
+    missing: bool = False
+    grounding_status: Optional[str] = None
 
 
 class Match(BaseModel):
@@ -35,9 +43,11 @@ class RowOutcome(BaseModel):
     """Per-row scoring result."""
 
     expected_id: str
-    outcome: Literal["PASS", "FAIL", "POSITIVE_HIT", "POSITIVE_MISS"]
+    outcome: Literal["PASS", "FAIL", "POSITIVE_HIT", "POSITIVE_MISS", "FALSE_REJECTION"]
     expected_label: str
     actual_label: Optional[str] = None
+    actual_claim_summary: Optional[str] = None
+    actual_grounding_status: Optional[str] = None
 
 
 class EvalReport(BaseModel):
@@ -52,6 +62,9 @@ class EvalReport(BaseModel):
 
     refused_by_label: int
     refused_by_omission: int
+    refused_by_grounding: int
+    false_rejections: int
+    false_rejection_rate: float
     positive_hit_floor: int
     refusal_rate_valid: bool
     invalid_reason: Optional[str] = None

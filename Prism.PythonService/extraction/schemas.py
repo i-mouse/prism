@@ -12,7 +12,7 @@ paper_claims and its jsonb-owned EvidenceSpans column.
 """
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Literal, Optional
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -30,6 +30,7 @@ class GroundingStatus(str, Enum):
     which serializes as PascalCase enum member names.
     """
     PASS = "Pass"
+    PARTIAL = "Partial"
     FAIL = "Fail"
     SKIPPED = "Skipped"
 
@@ -97,6 +98,22 @@ class ClaimsExtractionResponse(BaseModel):
         ...,
         description="All empirical claims extracted from the paper. Empty if none groundable."
     )
+
+
+# --- Span grounding audit (Stage 2 of grounding.py) - LLM response schema ---
+
+class SpanAuditVerdict(BaseModel):
+    """Structured response from the span-level grounding audit LLM call.
+
+    Literal (not GroundingStatus) so the LLM can never emit "Skipped" -
+    that value is pipeline-internal and not a real audit verdict.
+    """
+    reasoning: str = Field(..., description="Step-by-step reasoning about whether the quote supports the claim, considering the surrounding context")
+    verdict: Literal["Pass", "Partial", "Fail"] = Field(
+        ...,
+        description="Pass: quote directly supports the claim. Partial: topically relevant but incomplete on its own. Fail: unrelated or contradicts the claim."
+    )
+    reason: str = Field(..., description="One short sentence explaining the verdict")
 
 
 # --- Final layer (pipeline-finalized, written to Postgres) ---

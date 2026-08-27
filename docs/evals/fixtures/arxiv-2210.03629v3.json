@@ -1,78 +1,111 @@
 {
   "header": {
-    "prompt_hash": "5acbc4f65ac1",
+    "prompt_hash": "78f604c5e2c9",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.1-flash-lite",
-    "generated_at": "2026-08-21T07:36:30.346379+00:00",
+    "generated_at": "2026-08-27T10:27:15.760443+00:00",
     "paper_id": "arxiv-2210.03629v3",
     "filename": "react.pdf",
-    "extraction_run_id": "b79ebfc6-0fe8-4ef5-8a00-5f55a2246c3c"
+    "extraction_run_id": "2d481245-7209-4c1a-8243-cfbbca961804"
   },
   "claims": [
     {
       "index": 0,
       "label": "partially_supported",
-      "claim_summary": "ReAct demonstrates effectiveness over state-of-the-art baselines while improving interpretability and trustworthiness."
+      "claim_summary": "ReAct demonstrates effectiveness over state-of-the-art baselines with improved interpretability and trustworthiness",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 1,
       "label": "partially_supported",
-      "claim_summary": "ReAct reduces hallucination and error propagation on HotpotQA and Fever via Wikipedia interaction."
+      "claim_summary": "ReAct reduces CoT hallucination and error propagation on HotpotQA and Fever",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 2,
       "label": "supported",
-      "claim_summary": "ReAct outperforms imitation and reinforcement learning on ALFWorld and WebShop by 34% and 10%."
+      "claim_summary": "Few-shot ReAct beats imitation and RL baselines on ALFWorld and WebShop",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 3,
       "label": "supported",
-      "claim_summary": "ReAct outperforms action-only models and is competitive with CoT on HotpotQA and Fever."
+      "claim_summary": "Few-shot ReAct outperforms RL and IL baselines trained on thousands of instances",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 4,
       "label": "supported",
-      "claim_summary": "Combining ReAct and CoT achieves top performance by merging internal and external knowledge."
+      "claim_summary": "ReAct shows consistent advantages in decision making over action-only controlled baselines",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 5,
       "label": "supported",
-      "claim_summary": "Sparse reasoning in ReAct provides consistent advantages over action-only baselines in decision making."
+      "claim_summary": "ReAct outperforms CoT on Fever while slightly lagging behind CoT on HotpotQA",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 6,
       "label": "supported",
-      "claim_summary": "ReAct outperforms CoT on Fever but slightly lags behind CoT on HotpotQA."
+      "claim_summary": "CoT suffers from higher hallucination false-positive rates compared to grounded ReAct",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 7,
       "label": "supported",
-      "claim_summary": "CoT has a higher false positive hallucination rate (14%) compared to ReAct (6%)."
+      "claim_summary": "ReAct combined with CoT-SC matches 21-sample CoT-SC using only 3 to 5 samples",
+      "missing": true,
+      "grounding_status": "Fail"
     },
     {
       "index": 8,
       "label": "supported",
-      "claim_summary": "ReAct combined with CoT-SC matches 21-sample CoT-SC performance using only 3-5 samples."
+      "claim_summary": "Finetuned ReAct on 3,000 examples outperforms prompting methods across larger model sizes",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 9,
       "label": "supported",
-      "claim_summary": "Finetuned ReAct outperforms prompt-based methods across smaller model scales."
+      "claim_summary": "ReAct reaches 71% success rate on ALFWorld, outperforming Act and BUTLER baselines",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 10,
       "label": "supported",
-      "claim_summary": "ReAct achieves 71% success on ALFWorld, outperforming Act (45%) and BUTLER (37%)."
+      "claim_summary": "The lowest ReAct ALFWorld trial outperforms the best Act and BUTLER trials",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 11,
       "label": "supported",
-      "claim_summary": "ReAct achieves a 10% absolute success rate improvement on WebShop over prior methods."
+      "claim_summary": "Adding sparse reasoning in WebShop improves overall success rate by ten percent",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 12,
       "label": "supported",
-      "claim_summary": "ReAct substantially outperforms Inner Monologue-style prompting with 71% vs 53% success on ALFWorld."
+      "claim_summary": "ReAct outperforms Inner Monologue style prompting across five of six ALFWorld tasks",
+      "missing": false,
+      "grounding_status": "Pass"
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "GPT-3 using ReAct consistently outperforms PaLM-540B on HotpotQA and ALFWorld benchmarks",
+      "missing": false,
+      "grounding_status": "Pass"
     }
   ],
   "matches": [
@@ -82,11 +115,11 @@
     },
     {
       "expected_id": "REACT-M02",
-      "actual_index": 7
+      "actual_index": 6
     },
     {
       "expected_id": "REACT-M03",
-      "actual_index": 3
+      "actual_index": null
     },
     {
       "expected_id": "REACT-M05",
@@ -94,23 +127,23 @@
     },
     {
       "expected_id": "REACT-M06",
-      "actual_index": 9
+      "actual_index": 8
     },
     {
       "expected_id": "REACT-M07",
-      "actual_index": null
+      "actual_index": 2
     },
     {
       "expected_id": "REACT-M08",
-      "actual_index": 6
-    },
-    {
-      "expected_id": "REACT-M09",
       "actual_index": 5
     },
     {
+      "expected_id": "REACT-M09",
+      "actual_index": null
+    },
+    {
       "expected_id": "REACT-M10",
-      "actual_index": 8
+      "actual_index": 7
     },
     {
       "expected_id": "REACT-M11",

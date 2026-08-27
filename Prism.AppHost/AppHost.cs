@@ -6,6 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var cache = builder.AddRedis("redis-cache");
 
 var apiKey = builder.Configuration["GoogleApiKey"];
+var groqApiKey = builder.Configuration["GroqApiKey"];
 var userrabbitmq = builder.AddParameter( name:"rabbitmquser",secret :true);
 var passrabbitmq = builder.AddParameter( name:"rabbitmqpass",secret :true);
 
@@ -28,6 +29,7 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
     .WithHttpEndpoint(targetPort: 8000, name: "pythonapi", env: "PORT")
     .WithReference(qdrantDB)
     .WithEnvironment("AI_API_KEY", apiKey)
+    .WithEnvironment("GROQ_API_KEY", groqApiKey)
     .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
     .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.1-flash-lite")
     .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
@@ -42,6 +44,7 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
                         .WithReference(qdrantDB)
                          .WithReference(postgres) 
                         .WithEnvironment("AI_API_KEY",apiKey)
+                        .WithEnvironment("GROQ_API_KEY", groqApiKey)
                         .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
                         .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.1-flash-lite")
                         .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")

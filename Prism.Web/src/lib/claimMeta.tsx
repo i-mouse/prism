@@ -53,6 +53,7 @@ export const extractionStatusMeta: Record<ExtractionStatus, StatusMeta> = {
 
 export const groundingStatusMeta: Record<GroundingStatus, { label: string; textClass: string; bgClass: string }> = {
   Pass: { label: "Pass", textClass: "text-supported", bgClass: "bg-supported-bg" },
+  Partial: { label: "Partial", textClass: "text-partial", bgClass: "bg-partial-bg" },
   Fail: { label: "Fail", textClass: "text-refused", bgClass: "bg-refused-bg" },
   Skipped: { label: "Skipped", textClass: "text-ink-muted", bgClass: "bg-surface-sunken" },
 };

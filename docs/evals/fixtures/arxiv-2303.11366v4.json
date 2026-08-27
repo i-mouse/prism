@@ -1,101 +1,142 @@
 {
   "header": {
-    "prompt_hash": "5acbc4f65ac1",
+    "prompt_hash": "78f604c5e2c9",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.1-flash-lite",
-    "generated_at": "2026-08-21T07:36:22.108548+00:00",
+    "generated_at": "2026-08-27T10:27:09.970700+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
-    "extraction_run_id": "32138ba9-9cd4-49c5-81e8-bc2d142b9841"
+    "extraction_run_id": "25ba2a9a-e2b2-48ed-b79a-7028c2b068ea"
   },
   "claims": [
     {
       "index": 0,
-      "label": "supported",
-      "claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, outperforming GPT-4's 80% baseline."
+      "label": "partially_supported",
+      "claim_summary": "Self-reflection enables language agents to effectively learn complex tasks in few trials",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 1,
       "label": "supported",
-      "claim_summary": "Reflexion yields major performance gains across AlfWorld, HotPotQA, and HumanEval tasks."
+      "claim_summary": "Reflexion outperforms baseline agents across decision-making, coding, and reasoning tasks",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 2,
       "label": "supported",
-      "claim_summary": "Reflexion with ReAct solves 130 out of 134 AlfWorld tasks using heuristic evaluation."
+      "claim_summary": "Reflexion reaches 91% pass@1 on HumanEval, beating GPT-4's 80%",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 3,
       "label": "supported",
-      "claim_summary": "ReAct-only baseline converges at a 22% hallucination rate without recovering."
+      "claim_summary": "Reflexion improves performance on AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 4,
       "label": "supported",
-      "claim_summary": "Reflexion boosts reasoning accuracy by 14% on HotPotQA without ground-truth answers."
+      "claim_summary": "Reflexion improves upon strong baselines and sets state-of-the-art results in code generation",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 5,
       "label": "supported",
-      "claim_summary": "Self-reflection provides an 8% absolute accuracy boost over standard episodic memory."
+      "claim_summary": "ReAct with Reflexion completes 130 of 134 AlfWorld tasks using a simple heuristic",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 6,
       "label": "supported",
-      "claim_summary": "Reflexion achieves SOTA on Python and Rust code benchmarks except MBPP Python."
+      "claim_summary": "The ReAct-only baseline converges to a 22% hallucination rate without long-term recovery",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 7,
       "label": "supported",
-      "claim_summary": "False positive test execution is 16.3% on MBPP vs 1.4% on HumanEval."
+      "claim_summary": "Reflexion significantly outperforms baseline methods on HotPotQA across multiple learning steps",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 8,
       "label": "supported",
-      "claim_summary": "Omitting unit test generation drops accuracy below baseline to 52%."
+      "claim_summary": "Self-reflection yields an 8% absolute improvement over episodic memory on HotPotQA reasoning",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 9,
       "label": "supported",
-      "claim_summary": "Self-correction via Reflexion is an emergent capability seen in larger models."
+      "claim_summary": "Reflexion achieves state-of-the-art accuracy across Python and Rust code benchmarks except MBPP Python",
+      "missing": false,
+      "grounding_status": "Pass"
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "HumanEval exhibits a low 1.4% false positive rate compared to 16.3% on MBPP",
+      "missing": false,
+      "grounding_status": "Partial"
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "Removing unit test generation drops Rust HumanEval accuracy below the baseline to 52%",
+      "missing": false,
+      "grounding_status": "Pass"
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "Omitting verbal self-reflection feedback prevents the agent from exceeding baseline performance",
+      "missing": false,
+      "grounding_status": "Pass"
     }
   ],
   "matches": [
     {
       "expected_id": "REFLEX-M01",
-      "actual_index": 0
+      "actual_index": 2
     },
     {
       "expected_id": "REFLEX-M02",
-      "actual_index": null
+      "actual_index": 3
     },
     {
       "expected_id": "REFLEX-M03",
-      "actual_index": 7
+      "actual_index": 10
     },
     {
       "expected_id": "REFLEX-M04",
-      "actual_index": 6
+      "actual_index": 9
     },
     {
       "expected_id": "REFLEX-M05",
-      "actual_index": 5
-    },
-    {
-      "expected_id": "REFLEX-M06",
       "actual_index": 8
     },
     {
+      "expected_id": "REFLEX-M06",
+      "actual_index": 11
+    },
+    {
       "expected_id": "REFLEX-M07",
-      "actual_index": null
+      "actual_index": 12
     },
     {
       "expected_id": "REFLEX-M08",
-      "actual_index": null
+      "actual_index": 1
     },
     {
       "expected_id": "REFLEX-M09",
-      "actual_index": null
+      "actual_index": 3
     },
     {
       "expected_id": "REFLEX-M11",
@@ -107,7 +148,7 @@
     },
     {
       "expected_id": "REFLEX-M13",
-      "actual_index": null
+      "actual_index": 0
     }
   ]
 }

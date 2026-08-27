@@ -118,6 +118,55 @@ def build_gemini_messages_for_audit(
     ]
 
 
+def _format_span_audit_user_message(claim_text: str, quote: str, context: str) -> str:
+    """Formats the claim/quote/context envelope shared by the real span-audit
+    call and its few-shot examples, so the model sees an identical shape."""
+    return (
+        f"Claim: {claim_text}\n\n"
+        f'Evidence quote:\n"{quote}"\n\n'
+        f'Surrounding paper context:\n"...{context}..."'
+    )
+
+
+def build_gemini_messages_for_span_audit(
+    claim_text: str,
+    quote: str,
+    context: str,
+) -> list[dict]:
+    """Assembles the Gemini message list for the span-level grounding audit
+    (Stage 2 of extraction/grounding.py).
+
+    Mirrors build_gemini_messages_for_extractor's few-shot envelope pattern:
+    system prompt, then for each few-shot example a user message (the same
+    claim/quote/context envelope the real call uses) followed by a model
+    message (its verdict/reason as a JSON string), then the final user
+    message for the span actually being audited.
+    """
+    messages: list[dict] = [
+        {"role": "system", "content": _read_prompt_file("audit_system.txt")},
+    ]
+
+    fewshot = json.loads(_read_prompt_file("audit_fewshot.json"))
+    for example in fewshot.get("examples", []):
+        messages.append(
+            {
+                "role": "user",
+                "content": _format_span_audit_user_message(
+                    example["claim"], example["quote"], example["context"]
+                ),
+            }
+        )
+        messages.append(
+            {
+                "role": "model",
+                "content": json.dumps({"verdict": example["verdict"], "reason": example["reason"]}),
+            }
+        )
+
+    messages.append({"role": "user", "content": _format_span_audit_user_message(claim_text, quote, context)})
+    return messages
+
+
 def build_gemini_messages_for_structure(
     claim_text_verbatim: str,
     claim_summary: str,

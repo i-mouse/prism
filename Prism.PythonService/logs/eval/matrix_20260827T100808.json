@@ -1,0 +1,393 @@
+{
+  "timestamp": "2026-08-27T10:08:08.901207+00:00",
+  "args": {
+    "source": "db",
+    "paper": "all",
+    "repeat": 1,
+    "matrix_path": "H:\\Work projects\\Prism\\docs\\evals\\matrix_eval.json",
+    "fixture_dir": "H:\\Work projects\\Prism\\docs\\evals\\fixtures",
+    "verbose": true
+  },
+  "papers": [
+    {
+      "paper_id": "arxiv-2303.11366v4",
+      "filename": "reflexion.pdf",
+      "status": "SCORED",
+      "claims_count": 13,
+      "report": {
+        "correct_refusals": 3,
+        "total_negatives": 5,
+        "refusal_rate": 0.6,
+        "positive_hits": 7,
+        "positive_total": 7,
+        "per_row": {
+          "REFLEX-M01": {
+            "expected_id": "REFLEX-M01",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Reflexion reaches 91% pass@1 on HumanEval, beating GPT-4's 80%",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M02": {
+            "expected_id": "REFLEX-M02",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Reflexion improves performance on AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M03": {
+            "expected_id": "REFLEX-M03",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "HumanEval exhibits a low 1.4% false positive rate compared to 16.3% on MBPP",
+            "actual_grounding_status": "Partial"
+          },
+          "REFLEX-M04": {
+            "expected_id": "REFLEX-M04",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Reflexion achieves state-of-the-art accuracy across Python and Rust code benchmarks except MBPP Python",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M05": {
+            "expected_id": "REFLEX-M05",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Self-reflection yields an 8% absolute improvement over episodic memory on HotPotQA reasoning",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M06": {
+            "expected_id": "REFLEX-M06",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Removing unit test generation drops Rust HumanEval accuracy below the baseline to 52%",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M07": {
+            "expected_id": "REFLEX-M07",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Omitting verbal self-reflection feedback prevents the agent from exceeding baseline performance",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M08": {
+            "expected_id": "REFLEX-M08",
+            "outcome": "FAIL",
+            "expected_label": "partially_supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Reflexion outperforms baseline agents across decision-making, coding, and reasoning tasks",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M09": {
+            "expected_id": "REFLEX-M09",
+            "outcome": "FAIL",
+            "expected_label": "partially_supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Reflexion improves performance on AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
+            "actual_grounding_status": "Pass"
+          },
+          "REFLEX-M11": {
+            "expected_id": "REFLEX-M11",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "REFLEX-M12": {
+            "expected_id": "REFLEX-M12",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "REFLEX-M13": {
+            "expected_id": "REFLEX-M13",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": "partially_supported",
+            "actual_claim_summary": "Self-reflection enables language agents to effectively learn complex tasks in few trials",
+            "actual_grounding_status": "Pass"
+          }
+        },
+        "refused_by_label": 1,
+        "refused_by_omission": 2,
+        "refused_by_grounding": 0,
+        "false_rejections": 0,
+        "false_rejection_rate": 0.0,
+        "positive_hit_floor": 10,
+        "refusal_rate_valid": false,
+        "invalid_reason": "positive hits 7 below floor 10"
+      }
+    },
+    {
+      "paper_id": "arxiv-2201.11903v6",
+      "filename": "cot.pdf",
+      "status": "SCORED",
+      "claims_count": 11,
+      "report": {
+        "correct_refusals": 3,
+        "total_negatives": 5,
+        "refusal_rate": 0.6,
+        "positive_hits": 3,
+        "positive_total": 7,
+        "per_row": {
+          "COT-M01": {
+            "expected_id": "COT-M01",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "PaLM 540B with eight chain-of-thought exemplars achieves state-of-the-art accuracy on GSM8K.",
+            "actual_grounding_status": "Pass"
+          },
+          "COT-M02": {
+            "expected_id": "COT-M02",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Chain-of-thought prompting improves performance only in models with around 100B parameters.",
+            "actual_grounding_status": "Pass"
+          },
+          "COT-M03": {
+            "expected_id": "COT-M03",
+            "outcome": "POSITIVE_MISS",
+            "expected_label": "supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "COT-M04": {
+            "expected_id": "COT-M04",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Chain-of-thought prompting outperforms standard prompting across various distinct annotator prompts.",
+            "actual_grounding_status": "Pass"
+          },
+          "COT-M05": {
+            "expected_id": "COT-M05",
+            "outcome": "POSITIVE_MISS",
+            "expected_label": "supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "COT-M06": {
+            "expected_id": "COT-M06",
+            "outcome": "POSITIVE_MISS",
+            "expected_label": "supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "COT-M07": {
+            "expected_id": "COT-M07",
+            "outcome": "POSITIVE_MISS",
+            "expected_label": "supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "COT-M08": {
+            "expected_id": "COT-M08",
+            "outcome": "FAIL",
+            "expected_label": "partially_supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Chain-of-thought prompting enables length generalization in sufficiently scaled language models.",
+            "actual_grounding_status": "Pass"
+          },
+          "COT-M09": {
+            "expected_id": "COT-M09",
+            "outcome": "FAIL",
+            "expected_label": "partially_supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Chain-of-thought prompting improves performance across arithmetic, commonsense, and symbolic reasoning tasks.",
+            "actual_grounding_status": "Pass"
+          },
+          "COT-M10": {
+            "expected_id": "COT-M10",
+            "outcome": "PASS",
+            "expected_label": "partially_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "COT-M11": {
+            "expected_id": "COT-M11",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "COT-M12": {
+            "expected_id": "COT-M12",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          }
+        },
+        "refused_by_label": 0,
+        "refused_by_omission": 3,
+        "refused_by_grounding": 0,
+        "false_rejections": 0,
+        "false_rejection_rate": 0.0,
+        "positive_hit_floor": 10,
+        "refusal_rate_valid": false,
+        "invalid_reason": "positive hits 3 below floor 10"
+      }
+    },
+    {
+      "paper_id": "arxiv-2210.03629v3",
+      "filename": "react.pdf",
+      "status": "SCORED",
+      "claims_count": 14,
+      "report": {
+        "correct_refusals": 4,
+        "total_negatives": 4,
+        "refusal_rate": 1.0,
+        "positive_hits": 6,
+        "positive_total": 9,
+        "per_row": {
+          "REACT-M01": {
+            "expected_id": "REACT-M01",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Adding sparse reasoning in WebShop improves overall success rate by ten percent",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M02": {
+            "expected_id": "REACT-M02",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "CoT suffers from higher hallucination false-positive rates compared to grounded ReAct",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M03": {
+            "expected_id": "REACT-M03",
+            "outcome": "POSITIVE_MISS",
+            "expected_label": "supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "REACT-M05": {
+            "expected_id": "REACT-M05",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "ReAct outperforms Inner Monologue style prompting across five of six ALFWorld tasks",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M06": {
+            "expected_id": "REACT-M06",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Finetuned ReAct on 3,000 examples outperforms prompting methods across larger model sizes",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M07": {
+            "expected_id": "REACT-M07",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "Few-shot ReAct beats imitation and RL baselines on ALFWorld and WebShop",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M08": {
+            "expected_id": "REACT-M08",
+            "outcome": "POSITIVE_HIT",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "ReAct outperforms CoT on Fever while slightly lagging behind CoT on HotpotQA",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M09": {
+            "expected_id": "REACT-M09",
+            "outcome": "POSITIVE_MISS",
+            "expected_label": "supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "REACT-M10": {
+            "expected_id": "REACT-M10",
+            "outcome": "FALSE_REJECTION",
+            "expected_label": "supported",
+            "actual_label": "supported",
+            "actual_claim_summary": "ReAct combined with CoT-SC matches 21-sample CoT-SC using only 3 to 5 samples",
+            "actual_grounding_status": "Fail"
+          },
+          "REACT-M11": {
+            "expected_id": "REACT-M11",
+            "outcome": "PASS",
+            "expected_label": "partially_supported",
+            "actual_label": "partially_supported",
+            "actual_claim_summary": "ReAct reduces CoT hallucination and error propagation on HotpotQA and Fever",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M12": {
+            "expected_id": "REACT-M12",
+            "outcome": "PASS",
+            "expected_label": "partially_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          },
+          "REACT-M13": {
+            "expected_id": "REACT-M13",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": "partially_supported",
+            "actual_claim_summary": "ReAct demonstrates effectiveness over state-of-the-art baselines with improved interpretability and trustworthiness",
+            "actual_grounding_status": "Pass"
+          },
+          "REACT-M14": {
+            "expected_id": "REACT-M14",
+            "outcome": "PASS",
+            "expected_label": "not_supported",
+            "actual_label": null,
+            "actual_claim_summary": null,
+            "actual_grounding_status": null
+          }
+        },
+        "refused_by_label": 2,
+        "refused_by_omission": 2,
+        "refused_by_grounding": 0,
+        "false_rejections": 1,
+        "false_rejection_rate": 0.1111111111111111,
+        "positive_hit_floor": 10,
+        "refusal_rate_valid": false,
+        "invalid_reason": "positive hits 6 below floor 10"
+      }
+    }
+  ],
+  "aggregate": {
+    "correct_refusals": 10,
+    "total_negatives": 14,
+    "refusal_rate": 0.7142857142857143,
+    "refused_by_label": 3,
+    "refused_by_omission": 7,
+    "refused_by_grounding": 0,
+    "positive_hits": 16,
+    "positive_total": 23,
+    "false_rejections": 1,
+    "false_rejection_rate": 0.043478260869565216,
+    "positive_hit_floor": 10,
+    "refusal_rate_valid": true,
+    "scored_papers": 3
+  }
+}

@@ -1,6 +1,6 @@
 export type ClaimLabel = "supported" | "partially_supported" | "not_supported";
 
-export type GroundingStatus = "Pass" | "Fail" | "Skipped";
+export type GroundingStatus = "Pass" | "Partial" | "Fail" | "Skipped";
 
 export type ExtractionStatus = "Pending" | "In progress" | "Completed" | "Failed";
 

@@ -113,9 +113,9 @@ The tiers represent the transition from deterministic extraction to conversation
 - React 19 Claim-Support Matrix three-panel UI with collapsible evidence drawer and smooth stage progress tracking.
 - Paper-scoped LangGraph chat agent backend (SSE transport) with Postgres checkpoints.
 - React Chat Strip with native streaming fetch, claim highlighting hook-ups, dynamic follow-ups, and UX polish.
+- Grounding tuning & hybrid LLM architecture (Slice 2.8 shipped): reasoning-first schema pattern for span audit, context widening (500-1500 chars with paragraph snapping), 3-tier Pass/Fail/Partial rubric, and hybrid Gemini 3.6 Flash paid Tier 1 + Groq Developer/free primary audit with Gemini 3.1 Flash Lite paid Tier 1 fallback via LiteLLM.
 
 **Pending V1 Milestones:**
-- Slice 2.8: Grounding tuning (wider context window, 3-tier verdict rubric, false-rejection metrics).
 - Slice 3c: Deprecation/deletion of legacy general chat pipeline (`ai_service.py`, `agent_service.py`, and `/api/chat/ask` endpoint).
 - Azure Deployment (Container Apps, Postgres Flexible Server, Azure AI Search, Key Vault, Managed Identity).
 

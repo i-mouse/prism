@@ -143,8 +143,8 @@ flowchart TD
 | AI worker runtime | Python | 3.13 |
 | AI worker packaging | uv | — |
 | Agent framework | LangGraph + FastAPI | — |
-| LLM client | google-genai | — |
-| LLM models | Gemini 3.6 Flash (extractor + per-claim auditor + per-claim structurer), Gemini 3.1 Flash Lite (grounding audit) | Env-driven |
+| LLM client | google-genai, litellm | LiteLLM provider abstraction for audit fallback chain |
+| LLM models | Gemini 3.6 Flash paid Tier 1 (extractor), Groq openai/gpt-oss-20b free tier (primary audit via LiteLLM), Gemini 3.1 Flash Lite paid Tier 1 (audit fallback) | Env-driven |
 | Vector store | Qdrant | 1.18 |
 | Relational DB | PostgreSQL | 18 |
 | Async queue | RabbitMQ | 4.3-management |
@@ -319,7 +319,7 @@ message telling you which paper to re-dump.
 
 ## Status
 
-Portfolio project demonstrating Senior Azure AI Engineer capabilities: multi-service orchestration, async ingestion pipelines, LLM structured output, deterministic grounding, and evaluation-driven design. The eval harness reports refusal-recall split into by_label and by_omission counts on a golden set of 17 grounding-negative cases across three papers. Not open to external contributions.
+Portfolio project demonstrating Senior Azure AI Engineer capabilities: multi-service orchestration, async ingestion pipelines, LLM structured output, deterministic grounding, and evaluation-driven design. The eval harness reports 10/14 (71%) refusal rate with 16/23 (70%) positive hits and 1/23 (4%) false rejection on a golden set of 14 grounding-negative cases across three papers. Not open to external contributions.
 
 ---
 
