@@ -1,73 +1,100 @@
 {
   "header": {
-    "prompt_hash": "5acbc4f65ac1",
+    "prompt_hash": "78f604c5e2c9",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.1-flash-lite",
-    "generated_at": "2026-08-21T07:36:27.073042+00:00",
+    "generated_at": "2026-08-27T10:27:12.967846+00:00",
     "paper_id": "arxiv-2201.11903v6",
     "filename": "cot.pdf",
-    "extraction_run_id": "2f1deb6c-05ab-4552-a997-25046d3e9ce8"
+    "extraction_run_id": "d08b7e18-223a-4884-bfb6-3c9dfaf3a531"
   },
   "claims": [
     {
       "index": 0,
       "label": "supported",
-      "claim_summary": "PaLM 540B with eight CoT exemplars achieves state-of-the-art accuracy on GSM8K."
+      "claim_summary": "Chain-of-thought prompting improves performance across arithmetic, commonsense, and symbolic reasoning tasks.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 1,
       "label": "supported",
-      "claim_summary": "Chain-of-thought prompting more than doubled GSM8K solve rates for large models."
+      "claim_summary": "PaLM 540B with eight chain-of-thought exemplars achieves state-of-the-art accuracy on GSM8K.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 2,
       "label": "supported",
-      "claim_summary": "PaLM with chain-of-thought prompting reaches within 2% of SOTA on AQuA and ASDiv."
+      "claim_summary": "Chain-of-thought prompting outperforms standard prompting across arithmetic, commonsense, and symbolic benchmarks.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 3,
       "label": "supported",
-      "claim_summary": "48 of 50 correct LaMDA 137B answers contained logically sound reasoning chains."
+      "claim_summary": "PaLM 540B using chain-of-thought prompting beats standard prompting and sets GSM8K state-of-the-art.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 4,
       "label": "supported",
-      "claim_summary": "LaMDA 137B errors on GSM8K were 46% minor and 54% major semantic errors."
+      "claim_summary": "Chain-of-thought prompting improves performance only in models with around 100B parameters.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 5,
       "label": "supported",
-      "claim_summary": "PaLM 540B with CoT beats prior SOTA on StrategyQA and human benchmark on Sports."
+      "claim_summary": "PaLM 540B chain-of-thought prompting sets new state-of-the-art on GSM8K, SVAMP, and MAWPS.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 6,
       "label": "supported",
-      "claim_summary": "PaLM 540B with CoT achieves near 100% solve rates on in-domain symbolic tasks."
+      "claim_summary": "PaLM with chain-of-thought prompting reaches within 2% of SOTA on AQuA and ASDiv.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 7,
       "label": "supported",
-      "claim_summary": "All CoT prompt variants from different annotators consistently outperform standard prompting baselines."
+      "claim_summary": "Chain-of-thought prompting outperforms standard prompting across various distinct annotator prompts.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 8,
       "label": "supported",
-      "claim_summary": "Post-hoc external calculator integration substantially improves chain-of-thought prompting performance."
+      "claim_summary": "PaLM 540B sets StrategyQA SOTA and beats human performance on sports understanding.",
+      "missing": false,
+      "grounding_status": "Pass"
     },
     {
       "index": 9,
       "label": "supported",
-      "claim_summary": "Chain-of-thought prompting enables length generalization on out-of-domain symbolic tasks."
+      "claim_summary": "PaLM 540B achieves nearly 100% solve rates on symbolic reasoning tasks with chain-of-thought.",
+      "missing": false,
+      "grounding_status": "Pass"
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting enables length generalization in sufficiently scaled language models.",
+      "missing": false,
+      "grounding_status": "Pass"
     }
   ],
   "matches": [
     {
       "expected_id": "COT-M01",
-      "actual_index": 0
+      "actual_index": 1
     },
     {
       "expected_id": "COT-M02",
-      "actual_index": null
+      "actual_index": 4
     },
     {
       "expected_id": "COT-M03",
@@ -91,11 +118,11 @@
     },
     {
       "expected_id": "COT-M08",
-      "actual_index": 9
+      "actual_index": 10
     },
     {
       "expected_id": "COT-M09",
-      "actual_index": null
+      "actual_index": 0
     },
     {
       "expected_id": "COT-M10",
