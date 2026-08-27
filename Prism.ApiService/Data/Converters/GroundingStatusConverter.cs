@@ -11,6 +11,7 @@ public sealed class GroundingStatusConverter : ValueConverter<GroundingStatus, s
     private static readonly Dictionary<GroundingStatus, string> ToDb = new()
     {
         [GroundingStatus.Pass]    = "Pass",
+        [GroundingStatus.Partial] = "Partial",
         [GroundingStatus.Fail]    = "Fail",
         [GroundingStatus.Skipped] = "Skipped",
     };

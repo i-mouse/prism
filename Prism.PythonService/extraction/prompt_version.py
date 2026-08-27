@@ -16,6 +16,8 @@ PROMPT_FILENAMES = (
     "extract_claims_fewshot.json",
     "audit_claim_system.md",
     "structure_verdict_system.md",
+    "audit_system.txt",
+    "audit_fewshot.json",
 )
 
 

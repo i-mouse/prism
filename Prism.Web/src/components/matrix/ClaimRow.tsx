@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import type { ClaimDto } from "@/types/api";
 import { claimLabelMeta } from "@/lib/claimMeta";
-import { displayLabel } from "@/lib/claim-display";
+import { displayLabel, humanizeReason } from "@/lib/claim-display";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { cn } from "@/lib/utils";
 
@@ -52,6 +52,9 @@ export function ClaimRow({ claim, onViewEvidence }: ClaimRowProps) {
           {firstSpan?.sourceSection}
           {firstSpan?.pageNumber != null ? ` · p. ${firstSpan.pageNumber}` : ""}
         </div>
+        {claim.groundingStatus === "Partial" && claim.reason && (
+          <p className="text-sm leading-relaxed text-partial">{humanizeReason(claim.reason)}</p>
+        )}
       </div>
 
       <button

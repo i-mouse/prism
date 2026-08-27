@@ -181,6 +181,71 @@ def test_positive_floor_met_marks_valid():
     assert report.invalid_reason is None
 
 
+def test_positive_row_grounded_away_is_false_rejection_not_a_hit():
+    """The exact Slice 2.8 blind spot: extractor label is 'supported' (its
+    own optimistic assessment survives grounding rejection unchanged) but
+    missing=True means the grounder vetoed it. Must not count as a hit."""
+    expected = [ExpectedRow(id="P1", expected_label="supported", grounding_negative=False)]
+    actual = [ActualClaim(index=0, label="supported", missing=True, grounding_status="Fail")]
+    matches = [Match(expected_id="P1", actual_index=0)]
+
+    report = score(expected, actual, matches, positive_hit_floor=0)
+
+    assert report.per_row["P1"].outcome == "FALSE_REJECTION"
+    assert report.positive_hits == 0
+    assert report.false_rejections == 1
+    assert report.false_rejection_rate == 1.0
+
+
+def test_positive_row_grounding_status_fail_without_missing_flag_is_false_rejection():
+    """grounding_status='Fail' alone (missing not set) is still a rejection -
+    the metric's OR condition, not just the missing flag."""
+    expected = [ExpectedRow(id="P1", expected_label="supported", grounding_negative=False)]
+    actual = [ActualClaim(index=0, label="supported", missing=False, grounding_status="Fail")]
+    matches = [Match(expected_id="P1", actual_index=0)]
+
+    report = score(expected, actual, matches, positive_hit_floor=0)
+
+    assert report.per_row["P1"].outcome == "FALSE_REJECTION"
+
+
+def test_positive_hits_and_false_rejections_are_complementary():
+    expected = [
+        ExpectedRow(id="P1", expected_label="supported", grounding_negative=False),
+        ExpectedRow(id="P2", expected_label="supported", grounding_negative=False),
+    ]
+    actual = [
+        ActualClaim(index=0, label="supported", missing=False, grounding_status="Pass"),
+        ActualClaim(index=1, label="supported", missing=True, grounding_status="Fail"),
+    ]
+    matches = [
+        Match(expected_id="P1", actual_index=0),
+        Match(expected_id="P2", actual_index=1),
+    ]
+
+    report = score(expected, actual, matches, positive_hit_floor=0)
+
+    assert report.positive_hits == 1
+    assert report.false_rejections == 1
+    assert report.positive_hits + report.false_rejections == report.positive_total
+
+
+def test_negative_row_grounded_away_counts_as_refused_by_grounding():
+    """A grounding-negative row where the grounder rejected the claim (rather
+    than the extractor's own label happening to be not_supported) is still
+    a correct refusal - just via a different bucket than refused_by_label."""
+    expected = [ExpectedRow(id="N1", expected_label="not_supported", grounding_negative=True)]
+    actual = [ActualClaim(index=0, label="supported", missing=True, grounding_status="Fail")]
+    matches = [Match(expected_id="N1", actual_index=0)]
+
+    report = score(expected, actual, matches)
+
+    assert report.per_row["N1"].outcome == "PASS"
+    assert report.correct_refusals == 1
+    assert report.refused_by_grounding == 1
+    assert report.refused_by_label == 0
+
+
 def test_silence_gaming_caught():
     """Engine emits zero claims: every negative row passes by omission,
     refusal_rate hits 100%, but positive_hits=0 must invalidate the number.

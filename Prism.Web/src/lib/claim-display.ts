@@ -14,12 +14,20 @@ export function displayLabel(claim: ClaimDto): ClaimLabel {
 
 /**
  * Rewrites the grounder's log-line reason string into a readable
- * sentence for display. Falls back to the raw string when the
- * expected "N spans failed RapidFuzz... M spans failed LLM audit"
- * shape isn't found, since the reason format isn't a strict contract.
+ * sentence for display. Falls back to the raw string when neither
+ * the Fail shape ("N spans failed RapidFuzz... M spans failed LLM
+ * audit") nor the Partial shape ("accepted... as partial support")
+ * is found, since the reason format isn't a strict contract.
  */
 export function humanizeReason(raw: string | null | undefined): string | null {
   if (!raw) return null;
+
+  const partialMatch = raw.match(/accepted the cited evidence as partial support:\s*(\d+)\s+passages?/i);
+  if (partialMatch) {
+    const count = parseInt(partialMatch[1], 10);
+    return `The auditor found partial support: ${count} passage${count === 1 ? "" : "s"} touched on the claim but did not fully confirm it.`;
+  }
+
   const match = raw.match(
     /(\d+)\s+spans?\s+failed\s+RapidFuzz.*?(\d+)\s+spans?\s+failed\s+LLM\s+audit/i
   );
