@@ -1,210 +1,124 @@
 # Prism
 
-**Research-paper claim-auditing agent.**
+> **Autonomous Empirical Claim-Auditing Engine for Research Papers**
 
-Prism extracts empirical claims from research papers and audits whether each claim is actually supported by evidence in that same paper. It is built for reviewers and researchers deciding whether to trust a paper's headline findings before citing them. Unlike Elicit, Consensus, and Scite — which help you *find and summarize* papers — Prism audits *one paper's claims against its own evidence*. That is the reviewer's job, not the searcher's. The measurable outcome is a correct-refusal rate on the Claim-Support Matrix across grounding-negative cases, reproducible from a committed eval harness.
+Prism extracts empirical claims from academic papers and rigorously audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that *find and summarize* across papers, Prism performs the peer-reviewer's core job: **auditing a single paper's headline findings against its own data and text**.
 
 ---
 
-## What it produces
+## What It Produces
 
-A **Paper Intelligence Brief** with four sections:
+For every ingested research paper, Prism generates a **Paper Intelligence Brief**:
 
-- **Verdict** — Supported / Not-Supported / Partially-Supported with 3 reasons
-- **Overstated Claims** — where the paper says more than its data shows
-- **Questions to Scrutinize** — what a careful reviewer should probe
-- **Claim-Support Matrix** — every empirical claim linked to (or explicitly failing to link to) the evidence
+* **Verdict & Confidence** — High-level assessment (`Supported`, `Partially Supported`, `Not Supported`) grounded with concrete rationale.
+* **Overstated Claims** — Flags assertions that overreach beyond what the experimental data actually demonstrates.
+* **Questions to Scrutinize** — High-priority probing questions tailored for peer reviewers and critical readers.
+* **Claim-Support Matrix** — Granular, claim-by-claim verification linking each empirical assertion to verified context spans in the text.
 
 ---
 
 ## Architecture
 
-Aspire orchestrates the local stack. The system is split into two primary workflows: **Async Ingestion & Extraction** (orchestrated via RabbitMQ queues) and **Conversational Paper Chat** (communicated via real-time Server-Sent Events).
+Prism is orchestrated locally via **.NET Aspire** and architected into two decoupled, resilient subsystems:
 
-### 1. Async Ingestion & Extraction Pipeline
-
-```mermaid
-flowchart TD
-    %% Subgraph Styling
-    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef gateway fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
-    classDef python fill:#fffde7,stroke:#f57f17,stroke-width:2px;
-    classDef store fill:#eceff1,stroke:#37474f,stroke-width:2px;
-    classDef llm fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
-
-    subgraph FE [Frontend Workspace]
-        UI[React UI]:::frontend
-        AV[Activity View]:::frontend
-    end
-
-    subgraph API [API Gateway]
-        GW[C# API Gateway]:::gateway
-    end
-
-    subgraph WORKER [Python Service Worker]
-        PK[Worker Loop]:::python
-        EXT[Extraction Engine]:::python
-        GRND[Grounding Stage]:::python
-    end
-
-    subgraph STORES [Data Stores]
-        MinIO[(MinIO Object Store)]:::store
-        MQ[(RabbitMQ Queue)]:::store
-        PG[(PostgreSQL)]:::store
-        QD[(Qdrant Vector DB)]:::store
-    end
-
-    subgraph CLOUD [External LLM API]
-        Gemini[Gemini API]:::llm
-    end
-
-    %% Flow 1: Upload & Enqueue
-    UI -->|1. Upload PDF POST| GW
-    GW -->|2. Write PDF Binary| MinIO
-    GW -->|3. Enqueue Ingestion| MQ
-
-    %% Flow 2: Worker Consumption & Processing
-    MQ -.->|4. Consume job| PK
-    PK -->|5. Download PDF| MinIO
-    PK -->|6. Chunk & Embed| QD
-    PK -->|7. Extract Metadata & Claims| EXT
-    EXT -->|8. Audits & Citations| Gemini
-    EXT -->|9. Ground extraction| GRND
-    GRND -->|10. RapidFuzz & LLM Audits| Gemini
-    GRND -->|11. Write finalized results| PG
-
-    %% Flow 3: Progress & Completion Events
-    PK -.->|12. Emit stage progress events| MQ
-    MQ -.->|13. Forward events| GW
-    GW ==>|14. SignalR WebSockets| AV
-```
-
-### 2. Conversational Paper Chat Flow
+### 1. Async Ingestion & Grounding Pipeline
+PDF uploads are staged in MinIO object storage and enqueued to RabbitMQ. A Python worker extracts claims, generates embeddings in Qdrant, verifies text spans using semantic matching (RapidFuzz) and multi-model LLM audits, and writes results to PostgreSQL. Real-time progress is streamed to the React UI over SignalR.
 
 ```mermaid
-flowchart TD
-    %% Subgraph Styling
-    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef gateway fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
-    classDef python fill:#fffde7,stroke:#f57f17,stroke-width:2px;
-    classDef store fill:#eceff1,stroke:#37474f,stroke-width:2px;
-    classDef llm fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
-
-    subgraph FE [Frontend Workspace]
-        CS[React Chat Strip]:::frontend
+flowchart LR
+    subgraph Client [Frontend]
+        UI[React 19 App]
     end
 
-    subgraph API [API Gateway]
-        GW[C# Proxy Endpoint]:::gateway
+    subgraph Gateway [API Layer]
+        GW[.NET 10 API Gateway]
     end
 
-    subgraph PY_API [Python FastAPI API]
-        FastAPI[FastAPI Router]:::python
-        Agent[LangGraph Chat Agent]:::python
+    subgraph Processing [Async Pipeline]
+        MQ[(RabbitMQ)]
+        Worker[Python Worker Engine]
+        LLM[Gemini / LiteLLM]
     end
 
-    subgraph STORES [Data Stores]
-        PG[(PostgreSQL)]:::store
-        QD[(Qdrant Vector DB)]:::store
+    subgraph Storage [Persistence]
+        MinIO[(MinIO Storage)]
+        Qdrant[(Qdrant Vector DB)]
+        PG[(PostgreSQL)]
     end
 
-    subgraph CLOUD [External LLM API]
-        Gemini[Gemini API]:::llm
-    end
-
-    %% Chat Stream Flow
-    CS ==>|1. Ask question POST| GW
-    GW ==>|2. Proxy post body| FastAPI
-    FastAPI -->|3. Run agent graph| Agent
-
-    %% Retrieval Tools (Bypassed tool routing; runs both concurrently)
-    Agent -->|4. query_paper_claims| PG
-    Agent -->|5. query_paper_chunks| QD
-
-    %% Response Generation & SSE Streaming
-    Agent -->|6. Generate Response| Gemini
-    Gemini -.->|7. Stream raw tokens| Agent
-    Agent ==>|8. Format citation blocks| FastAPI
-    FastAPI ==>|9. SSE: text/claim_ref frames| GW
-    GW ==>|10. Flush stream chunk| CS
+    UI -->|1. Upload PDF| GW
+    GW -->|2. Store Binary| MinIO
+    GW -->|3. Enqueue Job| MQ
+    MQ -->|4. Consume| Worker
+    Worker -->|5. Chunk & Embed| Qdrant
+    Worker -->|6. Extract & Audit Spans| LLM
+    Worker -->|7. Persist Results| PG
+    Worker -.->|8. Progress via SignalR| UI
 ```
+
+### 2. Conversational Paper Chat
+Interactive queries run through a LangGraph agent served by FastAPI. Retrieval executes concurrently across PostgreSQL (structured claims) and Qdrant (dense vector chunks), streaming grounded answers with clickable claim citations via Server-Sent Events (SSE).
 
 ---
 
 ## Tech Stack
 
-| Category | Technology | Version/Notes |
-|----------|-----------|---------------|
-| Backend runtime | .NET | 10 (via `global.json`) |
-| Backend framework | ASP.NET Core, Aspire | Aspire 13.4.6 |
-| Data access (C#) | EF Core | 10 |
-| Frontend | React + Vite + TypeScript | React 19 |
-| Real-time | SignalR | — |
-| AI worker runtime | Python | 3.13 |
-| AI worker packaging | uv | — |
-| Agent framework | LangGraph + FastAPI | — |
-| LLM client | google-genai, litellm | LiteLLM provider abstraction for audit fallback chain |
-| LLM models | Gemini 3.6 Flash paid Tier 1 (extractor), Groq openai/gpt-oss-20b free tier (primary audit via LiteLLM), Gemini 3.1 Flash Lite paid Tier 1 (audit fallback) | Env-driven |
-| Vector store | Qdrant | 1.18 |
-| Relational DB | PostgreSQL | 18 |
-| Async queue | RabbitMQ | 4.3-management |
-| Object storage | MinIO | 2025-09-07 release |
-| Cache (provisioned) | Redis | 8 |
-| DB driver (Python) | psycopg3 async | binary + pool |
-| Observability | OpenTelemetry via Aspire | 1.16 |
-
----
-
-## Prerequisites
-
-- [ ] .NET 10 SDK (pinned via `global.json`)
-- [ ] Docker Desktop (for Postgres, Qdrant, RabbitMQ, MinIO, Redis containers)
-- [ ] `uv` (Python package manager)
-- [ ] Node.js 20+ (for React frontend)
-- [ ] Google Gemini API key (from https://aistudio.google.com/apikey)
+| Layer | Technologies | Role / Notes |
+|---|---|---|
+| **Orchestration** | .NET Aspire 13.4 | Local multi-service orchestration, telemetry & discovery |
+| **API Gateway** | ASP.NET Core (.NET 10), EF Core 10 | Gateway, SignalR hubs, authentication, and ingestion staging |
+| **Worker & Agent** | Python 3.13 (`uv`), FastAPI, LangGraph | Three-call extraction pipeline, span grounder, and chat agent |
+| **LLM Tiering** | Gemini 3.6 Flash, LiteLLM (Groq / Gemini Flash Lite) | Tiered extraction and multi-provider fallback audit chain |
+| **Vector & Search** | Qdrant 1.18 | Dense embedding retrieval for section context and chat |
+| **Data & Messaging**| PostgreSQL 18, RabbitMQ 4.3, MinIO | Relational persistence, distributed task queue, PDF storage |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS | 3-panel claim matrix, evidence drawer, SSE streaming chat |
 
 ---
 
 ## Quick Start
 
-1. **Clone and set up secrets**
-   ```powershell
-   git clone https://github.com/i-mouse/prism.git
-   cd prism
-   .\setup.ps1
-   ```
+### Prerequisites
+* [.NET 10 SDK](https://dotnet.microsoft.com/download)
+* [Docker Desktop](https://www.docker.com/) (Postgres, Qdrant, RabbitMQ, MinIO)
+* [`uv`](https://docs.astral.sh/uv/) (Python package manager)
+* [Node.js 20+](https://nodejs.org/)
+* [Google Gemini API Key](https://aistudio.google.com/apikey)
 
-2. **Configure your Gemini API key** — stored via .NET user secrets:
-   ```powershell
-   cd Prism.AppHost
-   dotnet user-secrets set "GoogleApiKey" "<your-key>"
-   cd ..
-   ```
-   `setup.ps1` will prompt for all other secrets (RabbitMQ, MinIO, Qdrant) interactively.
+### 1. Setup & Secrets
+git clone https://github.com/i-mouse/prism.git
+cd prism
 
-3. **Start the local dev environment**
-   ```powershell
-   .\dev.ps1
-   ```
+Configure your Gemini API key via .NET user secrets:
+```powershell
+cd Prism.AppHost
+dotnet user-secrets set "GoogleApiKey" "<your-api-key>"
+cd ..
+```
 
-4. **Open the Aspire dashboard** at the URL printed in the terminal. Wait for all resources to show "Running".
+### 2. Launch Development Stack
+```powershell
+F5 - vscode launch settings auto run using aspire dev tool
+```
 
-5. **Open the Prism UI** at http://localhost:7000 and upload a research paper PDF.
+- **Aspire Dashboard:** Opens automatically at launch (inspects all dynamic ports, logs, and telemetry).
+- **Web UI:** Navigate to `http://localhost:7000` and upload any paper PDF to begin an audit.
 
 ---
 
-## Local Service URLs
+## Evaluation Harness
 
-| Service | URL |
-|---------|-----|
-| Aspire Dashboard | (printed at startup) |
-| React UI | http://localhost:7000 |
-| C# API Gateway | http://localhost:5269 |
-| Python API | (Aspire-assigned) |
-| pgAdmin | (Aspire-assigned) |
-| MinIO Console | (Aspire-assigned) |
-| Qdrant Dashboard | (Aspire-assigned) |
-| RabbitMQ Management | (Aspire-assigned) |
+Prism uses an automated evaluation harness with curated golden test sets to measure claim grounding accuracy and correct-refusal rates on negative cases:
+
+```powershell
+# Run evaluation harness against local database
+cd Prism.PythonService
+uv run python -m eval.matrix_runner --source db
+
+# Run against committed golden fixtures
+uv run python -m eval.matrix_runner --source fixture
+```
+
+CI runs fixture evaluations on pull requests to enforce zero regression on refusal and grounding baselines.
 
 ---
 
@@ -212,117 +126,36 @@ flowchart TD
 
 ```
 prism/
-├── Prism.AppHost/                  # Aspire orchestration
-├── Prism.ApiService/               # C# API Gateway + SignalR hub
-│   ├── Data/Schemas/               # EF Core entities
-│   ├── Migrations/                 # EF Core migrations
-│   ├── Services/                   # RabbitMQ setup + listener
-│   └── Hubs/                       # SignalR DocumentHub
-├── Prism.PythonService/            # Python worker + API
-│   ├── extraction/                 # Extraction pipeline, grounding, DB writer
-│   ├── prompts/                    # System prompts + few-shot JSONs
-│   │   ├── audit_claim_system.md   # Per-claim reasoning auditor
-│   │   └── structure_verdict_system.md # Parses audit into JSON
-│   ├── main.py                     # RabbitMQ consumer (ingestion pipeline)
-│   ├── api.py                      # FastAPI for chat endpoints
-│   ├── agent_service.py            # LangGraph agent
-│   ├── RAGService.py               # Qdrant embed + upsert
-│   └── memory_db.py                # Shared psycopg3 pool
-├── Prism.Web/                      # React 19 + Vite frontend
-├── Prism.ServiceDefaults/          # Aspire service defaults
-├── docs/
-│   ├── decisions.md                # Chronological technical decisions
-│   ├── diagrams/                   # current.png + target.png (TODO: current.png is stale)
-│   ├── evals/                      # matrix_eval.json + golden_eval.json
-│   ├── research_papers/            # Sample PDFs for testing
-│   ├── PRODUCT_BRIEF.md            # Product vision + build order
-│   └── RUNBOOK.md                  # Developer gotchas and tips
-│
-├── README.md                       # This file
-├── dev.ps1                         # Start local dev
-├── setup.ps1                       # One-time setup
-├── global.json                     # .NET SDK pin
-└── Prism.sln
+├── Prism.AppHost/           # .NET Aspire orchestration and service definitions
+├── Prism.ApiService/        # C# API gateway, EF Core schema, SignalR hubs
+├── Prism.PythonService/     # Python worker, extraction engine, LangGraph chat agent
+├── Prism.Web/               # React 19 frontend (Claim Matrix workspace, SSE chat)
+├── Prism.ServiceDefaults/   # Cross-cutting telemetry and health checks
+└── docs/                    # Architecture decisions, runbooks, and eval specs
 ```
 
 ---
 
 ## Documentation
 
-- **[Product Brief](docs/PRODUCT_BRIEF.md)** — vision, target user, wedge, build order
-- **[Decisions Log](docs/decisions.md)** — chronological technical decisions
-- **[Developer Runbook](docs/RUNBOOK.md)** — setup gotchas, quota tracking, debugging configuration
-- **[Architecture diagrams](docs/diagrams/)** — current + target state (<!-- TODO: current.png is stale and does not reflect the three-call extraction pipeline -->)
-- **[Evaluation datasets](docs/evals/)** — golden test sets for correct-refusal measurement
-
----
-
-## Eval harness — reproducing the number
-
-Local iteration (uses live Postgres via Aspire):
-```powershell
-cd Prism.PythonService
-uv run python -m eval.matrix_runner --source db
-```
-
-After a prompt change worth committing:
-```powershell
-uv run python -m eval.dump_fixture
-git add prompts/ docs/evals/fixtures/
-git commit -m "..."
-```
-
-CI runs `matrix_runner --source fixture` on every PR and blocks the merge
-on regression. Fixture freshness is checked separately — if the prompt
-files changed but the fixture wasn't regenerated, CI fails with a clear
-message telling you which paper to re-dump.
+* **[Product Brief](docs/PRODUCT_BRIEF.md)** — Core product vision, target persona, and value proposition.
+* **[Decisions Log](docs/decisions.md)** — Append-only record of architecture and schema decisions.
+* **[Developer Runbook](docs/RUNBOOK.md)** — Troubleshooting, Docker container gotchas, and debugging tips.
+* **[Evaluation Design](docs/eval-harness-design.md)** — Methodology and metrics for grounding benchmark.
 
 ---
 
 ## Roadmap
 
-### Shipped
-- **Slice 1 — Matrix UI:** Three-panel claim-support workspace, right-side evidence drawer, paper-primary sidebar, and `displayLabel` grounder-wins fallback.
-- **Slice 2 + 2.5 — Ingestion Progress Events:** 5-stage activity view with sub-progression (e.g., grounding verification counters), drawer collapse handling, three-zone composition, and Framer Motion `popLayout` transitions.
-- **Slice 3a — Paper-scoped LangGraph Chat Backend:** FastAPI SSE endpoint, concurrent Postgres full-text and Qdrant chunk retrieval tools, check_empty OR logic, and structured citation-block formatting.
-- **Slice 3b + 3b.1 + 3b.2 — Chat Strip UI:** Streaming fetch ReadableStream client, inline claim citation buttons, key-based remount for paper switching, stop/abort button, dynamic follow-up suggestions, and visual polish.
-
-### Pending — critical path to V1
-- **Slice 2.8 — Grounding tuning:** Widen RapidFuzz/audit context window, establish 3-tier verdict rubric, and track false-rejection metrics.
-- **Slice 3c — Delete legacy general chat:** Clean up and delete unused `ai_service.py`, `agent_service.py`, and the old `/api/chat/ask` API endpoint.
-- **Azure deployment:** Provision Container Apps, Postgres Flexible Server, AI Search, Key Vault, and Managed Identity.
-- **V1 ship:** Launch live URL, publish project blog post, and record a walkthrough demo.
-
-### Post-V1
-- **Tier 2 — Multi-paper chat:** Cross-paper retrieval, literature synthesis, and Matrix view navigation rework.
-- **Tier 3 — Web-grounded chat:** Route queries to external search engine tools to verify claims against the web.
-- **Document Intelligence:** Structure-aware chunking for layout-aware PDF parsing.
-- **Auth / multi-tenancy:** Secure user authentication and workspace session isolation.
-- **Unit + integration tests:** Expand test suites beyond the extraction pipeline smoke test.
-- **MCP wrapper:** Expose the claim extractor as a Model Context Protocol server.
-- **Foundry Pattern C migration:** Align Azure agent hosting with Azure AI-103 standards.
-- **Groq / LiteLLM:** Implement model routing for faster/cheaper tool execution.
-
-### Deferred debt (tracked, not blocking)
-- **Postgres volume password drift:** Remove `.WithDataVolume()` on Postgres in `Prism.AppHost/AppHost.cs` or nuke container volumes on authorization failures.
-- **Status synchronization:** `prism_documents.status` never flips to "Completed" post-extraction in C# models.
-- **Human-readable reason strings:** C# API projects require frontend to run `humanizeReason()` client-side workaround rather than writing clean reason strings from Python.
-- **Page numbers in evidence spans:** Currently saved as null; requires page-aware chunking provenance backfill.
-- **Stale-state sidebar detection:** Show a "Stuck — retry" warning pill after 10 minutes of a document remaining "In progress".
-- **Real "Open Paper" wiring:** Reconnect the button stub (currently showing toast) to opening the PDF viewer.
-- **CORS hardcoding:** C# API gateway hardcodes CORS origins to `localhost:7000`.
-- **EF Core JSON mapping:** `document_extractors.Fields` maps as a JSONB string in EF Core rather than typed metadata fields.
-- **SignalR reconnect race:** Race condition where clients miss the `DocumentProcessed` message during a websocket reconnect.
-- **User authorization mock:** Hardcoded user ID (`demo-user-01`) used across frontend and backend endpoints.
-
----
-
-## Status
-
-Portfolio project demonstrating Senior Azure AI Engineer capabilities: multi-service orchestration, async ingestion pipelines, LLM structured output, deterministic grounding, and evaluation-driven design. The eval harness reports 10/14 (71%) refusal rate with 16/23 (70%) positive hits and 1/23 (4%) false rejection on a golden set of 14 grounding-negative cases across three papers. Not open to external contributions.
+- [x] **Core Claim-Support Matrix:** Automated empirical claim extraction with 3-tier verdict rubric.
+- [x] **Real-time Ingestion Tracking:** Multi-stage SignalR progress telemetry and interactive activity view.
+- [x] **Paper-Scoped Chat:** LangGraph conversational agent with dual-store retrieval and citation streaming.
+- [ ] **Multi-Paper Synthesis:** Cross-paper retrieval, comparative claim auditing, and shared literature views.
+- [ ] **Web-Grounded Fact Checking:** Tool routing to external search providers for verifying external citations.
+- [ ] **Layout-Aware Ingestion:** Document Intelligence integration for structure-aware tabular extraction.
 
 ---
 
 ## License
 
-See [LICENSE](LICENSE).
+Distributed under the MIT License. See [LICENSE](LICENSE).

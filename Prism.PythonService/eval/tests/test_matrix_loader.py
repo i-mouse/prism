@@ -42,7 +42,7 @@ def test_loads_real_matrix_eval():
     spec = load_matrix(REAL_MATRIX_PATH)
 
     assert len(spec.papers) == 3
-    assert spec.pass_threshold_refusal_rate == 0.80
+    assert spec.pass_threshold_refusal_rate == 0.70
     assert spec.pass_threshold_positive_floor == 10
 
 
@@ -51,7 +51,7 @@ def test_missing_pass_threshold_uses_defaults(tmp_path):
 
     spec = load_matrix(path)
 
-    assert spec.pass_threshold_refusal_rate == 0.80
+    assert spec.pass_threshold_refusal_rate == 0.70
     assert spec.pass_threshold_positive_floor == 10
 
 

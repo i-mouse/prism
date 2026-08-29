@@ -1,14 +1,12 @@
-import os
 from psycopg_pool import AsyncConnectionPool
+from config import settings
 
 def create_db_connection_pool() -> AsyncConnectionPool:
-    host     = os.environ["PRISM_DB_HOST"]
-    port     = os.environ.get("PRISM_DB_PORT", "5432")
-    dbname   = os.environ["PRISM_DB_DATABASENAME"]
-    user     = os.environ["PRISM_DB_USERNAME"]
-    password = os.environ["PRISM_DB_PASSWORD"]
-
-    conninfo = f"host={host} port={port} dbname={dbname} user={user} password={password}"
-    print(f"[OK] Connecting to: {host}:{port}/{dbname}", flush=True)
+    conninfo = (
+        f"host={settings.prism_db_host} port={settings.prism_db_port} "
+        f"dbname={settings.prism_db_databasename} user={settings.prism_db_username} "
+        f"password={settings.prism_db_password}"
+    )
+    print(f"[OK] Connecting to: {settings.prism_db_host}:{settings.prism_db_port}/{settings.prism_db_databasename}", flush=True)
 
     return AsyncConnectionPool(conninfo=conninfo, min_size=1, max_size=10, open=False)

@@ -1,4 +1,6 @@
-# API process (FastAPI/uvicorn). Worker process uses the sibling Dockerfile.worker.
+# Worker process (RabbitMQ consumer, main.py). Sibling to Dockerfile (API process) -
+# same locked dependency set, different entrypoint, so each scales independently
+# in Azure Container Apps.
 FROM python:3.13-slim AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
@@ -10,5 +12,4 @@ COPY --from=builder /app/.venv /app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 WORKDIR /app
 COPY . .
-EXPOSE 8000
-CMD ["python", "-m", "uvicorn", "api:pythonAPI", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "main.py"]

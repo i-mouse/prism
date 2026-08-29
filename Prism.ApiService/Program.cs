@@ -2,6 +2,7 @@
 using System.Data.Common;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using Prism.ApiService.Configuration;
 using Prism.ApiService.Data;
 using Prism.ApiService.Features.PaperSubmission;
 using Prism.ApiService.Services;
@@ -68,21 +69,45 @@ builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp =>
  
  builder.Services.AddHostedService<RabbitMqListenerService>();
 
+// Local Aspire dev resolves the python service through service discovery (`services:...:0`);
+// Azure deploys it as a standalone container, so PYTHON_API_URL takes priority when set.
+var pythonApiUrl = builder.Configuration["PYTHON_API_URL"]
+    ?? builder.Configuration["services:prism-ai-pythonAPI:pythonapi:0"]
+    ?? throw new InvalidOperationException("PYTHON_API_URL not configured");
+
     builder.Services.AddHttpClient("pythonapi", client =>
     {
-        client.BaseAddress = new Uri(builder.Configuration["services:prism-ai-pythonAPI:pythonapi:0"]!);
+        client.BaseAddress = new Uri(pythonApiUrl);
     });
+
+var allowedOrigins = builder.Configuration["AllowedOrigins"]
+    ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
+    ?? new[] { "http://localhost:7000" };
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("SignalRPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:7000")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
     });
 });
+
+var runMigrationsOnStartup = builder.Configuration.GetValue<bool>("RUN_MIGRATIONS_ON_STARTUP");
+
+// Feed the values resolved above (env-var fallback chains, etc.) back into IConfiguration
+// under the PrismSettings property names so the typed options below bind to the same
+// resolved values instead of re-reading raw keys.
+builder.Configuration["PythonApiUrl"] = pythonApiUrl;
+builder.Configuration["AllowedOrigins"] = string.Join(",", allowedOrigins);
+builder.Configuration["RunMigrationsOnStartup"] = runMigrationsOnStartup.ToString();
+
+builder.Services.AddOptions<PrismSettings>()
+    .Bind(builder.Configuration)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var app = builder.Build();
 
@@ -91,8 +116,12 @@ using (var scope = app.Services.CreateAsyncScope())
     var service = scope.ServiceProvider.GetRequiredService<MinioStorageService>();
     await service.EnsureBucketExistAsync("prism-uploads");
 }
-using (var scope = app.Services.CreateAsyncScope())
+// Migrations run once per Container Apps revision via a separate one-shot deploy task,
+// not on every container start (multiple replicas starting together would deadlock on
+// the migration lock). Local Aspire dev keeps this on via AppHost.cs.
+if (runMigrationsOnStartup)
 {
+    using var scope = app.Services.CreateAsyncScope();
     var service = scope.ServiceProvider.GetRequiredService<PrismDBContext>();
     await service.Database.MigrateAsync();
 }
@@ -109,6 +138,12 @@ app.MapPaperEndPoint();
 app.MapChatEndPoint();
 app.MapChatHistoryEndpoints();
 app.MapSystemEndPoint();
+
+// Fast liveness probe for Azure Container Apps - no DB/Qdrant ping, must return 200 quickly
+// even under load. A deeper /readiness endpoint can come post-V1.
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
+    .WithName("HealthCheck")
+    .ExcludeFromDescription();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

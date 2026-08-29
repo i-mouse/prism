@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import HumanMessage
 from agent_service import  workflow,ragservice
 from pydantic import BaseModel
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from config import settings
 from memory_db import create_db_connection_pool
 from paper_chat.agent import build_paper_chat_graph
 from paper_chat.blocks import ClaimReferenceBlock, TextBlock, block_to_sse
@@ -38,6 +39,11 @@ async def lifespan(app: FastAPI):
 
 
 pythonAPI = FastAPI(title="Prism python agent", lifespan=lifespan)
+
+
+@pythonAPI.get("/health", include_in_schema=False)
+async def health():
+    return {"status": "healthy"}
 
 
 class QueryRequest(BaseModel):
@@ -203,7 +209,12 @@ async def get_chat_history(chatid: str, http_request: Request):
 
 # --- SYSTEM RESET (NUCLEAR OPTION) ---
 @pythonAPI.delete("/api/system/reset")
-async def wipe_ai_system(http_request: Request): # ADD Request parameter
+async def wipe_ai_system(http_request: Request, x_admin_token: str | None = Header(default=None)):
+    if not settings.system_admin_token:
+        raise HTTPException(status_code=403, detail="System reset disabled: no admin token configured")
+    if x_admin_token != settings.system_admin_token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     try:
         # 1. WIPE QDRANT (Vector Database)
         try:
@@ -225,5 +236,4 @@ async def wipe_ai_system(http_request: Request): # ADD Request parameter
         raise HTTPException(status_code=500, detail=str(e))     
 if __name__ == "__main__":
     import uvicorn
-    porta = int(os.environ.get("PORT", 8000))
-    uvicorn.run(pythonAPI, host="0.0.0.0", port=porta)
+    uvicorn.run(pythonAPI, host="0.0.0.0", port=settings.port)

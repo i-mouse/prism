@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from minio import Minio
 from ai_service import AIService
 from RAGService import RAGService
+from config import settings
 from memory_db import create_db_connection_pool
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from agent_service import workflow
@@ -62,12 +63,8 @@ async def main():
     service = AIService()
     rag_service = RAGService()
 
-    connection_string = os.getenv("ConnectionStrings__messaging")
-    connection_string_minio = os.getenv("ConnectionStrings__storage")
-
-    if not connection_string_minio or not connection_string:
-        print("Error: Connection strings not found!")
-        sys.exit(1)
+    connection_string = settings.messaging_connection_string
+    connection_string_minio = settings.storage_connection_string
 
     # -------------------------------------------------------------------------
     # THE ASYNC GRAIL: We create the Pool and Compile the Graph exactly ONCE
@@ -186,7 +183,7 @@ async def main():
                         metadata_final = PaperMetadataFinal(
                             **metadata_response.metadata.model_dump(),
                             prompt_version=get_prompt_version(),
-                            model_used=os.getenv("LLM_EXTRACTION_MODEL", "unknown"),
+                            model_used=settings.llm_extraction_model,
                             extracted_at=datetime.now(timezone.utc),
                         )
 

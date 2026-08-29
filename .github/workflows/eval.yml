@@ -13,25 +13,37 @@ jobs:
     defaults:
       run:
         working-directory: Prism.PythonService
+    env:
+      # Dummy values to satisfy pydantic BaseSettings validation at import time.
+      # CI runs fixture-only eval — no real services are hit, so these
+      # placeholders are safe. Real secrets belong in Azure Key Vault at deploy time.
+      PRISM_DB_HOST: "localhost"
+      PRISM_DB_DATABASENAME: "test"
+      PRISM_DB_USERNAME: "test"
+      PRISM_DB_PASSWORD: "test"
+      ConnectionStrings__messaging: "amqp://test:test@localhost:5672"
+      ConnectionStrings__storage: "http://localhost:9000"
+      AI_API_KEY: "dummy-key-not-used-in-fixture-eval"
+      GROQ_API_KEY: "dummy-key-not-used-in-fixture-eval"
+      LLM_EXTRACTION_MODEL: "gemini-3.6-flash"
+      LLM_AUDIT_MODEL: "gemini-3.1-flash-lite"
+      LLM_SUMMARY_MODEL: "gemini-3.1-flash-lite"
+      LLM_FAST_MODEL: "gemini-3.1-flash-lite"
+      LLM_AGENT_MODEL: "gemini-3.6-flash"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Install uv
         uses: astral-sh/setup-uv@v3
         with:
           python-version: "3.13"
-
       - name: Install dependencies
         run: uv sync --frozen
-
       - name: Run offline eval tests
         run: uv run pytest eval/tests/ -v
-
       - name: Check fixture freshness
         run: uv run python -m eval.check_fixture_freshness
-
       - name: Run matrix eval (fixture mode)
         run: uv run python -m eval.matrix_runner --source fixture
