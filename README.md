@@ -85,11 +85,8 @@ Interactive queries run through a LangGraph agent served by FastAPI. Retrieval e
 * [Google Gemini API Key](https://aistudio.google.com/apikey)
 
 ### 1. Setup & Secrets
-```powershell
 git clone https://github.com/i-mouse/prism.git
 cd prism
-.\setup.ps1
-```
 
 Configure your Gemini API key via .NET user secrets:
 ```powershell
@@ -100,7 +97,7 @@ cd ..
 
 ### 2. Launch Development Stack
 ```powershell
-.\dev.ps1
+F5 - vscode launch settings auto run using aspire dev tool
 ```
 
 - **Aspire Dashboard:** Opens automatically at launch (inspects all dynamic ports, logs, and telemetry).
