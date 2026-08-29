@@ -18,7 +18,6 @@ extract_claims (Prompt 2) is a sequential three-call pipeline:
 """
 import asyncio
 import json
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
@@ -27,6 +26,7 @@ from google import genai
 from google.genai import errors, types
 from pydantic import BaseModel
 
+from config import settings
 from extraction.prompt_loader import (
     build_gemini_messages_for_audit,
     build_gemini_messages_for_extractor,
@@ -123,10 +123,7 @@ def _write_structured_log(
 
 
 def _build_client() -> genai.Client:
-    api_key = os.getenv("AI_API_KEY")
-    if not api_key:
-        raise RuntimeError("AI_API_KEY environment variable is not set")
-    return genai.Client(api_key=api_key)
+    return genai.Client(api_key=settings.ai_api_key)
 
 
 async def _generate_with_fallback(
@@ -140,9 +137,7 @@ async def _generate_with_fallback(
     exhausted. Returns (response, model_name_actually_used). Raises on
     terminal failure (non-retryable error, or fallback attempt also fails).
     """
-    model_name = os.getenv("LLM_EXTRACTION_MODEL")
-    if not model_name:
-        raise RuntimeError("LLM_EXTRACTION_MODEL environment variable is not set")
+    model_name = settings.llm_extraction_model
 
     try:
         response = await _call_gemini(client, model_name, contents, config, chat_id)
@@ -150,12 +145,7 @@ async def _generate_with_fallback(
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
             raise
-        fallback_model = os.getenv("LLM_AUDIT_MODEL")
-        if not fallback_model:
-            raise RuntimeError(
-                f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
-                f"(chat_id={chat_id}) and LLM_AUDIT_MODEL is not set for fallback"
-            ) from primary_exc
+        fallback_model = settings.llm_audit_model
         try:
             print(f"[extraction] chat_id={chat_id} falling back to model={fallback_model}")
             response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)

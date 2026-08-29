@@ -36,6 +36,8 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
     .WithEnvironment("LLM_FAST_MODEL", "gemini-3.1-flash-lite")
     .WithEnvironment("LLM_AGENT_MODEL", "gemini-3.6-flash")
     .WithReference(postgres)
+    .WithReference(rabbitMQ)    // ADD THIS
+    .WithReference(miniIO)      // ADD THIS
     .WaitFor(postgres);
                 
  builder.AddPythonApp("prism-ai-pythonWorker","../Prism.PythonService","main.py")
@@ -57,6 +59,7 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
 
 var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithEnvironment("DEPLOYMENT_REGION","US-East")
+                     .WithEnvironment("RUN_MIGRATIONS_ON_STARTUP", "true")
                      .WithReference(cache)
                      .WithReference(postgres)
                      .WaitFor(postgres)

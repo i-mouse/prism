@@ -7,8 +7,13 @@ export default defineConfig(({ mode }) => {
   // Load Aspire variables (they are injected as system env vars)
   const env = loadEnv(mode, process.cwd(), '');
 
-  // Aspire provides the service URL here
-  const target = env.services__apiservice__https__0 || env.services__apiservice__http__0;
+  // Aspire provides the service URL here; standalone builds/preview (no Aspire orchestrator)
+  // fall back to VITE_API_BASE_URL, then to the local Aspire default port.
+  const target =
+    env.services__apiservice__https__0 ||
+    env.services__apiservice__http__0 ||
+    env.VITE_API_BASE_URL ||
+    'http://localhost:7217';
 
   return {
     plugins: [react(), tailwindcss()],

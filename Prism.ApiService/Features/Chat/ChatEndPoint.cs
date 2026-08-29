@@ -14,7 +14,7 @@ public static class ChatEndPoint
 
     public static void MapChatEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/chat/ask", async ([FromBody] ChatRequest request, IHttpClientFactory httpClientFactory, PrismDBContext dBContext, ILogger<ChatRequest> logger) =>
+        app.MapPost("/api/chat/ask", async ([FromBody] ChatRequest request, IHttpClientFactory httpClientFactory, PrismDBContext dBContext, IWebHostEnvironment env, ILogger<ChatRequest> logger) =>
         {
 
            try
@@ -23,21 +23,23 @@ public static class ChatEndPoint
              var client = httpClientFactory.CreateClient("pythonapi");
               await AddToDatabase(request,dBContext);
              var result = await client.PostAsJsonAsync("/api/chat/ask",request);
- 
+
              if(!result.IsSuccessStatusCode)
              {
                var error =  await result.Content.ReadAsStringAsync();
                logger.LogError($"Python chat API error: {error}\n");
                return Results.Problem($"Python chat API error: {error}");
              }
- 
+
              var ans =  await result.Content.ReadFromJsonAsync<ChatResponse>();
              return Results.Ok(ans);
            }
            catch (Exception ex)
            {
                logger.LogError(ex,$"Failed to call python worker ASK api.");
-                return Results.InternalServerError(ex.Message);
+               return env.IsDevelopment()
+                   ? Results.Problem(ex.Message, statusCode: 500)
+                   : Results.Problem("An internal error occurred", statusCode: 500);
            }
 
         }  ).WithName("AskAgent") .DisableAntiforgery();
@@ -97,7 +99,7 @@ public static class ChatEndPoint
         .WithName("AskPaperChatStream")
         .DisableAntiforgery();
 
-      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, ILogger<ChatRequest> logger )=>
+      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, IWebHostEnvironment env, ILogger<ChatRequest> logger )=>
         {
           try
           {
@@ -114,8 +116,11 @@ public static class ChatEndPoint
             return Results.Ok(history);
           }
           catch (Exception ex)
-         { 
-          return Results.InternalServerError(ex.Message); 
+         {
+          logger.LogError(ex, "Failed to get chat history");
+          return env.IsDevelopment()
+              ? Results.Problem(ex.Message, statusCode: 500)
+              : Results.Problem("An internal error occurred", statusCode: 500);
           }
         });
     }

@@ -10,7 +10,6 @@ No DB writes, no worker integration - this module only grounds and logs.
 """
 import asyncio
 import json
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
@@ -18,6 +17,7 @@ from typing import Awaitable, Callable, Optional
 import litellm
 from rapidfuzz import fuzz
 
+from config import settings
 from extraction.prompt_loader import build_gemini_messages_for_span_audit
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import (
@@ -338,15 +338,9 @@ async def ground_extraction(
     the order claims complete in is not guaranteed to match extraction
     order.
     """
-    audit_model = os.getenv("AUDIT_MODEL", "groq/openai/gpt-oss-20b")
-    fallback_model = os.getenv("AUDIT_FALLBACK_MODEL", "gemini/gemini-3.1-flash-lite-preview")
-
-    if not os.getenv("GROQ_API_KEY"):
-        raise RuntimeError("GROQ_API_KEY environment variable is not set")
-
-    gemini_api_key = os.getenv("AI_API_KEY")
-    if not gemini_api_key:
-        raise RuntimeError("AI_API_KEY environment variable is not set")
+    audit_model = settings.audit_model
+    fallback_model = settings.audit_fallback_model
+    gemini_api_key = settings.ai_api_key
 
     semaphore = asyncio.Semaphore(AUDIT_CONCURRENCY)
 

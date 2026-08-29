@@ -32,7 +32,6 @@ not guaranteed to preserve citation position relative to the prose, and
 option (a) needs no extra graph nodes.
 """
 import asyncio
-import os
 import re
 from typing import Annotated, Literal, TypedDict
 
@@ -43,6 +42,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 from pydantic import BaseModel, Field
 
+from config import settings
 from paper_chat.tools import query_paper_chunks, query_paper_claims
 
 REFUSAL_MESSAGE = (
@@ -75,14 +75,14 @@ class RetrievalRoute(BaseModel):
 
 
 llm = ChatGoogleGenerativeAI(
-    model=os.getenv("LLM_AGENT_MODEL"),
-    api_key=os.getenv("AI_API_KEY"),
+    model=settings.llm_agent_model,
+    api_key=settings.ai_api_key,
     temperature=0.2,
 )
 
 fast_llm = ChatGoogleGenerativeAI(
-    model=os.getenv("LLM_FAST_MODEL"),
-    api_key=os.getenv("AI_API_KEY"),
+    model=settings.llm_fast_model,
+    api_key=settings.ai_api_key,
     temperature=0.0,
 )
 
