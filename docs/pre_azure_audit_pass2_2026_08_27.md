@@ -4,6 +4,7 @@
 **Scope:** Architecture Patterns, Config & Secrets, Observability, Concurrency, Type Safety, Testing, DX, Future-Fit  
 **Base Reference:** `docs/pre_azure_audit_2026_08_27.md` (First Pass — No repeat findings)  
 **Mode:** Deep Read-Only Audit (No Code Edits, No Dependency Changes)  
+**Status:** Blockers resolved in PR 1 (`feat/azure-pre-deploy-foundation`) on 2026-08-29; remaining items scheduled for PR 2 and PR 3. Kept for historical audit trail.
 
 ---
 

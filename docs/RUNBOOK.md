@@ -5,7 +5,7 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 ---
 
 ## 1. Aspire Postgres Volume Password Drift
-* **Symptom:** On running `.\dev.ps1`, the Postgres container starts, but backend services fail to connect, throwing database authentication or password validation errors.
+* **Symptom:** On launching Aspire, the Postgres container starts, but backend services fail to connect, throwing database authentication or password validation errors.
 * **Gotcha:** Aspire automatically configures the database connection with auto-generated passwords stored in user secrets. However, if the local Docker data volumes persist across environment updates or configuration changes, the container's initialized credentials can drift from what Aspire injects.
 * **Workaround:**
   1. Find the active database Docker volume:
@@ -16,7 +16,7 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
      ```powershell
      docker volume rm <volume-name>
      ```
-  3. Re-run `.\dev.ps1` to spin up a clean database.
+  3. Relaunch the Aspire stack (`F5` in VS Code or `dotnet run --project Prism.AppHost`) to spin up a clean database.
 
 ---
 
@@ -36,7 +36,7 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 * **Symptom:** API calls to Qdrant, MinIO, or RabbitMQ from PowerShell scripts or external tools fail.
 * **Gotcha:** Aspire assigns random, dynamic ports to all containerized services (RabbitMQ management, MinIO console, Qdrant Dashboard, pgAdmin) at startup to prevent local port collisions. Do not hardcode these ports in scratch scripts or client applications.
 * **Solution:**
-  - Open the **Aspire Dashboard** (at the URL printed in the terminal when launching `.\dev.ps1`).
+  - Open the **Aspire Dashboard** (at the URL printed in the terminal when launching Aspire).
   - Refer to the **Endpoints** column to inspect active ports for the current run and use those.
 
 ---

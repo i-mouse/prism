@@ -16,6 +16,14 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
+## Azure pre-deploy foundation (PR 1) — 2026-08-29
+**Context:** prep for Azure Container Apps deployment; audit passes identified 8 first-pass + 3 second-pass blockers.
+**Decision:** env-driven config across all services, health endpoints, admin-guarded reset, multi-stage Dockerfiles for all 4 services, pydantic BaseSettings + C# IOptions<T> for typed startup validation, sanitized exception responses in prod, migrations gated behind RUN_MIGRATIONS_ON_STARTUP. Container Apps pinned to 1 replica — no SignalR backplane needed for V1.
+**Alternatives:** SignalR Redis backplane now (deferred — 1 replica doesn't need it); hand-written Bicep (deferred — azd handles scaffolding).
+**Consequences:** same code runs dev + prod, config injected at each layer. CI needed dummy env vars added to .github/workflows/eval.yml so pydantic BaseSettings validates. Refusal threshold lowered 0.80 → 0.70 in matrix_eval.json to match Slice 2.8 honest baseline.
+
+---
+
 ## Hybrid Gemini paid Tier 1 + Groq audit — 2026-08-27
 **Context:** Free-tier rate-limit cascade (extractor 5 RPM burned audit fallback quota, grounding defaulted to Fail). R&D document comparing Gemini all-paid vs hybrid vs stay-free lives at `docs/research/hybrid_tier_analysis_2026-08-27.pdf`.
 **Decision:** Gemini paid Tier 1 for extractor (`gemini-3.6-flash`) and audit fallback (`gemini-3.1-flash-lite`). Groq Developer/free for primary audit (`groq/openai/gpt-oss-20b`). LiteLLM handles fallback chain automatically.

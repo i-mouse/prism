@@ -114,10 +114,13 @@ The tiers represent the transition from deterministic extraction to conversation
 - Paper-scoped LangGraph chat agent backend (SSE transport) with Postgres checkpoints.
 - React Chat Strip with native streaming fetch, claim highlighting hook-ups, dynamic follow-ups, and UX polish.
 - Grounding tuning & hybrid LLM architecture (Slice 2.8 shipped): reasoning-first schema pattern for span audit, context widening (500-1500 chars with paragraph snapping), 3-tier Pass/Fail/Partial rubric, and hybrid Gemini 3.6 Flash paid Tier 1 + Groq Developer/free primary audit with Gemini 3.1 Flash Lite paid Tier 1 fallback via LiteLLM.
+- Azure pre-deploy foundation (PR 1 shipped): env-driven config (`BaseSettings` / `IOptions`), health endpoints, admin-guarded reset, multi-stage Dockerfiles for all 4 services, single-replica Container Apps topology, and CI env alignment.
 
 **Pending V1 Milestones:**
-- Slice 3c: Deprecation/deletion of legacy general chat pipeline (`ai_service.py`, `agent_service.py`, and `/api/chat/ask` endpoint).
-- Azure Deployment (Container Apps, Postgres Flexible Server, Azure AI Search, Key Vault, Managed Identity).
+- PR 2: Concurrency & Observability (OpenTelemetry distributed tracing, cancellation token propagation).
+- PR 3: Cleanup & Integration Tests (Slice 3c legacy chat deletion, test coverage).
+- Azure Deployment: Provisioning Container Apps, Postgres Flexible Server, AI Search, Key Vault via `azd`.
+- V1 Ship: Live demo deployment, walkthrough video, and publication.
 
 ---
 
@@ -129,10 +132,12 @@ The tiers represent the transition from deterministic extraction to conversation
 **4. Ingestion progress events (Slice 2 + 2.5).** Granular progress updates and sub-progression logs via SignalR. (DONE)
 **5. Paper-scoped chat (Slice 3a + 3b + 3b.1 + 3b.2).** Chat agent with Postgres checkpoints, fetch streaming, citations, dynamic follow-ups, and density cleanup. (DONE)
 **6. Eval harness verification.** Running evaluations locally and locking CI on regression. (DONE — PR #22)
-**7. Grounding Tuning (Slice 2.8).** Iterating grounding prompt + validation window to reduce false rejections. (PENDING V1)
-**8. Code cleanup (Slice 3c).** Drop legacy chat python services and HTTP endpoints. (PENDING V1)
-**9. Azure deployment.** Set up cloud infrastructure mirroring local Aspire resources. (PENDING V1)
-**10. Ship the V1 proof.** Live URL, blog post, recorded walkthrough. (PENDING V1)
+**7. Grounding Tuning (Slice 2.8).** Iterating grounding prompt + validation window to reduce false rejections. (DONE — PR #32)
+**8. Azure pre-deploy foundation (PR 1).** Typed config, multi-stage Dockerfiles, health probes, single-replica topology. (DONE — PR #33)
+**9. Concurrency & Observability (PR 2).** OpenTelemetry tracing, cancellation handling, worker task pool safety. (PENDING V1)
+**10. Code cleanup & tests (PR 3 / Slice 3c).** Drop legacy chat python services and add integration test suite. (PENDING V1)
+**11. Azure deployment.** Set up cloud infrastructure mirroring local Aspire resources via `azd`. (PENDING V1)
+**12. Ship the V1 proof.** Live URL, blog post, recorded walkthrough. (PENDING V1)
 
 ---
 

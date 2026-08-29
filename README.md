@@ -85,8 +85,10 @@ Interactive queries run through a LangGraph agent served by FastAPI. Retrieval e
 * [Google Gemini API Key](https://aistudio.google.com/apikey)
 
 ### 1. Setup & Secrets
+```bash
 git clone https://github.com/i-mouse/prism.git
 cd prism
+```
 
 Configure your Gemini API key via .NET user secrets:
 ```powershell
@@ -96,9 +98,8 @@ cd ..
 ```
 
 ### 2. Launch Development Stack
-```powershell
-F5 - vscode launch settings auto run using aspire dev tool
-```
+- **VS Code:** Press `F5` (launches using configured `.NET Aspire` host).
+- **CLI:** Run `dotnet run --project Prism.AppHost`
 
 - **Aspire Dashboard:** Opens automatically at launch (inspects all dynamic ports, logs, and telemetry).
 - **Web UI:** Navigate to `http://localhost:7000` and upload any paper PDF to begin an audit.
@@ -147,9 +148,19 @@ prism/
 
 ## Roadmap
 
+### Shipped
 - [x] **Core Claim-Support Matrix:** Automated empirical claim extraction with 3-tier verdict rubric.
 - [x] **Real-time Ingestion Tracking:** Multi-stage SignalR progress telemetry and interactive activity view.
 - [x] **Paper-Scoped Chat:** LangGraph conversational agent with dual-store retrieval and citation streaming.
+- [x] **Azure Pre-Deploy Foundation (PR 1):** Typed env config (`BaseSettings` / `IOptions`), health endpoints, multi-stage Dockerfiles, and single-replica container topology.
+
+### Pending V1
+- [ ] **PR 2 (Concurrency & Observability):** OpenTelemetry distributed tracing and cancellation token propagation.
+- [ ] **PR 3 (Cleanup & Tests):** Legacy chat pipeline deprecation (Slice 3c) and test suite expansion.
+- [ ] **Azure Deployment:** Cloud infrastructure provisioning via `azd` (Container Apps, Postgres Flexible, AI Search, Key Vault).
+- [ ] **V1 Ship Artifacts:** Public live demo deployment, walkthrough demo, and publication.
+
+### Post-V1 (North-Star)
 - [ ] **Multi-Paper Synthesis:** Cross-paper retrieval, comparative claim auditing, and shared literature views.
 - [ ] **Web-Grounded Fact Checking:** Tool routing to external search providers for verifying external citations.
 - [ ] **Layout-Aware Ingestion:** Document Intelligence integration for structure-aware tabular extraction.
