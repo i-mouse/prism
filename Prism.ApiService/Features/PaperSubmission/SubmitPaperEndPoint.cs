@@ -3,6 +3,8 @@ using Prism.ApiService.Data.Schemas;
 using Prism.ApiService.Services;
 using MassTransit;
 using Prism.ApiService.Contracts;
+using Prism.ApiService.Middleware;
+using Prism.ApiService.Telemetry;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -15,47 +17,62 @@ public static class SubmitPaperEndpoint
 
     public static void MapPaperEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/papers", async ([FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,MinioStorageService storageService) =>
+        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,MinioStorageService storageService, CancellationToken ct) =>
         {
             if (request == null || request.Files == null || request.Files.Count == 0)
             {
-                return Results.BadRequest("Request is blank");
+                return Results.Problem(detail: "Request is blank", statusCode: StatusCodes.Status400BadRequest);
             }
             else if(String.IsNullOrEmpty(request.ConnectionId))
             {
-                 return Results.BadRequest("ConnectionId is blank. Please reconnect your signalR.");
+                 return Results.Problem(detail: "ConnectionId is blank. Please reconnect your signalR.", statusCode: StatusCodes.Status400BadRequest);
             }
             else if (request.Files.Count != 1)
             {
-                return Results.BadRequest("Prism audits one paper at a time. Upload a single PDF.");
+                return Results.Problem(detail: "Prism audits one paper at a time. Upload a single PDF.", statusCode: StatusCodes.Status400BadRequest);
             }
             var result = new
             {
               Message = "Paper received",
               UserId = request.UserId
             };
+            var correlationId = httpContext.GetCorrelationId();
              foreach (var file in request.Files)
              {
                 var fileId = Guid.NewGuid();
+                using var activity = PrismTelemetry.ActivitySource.StartActivity("paper.upload");
+                activity?.SetTag("file.name", file.FileName);
+                activity?.SetTag("chat.id", request.ChatId);
+                activity?.SetTag("correlation.id", correlationId);
+
                 var stream = file.OpenReadStream();
-                await storageService.UploadFileAsync(stream,file.FileName,file.ContentType);
-                await AddToDatabase(fileId,file, request.ChatId, request.UserId, dBContext);
+                await storageService.UploadFileAsync(stream,file.FileName,file.ContentType,ct);
+                await AddToDatabase(fileId,file, request.ChatId, request.UserId, dBContext, ct);
                 var contract = new PrismUploaded(fileId.ToString(),request.UserId,file.FileName,request.ConnectionId,request.ChatId);
-                await publishEndpoint.Publish(contract);
-         
+                await publishEndpoint.Publish(contract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
+                {
+                    if (correlationId is not null)
+                    {
+                        publishContext.Headers.Set("x-correlation-id", correlationId);
+                    }
+                }), ct);
+
              }
-         
+
 
             return Results.Ok(result);
 
         }  ).WithName("SubmitPaper") .DisableAntiforgery();
 
-        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, PrismDBContext dbContext) =>
+        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, PrismDBContext dbContext, CancellationToken ct) =>
         {
+            using var activity = PrismTelemetry.ActivitySource.StartActivity("paper.claims.read");
+            activity?.SetTag("paper.id", paperId);
+
             var file = await dbContext.FileRecords
                 .Where(f => f.FileId == paperId)
                 .Select(f => new { f.FileId, f.FileName, f.Summary })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(ct);
 
             if (file == null)
             {
@@ -63,11 +80,11 @@ public static class SubmitPaperEndpoint
             }
             var labelConverter = new ClaimLabelConverter();
             var statusConverter = new GroundingStatusConverter();
-            
+
             var extractor = await dbContext.DocumentExtractors
                 .Where(e => e.FileId == paperId)
                 .OrderByDescending(e => e.CreatedAt)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(ct);
 
             if (extractor == null)
             {
@@ -84,7 +101,7 @@ public static class SubmitPaperEndpoint
                 .Where(c => c.DocumentExtractorId == extractor.Id)
                 .OrderBy(c => c.Position)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(ct);
 
             var claimDtos = claims
             .Select(c => new ClaimDto(
@@ -126,7 +143,7 @@ public static class SubmitPaperEndpoint
 
     public static void MapChatHistoryEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/chats/{userId}", async (string userId, PrismDBContext dbContext) =>
+        app.MapGet("/api/chats/{userId}", async (string userId, PrismDBContext dbContext, CancellationToken ct) =>
         {
             var userChats = await dbContext.PrismDocuments
                 .Where(doc => doc.UserId == userId)
@@ -148,7 +165,7 @@ public static class SubmitPaperEndpoint
                     UploadedAt = x.UploadedAt
                 })
                 .OrderByDescending(doc => doc.UploadedAt)
-                .ToListAsync();
+                .ToListAsync(ct);
 
             if (userChats == null || userChats.Count == 0)
             {
@@ -161,11 +178,11 @@ public static class SubmitPaperEndpoint
 
         // Backfill endpoint: lets the client recover file summaries it may have
         // missed via SignalR (closed tab, dropped connection, page never open).
-        app.MapGet("/api/chats/{chatId}/files", async (string chatId, PrismDBContext dbContext) =>
+        app.MapGet("/api/chats/{chatId}/files", async (string chatId, PrismDBContext dbContext, CancellationToken ct) =>
         {
             if (!Guid.TryParse(chatId, out var chatGuid))
             {
-                return Results.BadRequest("Invalid chatId");
+                return Results.Problem(detail: "Invalid chatId", statusCode: StatusCodes.Status400BadRequest);
             }
 
             var files = await dbContext.FileRecords
@@ -179,19 +196,19 @@ public static class SubmitPaperEndpoint
                     UploadedAt = f.UploadedAt,
                     Status = f.Summary != null ? "Completed" : "In progress"
                 })
-                .ToListAsync();
+                .ToListAsync(ct);
 
             return Results.Ok(files);
         })
         .WithName("GetChatFiles");
     }
 
-    public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, PrismDBContext prismDBContext)
+    public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, PrismDBContext prismDBContext, CancellationToken ct)
     {
         var chatGuid = Guid.Parse(chatId);
 
         var existingRecord = await prismDBContext.PrismDocuments
-            .FirstOrDefaultAsync(a => a.ChatId == chatGuid);
+            .FirstOrDefaultAsync(a => a.ChatId == chatGuid, ct);
 
         if (existingRecord == null)
         {
@@ -219,6 +236,6 @@ public static class SubmitPaperEndpoint
             ChatId = chatGuid
         });
 
-        await prismDBContext.SaveChangesAsync();
+        await prismDBContext.SaveChangesAsync(ct);
     }
 }

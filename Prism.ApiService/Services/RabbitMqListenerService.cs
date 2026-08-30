@@ -5,6 +5,7 @@ using RabbitMQ.Client.Events;
 using Prism.ApiService.Hubs;
 using  System.Text.Json;
 using Prism.ApiService.Data;
+using Prism.ApiService.Telemetry;
 using Microsoft.EntityFrameworkCore;
 
 namespace Prism.ApiService.Services;
@@ -63,7 +64,12 @@ public class RabbitMqListenerService : BackgroundService
             }
 
             var progressChatId = progressChatIdProp.ToString();
-            await _hubContext.Clients.Group($"chat-{progressChatId}").ExtractionProgress(dataObject);
+            using (var activity = PrismTelemetry.ActivitySource.StartActivity("signalr.broadcast"))
+            {
+                activity?.SetTag("chat.id", progressChatId);
+                activity?.SetTag("signalr.method", "ExtractionProgress");
+                await _hubContext.Clients.Group($"chat-{progressChatId}").ExtractionProgress(dataObject);
+            }
             await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
             return;
         }
@@ -85,19 +91,24 @@ public class RabbitMqListenerService : BackgroundService
        {
         var dbContext = scope.ServiceProvider.GetRequiredService<PrismDBContext>();
 
-        var obj = await dbContext.FileRecords.FindAsync(Guid.Parse(fileIdStr));
+        var obj = await dbContext.FileRecords.FindAsync(new object?[] { Guid.Parse(fileIdStr) }, stoppingToken);
         if(obj!=null)
             {
                 obj.Summary = summary;
                 obj.UploadedAt = DateTime.UtcNow;
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(stoppingToken);
             }
        }
 
         // Broadcast to the ChatId-scoped group rather than a single ConnectionId,
         // so the message still lands even if the client reconnected (new socket ID)
         // since it was uploaded.
-        await _hubContext.Clients.Group($"chat-{chatId}").DocumentProcessed(dataObject);
+        using (var activity = PrismTelemetry.ActivitySource.StartActivity("signalr.broadcast"))
+        {
+            activity?.SetTag("chat.id", chatId);
+            activity?.SetTag("signalr.method", "DocumentProcessed");
+            await _hubContext.Clients.Group($"chat-{chatId}").DocumentProcessed(dataObject);
+        }
 
         await channel.BasicAckAsync(ea.DeliveryTag,false,stoppingToken);
 

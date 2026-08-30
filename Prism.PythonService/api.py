@@ -1,17 +1,33 @@
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from langchain_core.messages import HumanMessage
-from agent_service import  workflow,ragservice
+import agent_service
+from agent_service import workflow
 from pydantic import BaseModel
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from config import settings
 from memory_db import create_db_connection_pool
 from paper_chat.agent import build_paper_chat_graph
 from paper_chat.blocks import ClaimReferenceBlock, TextBlock, block_to_sse
+from correlation import correlation_id_var, get_correlation_id
+from telemetry import init_telemetry
+from opentelemetry import trace
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
+import asyncio
 import os
+import uuid
 from contextlib import asynccontextmanager
 import json
 import psycopg
+
+CORRELATION_ID_HEADER = "X-Correlation-Id"
+
+tracer = init_telemetry("prism-python-api")
+HTTPXClientInstrumentor().instrument()
+PsycopgInstrumentor().instrument()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -39,6 +55,62 @@ async def lifespan(app: FastAPI):
 
 
 pythonAPI = FastAPI(title="Prism python agent", lifespan=lifespan)
+FastAPIInstrumentor.instrument_app(pythonAPI)
+
+
+@pythonAPI.middleware("http")
+async def correlation_id_middleware(request: Request, call_next):
+    correlation_id = request.headers.get(CORRELATION_ID_HEADER) or str(uuid.uuid4())
+    correlation_id_var.set(correlation_id)
+
+    span = trace.get_current_span()
+    span.set_attribute("correlation_id", correlation_id)
+
+    response = await call_next(request)
+    response.headers[CORRELATION_ID_HEADER] = correlation_id
+    return response
+
+
+def _trace_id_hex() -> str | None:
+    span_context = trace.get_current_span().get_span_context()
+    if not span_context.is_valid:
+        return None
+    return format(span_context.trace_id, "032x")
+
+
+def _problem_response(status_code: int, title: str, detail: str, type_: str = "about:blank") -> JSONResponse:
+    return JSONResponse(
+        status_code=status_code,
+        content={
+            "type": type_,
+            "title": title,
+            "status": status_code,
+            "detail": detail,
+            "traceId": _trace_id_hex(),
+            "correlationId": get_correlation_id(),
+        },
+        media_type="application/problem+json",
+    )
+
+
+@pythonAPI.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    return _problem_response(status_code=exc.status_code, title=exc.detail, detail=exc.detail)
+
+
+@pythonAPI.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    print(f"Unhandled exception: {exc!r}", flush=True)
+    trace.get_current_span().set_status(trace.Status(trace.StatusCode.ERROR, str(exc)))
+    # No confirmed dev/prod environment flag exists in config.py (verified: no such
+    # field there, and AppHost.cs never sets ASPNETCORE_ENVIRONMENT/ENVIRONMENT for
+    # either Python resource) - defaults to always hiding exception details. Flagged
+    # in the PR description for a follow-up decision on adding one.
+    return _problem_response(
+        status_code=500,
+        title="An unexpected error occurred",
+        detail="An internal error occurred",
+    )
 
 
 @pythonAPI.get("/health", include_in_schema=False)
@@ -150,10 +222,16 @@ async def paper_chat_ask(request: ChatAskRequest, contextrequest: Request):
             async for event in graph.astream(
                 initial_state, config, stream_mode=["custom", "messages"]
             ):
+                if await contextrequest.is_disconnected():
+                    print(f" [CANCEL] paper chat stream: client disconnected, chat_id={request.chat_id}", flush=True)
+                    return
                 frame = serialize_event_to_sse(event)
                 if frame:
                     yield frame
             yield 'data: {"type": "done"}\n\n'
+        except asyncio.CancelledError:
+            print(f" [CANCEL] paper chat stream cancelled, chat_id={request.chat_id}", flush=True)
+            raise
         except Exception as exc:
             print(f" [FAIL] paper chat stream error: {exc!r}", flush=True)
             yield f'data: {{"type": "error", "message": {json.dumps(str(exc))}}}\n\n'
@@ -218,7 +296,8 @@ async def wipe_ai_system(http_request: Request, x_admin_token: str | None = Head
     try:
         # 1. WIPE QDRANT (Vector Database)
         try:
-            ragservice.client.delete_collection(collection_name="prism_collection")
+            ragservice = await agent_service._get_ragservice()
+            await ragservice.client.delete_collection(collection_name="prism_collection")
         except Exception as e:
             print(f" [WARN] Qdrant wipe warning: {e}")
 

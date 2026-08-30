@@ -27,10 +27,10 @@ async def _get_pool():
     return _pool
 
 
-def _get_ragservice() -> RAGService:
+async def _get_ragservice() -> RAGService:
     global _ragservice
     if _ragservice is None:
-        _ragservice = RAGService()
+        _ragservice = await RAGService.create()
     return _ragservice
 
 
@@ -142,8 +142,8 @@ async def query_paper_chunks(active_file_id: str, query: str, limit: int = 5) ->
     Empty list if no matches.
     """
     try:
-        ragservice = _get_ragservice()
-        hits = ragservice.search_db(user_query=query, limit=limit, file_id=active_file_id)
+        ragservice = await _get_ragservice()
+        hits = await ragservice.search_db(user_query=query, limit=limit, file_id=active_file_id)
         return [
             {
                 "chunk_text": hit.payload.get("text", ""),

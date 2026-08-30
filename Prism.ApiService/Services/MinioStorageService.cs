@@ -18,7 +18,7 @@ public class MinioStorageService(IMinioClient minioClient)
         }
     }
 
-    public async Task<string> UploadFileAsync(Stream stream, string fileName,string contentType)
+    public async Task<string> UploadFileAsync(Stream stream, string fileName,string contentType, CancellationToken cancellationToken = default)
     {
         var args = new PutObjectArgs()
                     .WithBucket("prism-uploads")
@@ -27,8 +27,8 @@ public class MinioStorageService(IMinioClient minioClient)
                     .WithObjectSize(stream.Length)
                     .WithContentType(contentType);
 
-         await  minioClient.PutObjectAsync(args);         
+         await  minioClient.PutObjectAsync(args, cancellationToken).ConfigureAwait(false);
 
         return fileName;
-    } 
+    }
 }

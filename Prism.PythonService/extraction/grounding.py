@@ -146,6 +146,7 @@ async def _call_litellm_audit(
     fallback_model: str,
     gemini_api_key: str,
     span_source_section: str,
+    correlation_id: str | None = None,
 ) -> SpanAuditVerdict:
     """Calls the span-audit model with retry/backoff, raising the last error
     if all attempts fail. Each attempt carries LiteLLM's built-in `fallbacks`
@@ -168,11 +169,11 @@ async def _call_litellm_audit(
             return SpanAuditVerdict.model_validate_json(content)
         except Exception as exc:
             if not _is_retryable(exc):
-                print(f"[ground_extraction] audit non-retryable error for span in {span_source_section!r}: {exc!r}")
+                print(f"[ground_extraction] correlation_id={correlation_id} audit non-retryable error for span in {span_source_section!r}: {exc!r}")
                 raise
             last_exception = exc
             print(
-                f"[ground_extraction] audit attempt={attempt}/{AUDIT_MAX_ATTEMPTS} "
+                f"[ground_extraction] correlation_id={correlation_id} audit attempt={attempt}/{AUDIT_MAX_ATTEMPTS} "
                 f"failed for span in {span_source_section!r}: {exc!r}"
             )
             if attempt < AUDIT_MAX_ATTEMPTS:
@@ -191,6 +192,7 @@ async def _audit_span_with_llm(
     audit_model: str,
     fallback_model: str,
     gemini_api_key: str,
+    correlation_id: str | None = None,
 ) -> GroundingStatus:
     """Asks the audit model whether the evidence quote supports the claim.
 
@@ -222,10 +224,11 @@ async def _audit_span_with_llm(
                 fallback_model=fallback_model,
                 gemini_api_key=gemini_api_key,
                 span_source_section=span_source_section,
+                correlation_id=correlation_id,
             )
             return GroundingStatus(verdict.verdict)
         except Exception as exc:
-            print(f"[ground_extraction] LLM audit failed for span in {span_source_section!r}: {exc!r}")
+            print(f"[ground_extraction] correlation_id={correlation_id} LLM audit failed for span in {span_source_section!r}: {exc!r}")
             return GroundingStatus.FAIL
 
 
@@ -241,6 +244,7 @@ async def _ground_span(
     audit_model: str,
     fallback_model: str,
     gemini_api_key: str,
+    correlation_id: str | None = None,
 ) -> tuple[EvidenceSpanFinal, bool]:
     """Grounds one span. Returns (finalized span, passed_rapidfuzz)."""
     if not _passes_rapidfuzz(span.source_text, paper_text):
@@ -258,7 +262,7 @@ async def _ground_span(
         span_context = _extract_span_context(paper_text, alignment.dest_start, alignment.dest_end)
     else:
         span_context = span.source_text
-    print(f"[ground_extraction] audit context: {len(span_context)} chars for span in {span.source_section!r}")
+    print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars for span in {span.source_section!r}")
 
     status = await _audit_span_with_llm(
         claim_text=claim_text,
@@ -269,6 +273,7 @@ async def _ground_span(
         audit_model=audit_model,
         fallback_model=fallback_model,
         gemini_api_key=gemini_api_key,
+        correlation_id=correlation_id,
     )
     final_span = EvidenceSpanFinal(
         source_text=span.source_text,
@@ -368,6 +373,7 @@ async def ground_extraction(
             audit_model=audit_model,
             fallback_model=fallback_model,
             gemini_api_key=gemini_api_key,
+            correlation_id=correlation_id,
         )
         await _report_claim_done(claim_idx)
         return result

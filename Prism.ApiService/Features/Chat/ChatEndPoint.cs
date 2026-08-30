@@ -2,6 +2,7 @@ using Prism.ApiService.Data;
 using Prism.ApiService.Services;
 using MassTransit;
 using Prism.ApiService.Contracts;
+using Prism.ApiService.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Minio.DataModel.Args;
 using System.Data.Common;
@@ -14,24 +15,24 @@ public static class ChatEndPoint
 
     public static void MapChatEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/chat/ask", async ([FromBody] ChatRequest request, IHttpClientFactory httpClientFactory, PrismDBContext dBContext, IWebHostEnvironment env, ILogger<ChatRequest> logger) =>
+        app.MapPost("/api/chat/ask", async ([FromBody] ChatRequest request, IHttpClientFactory httpClientFactory, PrismDBContext dBContext, IWebHostEnvironment env, ILogger<ChatRequest> logger, CancellationToken ct) =>
         {
 
            try
            {
 
              var client = httpClientFactory.CreateClient("pythonapi");
-              await AddToDatabase(request,dBContext);
-             var result = await client.PostAsJsonAsync("/api/chat/ask",request);
+              await AddToDatabase(request,dBContext,ct);
+             var result = await client.PostAsJsonAsync("/api/chat/ask",request,ct);
 
              if(!result.IsSuccessStatusCode)
              {
-               var error =  await result.Content.ReadAsStringAsync();
+               var error =  await result.Content.ReadAsStringAsync(ct);
                logger.LogError($"Python chat API error: {error}\n");
                return Results.Problem($"Python chat API error: {error}");
              }
 
-             var ans =  await result.Content.ReadFromJsonAsync<ChatResponse>();
+             var ans =  await result.Content.ReadFromJsonAsync<ChatResponse>(ct);
              return Results.Ok(ans);
            }
            catch (Exception ex)
@@ -44,7 +45,7 @@ public static class ChatEndPoint
 
         }  ).WithName("AskAgent") .DisableAntiforgery();
 
-      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, ILogger<ChatRequest> logger) =>
+      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, ILogger<ChatRequest> logger, CancellationToken ct) =>
         {
             // Paper-scoped chat (Slice 3a): proxies the Python SSE stream through to the
             // client unbuffered. Bypasses RabbitMQ - direct C# -> Python HTTP call.
@@ -55,18 +56,23 @@ public static class ChatEndPoint
             {
                 Content = JsonContent.Create(request)
             };
+            var correlationId = httpContext.GetCorrelationId();
+            if (correlationId is not null)
+            {
+                pythonRequest.Headers.TryAddWithoutValidation(CorrelationIdMiddlewareExtensions.HeaderName, correlationId);
+            }
 
             HttpResponseMessage pythonResponse;
             try
             {
                 pythonResponse = await client.SendAsync(
-                    pythonRequest, HttpCompletionOption.ResponseHeadersRead, httpContext.RequestAborted);
+                    pythonRequest, HttpCompletionOption.ResponseHeadersRead, ct);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Failed to reach python paper-chat stream endpoint.");
                 httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
-                await httpContext.Response.WriteAsync(ex.Message);
+                await httpContext.Response.WriteAsync(ex.Message, ct);
                 return;
             }
 
@@ -74,10 +80,10 @@ public static class ChatEndPoint
             {
                 if (!pythonResponse.IsSuccessStatusCode)
                 {
-                    var error = await pythonResponse.Content.ReadAsStringAsync();
+                    var error = await pythonResponse.Content.ReadAsStringAsync(ct);
                     logger.LogError($"Python paper-chat stream error: {error}");
                     httpContext.Response.StatusCode = (int)pythonResponse.StatusCode;
-                    await httpContext.Response.WriteAsync(error);
+                    await httpContext.Response.WriteAsync(error, ct);
                     return;
                 }
 
@@ -86,33 +92,33 @@ public static class ChatEndPoint
                 httpContext.Response.Headers["Connection"] = "keep-alive";
                 httpContext.Response.Headers["X-Accel-Buffering"] = "no";
 
-                await using var stream = await pythonResponse.Content.ReadAsStreamAsync(httpContext.RequestAborted);
+                await using var stream = await pythonResponse.Content.ReadAsStreamAsync(ct);
                 var buffer = new byte[4096];
                 int bytesRead;
-                while ((bytesRead = await stream.ReadAsync(buffer, httpContext.RequestAborted)) > 0)
+                while ((bytesRead = await stream.ReadAsync(buffer, ct)) > 0)
                 {
-                    await httpContext.Response.Body.WriteAsync(buffer.AsMemory(0, bytesRead), httpContext.RequestAborted);
-                    await httpContext.Response.Body.FlushAsync(httpContext.RequestAborted);
+                    await httpContext.Response.Body.WriteAsync(buffer.AsMemory(0, bytesRead), ct);
+                    await httpContext.Response.Body.FlushAsync(ct);
                 }
             }
         })
         .WithName("AskPaperChatStream")
         .DisableAntiforgery();
 
-      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, IWebHostEnvironment env, ILogger<ChatRequest> logger )=>
+      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, IWebHostEnvironment env, ILogger<ChatRequest> logger, CancellationToken ct)=>
         {
           try
           {
             var client =  httpClientFactory.CreateClient("pythonapi");
-            var result = await client.GetAsync($"/api/chat/{chatId}/history");
+            var result = await client.GetAsync($"/api/chat/{chatId}/history",ct);
 
             if (!result.IsSuccessStatusCode)
             {
-              var error =  await result.Content.ReadAsStringAsync();
+              var error =  await result.Content.ReadAsStringAsync(ct);
                logger.LogError($"Problem getting history API error: {error}\n");
                return Results.Problem($"Problem getting history API error: {error}");
             }
-            var history = await result.Content.ReadFromJsonAsync(typeof(object));
+            var history = await result.Content.ReadFromJsonAsync(typeof(object),ct);
             return Results.Ok(history);
           }
           catch (Exception ex)
@@ -124,7 +130,7 @@ public static class ChatEndPoint
           }
         });
     }
-    public static async Task AddToDatabase(ChatRequest request,PrismDBContext prismDBContext)
+    public static async Task AddToDatabase(ChatRequest request,PrismDBContext prismDBContext, CancellationToken ct)
     {
        var existingRecord =  prismDBContext.PrismDocuments.FirstOrDefault(a=>a.ChatId==Guid.Parse(request.chatId));
        if (existingRecord!=null)
@@ -144,7 +150,7 @@ public static class ChatEndPoint
 
         prismDBContext.PrismDocuments.Add(entry);
        }
-       await prismDBContext.SaveChangesAsync();
+       await prismDBContext.SaveChangesAsync(ct);
     }
-    
+
 }

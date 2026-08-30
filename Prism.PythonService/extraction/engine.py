@@ -24,6 +24,7 @@ from typing import Awaitable, Callable, Optional
 
 from google import genai
 from google.genai import errors, types
+from opentelemetry import trace
 from pydantic import BaseModel
 
 from config import settings
@@ -36,6 +37,8 @@ from extraction.prompt_loader import (
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
 
+tracer = trace.get_tracer(__name__)
+
 AUDIT_STRUCTURE_CONCURRENCY = 5
 
 LOGS_DIR = Path(__file__).parent.parent / "logs"
@@ -46,7 +49,12 @@ BACKOFF_SECONDS = (1, 2, 4)
 
 
 def _is_retryable(exc: Exception) -> bool:
-    """Returns True for rate limits, server errors, timeouts, and connection drops."""
+    """Returns True for rate limits, server errors, timeouts, and connection drops.
+
+    The `except Exception` blocks around retry loops in this module never see a
+    client-disconnect cancellation: asyncio.CancelledError is a BaseException,
+    not an Exception, in Python >=3.8, so it always propagates past them.
+    """
     if isinstance(exc, errors.APIError):
         return exc.code in RETRYABLE_STATUS_CODES
     return isinstance(exc, (TimeoutError, ConnectionError, asyncio.TimeoutError))
@@ -73,20 +81,21 @@ async def _call_gemini(
     contents: list[types.Content],
     config: types.GenerateContentConfig,
     chat_id: str,
+    correlation_id: str | None = None,
 ) -> types.GenerateContentResponse:
     """Calls Gemini with retry/backoff, raising the last error if all attempts fail."""
     last_exception: Exception | None = None
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            print(f"[extraction] chat_id={chat_id} model={model} attempt={attempt}/{MAX_ATTEMPTS}")
+            print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} model={model} attempt={attempt}/{MAX_ATTEMPTS}")
             return await client.aio.models.generate_content(model=model, contents=contents, config=config)
         except Exception as exc:
             if not _is_retryable(exc):
-                print(f"[extraction] chat_id={chat_id} model={model} non-retryable error: {exc!r}")
+                print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} model={model} non-retryable error: {exc!r}")
                 raise
             last_exception = exc
-            print(f"[extraction] chat_id={chat_id} model={model} attempt={attempt}/{MAX_ATTEMPTS} failed: {exc!r}")
+            print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} model={model} attempt={attempt}/{MAX_ATTEMPTS} failed: {exc!r}")
             if attempt < MAX_ATTEMPTS:
                 await asyncio.sleep(BACKOFF_SECONDS[attempt - 1])
 
@@ -131,6 +140,7 @@ async def _generate_with_fallback(
     contents: list[types.Content],
     config: types.GenerateContentConfig,
     chat_id: str,
+    correlation_id: str | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
     """Calls Gemini on LLM_EXTRACTION_MODEL with retry/backoff, falling back to
     LLM_AUDIT_MODEL for one final attempt if the primary model's retries are
@@ -140,18 +150,18 @@ async def _generate_with_fallback(
     model_name = settings.llm_extraction_model
 
     try:
-        response = await _call_gemini(client, model_name, contents, config, chat_id)
+        response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
         return response, model_name
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
             raise
         fallback_model = settings.llm_audit_model
         try:
-            print(f"[extraction] chat_id={chat_id} falling back to model={fallback_model}")
+            print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
             response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
             return response, fallback_model
         except Exception as fallback_exc:
-            print(f"[extraction] chat_id={chat_id} fallback model={fallback_model} failed: {fallback_exc!r}")
+            print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} fallback model={fallback_model} failed: {fallback_exc!r}")
             raise RuntimeError(
                 f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
                 f"and fallback attempt on model={fallback_model} (chat_id={chat_id})"
@@ -184,7 +194,7 @@ async def _call_gemini_structured(
         response_schema=response_schema,
     )
 
-    response, used_model = await _generate_with_fallback(client, contents, config, chat_id)
+    response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)
     raw_text = response.text
 
     parsed = response.parsed
@@ -192,7 +202,7 @@ async def _call_gemini_structured(
         try:
             parsed = response_schema.model_validate(json.loads(raw_text))
         except (json.JSONDecodeError, ValueError) as parse_exc:
-            print(f"[extraction] chat_id={chat_id} malformed response, raw={raw_text!r}")
+            print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} malformed response, raw={raw_text!r}")
             _write_structured_log(
                 log_subdir=log_subdir,
                 chat_id=chat_id,
@@ -246,13 +256,13 @@ async def _call_gemini_json(
         response_mime_type="application/json",
     )
 
-    response, used_model = await _generate_with_fallback(client, contents, config, chat_id)
+    response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)
     raw_text = response.text
 
     try:
         parsed = json.loads(raw_text)
     except json.JSONDecodeError as parse_exc:
-        print(f"[extraction] chat_id={chat_id} malformed JSON response, raw={raw_text!r}")
+        print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} malformed JSON response, raw={raw_text!r}")
         _write_structured_log(
             log_subdir=log_subdir,
             chat_id=chat_id,
@@ -300,7 +310,7 @@ async def _call_gemini_freetext(
         temperature=0,
     )
 
-    response, used_model = await _generate_with_fallback(client, contents, config, chat_id)
+    response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)
     raw_text = response.text
 
     _write_structured_log(
@@ -345,20 +355,28 @@ async def _audit_and_structure_claim(
             except Exception:
                 pass  # progress emission never breaks extraction
 
-        audit_text = await _call_gemini_freetext(
-            messages=build_gemini_messages_for_audit(paper_text, claim_text_verbatim, claim_summary),
-            chat_id=chat_id,
-            correlation_id=correlation_id,
-            log_subdir="audit",
-        )
+        with tracer.start_as_current_span("auditor") as span:
+            span.set_attribute("correlation_id", correlation_id or "")
+            span.set_attribute("chat_id", chat_id)
+            span.set_attribute("claim_number", claim_number)
+            audit_text = await _call_gemini_freetext(
+                messages=build_gemini_messages_for_audit(paper_text, claim_text_verbatim, claim_summary),
+                chat_id=chat_id,
+                correlation_id=correlation_id,
+                log_subdir="audit",
+            )
 
-        structured = await _call_gemini_structured(
-            messages=build_gemini_messages_for_structure(claim_text_verbatim, claim_summary, audit_text),
-            response_schema=ClaimLLM,
-            chat_id=chat_id,
-            correlation_id=correlation_id,
-            log_subdir="structure",
-        )
+        with tracer.start_as_current_span("structurer") as span:
+            span.set_attribute("correlation_id", correlation_id or "")
+            span.set_attribute("chat_id", chat_id)
+            span.set_attribute("claim_number", claim_number)
+            structured = await _call_gemini_structured(
+                messages=build_gemini_messages_for_structure(claim_text_verbatim, claim_summary, audit_text),
+                response_schema=ClaimLLM,
+                chat_id=chat_id,
+                correlation_id=correlation_id,
+                log_subdir="structure",
+            )
 
     return structured
 
@@ -377,12 +395,15 @@ async def extract_claims(
     structure call fails is logged and dropped rather than failing the
     whole extraction - downstream grounding handles missing claims correctly.
     """
-    extracted = await _call_gemini_json(
-        messages=build_gemini_messages_for_extractor(paper_text),
-        chat_id=chat_id,
-        correlation_id=correlation_id,
-        log_subdir="extraction",
-    )
+    with tracer.start_as_current_span("extractor") as span:
+        span.set_attribute("correlation_id", correlation_id or "")
+        span.set_attribute("chat_id", chat_id)
+        extracted = await _call_gemini_json(
+            messages=build_gemini_messages_for_extractor(paper_text),
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            log_subdir="extraction",
+        )
     claims = extracted.get("claims", [])
 
     if on_detail is not None:
@@ -407,7 +428,7 @@ async def extract_claims(
     for claim, result in zip(claims, results):
         if isinstance(result, Exception):
             print(
-                f"[extraction] chat_id={chat_id} audit/structure pipeline failed for "
+                f"[extraction] chat_id={chat_id} correlation_id={correlation_id} audit/structure pipeline failed for "
                 f"claim={claim.get('claim_text_verbatim', '')!r}: {result!r}"
             )
             continue

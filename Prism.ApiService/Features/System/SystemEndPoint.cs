@@ -20,7 +20,8 @@ public static class SystemEndPoint
             IWebHostEnvironment env,
             PrismDBContext db,
             IHttpClientFactory httpClientFactory,
-            ILogger<PrismDBContext> logger) =>
+            ILogger<PrismDBContext> logger,
+            CancellationToken ct) =>
         {
             var expectedToken = settings.Value.SystemAdminToken;
             if (string.IsNullOrEmpty(expectedToken))
@@ -36,12 +37,12 @@ public static class SystemEndPoint
 
             try
             {
-                await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"prism_documents\" CASCADE;");
+                await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"prism_documents\" CASCADE;", ct);
 
                 // 2. Command Python to wipe LangGraph and Qdrant
                 var pythonClient = httpClientFactory.CreateClient("pythonapi");
                 pythonClient.DefaultRequestHeaders.Add("X-Admin-Token", expectedToken);
-                var pythonResponse = await pythonClient.DeleteAsync("/api/system/reset");
+                var pythonResponse = await pythonClient.DeleteAsync("/api/system/reset", ct);
 
                 if (!pythonResponse.IsSuccessStatusCode) {
                     return Results.Problem("C# DB wiped, but Python failed to wipe Qdrant/LangGraph.");
