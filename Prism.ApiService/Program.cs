@@ -1,5 +1,6 @@
 
 using System.Data.Common;
+using System.Diagnostics;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Prism.ApiService.Configuration;
@@ -11,11 +12,30 @@ using Minio;
 using Prism.ApiService.Features.Chat;
 using Prism.ApiService.Features.System;
 using Prism.ApiService.Hubs;
+using Prism.ApiService.Middleware;
 using Microsoft.AspNetCore.Connections;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Wires OpenTelemetry (traces/metrics/logs + OTLP export), health checks, service
+// discovery, and HttpClient resilience - see Prism.ServiceDefaults/Extensions.cs.
+// This project previously had no reference to Prism.ServiceDefaults at all, so
+// none of that ever ran despite the exporter/instrumentation packages being
+// installed - the API service exported zero spans as a result.
+builder.AddServiceDefaults();
+
 builder.Services.AddOpenApi();
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = ctx =>
+    {
+        ctx.ProblemDetails.Extensions["traceId"] = Activity.Current?.Id ?? ctx.HttpContext.TraceIdentifier;
+        ctx.ProblemDetails.Extensions["correlationId"] = ctx.HttpContext.GetCorrelationId();
+    };
+});
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddMassTransit(busConfiguration =>
 {
     busConfiguration.SetKebabCaseEndpointNameFormatter();
@@ -110,6 +130,9 @@ builder.Services.AddOptions<PrismSettings>()
     .ValidateOnStart();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseCorrelationId();
 
 using (var scope = app.Services.CreateAsyncScope())
 {

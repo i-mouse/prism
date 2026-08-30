@@ -145,7 +145,7 @@ async def write_extraction_result(
                         ),
                     )
     except Exception as exc:
-        print(f"[write_extraction_result] chat_id={chat_id} file_id={file_id} failed: {exc!r}")
+        print(f"[write_extraction_result] chat_id={chat_id} correlation_id={correlation_id} file_id={file_id} failed: {exc!r}")
         raise RuntimeError(
             f"Failed to write extraction result for file_id={file_id} chat_id={chat_id}: {exc}"
         ) from exc

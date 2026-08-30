@@ -52,7 +52,19 @@ fast_llm = ChatGoogleGenerativeAI(
     temperature=0.0
 )
 
-ragservice = RAGService()
+_ragservice: RAGService | None = None
+
+
+async def _get_ragservice() -> RAGService:
+    """Lazy async singleton - module-level top-level code can't await, so this
+    is where the module-level `ragservice = RAGService()` construction site
+    moved to when RAGService switched to AsyncQdrantClient. All callers within
+    this module (and api.py, via this function) must go through this rather
+    than constructing RAGService directly."""
+    global _ragservice
+    if _ragservice is None:
+        _ragservice = await RAGService.create()
+    return _ragservice
 
 def get_safe_text(content) -> str:
     if isinstance(content, list):
@@ -116,14 +128,15 @@ async def query_rewriter_node(state: AgentState):
     }
 
 @tool
-def search_prism_doc(query: str) -> str:
+async def search_prism_doc(query: str) -> str:
     """Search the research papers database for relevant information.
     Use specific keywords from the question."""
     print(f' [SEARCH] Agent searching database for: "{query}"')
-    
+
     # FIX: Enterprise Fault Tolerance via Try/Except
     try:
-        results = ragservice.search_db(user_query=query, limit=7)
+        ragservice = await _get_ragservice()
+        results = await ragservice.search_db(user_query=query, limit=7)
         if not results:
             return "NO_RESULTS_FOUND"
         
