@@ -1,4 +1,3 @@
-using Prism.ApiService.Data;
 using Prism.ApiService.Services;
 using MassTransit;
 using Prism.ApiService.Contracts;
@@ -15,37 +14,7 @@ public static class ChatEndPoint
 
     public static void MapChatEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/chat/ask", async ([FromBody] ChatRequest request, IHttpClientFactory httpClientFactory, PrismDBContext dBContext, IWebHostEnvironment env, ILogger<ChatRequest> logger, CancellationToken ct) =>
-        {
-
-           try
-           {
-
-             var client = httpClientFactory.CreateClient("pythonapi");
-              await AddToDatabase(request,dBContext,ct);
-             var result = await client.PostAsJsonAsync("/api/chat/ask",request,ct);
-
-             if(!result.IsSuccessStatusCode)
-             {
-               var error =  await result.Content.ReadAsStringAsync(ct);
-               logger.LogError($"Python chat API error: {error}\n");
-               return Results.Problem($"Python chat API error: {error}");
-             }
-
-             var ans =  await result.Content.ReadFromJsonAsync<ChatResponse>(ct);
-             return Results.Ok(ans);
-           }
-           catch (Exception ex)
-           {
-               logger.LogError(ex,$"Failed to call python worker ASK api.");
-               return env.IsDevelopment()
-                   ? Results.Problem(ex.Message, statusCode: 500)
-                   : Results.Problem("An internal error occurred", statusCode: 500);
-           }
-
-        }  ).WithName("AskAgent") .DisableAntiforgery();
-
-      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, ILogger<ChatRequest> logger, CancellationToken ct) =>
+      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, ILogger<PaperChatAskRequest> logger, CancellationToken ct) =>
         {
             // Paper-scoped chat (Slice 3a): proxies the Python SSE stream through to the
             // client unbuffered. Bypasses RabbitMQ - direct C# -> Python HTTP call.
@@ -105,7 +74,7 @@ public static class ChatEndPoint
         .WithName("AskPaperChatStream")
         .DisableAntiforgery();
 
-      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, IWebHostEnvironment env, ILogger<ChatRequest> logger, CancellationToken ct)=>
+      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, IWebHostEnvironment env, ILogger<PaperChatAskRequest> logger, CancellationToken ct)=>
         {
           try
           {
@@ -130,27 +99,4 @@ public static class ChatEndPoint
           }
         });
     }
-    public static async Task AddToDatabase(ChatRequest request,PrismDBContext prismDBContext, CancellationToken ct)
-    {
-       var existingRecord =  prismDBContext.PrismDocuments.FirstOrDefault(a=>a.ChatId==Guid.Parse(request.chatId));
-       if (existingRecord!=null)
-       {
-        existingRecord.Status = "In progress";
-       }
-       else
-       {
-        var entry = new PrismDocument{
-            UserId = request.userId,
-            ChatTitle = $"Chat: {request.question}",
-            CreatedAt = DateTime.UtcNow,
-            Status = "In progress",
-            ChatId = Guid.Parse(request.chatId)
-            ,UploadedAt =DateTime.UtcNow
-        };
-
-        prismDBContext.PrismDocuments.Add(entry);
-       }
-       await prismDBContext.SaveChangesAsync(ct);
-    }
-
 }
