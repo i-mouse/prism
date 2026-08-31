@@ -118,59 +118,6 @@ async def health():
     return {"status": "healthy"}
 
 
-class QueryRequest(BaseModel):
-    question: str
-    chatId: str = "default_thread"
-
-@pythonAPI.post("/api/chat/ask")
-async def ask_agent_with_memory(request: QueryRequest, contextrequest: Request):
-    """API endpoint to ask agent questions with postgres memory"""
-    try:
-        input_config = {"configurable": {"thread_id": request.chatId}}
-        input_message = {"messages": [HumanMessage(content=request.question)]}
-
-        # 1. Run the Graph
-        result = await contextrequest.app.state.compiled_agent.ainvoke(input=input_message, config=input_config)
-        
-        # 2. Extract Text
-        final_raw_answer = result["messages"][-1].content
-        if isinstance(final_raw_answer, list):
-            final_answer = final_raw_answer[0].get("text", str(final_raw_answer))
-        else:
-            final_answer = str(final_raw_answer)
-
-        # 3. Extract Metadata
-        caveat = result.get("caveat")
-        is_trusted = result.get("grounding_passed", True)
-        intent = result.get("intent", "casual_chat")
-
-        # 4. Extract Sources (from the tool message)
-        sources = []
-        if intent == "prism_search":
-            # Read messages in reverse to find the most recent tool call
-            for msg in reversed(result["messages"]):
-                if msg.type == "tool":
-                    if msg.content not in ["NO_RESULTS_FOUND", "DATABASE_ERROR"]:
-                        try:
-                            sources = json.loads(msg.content)
-                        except json.JSONDecodeError:
-                            pass
-                    break # Stop looking after we find the latest tool response
-
-        # 5. Send it all back
-        return {
-            "answer": final_answer,
-            "caveat": caveat,
-            "isTrusted": is_trusted,
-            "intent": intent,
-            "sources": sources
-        }
-
-    except Exception as e:
-        print(f"Error while processing ask agent API: {str(e)}", flush=True)
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 class ChatAskRequest(BaseModel):
     chat_id: str
     active_file_id: str
