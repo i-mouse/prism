@@ -10,7 +10,6 @@ using Prism.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using Prism.ApiService.Features.Chat;
-using Prism.ApiService.Features.System;
 using Prism.ApiService.Hubs;
 using Prism.ApiService.Middleware;
 using Microsoft.AspNetCore.Connections;
@@ -100,15 +99,26 @@ var pythonApiUrl = builder.Configuration["PYTHON_API_URL"]
         client.BaseAddress = new Uri(pythonApiUrl);
     });
 
-var allowedOrigins = builder.Configuration["AllowedOrigins"]
-    ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
-    ?? new[] { "http://localhost:7000" };
+// CORS_ALLOWED_ORIGINS (env var / config) is the only source of truth for allowed
+// origins in prod. In dev, fall back to the local Vite dev server and Aspire-proxied
+// ports so `dotnet run` / F5 works without extra setup. Never AllowAnyOrigin().
+var corsAllowedOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"]
+    ?.Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+if (corsAllowedOrigins is null || corsAllowedOrigins.Length == 0)
+{
+    corsAllowedOrigins = builder.Environment.IsDevelopment()
+        ? new[] { "http://localhost:5173", "http://localhost:7000" }
+        : Array.Empty<string>();
+}
+
+builder.Services.Configure<CorsSettings>(options => options.AllowedOrigins = corsAllowedOrigins);
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("SignalRPolicy", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        policy.WithOrigins(corsAllowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -121,13 +131,16 @@ var runMigrationsOnStartup = builder.Configuration.GetValue<bool>("RUN_MIGRATION
 // under the PrismSettings property names so the typed options below bind to the same
 // resolved values instead of re-reading raw keys.
 builder.Configuration["PythonApiUrl"] = pythonApiUrl;
-builder.Configuration["AllowedOrigins"] = string.Join(",", allowedOrigins);
 builder.Configuration["RunMigrationsOnStartup"] = runMigrationsOnStartup.ToString();
 
 builder.Services.AddOptions<PrismSettings>()
     .Bind(builder.Configuration)
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
+// Cap request body size at 20MB (paper uploads) - rejects oversized bodies before
+// they're buffered.
+builder.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 20_000_000);
 
 var app = builder.Build();
 
@@ -160,7 +173,6 @@ using (var scope = app.Services.CreateAsyncScope())
 app.MapPaperEndPoint();
 app.MapChatEndPoint();
 app.MapChatHistoryEndpoints();
-app.MapSystemEndPoint();
 
 // Fast liveness probe for Azure Container Apps - no DB/Qdrant ping, must return 200 quickly
 // even under load. A deeper /readiness endpoint can come post-V1.
