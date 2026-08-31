@@ -72,6 +72,17 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
  builder.AddNpmApp("prism-ai-reactUI","../Prism.Web")
                      .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
                      .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
-                     .WithReference(apiservice);              
+                     .WithReference(apiservice);
 
+// Aspire dashboard external-exposure check (pre-deploy hardening, 2026-08-31): no
+// AddAzureContainerAppEnvironment() resource exists in this AppHost yet - the
+// Aspire.Hosting.Azure.AppContainers package isn't even referenced (Prism.AppHost.csproj).
+// Azure infra provisioning is still deferred to a future azd-driven PR (see
+// docs/decisions.md, "Azure pre-deploy foundation"). None of the endpoints above call
+// .WithExternalHttpEndpoints()/.ExternalHttpEndpoints(true), so nothing here - including
+// a future dashboard component - is externally routable today. When
+// AddAzureContainerAppEnvironment() is added, keep the dashboard internal-only
+// (Azure's managed-environment dashboard component has no public ingress by default;
+// it's reached via `az containerapp env dashboard show`, not a WithHttpEndpoint call) and
+// don't call .WithExternalHttpEndpoints() on it.
 builder.Build().Run();

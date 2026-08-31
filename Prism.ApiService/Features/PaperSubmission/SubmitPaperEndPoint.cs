@@ -39,6 +39,11 @@ public static class SubmitPaperEndpoint
             var correlationId = httpContext.GetCorrelationId();
              foreach (var file in request.Files)
              {
+                if (file.Length > 20_000_000)
+                {
+                    return Results.Problem(statusCode: 413, detail: "File exceeds 20MB limit");
+                }
+
                 var fileId = Guid.NewGuid();
                 using var activity = PrismTelemetry.ActivitySource.StartActivity("paper.upload");
                 activity?.SetTag("file.name", file.FileName);
