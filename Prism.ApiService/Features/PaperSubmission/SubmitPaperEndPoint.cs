@@ -17,7 +17,7 @@ public static class SubmitPaperEndpoint
 
     public static void MapPaperEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,MinioStorageService storageService, CancellationToken ct) =>
+        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,AzureBlobStorageService storageService, CancellationToken ct) =>
         {
             if (request == null || request.Files == null || request.Files.Count == 0)
             {

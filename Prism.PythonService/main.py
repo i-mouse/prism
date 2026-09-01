@@ -8,7 +8,8 @@ import os, json, fitz, traceback, time
 import aio_pika
 import psycopg
 from datetime import datetime, timezone
-from minio import Minio
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import ContainerClient
 from ai_service import AIService
 from RAGService import RAGService
 from config import settings
@@ -49,10 +50,19 @@ def _get_attempt_count(message) -> int:
     # Fallback: our own portable counter
     return int(headers.get("x-attempt", 1))
 
-def parse_aspire_minio(conn_str):
-    parts = {k: v for k, v in (item.split('=') for item in conn_str.split(';'))}
-    endpoint = parts['Endpoint'].replace("http://", "").replace("https://", "").rstrip('/')
-    return endpoint, parts['AccessKey'], parts['SecretKey']
+def get_blob_container_client(conn_str: str, container_name: str = "prism-uploads") -> ContainerClient:
+    # Local (Azurite emulator): Aspire injects a full connection string with AccountKey.
+    # Prod: a bare https:// account URL - Blob Storage resources provisioned by Aspire
+    # use managed identity, not a shared key, so we authenticate with
+    # DefaultAzureCredential in that case.
+    if "AccountKey=" in conn_str:
+        return ContainerClient.from_connection_string(conn_str, container_name=container_name)
+    return ContainerClient(account_url=conn_str, container_name=container_name, credential=DefaultAzureCredential())
+
+
+def _download_blob_to_file(container_client: ContainerClient, blob_name: str, local_path: str) -> None:
+    with open(local_path, "wb") as f:
+        container_client.download_blob(blob_name).readinto(f)
 
 def extract_pdf_text_sync(local_path: str) -> tuple[str, int]:
     """Synchronous PDF extraction wrapper so it doesn't block the async loop.
@@ -72,7 +82,7 @@ async def main():
     rag_service = await RAGService.create()
 
     connection_string = settings.messaging_connection_string
-    connection_string_minio = settings.storage_connection_string
+    connection_string_storage = settings.storage_connection_string
 
     # -------------------------------------------------------------------------
     # THE ASYNC GRAIL: We create the Pool and Compile the Graph exactly ONCE
@@ -87,32 +97,31 @@ async def main():
         await setup_checkpointer.setup()
 
     checkpointer = AsyncPostgresSaver(pool)
-    
+
     agent_app = workflow.compile(
         checkpointer=checkpointer,
         name="Prism Agent"
     )
     print("[OK] Database Pool & Agent Workflow Compiled and Ready!", flush=True)
 
-    # --- MinIO Setup ---
-    endpoint, user, password = parse_aspire_minio(connection_string_minio)
-    minio_client = Minio(endpoint=endpoint, access_key=user, secret_key=password, secure=False)
-    print("[OK] Connected to MinIO", flush=True)
+    # --- Blob Storage setup ---
+    blob_container_client = get_blob_container_client(connection_string_storage)
+    print("[OK] Connected to Blob Storage", flush=True)
 
     # --- aio-pika RabbitMQ Setup ---
     AioPikaInstrumentor().instrument()
     print("[...] Connecting to RabbitMQ...", flush=True)
     connection = await aio_pika.connect_robust(connection_string)
-    
+
     async with connection:
         channel = await connection.channel()
 
         await channel.set_qos(prefetch_count=1)
-        
+
         # Setup Exchange & Queue
         exchange = await channel.declare_exchange(
-            'Prism.ApiService.Contracts:PrismUploaded', 
-            aio_pika.ExchangeType.FANOUT, 
+            'Prism.ApiService.Contracts:PrismUploaded',
+            aio_pika.ExchangeType.FANOUT,
             durable=True
         )
         queue = await channel.declare_queue('main_prism_queue', durable=True,arguments={
@@ -120,8 +129,14 @@ async def main():
                 "x-dead-letter-routing-key": "prism_failed"
             })
         await queue.bind(exchange)
-        
-        print(f" [*] Waiting for messages in {queue.name}. To exit press CTRL+C")
+
+        # flush=True matters here: stdout is fully buffered (not line-buffered) when
+        # piped rather than attached to a real terminal - which is exactly how Aspire's
+        # DCP captures a launched process's output for the dashboard. Without flush=True
+        # this line sits in Python's stdout buffer, invisible in the console log, until
+        # the buffer fills or the process exits - it looks exactly like a hang even
+        # though the consumer is genuinely up and waiting.
+        print(f" [*] Waiting for messages in {queue.name}. To exit press CTRL+C", flush=True)
 
         # The Async Iterator (Listens for messages continuously)
         async with queue.iterator() as queue_iter:
@@ -167,7 +182,7 @@ async def main():
                                 process_span.set_attribute("chat_id", chat_id)
 
                                 attempt = _get_attempt_count(message)
-                                print(f'\n[x] Received {file_name} attempt={attempt}/{MAX_ATTEMPTS} correlation_id={correlation_id}')
+                                print(f'\n[x] Received {file_name} attempt={attempt}/{MAX_ATTEMPTS} correlation_id={correlation_id}', flush=True)
 
                                 emitter = ProgressEmitter(channel, file_id=file_id, chat_id=chat_id)
                                 await emitter.emit_stage("preparing")
@@ -175,7 +190,7 @@ async def main():
                                 # 1. Download file asynchronously using threads
                                 local_path = os.path.join("downloads", file_name)
                                 os.makedirs("downloads", exist_ok=True)
-                                await asyncio.to_thread(minio_client.fget_object, 'prism-uploads', file_name, local_path)
+                                await asyncio.to_thread(_download_blob_to_file, blob_container_client, file_name, local_path)
 
                                 # 2. Extract text asynchronously
                                 _, extension = os.path.splitext(local_path)
@@ -205,7 +220,7 @@ async def main():
                                 # ============================================
                                 # NEW: Extraction pipeline (metadata + claims + grounding + DB write)
                                 # ============================================
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting metadata extraction')
+                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting metadata extraction', flush=True)
                                 with tracer.start_as_current_span("extract_metadata") as span:
                                     span.set_attribute("correlation_id", correlation_id)
                                     span.set_attribute("paper_id", file_id)
@@ -226,7 +241,7 @@ async def main():
 
                                 current_stage = "extracting"
                                 await emitter.emit_stage("extracting")
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction')
+                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction', flush=True)
                                 with tracer.start_as_current_span("extract_claims") as span:
                                     span.set_attribute("correlation_id", correlation_id)
                                     span.set_attribute("paper_id", file_id)
@@ -242,7 +257,7 @@ async def main():
                                 await emitter.emit_stage_detail(
                                     "grounding", f"Verifying evidence spans for {len(extraction.claims)} claims"
                                 )
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting grounding')
+                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting grounding', flush=True)
                                 with tracer.start_as_current_span("ground_extraction") as span:
                                     span.set_attribute("correlation_id", correlation_id)
                                     span.set_attribute("paper_id", file_id)
@@ -257,7 +272,7 @@ async def main():
                                 current_stage = "finalizing"
                                 await emitter.emit_stage("finalizing")
                                 await emitter.emit_stage_detail("finalizing", "Writing results")
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} writing to DB')
+                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} writing to DB', flush=True)
                                 with tracer.start_as_current_span("writer.write") as span:
                                     span.set_attribute("correlation_id", correlation_id)
                                     span.set_attribute("paper_id", file_id)
@@ -269,7 +284,7 @@ async def main():
                                         correlation_id=correlation_id,
                                     )
 
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} document_extractor_id={doc_extractor_id} claims={len(grounded)}')
+                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} document_extractor_id={doc_extractor_id} claims={len(grounded)}', flush=True)
 
                                 supported = sum(1 for c in grounded if c.label.value == "supported" and not c.missing)
                                 partial = sum(1 for c in grounded if c.label.value == "partially_supported" and not c.missing)
@@ -309,7 +324,7 @@ async def main():
                                     routing_key='document_processed_queue',
                                 )
                                 await message.ack()
-                                print(f'[OK] Completed: {file_name} correlation_id={correlation_id}')
+                                print(f'[OK] Completed: {file_name} correlation_id={correlation_id}', flush=True)
 
                             # ==========================================
                             # 1. TERMINAL ERROR (Corrupted PDF)
@@ -317,7 +332,7 @@ async def main():
                             except fitz.FileDataError as e:
                                 process_span.record_exception(e)
                                 process_span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
-                                print(f'[CORRUPT] Corrupted file detected: {file_name}')
+                                print(f'[CORRUPT] Corrupted file detected: {file_name}', flush=True)
                                 traceback.print_exc()
 
                                 error_message = {
@@ -334,7 +349,7 @@ async def main():
                                     routing_key='document_processed_queue',
                                 )
                                 await message.reject(requeue=False)
-                                print(f'[DEAD] Message {file_name} sent to Dead Letter Queue.')
+                                print(f'[DEAD] Message {file_name} sent to Dead Letter Queue.', flush=True)
 
                             # ==========================================
                             # 2. TERMINAL ERROR (Postgres FK violation - bad file_id upstream)
@@ -342,7 +357,7 @@ async def main():
                             except psycopg.errors.ForeignKeyViolation as e:
                                 process_span.record_exception(e)
                                 process_span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
-                                print(f'[DEAD] FK violation for {file_name} - file_id may be invalid: {e}')
+                                print(f'[DEAD] FK violation for {file_name} - file_id may be invalid: {e}', flush=True)
                                 traceback.print_exc()
 
                                 error_message = {
@@ -359,7 +374,7 @@ async def main():
                                     routing_key='document_processed_queue',
                                 )
                                 await message.reject(requeue=False)  # -> DLQ
-                                print(f'[DEAD] Message {file_name} sent to Dead Letter Queue (FK violation).')
+                                print(f'[DEAD] Message {file_name} sent to Dead Letter Queue (FK violation).', flush=True)
 
                             # ==========================================
                             # 3. TRANSIENT ERROR (LLM Timeout, Network Blip, Extraction JSON)
@@ -377,7 +392,7 @@ async def main():
                                         pass  # don't let failure emission mask the original error
 
                                 if attempt >= MAX_ATTEMPTS:
-                                    print(f'[DEAD] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ')
+                                    print(f'[DEAD] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ', flush=True)
                                     error_message = {
                                         "fileId": file_id,
                                         "fileName": file_name,
@@ -392,7 +407,7 @@ async def main():
                                     )
                                     await message.reject(requeue=False)  # -> DLQ
                                 else:
-                                    print(f'[WARN] {file_name} attempt {attempt} failed, retrying in 5s: {e}')
+                                    print(f'[WARN] {file_name} attempt {attempt} failed, retrying in 5s: {e}', flush=True)
                                     await asyncio.sleep(5)
                                     # Republish with incremented x-attempt counter.
                                     # message.reject(requeue=True) cannot mutate headers, so we
@@ -421,5 +436,5 @@ if __name__ == '__main__':
         sys.exit(0)
     except Exception:
         print(traceback.format_exc())
-        time.sleep(60) 
+        time.sleep(60)
         raise

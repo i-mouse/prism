@@ -1,8 +1,8 @@
 import os
 from openai import AsyncOpenAI,AuthenticationError
 from dotenv import load_dotenv
-import asyncio
-import google.generativeai as genai
+from google import genai
+from google.genai import types as genai_types
 load_dotenv()
 
 class AIService:
@@ -10,11 +10,7 @@ class AIService:
 
         AI_BASE_URL='https://generativelanguage.googleapis.com/v1beta/openai/'
         self.client = AsyncOpenAI(api_key= os.getenv("AI_API_KEY"),base_url= AI_BASE_URL)
-        genai.configure(api_key=os.getenv("AI_API_KEY"))
-        # print("Available Models:")
-        # for m in genai.list_models():
-        #     if 'generateContent' in m.supported_generation_methods:
-        #         print(f" - {m.name}")
+        self.genai_client = genai.Client(api_key=os.getenv("AI_API_KEY"))
 
 
     async def analyize_text(self,text:str):
@@ -40,19 +36,18 @@ class AIService:
 
     async def transcribe_audio(self, file_path: str):
         print(f" [AUDIO] Uploading audio to Gemini: {file_path}...")
-        audio_file = await asyncio.to_thread(
-            genai.upload_file, 
-            path=file_path,
-            mime_type="audio/mp3" 
+        audio_file = await self.genai_client.aio.files.upload(
+            file=file_path,
+            config=genai_types.UploadFileConfig(mime_type="audio/mp3"),
         )
-        
+
         print(f" [CLOUD] File uploaded: {audio_file.uri}")
 
-        model = genai.GenerativeModel(os.getenv("LLM_SUMMARY_MODEL"))
-        response = await model.generate_content_async(
-            [audio_file, "Please transcribe this audio and provide  result in proper format without missing any detail from the audio.Need word-for-word transcription"]
+        response = await self.genai_client.aio.models.generate_content(
+            model=os.getenv("LLM_SUMMARY_MODEL"),
+            contents=[audio_file, "Please transcribe this audio and provide  result in proper format without missing any detail from the audio.Need word-for-word transcription"],
         )
-        
+
         print(" [OK] Audio processed successfully.")
         return response.text
 

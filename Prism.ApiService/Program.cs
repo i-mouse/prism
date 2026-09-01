@@ -8,7 +8,6 @@ using Prism.ApiService.Data;
 using Prism.ApiService.Features.PaperSubmission;
 using Prism.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
-using Minio;
 using Prism.ApiService.Features.Chat;
 using Prism.ApiService.Hubs;
 using Prism.ApiService.Middleware;
@@ -47,7 +46,7 @@ builder.Services.AddMassTransit(busConfiguration =>
 
     });
 
-    
+
 });
 
 builder.Services.AddSwaggerGen();
@@ -60,21 +59,13 @@ builder.Services.AddScoped<IfileUploader,FakeFileUploader>();
 builder.AddNpgsqlDbContext<PrismDBContext>("prism-db",
     configureDbContextOptions: options => options.UseSnakeCaseNamingConvention());
 
-builder.Services.AddMinio(configureClient =>    
-{
-    // we have to pass cred n username because AddMinio follow HTTP Standard. eg - http://localhost:9000
-    var connectionString = builder.Configuration.GetConnectionString("storage");
-    var settings = connectionString!.Split(";").Select(part=> part.Split("=")).ToDictionary(split => split[0], split => split[1]);
-    var endpointUrl = new Uri(settings["Endpoint"]);
-    var accessKey = settings["AccessKey"];
-    var secretKey = settings["SecretKey"];
-
-    bool useSSL = endpointUrl.Scheme == "https";
-    configureClient.WithEndpoint(endpointUrl.Authority).WithCredentials(accessKey,secretKey).WithSSL(useSSL);
-}  );
+// Registers BlobContainerClient in DI, resolving the Azurite connection string
+// locally or DefaultAzureCredential against the real account in prod - same
+// local/prod split the Npgsql client integration already does for Postgres.
+builder.AddAzureBlobContainerClient("uploads");
 
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp => 
+builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp =>
 {
       var connctionString = builder.Configuration.GetConnectionString("messaging");
 
@@ -84,8 +75,8 @@ builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp =>
         };
 });
 
- builder.Services.AddScoped<MinioStorageService>();
- 
+ builder.Services.AddScoped<AzureBlobStorageService>();
+
  builder.Services.AddHostedService<RabbitMqListenerService>();
 
 // Local Aspire dev resolves the python service through service discovery (`services:...:0`);
@@ -149,8 +140,8 @@ app.UseCorrelationId();
 
 using (var scope = app.Services.CreateAsyncScope())
 {
-    var service = scope.ServiceProvider.GetRequiredService<MinioStorageService>();
-    await service.EnsureBucketExistAsync("prism-uploads");
+    var service = scope.ServiceProvider.GetRequiredService<AzureBlobStorageService>();
+    await service.EnsureContainerExistsAsync();
 }
 // Migrations run once per Container Apps revision via a separate one-shot deploy task,
 // not on every container start (multiple replicas starting together would deadlock on

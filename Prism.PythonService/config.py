@@ -29,9 +29,15 @@ class PrismSettings(BaseSettings):
     prism_db_username: str
     prism_db_password: str
 
-    # RabbitMQ / MinIO - Aspire injects these as full connection strings (main.py)
+    # RabbitMQ / Blob Storage - Aspire injects these as connection strings (main.py).
+    # "messaging" is the RabbitMQ resource. "blobs" is the blob *service*-level resource
+    # (AddBlobs, not AddBlobContainer) - the container-scoped "uploads" resource's
+    # connection string carries a ";ContainerName=..." suffix meant only for Aspire's own
+    # .NET client integrations to parse; the raw Python SDK chokes on it (confirmed via a
+    # live F5 run - "Connection string is either blank or malformed."). Python targets the
+    # "prism-uploads" container by literal string at the call site instead - see main.py.
     messaging_connection_string: str = Field(validation_alias="ConnectionStrings__messaging")
-    storage_connection_string: str = Field(validation_alias="ConnectionStrings__storage")
+    storage_connection_string: str = Field(validation_alias="ConnectionStrings__blobs")
 
     # LLM (Gemini)
     ai_api_key: str

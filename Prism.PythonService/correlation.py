@@ -1,10 +1,10 @@
 """Correlation ID threading across the Python service.
 
-Both entry points (api.py's FastAPI middleware, main.py's RabbitMQ consumer
-loop) set this ContextVar for the duration of one request/message, so every
-downstream call - including plain print() logging, which is what this
-codebase uses everywhere instead of a structured logger - can read it back
-without threading it through every function signature.
+Both entry points (api.py's FastAPI middleware, main.py's RabbitMQ
+consumer loop) set this ContextVar for the duration of one request/message,
+so every downstream call - including plain print() logging, which is what
+this codebase uses everywhere instead of a structured logger - can read it
+back without threading it through every function signature.
 """
 from contextvars import ContextVar
 
