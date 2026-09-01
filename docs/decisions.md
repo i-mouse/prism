@@ -16,6 +16,29 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
+## Managed vs self-hosted service split — 2026-09-01
+
+**Context:** deploying Prism to Azure Container Apps. Needed to decide which components become Azure-managed services and which stay as self-hosted containers.
+
+**Decision:** split on operational cost of ownership, not on vendor alignment.
+
+Azure-managed (expensive to self-operate correctly):
+- PostgreSQL → Azure Postgres Flexible Server. Backups, PITR, HA, and patching are real operational work with real failure modes.
+- Object storage → Azure Blob Storage. Durability guarantees we would otherwise have to build and test ourselves.
+- Secrets → Azure Key Vault + Managed Identity. Eliminates long-lived credentials from config entirely.
+- Observability → Application Insights (OTel exporter swap only; instrumentation is vendor-neutral).
+
+Self-hosted containers (cheap to operate, already abstracted):
+- RabbitMQ. Single-node, low-throughput, no replay requirement. MassTransit abstracts the transport — swapping to Service Bus is a config change on the C# side and a scoped consumer port on the Python side.
+- Qdrant. Azure AI Search Free tier caps at 50MB/3 indexes; Basic is ~$250/month idle. RAGService is the abstraction boundary.
+- Gemini/Groq via LiteLLM. Azure OpenAI is one env var away.
+
+**Alternatives:** full Azure-native migration (Service Bus, AI Search, Azure OpenAI) — rejected. Would replace three working, abstracted components with vendor-specific ones for no operational gain, at the cost of eval-baseline re-verification and a delayed ship. An attempted Service Bus migration surfaced four distinct bugs in the Aspire ServiceBus emulator + azure-servicebus Python SDK combination (including upstream microsoft/aspire#14041), reinforcing that the swap should be a deliberate, isolated PR rather than bundled with the deploy.
+
+**Consequences:** RabbitMQ and Qdrant run as containers inside the Container Apps environment with internal-only ingress. Both are declared in the same Aspire/Bicep resource graph as the managed services — one IaC surface, one deploy pipeline, one secrets source. Swapping either to its Azure-native equivalent remains a bounded change behind an existing abstraction, not a rewrite. Documented swap criteria: move RabbitMQ to Service Bus if we need multi-replica consumers or cross-region delivery; move Qdrant to AI Search if we need hybrid semantic search or the corpus exceeds single-node capacity.
+
+---
+
 ## Slice 3c: legacy chat deletion — 2026-08-30
 **Context:** paper-scoped chat (Slice 3a/3b) is the only chat surface per the Tier 2/Tier 3 collapse decision (2026-08-22). Legacy general-purpose chat (`agent_service.py` + `ai_service.py` + `/api/chat/ask`) has been transitional since Slice 3a shipped. The original plan for this slice was to delete both Python modules outright.
 **Decision:** deleted only the "ask" surfaces — C# `POST /api/chat/ask`, Python's `ask_agent_with_memory` handler, and the dead `ChatMode.tsx` component (already unreachable behind `isChatMode = false` in `App.tsx`, superseded by the Matrix UI). `agent_service.py` and `ai_service.py` are **not** deleted: investigation before deleting found both are load-bearing outside the legacy chat surface. `ai_service.py`'s `AIService` is called from `main.py`'s core paper-processing pipeline (audio transcription input, and `analyize_text()` output that becomes `FileRecord.Summary` — the DB field three endpoints use as the "extraction complete" check). `agent_service.py`'s `workflow` StateGraph is the checkpointer-backed message store behind `GET /api/chat/{chatId}/history` (explicitly kept) and `main.py`'s post-upload "Processing completed" message injection. Confirmed with the requester before proceeding; both modules stay as-is, imports intact.

@@ -3,7 +3,6 @@ using MassTransit;
 using Prism.ApiService.Contracts;
 using Prism.ApiService.Middleware;
 using Microsoft.AspNetCore.Mvc;
-using Minio.DataModel.Args;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 
