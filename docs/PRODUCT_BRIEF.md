@@ -116,11 +116,19 @@ The tiers represent the transition from deterministic extraction to conversation
 - Grounding tuning & hybrid LLM architecture (Slice 2.8 shipped): reasoning-first schema pattern for span audit, context widening (500-1500 chars with paragraph snapping), 3-tier Pass/Fail/Partial rubric, and hybrid Gemini 3.6 Flash paid Tier 1 + Groq Developer/free primary audit with Gemini 3.1 Flash Lite paid Tier 1 fallback via LiteLLM.
 - Azure pre-deploy foundation (PR 1 shipped): env-driven config (`BaseSettings` / `IOptions`), health endpoints, admin-guarded reset, multi-stage Dockerfiles for all 4 services, single-replica Container Apps topology, and CI env alignment.
 
-**Pending V1 Milestones:**
-- PR 2: Concurrency & Observability (OpenTelemetry distributed tracing, cancellation token propagation).
-- PR 3: Cleanup & Integration Tests (Slice 3c legacy chat deletion, test coverage).
-- Azure Deployment: Provisioning Container Apps, Postgres Flexible Server, AI Search, Key Vault via `azd`.
-- V1 Ship: Live demo deployment, walkthrough video, and publication.
+**Shipped V1 (live on Azure):**
+- Live URL: https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/
+- PR 1: Azure pre-deploy foundation (config, containers, health checks)
+- PR 2: Distributed tracing, correlation IDs, RFC 7807, cancellation
+- PR 3: Legacy chat pipeline deletion
+- PR 4: Azure resource declarations (Postgres Flexible, Blob Storage, Key Vault)
+- PR 5: First Azure deploy to Container Apps
+
+**Post-ship stabilization (in progress):**
+- Port manual deploy fixes to code (prevent regression)
+- Backend URL env-configurable (currently hardcoded in nginx.conf)
+- Entra ID auth
+- Docs and naming cleanup
 
 ---
 

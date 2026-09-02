@@ -22,12 +22,16 @@ class PrismSettings(BaseSettings):
         extra="ignore",
     )
 
-    # Postgres (memory_db.py - LangGraph checkpointer pool)
+    # Postgres (memory_db.py - LangGraph checkpointer pool). Locally the RunAsContainer
+    # Postgres uses password auth, so both are set. The deployed Azure Postgres Flexible
+    # Server is Entra-only (passwordAuth: Disabled) - no password exists to inject, so
+    # both are optional here and memory_db.py falls back to a Managed Identity token
+    # (DefaultAzureCredential) as the password when prism_db_password is unset.
     prism_db_host: str
     prism_db_port: int = 5432
     prism_db_databasename: str
-    prism_db_username: str
-    prism_db_password: str
+    prism_db_username: str | None = None
+    prism_db_password: str | None = None
 
     # RabbitMQ / Blob Storage - Aspire injects these as connection strings (main.py).
     # "messaging" is the RabbitMQ resource. "blobs" is the blob *service*-level resource

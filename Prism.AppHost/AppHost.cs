@@ -2,6 +2,18 @@ using Microsoft.Extensions.Configuration;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// PR5: Azure Container Apps environment - only meaningful in publish mode (aspire
+// deploy); F5 ignores it since there's nothing to run locally for a compute
+// environment. Provisions the managed environment, Log Analytics workspace,
+// container registry, and Aspire dashboard component. See docs/decisions.md,
+// "First Azure deploy".
+var acaEnv = builder.AddAzureContainerAppEnvironment("prism-env");
+
+// App Insights: OTel exporter swap only (docs/decisions.md, "Managed vs self-hosted
+// service split") - instrumentation itself is already vendor-neutral OTel, unchanged
+// from PR2. WithReference injects APPLICATIONINSIGHTS_CONNECTION_STRING.
+var appInsights = builder.AddAzureApplicationInsights("appInsights");
+
 // Redis provisioned for future response caching — caching logic NOT yet implemented (see README Roadmap)
 var cache = builder.AddRedis("redis-cache");
 
@@ -34,7 +46,21 @@ var uploads = storage.AddBlobContainer("uploads", blobContainerName: "prism-uplo
 // a plain standards-compliant connection string - what Python needs (see the note below).
 var blobs = storage.AddBlobs("blobs");
 
-var rabbitMQ = builder.AddRabbitMQ ("messaging",userName : userrabbitmq,password:passrabbitmq).WithDataVolume().WithManagementPlugin();
+// PR5: WithDataVolume() maps to an Azure Files-backed volume on Container Apps
+// (local bind-mount semantics don't carry over - see AddAzureContainerAppEnvironment
+// comment above). RabbitMQ's Erlang runtime refuses to start if /var/lib/rabbitmq's
+// .erlang.cookie isn't owner-only (0600) - confirmed via a live deploy crash
+// ("Cookie file ... must be accessible by owner only") - and Azure Files (SMB-backed)
+// doesn't preserve that permission bit the way a local Docker bind mount does. Qdrant
+// and Redis use the same WithDataVolume() pattern and deploy healthy, so this is
+// RabbitMQ-specific, not a general Azure Files problem. Skip the volume in publish
+// mode: this is a single-node, low-throughput dev/early-prod queue (docs/decisions.md,
+// "Managed vs self-hosted service split") with no durability requirement yet, so
+// losing queue state across container restarts is an acceptable trade for a working
+// deploy. F5 keeps the volume (Docker Desktop bind mounts don't have this problem).
+var rabbitMQBuilder = builder.AddRabbitMQ("messaging", userName: userrabbitmq, password: passrabbitmq).WithManagementPlugin();
+if (!builder.ExecutionContext.IsPublishMode) rabbitMQBuilder.WithDataVolume();
+var rabbitMQ = rabbitMQBuilder;
 
 // Key Vault has no local emulator (unlike Postgres/Storage above) - only
 // add it in publish mode (azd), where it's actually provisioned. Adding it
@@ -77,8 +103,16 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
     .WithReference(postgres)
     .WithReference(rabbitMQ)
     .WithReference(blobs)
+    .WithReference(appInsights)
     .WaitFor(postgres)
-    .WaitFor(blobs);
+    .WaitFor(blobs)
+    // Replica pin (docs/deployment_notes.md) - matches apiservice; no shared state here
+    // today, but keeping all three app containers at a fixed 1 replica avoids surprises.
+    .PublishAsAzureContainerApp((infra, app) =>
+    {
+        app.Template.Scale.MinReplicas = 1;
+        app.Template.Scale.MaxReplicas = 1;
+    });
 if (keyVault is not null) pythonAPI.WithReference(keyVault);
 
 var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.PythonService","main.py")
@@ -86,6 +120,7 @@ var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.Python
                         .WithReference(rabbitMQ)
                         .WithReference(qdrantDB)
                          .WithReference(postgres)
+                        .WithReference(appInsights)
                         .WithEnvironment("AI_API_KEY",apiKey)
                         .WithEnvironment("GROQ_API_KEY", groqApiKey)
                         .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
@@ -101,7 +136,11 @@ if (keyVault is not null) pythonWorker.WithReference(keyVault);
 
 var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithEnvironment("DEPLOYMENT_REGION","US-East")
-                     .WithEnvironment("RUN_MIGRATIONS_ON_STARTUP", "true")
+                     // Migrations must not run on Container App startup in prod - concurrent
+                     // replica starts would race for the migration lock (docs/deployment_notes.md,
+                     // "Migration strategy"). Run once manually post-deploy instead. Locally
+                     // (F5) this stays "true" so the dev DB is always up to date.
+                     .WithEnvironment("RUN_MIGRATIONS_ON_STARTUP", builder.ExecutionContext.IsPublishMode ? "false" : "true")
                      .WithReference(cache)
                      .WithReference(postgres)
                      .WaitFor(postgres)
@@ -110,23 +149,40 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithReference(qdrantDB)
                      .WithReference(uploads)
                      .WaitFor(uploads)
-                    .WithReference(pythonAPI.GetEndpoint("pythonapi"));
+                     .WithReference(appInsights)
+                    .WithReference(pythonAPI.GetEndpoint("pythonapi"))
+                    // Frontend calls this directly from the browser (VITE_API_BASE_URL is baked
+                    // into the static bundle at build time) - needs public ingress.
+                    .WithExternalHttpEndpoints()
+                    // No SignalR backplane (docs/deployment_notes.md, "Replica pin") - in-memory
+                    // group routing only works with exactly one apiservice replica.
+                    .PublishAsAzureContainerApp((infra, app) =>
+                    {
+                        app.Template.Scale.MinReplicas = 1;
+                        app.Template.Scale.MaxReplicas = 1;
+                    });
 if (keyVault is not null) apiservice.WithReference(keyVault);
 
+ // PR5: AddNpmApp alone runs `npm run dev` locally but isn't picked up by `aspire
+ // deploy` at all - it never appears in the publish pipeline (confirmed via a live
+ // deploy: zero mentions of prism-ai-reactUI in the log, no Container App created).
+ // PublishAsDockerFile() switches the publish target to the existing
+ // Prism.Web/Dockerfile (nginx + `npm run build`) without touching local F5 behavior.
+ // VITE_API_BASE_URL is a Vite build-time value baked into the static bundle by
+ // `npm run build` (docs/deployment_notes.md) - WithEnvironment only reaches the F5
+ // dev server process, so the container build needs the same value as a build arg too.
  builder.AddNpmApp("prism-ai-reactUI","../Prism.Web")
                      .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
                      .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
-                     .WithReference(apiservice);
+                     .WithReference(apiservice)
+                     .WithExternalHttpEndpoints()
+                     .PublishAsDockerFile(c => c.WithBuildArg("VITE_API_BASE_URL", apiservice.GetEndpoint("https")));
 
-// Aspire dashboard external-exposure check (pre-deploy hardening, 2026-08-31): no
-// AddAzureContainerAppEnvironment() resource exists in this AppHost yet - the
-// Aspire.Hosting.Azure.AppContainers package isn't even referenced (Prism.AppHost.csproj).
-// Azure infra provisioning is still deferred to a future azd-driven PR (see
-// docs/decisions.md, "Azure pre-deploy foundation"). None of the endpoints above call
-// .WithExternalHttpEndpoints()/.ExternalHttpEndpoints(true), so nothing here - including
-// a future dashboard component - is externally routable today. When
-// AddAzureContainerAppEnvironment() is added, keep the dashboard internal-only
-// (Azure's managed-environment dashboard component has no public ingress by default;
-// it's reached via `az containerapp env dashboard show`, not a WithHttpEndpoint call) and
-// don't call .WithExternalHttpEndpoints() on it.
+// Aspire dashboard external-exposure check (PR5): AddAzureContainerAppEnvironment is
+// now present (prism-env, above). Only apiservice and reactUI call
+// .WithExternalHttpEndpoints() - everything else (pythonAPI, pythonWorker, rabbitMQ,
+// qdrant, redis, postgres, storage) stays internal-only within the environment. The
+// dashboard component itself gets no WithExternalHttpEndpoints() call anywhere in this
+// file, so it has no public ingress by default; it's reached via
+// `az containerapp env dashboard show`, not a URL.
 builder.Build().Run();
