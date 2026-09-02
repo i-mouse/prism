@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Aspire.Hosting.Azure;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -7,18 +8,25 @@ var builder = DistributedApplication.CreateBuilder(args);
 // environment. Provisions the managed environment, Log Analytics workspace,
 // container registry, and Aspire dashboard component. See docs/decisions.md,
 // "First Azure deploy".
-var acaEnv = builder.AddAzureContainerAppEnvironment("prism-env");
+
 
 // App Insights: OTel exporter swap only (docs/decisions.md, "Managed vs self-hosted
 // service split") - instrumentation itself is already vendor-neutral OTel, unchanged
 // from PR2. WithReference injects APPLICATIONINSIGHTS_CONNECTION_STRING.
-var appInsights = builder.AddAzureApplicationInsights("appInsights");
+// Publish-mode-only Azure resources
+var acaEnv = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureContainerAppEnvironment("prism-env")
+    : null;
+
+var appInsights = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureApplicationInsights("appInsights")
+    : null;
 
 // Redis provisioned for future response caching — caching logic NOT yet implemented (see README Roadmap)
 var cache = builder.AddRedis("redis-cache");
 
-var apiKey = builder.Configuration["GoogleApiKey"];
-var groqApiKey = builder.Configuration["GroqApiKey"];
+var geminiKey = builder.AddParameter("GoogleApiKey", secret: true);
+var groqKey = builder.AddParameter("GroqApiKey", secret: true);
 
 var qdrantKey = builder.AddParameter("QdrantApiKey", secret: true);
 var userrabbitmq = builder.AddParameter( name:"rabbitmquser",secret :true);
@@ -67,9 +75,31 @@ var rabbitMQ = rabbitMQBuilder;
 // unconditionally would make F5 block forever on a resource that can never reach
 // "Running" locally, since there's nothing to run - it would need a real Azure
 // subscription even for `dotnet run`. Local dev keeps using user-secrets/env vars
-// directly, exactly as before.
+// directly (Parameters:GoogleApiKey / Parameters:GroqApiKey via user-secrets),
+// exactly as before.
 var keyVault = builder.ExecutionContext.IsPublishMode
     ? builder.AddAzureKeyVault("prism-secrets")
+    : null;
+if (keyVault is not null)
+{
+    keyVault.AddSecret("gemini-api-key", geminiKey);
+    keyVault.AddSecret("groq-api-key", groqKey);
+}
+
+// Postgres Entra auth needs a username Python's raw psycopg client can look up (unlike
+// apiservice's .NET Npgsql client integration, which auto-detects it from managed identity
+// - docs/decisions.md, "First Azure deploy", item 8). Aspire's default per-app Container
+// App identity (docs/decisions.md item 7) has no accessible name reference from AppHost
+// code, so pythonAPI/pythonWorker get explicit named identities instead: each one's
+// NameOutputReference becomes PRISM_DB_USERNAME below, and Aspire's PostgreSQL
+// role-assignment support (dotnet/aspire#8209) registers the explicit identity as a
+// Postgres Entra admin through the WithReference(postgres) calls already in place -
+// same mechanism as the default per-app identity, no extra role-assignment wiring needed.
+var pythonAPIIdentity = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureUserAssignedIdentity("prism-pythonAPI-identity")
+    : null;
+var pythonWorkerIdentity = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureUserAssignedIdentity("prism-pythonWorker-identity")
     : null;
 
 var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
@@ -93,8 +123,6 @@ var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonService")
     .WithHttpEndpoint(targetPort: 8000, name: "pythonapi", env: "PORT")
     .WithReference(qdrantDB)
-    .WithEnvironment("AI_API_KEY", apiKey)
-    .WithEnvironment("GROQ_API_KEY", groqApiKey)
     .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
     .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.1-flash-lite")
     .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
@@ -103,26 +131,49 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
     .WithReference(postgres)
     .WithReference(rabbitMQ)
     .WithReference(blobs)
-    .WithReference(appInsights)
     .WaitFor(postgres)
     .WaitFor(blobs)
     // Replica pin (docs/deployment_notes.md) - matches apiservice; no shared state here
     // today, but keeping all three app containers at a fixed 1 replica avoids surprises.
+    // CPU/memory: default 0.5/1Gi OOM-killed this service under real load during the
+    // 2026-09-01 deploy (docs/decisions.md, "First Azure deploy", item 10) - sized to
+    // 2.0/4Gi to match the manual `az containerapp update` fix already live.
     .PublishAsAzureContainerApp((infra, app) =>
     {
         app.Template.Scale.MinReplicas = 1;
         app.Template.Scale.MaxReplicas = 1;
+        var container = app.Template.Containers.Single().Value!;
+        container.Resources.Cpu = 2.0;
+        container.Resources.Memory = "4Gi";
     });
-if (keyVault is not null) pythonAPI.WithReference(keyVault);
+if (appInsights is not null) pythonAPI.WithReference(appInsights);
+
+if (pythonAPIIdentity is not null)
+{
+    pythonAPI
+        .WithAzureUserAssignedIdentity(pythonAPIIdentity)
+        .WithEnvironment("PRISM_DB_USERNAME", pythonAPIIdentity.Resource.NameOutputReference);
+}
+
+if (keyVault is not null)
+{
+    pythonAPI
+        .WithReference(keyVault)
+        .WithEnvironment("AI_API_KEY", keyVault.GetSecret("gemini-api-key"))
+        .WithEnvironment("GROQ_API_KEY", keyVault.GetSecret("groq-api-key"));
+}
+else
+{
+    pythonAPI
+        .WithEnvironment("AI_API_KEY", geminiKey)
+        .WithEnvironment("GROQ_API_KEY", groqKey);
+}
 
 var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.PythonService","main.py")
                         .WithReference(blobs)
                         .WithReference(rabbitMQ)
                         .WithReference(qdrantDB)
                          .WithReference(postgres)
-                        .WithReference(appInsights)
-                        .WithEnvironment("AI_API_KEY",apiKey)
-                        .WithEnvironment("GROQ_API_KEY", groqApiKey)
                         .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
                         .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.1-flash-lite")
                         .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
@@ -131,8 +182,46 @@ var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.Python
                         .WithEnvironment("PRISM_DEBUG", "1")
                         .WithUv()
                         .WithDebugging()
-                        .WaitFor(postgres).WaitFor(rabbitMQ).WaitFor(blobs);
-if (keyVault is not null) pythonWorker.WithReference(keyVault);
+                        .WaitFor(postgres).WaitFor(rabbitMQ).WaitFor(blobs)
+                        // AddPythonApp's auto-generated publish container ran api.py (the FastAPI
+                        // server) instead of main.py (the RabbitMQ consumer loop) - docs/decisions.md,
+                        // "First Azure deploy", item 9. Dockerfile.worker already has the correct
+                        // CMD ["python", "main.py"] but was never referenced. Point publish at it
+                        // explicitly instead of Aspire's generated build.
+                        .PublishAsDockerFile(c => c.WithDockerfile("../Prism.PythonService", "Dockerfile.worker"))
+                        // CPU/memory: default 0.5/1Gi silently OOM-killed this service right after
+                        // the embedding-model-load + PDF-processing stage (docs/decisions.md,
+                        // "First Azure deploy", item 10) - sized to 2.0/4Gi to match the manual
+                        // `az containerapp update` fix already live.
+                        .PublishAsAzureContainerApp((infra, app) =>
+                        {
+                            var container = app.Template.Containers.Single().Value!;
+                            container.Resources.Cpu = 2.0;
+                            container.Resources.Memory = "4Gi";
+                        });
+
+if (appInsights is not null) pythonWorker.WithReference(appInsights);
+
+if (pythonWorkerIdentity is not null)
+{
+    pythonWorker
+        .WithAzureUserAssignedIdentity(pythonWorkerIdentity)
+        .WithEnvironment("PRISM_DB_USERNAME", pythonWorkerIdentity.Resource.NameOutputReference);
+}
+
+if (keyVault is not null)
+{
+    pythonWorker
+        .WithReference(keyVault)
+        .WithEnvironment("AI_API_KEY", keyVault.GetSecret("gemini-api-key"))
+        .WithEnvironment("GROQ_API_KEY", keyVault.GetSecret("groq-api-key"));
+}
+else
+{
+    pythonWorker
+        .WithEnvironment("AI_API_KEY", geminiKey)
+        .WithEnvironment("GROQ_API_KEY", groqKey);
+}
 
 var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithEnvironment("DEPLOYMENT_REGION","US-East")
@@ -149,7 +238,6 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithReference(qdrantDB)
                      .WithReference(uploads)
                      .WaitFor(uploads)
-                     .WithReference(appInsights)
                     .WithReference(pythonAPI.GetEndpoint("pythonapi"))
                     // Frontend calls this directly from the browser (VITE_API_BASE_URL is baked
                     // into the static bundle at build time) - needs public ingress.
@@ -161,6 +249,7 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                         app.Template.Scale.MinReplicas = 1;
                         app.Template.Scale.MaxReplicas = 1;
                     });
+if (appInsights is not null) apiservice.WithReference(appInsights);
 if (keyVault is not null) apiservice.WithReference(keyVault);
 
  // PR5: AddNpmApp alone runs `npm run dev` locally but isn't picked up by `aspire
@@ -171,12 +260,20 @@ if (keyVault is not null) apiservice.WithReference(keyVault);
  // VITE_API_BASE_URL is a Vite build-time value baked into the static bundle by
  // `npm run build` (docs/deployment_notes.md) - WithEnvironment only reaches the F5
  // dev server process, so the container build needs the same value as a build arg too.
- builder.AddNpmApp("prism-ai-reactUI","../Prism.Web")
-                     .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
-                     .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
-                     .WithReference(apiservice)
-                     .WithExternalHttpEndpoints()
-                     .PublishAsDockerFile(c => c.WithBuildArg("VITE_API_BASE_URL", apiservice.GetEndpoint("https")));
+
+//  builder.AddNpmApp("prism-ai-reactUI","../Prism.Web")
+//                      .WithHttpEndpoint(port:7000,name: "reactUI",env: "VITE_PORT")
+//                      .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
+//                      .WithReference(apiservice)
+//                      .WithExternalHttpEndpoints()
+//                      .PublishAsDockerFile(c => c.WithBuildArg("VITE_API_BASE_URL", apiservice.GetEndpoint("https")));
+
+builder.AddJavaScriptApp("prism-ai-reactUI", "../Prism.Web")
+    .WithNpm(install: true)
+    .WithHttpEndpoint(port: 7000, name: "reactUI", env: "VITE_PORT")
+    .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
+    .WithReference(apiservice)
+    .WithExternalHttpEndpoints();
 
 // Aspire dashboard external-exposure check (PR5): AddAzureContainerAppEnvironment is
 // now present (prism-env, above). Only apiservice and reactUI call
