@@ -34,7 +34,7 @@ secrets.json
 #-----Folders -----
 /downloads
 
-# Runtime / generated — never commit
+# Runtime / generated ï¿½ never commit
 downloads/
 qdrant_storage/
 node_modules/
@@ -51,3 +51,8 @@ Prism.PythonService/logs/
 
 # Local smoke test scripts (may contain hardcoded API keys)
 Prism.PythonService/smoke_test_extraction.py
+Prism.AppHost/.deploy.env
+keys.txt
+
+# Aspire local orchestration cache
+aspire.config.json

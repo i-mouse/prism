@@ -94,20 +94,34 @@ Interactive queries run through a LangGraph agent served by FastAPI. Retrieval e
 * [Node.js 20+](https://nodejs.org/)
 * [Google Gemini API Key](https://aistudio.google.com/apikey)
 
-### 1. Setup & Secrets
+### Local setup — API keys
+
+Prism needs API keys from Google AI Studio (Gemini) and Groq. Both have free tiers. RabbitMQ and Qdrant credentials are arbitrary strings you choose.
+
+Get keys:
+- Gemini: https://aistudio.google.com/apikey
+- Groq: https://console.groq.com/keys
+
+Set them in .NET user-secrets (never committed):
+
+```powershell
+cd Prism.AppHost
+dotnet user-secrets set "Parameters:GoogleApiKey" "AIza..."
+dotnet user-secrets set "Parameters:GroqApiKey"   "gsk_..."
+dotnet user-secrets set "Parameters:rabbitmquser" "admin"
+dotnet user-secrets set "Parameters:rabbitmqpass" "any-strong-string"
+dotnet user-secrets set "Parameters:QdrantApiKey" "any-strong-string"
+```
+
+Then F5 as usual. Aspire injects these into the containers automatically.
+
+### Setup & Secrets
 ```bash
 git clone https://github.com/i-mouse/prism.git
 cd prism
 ```
 
-Configure your Gemini API key via .NET user secrets:
-```powershell
-cd Prism.AppHost
-dotnet user-secrets set "GoogleApiKey" "<your-api-key>"
-cd ..
-```
-
-### 2. Launch Development Stack
+### Launch Development Stack
 - **VS Code:** Press `F5` (launches using configured `.NET Aspire` host).
 - **CLI:** Run `dotnet run --project Prism.AppHost`
 
