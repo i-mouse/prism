@@ -27,6 +27,28 @@ When adding a new decision: copy the template below, put it at the top, do not m
 
 ---
 
+## PR 5 code port verification + reactUI JS app migration — 2026-09-02
+**Context:** PR 5 (2026-09-01) shipped live but left 4 manual az patches on the Container Apps. Goal for this session: port them to AppHost.cs so next aspire deploy reproduces without manual intervention.
+
+**Decision + what shipped:** 
+- Gated Azure resources (App Insights, ACA env, Key Vault) behind IsPublishMode — local F5 no longer touches Azure surface
+- Key Vault via AddParameter(secret:true) + AddSecret + GetSecret producing secretref: in Container App spec (not plaintext env)
+- Explicit user-assigned managed identities for pythonAPI/pythonWorker; PRISM_DB_USERNAME wired from NameOutputReference; Postgres Entra admin registration + role assignments auto-target explicit identity via dotnet/aspire#8209 and #8441 (verified: --0000009 revisions of both services running clean)
+- pythonAPI/pythonWorker resized to 2.0 CPU / 4Gi via PublishAsAzureContainerApp
+- pythonWorker uses Dockerfile.worker via PublishAsDockerFile
+- reactUI migrated from AddNpmApp (obsoleted in Aspire 13.x) to AddJavaScriptApp; required matching Aspire.Hosting.JavaScript 13.4.6 package
+- .deploy.env.template committed, .deploy.env gitignored
+
+**Alternatives:** none rejected on the fixes above; each was the required port of a specific manual patch documented in the 2026-09-01 entry.
+
+**Consequences + deferred:**
+- 6 of 7 services now reproducible from aspire deploy alone
+- reactUI publish path STILL requires manual docker build/push. Reproduced across three code paths (AddNpmApp+PublishAsDockerFile+WithBuildArg, AddDockerfile+WithBuildArg, AddJavaScriptApp with existing Dockerfile) — common trigger is WithBuildArg in publish mode causing Aspire CLI orchestration deadlock. Aspire bug, not our code. AppHost.cs keeps AddJavaScriptApp for local F5 only.
+- reactUI Container App requires one-time `az containerapp ingress update --target-port 80` on initial creation (nginx serves on 80, ACA default probe was 7000). Sticks across image updates.
+- v1.0.1 will eliminate WithBuildArg by baking VITE_API_BASE_URL via a .env.production file in Prism.Web, closing the last manual step.
+
+---
+
 ## First Azure deploy — 2026-09-01
 
 **Context:** first real `aspire deploy` of Prism to Azure Container Apps (`prism-env`/`prism-rg`/`centralindia`), targeting a live public URL with react.pdf processing end-to-end. Researched current (2026) practice directly rather than from training patterns: `aspire deploy` is the confirmed recommended default over `azd up`; non-interactive runs need `Azure__SubscriptionId`/`Azure__Location`/`Azure__ResourceGroup` env vars; Azure Postgres Flexible Server Managed Identity auth is handled by Aspire's generated `roles.bicep` (creates the Entra DB principal automatically, no manual `pgaadauth_create_principal` needed).
@@ -454,6 +476,7 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 
 ## Deferred / Won't Do (for now)
 
+- **reactUI WithBuildArg deadlock elimination — v1.0.1**. Bake VITE_API_BASE_URL via Prism.Web/.env.production instead of WithBuildArg to unblock aspire deploy for reactUI.
 - **Multi-domain support** — YAGNI until a second domain is real.
 - **memory_db.py Aspire env var reconciliation** — currently reads `PRISM_DB_*` fallback vars while Aspire injects `ConnectionStrings__postgres`; works locally, worth cleanup at Azure deploy time.
 - **Content-hash file deduplication** — same PDF uploaded twice creates two `file_id`s and two extraction runs; correct behavior for portfolio (runs are the eval unit).

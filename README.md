@@ -130,6 +130,48 @@ cd prism
 
 ---
 
+## Deploy
+
+### Deploy to Azure Container Apps
+
+**Prerequisites**: Azure CLI logged in (`az login`), Azure subscription set (`az account set --subscription <id>`), and a resource group.
+
+1. Copy `Prism.AppHost/.deploy.env.template` to `Prism.AppHost/.deploy.env` and fill in the five Parameters values (never committed).
+
+2. Source and deploy:
+```powershell
+cd Prism.AppHost
+. .\.deploy.env
+aspire deploy
+```
+   This deploys 6 services: apiservice, pythonAPI, pythonWorker, messaging (RabbitMQ), qdrant, redis-cache. Plus Key Vault, Postgres Flexible Server, Blob Storage, App Insights, and role assignments.
+
+3. **reactUI is a manual push** (aspire deploy has a known WithBuildArg deadlock, tracked as v1.0.1):
+```powershell
+$ACR = "<your-acr-name>"  # from az acr list -o table
+$API_URL = "<apiservice URL from aspire deploy output>"
+
+cd ..\Prism.Web
+docker build --build-arg VITE_API_BASE_URL=$API_URL `
+  -t prism-ai-reactui:latest -f Dockerfile .
+az acr login --name $ACR
+docker tag prism-ai-reactui:latest "$ACR.azurecr.io/prism-ai-reactui:v1.0"
+docker push "$ACR.azurecr.io/prism-ai-reactui:v1.0"
+az containerapp update `
+  --name prism-ai-reactui --resource-group <your-rg> `
+  --image "$ACR.azurecr.io/prism-ai-reactui:v1.0"
+```
+
+4. **One-time on first-ever reactUI Container App creation**, set the ingress target port to 80 (nginx default; ACA defaults to 7000 from the AppHost `WithHttpEndpoint` declaration):
+```powershell
+az containerapp ingress update `
+  --name prism-ai-reactui --resource-group <your-rg> `
+  --target-port 80
+```
+   Persists across image updates — only needed once per environment.
+
+---
+
 ## Evaluation Harness
 
 Prism uses an automated evaluation harness with curated golden test sets to measure claim grounding accuracy and correct-refusal rates on negative cases:
@@ -186,7 +228,6 @@ prism/
 - [x] **PR 5:** First Azure deploy — live URL
 
 ### Post-Ship (in progress)
-- [ ] Port manual deploy fixes to code (prevent next-deploy regression)
 - [ ] Make backend URL env-configurable (currently hardcoded in nginx.conf)
 - [ ] Entra ID auth (biggest post-ship item)
 - [ ] Docs, comment, and naming cleanup
