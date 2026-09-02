@@ -17,6 +17,16 @@ For every ingested research paper, Prism generates a **Paper Intelligence Brief*
 
 ---
 
+## Live Demo
+
+🔗 **[Prism on Azure](https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/)**
+
+Deployed on Azure Container Apps (Sept 2026). Upload any arXiv PDF and watch the extraction + audit pipeline run in real time.
+
+**Stack:** Container Apps (6 services) · Postgres Flexible Server · Blob Storage · Key Vault · Managed Identity · Application Insights · RabbitMQ + Qdrant as internal sidecars
+
+---
+
 ## Architecture
 
 Prism is orchestrated locally via **.NET Aspire** and architected into two decoupled, resilient subsystems:
@@ -154,11 +164,18 @@ prism/
 - [x] **Paper-Scoped Chat:** LangGraph conversational agent with dual-store retrieval and citation streaming.
 - [x] **Azure Pre-Deploy Foundation (PR 1):** Typed env config (`BaseSettings` / `IOptions`), health endpoints, multi-stage Dockerfiles, and single-replica container topology.
 
-### Pending V1
-- [ ] **PR 2 (Concurrency & Observability):** OpenTelemetry distributed tracing and cancellation token propagation.
-- [ ] **PR 3 (Cleanup & Tests):** Legacy chat pipeline deprecation (Slice 3c) and test suite expansion.
-- [ ] **Azure Deployment:** Cloud infrastructure provisioning via `azd` (Container Apps, Postgres Flexible, AI Search, Key Vault).
-- [ ] **V1 Ship Artifacts:** Public live demo deployment, walkthrough demo, and publication.
+### Shipped (V1)
+- [x] **PR 1:** Azure pre-deploy foundation (config, containers, health checks)
+- [x] **PR 2:** Distributed tracing, correlation IDs, RFC 7807, cancellation
+- [x] **PR 3:** Legacy chat pipeline deletion
+- [x] **PR 4:** Azure resource declarations (Postgres Flexible, Blob Storage, Key Vault, Managed Identity)
+- [x] **PR 5:** First Azure deploy — live URL
+
+### Post-Ship (in progress)
+- [ ] Port manual deploy fixes to code (prevent next-deploy regression)
+- [ ] Make backend URL env-configurable (currently hardcoded in nginx.conf)
+- [ ] Entra ID auth (biggest post-ship item)
+- [ ] Docs, comment, and naming cleanup
 
 ### Post-V1 (North-Star)
 - [ ] **Multi-Paper Synthesis:** Cross-paper retrieval, comparative claim auditing, and shared literature views.

@@ -55,8 +55,14 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IfileUploader,FakeFileUploader>();
 
-// builder.AddNpgsqlDbContext<PrismDBContext>("prism-db");
-builder.AddNpgsqlDbContext<PrismDBContext>("prism-db",
+// AddAzureNpgsqlDbContext (not plain AddNpgsqlDbContext) - the deployed Azure Postgres
+// Flexible Server is Entra-only (no password exists at all), and per Aspire's own docs
+// "Microsoft Entra ID... requires changes to the application code to use an azure
+// credential." Confirmed via a live deploy: plain AddNpgsqlDbContext produced a
+// connection with no SSL and a placeholder username, rejected by pg_hba.conf. Locally,
+// the RunAsContainer Postgres connection string still carries a real username/password,
+// so this same call transparently uses password auth there - no local/prod branch needed.
+builder.AddAzureNpgsqlDbContext<PrismDBContext>("prism-db",
     configureDbContextOptions: options => options.UseSnakeCaseNamingConvention());
 
 // Registers BlobContainerClient in DI, resolving the Azurite connection string
