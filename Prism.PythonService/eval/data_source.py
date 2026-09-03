@@ -23,7 +23,7 @@ WITH latest AS (
     ORDER  BY de.created_at DESC
     LIMIT  1
 )
-SELECT pc.label, pc.claim_summary, pc.missing, pc.grounding_status
+SELECT pc.label, pc.claim_summary, pc.missing, pc.grounding_status, pc.claim_text_verbatim
 FROM   paper_claims pc
 JOIN   latest ON pc.document_extractor_id = latest.de_id
 ORDER  BY pc.created_at ASC;
@@ -55,7 +55,14 @@ async def read_from_db(filename: str) -> list[ActualClaim]:
             rows = await cur.fetchall()
 
     return [
-        ActualClaim(index=i, label=row[0], claim_summary=row[1], missing=row[2], grounding_status=row[3])
+        ActualClaim(
+            index=i,
+            label=row[0],
+            claim_summary=row[1],
+            missing=row[2],
+            grounding_status=row[3],
+            claim_text_verbatim=row[4],
+        )
         for i, row in enumerate(rows)
     ]
 

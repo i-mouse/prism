@@ -14,6 +14,7 @@ class ExpectedRow(BaseModel):
     expected_label: Literal["supported", "partially_supported", "not_supported"]
     grounding_negative: bool
     claim_summary: str = ""
+    claim_text_verbatim: str = ""
 
 
 class ActualClaim(BaseModel):
@@ -23,11 +24,14 @@ class ActualClaim(BaseModel):
     (False / None) so fixtures dumped before these columns were added
     to the SELECT still validate - they just can't contribute to
     false_rejection_rate, which is the whole point of that metric.
+    claim_text_verbatim defaults to "" for the same reason - fixtures
+    dumped before this field existed still validate.
     """
 
     index: int
     label: Literal["supported", "partially_supported", "not_supported"]
     claim_summary: str = ""
+    claim_text_verbatim: str = ""
     missing: bool = False
     grounding_status: Optional[str] = None
 
@@ -39,13 +43,29 @@ class Match(BaseModel):
     actual_index: Optional[int] = None
 
 
+# RowOutcome JSON shape, as written into logs/eval/matrix_*.json under
+# papers[].report.per_row.<expected_id>:
+#   expected_id              golden-set row id, e.g. "REACT-M13"
+#   outcome                  PASS | FAIL | POSITIVE_HIT | POSITIVE_MISS | FALSE_REJECTION
+#   expected_label           golden-set label: supported | partially_supported | not_supported
+#   expected_claim_text_verbatim  golden-set claim quote, from matrix_eval.json (may be "" if absent)
+#   expected_claim_summary   golden-set short claim description
+#   actual_label             engine's label for the matched claim, or null if no match
+#   actual_claim_text_verbatim    matched claim's verbatim quote, or null if no match
+#   actual_claim_summary     matched claim's short description, or null if no match
+#   actual_grounding_status  matched claim's grounding verdict (Pass/Partial/Fail), or null
+# The two verbatim/summary pairs exist purely for human diagnosis - reading a FAIL row
+# should not require cross-referencing matrix_eval.json and a separate DB query by hand.
 class RowOutcome(BaseModel):
     """Per-row scoring result."""
 
     expected_id: str
     outcome: Literal["PASS", "FAIL", "POSITIVE_HIT", "POSITIVE_MISS", "FALSE_REJECTION"]
     expected_label: str
+    expected_claim_text_verbatim: Optional[str] = None
+    expected_claim_summary: Optional[str] = None
     actual_label: Optional[str] = None
+    actual_claim_text_verbatim: Optional[str] = None
     actual_claim_summary: Optional[str] = None
     actual_grounding_status: Optional[str] = None
 

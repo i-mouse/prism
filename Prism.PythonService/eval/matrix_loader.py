@@ -69,6 +69,7 @@ def load_matrix(path: str | Path) -> MatrixSpec:
                         expected_label=row["expected_label"],
                         grounding_negative=row["grounding_negative"],
                         claim_summary=row.get("claim_summary", ""),
+                        claim_text_verbatim=row.get("claim_text_verbatim", ""),
                     )
                     for row in paper_raw["expected_matrix"]
                 ],
