@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TopBar } from "@/components/TopBar";
 import { Sidebar } from "@/components/Sidebar";
 import { MatrixView } from "@/components/MatrixView";
 import { EvidenceDrawer } from "@/components/EvidenceDrawer";
+import type { UploadZoneHandle } from "@/components/sidebar/UploadZone";
 import { useActivePaper } from "@/hooks/useActivePaper";
 import { useChats } from "@/hooks/useChats";
 import { usePaperClaims } from "@/hooks/usePaperClaims";
@@ -22,6 +23,7 @@ export function AppShell() {
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
   const [fileSizeLabels, setFileSizeLabels] = useState<Record<string, string>>({});
   const drawerOpen = selectedClaimId !== null;
+  const uploadZoneRef = useRef<UploadZoneHandle>(null);
 
   useEffect(() => {
     joinChat(activeChatId).catch((err) => console.error("Failed to join chat group:", err));
@@ -86,6 +88,7 @@ export function AppShell() {
           fileSizeLabels={fileSizeLabels}
           onUploaded={handleUploaded}
           onSelectChat={handleSelectChat}
+          uploadZoneRef={uploadZoneRef}
         />
         <main className="flex min-h-0 min-w-0 flex-col bg-surface">
           <MatrixView
@@ -94,6 +97,7 @@ export function AppShell() {
             activePaperId={activePaperId}
             activeChatId={activeChatId}
             onViewEvidence={setSelectedClaimId}
+            onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
           />
         </main>
         {drawerOpen && <EvidenceDrawer paperClaims={paperClaims} />}

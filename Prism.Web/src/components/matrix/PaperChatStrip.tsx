@@ -123,14 +123,14 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
     >
       {turns.length === 0 ? (
         <div className="flex flex-col items-center gap-2.5 px-6 py-4">
-          <p className="text-center text-xs text-ink-muted">Ask about this paper</p>
+          <p className="text-center font-sans text-sm text-ink-secondary">Ask about this paper</p>
           <div className="flex max-w-lg flex-wrap justify-center gap-2">
             {SUGGESTED_PROMPTS.map((prompt) => (
               <button
                 key={prompt}
                 type="button"
                 onClick={() => sendMessage(prompt)}
-                className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-muted transition-all hover:border-border-strong hover:bg-surface-sunken"
+                className="rounded-full border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
               >
                 {prompt}
               </button>
@@ -167,7 +167,7 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
             <button
               type="button"
               onClick={scrollToBottom}
-              className="absolute bottom-3 right-6 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted shadow-sm transition-all hover:border-border-strong hover:bg-surface-sunken"
+              className="absolute bottom-3 right-6 rounded-full border border-hairline bg-surface px-3 py-1.5 text-xs font-medium text-ink-muted shadow-sm transition-all hover:border-hairline-strong hover:bg-surface-sunken"
             >
               New messages ↓
             </button>
@@ -301,7 +301,7 @@ function AssistantTurn({
               key={prompt}
               type="button"
               onClick={() => onFollowUp(prompt)}
-              className="rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-muted transition-all hover:border-border-strong hover:bg-surface-sunken"
+              className="rounded-full border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
@@ -355,9 +355,9 @@ function ChatInput({
     <div className="px-6 pb-4">
       <div
         className={cn(
-          "flex items-end gap-2 rounded-2xl border border-border bg-surface p-2",
+          "flex w-full items-end gap-2 rounded-full border border-hairline bg-surface px-5 py-3",
           "transition-all duration-150",
-          "focus-within:border-accent/50 focus-within:ring-4 focus-within:ring-accent/10"
+          "focus-within:border-brand focus-within:ring-2 focus-within:ring-brand-subtle"
         )}
       >
         <textarea
@@ -369,8 +369,8 @@ function ChatInput({
           disabled={isSending}
           rows={1}
           className={cn(
-            "max-h-24 flex-1 resize-none overflow-y-auto bg-transparent px-3 py-1.5",
-            "text-sm text-ink placeholder:text-ink-subtle",
+            "max-h-24 flex-1 resize-none overflow-y-auto bg-transparent",
+            "font-sans text-sm text-ink placeholder:text-ink-tertiary",
             "focus:outline-none"
           )}
         />
@@ -379,7 +379,7 @@ function ChatInput({
             type="button"
             onClick={onStop}
             className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
               "bg-ink text-surface transition-all hover:bg-ink-muted"
             )}
           >
@@ -391,10 +391,9 @@ function ChatInput({
             onClick={handleSubmit}
             disabled={!message.trim()}
             className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl",
-              "bg-accent text-accent-fg transition-all duration-100",
-              "hover:bg-accent-hover active:scale-95",
-              "disabled:cursor-not-allowed disabled:opacity-30"
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-100",
+              "bg-brand text-white hover:bg-brand-hover active:scale-95",
+              "disabled:cursor-not-allowed disabled:bg-hairline disabled:text-ink-tertiary disabled:hover:bg-hairline"
             )}
           >
             <ArrowUp className="h-4 w-4" />

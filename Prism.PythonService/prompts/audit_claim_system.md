@@ -10,8 +10,8 @@ The reason this step is free text: when the label field is generated alongside r
 
 **Step 1 — Read the claim carefully and identify its scope.**
 What exactly is the claim asserting? Circle mentally:
-- Is it a comparison against a specific named method, or against a *class* of methods ("traditional RL", "state-of-the-art", "prior work")?
-- Is it about a specific dataset, or a *broad domain* ("any language task", "all modalities", "arbitrary agents")?
+- Is it a comparison against a specific named method, or against a *class* of methods ("traditional RL", "state-of-the-art", "prior work")? — see Pattern B below.
+- Is it about a specific dataset, or a *broad domain* ("any language task", "all modalities", "arbitrary agents")? — see Pattern A below.
 - Is it a measured metric, or an *unmeasured property* ("robust", "efficient", "generalizes", "interpretable")?
 
 **Step 2 — Search the paper for evidence matching that exact scope.**
@@ -56,6 +56,42 @@ QUOTE: We apply our approach, named ReAct, to a diverse set of language and deci
 SECTION: Abstract
 QUOTE: Supervised SoTA 67.5
 SECTION: Table 1
+
+# Two rhetorical patterns worth extra scrutiny
+
+Two claim shapes are the most common source of over-generous audits: the reasoning above gets skimmed as "this is basically what the paper is about" instead of checked against the actual scope of the experiments. These are named the same way upstream, in the extractor's pattern taxonomy, so the labels carry through the whole pipeline:
+
+**Pattern A — generalization-without-test.** The claim asserts the method applies broadly (any X, arbitrary Y, "a general framework/paradigm for Z") but the experiments only cover a narrow, specific slice of that space. This is a Step 1 broad-domain scope paired with a Step 2 evidence search that comes up short of that domain.
+
+**Pattern B — superiority-vs-class-not-tested.** The claim frames the method as beating or avoiding the downsides of an entire CATEGORY of prior approaches (a whole family of methods, "traditional X", "state-of-the-art") rather than a specific system the paper actually benchmarks against. This is a Step 1 comparative-class scope paired with a Step 2 baseline list that never includes a member of that class.
+
+Both patterns read as confident, declarative sentences — often in the Abstract or Introduction — which is exactly what makes them easy to skim past as "obviously true" instead of scope-checking them. The worked example above (Output shape) is itself a Pattern B case: a state-of-the-art baseline class the paper never actually runs against. Two more worked examples follow, from unrelated papers, so the pattern isn't tied to one topic.
+
+## Worked example — Pattern A (generalization-without-test)
+
+The claim reads: "We introduce GraphDistill, a general framework for compressing graph neural networks that is broadly applicable across graph-structured data — social networks, molecular graphs, citation networks, and knowledge graphs alike."
+
+Reasoning that would produce a `not_supported` verdict:
+
+The scope here is "broadly applicable across graph-structured data," instantiated with four named domains: social networks, molecular graphs, citation networks, knowledge graphs. That is a broad-domain claim (Step 1), so the evidence search (Step 2) needs experiments spanning that same breadth. Scanning the Experiments section, every reported result is on Cora, Citeseer, and PubMed — three citation-network benchmarks. No social-network, molecular-graph, or knowledge-graph experiment appears anywhere in the paper, including the appendix. The claim's "alike" framing implies validation across all four named domains, but three of the four never appear in the experimental section at all.
+
+VERDICT: not_supported
+
+QUOTE: We evaluate GraphDistill on three standard citation network benchmarks: Cora, Citeseer, and PubMed.
+SECTION: Section 5.1 (Experimental Setup)
+
+## Worked example — Pattern B (superiority-vs-class-not-tested)
+
+The claim reads: "Unlike gradient-based meta-learning approaches, which require expensive second-order derivatives and costly inner-loop optimization, our metric-based method MetaProto achieves superior sample efficiency."
+
+Reasoning that would produce a `not_supported` verdict:
+
+The scope here is a comparison against "gradient-based meta-learning approaches" as a class — the kind of method MAML and its variants represent — not a specific named system the paper actually runs (Step 1). Checking the baselines table (Step 2), every comparison method listed — Prototypical Networks, Matching Networks, Relation Networks — is itself metric-based; none is a gradient-based, second-order method. No FLOPs count, wall-clock time, or sample-count comparison against any gradient-based baseline appears anywhere in the results. The paper asserts superior sample efficiency over a category it never benchmarks against; the efficiency comparison it does report is entirely within the metric-based family it already belongs to.
+
+VERDICT: not_supported
+
+QUOTE: We compare MetaProto against three metric-based few-shot baselines: Matching Networks, Prototypical Networks, and Relation Networks.
+SECTION: Table 2 (Baseline Comparisons)
 
 # Critical rules
 

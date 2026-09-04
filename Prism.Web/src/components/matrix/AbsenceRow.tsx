@@ -1,8 +1,9 @@
-import { ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { ClaimDto } from "@/types/api";
-import { claimLabelMeta } from "@/lib/claimMeta";
+import { claimLabelToVerdict } from "@/lib/claimMeta";
 import { displayLabel, humanizeReason } from "@/lib/claim-display";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
+import { VerdictPill, verdictBorderClass } from "@/components/VerdictPill";
 import { cn } from "@/lib/utils";
 
 interface AbsenceRowProps {
@@ -11,8 +12,7 @@ interface AbsenceRowProps {
 }
 
 export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
-  const meta = claimLabelMeta[displayLabel(claim)];
-  const Icon = meta.Icon;
+  const verdict = claimLabelToVerdict[displayLabel(claim)];
   const firstSpan = claim.evidenceSpans[0];
   const { selectedClaimId, highlightedClaimId } = useSelectedClaim();
   const isSelected = selectedClaimId === claim.id;
@@ -22,49 +22,39 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
     <div
       data-claim-id={claim.id}
       className={cn(
-        "flex items-start gap-4 rounded-r-md rounded-l-none border border-border border-l-4 px-6 py-4",
-        meta.borderClass,
-        meta.cardBgClass,
+        "relative overflow-hidden rounded-xl border border-hairline bg-surface p-5 transition-colors hover:border-hairline-strong",
         isHighlighted && "ring-2 ring-accent ring-offset-2 ring-offset-surface transition-all duration-300"
       )}
     >
-      <div className="flex w-40 shrink-0 flex-col items-start">
-        <span
+      <div className={cn("absolute top-0 left-0 h-full w-1", verdictBorderClass[verdict])} />
+
+      <div className="flex items-start justify-between gap-4">
+        <VerdictPill verdict={verdict} />
+        <button
+          type="button"
+          onClick={onViewEvidence}
           className={cn(
-            "inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-xs font-semibold uppercase tracking-wider",
-            meta.bgClass,
-            meta.textClass
+            "group inline-flex shrink-0 items-center gap-1 font-sans text-sm text-brand hover:text-brand-hover",
+            isSelected && "underline"
           )}
         >
-          <Icon className="h-3.5 w-3.5" />
-          {meta.text}
-        </span>
+          View Evidence
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </button>
       </div>
 
-      <div className="min-w-0 flex-1 space-y-1.5">
-        <div className="text-[15px] font-semibold leading-snug text-ink">{claim.claimSummary}</div>
-        <div className="text-xs font-semibold uppercase tracking-[0.08em] text-refused">(No Evidence)</div>
-        <p className="text-sm font-normal text-refused">No supporting evidence in this paper.</p>
-        {claim.reason && (
-          <p className="text-sm leading-relaxed text-ink">{humanizeReason(claim.reason)}</p>
-        )}
-        <div className="text-xs text-ink-subtle uppercase tracking-[0.05em]">
-          {firstSpan?.sourceSection}
-          {firstSpan?.pageNumber != null ? ` · p. ${firstSpan.pageNumber}` : ""}
-        </div>
-      </div>
+      <div className="mt-2 font-sans text-base font-medium text-ink">{claim.claimSummary}</div>
 
-      <button
-        type="button"
-        onClick={onViewEvidence}
-        className={cn(
-          "group inline-flex shrink-0 items-center gap-1 text-sm font-medium text-ink-muted underline-offset-4 transition-colors duration-quick ease-smooth hover:text-ink hover:underline",
-          isSelected && "text-accent underline hover:text-accent"
-        )}
-      >
-        View Evidence
-        <ChevronRight className="h-4 w-4 opacity-0 transition-opacity duration-quick ease-smooth group-hover:opacity-100" />
-      </button>
+      <div className="mt-3 text-xs font-semibold uppercase tracking-[0.08em] text-verdict-refused-text">
+        (No Evidence)
+      </div>
+      <p className="text-sm font-normal text-verdict-refused-text">No supporting evidence in this paper.</p>
+      {claim.reason && <p className="mt-2 text-sm leading-relaxed text-ink">{humanizeReason(claim.reason)}</p>}
+
+      <div className="mt-2 font-mono text-xs uppercase tracking-wider text-ink-tertiary">
+        {firstSpan?.sourceSection}
+        {firstSpan?.pageNumber != null ? ` · p. ${firstSpan.pageNumber}` : ""}
+      </div>
     </div>
   );
 }

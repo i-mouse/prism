@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,20 @@ interface UploadZoneProps {
   refetchChats: () => void;
 }
 
-export function UploadZone({ getConnectionId, joinChat, onUploaded, refetchChats }: UploadZoneProps) {
+export interface UploadZoneHandle {
+  openFilePicker: () => void;
+}
+
+export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function UploadZone(
+  { getConnectionId, joinChat, onUploaded, refetchChats },
+  ref
+) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    openFilePicker: () => inputRef.current?.click(),
+  }));
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     // input.files is a live FileList tied to the element, so it must be
@@ -80,7 +91,7 @@ export function UploadZone({ getConnectionId, joinChat, onUploaded, refetchChats
         onChange={handleChange}
       />
       <Button
-        className="h-11 w-full gap-2 bg-accent font-medium text-accent-fg shadow-card hover:bg-accent-hover"
+        className="h-auto w-full gap-2 rounded-lg bg-brand px-4 py-2.5 font-sans text-sm font-medium text-white hover:bg-brand-hover"
         disabled={uploading}
         onClick={() => inputRef.current?.click()}
       >
@@ -89,4 +100,4 @@ export function UploadZone({ getConnectionId, joinChat, onUploaded, refetchChats
       </Button>
     </div>
   );
-}
+});

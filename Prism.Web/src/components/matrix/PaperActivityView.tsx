@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { Check, XCircle } from "lucide-react";
 import { useExtractionProgress } from "@/hooks/useSignalR";
 import type { ExtractionStage } from "@/types/api";
 import { cn } from "@/lib/utils";
@@ -56,9 +56,9 @@ export function PaperActivityView({ fileId, fileName }: PaperActivityViewProps) 
       <div className="relative mx-auto flex max-w-2xl flex-col gap-10 px-8 pb-12 pt-16">
         {/* Zone 1: header */}
         <div className="flex flex-col gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-accent">AUDITING PAPER</p>
-          <h1 className="font-display text-3xl font-bold tracking-[-0.02em] text-ink">{fileName}</h1>
-          {headerDetail && <p className="mt-1 text-sm text-ink-muted">{headerDetail}</p>}
+          <p className="font-sans text-xs uppercase tracking-wider text-ink-tertiary">Auditing Paper</p>
+          <h1 className="font-sans text-3xl font-semibold text-ink">{fileName}</h1>
+          {headerDetail && <p className="mt-1 font-sans text-sm text-ink-secondary">{headerDetail}</p>}
         </div>
 
         {/* Zone 2: process card */}
@@ -66,7 +66,7 @@ export function PaperActivityView({ fileId, fileName }: PaperActivityViewProps) 
           initial={{ opacity: 0, y: 12, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1], delay: 0.1 }}
-          className="rounded-xl border border-border bg-surface p-8 shadow-card"
+          className="rounded-xl border border-hairline bg-surface p-8"
         >
           <ol className="relative flex flex-col gap-6 pl-4">
             {STAGE_ORDER.map((stage, i) => {
@@ -93,23 +93,21 @@ export function PaperActivityView({ fileId, fileName }: PaperActivityViewProps) 
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="text-center text-sm tabular-nums text-ink-muted"
+            className="text-center font-sans text-sm tabular-nums text-ink-secondary"
           >
             {progress.finalizingSummary}
           </motion.div>
         ) : (
-          <div className="text-center text-xs text-ink-subtle">
-            Prism grounds every claim in the paper's own evidence.
+          <div className="text-center font-sans text-xs text-ink-tertiary">
+            Prism grounds every claim in the paper&apos;s own evidence.
           </div>
         )}
 
         {hasFailed && (
-          <div className="mx-auto max-w-lg rounded-md border border-refused/20 bg-refused-bg p-4 text-sm text-refused">
-            <p className="font-medium">
-              Extraction failed at the {failedStageLabel ?? "unknown"} stage.
-            </p>
-            <p className="mt-1 text-ink-muted">
-              The paper couldn't be processed. Try uploading again from the sidebar.
+          <div className="mx-auto max-w-lg rounded-md border border-verdict-refused-border/20 bg-verdict-refused-bg p-4 text-sm text-verdict-refused-text">
+            <p className="font-medium">Extraction failed at the {failedStageLabel ?? "unknown"} stage.</p>
+            <p className="mt-1 text-ink-secondary">
+              The paper couldn&apos;t be processed. Try uploading again from the sidebar.
             </p>
           </div>
         )}
@@ -136,26 +134,26 @@ function StageRow({ label, status, detail, completed, total, isLast }: StageRowP
         <div
           className={cn(
             "absolute bottom-[-24px] left-[15px] top-8 w-px",
-            status === "completed" ? "bg-border-strong" : "border-l border-dashed border-border"
+            status === "completed" ? "bg-hairline-strong" : "border-l border-dashed border-hairline"
           )}
         />
       )}
 
       <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center bg-surface">
         {status === "completed" && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-supported-bg">
-            <CheckCircle2 className="h-5 w-5 text-supported" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-verdict-supported-bg">
+            <Check className="h-5 w-5 text-verdict-supported-icon" />
           </div>
         )}
         {status === "current" && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-accent bg-accent-subtle">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-accent" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-brand bg-brand-subtle">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-brand" />
           </div>
         )}
-        {status === "pending" && <div className="h-6 w-6 rounded-full border border-dashed border-border" />}
+        {status === "pending" && <div className="h-6 w-6 rounded-full border border-dashed border-hairline" />}
         {status === "failed" && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-refused-bg">
-            <XCircle className="h-5 w-5 text-refused" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-verdict-refused-bg">
+            <XCircle className="h-5 w-5 text-verdict-refused-icon" />
           </div>
         )}
       </div>
@@ -163,11 +161,11 @@ function StageRow({ label, status, detail, completed, total, isLast }: StageRowP
       <div className="min-w-0 flex-1 pt-1">
         <h3
           className={cn(
-            "text-base",
-            status === "completed" && "font-medium text-ink",
-            status === "current" && "font-semibold text-ink",
-            status === "pending" && "font-normal text-ink-muted",
-            status === "failed" && "font-semibold text-refused"
+            "font-mono text-xs uppercase tracking-wider",
+            status === "completed" && "text-verdict-supported-icon",
+            status === "current" && "text-brand",
+            status === "pending" && "text-ink-tertiary",
+            status === "failed" && "text-verdict-refused-text"
           )}
         >
           {label}
@@ -181,7 +179,7 @@ function StageRow({ label, status, detail, completed, total, isLast }: StageRowP
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.12 }}
-              className="mt-1.5 truncate text-sm leading-relaxed text-ink-muted"
+              className="mt-1.5 truncate font-sans text-sm leading-relaxed text-ink-secondary"
             >
               {detail}
             </motion.p>
@@ -190,13 +188,13 @@ function StageRow({ label, status, detail, completed, total, isLast }: StageRowP
 
         {status === "current" && showCounter && (
           <div className="mt-2 flex items-center gap-3">
-            <div className="h-1 w-24 overflow-hidden rounded-full bg-border">
+            <div className="h-1 w-24 overflow-hidden rounded-full bg-hairline">
               <div
-                className="h-full bg-accent transition-[width] duration-300 ease-out"
+                className="h-full bg-brand transition-all duration-300 ease-out"
                 style={{ width: `${(completed! / total!) * 100}%` }}
               />
             </div>
-            <span className="text-xs font-medium tabular-nums text-ink-muted">
+            <span className="font-sans text-sm tabular-nums text-ink-secondary">
               {completed} / {total}
             </span>
           </div>
