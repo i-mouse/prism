@@ -1,142 +1,163 @@
 {
   "header": {
-    "prompt_hash": "78f604c5e2c9",
+    "prompt_hash": "055d52687cc8",
     "model_name": "gemini-3.6-flash",
-    "matcher_model": "gemini-3.1-flash-lite",
-    "generated_at": "2026-08-27T10:27:09.970700+00:00",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-09-04T16:16:18.142704+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
-    "extraction_run_id": "25ba2a9a-e2b2-48ed-b79a-7028c2b068ea"
+    "extraction_run_id": "a9580aad-dfd2-416d-acbf-07c9618d32d8"
   },
   "claims": [
     {
       "index": 0,
-      "label": "partially_supported",
-      "claim_summary": "Self-reflection enables language agents to effectively learn complex tasks in few trials",
+      "label": "supported",
+      "claim_summary": "Reflexion achieves significant performance gains across sequential decision-making, coding, and reasoning tasks",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion is flexible enough to incorporate various types (scalar values or free-form language) and sources (external or internally simulated) of feedback signals, and obtains significant improvements over a baseline agent across diverse tasks (sequential decision-making, coding, language reasoning)."
     },
     {
       "index": 1,
       "label": "supported",
-      "claim_summary": "Reflexion outperforms baseline agents across decision-making, coding, and reasoning tasks",
+      "claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, outperforming GPT-4's 80%",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4 that achieves 80%."
     },
     {
       "index": 2,
-      "label": "supported",
-      "claim_summary": "Reflexion reaches 91% pass@1 on HumanEval, beating GPT-4's 80%",
+      "label": "not_supported",
+      "claim_summary": "Reflexion offers multiple key advantages over traditional policy or value-based reinforcement learning",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes."
     },
     {
       "index": 3,
       "label": "supported",
-      "claim_summary": "Reflexion improves performance on AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
+      "claim_summary": "Reflexion agents perform better as decision-makers, reasoners, and programmers across tasks",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers."
     },
     {
       "index": 4,
       "label": "supported",
-      "claim_summary": "Reflexion improves upon strong baselines and sets state-of-the-art results in code generation",
+      "claim_summary": "Reflexion improves AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%."
     },
     {
       "index": 5,
       "label": "supported",
-      "claim_summary": "ReAct with Reflexion completes 130 of 134 AlfWorld tasks using a simple heuristic",
+      "claim_summary": "Self-reflection in LLMs enables learning complex tasks within a few trials",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We explore this emergent property of self-reflection in LLMs and empirically show that self-reflection is extremely useful to learn complex tasks over a handful of trials."
     },
     {
       "index": 6,
       "label": "supported",
-      "claim_summary": "The ReAct-only baseline converges to a 22% hallucination rate without long-term recovery",
+      "claim_summary": "Reflexion beats strong baselines across tasks and reaches state-of-the-art in code generation",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We show that Reflexion achieves improvements over strong baselines across several tasks, and achieves state-of-the-art results on various code generation benchmarks."
     },
     {
       "index": 7,
       "label": "supported",
-      "claim_summary": "Reflexion significantly outperforms baseline methods on HotPotQA across multiple learning steps",
+      "claim_summary": "ReAct + Reflexion solves 130 of 134 ALFWorld tasks, outperforming baseline ReAct",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning."
     },
     {
       "index": 8,
       "label": "supported",
-      "claim_summary": "Self-reflection yields an 8% absolute improvement over episodic memory on HotPotQA reasoning",
+      "claim_summary": "Reflexion outperforms all baseline methods on HotPotQA over iterative learning steps",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion outperforms all baseline approaches by significant margins over several learning steps."
     },
     {
       "index": 9,
       "label": "supported",
-      "claim_summary": "Reflexion achieves state-of-the-art accuracy across Python and Rust code benchmarks except MBPP Python",
+      "claim_summary": "Baseline methods fail to improve on failed HotPotQA tasks in subsequent trials",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Furthermore, ReAct-only, CoT-only, and CoT (GT)-only implementations fail to probabilistically improve on any tasks, meaning that no failed tasks from the first trial from any of the baseline approaches were able to be solved in subsequent trials using a temperature of 0.7"
     },
     {
       "index": 10,
       "label": "supported",
-      "claim_summary": "HumanEval exhibits a low 1.4% false positive rate compared to 16.3% on MBPP",
+      "claim_summary": "Reflexion improves CoT (GT) accuracy by 14% without ground truth answers",
       "missing": false,
-      "grounding_status": "Partial"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Still, the CoT (GT) agent is unable to correctly infer the correct answer for 39% of the questions, but Reflexion helps the agent to correct its mistakes without access to the ground truth answer to improve its accuracy by 14%."
     },
     {
       "index": 11,
       "label": "supported",
-      "claim_summary": "Removing unit test generation drops Rust HumanEval accuracy below the baseline to 52%",
+      "claim_summary": "Self-reflection provides an 8% boost over standard episodic memory on HotPotQA",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage."
     },
     {
       "index": 12,
       "label": "supported",
-      "claim_summary": "Omitting verbal self-reflection feedback prevents the agent from exceeding baseline performance",
+      "claim_summary": "Reflexion sets new state-of-the-art results across Python and Rust benchmarks except MBPP Python",
       "missing": false,
-      "grounding_status": "Pass"
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion outperforms all baseline accuracies and sets new state-of-the-art standards on all benchmarks for Python and Rust except for MBPP Python 1."
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Omitting internal test generation drops accuracy to 52%, below the 60% baseline",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "3 shows an inferior 52% vs 60% (baseline) accuracy, which suggests that the agent is unable to determine if the current implementation is correct without unit tests."
     }
   ],
   "matches": [
     {
       "expected_id": "REFLEX-M01",
-      "actual_index": 2
-    },
-    {
-      "expected_id": "REFLEX-M02",
-      "actual_index": 3
-    },
-    {
-      "expected_id": "REFLEX-M03",
-      "actual_index": 10
-    },
-    {
-      "expected_id": "REFLEX-M04",
-      "actual_index": 9
-    },
-    {
-      "expected_id": "REFLEX-M05",
-      "actual_index": 8
-    },
-    {
-      "expected_id": "REFLEX-M06",
-      "actual_index": 11
-    },
-    {
-      "expected_id": "REFLEX-M07",
-      "actual_index": 12
-    },
-    {
-      "expected_id": "REFLEX-M08",
       "actual_index": 1
     },
     {
-      "expected_id": "REFLEX-M09",
+      "expected_id": "REFLEX-M02",
+      "actual_index": 4
+    },
+    {
+      "expected_id": "REFLEX-M03",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M04",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M05",
+      "actual_index": 11
+    },
+    {
+      "expected_id": "REFLEX-M06",
+      "actual_index": 13
+    },
+    {
+      "expected_id": "REFLEX-M07",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REFLEX-M08",
       "actual_index": 3
+    },
+    {
+      "expected_id": "REFLEX-M09",
+      "actual_index": 4
     },
     {
       "expected_id": "REFLEX-M11",
@@ -144,11 +165,11 @@
     },
     {
       "expected_id": "REFLEX-M12",
-      "actual_index": null
+      "actual_index": 2
     },
     {
       "expected_id": "REFLEX-M13",
-      "actual_index": 0
+      "actual_index": null
     }
   ]
 }
