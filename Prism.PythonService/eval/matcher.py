@@ -26,7 +26,7 @@ LOGS_DIR = Path(__file__).parent.parent / "logs" / "matcher"
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 MAX_ATTEMPTS = 3
 BACKOFF_SECONDS = (1, 2, 4)
-DEFAULT_MODEL = "gemini-2.5-flash-lite"
+DEFAULT_MODEL = "gemini-3.1-flash-lite"
 
 _MATCH_LIST_ADAPTER = TypeAdapter(list[Match])
 
