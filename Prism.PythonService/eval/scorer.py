@@ -46,6 +46,7 @@ def score(
             actual_claim = actual_by_index.get(match.actual_index)
         actual_label = actual_claim.label if actual_claim is not None else None
         actual_claim_summary = actual_claim.claim_summary if actual_claim is not None else None
+        actual_claim_text_verbatim = actual_claim.claim_text_verbatim if actual_claim is not None else None
         actual_grounding_status = actual_claim.grounding_status if actual_claim is not None else None
 
         if is_negative:
@@ -81,7 +82,10 @@ def score(
             expected_id=row.id,
             outcome=outcome,
             expected_label=row.expected_label,
+            expected_claim_text_verbatim=row.claim_text_verbatim or None,
+            expected_claim_summary=row.claim_summary or None,
             actual_label=actual_label,
+            actual_claim_text_verbatim=actual_claim_text_verbatim,
             actual_claim_summary=actual_claim_summary,
             actual_grounding_status=actual_grounding_status,
         )

@@ -54,6 +54,36 @@
     }
   },
   {
+    "example_type": "pattern_A_generalization_without_test",
+    "input_excerpt": "Section 1 Introduction. Software engineers routinely debug unfamiliar programs by reading error traces, forming a hypothesis, and testing a fix. We present AutoFix, a general-purpose repair paradigm applicable to any programming task that a human developer could reason through from an error trace alone. In this paper, we evaluate AutoFix on Python function-level bugs drawn from the Defects4J and QuixBugs benchmarks.",
+    "note": "The middle sentence reads like Introduction scene-setting (\"we present a general-purpose paradigm\") and is easy to wave through as background about what the system IS rather than a claim about what it does. It is Pattern A: a broad applicability claim (\"any programming task\") stated before the narrow, concrete evaluation scope (Python function-level bugs on two benchmarks) is even mentioned. Extract the broad claim on its own terms - do not wait to see whether the eventual Results section actually covers that breadth, and do not silently narrow the quote to match the evaluation scope. The first sentence stays unextracted (pure background about how humans debug, no assertion about AutoFix). The last sentence is evaluation scope, not a result, so it is not extracted either - only the middle sentence asserts something about AutoFix itself.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "We present AutoFix, a general-purpose repair paradigm applicable to any programming task that a human developer could reason through from an error trace alone.",
+          "claim_summary": "AutoFix is a general-purpose repair paradigm for any programming task solvable from an error trace"
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "pattern_B_superiority_vs_class_not_tested",
+    "input_excerpt": "Section 1 Introduction. Fine-tuning a large pretrained model for each new domain requires substantial labeled data and repeated, costly training runs. We propose PromptWeave, which adapts to new domains purely through in-context demonstrations, avoiding the retraining overhead that supervised fine-tuning approaches incur. Section 4 Results. On the DomainSwitch benchmark, PromptWeave with 8 demonstrations reaches 74.2% accuracy, compared to 69.5% for the best zero-shot prompting baseline.",
+    "note": "Pattern B: the Introduction pairs a category's limitation (\"fine-tuning... requires... costly training runs\") with the paper's method positioned as the fix (\"avoiding the retraining overhead that supervised fine-tuning approaches incur\"). That pairing is an implied efficiency-superiority claim against the whole class of supervised fine-tuning methods - not against the zero-shot prompting baseline actually benchmarked in Section 4. Extract the Introduction pairing as its own claim even though Results never runs a fine-tuning baseline to back it up; that gap is exactly what audit needs to see. The Results sentence is a separate, narrower claim (against a specific tested baseline) and must be extracted too - the two are not interchangeable and will be audited differently.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "We propose PromptWeave, which adapts to new domains purely through in-context demonstrations, avoiding the retraining overhead that supervised fine-tuning approaches incur.",
+          "claim_summary": "PromptWeave avoids the retraining overhead that supervised fine-tuning approaches require"
+        },
+        {
+          "claim_text_verbatim": "On the DomainSwitch benchmark, PromptWeave with 8 demonstrations reaches 74.2% accuracy, compared to 69.5% for the best zero-shot prompting baseline.",
+          "claim_summary": "PromptWeave reaches 74.2% on DomainSwitch, beating the best zero-shot baseline's 69.5%"
+        }
+      ]
+    }
+  },
+  {
     "example_type": "do_not_extract_motivational",
     "input_excerpt": "Section 1 Introduction. Language agents are an exciting frontier for AI research, and understanding how to make them reason more effectively is one of the most important challenges facing our field today.",
     "note": "This excerpt is pure motivation, no empirical claim about what this paper achieved. Extract nothing.",
