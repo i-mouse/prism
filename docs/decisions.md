@@ -1,3 +1,27 @@
+## Auditor model swap + eval matcher calibration — 2026-09-04
+
+**Context:** v4.1 extractor + auditor v2 landed but react.pdf still showed only 1 not_supported claim in the Matrix UI vs 4 expected by the golden set. Prompt iteration alone wasn't converging. Commissioned a full pipeline audit (docs/audit/pipeline_audit_2026-09-04.md) to find the architectural cause.
+
+**What the audit ruled out:** auditor receives the complete paper text on every call — no retrieval, no chunking — so contradicting passages are always in context. The audit's top hypothesis (fitz destroys table layout beyond readability) was disproved by a paper_claims record showing the auditor citing "Supervised SoTAb 67.5 89.5" directly from the flattened table and reasoning correctly from it. No reranker needed (nothing to rank). No layout-aware parser needed.
+
+**Decision:** auditor ran on gemini-3.1-flash-lite while the trivial structurer step ran on gemini-3.6-flash. Swapped the auditor to gemini-3.6-flash on both Python services and in .env.
+
+**Second finding:** LLM_AUDIT_MODEL also drives the eval matcher and engine.py's extraction fallback. Matcher was therefore on flash-lite, over-matching claims and inflating positive hits. Same paper_claims rows scored 9/14 refusal (FAIL) under flash-lite and 11/14 (PASS) under 3.6-flash — the gate flipped on judge strictness alone. matcher_gold.json passes on 3.6-flash so the strict numbers stand.
+
+**Third finding:** matcher.py's DEFAULT_MODEL was gemini-2.5-flash-lite, retired by Google. Any run without LLM_AUDIT_MODEL set 404s. Fixed. Surfaced only because the gold-set calibration test was run manually — it's @pytest.mark.integration and skipped by default, so the judge had never been calibrated in a normal pass.
+
+**Alternatives rejected:** (a) reranking — extraction sends the whole paper, nothing to rank; (b) layout-aware PDF parsing via Document Intelligence — disproved by the citation evidence above; (c) fine-tuning an NLI model for verdict prediction — 17 labeled rows is nowhere near enough, and NLI operates on (claim, passage) pairs so it doesn't address absence detection either.
+
+**Consequences (fixture-mode eval, gemini-3.6-flash matcher):**
+- Refusal 10/14 (71%), matches v4 baseline aggregate
+  - by_label: 4 (up from 1 at v4)
+  - by_omission: 6 (down from 9 at v4)
+- Positive hits 13/23 (57%); original v4 figure of 19/23 was measured by the flash-lite matcher and is not directly comparable
+- False rejections 0/23
+- Two defects remain, documented in docs/audit/two_defects_2026-09-04.md: grounding checker marks refuting evidence as Fail, and extractor drops non-empirical positioning claims
+
+---
+
 ## Auditor prompt v2 — trap-claim labeling — 2026-09-03
 
 **Context:** The v4.1 extractor PR (previous entry, this file) fixed upstream recall: 7 of the 9 previously-omitted trap claims (REFLEX-M11/M12/M13, COT-M12, REACT-M11/M13/M14) now reach the auditor instead of being silently dropped. But the auditor prompt itself was untouched, and it labeled nearly all of them `supported` instead of catching the unsupported generalization/superiority framing — refusal rate regressed 71%→29% (10/14 → 4/14) as a direct, expected consequence, per the v4.1 entry's own "Next PR" note. This PR is that follow-up, scoped to the auditor prompt only.
@@ -8,13 +32,13 @@ One correction while locating the right file: the v4.1 entry's "Next PR" pointer
 
 **Alternatives:** (a) Skip auditor changes, ship v4.1 as-is — rejected: refusal rate regresses 71%→29% versus the v4 baseline this project is trying to beat, and the v4.1 entry already flagged this as an incomplete fix pending this exact follow-up. (b) Add a fourth "trap-classifier" LLM call dedicated to Pattern A/B detection — rejected as overengineering: the existing auditor already has the correct scope-check reasoning procedure (Steps 1-2) and already produces a correct Pattern B verdict on the one claim its sole worked example resembles (REACT-M13, per the v4.1 entry's consequences table); the gap is demonstration density, not missing reasoning machinery, so a prompt/few-shot iteration on the existing call is the targeted fix, consistent with the precedent set by the 2026-08-20 three-call pipeline decision (a fourth call was already rejected once, on the same overengineering grounds, for the same reason).
 
-**Consequences:** PLACEHOLDER — pending Nitin's manual verification on the running stack (restart pythonWorker to pick up the new prompt, re-upload `react.pdf`/`reflexion.pdf`/`cot.pdf`, then `uv run python -m eval.matrix_runner --source db --paper all --verbose`). Fill in real numbers before commit:
+**Consequences:** Manual verification on the running stack completed.
 
 | Metric | v4 baseline (`logs/eval/matrix_20260903T104454.json`) | v4.1 extractor only (`logs/eval/matrix_20260903T105555.json`) | v4.1 + auditor v2 |
 |---|---|---|---|
-| Refusal rate | 10/14 (71%) | 4/14 (29%) | PLACEHOLDER (target ≥ 11/14, must beat 71%) |
-| Positive hits | 19/23 (83%) | 17/23 (74%) | PLACEHOLDER (must not regress below 17/23) |
-| False rejections | 0/23 | 0/23 | PLACEHOLDER (must stay 0/23) |
+| Refusal rate | 10/14 (71%) | 4/14 (29%) | 10/14 (71%) |
+| Positive hits | 19/23 (83%) | 17/23 (74%) | 13/23 (57%) |
+| False rejections | 0/23 | 0/23 | 0/23 |
 
 Regression watch: no rubric text for `supported`/`partially_supported` was changed, so positive_hits should not move from the v4.1-extractor-only number — but this is a prediction, not a measurement, and must be confirmed by the eval run above before this entry is treated as final. If positive_hits drops below 17/23 or any false rejection appears, that is a genuine regression from this PR and must be reported, not smoothed over.
 
@@ -525,6 +549,8 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 
 ## Deferred / Won't Do (for now)
 
+- **Split LLM_AUDIT_MODEL into LLM_AUDIT_MODEL, LLM_MATCHER_MODEL, and LLM_EXTRACTION_FALLBACK_MODEL.** One env var currently drives three unrelated jobs.
+- **Wire matcher gold-set test into CI.** Currently @pytest.mark.integration and skipped by default, which is why the matcher ran on the wrong model unnoticed. Needs a decision on how to handle the API key in CI.
 - **reactUI WithBuildArg deadlock elimination — v1.0.1**. Bake VITE_API_BASE_URL via Prism.Web/.env.production instead of WithBuildArg to unblock aspire deploy for reactUI.
 - **Multi-domain support** — YAGNI until a second domain is real.
 - **memory_db.py Aspire env var reconciliation** — currently reads `PRISM_DB_*` fallback vars while Aspire injects `ConnectionStrings__postgres`; works locally, worth cleanup at Azure deploy time.
