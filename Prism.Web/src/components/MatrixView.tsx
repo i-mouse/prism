@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FileText } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PrismLogo } from "@/components/PrismLogo";
 import { PaperHeader } from "@/components/matrix/PaperHeader";
 import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { ClaimList } from "@/components/matrix/ClaimList";
@@ -23,6 +24,7 @@ interface MatrixViewProps {
   activePaperId: string | null;
   activeChatId: string;
   onViewEvidence: (claimId: string) => void;
+  onUploadClick: () => void;
 }
 
 type SortMode = "position" | "support";
@@ -46,6 +48,7 @@ export function MatrixView({
   activePaperId,
   activeChatId,
   onViewEvidence,
+  onUploadClick,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
 
@@ -70,11 +73,20 @@ export function MatrixView({
 
   if (!activePaperId) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center">
-        <FileText className="h-12 w-12 text-ink-subtle" />
-        <p className="text-sm text-ink-muted">
-          Select a paper from the sidebar, or upload a paper to get started.
-        </p>
+      <div className="flex h-full flex-col items-center justify-center gap-6 px-6">
+        <PrismLogo className="h-16 w-16 opacity-40" />
+        <div className="max-w-md space-y-2 text-center">
+          <h1 className="font-sans text-2xl font-semibold text-ink">Select a paper to see its audit.</h1>
+          <p className="font-sans text-base text-ink-secondary">Or upload a new paper to get started.</p>
+        </div>
+        <button
+          type="button"
+          onClick={onUploadClick}
+          className="flex items-center gap-2 rounded-lg border border-brand px-5 py-2.5 font-sans text-sm font-medium text-brand transition-colors hover:bg-brand hover:text-white"
+        >
+          <Upload className="h-4 w-4" />
+          Upload a paper
+        </button>
       </div>
     );
   }

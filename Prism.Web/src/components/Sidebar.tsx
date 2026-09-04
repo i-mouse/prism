@@ -1,5 +1,7 @@
+import type { Ref } from "react";
 import type { ChatListItem } from "@/types/api";
-import { UploadZone } from "@/components/sidebar/UploadZone";
+import { PrismLogo } from "@/components/PrismLogo";
+import { UploadZone, type UploadZoneHandle } from "@/components/sidebar/UploadZone";
 import { CurrentContextCard } from "@/components/sidebar/CurrentContextCard";
 import { PaperListItem } from "@/components/sidebar/PaperListItem";
 import { SidebarFooter } from "@/components/sidebar/SidebarFooter";
@@ -13,6 +15,7 @@ interface SidebarProps {
   fileSizeLabels: Record<string, string>;
   onUploaded: (chatId: string, fileId: string, file: File) => void;
   onSelectChat: (chatId: string) => void;
+  uploadZoneRef?: Ref<UploadZoneHandle>;
 }
 
 export function Sidebar({
@@ -24,20 +27,20 @@ export function Sidebar({
   fileSizeLabels,
   onUploaded,
   onSelectChat,
+  uploadZoneRef,
 }: SidebarProps) {
   const activeChat = chats.find((c) => c.chatId === activeChatId) ?? null;
 
   return (
-    <aside className="flex h-full flex-col overflow-y-auto border-r border-border bg-surface-alt px-3 py-4">
+    <aside className="flex h-full flex-col overflow-y-auto border-r border-hairline bg-surface px-4 py-6">
       <div className="flex items-center gap-2 pb-4">
-        <svg viewBox="0 0 24 24" className="h-8 w-8 text-ink" fill="currentColor">
-          <path d="M12 1L23 12L12 23L1 12L12 1Z" />
-        </svg>
-        <span className="font-display text-lg font-bold text-ink">Prism</span>
+        <PrismLogo className="h-6 w-6" />
+        <span className="font-sans font-semibold text-ink">Prism</span>
       </div>
 
       <div className="pb-6">
         <UploadZone
+          ref={uploadZoneRef}
           getConnectionId={getConnectionId}
           joinChat={joinChat}
           refetchChats={refetchChats}
@@ -47,7 +50,7 @@ export function Sidebar({
 
       {activeChat && (
         <>
-          <div className="pb-2 text-xs font-semibold uppercase tracking-[0.05em] text-ink-subtle">
+          <div className="pb-2 font-sans text-xs uppercase tracking-wider text-ink-tertiary">
             Current Context
           </div>
           <div className="pb-6">
@@ -60,7 +63,7 @@ export function Sidebar({
         </>
       )}
 
-      <div className="pb-2 text-xs font-semibold uppercase tracking-[0.05em] text-ink-subtle">
+      <div className="pb-2 font-sans text-xs uppercase tracking-wider text-ink-tertiary">
         Papers
       </div>
       <div className="flex flex-col gap-1">

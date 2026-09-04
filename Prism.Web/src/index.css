@@ -21,6 +21,19 @@
   --ring: oklch(0.5 0.22 285);
 }
 
+/* Restyle signature gradient (PRISM_DESIGN_SYSTEM.md §1). Used on the
+   audit summary number and hero-style headline moments. */
+.gradient-brand {
+  background: linear-gradient(
+    90deg,
+    oklch(0.705 0.213 47.604) 0%,
+    oklch(0.645 0.246 16.439) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @keyframes prism-fade-in {
   from {
     opacity: 0;

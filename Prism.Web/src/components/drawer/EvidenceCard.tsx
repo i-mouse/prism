@@ -1,5 +1,6 @@
 import type { EvidenceSpanDto } from "@/types/api";
-import { groundingStatusMeta } from "@/lib/claimMeta";
+import { groundingStatusMeta, groundingStatusToVerdict } from "@/lib/claimMeta";
+import { VerdictPill } from "@/components/VerdictPill";
 
 interface EvidenceCardProps {
   span: EvidenceSpanDto;
@@ -7,18 +8,19 @@ interface EvidenceCardProps {
 
 export function EvidenceCard({ span }: EvidenceCardProps) {
   const status = groundingStatusMeta[span.groundingStatus];
+  const verdict = groundingStatusToVerdict[span.groundingStatus];
 
   return (
-    <div className="space-y-3 rounded-md border border-border bg-surface p-4">
-      <p className="font-mono text-[13px] leading-relaxed text-ink">{span.sourceText}</p>
+    <div className="space-y-2">
+      <p className="rounded-lg border border-hairline bg-surface-subtle p-3 font-mono text-sm text-ink">
+        {span.sourceText}
+      </p>
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-[0.05em] text-ink-subtle">
+        <p className="font-mono text-xs uppercase tracking-wider text-ink-tertiary">
           {span.sourceSection}
           {span.pageNumber != null ? ` · p. ${span.pageNumber}` : ""}
         </p>
-        <span className={`h-5 text-xs font-semibold uppercase tracking-[0.05em] ${status.textClass}`}>
-          {status.label}
-        </span>
+        <VerdictPill verdict={verdict} label={status.label} size="sm" />
       </div>
     </div>
   );
