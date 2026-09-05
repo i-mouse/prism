@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Upload } from "lucide-react";
+import { ChevronDown, ChevronUp, Upload } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -9,12 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PrismLogo } from "@/components/PrismLogo";
 import { PaperHeader } from "@/components/matrix/PaperHeader";
 import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { ClaimList } from "@/components/matrix/ClaimList";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
+import { useOverviewCollapsed } from "@/hooks/useOverviewCollapsed";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
@@ -51,6 +51,7 @@ export function MatrixView({
   onUploadClick,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
+  const [overviewCollapsed, setOverviewCollapsed] = useOverviewCollapsed();
 
   const claims = paperClaims?.claims ?? [];
 
@@ -73,20 +74,86 @@ export function MatrixView({
 
   if (!activePaperId) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-6 px-6">
-        <PrismLogo className="h-16 w-16 opacity-40" />
-        <div className="max-w-md space-y-2 text-center">
-          <h1 className="font-sans text-2xl font-semibold text-ink">Select a paper to see its audit.</h1>
-          <p className="font-sans text-base text-ink-secondary">Or upload a new paper to get started.</p>
+      <div className="flex h-full flex-col items-center justify-center gap-12 px-4 py-8 md:px-6 lg:py-16">
+        <div className="w-full max-w-2xl">
+          {/* Zone A — HERO DROP ZONE */}
+          <div 
+            className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-hairline p-8 md:p-12 transition-all duration-200 hover:border-brand hover:bg-brand-subtle group"
+            onClick={onUploadClick}
+          >
+            <Upload className="h-12 w-12 text-ink-tertiary transition-colors group-hover:text-brand" strokeWidth={1.5} />
+            <h1 className="mt-4 font-sans text-2xl font-semibold text-ink">
+              Drop a research paper
+            </h1>
+            <p className="mt-2 font-mono text-xs text-ink-tertiary">
+              PDF · up to 50MB · no account needed
+            </p>
+          </div>
+
+          {/* Zone B — HOW IT WORKS STRIP */}
+          <div className="mt-12 hidden md:grid grid-cols-3 gap-4 relative">
+            {/* Desktop Connector Line */}
+            <div className="absolute top-8 left-1/6 right-1/6 h-px border-t border-dashed border-hairline z-0" />
+            
+            <div className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand font-mono text-xs text-white">1</div>
+              <div className="mt-3 font-sans text-sm font-semibold text-ink">Extractor</div>
+              <div className="mt-1 font-sans text-xs text-ink-secondary">Pulls every claim from the paper.</div>
+            </div>
+            
+            <div className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-verdict-supported-icon font-mono text-xs text-white">2</div>
+              <div className="mt-3 font-sans text-sm font-semibold text-ink">Auditor</div>
+              <div className="mt-1 font-sans text-xs text-ink-secondary">Reasons against the paper's own text.</div>
+            </div>
+
+            <div className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-verdict-refused-icon font-mono text-xs text-white">3</div>
+              <div className="mt-3 font-sans text-sm font-semibold text-ink">Verdict</div>
+              <div className="mt-1 font-sans text-xs text-ink-secondary">Refuses to affirm what isn't supported.</div>
+            </div>
+          </div>
+
+          {/* Mobile How It Works Strip */}
+          <div className="mt-8 flex flex-col gap-3 md:hidden">
+            <div className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand font-mono text-xs text-white">1</div>
+              <div>
+                <div className="font-sans text-sm font-semibold text-ink">Extractor</div>
+                <div className="font-sans text-xs text-ink-secondary">Pulls every claim from the paper.</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-verdict-supported-icon font-mono text-xs text-white">2</div>
+              <div>
+                <div className="font-sans text-sm font-semibold text-ink">Auditor</div>
+                <div className="font-sans text-xs text-ink-secondary">Reasons against the paper's own text.</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-verdict-refused-icon font-mono text-xs text-white">3</div>
+              <div>
+                <div className="font-sans text-sm font-semibold text-ink">Verdict</div>
+                <div className="font-sans text-xs text-ink-secondary">Refuses to affirm what isn't supported.</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Zone C — METRIC FOOTER */}
+          <div className="mt-12 text-center">
+            <p className="font-sans text-sm text-ink-secondary">
+              <span className="font-mono gradient-brand font-semibold text-base">10 of 14</span> correct refusals on adversarial test cases
+            </p>
+            <a 
+              href="https://github.com/i-mouse/prism#eval" 
+              target="_blank" 
+              rel="noreferrer"
+              className="mt-2 inline-flex items-center gap-1 font-sans text-xs text-brand hover:text-brand-hover"
+            >
+              See the eval →
+            </a>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={onUploadClick}
-          className="flex items-center gap-2 rounded-lg border border-brand px-5 py-2.5 font-sans text-sm font-medium text-brand transition-colors hover:bg-brand hover:text-white"
-        >
-          <Upload className="h-4 w-4" />
-          Upload a paper
-        </button>
       </div>
     );
   }
@@ -126,45 +193,66 @@ export function MatrixView({
           transition={{ duration: 0.3, delay: 0.1 }}
           className="flex h-full min-h-0 flex-col"
         >
-          <div className="shrink-0 px-8 pt-4">
+          <div className="shrink-0 px-3 py-3 md:px-8 md:pt-4 md:pb-0">
             <PaperHeader
               fileName={paperClaims.fileName}
               extractionStatus={paperClaims.extractionStatus}
               completedAt={paperClaims.completedAt}
             />
 
-            <div className="mt-6">
-              <SummaryStrip summary={derivedSummary} />
+            <div className="mt-3 flex items-center justify-between md:mt-4">
+              <span className="font-sans text-xs uppercase tracking-wider text-ink-tertiary">
+                Audit overview
+              </span>
+              <button
+                type="button"
+                onClick={() => setOverviewCollapsed(!overviewCollapsed)}
+                aria-expanded={!overviewCollapsed}
+                aria-controls="audit-overview-region"
+                aria-label="Toggle audit overview"
+                className="rounded-md bg-transparent p-1 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+              >
+                {overviewCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+              </button>
             </div>
 
-            <div className="mt-3 flex items-center justify-end">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-ink-muted">Sort by:</span>
-                <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-                  <SelectTrigger size="sm" className="border-border text-sm text-ink hover:border-border-strong">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="position" className="focus:bg-surface-sunken focus:text-ink">
-                      Position
-                    </SelectItem>
-                    <SelectItem value="support" className="focus:bg-surface-sunken focus:text-ink">
-                      Support
-                    </SelectItem>
-                    <SelectItem
-                      value="section"
-                      disabled
-                      className="cursor-not-allowed opacity-50 focus:bg-surface-sunken focus:text-ink"
-                    >
-                      Section
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+            <CollapsibleRegion id="audit-overview-region" collapsed={overviewCollapsed}>
+              <div className="mt-2 md:mt-3">
+                <SummaryStrip summary={derivedSummary} />
               </div>
+            </CollapsibleRegion>
+
+            <div className="mb-2 flex items-center justify-between border-b border-hairline py-2 md:mb-3 md:py-3">
+              <span className="hidden font-sans text-xs text-ink-secondary sm:inline md:text-sm">
+                {claims.length} {claims.length === 1 ? "claim" : "claims"}
+              </span>
+              <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+                <SelectTrigger
+                  className="gap-1 rounded-lg border-hairline bg-surface px-2 py-1 font-sans text-xs text-ink hover:border-hairline-strong focus-visible:ring-2 focus-visible:ring-brand-subtle md:px-3 md:py-1.5 md:text-sm lg:!h-8"
+                >
+                  <span className="text-ink-tertiary">Sort:</span>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="position" className="focus:bg-surface-subtle focus:text-ink">
+                    Position
+                  </SelectItem>
+                  <SelectItem value="support" className="focus:bg-surface-subtle focus:text-ink">
+                    Support
+                  </SelectItem>
+                  <SelectItem
+                    value="section"
+                    disabled
+                    className="cursor-not-allowed opacity-50 focus:bg-surface-subtle focus:text-ink"
+                  >
+                    Section
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-8 pb-6 pt-2">
+          <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-24 pt-2 md:px-8 lg:pb-6">
             <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
           </div>
 
@@ -172,6 +260,69 @@ export function MatrixView({
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+function prefersReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+// Drives the collapse/expand height manually via rAF instead of a CSS
+// `transition: max-height` — the latter reliably got stuck mid-transition
+// (computed height pinned at 0) on this element in testing, so height is
+// interpolated by hand every frame instead of trusting the CSS engine.
+function CollapsibleRegion({ id, collapsed, children }: { id: string; collapsed: boolean; children: ReactNode }) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    const outer = outerRef.current;
+    const content = contentRef.current;
+    if (!outer || !content) return;
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      outer.style.height = collapsed ? "0px" : "auto";
+      return;
+    }
+
+    if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+
+    if (prefersReducedMotion()) {
+      outer.style.height = collapsed ? "0px" : "auto";
+      return;
+    }
+
+    const startHeight = outer.getBoundingClientRect().height;
+    const targetHeight = collapsed ? 0 : content.getBoundingClientRect().height;
+    const duration = 200;
+    const start = performance.now();
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const h = startHeight + (targetHeight - startHeight) * easeOut(t);
+      outer.style.height = `${h}px`;
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(step);
+      } else {
+        outer.style.height = collapsed ? "0px" : "auto";
+        rafRef.current = null;
+      }
+    };
+    rafRef.current = requestAnimationFrame(step);
+
+    return () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [collapsed]);
+
+  return (
+    <div id={id} ref={outerRef} className="overflow-hidden" style={{ height: collapsed ? 0 : undefined }}>
+      <div ref={contentRef}>{children}</div>
+    </div>
   );
 }
 

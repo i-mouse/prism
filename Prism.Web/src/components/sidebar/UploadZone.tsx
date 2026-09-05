@@ -2,37 +2,32 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface UploadZoneProps {
   getConnectionId: () => string | null;
   joinChat: (chatId: string) => Promise<void>;
   onUploaded: (chatId: string, fileId: string, file: File) => void;
   refetchChats: () => void;
+  collapsed?: boolean;
 }
 
 export interface UploadZoneHandle {
   openFilePicker: () => void;
+  handleFiles: (files: FileList | File[]) => void;
 }
 
 export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function UploadZone(
-  { getConnectionId, joinChat, onUploaded, refetchChats },
+  { getConnectionId, joinChat, onUploaded, refetchChats, collapsed = false },
   ref
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  useImperativeHandle(ref, () => ({
-    openFilePicker: () => inputRef.current?.click(),
-  }));
+  const processFiles = async (filesArray: File[]) => {
+    if (filesArray.length === 0) return;
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    // input.files is a live FileList tied to the element, so it must be
-    // copied out before clearing e.target.value below (which also clears it).
-    const files = Array.from(e.target.files ?? []);
-    e.target.value = "";
-    if (files.length === 0) return;
-
-    if (files.length > 1) {
+    if (filesArray.length > 1) {
       toast.error("Prism audits one paper at a time. Upload a single PDF.");
       return;
     }
@@ -44,7 +39,7 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
     }
 
     const chatId = crypto.randomUUID();
-    const file = files[0];
+    const file = filesArray[0];
 
     setUploading(true);
     try {
@@ -80,6 +75,17 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    openFilePicker: () => inputRef.current?.click(),
+    handleFiles: (files) => processFiles(Array.from(files)),
+  }));
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    processFiles(files);
+  };
+
   return (
     <div>
       <input
@@ -91,12 +97,16 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
         onChange={handleChange}
       />
       <Button
-        className="h-auto w-full gap-2 rounded-lg bg-brand px-4 py-2.5 font-sans text-sm font-medium text-white hover:bg-brand-hover"
+        className={cn(
+          "h-auto w-full gap-2 rounded-lg bg-brand px-4 py-2.5 font-sans text-sm font-medium text-white hover:bg-brand-hover focus-visible:ring-2 focus-visible:ring-brand-subtle transition-all duration-150 ease-smooth",
+          collapsed ? "px-0 justify-center min-w-[2.75rem]" : ""
+        )}
         disabled={uploading}
         onClick={() => inputRef.current?.click()}
+        title={collapsed ? "Upload & Analyze" : undefined}
       >
-        <Upload className="h-4 w-4" />
-        {uploading ? "Uploading..." : "Upload & Analyze"}
+        <Upload className={cn("h-4 w-4", collapsed && "mx-auto")} />
+        {!collapsed && (uploading ? "Uploading..." : "Upload & Analyze")}
       </Button>
     </div>
   );

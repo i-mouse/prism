@@ -47,20 +47,22 @@ export function VerdictPill({
 }: {
   verdict: Verdict;
   label?: string;
-  size?: "default" | "sm";
+  size?: "default" | "sm" | "xs";
   className?: string;
 }) {
   const c = config[verdict];
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full font-mono uppercase tracking-wider",
-        size === "default" ? "px-2.5 py-1 text-xs" : "px-2 py-0.5 text-[10px]",
+        "inline-flex items-center gap-1 rounded-full font-mono uppercase tracking-wider",
+        size === "default" && "gap-1.5 px-2.5 py-1 text-xs",
+        size === "sm" && "gap-1.5 px-2 py-0.5 text-[10px]",
+        size === "xs" && "px-1.5 py-0.5 text-[9px]",
         c.classes,
         className
       )}
     >
-      <c.Icon className={cn("h-3 w-3", c.iconClass)} strokeWidth={2.5} />
+      <c.Icon className={cn(size === "xs" ? "h-2.5 w-2.5" : "h-3 w-3", c.iconClass)} strokeWidth={2.5} />
       {label ?? c.label}
     </span>
   );

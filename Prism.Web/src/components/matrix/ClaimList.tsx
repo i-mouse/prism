@@ -9,7 +9,7 @@ interface ClaimListProps {
 
 export function ClaimList({ claims, onViewEvidence }: ClaimListProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 md:space-y-3">
       {claims.map((claim) =>
         claim.missing ? (
           <AbsenceRow key={claim.id} claim={claim} onViewEvidence={() => onViewEvidence(claim.id)} />
