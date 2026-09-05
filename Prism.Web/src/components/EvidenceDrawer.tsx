@@ -73,10 +73,15 @@ export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
           </div>
 
           <div className="mt-auto pt-6">
-            <div className="space-y-2 rounded-md border border-hairline bg-surface p-4">
-              <p className="font-sans text-xs uppercase tracking-wider text-ink-tertiary">Linked to Claim</p>
-              <p className="text-sm text-ink">{claim.claimSummary}</p>
-              <VerdictPill verdict={claimLabelToVerdict[displayLabel(claim)]} />
+            <div className="rounded-md border border-hairline bg-surface p-4">
+              <p className="mb-2 font-sans text-xs uppercase tracking-wider text-ink-tertiary">Linked to Claim</p>
+              <div className="flex items-start gap-3">
+                <p className="flex-1 min-w-0 text-sm text-ink">{claim.claimSummary}</p>
+                <div className="flex shrink-0 items-start">
+                  <VerdictPill verdict={claimLabelToVerdict[displayLabel(claim)]} className="md:hidden" size="sm" />
+                  <VerdictPill verdict={claimLabelToVerdict[displayLabel(claim)]} className="hidden md:inline-flex" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
