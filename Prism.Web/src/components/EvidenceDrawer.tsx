@@ -15,7 +15,9 @@ interface EvidenceDrawerProps {
 
 export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
-  const claim = paperClaims?.claims.find((c) => c.id === selectedClaimId) ?? null;
+  const allClaims = paperClaims?.claims ?? [];
+  const claimIndex = allClaims.findIndex((c) => c.id === selectedClaimId);
+  const claim = claimIndex >= 0 ? allClaims[claimIndex] : null;
 
   const openPaper = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,8 +51,14 @@ export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
               <ExternalLink className="h-3 w-3" />
             </button>
           </div>
+          
+          <p className="mt-8 text-base text-ink font-medium leading-snug">{claim.claimSummary}</p>
+          
+          <div className="mt-3 flex justify-end">
+            <VerdictPill verdict={claimLabelToVerdict[displayLabel(claim)]} />
+          </div>
 
-          <div className="mt-6 font-sans text-xs uppercase tracking-wider text-ink-tertiary">Source</div>
+          <div className="mt-8 font-sans text-xs uppercase tracking-wider text-ink-tertiary">SOURCES FROM PAPER</div>
 
           {claim.missing && (
             <div className="mt-3 rounded-md bg-refused-bg p-3 text-sm text-refused">

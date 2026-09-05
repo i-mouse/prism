@@ -132,12 +132,14 @@ export function AppShell() {
   );
 
   const handleUploaded = useCallback(
-    (chatId: string, _fileId: string, file: File) => {
+    (chatId: string, fileId: string, file: File) => {
       setFileSizeLabels((prev) => ({ ...prev, [chatId]: formatFileSize(file.size) }));
       setIsMobileSidebarOpen(false);
+      setActiveChatId(chatId);
+      setActivePaperId(fileId);
       navigate(`/paper/${chatId}`);
     },
-    [navigate]
+    [navigate, setActiveChatId, setActivePaperId]
   );
 
   const isDesktopCollapsed = localStorage.getItem("prism_sidebar_collapsed") === "true";

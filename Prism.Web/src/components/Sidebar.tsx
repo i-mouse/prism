@@ -77,7 +77,7 @@ export function Sidebar({
       {activeChat && !collapsed && (
         <>
           <div className="pb-2 px-1 font-sans text-[10px] uppercase tracking-wider text-ink-tertiary">
-            Current Context
+            CURRENT PAPER
           </div>
           <div className="pb-6">
             <CurrentContextCard
@@ -91,7 +91,7 @@ export function Sidebar({
 
       {!collapsed && (
         <div className="pb-2 px-1 font-sans text-[10px] uppercase tracking-wider text-ink-tertiary">
-          Papers
+          RECENT PAPERS
         </div>
       )}
       

@@ -98,8 +98,8 @@ function followUpsFor(turn: ChatTurn): string[] {
 
 function PrismAvatar() {
   return (
-    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-accent/20 bg-accent-subtle">
-      <div className="h-2 w-2 rotate-45 rounded-sm bg-accent" />
+    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-brand/20 bg-brand-subtle">
+      <div className="h-2 w-2 rotate-45 rounded-sm bg-brand" />
     </div>
   );
 }
@@ -322,7 +322,7 @@ function UserTurnBubble({ turn }: { turn: ChatTurn }) {
   const text = turn.blocks.map((b) => (b.type === "text" ? b.content : "")).join("");
   return (
     <div className="flex justify-end">
-      <div className="max-w-[75%] rounded-2xl bg-surface-subtle px-4 py-2.5 font-sans text-sm text-ink">{text}</div>
+      <div className="max-w-[75%] rounded-2xl rounded-br-sm bg-brand-subtle px-4 py-2.5 font-sans text-sm text-ink leading-relaxed">{text}</div>
     </div>
   );
 }

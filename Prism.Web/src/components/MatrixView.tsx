@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -10,11 +10,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PaperHeader } from "@/components/matrix/PaperHeader";
-import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { ClaimList } from "@/components/matrix/ClaimList";
+import { SummaryStrip } from "@/components/matrix/SummaryStrip";
+import { cn } from "@/lib/utils";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
-import { useOverviewCollapsed } from "@/hooks/useOverviewCollapsed";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
@@ -51,9 +51,15 @@ export function MatrixView({
   onUploadClick,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
-  const [overviewCollapsed, setOverviewCollapsed] = useOverviewCollapsed();
-
+  const [activeTab, setActiveTab] = useState<"claims" | "overview">("claims");
   const claims = paperClaims?.claims ?? [];
+
+  const sortedClaims = useMemo(() => {
+    if (sortMode === "support") {
+      return [...claims].sort(sortBySupport);
+    }
+    return [...claims].sort((a, b) => a.position - b.position);
+  }, [claims, sortMode]);
 
   const derivedSummary = useMemo(() => {
     const labels = claims.map(displayLabel);
@@ -64,13 +70,6 @@ export function MatrixView({
       notSupported: labels.filter((l) => l === "not_supported").length,
     };
   }, [claims]);
-
-  const sortedClaims = useMemo(() => {
-    if (sortMode === "support") {
-      return [...claims].sort(sortBySupport);
-    }
-    return [...claims].sort((a, b) => a.position - b.position);
-  }, [claims, sortMode]);
 
   if (!activePaperId) {
     return (
@@ -183,7 +182,7 @@ export function MatrixView({
           transition={{ duration: 0.2 }}
           className="h-full overflow-y-auto"
         >
-          <PaperActivityView fileId={activePaperId} fileName={paperClaims.fileName} />
+          <PaperActivityView fileId={activePaperId} fileName={paperClaims.fileName} extractionStatus={paperClaims.extractionStatus} />
         </motion.div>
       ) : (
         <motion.div
@@ -200,60 +199,74 @@ export function MatrixView({
               completedAt={paperClaims.completedAt}
             />
 
-            <div className="mt-3 flex items-center justify-between md:mt-4">
-              <span className="font-sans text-xs uppercase tracking-wider text-ink-tertiary">
-                Audit overview
-              </span>
-              <button
-                type="button"
-                onClick={() => setOverviewCollapsed(!overviewCollapsed)}
-                aria-expanded={!overviewCollapsed}
-                aria-controls="audit-overview-region"
-                aria-label="Toggle audit overview"
-                className="rounded-md bg-transparent p-1 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+            <div className="mt-6 flex items-center gap-6 border-b border-hairline px-1">
+              <button 
+                onClick={() => setActiveTab("claims")}
+                className={cn(
+                  "relative flex items-center gap-2 pb-3 font-sans text-sm font-semibold",
+                  activeTab === "claims" ? "text-brand" : "text-ink-secondary hover:text-ink"
+                )}
               >
-                {overviewCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                Claims
+                <span className={cn(
+                  "flex h-5 items-center justify-center rounded-full px-2 font-mono text-xs font-semibold",
+                  activeTab === "claims" ? "bg-brand-subtle text-brand" : "bg-surface-subtle text-ink-tertiary"
+                )}>
+                  {claims.length}
+                </span>
+                {activeTab === "claims" && <div className="absolute -bottom-px left-0 right-0 h-0.5 bg-brand" />}
+              </button>
+              <button 
+                onClick={() => setActiveTab("overview")}
+                className={cn(
+                  "relative pb-3 font-sans text-sm font-semibold",
+                  activeTab === "overview" ? "text-brand" : "text-ink-secondary hover:text-ink"
+                )}
+              >
+                Overview
+                {activeTab === "overview" && <div className="absolute -bottom-px left-0 right-0 h-0.5 bg-brand" />}
               </button>
             </div>
 
-            <CollapsibleRegion id="audit-overview-region" collapsed={overviewCollapsed}>
-              <div className="mt-2 md:mt-3">
-                <SummaryStrip summary={derivedSummary} />
-              </div>
-            </CollapsibleRegion>
-
-            <div className="mb-2 flex items-center justify-between border-b border-hairline py-2 md:mb-3 md:py-3">
-              <span className="hidden font-sans text-xs text-ink-secondary sm:inline md:text-sm">
-                {claims.length} {claims.length === 1 ? "claim" : "claims"}
-              </span>
-              <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-                <SelectTrigger
-                  className="gap-1 rounded-lg border-hairline bg-surface px-2 py-1 font-sans text-xs text-ink hover:border-hairline-strong focus-visible:ring-2 focus-visible:ring-brand-subtle md:px-3 md:py-1.5 md:text-sm lg:!h-8"
-                >
-                  <span className="text-ink-tertiary">Sort:</span>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="position" className="focus:bg-surface-subtle focus:text-ink">
-                    Position
-                  </SelectItem>
-                  <SelectItem value="support" className="focus:bg-surface-subtle focus:text-ink">
-                    Support
-                  </SelectItem>
-                  <SelectItem
-                    value="section"
-                    disabled
-                    className="cursor-not-allowed opacity-50 focus:bg-surface-subtle focus:text-ink"
+            {activeTab === "claims" && (
+              <div className="mb-2 flex items-center justify-end gap-3 py-3 md:mb-3">
+                <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+                  <SelectTrigger
+                    className="gap-1 rounded-lg border-hairline bg-surface px-2 py-1 font-sans text-xs text-ink hover:border-hairline-strong focus-visible:ring-2 focus-visible:ring-brand-subtle md:px-3 md:py-1.5 md:text-sm lg:!h-8"
                   >
-                    Section
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                    <span className="text-ink-tertiary">Sort:</span>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="position" className="focus:bg-surface-subtle focus:text-ink">
+                      Position
+                    </SelectItem>
+                    <SelectItem value="support" className="focus:bg-surface-subtle focus:text-ink">
+                      Support
+                    </SelectItem>
+                    <SelectItem
+                      value="section"
+                      disabled
+                      className="cursor-not-allowed opacity-50 focus:bg-surface-subtle focus:text-ink"
+                    >
+                      Section
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            {activeTab === "overview" && (
+              <div className="mb-2 py-3 md:mb-3" />
+            )}
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-24 pt-2 md:px-8 lg:pb-6">
-            <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
+            {activeTab === "claims" ? (
+              <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
+            ) : (
+              <SummaryStrip summary={derivedSummary} />
+            )}
           </div>
 
           <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} />
@@ -263,68 +276,7 @@ export function MatrixView({
   );
 }
 
-function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
-// Drives the collapse/expand height manually via rAF instead of a CSS
-// `transition: max-height` — the latter reliably got stuck mid-transition
-// (computed height pinned at 0) on this element in testing, so height is
-// interpolated by hand every frame instead of trusting the CSS engine.
-function CollapsibleRegion({ id, collapsed, children }: { id: string; collapsed: boolean; children: ReactNode }) {
-  const outerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number | null>(null);
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    const outer = outerRef.current;
-    const content = contentRef.current;
-    if (!outer || !content) return;
-
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      outer.style.height = collapsed ? "0px" : "auto";
-      return;
-    }
-
-    if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-
-    if (prefersReducedMotion()) {
-      outer.style.height = collapsed ? "0px" : "auto";
-      return;
-    }
-
-    const startHeight = outer.getBoundingClientRect().height;
-    const targetHeight = collapsed ? 0 : content.getBoundingClientRect().height;
-    const duration = 200;
-    const start = performance.now();
-    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const step = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      const h = startHeight + (targetHeight - startHeight) * easeOut(t);
-      outer.style.height = `${h}px`;
-      if (t < 1) {
-        rafRef.current = requestAnimationFrame(step);
-      } else {
-        outer.style.height = collapsed ? "0px" : "auto";
-        rafRef.current = null;
-      }
-    };
-    rafRef.current = requestAnimationFrame(step);
-
-    return () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-    };
-  }, [collapsed]);
-
-  return (
-    <div id={id} ref={outerRef} className="overflow-hidden" style={{ height: collapsed ? 0 : undefined }}>
-      <div ref={contentRef}>{children}</div>
-    </div>
-  );
-}
 
 function MatrixSkeleton() {
   return (

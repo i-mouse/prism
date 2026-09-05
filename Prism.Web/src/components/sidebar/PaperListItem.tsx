@@ -1,7 +1,5 @@
 import type { ChatListItem } from "@/types/api";
-import { extractionStatusMeta, extractionStatusToVerdict } from "@/lib/claimMeta";
 import { relativeTime } from "@/lib/format";
-import { VerdictPill } from "@/components/VerdictPill";
 import { cn } from "@/lib/utils";
 import { FileText } from "lucide-react";
 
@@ -13,8 +11,6 @@ interface PaperListItemProps {
 }
 
 export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: PaperListItemProps) {
-  const status = extractionStatusMeta[chat.extractionStatus];
-  const verdict = extractionStatusToVerdict[chat.extractionStatus];
 
   if (collapsed) {
     return (
@@ -37,14 +33,40 @@ export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: P
       type="button"
       onClick={onSelect}
       className={cn(
-        "w-full rounded-lg border-l-2 border-transparent px-3 py-3 text-left transition-colors hover:bg-surface-subtle",
-        isActive && "border-brand bg-brand-subtle"
+        "group flex w-full items-start gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-surface-subtle",
+        isActive && "border-brand bg-brand-subtle hover:bg-brand-subtle"
       )}
     >
-      <div className="truncate font-sans text-sm font-medium text-ink">{chat.fileName}</div>
-      <div className="mt-1 flex items-center gap-2">
-        <VerdictPill verdict={verdict} label={status.label} size="sm" />
-        <span className="font-mono text-xs tabular-nums text-ink-tertiary">{relativeTime(chat.uploadedAt)}</span>
+      <div className={cn(
+        "mt-0.5 shrink-0 rounded-md border border-hairline bg-surface p-1.5",
+        isActive ? "text-brand border-brand/20" : "text-ink-tertiary"
+      )}>
+        <FileText className="h-4 w-4" strokeWidth={1.5} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="truncate font-sans text-sm font-semibold text-ink">{chat.fileName}</div>
+        <div className="mt-1 flex items-center gap-1.5 font-sans text-[11px] font-medium">
+           {chat.extractionStatus === "Completed" ? (
+              <>
+                 <div className="flex h-3 w-3 items-center justify-center rounded-full bg-verdict-supported-icon text-white">
+                   <svg className="h-2 w-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                 </div>
+                 <span className="text-ink-secondary">Ready · {relativeTime(chat.uploadedAt)}</span>
+              </>
+           ) : chat.extractionStatus === "Failed" ? (
+              <>
+                 <div className="flex h-3 w-3 items-center justify-center rounded-full bg-verdict-refused-icon text-white">
+                    <svg className="h-2 w-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                 </div>
+                 <span className="text-ink-secondary">Failed · {relativeTime(chat.uploadedAt)}</span>
+              </>
+           ) : (
+              <>
+                 <div className="h-3.5 w-3.5 rounded-full border-[1.5px] border-brand border-t-transparent animate-spin" />
+                 <span className="text-brand">Analyzing...</span>
+              </>
+           )}
+        </div>
       </div>
     </button>
   );
