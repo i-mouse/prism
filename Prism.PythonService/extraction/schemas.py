@@ -102,13 +102,29 @@ class ClaimsExtractionResponse(BaseModel):
 
 # --- Span grounding audit (Stage 2 of grounding.py) - LLM response schema ---
 
+SpanStance = Literal["supports", "refutes", "neutral"]
+"""The quote's own relationship to the claim's assertion, judged in isolation
+from whatever label the auditor assigned - i.e. independent of claim_label,
+unlike verdict below. supports: the quote backs the claim. refutes: the
+quote contradicts or undermines the claim. neutral: the quote is unrelated,
+or on-topic but doesn't clearly land as support or refutation either way.
+"""
+
+
 class SpanAuditVerdict(BaseModel):
     """Structured response from the span-level grounding audit LLM call.
 
     Literal (not GroundingStatus) so the LLM can never emit "Skipped" -
-    that value is pipeline-internal and not a real audit verdict.
+    that value is pipeline-internal and not a real audit verdict. stance
+    has no default: a response missing it fails Pydantic validation rather
+    than silently defaulting, since a fabricated stance would be worse than
+    a loud, logged parse failure for the one span it affects.
     """
     reasoning: str = Field(..., description="Step-by-step reasoning about whether the quote supports the claim, considering the surrounding context")
+    stance: SpanStance = Field(
+        ...,
+        description="The quote's own relationship to the claim, independent of claim_label: supports, refutes, or neutral (unrelated or unclear either way)."
+    )
     verdict: Literal["Pass", "Partial", "Fail"] = Field(
         ...,
         description="Pass: quote directly supports the claim. Partial: topically relevant but incomplete on its own. Fail: unrelated or contradicts the claim."
@@ -127,6 +143,10 @@ class EvidenceSpanFinal(BaseModel):
     section_header: Optional[str] = None
     page_number: Optional[int] = None
     grounding_status: GroundingStatus
+    stance: Optional[SpanStance] = None
+    """None for spans that never reached the audit LLM (failed the RapidFuzz
+    gate, or the LLM call errored/returned malformed output) - there is no
+    stance to report for those, so None means "unknown", not a fake neutral."""
 
 
 class ClaimFinal(BaseModel):

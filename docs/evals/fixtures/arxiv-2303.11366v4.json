@@ -1,9 +1,9 @@
 {
   "header": {
-    "prompt_hash": "055d52687cc8",
+    "prompt_hash": "31021b91b11a",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
-    "generated_at": "2026-09-04T16:16:18.142704+00:00",
+    "generated_at": "2026-09-05T11:12:42.579904+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
     "extraction_run_id": "a9580aad-dfd2-416d-acbf-07c9618d32d8"

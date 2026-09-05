@@ -22,11 +22,13 @@ from extraction.prompt_loader import build_gemini_messages_for_span_audit
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import (
     ClaimFinal,
+    ClaimLabel,
     ClaimsExtractionResponse,
     EvidenceSpanFinal,
     EvidenceSpanLLM,
     GroundingStatus,
     SpanAuditVerdict,
+    SpanStance,
 )
 
 litellm.enable_json_schema_validation = True
@@ -185,6 +187,7 @@ async def _call_litellm_audit(
 
 async def _audit_span_with_llm(
     claim_text: str,
+    claim_label: ClaimLabel,
     span_source_text: str,
     span_source_section: str,
     span_context: str,
@@ -193,8 +196,10 @@ async def _audit_span_with_llm(
     fallback_model: str,
     gemini_api_key: str,
     correlation_id: str | None = None,
-) -> GroundingStatus:
-    """Asks the audit model whether the evidence quote supports the claim.
+) -> tuple[GroundingStatus, Optional[SpanStance]]:
+    """Asks the audit model whether the evidence quote justifies the
+    auditor's claim_label (supported/partially_supported/not_supported),
+    and separately what stance the quote itself takes on the claim.
 
     Receives the surrounding paper context (extracted via
     _extract_span_context) so the LLM can interpret table cell values
@@ -202,15 +207,23 @@ async def _audit_span_with_llm(
     Pass/Partial/Fail rubric (prompts/audit_system.txt +
     prompts/audit_fewshot.json) via structured JSON output, so an
     on-topic-but-unconfirmable passage lands on Partial instead of
-    forcing a binary guess into Fail.
+    forcing a binary guess into Fail. What Pass/Partial/Fail each mean
+    shifts with claim_label - e.g. for not_supported, a refuting quote
+    is Pass - but the verdict is still one of these same three values.
+    stance is orthogonal to claim_label (see SpanStance) - it is the
+    quote's own supports/refutes/neutral relationship to the claim,
+    independent of what the auditor decided.
 
-    Defensive: any error (API failure, malformed response) is logged and
-    treated as FAIL rather than propagated, since ambiguity here should
-    not abort grounding for the rest of the extraction.
+    Defensive: any error (API failure, malformed response, including a
+    response missing the required stance field) is logged and treated as
+    (FAIL, None) rather than propagated or silently defaulted, since
+    ambiguity here should not abort grounding for the rest of the
+    extraction - but it also must not fabricate a stance value.
     """
     messages = _to_litellm_messages(
         build_gemini_messages_for_span_audit(
             claim_text=claim_text,
+            claim_label=claim_label.value,
             quote=span_source_text,
             context=span_context,
         )
@@ -226,10 +239,10 @@ async def _audit_span_with_llm(
                 span_source_section=span_source_section,
                 correlation_id=correlation_id,
             )
-            return GroundingStatus(verdict.verdict)
+            return GroundingStatus(verdict.verdict), verdict.stance
         except Exception as exc:
             print(f"[ground_extraction] correlation_id={correlation_id} LLM audit failed for span in {span_source_section!r}: {exc!r}")
-            return GroundingStatus.FAIL
+            return GroundingStatus.FAIL, None
 
 
 def _passes_rapidfuzz(span_source_text: str, paper_text: str) -> bool:
@@ -238,6 +251,7 @@ def _passes_rapidfuzz(span_source_text: str, paper_text: str) -> bool:
 
 async def _ground_span(
     claim_text: str,
+    claim_label: ClaimLabel,
     span: EvidenceSpanLLM,
     paper_text: str,
     semaphore: asyncio.Semaphore,
@@ -254,6 +268,7 @@ async def _ground_span(
             section_header=span.section_header,
             page_number=span.page_number,
             grounding_status=GroundingStatus.FAIL,
+            stance=None,
         )
         return final_span, False
 
@@ -264,8 +279,9 @@ async def _ground_span(
         span_context = span.source_text
     print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars for span in {span.source_section!r}")
 
-    status = await _audit_span_with_llm(
+    status, stance = await _audit_span_with_llm(
         claim_text=claim_text,
+        claim_label=claim_label,
         span_source_text=span.source_text,
         span_source_section=span.source_section,
         span_context=span_context,
@@ -281,6 +297,7 @@ async def _ground_span(
         section_header=span.section_header,
         page_number=span.page_number,
         grounding_status=status,
+        stance=stance,
     )
     return final_span, True
 
@@ -319,6 +336,65 @@ def _write_grounding_log(
         "spans_failed_audit": spans_failed_audit,
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
+
+
+def _build_claim_reason(
+    claim_label: ClaimLabel,
+    n_pass: int,
+    n_partial: int,
+    n_fail: int,
+    n_rapidfuzz_failed: int,
+) -> str:
+    """Builds the per-claim reason string from the auditor's claim_label and
+    the distribution of span verdicts under the label-aware rubric in
+    audit_system.txt. Pass/Partial/Fail carry different meanings depending
+    on claim_label, so the same span counts read differently across labels
+    - e.g. a Pass span means "supports" under claim_label=supported but
+    "refutes" under claim_label=not_supported.
+
+    Replaces the old `elif partials:` check, which fired a positive-sounding
+    "partial support" reason on any Partial span even when Fail spans
+    dominated and the claim_label was ignored entirely.
+    """
+    total = n_pass + n_partial + n_fail
+
+    if total > 0 and n_rapidfuzz_failed == total:
+        return "The auditor's cited passages do not appear in the paper as quoted."
+
+    if claim_label == ClaimLabel.NOT_SUPPORTED:
+        if n_pass > 0:
+            noun = "passage" if n_pass == 1 else "passages"
+            return f"The paper provides evidence that contradicts this claim: {n_pass} {noun}."
+        return "The paper makes this claim but the cited evidence neither supports nor refutes it."
+
+    if claim_label == ClaimLabel.SUPPORTED:
+        if n_pass == total and n_pass > 0:
+            noun = "passage" if n_pass == 1 else "passages"
+            return f"Cited evidence supports the claim across {n_pass} {noun}."
+        if n_pass > 0:
+            return (
+                f"Partial support: {n_pass} of {total} cited passages support the claim; "
+                "the remainder are irrelevant."
+            )
+        if n_partial > 0:
+            noun = "passage" if n_partial == 1 else "passages"
+            verb = "offers" if n_partial == 1 else "offer"
+            return (
+                "The cited evidence is topically relevant but does not fully confirm the claim: "
+                f"{n_partial} {noun} {verb} partial support."
+            )
+        return "The paper makes this claim but the cited evidence does not confirm it."
+
+    # claim_label == ClaimLabel.PARTIALLY_SUPPORTED
+    if n_pass > 0:
+        noun = "passage" if n_pass == 1 else "passages"
+        verb = "is" if n_pass == 1 else "are"
+        return f"{n_pass} cited {noun} {verb} directly relevant to this claim (supporting or contradicting it)."
+    if n_partial > 0:
+        noun = "passage" if n_partial == 1 else "passages"
+        verb = "offers" if n_partial == 1 else "offer"
+        return f"The cited evidence is only loosely related to this claim: {n_partial} {noun} {verb} partial relevance."
+    return "The paper makes this claim but the cited evidence is not directly relevant."
 
 
 async def ground_extraction(
@@ -364,9 +440,10 @@ async def ground_extraction(
                 except Exception:
                     pass  # progress emission never breaks grounding
 
-    async def _ground_span_tracked(claim_idx: int, claim_text: str, span: EvidenceSpanLLM):
+    async def _ground_span_tracked(claim_idx: int, claim_text: str, claim_label: ClaimLabel, span: EvidenceSpanLLM):
         result = await _ground_span(
             claim_text=claim_text,
+            claim_label=claim_label,
             span=span,
             paper_text=paper_text,
             semaphore=semaphore,
@@ -390,14 +467,13 @@ async def ground_extraction(
         for span in claim.evidence_spans:
             span_claim_indices.append(claim_idx)
             span_tasks.append(
-                _ground_span_tracked(claim_idx, claim.claim_text_verbatim, span)
+                _ground_span_tracked(claim_idx, claim.claim_text_verbatim, claim.label, span)
             )
 
     span_results = await asyncio.gather(*span_tasks) if span_tasks else []
 
     claims_spans: list[list[EvidenceSpanFinal]] = [[] for _ in extraction.claims]
     claims_rapidfuzz_failed = [0 for _ in extraction.claims]
-    claims_audit_failed = [0 for _ in extraction.claims]
     spans_total = 0
     spans_passed_rapidfuzz = 0
     spans_passed_audit = 0
@@ -413,10 +489,8 @@ async def ground_extraction(
                 spans_passed_audit += 1
             elif final_span.grounding_status == GroundingStatus.PARTIAL:
                 spans_partial_audit += 1
-                claims_audit_failed[claim_idx] += 1
             else:
                 spans_failed_audit += 1
-                claims_audit_failed[claim_idx] += 1
         else:
             claims_rapidfuzz_failed[claim_idx] += 1
 
@@ -429,56 +503,40 @@ async def ground_extraction(
         spans = claims_spans[claim_idx]
         passes = [s for s in spans if s.grounding_status == GroundingStatus.PASS]
         partials = [s for s in spans if s.grounding_status == GroundingStatus.PARTIAL]
+        fails = [s for s in spans if s.grounding_status == GroundingStatus.FAIL]
+
+        reason = _build_claim_reason(
+            claim_label=claim.label,
+            n_pass=len(passes),
+            n_partial=len(partials),
+            n_fail=len(fails),
+            n_rapidfuzz_failed=claims_rapidfuzz_failed[claim_idx],
+        )
 
         if passes:
             claims_passed += 1
-            final_claims.append(
-                ClaimFinal(
-                    claim_text_verbatim=claim.claim_text_verbatim,
-                    claim_summary=claim.claim_summary,
-                    label=claim.label,
-                    evidence_spans=spans,
-                    grounding_status=GroundingStatus.PASS,
-                    missing=False,
-                    reason=None,
-                )
-            )
+            grounding_status = GroundingStatus.PASS
+            missing = False
         elif partials:
             claims_partial += 1
-            noun = "passage" if len(partials) == 1 else "passages"
-            reason = (
-                "The auditor accepted the cited evidence as partial support: "
-                f"{len(partials)} {noun} provided partial support to the claim."
-            )
-            final_claims.append(
-                ClaimFinal(
-                    claim_text_verbatim=claim.claim_text_verbatim,
-                    claim_summary=claim.claim_summary,
-                    label=claim.label,
-                    evidence_spans=spans,
-                    grounding_status=GroundingStatus.PARTIAL,
-                    missing=False,
-                    reason=reason,
-                )
-            )
+            grounding_status = GroundingStatus.PARTIAL
+            missing = False
         else:
             claims_failed += 1
-            reason = (
-                f"all evidence spans failed grounding: "
-                f"{claims_rapidfuzz_failed[claim_idx]} spans failed RapidFuzz check; "
-                f"{claims_audit_failed[claim_idx]} spans failed LLM audit"
+            grounding_status = GroundingStatus.FAIL
+            missing = True
+
+        final_claims.append(
+            ClaimFinal(
+                claim_text_verbatim=claim.claim_text_verbatim,
+                claim_summary=claim.claim_summary,
+                label=claim.label,
+                evidence_spans=spans,
+                grounding_status=grounding_status,
+                missing=missing,
+                reason=reason,
             )
-            final_claims.append(
-                ClaimFinal(
-                    claim_text_verbatim=claim.claim_text_verbatim,
-                    claim_summary=claim.claim_summary,
-                    label=claim.label,
-                    evidence_spans=spans,
-                    grounding_status=GroundingStatus.FAIL,
-                    missing=True,
-                    reason=reason,
-                )
-            )
+        )
 
     _write_grounding_log(
         chat_id=chat_id,
