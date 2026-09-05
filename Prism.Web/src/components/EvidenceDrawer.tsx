@@ -10,9 +10,10 @@ import type { PaperClaimsResponse } from "@/types/api";
 
 interface EvidenceDrawerProps {
   paperClaims: PaperClaimsResponse | null;
+  onClose?: () => void;
 }
 
-export function EvidenceDrawer({ paperClaims }: EvidenceDrawerProps) {
+export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
   const claim = paperClaims?.claims.find((c) => c.id === selectedClaimId) ?? null;
 
@@ -21,11 +22,16 @@ export function EvidenceDrawer({ paperClaims }: EvidenceDrawerProps) {
     toast("Opening PDFs is coming soon");
   };
 
+  const handleClose = () => {
+    if (onClose) onClose();
+    else setSelectedClaimId(null);
+  };
+
   return (
-    <aside className="flex h-full w-[400px] shrink-0 flex-col border-l border-hairline bg-surface p-6 shadow-drawer">
-      <div className="flex items-center justify-between border-b border-hairline pb-6">
+    <aside className="flex h-full w-full lg:w-[400px] shrink-0 flex-col lg:border-l border-hairline bg-surface p-4 md:p-6 shadow-drawer">
+      <div className="flex items-center justify-between border-b border-hairline pb-4 md:pb-6">
         <h2 className="font-sans text-lg font-semibold text-ink">Evidence</h2>
-        <Button variant="ghost" size="icon-sm" onClick={() => setSelectedClaimId(null)} aria-label="Close">
+        <Button variant="ghost" size="icon-sm" onClick={handleClose} aria-label="Close">
           <X className="h-4 w-4 text-ink-tertiary hover:text-ink" />
         </Button>
       </div>
