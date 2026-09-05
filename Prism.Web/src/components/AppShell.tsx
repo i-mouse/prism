@@ -233,7 +233,7 @@ export function AppShell() {
             onUploaded={handleUploaded}
             onSelectChat={handleSelectChat}
             uploadZoneRef={uploadZoneRef}
-            collapsed={desktopCollapsed}
+            collapsed={belowLg ? false : desktopCollapsed}
             onToggleCollapse={toggleDesktopCollapsed}
             onCloseMobile={() => setIsMobileSidebarOpen(false)}
           />
