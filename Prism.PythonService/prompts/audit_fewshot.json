@@ -1,36 +1,74 @@
 {
   "examples": [
     {
-      "reasoning": "The claim asserts ReAct outperforms baselines by 34 percentage points on ALFWorld. The quoted table rows show ReAct at 71%, Act at 45%, and BUTLER at 37% task success rate. In the surrounding context this is Table 3's ALFWorld comparison, the exact benchmark the claim references, and the gap between ReAct (71%) and BUTLER (37%) is precisely 34 points. The quote directly and quantitatively substantiates the claimed margin, so this is a clear Pass.",
-      "claim": "ReAct outperforms baselines by 34% on ALFWorld.",
-      "quote": "ReAct | 71%\nAct | 45%\nBUTLER | 37%",
-      "context": "Table 3 shows results on ALFWorld task success rate. Higher is better. ReAct | 71%\nAct | 45%\nBUTLER | 37%\nSee Section 4 for full analysis.",
+      "reasoning": "The claim is labeled supported and asserts GraphCompress reduces model size 4x while retaining 98% of original accuracy. The quoted table row shows 4.1x compression with 97.8% top-1 accuracy retained, and the surrounding context confirms this is Table 2's compression-vs-accuracy comparison, the exact experiment the claim references. Both numbers in the quote match the claim's figures closely enough to count as direct quantitative confirmation. The quote's own stance is squarely supportive of the claim, and since it directly substantiates both halves of the claim, this is a clear Pass.",
+      "claim": "GraphCompress reduces model size by 4x while retaining 98% of original accuracy on ImageNet classification.",
+      "claim_label": "supported",
+      "quote": "GraphCompress | 4.1x compression | 97.8% top-1 accuracy retained",
+      "context": "Table 2 reports compression ratio against retained top-1 accuracy on ImageNet. GraphCompress | 4.1x compression | 97.8% top-1 accuracy retained\nSee Section 5 for the full ablation over pruning thresholds.",
+      "stance": "supports",
       "verdict": "Pass",
-      "reason": "The 71% vs 37% margin in the table matches the claimed 34% delta on ALFWorld."
+      "reason": "The table's 4.1x/97.8% figures match the claimed 4x compression and 98% accuracy retention."
     },
     {
-      "reasoning": "The claim asserts that combining ReAct with chain-of-thought achieves the best overall performance among the approaches compared. The quote states the combination 'delivers the best of both,' describing a qualitative benefit — CoT's reasoning plus ReAct's grounded action — but cites no performance numbers. The surrounding context points to a separate ablation study as where such a comparison would be quantitatively verified, and that data isn't present in this passage. Because the passage supports the claim's direction but not its 'best overall' magnitude without the ablation numbers, this is a Partial.",
-      "claim": "Combining ReAct with chain-of-thought achieves best overall performance.",
-      "quote": "combining ReAct and CoT delivers the best of both",
-      "context": "In our experiments, we observed that combining ReAct and CoT delivers the best of both — the reasoning of CoT combined with the grounded action of ReAct. See ablation study for details.",
+      "reasoning": "The claim is labeled supported and asserts MetaFew achieves state-of-the-art few-shot accuracy on Omniglot. The quote states that MetaFew 'substantially closes the gap to human-level performance,' which is directionally supportive but qualitative - it doesn't state an accuracy number or a ranking against other methods. The surrounding context points to a separate results table for the actual benchmark comparison, which isn't included in this passage. The quote's stance clearly leans supportive, but because it doesn't verify the 'state-of-the-art' ranking on its own, this is a Partial.",
+      "claim": "MetaFew achieves state-of-the-art few-shot accuracy on Omniglot.",
+      "claim_label": "supported",
+      "quote": "MetaFew substantially closes the gap to human-level performance on held-out character classes",
+      "context": "On the Omniglot held-out split, MetaFew substantially closes the gap to human-level performance on held-out character classes. Table 4 compares against five prior few-shot methods.",
+      "stance": "supports",
       "verdict": "Partial",
-      "reason": "The passage asserts the combination is beneficial but does not verify the 'best overall' claim quantitatively; adjacent ablation table would be needed."
+      "reason": "The passage supports the claim's direction but the state-of-the-art ranking needs the adjacent comparison table to confirm."
     },
     {
-      "reasoning": "The claim asserts a specific mechanism — Wikipedia interaction — reducing hallucination specifically on the HotpotQA benchmark. The quote and its surrounding context only describe the diversity of training tasks and a zero-shot evaluation setup, with no mention of HotpotQA, hallucination, or Wikipedia interaction anywhere in the passage. Nothing here connects training-task diversity to the claim's specific hallucination-reduction mechanism or benchmark. Since the passage is topically unrelated to what the claim asserts, this is a Fail.",
-      "claim": "ReAct reduces hallucination on HotpotQA via Wikipedia interaction.",
-      "quote": "our approach is trained on a diverse set of tasks",
-      "context": "our approach is trained on a diverse set of tasks including language modeling, question answering, and decision making. We evaluate zero-shot performance across benchmarks.",
-      "verdict": "Fail",
-      "reason": "The passage discusses training diversity, not hallucination reduction or Wikipedia interaction."
-    },
-    {
-      "reasoning": "The claim asserts ReAct outperforms action-only models specifically on decision-making tasks. The quote directly states that even the lowest ReAct configuration outperforms the best action-only baseline, and the surrounding context confirms this comparison comes from Figure 4's decision-making category breakdown across ALFWorld and WebShop. The passage's scope (decision-making tasks) and comparison (ReAct vs. action-only) match the claim precisely, including a strong-form guarantee that the weakest ReAct setup still beats the strongest baseline. This directly and unambiguously supports the claim, so this is a Pass.",
-      "claim": "ReAct beats action-only models on decision-making tasks.",
-      "quote": "even the lowest ReAct configuration outperforms the best action-only baseline",
-      "context": "Figure 4 breaks down performance by task category. In the decision-making category, even the lowest ReAct configuration outperforms the best action-only baseline. This holds across both ALFWorld and WebShop.",
+      "reasoning": "The claim is labeled not_supported and asserts SpeechNet is robust to background noise across all tested conditions. The quote reports word error rate rising from 6% in clean audio to 31% under babble noise, a much larger degradation than the baseline's 14%, and the surrounding context confirms this comes from the paper's own robustness ablation. This is a direct, quantitative demonstration that SpeechNet degrades more than the baseline under noise - the opposite of robust - so the quote's own stance is a clear refutation of the claim. Because it directly refutes the claim rather than merely failing to support it, and the label is not_supported, this refutation is a Pass.",
+      "claim": "SpeechNet is robust to background noise across all tested conditions.",
+      "claim_label": "not_supported",
+      "quote": "SpeechNet's word error rate rises from 6% in clean audio to 31% under babble noise at 0dB SNR, a substantially larger degradation than the baseline's 14%",
+      "context": "Robustness ablation: SpeechNet's word error rate rises from 6% in clean audio to 31% under babble noise at 0dB SNR, a substantially larger degradation than the baseline's 14%. Performance under reverberation shows a similar pattern.",
+      "stance": "refutes",
       "verdict": "Pass",
-      "reason": "The passage directly asserts ReAct outperforming action-only baselines on decision-making tasks with figure reference."
+      "reason": "The reported degradation directly refutes the robustness claim, which is the correct outcome for a not_supported label."
+    },
+    {
+      "reasoning": "The claim is labeled not_supported and asserts QueryOpt-X generalizes to any relational schema without manual tuning. The quote only states that QueryOpt-X was evaluated on the TPC-H and TPC-DS benchmark schemas, and the surrounding context is purely a description of the evaluation setup - it says nothing about whether tuning was required or how the system behaves on schemas outside these two benchmarks. The passage is on-topic (it names the schemas tested) but its own stance neither argues for nor against the 'any schema, no tuning' assertion - it's simply a methods-section fact. Since the stance is neutral, this is a Fail.",
+      "claim": "QueryOpt-X generalizes to any relational schema without manual tuning.",
+      "claim_label": "not_supported",
+      "quote": "QueryOpt-X was evaluated on the TPC-H and TPC-DS benchmark schemas",
+      "context": "We evaluate QueryOpt-X on the TPC-H and TPC-DS benchmark schemas, following standard practice in the query optimization literature. Query plans were generated with default settings.",
+      "stance": "neutral",
+      "verdict": "Fail",
+      "reason": "The passage only lists which schemas were tested and does not support or refute the no-tuning generalization claim."
+    },
+    {
+      "reasoning": "The claim is labeled not_supported and asserts AnomalyFlow detects rare anomalies as reliably as it detects common ones. The quote reports that recall on the rarest anomaly category was noticeably lower than on the three most common categories, but does not report the exact gap, and the surrounding context confirms the precise numbers live in an adjacent table not included in this passage. The quote's stance leans toward refuting the 'as reliably' claim - it points at a reliability drop for rare cases - but stops short of a clear, quantified refutation on its own. Because the refutation is directionally there but incomplete without the adjacent table, this is a Partial.",
+      "claim": "AnomalyFlow detects rare anomalies as reliably as it detects common ones.",
+      "claim_label": "not_supported",
+      "quote": "Recall on the rarest anomaly category (under 2% of test events) was noticeably lower than on the three most common categories, though we do not report the exact gap here",
+      "context": "Per-category recall breakdown: Recall on the rarest anomaly category (under 2% of test events) was noticeably lower than on the three most common categories, though we do not report the exact gap here. See Table 5 for the full per-category breakdown.",
+      "stance": "refutes",
+      "verdict": "Partial",
+      "reason": "The passage suggests but doesn't quantify a reliability gap for rare anomalies - an incomplete refutation without Table 5."
+    },
+    {
+      "reasoning": "The claim is labeled partially_supported and asserts FedPriv-Agg improves communication efficiency over federated averaging, though at some cost to convergence speed - a mixed, two-part claim. The quote states FedPriv-Agg cuts per-round communication by 60% versus FedAvg but needs roughly 1.4x more training rounds for the same validation accuracy, and the surrounding context confirms this is the paper's own efficiency-versus-convergence tradeoff analysis. This passage directly addresses both halves of the claim - the efficiency gain and the convergence cost - matching the mixed framing exactly, so the quote's stance supports the claim as stated. Because it is squarely relevant to the specific assertion, this is a Pass.",
+      "claim": "FedPriv-Agg improves communication efficiency over standard federated averaging, though at some cost to convergence speed.",
+      "claim_label": "partially_supported",
+      "quote": "FedPriv-Agg cuts per-round communication by 60% compared to FedAvg, but requires roughly 1.4x more training rounds to reach the same validation accuracy",
+      "context": "Efficiency/convergence tradeoff: FedPriv-Agg cuts per-round communication by 60% compared to FedAvg, but requires roughly 1.4x more training rounds to reach the same validation accuracy. Total wall-clock time is comparable across both methods.",
+      "stance": "supports",
+      "verdict": "Pass",
+      "reason": "The passage confirms both halves of the mixed claim - the communication savings and the convergence cost."
+    },
+    {
+      "reasoning": "The claim is labeled partially_supported and asserts SuperRes-Diff produces visually sharper outputs than GAN baselines, though evaluators noted occasional artifacts - again a two-part, mixed claim that itself concedes the artifacts. The quote reports that a subset of user-study participants commented on ringing artifacts near high-contrast edges, which confirms the 'occasional artifacts' half the claim already concedes, but the passage says nothing about the sharpness comparison against GAN baselines, and the surrounding context doesn't supply it either. The quote's stance is supportive of the part of the claim it touches, but because it covers only one half of the mixed assertion, this is a Partial.",
+      "claim": "SuperRes-Diff produces visually sharper outputs than GAN-based baselines, though evaluators noted occasional artifacts.",
+      "claim_label": "partially_supported",
+      "quote": "a subset of participants commented on ringing artifacts near high-contrast edges in some SuperRes-Diff outputs",
+      "context": "In the qualitative user study, a subset of participants commented on ringing artifacts near high-contrast edges in some SuperRes-Diff outputs. Full pairwise preference results against GAN baselines are reported in Table 6.",
+      "stance": "supports",
+      "verdict": "Partial",
+      "reason": "The passage confirms the artifacts half of the mixed claim but doesn't address the sharper-than-GAN comparison."
     }
   ]
 }

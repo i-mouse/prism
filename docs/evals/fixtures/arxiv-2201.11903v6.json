@@ -1,9 +1,9 @@
 {
   "header": {
-    "prompt_hash": "055d52687cc8",
+    "prompt_hash": "31021b91b11a",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
-    "generated_at": "2026-09-04T16:16:38.467474+00:00",
+    "generated_at": "2026-09-05T11:13:01.692847+00:00",
     "paper_id": "arxiv-2201.11903v6",
     "filename": "cot.pdf",
     "extraction_run_id": "5046dbbb-13c2-46da-baad-68b8d984058a"
@@ -181,7 +181,7 @@
     },
     {
       "expected_id": "COT-M09",
-      "actual_index": 3
+      "actual_index": null
     },
     {
       "expected_id": "COT-M10",

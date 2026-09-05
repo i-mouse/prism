@@ -118,11 +118,15 @@ def build_gemini_messages_for_audit(
     ]
 
 
-def _format_span_audit_user_message(claim_text: str, quote: str, context: str) -> str:
-    """Formats the claim/quote/context envelope shared by the real span-audit
-    call and its few-shot examples, so the model sees an identical shape."""
+def _format_span_audit_user_message(claim_text: str, claim_label: str, quote: str, context: str) -> str:
+    """Formats the claim/label/quote/context envelope shared by the real
+    span-audit call and its few-shot examples, so the model sees an
+    identical shape. claim_label is the auditor's already-decided verdict
+    for the claim (supported/partially_supported/not_supported) - the
+    span audit only judges whether this quote justifies that label."""
     return (
         f"Claim: {claim_text}\n\n"
+        f"Auditor's label for this claim: {claim_label}\n\n"
         f'Evidence quote:\n"{quote}"\n\n'
         f'Surrounding paper context:\n"...{context}..."'
     )
@@ -130,17 +134,25 @@ def _format_span_audit_user_message(claim_text: str, quote: str, context: str) -
 
 def build_gemini_messages_for_span_audit(
     claim_text: str,
+    claim_label: str,
     quote: str,
     context: str,
 ) -> list[dict]:
     """Assembles the Gemini message list for the span-level grounding audit
     (Stage 2 of extraction/grounding.py).
 
+    claim_label is the auditor's claim-level verdict (Call #3/#4's output),
+    passed through as a plain string so this module stays free of the
+    schemas.py ClaimLabel enum - the caller (extraction/grounding.py) owns
+    that type and passes claim_label.value.
+
     Mirrors build_gemini_messages_for_extractor's few-shot envelope pattern:
     system prompt, then for each few-shot example a user message (the same
-    claim/quote/context envelope the real call uses) followed by a model
-    message (its verdict/reason as a JSON string), then the final user
-    message for the span actually being audited.
+    claim/label/quote/context envelope the real call uses) followed by a
+    model message (its stance/verdict/reason as a JSON string - reasoning
+    is in the example dict for the prompt file's own readability but isn't
+    replayed here, matching the pre-existing convention), then the final
+    user message for the span actually being audited.
     """
     messages: list[dict] = [
         {"role": "system", "content": _read_prompt_file("audit_system.txt")},
@@ -152,18 +164,22 @@ def build_gemini_messages_for_span_audit(
             {
                 "role": "user",
                 "content": _format_span_audit_user_message(
-                    example["claim"], example["quote"], example["context"]
+                    example["claim"], example["claim_label"], example["quote"], example["context"]
                 ),
             }
         )
         messages.append(
             {
                 "role": "model",
-                "content": json.dumps({"verdict": example["verdict"], "reason": example["reason"]}),
+                "content": json.dumps(
+                    {"stance": example["stance"], "verdict": example["verdict"], "reason": example["reason"]}
+                ),
             }
         )
 
-    messages.append({"role": "user", "content": _format_span_audit_user_message(claim_text, quote, context)})
+    messages.append(
+        {"role": "user", "content": _format_span_audit_user_message(claim_text, claim_label, quote, context)}
+    )
     return messages
 
 
