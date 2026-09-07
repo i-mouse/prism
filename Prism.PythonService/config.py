@@ -53,8 +53,12 @@ class PrismSettings(BaseSettings):
 
     # Groq audit fallback (extraction/grounding.py)
     groq_api_key: str
-    audit_model: str = "groq/openai/gpt-oss-20b"
-    audit_fallback_model: str = "gemini/gemini-3.1-flash-lite-preview"
+    llm_audit_primary_model: str
+    llm_audit_fallback_model: str
+
+    # Extraction fallback (extraction/engine.py) - separate from llm_audit_model
+    # (the auditor's own model) so the two workloads don't silently share a knob.
+    llm_extraction_fallback_model: str
 
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000

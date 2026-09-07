@@ -419,8 +419,8 @@ async def ground_extraction(
     the order claims complete in is not guaranteed to match extraction
     order.
     """
-    audit_model = settings.audit_model
-    fallback_model = settings.audit_fallback_model
+    audit_model = settings.llm_audit_primary_model
+    fallback_model = settings.llm_audit_fallback_model
     gemini_api_key = settings.ai_api_key
 
     semaphore = asyncio.Semaphore(AUDIT_CONCURRENCY)

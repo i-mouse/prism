@@ -143,9 +143,9 @@ async def _generate_with_fallback(
     correlation_id: str | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
     """Calls Gemini on LLM_EXTRACTION_MODEL with retry/backoff, falling back to
-    LLM_AUDIT_MODEL for one final attempt if the primary model's retries are
-    exhausted. Returns (response, model_name_actually_used). Raises on
-    terminal failure (non-retryable error, or fallback attempt also fails).
+    LLM_EXTRACTION_FALLBACK_MODEL for one final attempt if the primary model's
+    retries are exhausted. Returns (response, model_name_actually_used). Raises
+    on terminal failure (non-retryable error, or fallback attempt also fails).
     """
     model_name = settings.llm_extraction_model
 
@@ -155,7 +155,7 @@ async def _generate_with_fallback(
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
             raise
-        fallback_model = settings.llm_audit_model
+        fallback_model = settings.llm_extraction_fallback_model
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
             response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
@@ -178,10 +178,10 @@ async def _call_gemini_structured(
     """Calls Gemini with a schema-enforced structured output config.
 
     Retries transient failures (429/5xx/timeout/connection) up to 3 times with
-    exponential backoff, then falls back to LLM_AUDIT_MODEL for one final
-    attempt before raising the last error. Falls back to json.loads/model_validate
-    when response.parsed is None. Logs the request/response to
-    logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+    exponential backoff, then falls back to LLM_EXTRACTION_FALLBACK_MODEL for
+    one final attempt before raising the last error. Falls back to
+    json.loads/model_validate when response.parsed is None. Logs the
+    request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -189,7 +189,6 @@ async def _call_gemini_structured(
 
     config = types.GenerateContentConfig(
         system_instruction=system_prompt,
-        temperature=0,
         response_mime_type="application/json",
         response_schema=response_schema,
     )
@@ -252,7 +251,6 @@ async def _call_gemini_json(
 
     config = types.GenerateContentConfig(
         system_instruction=system_prompt,
-        temperature=0,
         response_mime_type="application/json",
     )
 
@@ -307,7 +305,6 @@ async def _call_gemini_freetext(
 
     config = types.GenerateContentConfig(
         system_instruction=system_prompt,
-        temperature=0,
     )
 
     response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)

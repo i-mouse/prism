@@ -30,6 +30,9 @@ jobs:
       LLM_SUMMARY_MODEL: "gemini-3.1-flash-lite"
       LLM_FAST_MODEL: "gemini-3.1-flash-lite"
       LLM_AGENT_MODEL: "gemini-3.6-flash"
+      LLM_AUDIT_PRIMARY_MODEL: "groq/openai/gpt-oss-20b"
+      LLM_AUDIT_FALLBACK_MODEL: "gemini/gemini-3.1-flash-lite"
+      LLM_EXTRACTION_FALLBACK_MODEL: "gemini-3.6-flash"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
