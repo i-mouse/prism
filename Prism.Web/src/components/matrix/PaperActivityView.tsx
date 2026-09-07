@@ -39,10 +39,19 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
     const handler = (payload: unknown) => {
       const ev = payload as ExtractionProgressEvent;
       if (ev.fileId !== fileId) return;
-      
-      const msg = ev.detail || (ev.stage === "done" ? "Processing complete." : `Started ${ev.stage}`);
+
+      // Bare stage-transition events carry no detail and fire once per stage -
+      // the left-hand checklist already reflects the transition, so skip them
+      // here rather than logging a line with no new information. "done" and
+      // "failed" are terminal states worth a line even without a detail.
+      let msg = ev.detail;
+      if (!msg) {
+        if (ev.stage === "done") msg = "Processing complete.";
+        else if (ev.stage === "failed") msg = `Failed during ${ev.failedStage ?? "processing"}`;
+        else return;
+      }
       const time = new Date().toLocaleTimeString("en-US", { hour12: false });
-      
+
       setLogs((prev) => [...prev, {
         id: crypto.randomUUID(),
         time,
@@ -88,7 +97,13 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
       <div className="flex items-center justify-between border-b border-hairline px-6 py-4 lg:px-8">
         <div>
           <h1 className="font-sans text-xl font-semibold text-ink">{fileName}</h1>
-          <p className="font-mono text-xs uppercase tracking-wider text-ink-tertiary">Auditing Paper</p>
+          <p className="font-mono text-xs uppercase tracking-wider text-ink-tertiary">
+            {extractionStatus === "Completed"
+              ? "Audit Complete"
+              : extractionStatus === "Failed"
+              ? "Audit Failed"
+              : "Auditing Paper"}
+          </p>
         </div>
         <button 
           onClick={() => {
@@ -110,7 +125,10 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
             {STAGE_ORDER.map((stage, i) => {
               const status = getStatus(i);
               const isLast = i === STAGE_ORDER.length - 1;
-              const logForStage = logs.find(l => l.stage === stage);
+              // The row marked "failed" represents a STAGE_ORDER stage (e.g. "grounding"),
+              // but the failure event itself is emitted with stage: "failed" - look there instead.
+              const stageLogs = logs.filter(l => l.stage === (status === "failed" ? "failed" : stage));
+              const logForStage = stageLogs.at(-1);
               return (
                 <li key={stage} className="relative flex items-start gap-4">
                   {!isLast && (
@@ -156,11 +174,10 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                         {logForStage?.time || ""}
                       </div>
                     </div>
-                    {status === "completed" && stage === "preparing" && (
-                      <div className="font-sans text-xs text-ink-secondary mt-1">Parsed 33 pages, 111 chunks</div>
-                    )}
-                    {status === "completed" && stage === "extracting" && (
-                      <div className="font-sans text-xs text-ink-secondary mt-1">Extracted paper metadata</div>
+                    {(status === "completed" || status === "current" || status === "failed") && logForStage && (
+                      <div className={cn("font-sans text-xs mt-1", status === "failed" ? "text-red-500" : "text-ink-secondary")}>
+                        {logForStage.message}
+                      </div>
                     )}
                     {status === "pending" && stage === "grounding" && (
                       <div className="font-sans text-xs text-ink-tertiary mt-1">Linking claims to evidence</div>
@@ -252,18 +269,6 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
               <div>
                 <div className="font-sans text-sm font-semibold text-ink">Working on your paper...</div>
                 <div className="font-sans text-xs text-ink-secondary mt-0.5">This may take a few minutes. You can safely leave this page.</div>
-              </div>
-            </div>
-            
-            <div className="flex-1 flex items-start gap-4 rounded-xl border border-hairline bg-surface p-4">
-              <div className="flex shrink-0 items-center justify-center">
-                <svg className="h-5 w-5 text-brand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <div>
-                <div className="font-sans text-sm font-semibold text-ink">Tip</div>
-                <div className="font-sans text-xs text-ink-secondary mt-0.5">Prism analyzes each claim and grounds it in the paper's own evidence.</div>
               </div>
             </div>
           </div>
