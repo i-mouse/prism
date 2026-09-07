@@ -26,7 +26,6 @@ LOGS_DIR = Path(__file__).parent.parent / "logs" / "matcher"
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 MAX_ATTEMPTS = 3
 BACKOFF_SECONDS = (1, 2, 4)
-DEFAULT_MODEL = "gemini-3.1-flash-lite"
 
 _MATCH_LIST_ADAPTER = TypeAdapter(list[Match])
 
@@ -122,7 +121,7 @@ async def match(
     Returns exactly len(expected_rows) Match objects - one per expected
     row, with actual_index = None if no matching actual claim.
     """
-    model_name = os.getenv("LLM_AUDIT_MODEL", DEFAULT_MODEL)
+    model_name = os.environ["LLM_EVAL_MATCHER_MODEL"]
     api_key = os.getenv("AI_API_KEY")
     if not api_key:
         raise RuntimeError("AI_API_KEY environment variable is not set")
@@ -147,11 +146,11 @@ async def match(
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
             raise
-        fallback_model = os.getenv("LLM_EXTRACTION_MODEL")
+        fallback_model = os.getenv("LLM_EVAL_MATCHER_FALLBACK_MODEL")
         if not fallback_model:
             raise RuntimeError(
                 f"Gemini call failed after {MAX_ATTEMPTS} attempts on model={model_name} "
-                f"(paper_id={paper_id}) and LLM_EXTRACTION_MODEL is not set for fallback"
+                f"(paper_id={paper_id}) and LLM_EVAL_MATCHER_FALLBACK_MODEL is not set for fallback"
             ) from primary_exc
         used_model = fallback_model
         try:

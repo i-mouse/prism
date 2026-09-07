@@ -75,12 +75,12 @@ class RetrievalRoute(BaseModel):
 
 
 llm = ChatGoogleGenerativeAI(
-    model=settings.llm_agent_model,
+    model=settings.llm_chat_model,
     api_key=settings.ai_api_key,
 )
 
 fast_llm = ChatGoogleGenerativeAI(
-    model=settings.llm_fast_model,
+    model=settings.llm_router_model,
     api_key=settings.ai_api_key,
 )
 
