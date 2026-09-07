@@ -16,7 +16,7 @@ Guest sessions are currently available for demo use only, making it easy for rev
 
 Upload a paper. Prism extracts claims, audits each claim against the paper's own evidence, and presents the results in a claim-support matrix.
 
-![Prism Claim-Support Matrix](docs/diagrams/matrix-view.png)
+![Prism Claim-Support Matrix](docs/diagrams/matrix-view-edited.png)
 
 ## Evaluation
 
