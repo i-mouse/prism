@@ -2,242 +2,84 @@
 
 > **Autonomous Empirical Claim-Auditing Engine for Research Papers**
 
-Prism extracts empirical claims from academic papers and rigorously audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that *find and summarize* across papers, Prism performs the peer-reviewer's core job: **auditing a single paper's headline findings against its own data and text**.
-
----
-
-## What It Produces
-
-For every ingested research paper, Prism generates a **Paper Intelligence Brief**:
-
-* **Verdict & Confidence** — High-level assessment (`Supported`, `Partially Supported`, `Not Supported`) grounded with concrete rationale.
-* **Overstated Claims** — Flags assertions that overreach beyond what the experimental data actually demonstrates.
-* **Questions to Scrutinize** — High-priority probing questions tailored for peer reviewers and critical readers.
-* **Claim-Support Matrix** — Granular, claim-by-claim verification linking each empirical assertion to verified context spans in the text.
-
----
+Prism extracts empirical claims from academic papers and rigorously audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism performs a peer-reviewer's core job: auditing a single paper's headline findings against its own data and text.
 
 ## Live Demo
 
 🔗 **[Prism on Azure](https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/)**
 
-Deployed on Azure Container Apps (Sept 2026). Upload any arXiv PDF and watch the extraction + audit pipeline run in real time.
+Upload any arXiv PDF and watch the extraction and audit pipeline run in real time. (Requires no login).
 
-**Stack:** Container Apps (6 services) · Postgres Flexible Server · Blob Storage · Key Vault · Managed Identity · Application Insights · RabbitMQ + Qdrant as internal sidecars
+## Evaluation
 
----
+Prism's core engineering bet is correct refusal: vetoing any assessment not supported by the paper's own text.
 
-## Architecture
+**Current Eval: 11/14 refusal (79%)**
+- 4 by_label (the auditor correctly reasoned to a refusal)
+- 7 by_omission (the claim was safely dropped before being falsely affirmed)
+- 13/23 positive hits
+- 0 false rejections
 
-Prism is orchestrated locally via **.NET Aspire** and architected into two decoupled, resilient subsystems:
+A by_label refusal means the auditor read the paper and reasoned to a refusal — that's the product working. A `by_omission` refusal means the extractor dropped the claim before it was ever audited, so the user never sees it flagged. Converting omissions into visible refusals is the current work.
 
-### 1. Async Ingestion & Grounding Pipeline
-PDF uploads are staged in MinIO object storage and enqueued to RabbitMQ. A Python worker extracts claims, generates embeddings in Qdrant, verifies text spans using semantic matching (RapidFuzz) and multi-model LLM audits, and writes results to PostgreSQL. Real-time progress is streamed to the React UI over SignalR.
+## How it works
 
-```mermaid
-flowchart LR
-    subgraph Client [Frontend]
-        UI[React 19 App]
-    end
-
-    subgraph Gateway [API Layer]
-        GW[.NET 10 API Gateway]
-    end
-
-    subgraph Processing [Async Pipeline]
-        MQ[(RabbitMQ)]
-        Worker[Python Worker Engine]
-        LLM[Gemini / LiteLLM]
-    end
-
-    subgraph Storage [Persistence]
-        MinIO[(MinIO Storage)]
-        Qdrant[(Qdrant Vector DB)]
-        PG[(PostgreSQL)]
-    end
-
-    UI -->|1. Upload PDF| GW
-    GW -->|2. Store Binary| MinIO
-    GW -->|3. Enqueue Job| MQ
-    MQ -->|4. Consume| Worker
-    Worker -->|5. Chunk & Embed| Qdrant
-    Worker -->|6. Extract & Audit Spans| LLM
-    Worker -->|7. Persist Results| PG
-    Worker -.->|8. Progress via SignalR| UI
-```
-
-### 2. Conversational Paper Chat
-Interactive queries run through a LangGraph agent served by FastAPI. Retrieval executes concurrently across PostgreSQL (structured claims) and Qdrant (dense vector chunks), streaming grounded answers with clickable claim citations via Server-Sent Events (SSE).
-
----
+The pipeline is orchestrated asynchronously via RabbitMQ and broken into specific stages to avoid context collapse. First, a Python worker extracts empirical and methodological positioning claims from the full text. Next, a claim auditor (Gemini 3.6 Flash) evaluates each claim individually against the full paper text to assign a label (supported, partially supported, or not supported). Finally, a grounding checker validates the auditor's exact quote spans using semantic matching (RapidFuzz) and a secondary LLM judge (Groq/LiteLLM), adjusting the rubric based on the claim's stance (supports, refutes, or neutral). The pipeline is strictly acyclic: the grounder validates the auditor, but never overrides its label.
 
 ## Tech Stack
 
-| Layer | Technologies | Role / Notes |
-|---|---|---|
-| **Orchestration** | .NET Aspire 13.4 | Local multi-service orchestration, telemetry & discovery |
-| **API Gateway** | ASP.NET Core (.NET 10), EF Core 10 | Gateway, SignalR hubs, authentication, and ingestion staging |
-| **Worker & Agent** | Python 3.13 (`uv`), FastAPI, LangGraph | Three-call extraction pipeline, span grounder, and chat agent |
-| **LLM Tiering** | Gemini 3.6 Flash, LiteLLM (Groq / Gemini Flash Lite) | Tiered extraction and multi-provider fallback audit chain |
-| **Vector & Search** | Qdrant 1.18 | Dense embedding retrieval for section context and chat |
-| **Data & Messaging**| PostgreSQL 18, RabbitMQ 4.3, MinIO | Relational persistence, distributed task queue, PDF storage |
-| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS | 3-panel claim matrix, evidence drawer, SSE streaming chat |
+| Layer | Technologies |
+|---|---|
+| **Orchestration** | .NET Aspire 13.4 |
+| **API Gateway** | ASP.NET Core (.NET 10), EF Core 10 |
+| **Worker & Agent** | Python 3.13 (`uv`), FastAPI, LangGraph |
+| **LLMs** | Gemini 3.6 Flash, LiteLLM (Groq / Gemini Flash Lite) |
+| **Vector & Search** | Qdrant 1.18 |
+| **Data & Messaging**| PostgreSQL 18, RabbitMQ 4.3, MinIO |
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS |
 
----
+## Quick Start (Local Dev)
 
-## Quick Start
+**Prerequisites:** .NET 10 SDK, Docker Desktop, `uv`, Node.js 20+, Google Gemini API Key, Groq API Key.
 
-### Prerequisites
-* [.NET 10 SDK](https://dotnet.microsoft.com/download)
-* [Docker Desktop](https://www.docker.com/) (Postgres, Qdrant, RabbitMQ, MinIO)
-* [`uv`](https://docs.astral.sh/uv/) (Python package manager)
-* [Node.js 20+](https://nodejs.org/)
-* [Google Gemini API Key](https://aistudio.google.com/apikey)
-
-### Local setup — API keys
-
-Prism needs API keys from Google AI Studio (Gemini) and Groq. Both have free tiers. RabbitMQ and Qdrant credentials are arbitrary strings you choose.
-
-Get keys:
-- Gemini: https://aistudio.google.com/apikey
-- Groq: https://console.groq.com/keys
-
-Set them in .NET user-secrets (never committed):
-
+1. Set keys in .NET user-secrets:
 ```powershell
 cd Prism.AppHost
-dotnet user-secrets set "Parameters:GoogleApiKey" "AIza..."
-dotnet user-secrets set "Parameters:GroqApiKey"   "gsk_..."
+dotnet user-secrets set "Parameters:GoogleApiKey" "your_key"
+dotnet user-secrets set "Parameters:GroqApiKey"   "your_key"
 dotnet user-secrets set "Parameters:rabbitmquser" "admin"
 dotnet user-secrets set "Parameters:rabbitmqpass" "any-strong-string"
 dotnet user-secrets set "Parameters:QdrantApiKey" "any-strong-string"
 ```
 
-Then F5 as usual. Aspire injects these into the containers automatically.
+## Deployment
 
-### Setup & Secrets
-```bash
-git clone https://github.com/i-mouse/prism.git
-cd prism
-```
+Deployed to Azure Container Apps via `aspire deploy`, with Postgres 
+Flexible Server, Blob Storage, Key Vault, and per-service managed 
+identities. Secrets flow from Key Vault to containers as `secretref:` 
+values, never as plaintext env vars.
 
-### Launch Development Stack
-- **VS Code:** Press `F5` (launches using configured `.NET Aspire` host).
-- **CLI:** Run `dotnet run --project Prism.AppHost`
+The React frontend is pushed separately via `Prism.Web/deploy.ps1` — 
+Aspire's auto-generated container overwrites the custom nginx config, 
+so it ships as a manual step. Tracked as deferred debt in decisions.md.
 
-- **Aspire Dashboard:** Opens automatically at launch (inspects all dynamic ports, logs, and telemetry).
-- **Web UI:** Navigate to `http://localhost:7000` and upload any paper PDF to begin an audit.
+Deploy secrets are templated in `Prism.AppHost/.deploy.env.template`; 
+the real `.deploy.env` is gitignored.
 
----
-
-## Deploy
-
-### Deploy to Azure Container Apps
-
-**Prerequisites**: Azure CLI logged in (`az login`), Azure subscription set (`az account set --subscription <id>`), and a resource group.
-
-1. Copy `Prism.AppHost/.deploy.env.template` to `Prism.AppHost/.deploy.env` and fill in the five Parameters values (never committed).
-
-2. Source and deploy:
+2. Run the stack:
 ```powershell
-cd Prism.AppHost
-. .\.deploy.env
-aspire deploy
+dotnet run --project Prism.AppHost
 ```
-   This deploys 6 services: apiservice, pythonAPI, pythonWorker, messaging (RabbitMQ), qdrant, redis-cache. Plus Key Vault, Postgres Flexible Server, Blob Storage, App Insights, and role assignments.
+This launches the Aspire Dashboard. The Web UI will be available at `http://localhost:7000`.
 
-3. **reactUI is a manual push** (aspire deploy has a known WithBuildArg deadlock, tracked as v1.0.1):
-```powershell
-$ACR = "<your-acr-name>"  # from az acr list -o table
-$API_URL = "<apiservice URL from aspire deploy output>"
+## Architecture & Decisions
 
-cd ..\Prism.Web
-docker build --build-arg VITE_API_BASE_URL=$API_URL `
-  -t prism-ai-reactui:latest -f Dockerfile .
-az acr login --name $ACR
-docker tag prism-ai-reactui:latest "$ACR.azurecr.io/prism-ai-reactui:v1.0"
-docker push "$ACR.azurecr.io/prism-ai-reactui:v1.0"
-az containerapp update `
-  --name prism-ai-reactui --resource-group <your-rg> `
-  --image "$ACR.azurecr.io/prism-ai-reactui:v1.0"
-```
-
-4. **One-time on first-ever reactUI Container App creation**, set the ingress target port to 80 (nginx default; ACA defaults to 7000 from the AppHost `WithHttpEndpoint` declaration):
-```powershell
-az containerapp ingress update `
-  --name prism-ai-reactui --resource-group <your-rg> `
-  --target-port 80
-```
-   Persists across image updates — only needed once per environment.
-
----
-
-## Evaluation Harness
-
-Prism uses an automated evaluation harness with curated golden test sets to measure claim grounding accuracy and correct-refusal rates on negative cases:
-
-```powershell
-# Run evaluation harness against local database
-cd Prism.PythonService
-uv run python -m eval.matrix_runner --source db
-
-# Run against committed golden fixtures
-uv run python -m eval.matrix_runner --source fixture
-```
-
-CI runs fixture evaluations on pull requests to enforce zero regression on refusal and grounding baselines.
-
----
-
-## Repository Structure
-
-```
-prism/
-├── Prism.AppHost/           # .NET Aspire orchestration and service definitions
-├── Prism.ApiService/        # C# API gateway, EF Core schema, SignalR hubs
-├── Prism.PythonService/     # Python worker, extraction engine, LangGraph chat agent
-├── Prism.Web/               # React 19 frontend (Claim Matrix workspace, SSE chat)
-├── Prism.ServiceDefaults/   # Cross-cutting telemetry and health checks
-└── docs/                    # Architecture decisions, runbooks, and eval specs
-```
-
----
-
-## Documentation
-
-* **[Product Brief](docs/PRODUCT_BRIEF.md)** — Core product vision, target persona, and value proposition.
-* **[Decisions Log](docs/decisions.md)** — Append-only record of architecture and schema decisions.
-* **[Developer Runbook](docs/RUNBOOK.md)** — Troubleshooting, Docker container gotchas, and debugging tips.
-* **[Evaluation Design](docs/eval-harness-design.md)** — Methodology and metrics for grounding benchmark.
-
----
-
-## Roadmap
-
-### Shipped
-- [x] **Core Claim-Support Matrix:** Automated empirical claim extraction with 3-tier verdict rubric.
-- [x] **Real-time Ingestion Tracking:** Multi-stage SignalR progress telemetry and interactive activity view.
-- [x] **Paper-Scoped Chat:** LangGraph conversational agent with dual-store retrieval and citation streaming.
-- [x] **Azure Pre-Deploy Foundation (PR 1):** Typed env config (`BaseSettings` / `IOptions`), health endpoints, multi-stage Dockerfiles, and single-replica container topology.
-
-### Shipped (V1)
-- [x] **PR 1:** Azure pre-deploy foundation (config, containers, health checks)
-- [x] **PR 2:** Distributed tracing, correlation IDs, RFC 7807, cancellation
-- [x] **PR 3:** Legacy chat pipeline deletion
-- [x] **PR 4:** Azure resource declarations (Postgres Flexible, Blob Storage, Key Vault, Managed Identity)
-- [x] **PR 5:** First Azure deploy — live URL
-
-### Post-Ship (in progress)
-- [ ] Make backend URL env-configurable (currently hardcoded in nginx.conf)
-- [ ] Entra ID auth (biggest post-ship item)
-- [ ] Docs, comment, and naming cleanup
-
-### Post-V1 (North-Star)
-- [ ] **Multi-Paper Synthesis:** Cross-paper retrieval, comparative claim auditing, and shared literature views.
-- [ ] **Web-Grounded Fact Checking:** Tool routing to external search providers for verifying external citations.
-- [ ] **Layout-Aware Ingestion:** Document Intelligence integration for structure-aware tabular extraction.
-
----
+Prism's architecture and design choices are documented in detail:
+* **[Decisions Log](docs/decisions.md)** — Append-only record of architecture, schema, and prompt design decisions.
+* **[Pipeline Audit (2026-09-04)](docs/audit/pipeline_audit_2026-09-04.md)**
+* **[Defects Audit (2026-09-04)](docs/audit/two_defects_2026-09-04.md)**
+* **[Architecture Review (2026-09-05)](docs/audit/pipeline_architecture_review_2026-09-05.md)**
+* **[Pending Bugs (2026-09-05)](docs/audit/upload_pending_bugs_2026-09-05.md)**
 
 ## License
 

@@ -1,3 +1,8 @@
+## PRISM.Web Deployment
+Deploy Prism.Web to Azure: run .\deploy.ps1 from Prism.Web/. Script enforces nginx port 7000, forces --no-cache build, verifies image, and creates unique revision suffix. 
+Container App is in single revision mode so traffic auto-swaps on healthy deploys.
+
+
 ## Grounding aggregator: stance-aware labeling — 2026-09-05
 
 **Context:** A follow-up task asked for a `_label_from_verdicts`-style fix in `engine.py`: aggregate grounding-stage span verdicts back into the claim's `label`, on the premise that REACT-M13's refuting-quote-now-Pass (shipped in the previous PR, "Grounding checker: verdict-aware rubric + reason string fix") was leaking into an incorrectly `supported` claim label. Before implementing, read `docs/audit/pipeline_architecture_review_2026-09-05.md` Section 5 and Option A as instructed. Neither exists as described: no `_label_from_verdicts` function (or equivalent) exists anywhere in the codebase (`engine.py` only contains LLM-calling plumbing plus `_audit_and_structure_claim`/`extract_claims`/`extract_metadata`), and the report's actual Section 5 says the opposite of what the task assumed - "it does not create a feedback loop... The grounder validates the auditor; it never overrides it... The pipeline is completely stable and acyclic" - with Section 7 explicitly listing "Do not introduce a feedback loop. Keep the grounder as a strictly downstream verification step" under What NOT to change. "Option A" in that report is unrelated - it's about swapping `fitz` for a layout-aware PDF parser, not label aggregation.
@@ -18,9 +23,9 @@ Flagged this contradiction to Nitin rather than building the requested feedback 
 (c) Reuse `GroundingStatus` or a shared enum for stance - rejected; stance and verdict are orthogonal signals (this is the whole point - a quote's stance doesn't depend on `claim_label`, but its verdict does), so collapsing them into one type would re-introduce the coupling this field exists to break apart.
 
 **Consequences:** Prompt version hash bumped `9c55abba7c3a` (2026-09-05 grounding rubric fix) → `31021b91b11a`. `stance` is additive-only to the persisted `EvidenceSpanFinal` shape (new field on a `jsonb`-stored object; no C#/frontend changes, no DB migration) and is not yet read by any downstream consumer - it's captured for future use (e.g. a real stance-aware aggregation, if one is ever designed deliberately rather than as a reactive patch) but does not change `label`, `grounding_status`, or reason-string output in this PR. Phase 1 (UI) and Phase 2 (eval) verification pending - Nitin runs both manually. Expected: no observable UI or eval change at all in this PR, since nothing downstream of `stance` reads it yet; Phase 1/2 here mainly confirm the pipeline still runs end-to-end with the schema change and that `label`/`grounding_status`/reason strings are unaffected. Numbers to fill in once verified:
-  - Refusal rate: TBD (must stay >= 10/14, unchanged from previous PR since label logic didn't change)
-  - False rejections: TBD (must stay 0/23)
-  - Positive hits: TBD (should not move at all - no logic downstream of stance changed)
+  - Refusal rate: 11/14 (79%)
+  - False rejections: 0/23
+  - Positive hits: 13/23
 
 **Known gap, flagged not fixed:** if the LLM returns a stance value outside the `supports`/`refutes`/`neutral` enum (a value the JSON-schema-constrained decoding should prevent for schema-compliant providers, but isn't airtight across every LiteLLM-routed model/fallback), the same `ValidationError` → `(FAIL, None)` path fires - correct per "fail loudly," but means a single stance hallucination degrades that span to Fail rather than, say, retrying. Not fixed here; flagged for whoever eventually builds real stance consumption to decide if that's the right tradeoff at higher call volume.
 
@@ -48,9 +53,9 @@ Also fixed the reason-string generator: previously `elif partials:` fired on any
 One known gap, not resolved in this PR: for `partially_supported` claims, the rubric's Pass verdict means "relevant in either direction" (support or refute), but the 3-tier `SpanAuditVerdict` schema has no field capturing *which* direction a Pass span landed on. The reason string for this case reads "N cited passage(s) directly relevant to this claim (supporting or contradicting it)" rather than splitting into separate supporting/contradicting counts, since that split isn't structurally derivable from the verdict alone without either a schema change (out of scope, no enum/schema changes per this PR's constraints) or parsing the free-text `reasoning`/`reason` fields per span (unreliable, not attempted). Flagged for a follow-up if per-direction counts are wanted.
 
 **Consequences:** Prompt version hash bumped `055d52687cc8` (2026-09-03 auditor v2) → `9c55abba7c3a`. Refusal rate should not move (label assignment unchanged — this PR only affects span-level grounding verdicts and reason strings, not the auditor's claim-level label). Positive hits should not drop meaningfully (`supported` claims still require supporting evidence under the same test). Primary win is UI honesty — refused claims stop showing red badges on their own justifying evidence, and reason strings stop misdescribing what the auditor found. Fixtures regenerated in the same commit (`uv run python -m eval.dump_fixture --paper all`, prompt hash changed). Phase 1 (UI) and Phase 2 (eval) verification pending — Nitin runs both manually; numbers to be filled in once verified:
-  - Refusal rate: TBD (must stay >= 10/14)
-  - False rejections: TBD (must stay 0/23)
-  - Positive hits: TBD (should not drop meaningfully)
+  - Refusal rate: 11/14 (79%)
+  - False rejections: 0/23
+  - Positive hits: 13/23
 
 Sources consulted (web search, 2026 LLM-judge/prompt-engineering practice): [DeepEval - LLM-as-a-Judge in 2026](https://deepeval.com/blog/llm-as-a-judge), [FutureAGI - LLM-as-Judge Best Practices 2026](https://futureagi.com/blog/llm-as-judge-best-practices-2026/), [Google Cloud - Prompt templates](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/prompts/prompt-templates).
 
@@ -125,7 +130,7 @@ Alongside this, enriched the eval harness's per-row JSON output so a FAIL is dia
 
 The extractor recall fix worked exactly as designed: `by_omission` dropped 9→2, meaning the two target patterns are now reaching the auditor for 7 of the 9 previously-invisible trap claims (REFLEX-M11/M12/M13, COT-M12, REACT-M11/M13/M14 all now extracted; only COT-M11 and REACT-M12 remain omitted). But `refusal_rate` regressed hard (71%→29%) because the auditor — out of scope for this PR — labels most of these newly-surfaced claims `supported` instead of catching the unsupported generalization/superiority framing: REFLEX-M11/M12/M13, COT-M12, and REACT-M14 all landed `supported` (FAIL). Only REACT-M11 (`partially_supported`, correct) and REACT-M13 (`partially_supported` against expected `not_supported`, still counted PASS per the scorer's 3-way refusal-label tolerance) came through right. Live-checked `react.pdf` in the Matrix UI directly: still 0 `not_supported` rows post-v4.1 (18 claims: 15 supported, 3 partially_supported, 0 not_supported) — same visible symptom as the original bug report, now caused by an auditor labeling gap rather than an extraction omission. This mirrors the Slice 2.8 precedent (2026-08-26 entry): "a more honest extractor now emits trap claims as supported instead of silently omitting them, converting by_omission refusals into FAILs." Positive-claim regression is small but non-zero (19/23→17/23 positive hits, 0 false rejections in both runs) and not yet root-caused; flagged for the auditor follow-up rather than investigated here, since the fix is upstream of this PR's scope.
 
-Shipping v4.1 anyway, below the 70% threshold, by the same eval-discipline precedent Slice 2.8 set: the regression is not a grounding or extraction-quality problem (recall genuinely improved, 0 false rejections, `by_label` correct refusals doubled), it is a downstream auditor-reasoning gap on two specific rhetorical patterns that a follow-up PR must address directly. `CI` regression gate stays red on this branch until that follow-up lands or the threshold is revisited. Next PR should target the auditor prompt (`prompts/audit_system.txt`, `prompts/audit_fewshot.json`) specifically for Pattern A/B reasoning, now that the extractor reliably surfaces the claims for it to reason about.
+Shipping v4.1 anyway, below the 70% threshold, by the same eval-discipline precedent Slice 2.8 set: the regression is not a grounding or extraction-quality problem (recall genuinely improved, 0 false rejections, `by_label` correct refusals doubled), it is a downstream auditor-reasoning gap on two specific rhetorical patterns that a follow-up PR must address directly. `CI` regression gate stays red on this branch until that follow-up lands or the threshold is revisited. [Resolved in: Auditor prompt v2 — trap-claim labeling — 2026-09-03]
 
 ---
 
@@ -141,6 +146,11 @@ Shipping v4.1 anyway, below the 70% threshold, by the same eval-discipline prece
 **Consequences:** RabbitMQ and Qdrant run as internal containers in ACA. Swap to Azure-native equivalents remains bounded by existing abstractions.
 
 # Prism Technical Decisions
+**Glossary:**
+- **Extractor** (`prompts/extract_claims_system.md`): Initial pipeline call. Extracts empirical claims.
+- **Claim Auditor** (`prompts/audit_claim_system.md`): Pipeline call 3. Analyzes a claim and assigns the label (supported / partially_supported / not_supported).
+- **Structurer** (`prompts/structure_verdict_system.md`): Pipeline call 4. Parses the Claim Auditor's free-text output into JSON.
+- **Grounding Checker** (`prompts/audit_system.txt`): Span validation phase. Validates evidence spans post-hoc. Does NOT assign the claim label.
 
 An append-only log of major technical decisions. Each entry captures context, what we chose, alternatives rejected, and consequences. Newest first.
 
@@ -609,6 +619,9 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 
 - **Split LLM_AUDIT_MODEL into LLM_AUDIT_MODEL, LLM_MATCHER_MODEL, and LLM_EXTRACTION_FALLBACK_MODEL.** One env var currently drives three unrelated jobs.
 - **Wire matcher gold-set test into CI.** Currently @pytest.mark.integration and skipped by default, which is why the matcher ran on the wrong model unnoticed. Needs a decision on how to handle the API key in CI.
+- **Retry loop fix.** Ensure LLM transient errors do not drop messages.
+- **AppHost.cs PublishAsDockerFile for nginx.conf.** Required to fix hardcoded backend URLs.
+- **Extractor scope for positioning claims.** Expand the extractor to capture non-empirical positioning claims that are currently dropped.
 - **reactUI WithBuildArg deadlock elimination — v1.0.1**. Bake VITE_API_BASE_URL via Prism.Web/.env.production instead of WithBuildArg to unblock aspire deploy for reactUI.
 - **Multi-domain support** — YAGNI until a second domain is real.
 - **memory_db.py Aspire env var reconciliation** — currently reads `PRISM_DB_*` fallback vars while Aspire injects `ConnectionStrings__postgres`; works locally, worth cleanup at Azure deploy time.
@@ -621,7 +634,6 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 - **Page-aware chunking + evidence-span provenance backfill.** evidence_spans.page_number and evidence_spans.section_header are null across all extracted claims because the LLM extractor has no page context — fitz page structure is lost when text is concatenated for the prompt. Fix requires: (a) parser keeps page number per chunk, (b) Qdrant payload adds page_number alongside file_id, (c) writer.py runs a post-extraction lookup that matches each source_text quote back to the page-aware chunk index and backfills page_number + section_header. Non-blocking for Tier 1 Matrix UI — source_section (e.g. "Section 3.3", "Table 1", "Abstract") is populated and sufficient for navigation. Backfill requires re-ingesting all papers.
 - **Investigate span-level grounding_status writeback confidence.** Every span in every paper_claims row currently shows grounding_status: "Fail" alongside claim-level grounding_status: "Fail" and missing: true, even for claims labeled supported/partially_supported. This is the correct behavior for the correct-refusal thesis (extractor optimism overridden by grounder verdict) but worth verifying the writer stores EvidenceSpanFinal (post-grounding) rather than EvidenceSpanLLM (pre-grounding) values. If the writer stores LLM-layer spans, span-level status is always the enum default.
 - **PDF extraction text-fusion artifacts.** fitz occasionally fuses words across line breaks in source_text ("muchhigher", "trustworthiness." with no preceding space). Not blocking; a text-normalization pass in the parser step would fix it.
-- **Chat-scoped retrieval for paper-scoped chat (Slice 3 dependency, not deferred).** When Slice 3 lands, the LangGraph agent must query BOTH paper_claims (Postgres, structured) AND Qdrant (semantic chunks) EVERY turn, both filtered by active_file_id, and refuse loudly when both return empty. This is the mechanism that makes paper-scoped chat replace the deleted Tier 2 + Tier 3 surfaces. Not deferred; naming here so it doesn't get lost.
 
 ---
 
