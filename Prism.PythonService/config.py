@@ -45,20 +45,23 @@ class PrismSettings(BaseSettings):
 
     # LLM (Gemini)
     ai_api_key: str
-    llm_agent_model: str
-    llm_fast_model: str
+    llm_chat_model: str
+    llm_router_model: str
     llm_summary_model: str
     llm_extraction_model: str
-    llm_audit_model: str
 
-    # Groq audit fallback (extraction/grounding.py)
+    # Groq span-grounding (extraction/grounding.py)
     groq_api_key: str
-    llm_audit_primary_model: str
-    llm_audit_fallback_model: str
+    llm_grounding_model: str
+    llm_grounding_fallback_model: str
 
-    # Extraction fallback (extraction/engine.py) - separate from llm_audit_model
-    # (the auditor's own model) so the two workloads don't silently share a knob.
+    # Extraction (Prompt 1 metadata + Prompt 2 extractor, extraction/engine.py)
     llm_extraction_fallback_model: str
+
+    # Claim audit (Prompt 3 auditor + Prompt 4 structurer, extraction/engine.py) -
+    # separate from the extraction pair above so the two workloads don't share a knob.
+    llm_claim_audit_model: str
+    llm_claim_audit_fallback_model: str
 
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000

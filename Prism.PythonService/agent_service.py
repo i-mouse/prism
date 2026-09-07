@@ -1,4 +1,3 @@
-import os
 import json
 from typing import TypedDict, Annotated, Optional, Literal
 from pydantic import BaseModel, Field
@@ -9,6 +8,8 @@ from langchain_core.messages import SystemMessage
 from langgraph.graph.message import add_messages
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
+
+from config import settings
 from RAGService import RAGService
 
 # --- Pydantic Models ---
@@ -40,14 +41,14 @@ class AgentState(TypedDict):
 
 # --- LLM Initialization ---
 llm = ChatGoogleGenerativeAI(
-    model=os.getenv("LLM_AGENT_MODEL"),
-    api_key=os.getenv("AI_API_KEY"),
+    model=settings.llm_chat_model,
+    api_key=settings.ai_api_key,
 )
 
 fast_llm = ChatGoogleGenerativeAI(
     # model="gemini-flash-latest",
-    model=os.getenv("LLM_FAST_MODEL"),
-    api_key=os.getenv("AI_API_KEY"),
+    model=settings.llm_router_model,
+    api_key=settings.ai_api_key,
 )
 
 _ragservice: RAGService | None = None

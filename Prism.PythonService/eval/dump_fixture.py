@@ -23,7 +23,7 @@ from psycopg_pool import AsyncConnectionPool
 
 from memory_db import create_db_connection_pool
 from extraction.prompt_version import get_prompt_version
-from eval.matcher import DEFAULT_MODEL, match
+from eval.matcher import match
 from eval.matrix_loader import MatrixSpec, PaperSpec, load_matrix
 from eval.types import ActualClaim
 
@@ -196,7 +196,7 @@ async def _run(args: argparse.Namespace) -> int:
 
     prompt_hash = get_prompt_version()
     model_name = os.getenv("LLM_EXTRACTION_MODEL", "")
-    matcher_model = os.getenv("LLM_AUDIT_MODEL", DEFAULT_MODEL)
+    matcher_model = os.environ["LLM_EVAL_MATCHER_MODEL"]
 
     all_dumped = True
     for paper in papers:

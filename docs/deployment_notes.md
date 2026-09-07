@@ -20,16 +20,25 @@ replica.
 
 **Prism.PythonService** (`config.py`, both API and worker containers):
 `PRISM_DB_HOST/PORT/DATABASENAME/USERNAME/PASSWORD`, `AI_API_KEY`,
-`LLM_AGENT_MODEL`, `LLM_FAST_MODEL`, `LLM_SUMMARY_MODEL`,
-`LLM_EXTRACTION_MODEL`, `LLM_AUDIT_MODEL`, `LLM_AUDIT_PRIMARY_MODEL`,
-`LLM_AUDIT_FALLBACK_MODEL`, `LLM_EXTRACTION_FALLBACK_MODEL`, `GROQ_API_KEY`.
+`GROQ_API_KEY`, and one `LLM_*` var per pipeline stage
+(`docs/audit/model_vars_2026-09-07.md`):
+`LLM_EXTRACTION_MODEL` / `LLM_EXTRACTION_FALLBACK_MODEL` (Prompt 1 metadata +
+Prompt 2 extractor), `LLM_CLAIM_AUDIT_MODEL` / `LLM_CLAIM_AUDIT_FALLBACK_MODEL`
+(Prompt 3 auditor + Prompt 4 structurer), `LLM_GROUNDING_MODEL` /
+`LLM_GROUNDING_FALLBACK_MODEL` (span-grounding, Groq primary), `LLM_CHAT_MODEL`,
+`LLM_ROUTER_MODEL`, `LLM_SUMMARY_MODEL`. `LLM_AUDIT_MODEL` no longer
+exists anywhere - it was dead production config (only `eval/matcher.py` read
+it, as the LLM-as-judge; that's now `LLM_EVAL_MATCHER_MODEL` /
+`LLM_EVAL_MATCHER_FALLBACK_MODEL`, read directly via `os.environ` in
+`eval/matcher.py`, not part of `config.py`/`PrismSettings`, and not injected
+into `AppHost.cs` - eval-only, never read in production).
 Worker only: `ConnectionStrings__messaging`, `ConnectionStrings__storage`.
 Optional: `PORT` (default 8000), `SYSTEM_ADMIN_TOKEN` (unset disables reset,
-returns 403). All `LLM_*` vars are required - `config.py` declares them with
-no default, so a missing one fails the service at startup (pydantic
-`ValidationError`) instead of silently falling back to a stale model string.
-Still read as raw env vars (not yet in `config.py`): `QDRANT_HTTPURI`,
-`QDRANT_APIKEY` (`RAGService.py`).
+returns 403). All `LLM_*` vars in `PrismSettings` are required - `config.py`
+declares them with no default, so a missing one fails the service at startup
+(pydantic `ValidationError`) instead of silently falling back to a stale
+model string. Still read as raw env vars (not yet in `config.py`):
+`QDRANT_HTTPURI`, `QDRANT_APIKEY` (`RAGService.py`).
 
 `PRISM_DB_PASSWORD` unset (Entra-only Azure Postgres) makes `memory_db.py`
 authenticate via `azure_postgresql_auth.psycopg3.AsyncEntraConnection`,

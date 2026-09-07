@@ -121,29 +121,29 @@ var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 // WithReference(rabbitMQ) injects the same ConnectionStrings__messaging env var
 // config.py and Program.cs already expect.
 //
-// LLM_AUDIT_PRIMARY_MODEL / LLM_AUDIT_FALLBACK_MODEL replace config.py's old
-// hardcoded audit_model/audit_fallback_model defaults, which no env var here
-// ever overrode - audit_fallback_model's default pointed at a Gemini model
-// Google shut down 2026-05-25, so every Groq 429 fell through to a dead
-// endpoint. LLM_EXTRACTION_FALLBACK_MODEL splits engine.py's extraction
-// fallback off LLM_AUDIT_MODEL (still injected below, now unused by
-// engine.py, left in place - no caller asked for its removal). Set to
-// "gemini-3.6-flash" to match LLM_AUDIT_MODEL's current value exactly - the
-// production-correctness PR's value of "gemini-3.1-flash-lite" for this var
-// assumed LLM_AUDIT_MODEL was already flash-lite, which predates this file's
-// v1.0.1 upgrade to flash; kept as flash here to guarantee zero behavior
-// change on this fallback path.
+// LLM_* vars named by pipeline stage (docs/audit/model_vars_2026-09-07.md):
+// extraction (Prompt 1 metadata + Prompt 2 extractor), claim-audit (Prompt 3
+// auditor + Prompt 4 structurer - previously silently reused the extraction
+// pair), span-grounding (Groq primary, Gemini LiteLLM fallback), chat, router
+// (chat intent routing), summary (ai_service.py doc summary + audio
+// transcription). LLM_AUDIT_MODEL is deliberately gone - it was dead config
+// in production (only eval/matcher.py read it, as the LLM-as-judge; that now
+// gets its own LLM_EVAL_MATCHER_MODEL/LLM_EVAL_MATCHER_FALLBACK_MODEL,
+// eval-only and intentionally not injected here). Every primary below now has
+// a different-tier fallback - a same-tier fallback shares the primary's quota
+// pool and isn't a real fallback.
 var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonService")
     .WithHttpEndpoint(targetPort: 8000, name: "pythonapi", env: "PORT")
     .WithReference(qdrantDB)
     .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
-    .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.6-flash")
-    .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
-    .WithEnvironment("LLM_FAST_MODEL", "gemini-3.1-flash-lite")
-    .WithEnvironment("LLM_AGENT_MODEL", "gemini-3.6-flash")
-    .WithEnvironment("LLM_AUDIT_PRIMARY_MODEL", "groq/openai/gpt-oss-20b")
-    .WithEnvironment("LLM_AUDIT_FALLBACK_MODEL", "gemini/gemini-3.1-flash-lite")
-    .WithEnvironment("LLM_EXTRACTION_FALLBACK_MODEL", "gemini-3.6-flash")
+    .WithEnvironment("LLM_EXTRACTION_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+    .WithEnvironment("LLM_CLAIM_AUDIT_MODEL", "gemini-3.6-flash")
+    .WithEnvironment("LLM_CLAIM_AUDIT_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+    .WithEnvironment("LLM_GROUNDING_MODEL", "groq/openai/gpt-oss-20b")
+    .WithEnvironment("LLM_GROUNDING_FALLBACK_MODEL", "gemini/gemini-3.1-flash-lite")
+    .WithEnvironment("LLM_CHAT_MODEL", "gemini-3.6-flash")
+    .WithEnvironment("LLM_ROUTER_MODEL", "gemini-3.5-flash-lite")
+    .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.5-flash-lite")
     .WithReference(postgres)
     .WithReference(rabbitMQ)
     .WithReference(blobs)
@@ -191,13 +191,14 @@ var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.Python
                         .WithReference(qdrantDB)
                          .WithReference(postgres)
                         .WithEnvironment("LLM_EXTRACTION_MODEL", "gemini-3.6-flash")
-                        .WithEnvironment("LLM_AUDIT_MODEL", "gemini-3.6-flash")
-                        .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.1-flash-lite")
-                        .WithEnvironment("LLM_FAST_MODEL", "gemini-3.1-flash-lite")
-                        .WithEnvironment("LLM_AGENT_MODEL", "gemini-3.6-flash")
-                        .WithEnvironment("LLM_AUDIT_PRIMARY_MODEL", "groq/openai/gpt-oss-20b")
-                        .WithEnvironment("LLM_AUDIT_FALLBACK_MODEL", "gemini/gemini-3.1-flash-lite")
-                        .WithEnvironment("LLM_EXTRACTION_FALLBACK_MODEL", "gemini-3.6-flash")
+                        .WithEnvironment("LLM_EXTRACTION_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+                        .WithEnvironment("LLM_CLAIM_AUDIT_MODEL", "gemini-3.6-flash")
+                        .WithEnvironment("LLM_CLAIM_AUDIT_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+                        .WithEnvironment("LLM_GROUNDING_MODEL", "groq/openai/gpt-oss-20b")
+                        .WithEnvironment("LLM_GROUNDING_FALLBACK_MODEL", "gemini/gemini-3.1-flash-lite")
+                        .WithEnvironment("LLM_CHAT_MODEL", "gemini-3.6-flash")
+                        .WithEnvironment("LLM_ROUTER_MODEL", "gemini-3.5-flash-lite")
+                        .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.5-flash-lite")
                         .WithEnvironment("PRISM_DEBUG", "1")
                         .WithUv()
                         .WithDebugging()

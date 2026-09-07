@@ -140,22 +140,21 @@ async def _generate_with_fallback(
     contents: list[types.Content],
     config: types.GenerateContentConfig,
     chat_id: str,
+    model_name: str,
+    fallback_model: str,
     correlation_id: str | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
-    """Calls Gemini on LLM_EXTRACTION_MODEL with retry/backoff, falling back to
-    LLM_EXTRACTION_FALLBACK_MODEL for one final attempt if the primary model's
-    retries are exhausted. Returns (response, model_name_actually_used). Raises
-    on terminal failure (non-retryable error, or fallback attempt also fails).
+    """Calls Gemini on model_name with retry/backoff, falling back to
+    fallback_model for one final attempt if the primary model's retries are
+    exhausted. Returns (response, model_name_actually_used). Raises on
+    terminal failure (non-retryable error, or fallback attempt also fails).
     """
-    model_name = settings.llm_extraction_model
-
     try:
         response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
         return response, model_name
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
             raise
-        fallback_model = settings.llm_extraction_fallback_model
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
             response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
@@ -174,14 +173,16 @@ async def _call_gemini_structured(
     chat_id: str,
     correlation_id: str | None,
     log_subdir: str,
+    model_name: str,
+    fallback_model: str,
 ) -> BaseModel:
     """Calls Gemini with a schema-enforced structured output config.
 
     Retries transient failures (429/5xx/timeout/connection) up to 3 times with
-    exponential backoff, then falls back to LLM_EXTRACTION_FALLBACK_MODEL for
-    one final attempt before raising the last error. Falls back to
-    json.loads/model_validate when response.parsed is None. Logs the
-    request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+    exponential backoff, then falls back to fallback_model for one final
+    attempt before raising the last error. Falls back to json.loads/model_validate
+    when response.parsed is None. Logs the request/response to
+    logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -193,7 +194,9 @@ async def _call_gemini_structured(
         response_schema=response_schema,
     )
 
-    response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)
+    response, used_model = await _generate_with_fallback(
+        client, contents, config, chat_id, model_name, fallback_model, correlation_id
+    )
     raw_text = response.text
 
     parsed = response.parsed
@@ -239,6 +242,8 @@ async def _call_gemini_json(
     chat_id: str,
     correlation_id: str | None,
     log_subdir: str,
+    model_name: str,
+    fallback_model: str,
 ) -> dict:
     """Calls Gemini in JSON mode without a response_schema, parsing response.text
     as JSON. Same retry/backoff/fallback-model behavior as _call_gemini_structured,
@@ -254,7 +259,9 @@ async def _call_gemini_json(
         response_mime_type="application/json",
     )
 
-    response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)
+    response, used_model = await _generate_with_fallback(
+        client, contents, config, chat_id, model_name, fallback_model, correlation_id
+    )
     raw_text = response.text
 
     try:
@@ -291,6 +298,8 @@ async def _call_gemini_freetext(
     chat_id: str,
     correlation_id: str | None,
     log_subdir: str,
+    model_name: str,
+    fallback_model: str,
 ) -> str:
     """Calls Gemini for plain free-text output - no JSON mode, no schema.
 
@@ -307,7 +316,9 @@ async def _call_gemini_freetext(
         system_instruction=system_prompt,
     )
 
-    response, used_model = await _generate_with_fallback(client, contents, config, chat_id, correlation_id)
+    response, used_model = await _generate_with_fallback(
+        client, contents, config, chat_id, model_name, fallback_model, correlation_id
+    )
     raw_text = response.text
 
     _write_structured_log(
@@ -361,6 +372,8 @@ async def _audit_and_structure_claim(
                 chat_id=chat_id,
                 correlation_id=correlation_id,
                 log_subdir="audit",
+                model_name=settings.llm_claim_audit_model,
+                fallback_model=settings.llm_claim_audit_fallback_model,
             )
 
         with tracer.start_as_current_span("structurer") as span:
@@ -373,6 +386,8 @@ async def _audit_and_structure_claim(
                 chat_id=chat_id,
                 correlation_id=correlation_id,
                 log_subdir="structure",
+                model_name=settings.llm_claim_audit_model,
+                fallback_model=settings.llm_claim_audit_fallback_model,
             )
 
     return structured
@@ -400,6 +415,8 @@ async def extract_claims(
             chat_id=chat_id,
             correlation_id=correlation_id,
             log_subdir="extraction",
+            model_name=settings.llm_extraction_model,
+            fallback_model=settings.llm_extraction_fallback_model,
         )
     claims = extracted.get("claims", [])
 
@@ -447,5 +464,7 @@ async def extract_metadata(
         chat_id=chat_id,
         correlation_id=correlation_id,
         log_subdir="metadata",
+        model_name=settings.llm_extraction_model,
+        fallback_model=settings.llm_extraction_fallback_model,
     )
     return result
