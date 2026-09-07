@@ -42,14 +42,12 @@ class AgentState(TypedDict):
 llm = ChatGoogleGenerativeAI(
     model=os.getenv("LLM_AGENT_MODEL"),
     api_key=os.getenv("AI_API_KEY"),
-    temperature=0.2 
 )
 
 fast_llm = ChatGoogleGenerativeAI(
     # model="gemini-flash-latest",
     model=os.getenv("LLM_FAST_MODEL"),
     api_key=os.getenv("AI_API_KEY"),
-    temperature=0.0
 )
 
 _ragservice: RAGService | None = None

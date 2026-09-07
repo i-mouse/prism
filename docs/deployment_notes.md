@@ -21,12 +21,20 @@ replica.
 **Prism.PythonService** (`config.py`, both API and worker containers):
 `PRISM_DB_HOST/PORT/DATABASENAME/USERNAME/PASSWORD`, `AI_API_KEY`,
 `LLM_AGENT_MODEL`, `LLM_FAST_MODEL`, `LLM_SUMMARY_MODEL`,
-`LLM_EXTRACTION_MODEL`, `LLM_AUDIT_MODEL`, `GROQ_API_KEY`. Worker only:
-`ConnectionStrings__messaging`, `ConnectionStrings__storage`. Optional:
-`AUDIT_MODEL`, `AUDIT_FALLBACK_MODEL`, `PORT` (default 8000),
-`SYSTEM_ADMIN_TOKEN` (unset disables reset, returns 403). Still read as raw
-env vars (not yet in `config.py`): `QDRANT_HTTPURI`, `QDRANT_APIKEY`
-(`RAGService.py`).
+`LLM_EXTRACTION_MODEL`, `LLM_AUDIT_MODEL`, `LLM_AUDIT_PRIMARY_MODEL`,
+`LLM_AUDIT_FALLBACK_MODEL`, `LLM_EXTRACTION_FALLBACK_MODEL`, `GROQ_API_KEY`.
+Worker only: `ConnectionStrings__messaging`, `ConnectionStrings__storage`.
+Optional: `PORT` (default 8000), `SYSTEM_ADMIN_TOKEN` (unset disables reset,
+returns 403). All `LLM_*` vars are required - `config.py` declares them with
+no default, so a missing one fails the service at startup (pydantic
+`ValidationError`) instead of silently falling back to a stale model string.
+Still read as raw env vars (not yet in `config.py`): `QDRANT_HTTPURI`,
+`QDRANT_APIKEY` (`RAGService.py`).
+
+`PRISM_DB_PASSWORD` unset (Entra-only Azure Postgres) makes `memory_db.py`
+authenticate via `azure_postgresql_auth.psycopg3.AsyncEntraConnection`,
+which fetches a fresh Managed Identity token per connection instead of once
+at pool creation - see `docs/prism_final_audit_2026-09-07.md` §3.1.
 
 **Prism.Web**: `VITE_API_BASE_URL` (Docker build arg, baked into the static
 bundle at build time - not a runtime env var).

@@ -22,8 +22,7 @@ class AIService:
                 messages=[
                     {"role":"system","content" : "You are a helpful Prism analyst."},
                     {"role":"user","content":f"Summarize this prism doc : \n\n{text[:100000]}"}
-                ],
-                temperature=0.7
+                ]
             )
             return response.choices[0].message.content
          
