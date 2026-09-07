@@ -6,9 +6,17 @@ Prism extracts empirical claims from academic papers and rigorously audits wheth
 
 ## Live Demo
 
-🔗 **[Prism on Azure](https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/)**
+**[Prism Live Demo](https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/)**
 
-Upload any arXiv PDF and watch the extraction and audit pipeline run in real time. (Requires no login).
+Try Prism directly in your browser using **Guest Access** — no account required.
+
+> **Google Sign-In:** Coming soon. Google authentication is currently under development.
+
+Guest sessions are currently available for demo use only, making it easy for reviewers to try the product without creating an account.
+
+Upload a paper. Prism extracts claims, audits each claim against the paper's own evidence, and presents the results in a claim-support matrix.
+
+![Prism Claim-Support Matrix](docs/diagrams/matrix-view.png)
 
 ## Evaluation
 
@@ -25,6 +33,10 @@ A by_label refusal means the auditor read the paper and reasoned to a refusal �
 ## How it works
 
 The pipeline is orchestrated asynchronously via RabbitMQ and broken into specific stages to avoid context collapse. First, a Python worker extracts empirical and methodological positioning claims from the full text. Next, a claim auditor (Gemini 3.6 Flash) evaluates each claim individually against the full paper text to assign a label (supported, partially supported, or not supported). Finally, a grounding checker validates the auditor's exact quote spans using semantic matching (RapidFuzz) and a secondary LLM judge (Groq/LiteLLM), adjusting the rubric based on the claim's stance (supports, refutes, or neutral). The pipeline is strictly acyclic: the grounder validates the auditor, but never overrides its label.
+
+## Architecture
+
+![Prism architecture — extraction pipeline, Azure Container Apps stack, deferred work](docs/diagrams/architecture.png)
 
 ## Tech Stack
 
@@ -54,17 +66,21 @@ dotnet user-secrets set "Parameters:QdrantApiKey" "any-strong-string"
 
 ## Deployment
 
-Deployed to Azure Container Apps via `aspire deploy`, with Postgres 
-Flexible Server, Blob Storage, Key Vault, and per-service managed 
-identities. Secrets flow from Key Vault to containers as `secretref:` 
-values, never as plaintext env vars.
+Backend services deploy via `aspire deploy` — apiservice, pythonAPI,
+pythonWorker, messaging, storage, Postgres. Managed identities and Key
+Vault provisioned automatically; secrets reach containers as `secretref:`
+values, never plaintext env vars.
 
-The React frontend is pushed separately via `Prism.Web/deploy.ps1` — 
-Aspire's auto-generated container overwrites the custom nginx config, 
-so it ships as a manual step. Tracked as deferred debt in decisions.md.
+The React frontend uses `Prism.Web/deploy.ps1` — a hardened manual push
+that preflights nginx.conf, prunes Docker layers, builds with a unique
+tag, and verifies cache-control headers landed on the live URL. This
+exists because `aspire deploy` builds its own reactUI container that
+overwrites the custom nginx.conf. Root fix (`AppHost.cs`
+`PublishAsDockerFile`) tracked for v1.0.2.
 
-Deploy secrets are templated in `Prism.AppHost/.deploy.env.template`; 
-the real `.deploy.env` is gitignored.
+Deploy secrets templated in `Prism.AppHost/.deploy.env.template`;
+`.deploy.env` gitignored. nginx listens on port 7000 to align with
+Azure Container Apps' probe.
 
 2. Run the stack:
 ```powershell
