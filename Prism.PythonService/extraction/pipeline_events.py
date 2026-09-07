@@ -70,6 +70,7 @@ class ProgressEmitter:
             "stage": "grounding",
             "completed": done,
             "total": total,
+            "detail": f"Verifying claim {done} of {total}",
         })
 
     async def emit_failed(self, failed_stage: Stage) -> None:
