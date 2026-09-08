@@ -209,7 +209,15 @@ export function AppShell() {
       <div
         className={cn(
           "flex flex-1 overflow-hidden transition-[grid-template-columns] duration-200 ease-smooth",
-          "lg:grid",
+          // grid-auto-rows defaults to `auto`, which sizes the single implicit
+          // row to its content's max-content height rather than clamping to
+          // this container's own (flex-bounded) height - with 1024px+ content
+          // taller than the viewport (an 18-claim list, say), that inflated
+          // row pushed the chat panel's bottom past the viewport where
+          // overflow-hidden clipped it invisibly rather than scrolling to it.
+          // minmax(0,1fr) makes the row fill exactly the container's height
+          // and lets `main`'s own min-h-0/overflow-y-auto do the scrolling.
+          "lg:grid lg:grid-rows-[minmax(0,1fr)]",
           drawerOpen ? (desktopCollapsed ? "lg:grid-cols-[64px_minmax(0,1fr)_400px]" : "lg:grid-cols-[240px_minmax(0,1fr)_400px]") : (desktopCollapsed ? "lg:grid-cols-[64px_minmax(0,1fr)]" : "lg:grid-cols-[240px_minmax(0,1fr)]")
         )}
       >
