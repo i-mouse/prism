@@ -353,7 +353,15 @@ function AssistantTurn({
           className="min-w-0 flex-1 [contain:layout_paint]"
           style={isStreamingWithContent ? { minHeight: "1.5em" } : undefined}
         >
-          <div className="space-y-3 font-sans text-sm text-ink">
+          {/* No space-y-* here: AssistantBlocks' output is a flat array of
+              inline text/citation-pill siblings meant to read as one
+              continuous flow (see its own comment) - space-y-* would put a
+              margin-top on every single fragment, including each pill,
+              shoving it down onto its own line and stacking huge gaps
+              between claims in a list. Vertical rhythm for genuine block
+              content (lists, blockquotes, code) comes from ChatMarkdown's
+              own component margins instead. */}
+          <div className="font-sans text-sm text-ink">
             <AssistantBlocks blocks={turn.blocks} isStreaming={!!turn.isStreaming} isLast={isLast} onClaimClick={onClaimClick} />
           </div>
 

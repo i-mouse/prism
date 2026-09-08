@@ -26,9 +26,9 @@ const components: Components = {
       {children}
     </blockquote>
   ),
-  ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>,
-  ol: ({ children }) => <ol className="my-2 list-decimal space-y-1 pl-5">{children}</ol>,
-  li: ({ children }) => <li>{children}</li>,
+  ul: ({ children }) => <ul className="my-1 list-disc space-y-0.5 pl-5">{children}</ul>,
+  ol: ({ children }) => <ol className="my-1 list-decimal space-y-0.5 pl-5">{children}</ol>,
+  li: ({ children }) => <li className="leading-[1.45]">{children}</li>,
   code: ({ className, children, ...props }) => {
     const isBlock = /language-/.test(className ?? "");
     if (isBlock) {
