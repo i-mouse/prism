@@ -93,21 +93,56 @@ async def _resolve_document_extractor_id(active_file_id: str) -> uuid.UUID | Non
             return row[0] if row else None
 
 
+_CLAIM_COLUMNS = (
+    "id, claim_text_verbatim, claim_summary, label, missing, "
+    "grounding_status, reason, evidence_spans, position"
+)
+
+_VALID_CLAIM_LABELS = {"supported", "partially_supported", "not_supported"}
+
+# Metadata/bulk lookups ("which claims are refused?", "list every claim")
+# have no natural rank to cut off by - unlike the FTS `query` mode's
+# per-call `limit`, this cap exists purely so a paper with an unusually
+# large claim set can't blow out the LLM's context window.
+_METADATA_LOOKUP_LIMIT = 25
+
+
 @tool
-async def query_paper_claims(active_file_id: str, query: str, limit: int = 5) -> list[dict]:
+async def query_paper_claims(
+    active_file_id: str,
+    query: str | None = None,
+    position: int | None = None,
+    label_filter: str | None = None,
+    limit: int = 5,
+) -> list[dict]:
     """
-    Retrieve claims from paper_claims table for the active paper.
-    Uses Postgres full-text search (to_tsvector/websearch_to_tsquery) on
-    claim_summary + claim_text_verbatim. No fallback: a query whose terms
-    don't overlap any claim's text returns an empty list, full stop - see
-    docs/audit/ui_chat_audit_2026-09-08.md for why the previous
-    top-N-by-position fallback made the graph's refusal path unreachable.
-    Summary/overview questions are out of scope for this tool (and for
-    chat generally - that's the Overview tab's job).
+    Use this tool to find claims from the current paper.
+
+    Modes (checked in this precedence order when more than one is given):
+      position=N       : fetch the one claim at that number (0, 1, 2, ...).
+                          Use for "claim 11", "show me claim 3", "what does
+                          claim 5 say", etc.
+      label_filter=STR  : fetch every claim with that audit label.
+                          Values: "supported", "partially_supported",
+                          "not_supported". Use for "which claims are
+                          refused?", "show partial claims", "any supported
+                          claims?", etc.
+      query=STR         : full-text search over claim text.
+                          Use for topical questions, e.g. "claims about
+                          hallucination".
+      (all None)        : return every claim for the paper (up to 25,
+                          ordered by position). Use for "list every claim",
+                          "summary of claims", "how many claims in total",
+                          "any refusal?", etc.
+
+    Precedence: position > label_filter > query > all.
     Filter: active_file_id (resolved to the paper's latest document_extractor_id).
-    Returns: list of {claim_id, claim_summary, claim_text_verbatim, label,
-                      missing, grounding_status, reason, evidence_spans (top-2)}.
-    Empty list if no matches or no extraction exists yet for this paper.
+    Returns: list of {claim_id, position, claim_summary, claim_text_verbatim,
+                      label, missing, grounding_status, reason,
+                      evidence_spans (top-2)}.
+    Empty list if no matches, an unrecognized label_filter value, a
+    position that doesn't exist, or no extraction yet for this paper -
+    never raises (see module docstring).
     """
     try:
         document_extractor_id = await _resolve_document_extractor_id(active_file_id)
@@ -117,33 +152,79 @@ async def query_paper_claims(active_file_id: str, query: str, limit: int = 5) ->
         pool = await _get_pool()
         async with pool.connection() as conn:
             async with conn.cursor(row_factory=dict_row) as cur:
-                # websearch_to_tsquery handles punctuation/quoting more gracefully than
-                # plainto_tsquery, but both AND all bare terms together - a single word
-                # in the user's question absent from the claim text (e.g. "baselines")
-                # still yields zero rows. That's expected and desired now: a miss here
-                # is a real signal, not something to paper over with a fallback.
-                await cur.execute(
-                    """
-                    SELECT id, claim_text_verbatim, claim_summary, label, missing,
-                           grounding_status, reason, evidence_spans
-                    FROM paper_claims
-                    WHERE document_extractor_id = %s
-                      AND to_tsvector('english', claim_summary || ' ' || claim_text_verbatim)
-                          @@ websearch_to_tsquery('english', %s)
-                    ORDER BY ts_rank(
-                        to_tsvector('english', claim_summary || ' ' || claim_text_verbatim),
-                        websearch_to_tsquery('english', %s)
-                    ) DESC
-                    LIMIT %s
-                    """,
-                    (document_extractor_id, query, query, limit),
-                )
-                rows = await cur.fetchall()
+                if position is not None:
+                    mode = "position"
+                    await cur.execute(
+                        f"""
+                        SELECT {_CLAIM_COLUMNS}
+                        FROM paper_claims
+                        WHERE document_extractor_id = %s AND position = %s
+                        LIMIT 1
+                        """,
+                        (document_extractor_id, position),
+                    )
+                    rows = await cur.fetchall()
+                elif label_filter is not None:
+                    mode = "label_filter"
+                    if label_filter not in _VALID_CLAIM_LABELS:
+                        print(
+                            f" [WARN] query_paper_claims: unrecognized label_filter={label_filter!r}, "
+                            f"expected one of {sorted(_VALID_CLAIM_LABELS)} - returning no matches"
+                        )
+                        return []
+                    await cur.execute(
+                        f"""
+                        SELECT {_CLAIM_COLUMNS}
+                        FROM paper_claims
+                        WHERE document_extractor_id = %s AND label = %s
+                        ORDER BY position ASC
+                        LIMIT {_METADATA_LOOKUP_LIMIT}
+                        """,
+                        (document_extractor_id, label_filter),
+                    )
+                    rows = await cur.fetchall()
+                elif query is not None:
+                    mode = "query"
+                    # websearch_to_tsquery handles punctuation/quoting more gracefully than
+                    # plainto_tsquery, but both AND all bare terms together - a single word
+                    # in the user's question absent from the claim text (e.g. "baselines")
+                    # still yields zero rows. That's expected and desired now: a miss here
+                    # is a real signal, not something to paper over with a fallback.
+                    await cur.execute(
+                        f"""
+                        SELECT {_CLAIM_COLUMNS}
+                        FROM paper_claims
+                        WHERE document_extractor_id = %s
+                          AND to_tsvector('english', claim_summary || ' ' || claim_text_verbatim)
+                              @@ websearch_to_tsquery('english', %s)
+                        ORDER BY ts_rank(
+                            to_tsvector('english', claim_summary || ' ' || claim_text_verbatim),
+                            websearch_to_tsquery('english', %s)
+                        ) DESC
+                        LIMIT %s
+                        """,
+                        (document_extractor_id, query, query, limit),
+                    )
+                    rows = await cur.fetchall()
+                else:
+                    mode = "all"
+                    await cur.execute(
+                        f"""
+                        SELECT {_CLAIM_COLUMNS}
+                        FROM paper_claims
+                        WHERE document_extractor_id = %s
+                        ORDER BY position ASC
+                        LIMIT {_METADATA_LOOKUP_LIMIT}
+                        """,
+                        (document_extractor_id,),
+                    )
+                    rows = await cur.fetchall()
 
         results = []
         for row in rows:
             results.append({
                 "claim_id": str(row["id"]),
+                "position": row["position"],
                 "claim_summary": row["claim_summary"],
                 "claim_text_verbatim": row["claim_text_verbatim"],
                 "label": row["label"],
@@ -152,7 +233,7 @@ async def query_paper_claims(active_file_id: str, query: str, limit: int = 5) ->
                 "reason": row["reason"],
                 "evidence_spans": (row["evidence_spans"] or [])[:2],
             })
-        print(f" [CLAIMS] query_paper_claims: file_id={active_file_id} returned {len(results)} claims")
+        print(f" [CLAIMS] query_paper_claims: file_id={active_file_id} mode={mode} returned {len(results)} claims")
         return results
     except Exception as exc:
         print(f" [WARN] query_paper_claims failed for active_file_id={active_file_id}: {exc!r}")

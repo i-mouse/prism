@@ -265,7 +265,12 @@ function MessageList({
   if (turns.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 px-4 py-8">
-        <p className="text-center font-sans text-base text-ink">Ask about this paper</p>
+        <p className="max-w-sm text-center font-sans text-sm text-ink-secondary sm:max-w-md sm:text-base sm:text-ink">
+          I can answer questions about this paper&rsquo;s claims, evidence, and audit
+          results. Try &ldquo;show me claim 3&rdquo;, &ldquo;which claims are
+          refused?&rdquo;, or ask about the paper&rsquo;s methods and findings. For an
+          overview, see the Overview tab.
+        </p>
         <div className="flex max-w-lg flex-wrap justify-center gap-2">
           {SUGGESTED_PROMPTS.map((prompt) => (
             <button

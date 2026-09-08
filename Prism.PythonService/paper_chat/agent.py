@@ -89,6 +89,9 @@ class AgentState(TypedDict):
     retrieved_chunks: list[dict]
     chunk_scores: list[float]
     route_decision: str
+    claim_lookup: str
+    claim_position: int | None
+    claim_label_filter: str | None
 
 
 class RetrievalRoute(BaseModel):
@@ -101,6 +104,33 @@ class RetrievalRoute(BaseModel):
             "'both': ambiguous, or the question benefits from both claim summaries "
             "and raw supporting text."
         )
+    )
+    claim_lookup: Literal["position", "label_filter", "query", "all"] = Field(
+        default="query",
+        description=(
+            "How query_paper_claims should look up claims. 'position': the user "
+            "named a specific claim number, e.g. 'claim 11', 'show me claim 3', "
+            "'what does claim 5 say' - set claim_position to that number. "
+            "'label_filter': the user asked for claims sharing one audit label, "
+            "e.g. 'which claims are refused?', 'show partial claims', 'are there "
+            "any supported claims?' - set claim_label_filter to 'supported', "
+            "'partially_supported', or 'not_supported' to match. 'all': the user "
+            "asked about the paper's OVERALL audit state rather than one label or "
+            "claim, e.g. 'any refusal?', 'how many claims in total', 'how many "
+            "are supported vs refused' - fetches every claim so it can be counted "
+            "exactly. 'query': anything else - a topical question best answered "
+            "by full-text search over claim content, e.g. 'claims about "
+            "hallucination'. Precedence when a question could fit more than one: "
+            "position > label_filter > query > all."
+        ),
+    )
+    claim_position: int | None = Field(
+        default=None,
+        description="The claim number the user asked about. Only set when claim_lookup='position'.",
+    )
+    claim_label_filter: Literal["supported", "partially_supported", "not_supported"] | None = Field(
+        default=None,
+        description="The audit label the user asked about. Only set when claim_lookup='label_filter'.",
     )
 
 
@@ -174,8 +204,16 @@ async def route_query(state: AgentState):
         "Decide what to retrieve from the active paper to answer this question.\n"
         f"Question: {query}"
     )
-    print(f" [ROUTE] route_decision={result.route}")
-    return {"route_decision": result.route}
+    print(
+        f" [ROUTE] route_decision={result.route} claim_lookup={result.claim_lookup} "
+        f"claim_position={result.claim_position} claim_label_filter={result.claim_label_filter}"
+    )
+    return {
+        "route_decision": result.route,
+        "claim_lookup": result.claim_lookup,
+        "claim_position": result.claim_position,
+        "claim_label_filter": result.claim_label_filter,
+    }
 
 
 async def execute_tools(state: AgentState):
@@ -183,6 +221,9 @@ async def execute_tools(state: AgentState):
     query = state["standalone_query"]
     active_file_id = state["active_file_id"]
     route = state.get("route_decision", "both")
+    claim_lookup = state.get("claim_lookup", "query")
+    claim_position = state.get("claim_position")
+    claim_label_filter = state.get("claim_label_filter")
 
     # The router's route_decision is retained for observability only. Tool
     # execution always calls both retrieval tools: a route of "claims" whose
@@ -193,9 +234,20 @@ async def execute_tools(state: AgentState):
     if route != "both":
         print(f" [TOOLS] route_decision={route!r} restricted a tool; calling both anyway")
 
-    tool_input = {"active_file_id": active_file_id, "query": query, "limit": 5}
+    # query_paper_claims itself also enforces this precedence (position >
+    # label_filter > query > all) - built explicitly here too so each call
+    # only carries the one argument that's actually relevant to claim_lookup.
+    if claim_lookup == "position":
+        claims_tool_input = {"active_file_id": active_file_id, "position": claim_position}
+    elif claim_lookup == "label_filter":
+        claims_tool_input = {"active_file_id": active_file_id, "label_filter": claim_label_filter}
+    elif claim_lookup == "all":
+        claims_tool_input = {"active_file_id": active_file_id}
+    else:
+        claims_tool_input = {"active_file_id": active_file_id, "query": query, "limit": 5}
+
     claims, (chunks, chunk_scores) = await asyncio.gather(
-        query_paper_claims.ainvoke(tool_input),
+        query_paper_claims.ainvoke(claims_tool_input),
         query_paper_chunks_scored(active_file_id=active_file_id, query=query, limit=5),
     )
 
@@ -205,20 +257,40 @@ async def execute_tools(state: AgentState):
 
 def check_empty(state: AgentState) -> str:
     """Routes to generate_response only when something confidently supports
-    an answer: a claim the grounding pipeline itself labeled "supported", or
-    a chunk above CHUNK_SIMILARITY_THRESHOLD. Otherwise picks between two
-    refusals using whatever weaker signal exists:
-      - a claim matched by full-text search but not labeled "supported"
-        (topically present, just not confidently grounded), or
-      - a chunk that scored above OUT_OF_SCOPE_SCORE_FLOOR but below
-        CHUNK_SIMILARITY_THRESHOLD (related to the paper's domain, just not
-        a confident match)
-    counts as in-scope-but-unsupported. Neither signal at all means the
-    question doesn't relate to this paper.
+    an answer. What "confident" means depends on claim_lookup:
+      - position/label_filter/all are explicit metadata/identity lookups,
+        not fuzzy topical matches - any non-empty result IS the answer,
+        whatever label those claims happen to carry (e.g. a label_filter of
+        "not_supported" returning 3 claims is a complete, correct answer to
+        "which claims are refused?", not a low-confidence one). label_filter
+        and all also treat a genuinely empty result as answerable ("zero
+        claims with that label" is itself the correct answer) rather than a
+        refusal. A position miss is the one case that IS a refusal: the
+        user named a specific claim number that doesn't exist.
+      - query (the default topical FTS mode) keeps the original confidence
+        cascade: a claim the grounding pipeline itself labeled "supported",
+        or a chunk above CHUNK_SIMILARITY_THRESHOLD, proceeds to generate.
+        Otherwise it picks between two refusals using whatever weaker
+        signal exists - a claim matched by FTS but not labeled "supported",
+        or a chunk that scored above OUT_OF_SCOPE_SCORE_FLOOR but below
+        CHUNK_SIMILARITY_THRESHOLD - as in-scope-but-unsupported. Neither
+        signal at all means the question doesn't relate to this paper.
     """
     claims = state.get("retrieved_claims") or []
     chunks = state.get("retrieved_chunks") or []
     chunk_scores = state.get("chunk_scores") or []
+    claim_lookup = state.get("claim_lookup", "query")
+
+    if claim_lookup == "position":
+        if claims:
+            print(" [CHECK_EMPTY] position lookup found the claim, proceeding to generate")
+            return "respond"
+        print(" [CHECK_EMPTY] position lookup found no such claim - refusing")
+        return "refuse_unsupported"
+
+    if claim_lookup in ("label_filter", "all"):
+        print(f" [CHECK_EMPTY] {claim_lookup} lookup returned {len(claims)} claims, proceeding to generate")
+        return "respond"
 
     supported_claims = [c for c in claims if c.get("label") == "supported"]
     if supported_claims or chunks:
@@ -268,9 +340,13 @@ def _build_unsupported_message(retrieved_claims: list[dict], retrieved_chunks: l
 
 async def refusal_unsupported_node(state: AgentState):
     print(" [REFUSE] Node: refusal_unsupported_node executing")
-    message = _build_unsupported_message(
-        state.get("retrieved_claims") or [], state.get("retrieved_chunks") or []
-    )
+    if state.get("claim_lookup") == "position":
+        position = state.get("claim_position")
+        message = f"I couldn't find claim {position} in this paper."
+    else:
+        message = _build_unsupported_message(
+            state.get("retrieved_claims") or [], state.get("retrieved_chunks") or []
+        )
     writer = get_stream_writer()
     writer({"type": "text", "content": message})
     return {"messages": [AIMessage(content=message)]}
@@ -287,7 +363,7 @@ def _build_context_block(retrieved_claims: list[dict], retrieved_chunks: list[di
                 for e in (c.get("evidence_spans") or [])[:2]
             ) or "none"
             claim_blocks.append(
-                f"- claim_id={c['claim_id']} label={c['label']} "
+                f"- Claim {c['position']} (claim_id={c['claim_id']}) label={c['label']} "
                 f"grounding_status={c['grounding_status']} missing={c['missing']} "
                 f"reason={c.get('reason') or 'n/a'}\n"
                 f"  summary: {c['claim_summary']}\n"
@@ -333,6 +409,18 @@ async def generate_response(state: AgentState):
         "including when a matched claim is labeled partially_supported or "
         "not_supported - say plainly \"The paper doesn't demonstrate this\" instead of "
         "stretching that claim into a confident answer.\n\n"
+        "When the user asks about the paper's OVERALL audit state (e.g. \"any "
+        "refusal?\", \"how many supported?\", \"any partial?\", \"how many claims "
+        "in total\"), the claims listed below already include every claim for "
+        "this paper - count them by label yourself and report exact counts, "
+        "including zero if a label has no matches. When the user asks about one "
+        "specific label (e.g. \"which claims are refused?\", \"show partial "
+        "claims\"), enumerate every retrieved claim below by its Claim number "
+        "and summary - if none were retrieved, say plainly that none exist "
+        "rather than guessing. Use the labels' exact vocabulary in your answer: "
+        "label=\"not_supported\" means refused, label=\"partially_supported\" "
+        "means partial, label=\"supported\" means supported - use these exact "
+        "strings, never a paraphrase like \"denied\" or \"rejected\".\n\n"
         f"{context_block}"
     ))
 
