@@ -63,3 +63,38 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
   - Launch the stack using the configured Aspire launcher in VS Code (`Ctrl+Shift+D` -> choose the Aspire launch configuration -> press `F5`).
   - Make sure the `C# Dev Kit` extension is installed for C# debugging.
   - For Vite/TypeScript UI debugging, breakpoints bind automatically when debugging via the Aspire launcher on Aspire versions 13.4+. If they fail, verify that `sourceMap: true` is enabled in `tsconfig.json` or debug via Chrome DevTools (`F12` in browser).
+
+## Common deployment failure modes
+
+### PrismSettings field rename crashes on boot
+Two-step deploy required. See "Deploying a PR that changes PrismSettings fields" below.
+
+### ImagePullFailure with MANIFEST_UNKNOWN
+Docker Desktop DNS/proxy gets stuck between pushes. Symptoms:
+- `docker push` returns success but `az acr repository show-tags` doesn't list the tag
+- Container App logs show `MANIFEST_UNKNOWN` on repeated pull attempts
+
+Fix: use `az acr build` instead of local Docker for the affected image.
+```powershell
+az acr build --registry <acr-name> --image "<repo>:<tag>" --file <Dockerfile> .
+```
+Slower (~2-3 min, builds in Azure) but bypasses local Docker entirely.
+
+### Worker OOMKilled (exit code 137) under load
+Symptoms: worker was Healthy, then Activating. `az containerapp logs show --type system` shows `exit code '137' and reason 'ProcessExited'`.
+
+Cause: embedding model + PDF parsing + concurrent LLM calls exceed memory limit. Two concurrent papers is enough to OOM at 4Gi.
+
+Immediate fix:
+```powershell
+az containerapp update -n prism-ai-pythonworker -g prism-rg --cpu 4.0 --memory 8Gi
+```
+ACA rule: memory = 2 × CPU exactly.
+
+Root cause fix: reduce `AUDIT_CONCURRENCY` or prefetch, revisit paper-concurrent processing model.
+
+### Revision Healthy but running old image
+`az containerapp show --query "properties.template..."` shows *desired* config.
+`az containerapp revision list --query "[?properties.active]"` shows *actual* running state.
+
+Always verify with the second after any deploy. Never trust `properties.template`.
