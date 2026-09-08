@@ -43,7 +43,7 @@ async def _run_pair(pair: dict) -> bool:
         claim_summary=pair["actual_claim_summary"],
     )
 
-    matches = await match(
+    matches, _used_model = await match(
         paper_id="matcher_gold_test",
         expected_rows=[expected_row],
         actual_claims=[actual_claim],

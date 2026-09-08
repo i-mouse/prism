@@ -216,9 +216,11 @@ async def _audit_span_with_llm(
 
     Defensive: any error (API failure, malformed response, including a
     response missing the required stance field) is logged and treated as
-    (FAIL, None) rather than propagated or silently defaulted, since
+    (SKIPPED, None) rather than propagated or silently defaulted, since
     ambiguity here should not abort grounding for the rest of the
-    extraction - but it also must not fabricate a stance value.
+    extraction - but it also must not fabricate a stance value, and a
+    transient service error must not be indistinguishable from a genuine
+    "paper does not support this" verdict.
     """
     messages = _to_litellm_messages(
         build_gemini_messages_for_span_audit(
@@ -242,7 +244,7 @@ async def _audit_span_with_llm(
             return GroundingStatus(verdict.verdict), verdict.stance
         except Exception as exc:
             print(f"[ground_extraction] correlation_id={correlation_id} LLM audit failed for span in {span_source_section!r}: {exc!r}")
-            return GroundingStatus.FAIL, None
+            return GroundingStatus.SKIPPED, None
 
 
 def _passes_rapidfuzz(span_source_text: str, paper_text: str) -> bool:
@@ -309,11 +311,13 @@ def _write_grounding_log(
     claims_passed: int,
     claims_partial: int,
     claims_failed: int,
+    claims_skipped: int,
     spans_total: int,
     spans_passed_rapidfuzz: int,
     spans_passed_audit: int,
     spans_partial_audit: int,
     spans_failed_audit: int,
+    spans_skipped_audit: int,
 ) -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     now = datetime.now(timezone.utc)
@@ -329,11 +333,13 @@ def _write_grounding_log(
         "claims_passed": claims_passed,
         "claims_partial": claims_partial,
         "claims_failed": claims_failed,
+        "claims_skipped": claims_skipped,
         "spans_total": spans_total,
         "spans_passed_rapidfuzz": spans_passed_rapidfuzz,
         "spans_passed_audit": spans_passed_audit,
         "spans_partial_audit": spans_partial_audit,
         "spans_failed_audit": spans_failed_audit,
+        "spans_skipped_audit": spans_skipped_audit,
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
 
@@ -344,6 +350,7 @@ def _build_claim_reason(
     n_partial: int,
     n_fail: int,
     n_rapidfuzz_failed: int,
+    n_skip: int = 0,
 ) -> str:
     """Builds the per-claim reason string from the auditor's claim_label and
     the distribution of span verdicts under the label-aware rubric in
@@ -355,8 +362,19 @@ def _build_claim_reason(
     Replaces the old `elif partials:` check, which fired a positive-sounding
     "partial support" reason on any Partial span even when Fail spans
     dominated and the claim_label was ignored entirely.
+
+    n_skip spans (audit errored transiently) take priority over n_fail: a
+    claim with no Pass/Partial evidence but at least one Skipped span is
+    unresolved, not refuted, so it must not read like a confirmed Fail.
     """
     total = n_pass + n_partial + n_fail
+
+    if n_pass == 0 and n_partial == 0 and n_skip > 0:
+        return (
+            "Grounding could not be evaluated for this claim due to a transient "
+            "service error (rate limit, timeout, or malformed response). Result "
+            "was excluded from scoring."
+        )
 
     if total > 0 and n_rapidfuzz_failed == total:
         return "The auditor's cited passages do not appear in the paper as quoted."
@@ -479,6 +497,7 @@ async def ground_extraction(
     spans_passed_audit = 0
     spans_partial_audit = 0
     spans_failed_audit = 0
+    spans_skipped_audit = 0
 
     for claim_idx, (final_span, passed_rapidfuzz) in zip(span_claim_indices, span_results):
         spans_total += 1
@@ -489,6 +508,8 @@ async def ground_extraction(
                 spans_passed_audit += 1
             elif final_span.grounding_status == GroundingStatus.PARTIAL:
                 spans_partial_audit += 1
+            elif final_span.grounding_status == GroundingStatus.SKIPPED:
+                spans_skipped_audit += 1
             else:
                 spans_failed_audit += 1
         else:
@@ -498,12 +519,14 @@ async def ground_extraction(
     claims_passed = 0
     claims_partial = 0
     claims_failed = 0
+    claims_skipped = 0
 
     for claim_idx, claim in enumerate(extraction.claims):
         spans = claims_spans[claim_idx]
         passes = [s for s in spans if s.grounding_status == GroundingStatus.PASS]
         partials = [s for s in spans if s.grounding_status == GroundingStatus.PARTIAL]
         fails = [s for s in spans if s.grounding_status == GroundingStatus.FAIL]
+        skips = [s for s in spans if s.grounding_status == GroundingStatus.SKIPPED]
 
         reason = _build_claim_reason(
             claim_label=claim.label,
@@ -511,6 +534,7 @@ async def ground_extraction(
             n_partial=len(partials),
             n_fail=len(fails),
             n_rapidfuzz_failed=claims_rapidfuzz_failed[claim_idx],
+            n_skip=len(skips),
         )
 
         if passes:
@@ -520,6 +544,10 @@ async def ground_extraction(
         elif partials:
             claims_partial += 1
             grounding_status = GroundingStatus.PARTIAL
+            missing = False
+        elif skips:
+            claims_skipped += 1
+            grounding_status = GroundingStatus.SKIPPED
             missing = False
         else:
             claims_failed += 1
@@ -545,11 +573,13 @@ async def ground_extraction(
         claims_passed=claims_passed,
         claims_partial=claims_partial,
         claims_failed=claims_failed,
+        claims_skipped=claims_skipped,
         spans_total=spans_total,
         spans_passed_rapidfuzz=spans_passed_rapidfuzz,
         spans_passed_audit=spans_passed_audit,
         spans_partial_audit=spans_partial_audit,
         spans_failed_audit=spans_failed_audit,
+        spans_skipped_audit=spans_skipped_audit,
     )
 
     return final_claims
