@@ -26,10 +26,6 @@ const CHAT_HEIGHT_STORAGE_KEY = "prism.chatHeight";
 const REFUSAL_PATTERN =
   /\b(can'?t|cannot|unable to|does(?:n't| not) (?:address|cover|mention|discuss)|outside (?:the )?scope|no (?:relevant )?(?:information|evidence))\b/i;
 
-function truncate(text: string, max: number): string {
-  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
-}
-
 function useIsLgUp() {
   const [isLgUp, setIsLgUp] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches
@@ -61,18 +57,6 @@ function readStoredHeight(): number {
 }
 
 type ClaimReferenceBlock = Extract<ChatBlock, { type: "claim_reference" }>;
-
-const dotClass: Record<ClaimReferenceBlock["display_label"], string> = {
-  supported: "bg-verdict-supported-icon",
-  partially_supported: "bg-verdict-partial-icon",
-  not_supported: "bg-verdict-refused-icon",
-};
-
-const underlineDecorationClass: Record<ClaimReferenceBlock["display_label"], string> = {
-  supported: "decoration-verdict-supported-icon",
-  partially_supported: "decoration-verdict-partial-icon",
-  not_supported: "decoration-verdict-refused-icon",
-};
 
 function turnToPlainText(turn: ChatTurn): string {
   return turn.blocks
@@ -265,12 +249,6 @@ function MessageList({
   if (turns.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3 px-4 py-8">
-        <p className="max-w-sm text-center font-sans text-sm text-ink-secondary sm:max-w-md sm:text-base sm:text-ink">
-          I can answer questions about this paper&rsquo;s claims, evidence, and audit
-          results. Try &ldquo;show me claim 3&rdquo;, &ldquo;which claims are
-          refused?&rdquo;, or ask about the paper&rsquo;s methods and findings. For an
-          overview, see the Overview tab.
-        </p>
         <div className="flex max-w-lg flex-wrap justify-center gap-2">
           {SUGGESTED_PROMPTS.map((prompt) => (
             <button
@@ -447,13 +425,9 @@ function AssistantBlocks({
         key={i}
         type="button"
         onClick={() => onClaimClick(block.claim_id)}
-        className={cn(
-          "group/citation mx-0.5 inline-flex items-center gap-1.5 align-middle",
-          underlineDecorationClass[block.display_label]
-        )}
+        title={block.claim_summary}
+        className="mx-0.5 inline-flex items-center align-middle transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-subtle rounded-full"
       >
-        <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", dotClass[block.display_label])} />
-        <span className="text-ink group-hover/citation:underline">{truncate(block.claim_summary, 50)}</span>
         <VerdictPill verdict={verdict} size="xs" />
       </button>
     );
@@ -502,7 +476,11 @@ function ChatInput({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+    // Enter sends (Ctrl/Cmd+Enter still does too, for existing muscle
+    // memory); Shift+Enter inserts a newline instead. isComposing guards
+    // IME input (e.g. Japanese) where Enter confirms a candidate rather
+    // than submitting the message.
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSubmit();
     }
