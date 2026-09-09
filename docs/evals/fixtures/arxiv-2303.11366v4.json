@@ -1,12 +1,15 @@
 {
   "header": {
     "prompt_hash": "31021b91b11a",
+    "matcher_fingerprint": "52401482adf2",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
     "generated_at": "2026-09-05T11:12:42.579904+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
-    "extraction_run_id": "a9580aad-dfd2-416d-acbf-07c9618d32d8"
+    "extraction_run_id": "a9580aad-dfd2-416d-acbf-07c9618d32d8",
+    "matcher_gold_pass_rate": 1.0,
+    "matcher_gold_verified_at": "2026-09-09T10:00:40.840625+00:00"
   },
   "claims": [
     {

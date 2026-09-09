@@ -64,6 +64,22 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
   - Make sure the `C# Dev Kit` extension is installed for C# debugging.
   - For Vite/TypeScript UI debugging, breakpoints bind automatically when debugging via the Aspire launcher on Aspire versions 13.4+. If they fail, verify that `sourceMap: true` is enabled in `tsconfig.json` or debug via Chrome DevTools (`F12` in browser).
 
+## 6. Eval Fixture Regeneration (`check_fixture_freshness` failures)
+
+* **Symptom:** `uv run python -m eval.check_fixture_freshness` (or the "Check fixture freshness" CI step) fails for one or more papers in `docs/evals/fixtures/`.
+* **Gotcha:** The failure message tells you exactly which of three independent things went stale — read it before picking a fix, since the three paths are not interchangeable and two of them (full regen, re-match) require a live Postgres connection and `LLM_EXTRACTION_MODEL`/`LLM_EVAL_MATCHER_MODEL` etc. in `.env`, while the third (gold-set verify) only needs `AI_API_KEY`.
+
+| Failure message contains | What changed | Fix |
+|---|---|---|
+| `prompt_hash ... does not match` / "extraction changed" | The extraction prompt files (`prompts/*.md`, `*.json`) changed | Full regen — re-extracts, re-grounds, re-matches, and freezes everything: `uv run python -m eval.dump_fixture --paper all`, then `uv run python -m eval.verify_matcher_gold` (a full regen doesn't populate `matcher_gold_pass_rate` itself — freshness will still flag it as missing until this runs) |
+| `matcher_fingerprint ... does not match` / "matcher changed" | Only `LLM_EVAL_MATCHER_MODEL` / `LLM_EVAL_MATCHER_FALLBACK_MODEL` (or a future matcher prompt file) changed — extraction is untouched | Re-match only, no re-extraction: `uv run python -m eval.rematch_fixture --paper all`, then `uv run python -m eval.verify_matcher_gold` |
+| `matcher_gold_pass_rate ... matcher gold check failed or never ran` | The matcher was never calibrated against `docs/evals/matcher_gold.json`, or `rematch_fixture` just cleared a stale pass_rate | `uv run python -m eval.verify_matcher_gold` |
+
+* **Why re-match is separate from full regen:** extraction (claims, grounding) and matching (pairing extracted claims to `matrix_eval.json`'s golden rows) are two independent LLM calls. A matcher-only change (model swap, matcher prompt edit) doesn't invalidate the already-extracted claims — re-running the full extraction pipeline just to refresh matches would burn Gemini quota and risk introducing unrelated extraction drift into what should be a narrow change.
+* **Why `verify_matcher_gold` is a separate step from `rematch_fixture`:** `rematch_fixture` refreshes a fixture's matches against *real* extracted claims, but that alone says nothing about whether the new matcher is actually *accurate* — that's what the 15-pair hand-labeled gold set in `docs/evals/matcher_gold.json` checks. `rematch_fixture` deliberately clears `matcher_gold_pass_rate`/`matcher_gold_verified_at` when it updates `matcher_fingerprint`, rather than leaving a pass_rate measured under the *old* matcher in place — so `check_fixture_freshness` will correctly demand a fresh `verify_matcher_gold` run before trusting the fixture again.
+* **Gold-set pass floor:** 0.9 (90%). If a real run comes in below that, do not commit the fixture update — the matcher itself needs fixing (model or prompt) first, not the freshness gate.
+* **None of this touches CI:** the eval harness is fully offline in CI (see `docs/decisions.md`, "Revert live-matcher CI back to frozen-fixture design") — all three regen commands above are run locally by a developer, and only their *output* (the committed fixture JSON) is what CI reads.
+
 ## Common deployment failure modes
 
 ### PrismSettings field rename crashes on boot

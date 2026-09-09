@@ -34,6 +34,16 @@ jobs:
       LLM_CHAT_MODEL: "gemini-3.6-flash"
       LLM_ROUTER_MODEL: "gemini-3.5-flash-lite"
       LLM_SUMMARY_MODEL: "gemini-3.5-flash-lite"
+      # Not a placeholder like the values above - these two must match
+      # whatever LLM_EVAL_MATCHER_MODEL/LLM_EVAL_MATCHER_FALLBACK_MODEL were
+      # set to locally when `eval.verify_matcher_gold` last froze
+      # matcher_fingerprint into docs/evals/fixtures/*.json. check_fixture_freshness
+      # recomputes the fingerprint from these env vars and compares it
+      # byte-for-byte against the committed value - a mismatch here fails CI
+      # even though no matcher behavior actually changed. Update both
+      # together with the fixtures whenever the matcher model routing changes.
+      LLM_EVAL_MATCHER_MODEL: "gemini-3.6-flash"
+      LLM_EVAL_MATCHER_FALLBACK_MODEL: "gemini-3.1-flash-lite"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,15 +61,3 @@ jobs:
         run: uv run python -m eval.check_fixture_freshness
       - name: Run matrix eval (fixture mode)
         run: uv run python -m eval.matrix_runner --source fixture
-      - name: Matcher gold-set (integration)
-        # Real Gemini calls against docs/evals/matcher_gold.json, calibrating
-        # the LLM-as-judge matcher itself - separate from the frozen-fixture
-        # scoring above (see docs/decisions.md "Freeze matcher output into
-        # fixtures"), which stays fixture-only. Runs only on push to main
-        # (not on every PR, and never for fork PRs, which don't see repo
-        # secrets) so it doesn't burn Gemini quota per-PR or fail forks on a
-        # missing secret - see docs/decisions.md for the scoped reversal.
-        if: github.event_name == 'push' && secrets.AI_API_KEY != ''
-        env:
-          AI_API_KEY: ${{ secrets.AI_API_KEY }}
-        run: uv run pytest eval/tests/test_matcher.py -v -m integration

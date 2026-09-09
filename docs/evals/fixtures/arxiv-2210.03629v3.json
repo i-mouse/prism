@@ -1,12 +1,15 @@
 {
   "header": {
     "prompt_hash": "31021b91b11a",
+    "matcher_fingerprint": "52401482adf2",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
     "generated_at": "2026-09-05T11:13:12.630345+00:00",
     "paper_id": "arxiv-2210.03629v3",
     "filename": "react.pdf",
-    "extraction_run_id": "3a1d6725-bb0b-49c0-9c53-fe38a96658e1"
+    "extraction_run_id": "3a1d6725-bb0b-49c0-9c53-fe38a96658e1",
+    "matcher_gold_pass_rate": 1.0,
+    "matcher_gold_verified_at": "2026-09-09T10:00:40.840625+00:00"
   },
   "claims": [
     {
