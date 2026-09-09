@@ -34,6 +34,16 @@ jobs:
       LLM_CHAT_MODEL: "gemini-3.6-flash"
       LLM_ROUTER_MODEL: "gemini-3.5-flash-lite"
       LLM_SUMMARY_MODEL: "gemini-3.5-flash-lite"
+      # Not a placeholder like the values above - these two must match
+      # whatever LLM_EVAL_MATCHER_MODEL/LLM_EVAL_MATCHER_FALLBACK_MODEL were
+      # set to locally when `eval.verify_matcher_gold` last froze
+      # matcher_fingerprint into docs/evals/fixtures/*.json. check_fixture_freshness
+      # recomputes the fingerprint from these env vars and compares it
+      # byte-for-byte against the committed value - a mismatch here fails CI
+      # even though no matcher behavior actually changed. Update both
+      # together with the fixtures whenever the matcher model routing changes.
+      LLM_EVAL_MATCHER_MODEL: "gemini-3.6-flash"
+      LLM_EVAL_MATCHER_FALLBACK_MODEL: "gemini-3.1-flash-lite"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
