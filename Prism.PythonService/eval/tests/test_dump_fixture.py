@@ -89,7 +89,7 @@ async def _fake_match(paper_id, expected_rows, actual_claims):
     return [
         Match(expected_id=row.id, actual_index=0 if i == 0 else None)
         for i, row in enumerate(expected_rows)
-    ]
+    ], "gemini-2.5-flash-lite"
 
 
 async def _raising_match(paper_id, expected_rows, actual_claims):
@@ -101,7 +101,7 @@ def test_dump_fixture_dry_run_writes_nothing(tmp_path, monkeypatch):
     monkeypatch.setattr(dump_fixture, "match", _fake_match)
 
     dumped = asyncio.run(
-        dump_fixture._dump_paper(_fake_paper(), tmp_path, True, "abcdef012345", "gemini-2.5-flash", "gemini-2.5-flash-lite")
+        dump_fixture._dump_paper(_fake_paper(), tmp_path, True, "abcdef012345", "gemini-2.5-flash")
     )
 
     assert dumped is True
@@ -113,7 +113,7 @@ def test_dump_fixture_writes_file_when_not_dry_run(tmp_path, monkeypatch):
     monkeypatch.setattr(dump_fixture, "match", _fake_match)
 
     dumped = asyncio.run(
-        dump_fixture._dump_paper(_fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash", "gemini-2.5-flash-lite")
+        dump_fixture._dump_paper(_fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash")
     )
 
     assert dumped is True
@@ -136,7 +136,7 @@ def test_dump_fixture_writes_matches_when_not_dry_run(tmp_path, monkeypatch):
 
     paper = _fake_paper()
     dumped = asyncio.run(
-        dump_fixture._dump_paper(paper, tmp_path, False, "abcdef012345", "gemini-2.5-flash", "gemini-2.5-flash-lite")
+        dump_fixture._dump_paper(paper, tmp_path, False, "abcdef012345", "gemini-2.5-flash")
     )
 
     assert dumped is True
@@ -153,9 +153,32 @@ def test_dump_fixture_matcher_failure_skips_and_writes_nothing(tmp_path, monkeyp
     monkeypatch.setattr(dump_fixture, "match", _raising_match)
 
     dumped = asyncio.run(
-        dump_fixture._dump_paper(_fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash", "gemini-2.5-flash-lite")
+        dump_fixture._dump_paper(_fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash")
     )
 
     assert dumped is False
     assert list(tmp_path.iterdir()) == []
     assert "matcher failed" in capsys.readouterr().out
+
+
+def test_dump_fixture_records_fallback_model_not_intended_primary(tmp_path, monkeypatch):
+    """The exact gap this fix closes: if match() fell back internally, the
+    fixture header must record the model that actually produced the
+    matches, not whatever the caller assumed was primary."""
+    monkeypatch.setattr(dump_fixture, "_fetch_latest_extraction", _fake_fetch_latest_extraction)
+
+    async def _fallback_match(paper_id, expected_rows, actual_claims):
+        return (
+            [Match(expected_id=row.id, actual_index=None) for row in expected_rows],
+            "gemini-3.1-flash-lite",
+        )
+
+    monkeypatch.setattr(dump_fixture, "match", _fallback_match)
+
+    dumped = asyncio.run(
+        dump_fixture._dump_paper(_fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash")
+    )
+
+    assert dumped is True
+    written = json.loads((tmp_path / "arxiv-2303.11366v4.json").read_text(encoding="utf-8"))
+    assert written["header"]["matcher_model"] == "gemini-3.1-flash-lite"

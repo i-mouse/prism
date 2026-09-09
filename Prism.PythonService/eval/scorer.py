@@ -18,6 +18,15 @@ def _was_grounded_away(actual_claim: ActualClaim) -> bool:
     return actual_claim.missing or actual_claim.grounding_status == "Fail"
 
 
+def _was_skipped(actual_claim: ActualClaim) -> bool:
+    """True if grounding hit a transient service error for this claim
+    (GroundingStatus.SKIPPED) rather than reaching a real verdict. A skipped
+    claim carries no semantic information either way, so it must not count
+    as a false rejection, a correct refusal, or a positive hit/miss - it is
+    excluded from every denominator entirely."""
+    return actual_claim.grounding_status == "Skipped"
+
+
 def score(
     expected_rows: list[ExpectedRow],
     actual_claims: list[ActualClaim],
@@ -29,6 +38,7 @@ def score(
 
     per_row: dict[str, RowOutcome] = {}
     correct_refusals = 0
+    strict_correct_refusals = 0
     total_negatives = 0
     positive_hits = 0
     positive_total = 0
@@ -36,6 +46,7 @@ def score(
     refused_by_omission = 0
     refused_by_grounding = 0
     false_rejections = 0
+    skipped = 0
 
     for row in expected_rows:
         is_negative = row.grounding_negative or row.expected_label == "not_supported"
@@ -49,8 +60,13 @@ def score(
         actual_claim_text_verbatim = actual_claim.claim_text_verbatim if actual_claim is not None else None
         actual_grounding_status = actual_claim.grounding_status if actual_claim is not None else None
 
-        if is_negative:
+        if actual_claim is not None and _was_skipped(actual_claim):
+            outcome = "SKIPPED"
+            skipped += 1
+        elif is_negative:
             total_negatives += 1
+            if actual_claim is not None and actual_claim.label == row.expected_label:
+                strict_correct_refusals += 1
             if actual_claim is None:
                 outcome = "PASS"
                 correct_refusals += 1
@@ -91,6 +107,7 @@ def score(
         )
 
     refusal_rate = correct_refusals / total_negatives if total_negatives else 0.0
+    strict_refusal_rate = strict_correct_refusals / total_negatives if total_negatives else 0.0
     false_rejection_rate = false_rejections / positive_total if positive_total else 0.0
 
     refusal_rate_valid = positive_hits >= positive_hit_floor
@@ -115,4 +132,7 @@ def score(
         positive_hit_floor=positive_hit_floor,
         refusal_rate_valid=refusal_rate_valid,
         invalid_reason=invalid_reason,
+        strict_correct_refusals=strict_correct_refusals,
+        strict_refusal_rate=strict_refusal_rate,
+        skipped=skipped,
     )

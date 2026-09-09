@@ -61,6 +61,9 @@ class MatrixReport:
     positive_hit_floor: int
     refusal_rate_valid: bool
     scored_papers: int
+    strict_correct_refusals: int
+    strict_refusal_rate: float
+    skipped: int
 
 
 def _display_name(result: PaperRunResult) -> str:
@@ -99,7 +102,7 @@ async def _run_paper(
             return PaperRunResult(paper_id=paper.paper_id, filename=paper.filename, status="SKIPPED", reason="no DB data")
 
         for _ in range(repeat):
-            matches = await match(paper.paper_id, paper.expected_rows, claims)
+            matches, _used_matcher_model = await match(paper.paper_id, paper.expected_rows, claims)
             reports.append(score(paper.expected_rows, claims, matches, positive_hit_floor=positive_hit_floor))
 
     else:  # source == "fixture"
@@ -168,6 +171,7 @@ def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> Matrix
     # "Worst" is min() for metrics where higher is better (hits, correct
     # refusals) and max() for false_rejections, where higher is worse.
     correct_refusals = sum(min(r.correct_refusals for r in result.reports) for result in scored)
+    strict_correct_refusals = sum(min(r.strict_correct_refusals for r in result.reports) for result in scored)
     total_negatives = sum(result.reports[0].total_negatives for result in scored)
     refused_by_label = sum(min(r.refused_by_label for r in result.reports) for result in scored)
     refused_by_omission = sum(min(r.refused_by_omission for r in result.reports) for result in scored)
@@ -175,8 +179,14 @@ def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> Matrix
     positive_hits = sum(min(r.positive_hits for r in result.reports) for result in scored)
     positive_total = sum(result.reports[0].positive_total for result in scored)
     false_rejections = sum(max(r.false_rejections for r in result.reports) for result in scored)
+    # skipped is a property of the frozen claims (grounding already ran),
+    # not of matcher variance, so it's stable across --repeat like
+    # total_negatives/positive_total rather than worst-cased like the
+    # outcome-derived metrics above.
+    skipped = sum(result.reports[0].skipped for result in scored)
 
     refusal_rate = correct_refusals / total_negatives if total_negatives else 0.0
+    strict_refusal_rate = strict_correct_refusals / total_negatives if total_negatives else 0.0
     false_rejection_rate = false_rejections / positive_total if positive_total else 0.0
     refusal_rate_valid = positive_hits >= positive_hit_floor
 
@@ -194,6 +204,9 @@ def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> Matrix
         positive_hit_floor=positive_hit_floor,
         refusal_rate_valid=refusal_rate_valid,
         scored_papers=len(scored),
+        strict_correct_refusals=strict_correct_refusals,
+        strict_refusal_rate=strict_refusal_rate,
+        skipped=skipped,
     )
 
 
@@ -255,6 +268,7 @@ def _print_report(
     lines.append("")
 
     refusal_pct = round(aggregate.refusal_rate * 100)
+    strict_pct = round(aggregate.strict_refusal_rate * 100)
     threshold_pct = round(threshold_refusal_rate * 100)
     refusal_tag = "PASS" if aggregate.refusal_rate >= threshold_refusal_rate else "FAIL"
     positive_pct = round(aggregate.positive_hits / aggregate.positive_total * 100) if aggregate.positive_total else 0
@@ -264,10 +278,21 @@ def _print_report(
     lines.append("=" * 64)
     lines.append("Prism Eval Results")
     lines.append("=" * 64)
+
+    if aggregate.skipped > 0:
+        lines.append(f"{aggregate.skipped} claims SKIPPED (transient errors) — not scored")
+        lines.append(
+            f"INCOMPLETE — {aggregate.skipped} spans not evaluated, cannot compute headline metric"
+        )
+    else:
+        lines.append(
+            f"Refusal-family rate: {aggregate.correct_refusals}/{aggregate.total_negatives} ({refusal_pct}%) "
+            f"[{refusal_tag} vs {threshold_pct}% threshold] "
+            "— grounder correctly refused claims paper doesn't support"
+        )
     lines.append(
-        f"Refusal rate:         {aggregate.correct_refusals}/{aggregate.total_negatives} ({refusal_pct}%) "
-        f"[{refusal_tag} vs {threshold_pct}% threshold] "
-        "— grounder correctly refused claims paper doesn't support"
+        f"Strict-label rate:   {aggregate.strict_correct_refusals}/{aggregate.total_negatives} ({strict_pct}%) "
+        "— refused via exact expected_label match only, no omission/grounding-rejection credit"
     )
     lines.append(f"  by label:            {aggregate.refused_by_label}")
     lines.append(f"  by omission:         {aggregate.refused_by_omission}")

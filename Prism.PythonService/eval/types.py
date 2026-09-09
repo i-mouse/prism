@@ -46,21 +46,21 @@ class Match(BaseModel):
 # RowOutcome JSON shape, as written into logs/eval/matrix_*.json under
 # papers[].report.per_row.<expected_id>:
 #   expected_id              golden-set row id, e.g. "REACT-M13"
-#   outcome                  PASS | FAIL | POSITIVE_HIT | POSITIVE_MISS | FALSE_REJECTION
+#   outcome                  PASS | FAIL | POSITIVE_HIT | POSITIVE_MISS | FALSE_REJECTION | SKIPPED
 #   expected_label           golden-set label: supported | partially_supported | not_supported
 #   expected_claim_text_verbatim  golden-set claim quote, from matrix_eval.json (may be "" if absent)
 #   expected_claim_summary   golden-set short claim description
 #   actual_label             engine's label for the matched claim, or null if no match
 #   actual_claim_text_verbatim    matched claim's verbatim quote, or null if no match
 #   actual_claim_summary     matched claim's short description, or null if no match
-#   actual_grounding_status  matched claim's grounding verdict (Pass/Partial/Fail), or null
+#   actual_grounding_status  matched claim's grounding verdict (Pass/Partial/Fail/Skipped), or null
 # The two verbatim/summary pairs exist purely for human diagnosis - reading a FAIL row
 # should not require cross-referencing matrix_eval.json and a separate DB query by hand.
 class RowOutcome(BaseModel):
     """Per-row scoring result."""
 
     expected_id: str
-    outcome: Literal["PASS", "FAIL", "POSITIVE_HIT", "POSITIVE_MISS", "FALSE_REJECTION"]
+    outcome: Literal["PASS", "FAIL", "POSITIVE_HIT", "POSITIVE_MISS", "FALSE_REJECTION", "SKIPPED"]
     expected_label: str
     expected_claim_text_verbatim: Optional[str] = None
     expected_claim_summary: Optional[str] = None
@@ -88,3 +88,15 @@ class EvalReport(BaseModel):
     positive_hit_floor: int
     refusal_rate_valid: bool
     invalid_reason: Optional[str] = None
+
+    # strict_correct_refusals requires actual_claim.label == row.expected_label
+    # exactly - no omission/grounding-rejection credit, unlike correct_refusals
+    # above (the "family" tolerance: not_supported OR partially_supported).
+    # Same denominator (total_negatives) so the two rates are comparable.
+    strict_correct_refusals: int = 0
+    strict_refusal_rate: float = 0.0
+
+    # Claims the grounding pipeline could not evaluate (transient service
+    # error, not a semantic verdict) - excluded from every denominator above,
+    # not scored either way. See GroundingStatus.SKIPPED.
+    skipped: int = 0

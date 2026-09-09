@@ -51,3 +51,15 @@ jobs:
         run: uv run python -m eval.check_fixture_freshness
       - name: Run matrix eval (fixture mode)
         run: uv run python -m eval.matrix_runner --source fixture
+      - name: Matcher gold-set (integration)
+        # Real Gemini calls against docs/evals/matcher_gold.json, calibrating
+        # the LLM-as-judge matcher itself - separate from the frozen-fixture
+        # scoring above (see docs/decisions.md "Freeze matcher output into
+        # fixtures"), which stays fixture-only. Runs only on push to main
+        # (not on every PR, and never for fork PRs, which don't see repo
+        # secrets) so it doesn't burn Gemini quota per-PR or fail forks on a
+        # missing secret - see docs/decisions.md for the scoped reversal.
+        if: github.event_name == 'push' && secrets.AI_API_KEY != ''
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+        run: uv run pytest eval/tests/test_matcher.py -v -m integration

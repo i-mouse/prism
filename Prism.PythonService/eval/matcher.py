@@ -115,11 +115,16 @@ async def match(
     paper_id: str,
     expected_rows: list[ExpectedRow],
     actual_claims: list[ActualClaim],
-) -> list[Match]:
+) -> tuple[list[Match], str]:
     """LLM-as-judge matcher. One call per paper.
 
-    Returns exactly len(expected_rows) Match objects - one per expected
-    row, with actual_index = None if no matching actual claim.
+    Returns (matches, used_model): exactly len(expected_rows) Match objects -
+    one per expected row, with actual_index = None if no matching actual
+    claim - plus the model that actually produced them. used_model is the
+    primary (LLM_EVAL_MATCHER_MODEL) unless the primary failed and the call
+    fell back to LLM_EVAL_MATCHER_FALLBACK_MODEL, in which case it is the
+    fallback - callers that persist provenance (e.g. dump_fixture.py) must
+    record this returned value, not assume the primary env var was used.
     """
     model_name = os.environ["LLM_EVAL_MATCHER_MODEL"]
     api_key = os.getenv("AI_API_KEY")
@@ -194,4 +199,4 @@ async def match(
     return [
         match_by_expected_id.get(row.id, Match(expected_id=row.id, actual_index=None))
         for row in expected_rows
-    ]
+    ], used_model

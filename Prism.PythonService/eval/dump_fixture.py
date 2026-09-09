@@ -137,7 +137,6 @@ async def _dump_paper(
     dry_run: bool,
     prompt_hash: str,
     model_name: str,
-    matcher_model: str,
 ) -> bool:
     """Returns True if the paper was (or, for --dry-run, would be) dumped."""
     result = await _fetch_latest_extraction(paper.filename)
@@ -149,14 +148,21 @@ async def _dump_paper(
     actual_claims = [ActualClaim(**claim) for claim in claims]
 
     try:
-        matches = await match(paper.paper_id, paper.expected_rows, actual_claims)
+        matches, used_matcher_model = await match(paper.paper_id, paper.expected_rows, actual_claims)
     except Exception as exc:
         print(f"SKIPPED (matcher failed for {paper.filename}): {exc}")
         return False
 
     match_dicts = [m.model_dump() for m in matches]
     fixture = build_fixture(
-        paper, extraction_run_id, claims, match_dicts, model_name, matcher_model, prompt_hash, datetime.now(timezone.utc)
+        paper,
+        extraction_run_id,
+        claims,
+        match_dicts,
+        model_name,
+        used_matcher_model,
+        prompt_hash,
+        datetime.now(timezone.utc),
     )
     fixture_path = fixture_dir / f"{paper.paper_id}.json"
 
@@ -196,11 +202,10 @@ async def _run(args: argparse.Namespace) -> int:
 
     prompt_hash = get_prompt_version()
     model_name = os.getenv("LLM_EXTRACTION_MODEL", "")
-    matcher_model = os.environ["LLM_EVAL_MATCHER_MODEL"]
 
     all_dumped = True
     for paper in papers:
-        dumped = await _dump_paper(paper, args.fixture_dir, args.dry_run, prompt_hash, model_name, matcher_model)
+        dumped = await _dump_paper(paper, args.fixture_dir, args.dry_run, prompt_hash, model_name)
         all_dumped = all_dumped and dumped
 
     return 0 if all_dumped else 1

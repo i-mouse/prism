@@ -457,6 +457,21 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 **Alternatives:** Add AI_API_KEY as a GitHub secret. Rejected — reproducibility claim gets weaker ("clone and run, if you have a Gemini key"), CI burns quota on every push, fork PRs break on missing secrets.
 
 **Consequences:** Matcher changes require fixture regen (enforced by check_fixture_freshness). Fixture size grows slightly. Reproducibility now bit-perfect: same fixture, same number, forever.
+
+---
+
+## Scoped reversal: wire matcher gold-set test into CI with a guarded AI_API_KEY secret — 2026-09-08
+
+**Context:** `docs/audit/eval_integrity_2026-09-08.md` (Q4) found the 15-pair matcher gold-set test (`eval/tests/test_matcher.py`, `docs/evals/matcher_gold.json`) exists but is never run — it's `@pytest.mark.integration`, and `pyproject.toml`'s `addopts = "-m 'not integration'"` skips it everywhere, including CI. Without it, nothing catches a regression in the LLM-as-judge matcher itself; it's trusted on real extraction data without ever being calibrated in CI. This directly touches the "Freeze matcher output into fixtures" decision above, which rejected adding `AI_API_KEY` as a GitHub secret for exactly this class of reason (quota burn per push, fork PRs breaking on a missing secret, weaker reproducibility).
+
+**Decision:** Add a CI step that runs `eval/tests/test_matcher.py -v -m integration` against the real gold set, but scoped narrowly to avoid the three objections that killed the broader version: (1) guarded with `if: github.event_name == 'push' && secrets.AI_API_KEY != ''`, so it never runs on `pull_request` (including fork PRs, which can't see repo secrets and would otherwise fail red on every PR) and only fires on pushes to `main`; (2) fixture-mode scoring (`matrix_runner --source fixture`) is untouched — it still makes zero LLM calls and stays bit-perfect reproducible per the decision above. This is a matcher-calibration gate, not a re-opening of live matching in the scored eval path.
+
+**Alternatives:** (a) Run unconditionally on every PR + push, as the audit's minimum-change suggestion literally reads — rejected, reintroduces the exact quota-burn/fork-PR-breakage costs the original decision was written to avoid. (b) Skip CI wiring entirely, keep it a documented manual command — rejected; the audit's whole point is that an unwired test doesn't catch drift, and a manual step reliably doesn't get run.
+
+**Consequences:** Gold-set drift is caught once per push to `main` (not per-PR), with a delay between a matcher regression landing and it being caught. Requires a real `AI_API_KEY` GitHub Actions secret to be configured by a repo admin — until then the step silently no-ops (green, skipped) rather than failing, so this decision alone does not guarantee the gate is active; check the Actions log for the step actually running. Fork PRs are unaffected (step never attempts to run for them).
+
+---
+
 ## Three-call claim extraction pipeline — 2026-08-20
 **Context:** Single-call structured extraction never emitted refusal labels (by_label=0 across v1/v2/v3 despite three prompt rewrites, escalating MUST language, pattern-labeled few-shot, and audit-procedure prompts). The failure was architectural: schema-constrained generation commits to the label field before reasoning, and helpfulness-tuned models default to "supported" when the reasoning path is short-circuited.
 **Decision:** Split extract_claims() into three sequential Gemini calls: extractor (list claims, no labels), auditor (per-claim free-text reasoning ending in VERDICT: line + verbatim QUOTE:/SECTION: pairs, no schema), structurer (parse audit prose into ClaimLLM JSON — the only call using response_schema). Per-claim audit → structure runs concurrent with asyncio.Semaphore(5). schemas.py, writer.py, grounding pipeline, and all downstream code unchanged.

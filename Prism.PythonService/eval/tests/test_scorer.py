@@ -246,6 +246,70 @@ def test_negative_row_grounded_away_counts_as_refused_by_grounding():
     assert report.refused_by_label == 0
 
 
+def test_skipped_claim_excluded_from_negative_denominators():
+    """A negative row matched to a Skipped claim must not count as a correct
+    refusal (positive-sounding) or a fail (negative-sounding) - it's simply
+    excluded from total_negatives entirely."""
+    expected = [ExpectedRow(id="N1", expected_label="not_supported", grounding_negative=True)]
+    actual = [ActualClaim(index=0, label="supported", grounding_status="Skipped")]
+    matches = [Match(expected_id="N1", actual_index=0)]
+
+    report = score(expected, actual, matches, positive_hit_floor=0)
+
+    assert report.per_row["N1"].outcome == "SKIPPED"
+    assert report.skipped == 1
+    assert report.total_negatives == 0
+    assert report.correct_refusals == 0
+    assert report.refused_by_label == 0
+    assert report.refused_by_omission == 0
+    assert report.refused_by_grounding == 0
+
+
+def test_skipped_claim_excluded_from_positive_denominators():
+    expected = [ExpectedRow(id="P1", expected_label="supported", grounding_negative=False)]
+    actual = [ActualClaim(index=0, label="supported", grounding_status="Skipped")]
+    matches = [Match(expected_id="P1", actual_index=0)]
+
+    report = score(expected, actual, matches, positive_hit_floor=0)
+
+    assert report.per_row["P1"].outcome == "SKIPPED"
+    assert report.skipped == 1
+    assert report.positive_total == 0
+    assert report.positive_hits == 0
+    assert report.false_rejections == 0
+
+
+def test_strict_refusal_rate_excludes_omission_and_grounding_credit():
+    """Family tolerance (correct_refusals) gives credit for omission and
+    grounding-rejection; strict requires the extractor's own label to
+    exactly match expected_label. Same denominator, lower numerator."""
+    expected = [
+        ExpectedRow(id="N1", expected_label="not_supported", grounding_negative=True),  # omitted
+        ExpectedRow(id="N2", expected_label="not_supported", grounding_negative=True),  # grounded away
+        ExpectedRow(id="N3", expected_label="not_supported", grounding_negative=True),  # exact label match
+        ExpectedRow(id="N4", expected_label="not_supported", grounding_negative=True),  # family match, not exact
+    ]
+    actual = [
+        ActualClaim(index=1, label="supported", missing=True, grounding_status="Fail"),
+        ActualClaim(index=2, label="not_supported"),
+        ActualClaim(index=3, label="partially_supported"),
+    ]
+    matches = [
+        Match(expected_id="N1", actual_index=None),
+        Match(expected_id="N2", actual_index=1),
+        Match(expected_id="N3", actual_index=2),
+        Match(expected_id="N4", actual_index=3),
+    ]
+
+    report = score(expected, actual, matches, positive_hit_floor=0)
+
+    assert report.total_negatives == 4
+    assert report.correct_refusals == 4
+    assert report.refusal_rate == 1.0
+    assert report.strict_correct_refusals == 1
+    assert report.strict_refusal_rate == 0.25
+
+
 def test_silence_gaming_caught():
     """Engine emits zero claims: every negative row passes by omission,
     refusal_rate hits 100%, but positive_hits=0 must invalidate the number.
