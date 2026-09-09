@@ -1,10 +1,26 @@
-"""CLI: verifies every paper's committed fixture matches the current prompt
-and the current matcher configuration.
+"""CLI: verifies every paper's committed fixture matches the current
+extraction prompt AND the current matcher (model routing + gold-set
+accuracy).
 
-Pure hash comparison - no LLM calls, no DB queries. Run in CI ahead of
-matrix_runner so a stale or legacy fixture is caught with a clear, per-paper
-message instead of silently scoring against out-of-date extraction data or
-matches frozen under a matcher configuration that has since changed.
+Pure hash/field comparison - no LLM calls, no DB queries. Run in CI ahead
+of matrix_runner so a stale or legacy fixture is caught with a clear,
+per-paper message naming the exact fix command instead of silently scoring
+against out-of-date extraction data or matches frozen under a matcher
+configuration that has since changed or was never gold-set verified.
+
+Three independent checks, each pointing at a different regen path:
+  prompt_hash            -> full regen (eval.dump_fixture): extraction
+                            itself changed, claims must be re-extracted.
+  matcher_fingerprint     -> re-match only (eval.rematch_fixture): only the
+                            matcher's model routing or prompt changed;
+                            claims are still valid, only matches need
+                            refreshing.
+  matcher_gold_pass_rate  -> re-verify (eval.verify_matcher_gold): the
+                            matcher was never calibrated against the gold
+                            set, or its last calibration is now stale
+                            (eval.rematch_fixture clears this field on
+                            purpose - see that module's docstring) or fell
+                            below the accuracy floor.
 """
 import argparse
 import sys
@@ -18,6 +34,8 @@ from extraction.prompt_version import get_prompt_version
 REPO_ROOT = Path(__file__).parent.parent.parent
 DEFAULT_MATRIX_PATH = REPO_ROOT / "docs" / "evals" / "matrix_eval.json"
 DEFAULT_FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures"
+
+MATCHER_GOLD_PASS_RATE_FLOOR = 0.9
 
 
 def _check_paper(
@@ -43,19 +61,27 @@ def _check_paper(
     if fixture_hash != current_hash:
         return False, (
             f"{paper_id}: fixture prompt_hash={fixture_hash[:8]} does not match "
-            f"current={current_hash[:8]}. Regenerate via "
+            f"current={current_hash[:8]} - extraction changed — full regen: "
             f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
         )
 
     fixture_matcher_fingerprint = header.get("matcher_fingerprint", "")
     if fixture_matcher_fingerprint != current_matcher_fingerprint:
-        stale_display = fixture_matcher_fingerprint[:8] if fixture_matcher_fingerprint else "(none - pre-fingerprint fixture)"
+        stale_display = fixture_matcher_fingerprint[:8] if fixture_matcher_fingerprint else "(none)"
         return False, (
             f"{paper_id}: fixture matcher_fingerprint={stale_display} does not match "
-            f"current={current_matcher_fingerprint[:8]} - the matcher's model routing "
-            f"(LLM_EVAL_MATCHER_MODEL/LLM_EVAL_MATCHER_FALLBACK_MODEL) or prompt changed "
-            f"since these matches were frozen. Regenerate via "
-            f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
+            f"current={current_matcher_fingerprint[:8]} - matcher changed — re-match only "
+            f"(no re-extraction): 'uv run python -m eval.rematch_fixture --paper {paper_id}', "
+            f"then 'uv run python -m eval.verify_matcher_gold'."
+        )
+
+    pass_rate = header.get("matcher_gold_pass_rate")
+    if pass_rate is None or pass_rate < MATCHER_GOLD_PASS_RATE_FLOOR:
+        rate_display = "missing" if pass_rate is None else f"{pass_rate:.1%}"
+        return False, (
+            f"{paper_id}: matcher_gold_pass_rate={rate_display} (floor "
+            f"{MATCHER_GOLD_PASS_RATE_FLOOR:.0%}) - matcher gold check failed or never ran: "
+            f"'uv run python -m eval.verify_matcher_gold'."
         )
 
     if not read_matches_from_fixture(fixture_path):
@@ -66,7 +92,8 @@ def _check_paper(
 
     return True, (
         f"{paper_id}: OK (prompt_hash={current_hash[:8]}, "
-        f"matcher_fingerprint={current_matcher_fingerprint[:8]})"
+        f"matcher_fingerprint={current_matcher_fingerprint[:8]}, "
+        f"matcher_gold_pass_rate={pass_rate:.1%})"
     )
 
 
@@ -97,4 +124,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    from dotenv import load_dotenv
+
+    load_dotenv()
     main()

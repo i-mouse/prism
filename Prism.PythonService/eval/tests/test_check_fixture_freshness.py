@@ -8,6 +8,7 @@ from eval import check_fixture_freshness as cff
 
 CURRENT_HASH = "currenthash1"
 CURRENT_MATCHER_FINGERPRINT = "matcherfp01"
+CURRENT_PASS_RATE = 0.9333333333333333  # 14/15, above the 0.9 floor
 
 
 @pytest.fixture(autouse=True)
@@ -48,10 +49,13 @@ def _write_fixture(
     include_matches: bool = True,
     matcher_fingerprint: str | None = CURRENT_MATCHER_FINGERPRINT,
     omit_matcher_fingerprint_key: bool = False,
+    matcher_gold_pass_rate: float | None = CURRENT_PASS_RATE,
+    omit_pass_rate_key: bool = False,
 ) -> Path:
-    """matcher_fingerprint defaults to the current one (fresh); pass a
-    different value to simulate matcher drift, or omit_matcher_fingerprint_key
-    to simulate a fixture written before this field existed."""
+    """matcher_fingerprint and matcher_gold_pass_rate default to fresh,
+    passing values. Pass a different fingerprint or a low/omitted pass_rate
+    to simulate the corresponding drift; omit_matcher_fingerprint_key
+    simulates a fixture written before that field existed."""
     fixture_dir.mkdir(parents=True, exist_ok=True)
     path = fixture_dir / f"{paper_id}.json"
     claims = [{"index": 0, "label": "supported", "claim_summary": "x"}]
@@ -70,6 +74,9 @@ def _write_fixture(
         }
         if not omit_matcher_fingerprint_key:
             header["matcher_fingerprint"] = matcher_fingerprint
+        if not omit_pass_rate_key:
+            header["matcher_gold_pass_rate"] = matcher_gold_pass_rate
+            header["matcher_gold_verified_at"] = "2026-09-09T00:00:00+00:00"
         content = {"header": header, "claims": claims}
         if include_matches:
             content["matches"] = [{"expected_id": f"{paper_id}-1", "actual_index": 0}]
@@ -87,7 +94,7 @@ def test_all_fixtures_fresh_returns_zero(tmp_path):
     assert cff.check_freshness(matrix_path, fixture_dir) == 0
 
 
-def test_stale_fixture_fails_with_clear_message(tmp_path, capsys):
+def test_stale_prompt_hash_fails_with_full_regen_message(tmp_path, capsys):
     matrix_path = _write_matrix(tmp_path, ["paper-a"])
     fixture_dir = tmp_path / "fixtures"
     _write_fixture(fixture_dir, "paper-a", "oldhashXYZ12")
@@ -97,7 +104,7 @@ def test_stale_fixture_fails_with_clear_message(tmp_path, capsys):
 
     assert exit_code == 1
     assert "paper-a" in out
-    assert "Regenerate via" in out
+    assert "extraction changed" in out
     assert "eval.dump_fixture --paper paper-a" in out
 
 
@@ -143,7 +150,7 @@ def test_all_papers_reported_when_multiple_fail(tmp_path, capsys):
     assert "paper-c" in out
 
 
-def test_stale_matcher_fingerprint_fails_with_clear_message(tmp_path, capsys):
+def test_stale_matcher_fingerprint_fails_with_rematch_message(tmp_path, capsys):
     matrix_path = _write_matrix(tmp_path, ["paper-a"])
     fixture_dir = tmp_path / "fixtures"
     _write_fixture(fixture_dir, "paper-a", CURRENT_HASH, matcher_fingerprint="stalefp0001")
@@ -154,8 +161,10 @@ def test_stale_matcher_fingerprint_fails_with_clear_message(tmp_path, capsys):
     assert exit_code == 1
     assert "paper-a" in out
     assert "matcher_fingerprint" in out
-    assert "Regenerate via" in out
-    assert "eval.dump_fixture --paper paper-a" in out
+    assert "matcher changed" in out
+    assert "re-match only" in out
+    assert "eval.rematch_fixture --paper paper-a" in out
+    assert "eval.verify_matcher_gold" in out
 
 
 def test_fixture_missing_matcher_fingerprint_key_fails(tmp_path, capsys):
@@ -171,7 +180,46 @@ def test_fixture_missing_matcher_fingerprint_key_fails(tmp_path, capsys):
     assert exit_code == 1
     assert "paper-a" in out
     assert "matcher_fingerprint" in out
-    assert "Regenerate via" in out
+    assert "re-match only" in out
+    assert "eval.rematch_fixture --paper paper-a" in out
+
+
+def test_pass_rate_missing_fails_with_verify_message(tmp_path, capsys):
+    matrix_path = _write_matrix(tmp_path, ["paper-a"])
+    fixture_dir = tmp_path / "fixtures"
+    _write_fixture(fixture_dir, "paper-a", CURRENT_HASH, omit_pass_rate_key=True)
+
+    exit_code = cff.check_freshness(matrix_path, fixture_dir)
+    out = capsys.readouterr().out
+
+    assert exit_code == 1
+    assert "paper-a" in out
+    assert "matcher_gold_pass_rate=missing" in out
+    assert "matcher gold check failed or never ran" in out
+    assert "eval.verify_matcher_gold" in out
+
+
+def test_pass_rate_below_floor_fails(tmp_path, capsys):
+    matrix_path = _write_matrix(tmp_path, ["paper-a"])
+    fixture_dir = tmp_path / "fixtures"
+    _write_fixture(fixture_dir, "paper-a", CURRENT_HASH, matcher_gold_pass_rate=0.8)
+
+    exit_code = cff.check_freshness(matrix_path, fixture_dir)
+    out = capsys.readouterr().out
+
+    assert exit_code == 1
+    assert "paper-a" in out
+    assert "matcher_gold_pass_rate=80.0%" in out
+    assert "matcher gold check failed or never ran" in out
+    assert "eval.verify_matcher_gold" in out
+
+
+def test_pass_rate_exactly_at_floor_passes(tmp_path):
+    matrix_path = _write_matrix(tmp_path, ["paper-a"])
+    fixture_dir = tmp_path / "fixtures"
+    _write_fixture(fixture_dir, "paper-a", CURRENT_HASH, matcher_gold_pass_rate=0.9)
+
+    assert cff.check_freshness(matrix_path, fixture_dir) == 0
 
 
 def test_fixture_missing_matches_key_fails(tmp_path, capsys):

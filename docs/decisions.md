@@ -472,6 +472,23 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 
 ---
 
+## Revert live-matcher CI back to frozen-fixture design — 2026-09-09
+
+**Context:** The scoped reversal above still put a live Gemini call, gated on a real `AI_API_KEY` secret, into `eval.yml` — even guarded to push-to-main-only, this reintroduced exactly the secret dependency and per-push LLM call that "Freeze matcher output into fixtures" (2026-08-13) was written to eliminate. In practice it also proved operationally fragile: the multi-line YAML `if:` condition referencing `secrets.AI_API_KEY` inside a `>-` block caused repeated workflow parse failures. Between the reintroduced secret dependency and the parse breakage, the live-CI approach cost more than the audit gap it closed.
+
+**Decision:** Remove both CI steps added by the scoped reversal ("Check matcher-relevant paths changed" and "Matcher gold-set (integration)") entirely. `eval.yml` now contains no reference to `secrets.AI_API_KEY` anywhere, matching the original frozen-fixture design. Matcher-gold verification moves from a live CI call to frozen fixture metadata, checked offline:
+- Every fixture header (`docs/evals/fixtures/*.json`) now carries `matcher_fingerprint` (hash of `LLM_EVAL_MATCHER_MODEL`/`LLM_EVAL_MATCHER_FALLBACK_MODEL`, already added in the prior PR), plus new `matcher_gold_pass_rate` and `matcher_gold_verified_at` fields.
+- `eval/verify_matcher_gold.py` (new) runs the real matcher against the 15-pair gold set, computes pass_rate, and freezes fingerprint + pass_rate + timestamp into every fixture header — run manually, same trust model as `dump_fixture.py`.
+- `eval/rematch_fixture.py` (new) handles the case where only the matcher changed (not extraction): re-runs the matcher against a paper's already-extracted Postgres claims (no re-extraction, no re-grounding), refreshes `matches` + `matcher_fingerprint`, and deliberately *clears* `matcher_gold_pass_rate`/`matcher_gold_verified_at` rather than carrying forward a number measured under the old matcher — forcing a subsequent `verify_matcher_gold` run before the fixture is trusted again.
+- `eval/check_fixture_freshness.py` (still fully offline - no LLM calls, no DB queries, no secrets) gained two checks alongside the existing `prompt_hash` one: `matcher_fingerprint` drift and `matcher_gold_pass_rate < 0.9`, each failing with a message naming the exact fix command (full regen vs. re-match-only vs. re-verify) rather than one generic "regenerate" message for every cause.
+- See `docs/RUNBOOK.md` §6 for the full decision table on which of the three regen paths applies to a given `check_fixture_freshness` failure.
+
+**Alternatives:** (a) Fix the YAML parse issue and keep the live step - rejected; the underlying secret-dependency and quota-burn objections from the original 2026-08-13 decision still apply regardless of whether the YAML itself is written correctly. (b) Keep the gold-set check entirely manual/undocumented (no header fields, no freshness check) - rejected; that's the exact "unwired test doesn't catch drift" gap the audit originally flagged, just relocated from CI back to nothing.
+
+**Consequences:** CI is secretless and LLM-free again, matching the original design intent — `check_fixture_freshness` + `matrix_runner --source fixture` are pure reads. Matcher-gold drift is now caught only when a developer remembers to run `verify_matcher_gold` (or when `check_fixture_freshness` fails locally/in CI and points them at it), not automatically on every push - a real regression in monitoring cadence versus the (broken) live-CI approach, accepted as the cost of a hermetic, secretless CI. The three fixture headers were regenerated with real gold-set data as part of this change (15/15, 100%) - not backfilled or guessed.
+
+---
+
 ## Three-call claim extraction pipeline — 2026-08-20
 **Context:** Single-call structured extraction never emitted refusal labels (by_label=0 across v1/v2/v3 despite three prompt rewrites, escalating MUST language, pattern-labeled few-shot, and audit-procedure prompts). The failure was architectural: schema-constrained generation commits to the label field before reasoning, and helpfulness-tuned models default to "supported" when the reasoning path is short-circuited.
 **Decision:** Split extract_claims() into three sequential Gemini calls: extractor (list claims, no labels), auditor (per-claim free-text reasoning ending in VERDICT: line + verbatim QUOTE:/SECTION: pairs, no schema), structurer (parse audit prose into ClaimLLM JSON — the only call using response_schema). Per-claim audit → structure runs concurrent with asyncio.Semaphore(5). schemas.py, writer.py, grounding pipeline, and all downstream code unchanged.
