@@ -1,6 +1,7 @@
 {
   "header": {
     "prompt_hash": "31021b91b11a",
+    "matcher_fingerprint": "6e340b9cffb3",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
     "generated_at": "2026-09-05T11:13:01.692847+00:00",

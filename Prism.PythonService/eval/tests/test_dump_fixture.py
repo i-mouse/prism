@@ -1,6 +1,7 @@
 """Offline tests for eval/dump_fixture.py. No DB, no LLM."""
 import asyncio
 import json
+from pathlib import Path
 
 from eval import dump_fixture
 from eval.data_source import get_fixture_header, read_from_fixture
@@ -123,6 +124,7 @@ def test_dump_fixture_writes_file_when_not_dry_run(tmp_path, monkeypatch):
     assert written["header"]["paper_id"] == "arxiv-2303.11366v4"
     assert written["header"]["prompt_hash"] == "abcdef012345"
     assert written["header"]["matcher_model"] == "gemini-2.5-flash-lite"
+    assert len(written["header"]["matcher_fingerprint"]) == 12
     assert written["claims"] == [{"index": 0, "label": "supported", "claim_summary": "Synthetic claim."}]
     assert written["matches"] == [
         {"expected_id": "REFLEX-M01", "actual_index": 0},
@@ -182,3 +184,45 @@ def test_dump_fixture_records_fallback_model_not_intended_primary(tmp_path, monk
     assert dumped is True
     written = json.loads((tmp_path / "arxiv-2303.11366v4.json").read_text(encoding="utf-8"))
     assert written["header"]["matcher_model"] == "gemini-3.1-flash-lite"
+
+
+def test_matcher_fingerprint_changes_with_model_env_vars(monkeypatch):
+    monkeypatch.setattr(dump_fixture, "MATCHER_PROMPT_PATH", Path("/does/not/exist.md"))
+
+    monkeypatch.setenv("LLM_EVAL_MATCHER_MODEL", "gemini-3.6-flash")
+    monkeypatch.setenv("LLM_EVAL_MATCHER_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+    fp1 = dump_fixture.get_matcher_fingerprint()
+
+    monkeypatch.setenv("LLM_EVAL_MATCHER_MODEL", "gemini-4.0-flash")
+    fp2 = dump_fixture.get_matcher_fingerprint()
+
+    assert len(fp1) == 12
+    assert fp1 != fp2
+
+
+def test_matcher_fingerprint_is_stable_for_same_env(monkeypatch):
+    monkeypatch.setattr(dump_fixture, "MATCHER_PROMPT_PATH", Path("/does/not/exist.md"))
+    monkeypatch.setenv("LLM_EVAL_MATCHER_MODEL", "gemini-3.6-flash")
+    monkeypatch.setenv("LLM_EVAL_MATCHER_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+
+    assert dump_fixture.get_matcher_fingerprint() == dump_fixture.get_matcher_fingerprint()
+
+
+def test_matcher_fingerprint_changes_when_prompt_file_changes(tmp_path, monkeypatch):
+    """MATCHER_PROMPT_PATH doesn't exist today (the system prompt is a string
+    constant in matcher.py), but the fingerprint must pick up its bytes the
+    moment such a file is introduced - this is what keeps it forward
+    compatible without another freshness-check change."""
+    monkeypatch.setenv("LLM_EVAL_MATCHER_MODEL", "gemini-3.6-flash")
+    monkeypatch.setenv("LLM_EVAL_MATCHER_FALLBACK_MODEL", "gemini-3.1-flash-lite")
+
+    prompt_path = tmp_path / "matcher_prompt.md"
+    monkeypatch.setattr(dump_fixture, "MATCHER_PROMPT_PATH", prompt_path)
+
+    prompt_path.write_text("You are a matcher.", encoding="utf-8")
+    fp1 = dump_fixture.get_matcher_fingerprint()
+
+    prompt_path.write_text("You are a matcher. Be strict.", encoding="utf-8")
+    fp2 = dump_fixture.get_matcher_fingerprint()
+
+    assert fp1 != fp2

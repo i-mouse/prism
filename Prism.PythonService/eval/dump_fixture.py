@@ -2,10 +2,11 @@
 
 Fixtures are what CI reads instead of the DB and instead of Gemini
 (eval/matrix_runner.py --source fixture). Each fixture carries a header
-(prompt_hash, model_name, matcher_model, generated_at, paper_id, filename,
-extraction_run_id) so a freshness check can detect a fixture that no
-longer matches the current prompt, plus the frozen claims and the frozen
-matcher output (list[Match]) so CI never has to call Gemini to score.
+(prompt_hash, matcher_fingerprint, model_name, matcher_model, generated_at,
+paper_id, filename, extraction_run_id) so a freshness check can detect a
+fixture that no longer matches the current extraction prompt OR the current
+matcher configuration, plus the frozen claims and the frozen matcher output
+(list[Match]) so CI never has to call Gemini to score.
 
 Run manually by developers after prompt iteration produces a
 high-performing extraction state worth freezing for CI:
@@ -13,6 +14,7 @@ high-performing extraction state worth freezing for CI:
 """
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import sys
@@ -30,6 +32,34 @@ from eval.types import ActualClaim
 REPO_ROOT = Path(__file__).parent.parent.parent
 DEFAULT_MATRIX_PATH = REPO_ROOT / "docs" / "evals" / "matrix_eval.json"
 DEFAULT_FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures"
+
+# No dedicated matcher prompt file exists yet - matcher.py's system prompt is
+# a string constant (_SYSTEM_PROMPT). This path is where one would live if
+# extracted later, so get_matcher_fingerprint() picks it up automatically
+# without another freshness-check change.
+MATCHER_PROMPT_PATH = Path(__file__).parent / "matcher_prompt.md"
+
+
+def get_matcher_fingerprint() -> str:
+    """Returns a 12-character SHA-256 hash of everything that can change the
+    matcher's behavior independently of the extraction prompt: the model
+    routing envs (LLM_EVAL_MATCHER_MODEL, LLM_EVAL_MATCHER_FALLBACK_MODEL)
+    plus MATCHER_PROMPT_PATH's bytes, if that file exists on disk.
+
+    Written into every fixture header alongside prompt_hash so
+    check_fixture_freshness can catch a fixture whose matches were frozen
+    under different matcher routing (model swap, added fallback) even when
+    the extraction prompt itself is unchanged - prompt_hash alone is blind
+    to this because the matcher is a separate LLM call from extraction.
+    """
+    primary = os.getenv("LLM_EVAL_MATCHER_MODEL", "")
+    fallback = os.getenv("LLM_EVAL_MATCHER_FALLBACK_MODEL", "")
+    combined = primary.encode("utf-8") + b"\x00" + fallback.encode("utf-8")
+
+    if MATCHER_PROMPT_PATH.exists():
+        combined += MATCHER_PROMPT_PATH.read_bytes()
+
+    return hashlib.sha256(combined).hexdigest()[:12]
 
 _LATEST_EXTRACTION_ID_SQL = """
 SELECT de.id
@@ -114,11 +144,13 @@ def build_fixture(
     model_name: str,
     matcher_model: str,
     prompt_hash: str,
+    matcher_fingerprint: str,
     generated_at: datetime,
 ) -> dict:
     return {
         "header": {
             "prompt_hash": prompt_hash,
+            "matcher_fingerprint": matcher_fingerprint,
             "model_name": model_name,
             "matcher_model": matcher_model,
             "generated_at": generated_at.isoformat(),
@@ -162,6 +194,7 @@ async def _dump_paper(
         model_name,
         used_matcher_model,
         prompt_hash,
+        get_matcher_fingerprint(),
         datetime.now(timezone.utc),
     )
     fixture_path = fixture_dir / f"{paper.paper_id}.json"

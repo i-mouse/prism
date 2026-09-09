@@ -51,15 +51,38 @@ jobs:
         run: uv run python -m eval.check_fixture_freshness
       - name: Run matrix eval (fixture mode)
         run: uv run python -m eval.matrix_runner --source fixture
+      - name: Check matcher-relevant paths changed
+        id: matcher_paths
+        if: github.event_name == 'push'
+        working-directory: ${{ github.workspace }}
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE="HEAD~1"
+          fi
+          if git diff --name-only "$BEFORE" "${{ github.sha }}" -- \
+              Prism.PythonService/eval/matcher.py \
+              docs/evals/matcher_gold.json \
+              | grep -q .; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Matcher gold-set (integration)
         # Real Gemini calls against docs/evals/matcher_gold.json, calibrating
         # the LLM-as-judge matcher itself - separate from the frozen-fixture
         # scoring above (see docs/decisions.md "Freeze matcher output into
         # fixtures"), which stays fixture-only. Runs only on push to main
         # (not on every PR, and never for fork PRs, which don't see repo
-        # secrets) so it doesn't burn Gemini quota per-PR or fail forks on a
+        # secrets) when the matcher or its gold set actually changed, so it
+        # doesn't burn Gemini quota on unrelated pushes or fail forks on a
         # missing secret - see docs/decisions.md for the scoped reversal.
-        if: github.event_name == 'push' && secrets.AI_API_KEY != ''
+        # The pytest command itself is unchanged from a manual on-demand run:
+        #   uv run pytest eval/tests/test_matcher.py -v -m integration
+        if: >-
+          github.event_name == 'push' &&
+          secrets.AI_API_KEY != '' &&
+          steps.matcher_paths.outputs.changed == 'true'
         env:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
         run: uv run pytest eval/tests/test_matcher.py -v -m integration

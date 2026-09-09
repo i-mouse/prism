@@ -1,14 +1,17 @@
-"""CLI: verifies every paper's committed fixture matches the current prompt.
+"""CLI: verifies every paper's committed fixture matches the current prompt
+and the current matcher configuration.
 
-Pure hash comparison — no LLM, no DB. Run in CI ahead of matrix_runner so a
-stale or legacy fixture is caught with a clear, per-paper message instead
-of silently scoring against out-of-date extraction data.
+Pure hash comparison - no LLM calls, no DB queries. Run in CI ahead of
+matrix_runner so a stale or legacy fixture is caught with a clear, per-paper
+message instead of silently scoring against out-of-date extraction data or
+matches frozen under a matcher configuration that has since changed.
 """
 import argparse
 import sys
 from pathlib import Path
 
 from eval.data_source import get_fixture_header, read_matches_from_fixture
+from eval.dump_fixture import get_matcher_fingerprint
 from eval.matrix_loader import MatrixSpec, load_matrix
 from extraction.prompt_version import get_prompt_version
 
@@ -17,7 +20,12 @@ DEFAULT_MATRIX_PATH = REPO_ROOT / "docs" / "evals" / "matrix_eval.json"
 DEFAULT_FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures"
 
 
-def _check_paper(paper_id: str, fixture_dir: Path, current_hash: str) -> tuple[bool, str]:
+def _check_paper(
+    paper_id: str,
+    fixture_dir: Path,
+    current_hash: str,
+    current_matcher_fingerprint: str,
+) -> tuple[bool, str]:
     """Returns (fresh, message) for one paper's fixture."""
     fixture_path = fixture_dir / f"{paper_id}.json"
 
@@ -39,22 +47,37 @@ def _check_paper(paper_id: str, fixture_dir: Path, current_hash: str) -> tuple[b
             f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
         )
 
+    fixture_matcher_fingerprint = header.get("matcher_fingerprint", "")
+    if fixture_matcher_fingerprint != current_matcher_fingerprint:
+        stale_display = fixture_matcher_fingerprint[:8] if fixture_matcher_fingerprint else "(none - pre-fingerprint fixture)"
+        return False, (
+            f"{paper_id}: fixture matcher_fingerprint={stale_display} does not match "
+            f"current={current_matcher_fingerprint[:8]} - the matcher's model routing "
+            f"(LLM_EVAL_MATCHER_MODEL/LLM_EVAL_MATCHER_FALLBACK_MODEL) or prompt changed "
+            f"since these matches were frozen. Regenerate via "
+            f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
+        )
+
     if not read_matches_from_fixture(fixture_path):
         return False, (
             f"{paper_id}: fixture missing frozen matches. Regenerate via "
             f"'uv run python -m eval.dump_fixture --paper {paper_id}'."
         )
 
-    return True, f"{paper_id}: OK (prompt_hash={current_hash[:8]})"
+    return True, (
+        f"{paper_id}: OK (prompt_hash={current_hash[:8]}, "
+        f"matcher_fingerprint={current_matcher_fingerprint[:8]})"
+    )
 
 
 def check_freshness(matrix_path: Path, fixture_dir: Path) -> int:
     matrix_spec: MatrixSpec = load_matrix(matrix_path)
     current_hash = get_prompt_version()
+    current_matcher_fingerprint = get_matcher_fingerprint()
 
     all_fresh = True
     for paper in matrix_spec.papers:
-        fresh, message = _check_paper(paper.paper_id, fixture_dir, current_hash)
+        fresh, message = _check_paper(paper.paper_id, fixture_dir, current_hash, current_matcher_fingerprint)
         print(message)
         all_fresh = all_fresh and fresh
 
