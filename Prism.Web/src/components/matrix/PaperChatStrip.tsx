@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { ArrowUp, Copy, RotateCw, Square } from "lucide-react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
+import { ArrowUp, ChevronDown, ChevronUp, Copy, MessageCircle, RotateCw, Square } from "lucide-react";
 import { toast } from "sonner";
 import { useChatStream } from "@/hooks/useChatStream";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
-import { VerdictPill } from "@/components/VerdictPill";
-import { claimLabelToVerdict } from "@/lib/claimMeta";
-import { ChatMarkdown } from "@/components/matrix/chat/ChatMarkdown";
+import { ChatMarkdown, citeMarker, cursorMarker, type ChatCiteInfo } from "@/components/matrix/chat/ChatMarkdown";
 import { ChatResizeHandle } from "@/components/matrix/chat/ChatResizeHandle";
 import { DEFAULT_CHAT_HEIGHT, clampChatHeight } from "@/components/matrix/chat/chatHeight";
 import { ChatBottomSheet, type SheetState } from "@/components/matrix/chat/ChatBottomSheet";
@@ -65,6 +64,26 @@ function turnToPlainText(turn: ChatTurn): string {
     .trim();
 }
 
+// Reassembles the block stream into ONE continuous markdown string (citations
+// become inline `![](cite:<id>)` markers, see ChatMarkdown.tsx) instead of
+// mounting a separate <ChatMarkdown> per TextBlock — the backend splits text
+// at every citation, and parsing each fragment in isolation shatters markdown
+// structures (lists, paragraphs) that span across a citation.
+function turnToMarkdown(turn: ChatTurn, showCursor: boolean): string {
+  const body = turn.blocks.map((b) => (b.type === "text" ? b.content : citeMarker(b.claim_id))).join("");
+  return showCursor ? body + cursorMarker() : body;
+}
+
+function claimsById(turn: ChatTurn): Record<string, ChatCiteInfo> {
+  const map: Record<string, ChatCiteInfo> = {};
+  for (const b of turn.blocks) {
+    if (b.type === "claim_reference") {
+      map[b.claim_id] = { claim_summary: b.claim_summary, display_label: b.display_label };
+    }
+  }
+  return map;
+}
+
 function followUpsFor(turn: ChatTurn): string[] {
   const claimRefs = turn.blocks.filter((b): b is ClaimReferenceBlock => b.type === "claim_reference");
   if (claimRefs.length > 0) {
@@ -96,6 +115,11 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
   const [chatHeight, setChatHeight] = useState(readStoredHeight);
   const panelRef = useRef<HTMLDivElement>(null);
   const [sheetState, setSheetState] = useState<SheetState>("peek");
+  // Collapsing never unmounts this component (or the useChatStream hook
+  // above), so turns/scroll state survives a collapse/reopen cycle — see
+  // the "chat collapse" task. Default true: additive, no behavior change
+  // for users who never touch the toggle.
+  const [isChatOpen, setIsChatOpen] = useState(true);
 
   const handleHeightChange = (h: number) => {
     setChatHeight(h);
@@ -149,11 +173,25 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
     return (
       <div
         ref={panelRef}
-        style={{ height: chatHeight }}
+        style={isChatOpen ? { height: chatHeight } : undefined}
         className="flex shrink-0 flex-col border-t border-hairline bg-surface"
       >
-        <ChatResizeHandle panelRef={panelRef} height={chatHeight} onHeightChange={handleHeightChange} />
-        <div className="flex min-h-0 flex-1 flex-col">
+        {isChatOpen && <ChatResizeHandle panelRef={panelRef} height={chatHeight} onHeightChange={handleHeightChange} />}
+        <div className="flex shrink-0 items-center justify-between px-4 py-2">
+          <span className="font-sans text-sm font-semibold text-ink">Chat</span>
+          <button
+            type="button"
+            onClick={() => setIsChatOpen((v) => !v)}
+            aria-label={isChatOpen ? "Collapse chat" : "Expand chat"}
+            title={isChatOpen ? "Collapse chat" : "Expand chat"}
+            className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+          >
+            {isChatOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+          </button>
+        </div>
+        {/* Hidden rather than unmounted so scroll position and any unsent
+            draft in ChatInput survive a collapse/reopen cycle. */}
+        <div className={cn("flex min-h-0 flex-1 flex-col", !isChatOpen && "hidden")}>
           {messages}
           {inputRow}
         </div>
@@ -181,8 +219,28 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
     </div>
   );
 
+  if (!isChatOpen) {
+    return createPortal(
+      <button
+        type="button"
+        onClick={() => setIsChatOpen(true)}
+        aria-label="Open chat"
+        title="Open chat"
+        className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white shadow-drawer transition-transform hover:scale-105 lg:hidden"
+      >
+        <MessageCircle className="h-5 w-5" />
+      </button>,
+      document.body
+    );
+  }
+
   return (
-    <ChatBottomSheet state={sheetState} onStateChange={setSheetState} bottomContent={bottomContent}>
+    <ChatBottomSheet
+      state={sheetState}
+      onStateChange={setSheetState}
+      bottomContent={bottomContent}
+      onRequestClose={() => setIsChatOpen(false)}
+    >
       {messages}
     </ChatBottomSheet>
   );
@@ -331,6 +389,7 @@ function AssistantTurn({
   const isDone = !turn.isStreaming && turn.blocks.length > 0;
   const isStreamingWithContent = turn.isStreaming && turn.blocks.length > 0;
   const showFollowUps = isLast && isDone;
+  const showCursor = !!turn.isStreaming && isLast;
 
   if (isThinking) {
     return (
@@ -353,16 +412,12 @@ function AssistantTurn({
           className="min-w-0 flex-1 [contain:layout_paint]"
           style={isStreamingWithContent ? { minHeight: "1.5em" } : undefined}
         >
-          {/* No space-y-* here: AssistantBlocks' output is a flat array of
-              inline text/citation-pill siblings meant to read as one
-              continuous flow (see its own comment) - space-y-* would put a
-              margin-top on every single fragment, including each pill,
-              shoving it down onto its own line and stacking huge gaps
-              between claims in a list. Vertical rhythm for genuine block
-              content (lists, blockquotes, code) comes from ChatMarkdown's
-              own component margins instead. */}
           <div className="font-sans text-sm text-ink">
-            <AssistantBlocks blocks={turn.blocks} isStreaming={!!turn.isStreaming} isLast={isLast} onClaimClick={onClaimClick} />
+            <ChatMarkdown
+              content={turnToMarkdown(turn, showCursor)}
+              claimsById={claimsById(turn)}
+              onClaimClick={onClaimClick}
+            />
           </div>
 
           {isDone && (
@@ -403,49 +458,6 @@ function AssistantTurn({
         </div>
       )}
     </div>
-  );
-}
-
-// Renders each block inline so a claim citation sitting between two text
-// blocks in the same sentence doesn't break the reading line.
-function AssistantBlocks({
-  blocks,
-  isStreaming,
-  isLast,
-  onClaimClick,
-}: {
-  blocks: ChatBlock[];
-  isStreaming: boolean;
-  isLast: boolean;
-  onClaimClick: (claimId: string) => void;
-}) {
-  const nodes: ReactNode[] = blocks.map((block, i) => {
-    if (block.type === "text") {
-      return (
-        <span key={i}>
-          <ChatMarkdown content={block.content} />
-        </span>
-      );
-    }
-    const verdict = claimLabelToVerdict[block.display_label];
-    return (
-      <button
-        key={i}
-        type="button"
-        onClick={() => onClaimClick(block.claim_id)}
-        title={block.claim_summary}
-        className="mx-0.5 inline-flex items-center align-middle transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-subtle rounded-full"
-      >
-        <VerdictPill verdict={verdict} size="xs" />
-      </button>
-    );
-  });
-
-  return (
-    <>
-      {nodes}
-      {isStreaming && isLast && <span className="streaming-cursor" />}
-    </>
   );
 }
 

@@ -28,47 +28,53 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
     >
       <div className={cn("absolute top-0 left-0 h-full w-1.5", verdictBorderClass[verdict])} />
 
-      <div className="flex items-start justify-between gap-4">
-        <VerdictPill verdict={verdict} className="hidden md:inline-flex" />
-        <VerdictPill verdict={verdict} size="sm" className="md:hidden" />
-        
-        <button
-          type="button"
-          onClick={onViewEvidence}
-          className={cn(
-            "group hidden md:inline-flex shrink-0 items-center gap-1 font-sans text-sm text-brand hover:text-brand-hover",
-            isSelected && "underline"
-          )}
-        >
-          View Evidence
-          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </button>
+      <div className="flex items-start gap-4">
+        <div className="pt-0.5 font-sans text-base font-semibold text-ink w-6 shrink-0 text-center pl-1.5">{claim.position}</div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-4">
+            <VerdictPill verdict={verdict} className="hidden md:inline-flex" />
+            <VerdictPill verdict={verdict} size="sm" className="md:hidden" />
+
+            <button
+              type="button"
+              onClick={onViewEvidence}
+              className={cn(
+                "group hidden md:inline-flex shrink-0 items-center gap-1 font-sans text-sm text-brand hover:text-brand-hover",
+                isSelected && "underline"
+              )}
+            >
+              View Evidence
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            </button>
+          </div>
+
+          <div className="mt-2 line-clamp-2 font-sans text-sm md:text-base font-medium leading-snug text-ink md:line-clamp-none md:leading-normal">{claim.claimSummary}</div>
+
+          <div className="mt-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-verdict-refused-text md:mt-3">
+            (No Evidence)
+          </div>
+          <p className="line-clamp-1 text-sm font-normal text-verdict-refused-text md:line-clamp-none">No supporting evidence in this paper.</p>
+          {claim.reason && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink md:line-clamp-none">{humanizeReason(claim.reason)}</p>}
+
+          <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-tertiary md:mt-2 md:text-xs">
+            {firstSpan?.sourceSection}
+            {firstSpan?.pageNumber != null ? ` · p. ${firstSpan.pageNumber}` : ""}
+          </div>
+
+          <button
+            type="button"
+            onClick={onViewEvidence}
+            className={cn(
+              "group mt-1.5 inline-flex md:hidden shrink-0 items-center gap-1 font-sans text-xs text-brand hover:text-brand-hover",
+              isSelected && "underline"
+            )}
+          >
+            View Evidence
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </button>
+        </div>
       </div>
-
-      <div className="mt-2 line-clamp-2 font-sans text-sm md:text-base font-medium leading-snug text-ink md:line-clamp-none md:leading-normal">{claim.claimSummary}</div>
-
-      <div className="mt-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-verdict-refused-text md:mt-3">
-        (No Evidence)
-      </div>
-      <p className="line-clamp-1 text-sm font-normal text-verdict-refused-text md:line-clamp-none">No supporting evidence in this paper.</p>
-      {claim.reason && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink md:line-clamp-none">{humanizeReason(claim.reason)}</p>}
-
-      <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-ink-tertiary md:mt-2 md:text-xs">
-        {firstSpan?.sourceSection}
-        {firstSpan?.pageNumber != null ? ` · p. ${firstSpan.pageNumber}` : ""}
-      </div>
-
-      <button
-        type="button"
-        onClick={onViewEvidence}
-        className={cn(
-          "group mt-1.5 inline-flex md:hidden shrink-0 items-center gap-1 font-sans text-xs text-brand hover:text-brand-hover",
-          isSelected && "underline"
-        )}
-      >
-        View Evidence
-        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-      </button>
     </div>
   );
 }

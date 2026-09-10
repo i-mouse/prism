@@ -104,7 +104,7 @@ _VALID_CLAIM_LABELS = {"supported", "partially_supported", "not_supported"}
 # have no natural rank to cut off by - unlike the FTS `query` mode's
 # per-call `limit`, this cap exists purely so a paper with an unusually
 # large claim set can't blow out the LLM's context window.
-_METADATA_LOOKUP_LIMIT = 25
+_METADATA_LOOKUP_LIMIT = 50
 
 
 @tool
@@ -130,7 +130,7 @@ async def query_paper_claims(
       query=STR         : full-text search over claim text.
                           Use for topical questions, e.g. "claims about
                           hallucination".
-      (all None)        : return every claim for the paper (up to 25,
+      (all None)        : return every claim for the paper (up to 50,
                           ordered by position). Use for "list every claim",
                           "summary of claims", "how many claims in total",
                           "any refusal?", etc.
