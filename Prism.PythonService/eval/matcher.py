@@ -12,6 +12,7 @@ _call_gemini_structured, adapted for a list[Match] response schema.
 import asyncio
 import json
 import os
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -48,13 +49,26 @@ def _is_retryable(exc: Exception) -> bool:
     return isinstance(exc, (TimeoutError, ConnectionError, asyncio.TimeoutError))
 
 
+def _normalize_ligatures(text: str) -> str:
+    """Decomposes PDF-extraction ligatures (ﬁ, ﬂ, ﬀ, ﬃ, ﬄ) to plain ASCII.
+
+    PyMuPDF's text extraction sometimes leaves these as single Unicode
+    compatibility characters (e.g. ﬁ for "fi") instead of the two
+    letters they represent. NFKC normalization decomposes them (and any
+    other compatibility-equivalent character) without altering already-
+    plain text, so it's safe to apply unconditionally to both sides of
+    a comparison.
+    """
+    return unicodedata.normalize("NFKC", text)
+
+
 def _build_user_content(expected_rows: list[ExpectedRow], actual_claims: list[ActualClaim]) -> str:
     payload = {
         "expected_rows": [
-            {"id": row.id, "claim_summary": row.claim_summary} for row in expected_rows
+            {"id": row.id, "claim_summary": _normalize_ligatures(row.claim_summary)} for row in expected_rows
         ],
         "actual_claims": [
-            {"index": claim.index, "claim_summary": claim.claim_summary}
+            {"index": claim.index, "claim_summary": _normalize_ligatures(claim.claim_summary)}
             for claim in actual_claims
         ],
     }
