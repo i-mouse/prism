@@ -31,7 +31,7 @@
   {
     "example_type": "abstract_sweep_with_multiple_broad_claims",
     "input_excerpt": "Abstract. We present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks. On ALFWorld and WebShop, ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10%. ReAct is robust to prompt selection and demonstrates effectiveness over state-of-the-art baselines.",
-    "note": "The Abstract contains FOUR distinct empirical assertions. All four must be extracted separately even though several overlap thematically. Each will be audited independently.",
+    "note": "The Abstract contains FOUR distinct claims, only one of which has a number attached. All four must be extracted separately even though several overlap thematically. Each will be audited independently.",
     "output": {
       "claims": [
         {
@@ -54,9 +54,9 @@
     }
   },
   {
-    "example_type": "pattern_A_generalization_without_test",
+    "example_type": "generalization_without_test",
     "input_excerpt": "Section 1 Introduction. Software engineers routinely debug unfamiliar programs by reading error traces, forming a hypothesis, and testing a fix. We present AutoFix, a general-purpose repair paradigm applicable to any programming task that a human developer could reason through from an error trace alone. In this paper, we evaluate AutoFix on Python function-level bugs drawn from the Defects4J and QuixBugs benchmarks.",
-    "note": "The middle sentence reads like Introduction scene-setting (\"we present a general-purpose paradigm\") and is easy to wave through as background about what the system IS rather than a claim about what it does. It is Pattern A: a broad applicability claim (\"any programming task\") stated before the narrow, concrete evaluation scope (Python function-level bugs on two benchmarks) is even mentioned. Extract the broad claim on its own terms - do not wait to see whether the eventual Results section actually covers that breadth, and do not silently narrow the quote to match the evaluation scope. The first sentence stays unextracted (pure background about how humans debug, no assertion about AutoFix). The last sentence is evaluation scope, not a result, so it is not extracted either - only the middle sentence asserts something about AutoFix itself.",
+    "note": "The middle sentence reads like Introduction scene-setting (\"we present a general-purpose paradigm\") and is easy to wave through as background about what the system IS rather than a claim about what it does. It asserts broad applicability (\"any programming task\") before the narrow, concrete evaluation scope (Python function-level bugs on two benchmarks) is even mentioned. Extract the broad claim on its own terms - do not wait to see whether the eventual Results section actually covers that breadth, and do not silently narrow the quote to match the evaluation scope. The first sentence stays unextracted (pure background about how humans debug, no assertion about AutoFix). The last sentence is evaluation scope, not a claim, so it is not extracted either - only the middle sentence asserts something about AutoFix itself.",
     "output": {
       "claims": [
         {
@@ -67,9 +67,9 @@
     }
   },
   {
-    "example_type": "pattern_B_superiority_vs_class_not_tested",
+    "example_type": "superiority_vs_class_not_tested",
     "input_excerpt": "Section 1 Introduction. Fine-tuning a large pretrained model for each new domain requires substantial labeled data and repeated, costly training runs. We propose PromptWeave, which adapts to new domains purely through in-context demonstrations, avoiding the retraining overhead that supervised fine-tuning approaches incur. Section 4 Results. On the DomainSwitch benchmark, PromptWeave with 8 demonstrations reaches 74.2% accuracy, compared to 69.5% for the best zero-shot prompting baseline.",
-    "note": "Pattern B: the Introduction pairs a category's limitation (\"fine-tuning... requires... costly training runs\") with the paper's method positioned as the fix (\"avoiding the retraining overhead that supervised fine-tuning approaches incur\"). That pairing is an implied efficiency-superiority claim against the whole class of supervised fine-tuning methods - not against the zero-shot prompting baseline actually benchmarked in Section 4. Extract the Introduction pairing as its own claim even though Results never runs a fine-tuning baseline to back it up; that gap is exactly what audit needs to see. The Results sentence is a separate, narrower claim (against a specific tested baseline) and must be extracted too - the two are not interchangeable and will be audited differently.",
+    "note": "The Introduction pairs a category's limitation (\"fine-tuning... requires... costly training runs\") with the paper's method positioned as the fix (\"avoiding the retraining overhead that supervised fine-tuning approaches incur\"). That pairing is an implied efficiency-superiority claim against the whole class of supervised fine-tuning methods - not against the zero-shot prompting baseline actually benchmarked in Section 4, and it carries no number of its own. Extract the Introduction pairing as its own claim even though Results never runs a fine-tuning baseline to back it up; that gap is exactly what audit needs to see. The Results sentence is a separate, narrower claim (against a specific tested baseline) and must be extracted too - the two are not interchangeable and will be audited differently.",
     "output": {
       "claims": [
         {
@@ -84,9 +84,47 @@
     }
   },
   {
-    "example_type": "do_not_extract_motivational",
+    "example_type": "implicit_scope_in_framework_defining_sentence",
+    "input_excerpt": "Section 1 Introduction. Calibrating a sensor fusion pipeline for a new robot platform today means hand-tuning parameters from scratch for every deployment. We propose CaliNet, a framework to calibrate sensor fusion pipelines directly from raw log data, without manual parameter tuning. We evaluate CaliNet on three indoor delivery robots equipped with LiDAR and stereo cameras.",
+    "note": "The middle sentence never uses a word like \"general\" or \"any\" - the breadth is in the noun phrase \"sensor fusion pipelines\" (a whole category) rather than \"the three delivery-robot pipelines we test.\" That implicit scope is still a positioning claim: the sentence asserts CaliNet works for pipelines broadly, and the eval only covers three robots of one kind. Extract the defining sentence on its own terms. The first sentence is background about the manual-tuning status quo (no assertion about CaliNet, not extracted). The last sentence states evaluation scope, not a claim (not extracted).",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "We propose CaliNet, a framework to calibrate sensor fusion pipelines directly from raw log data, without manual parameter tuning.",
+          "claim_summary": "CaliNet calibrates sensor fusion pipelines from raw log data without manual tuning"
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "unquantified_robustness_and_ease_of_use_claims",
+    "input_excerpt": "Section 2 Method. Reasoning traces can be readily elicited from a sufficiently large pretrained model simply by including a handful of worked examples in the prompt, with no additional training or architecture changes required. Section 5 Discussion. We further find that SketchSolver is robust to prompt selection: swapping which worked examples appear in the prompt does not meaningfully change downstream accuracy.",
+    "note": "Neither sentence has a percentage sign or a number, and both sit in paragraphs that otherwise read as plain method description or a discussion aside. Both are still positioning claims: the Method sentence asserts an effort/cost property (\"simply by\", \"no additional training\"), and the Discussion sentence asserts a robustness property (\"does not meaningfully change\"). A missing number is not a reason to skip either one - extract both and let audit check them against the actual variance reported in the paper's tables.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "Reasoning traces can be readily elicited from a sufficiently large pretrained model simply by including a handful of worked examples in the prompt, with no additional training or architecture changes required.",
+          "claim_summary": "Reasoning traces need only a few worked examples in the prompt, no extra training"
+        },
+        {
+          "claim_text_verbatim": "We further find that SketchSolver is robust to prompt selection: swapping which worked examples appear in the prompt does not meaningfully change downstream accuracy.",
+          "claim_summary": "SketchSolver's accuracy is robust to which prompt examples are used"
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "do_not_extract_field_level_background",
     "input_excerpt": "Section 1 Introduction. Language agents are an exciting frontier for AI research, and understanding how to make them reason more effectively is one of the most important challenges facing our field today.",
-    "note": "This excerpt is pure motivation, no empirical claim about what this paper achieved. Extract nothing.",
+    "note": "This excerpt is pure motivation about the field in general - it asserts nothing about what this paper's own method does, achieves, or is. Contrast with the framework-defining and positioning examples above: those name the paper's own method (\"We propose X...\", \"X is robust to...\"). This sentence never does. Extract nothing.",
+    "output": {
+      "claims": []
+    }
+  },
+  {
+    "example_type": "do_not_extract_implementation_detail",
+    "input_excerpt": "Section 3 Experimental Setup. We use a transformer encoder with 12 layers and a hidden size of 768, and train for 100 epochs using the Adam optimizer with a learning rate of 1e-4.",
+    "note": "This is a plain implementation detail with no comparative, generalization, robustness, efficiency, or superiority assertion attached to it - it just states configuration facts. Do not extract it just because it's specific and sounds precise. Contrast with the ease-of-use example above, which also describes how the method works but attaches an explicit effort/cost assertion (\"simply by\", \"no additional training\") - that distinction, not sentence length or specificity, is what decides extraction.",
     "output": {
       "claims": []
     }
