@@ -45,6 +45,7 @@ from pydantic import BaseModel, Field
 from config import settings
 from paper_chat.tools import (
     CHUNK_SIMILARITY_THRESHOLD,
+    get_total_claim_count,
     query_paper_chunks_scored,
     query_paper_claims,
 )
@@ -88,6 +89,7 @@ class AgentState(TypedDict):
     retrieved_claims: list[dict]
     retrieved_chunks: list[dict]
     chunk_scores: list[float]
+    total_claim_count: int
     route_decision: str
     claim_lookup: str
     claim_position: int | None
@@ -248,13 +250,23 @@ async def execute_tools(state: AgentState):
     else:
         claims_tool_input = {"active_file_id": active_file_id, "query": query, "limit": 5}
 
-    claims, (chunks, chunk_scores) = await asyncio.gather(
+    # total_claim_count is fetched alongside every route (not just claim_lookup
+    # ="all") so the LLM always has the paper's true claim total as ground
+    # truth, even when retrieval only returned a subset - see
+    # docs/audit/chat_claim_count_still_wrong_2026-09-10.md.
+    claims, (chunks, chunk_scores), total_claim_count = await asyncio.gather(
         query_paper_claims.ainvoke(claims_tool_input),
         query_paper_chunks_scored(active_file_id=active_file_id, query=query, limit=5),
+        get_total_claim_count(active_file_id),
     )
 
-    print(f" [TOOLS] retrieved_claims={len(claims)} retrieved_chunks={len(chunks)} chunk_scores={chunk_scores}")
-    return {"retrieved_claims": claims, "retrieved_chunks": chunks, "chunk_scores": chunk_scores}
+    print(f" [TOOLS] retrieved_claims={len(claims)} retrieved_chunks={len(chunks)} chunk_scores={chunk_scores} total_claim_count={total_claim_count}")
+    return {
+        "retrieved_claims": claims,
+        "retrieved_chunks": chunks,
+        "chunk_scores": chunk_scores,
+        "total_claim_count": total_claim_count,
+    }
 
 
 def check_empty(state: AgentState) -> str:
@@ -354,8 +366,15 @@ async def refusal_unsupported_node(state: AgentState):
     return {"messages": [AIMessage(content=message)]}
 
 
-def _build_context_block(retrieved_claims: list[dict], retrieved_chunks: list[dict]) -> str:
-    parts = []
+def _build_context_block(
+    retrieved_claims: list[dict], retrieved_chunks: list[dict], total_claim_count: int
+) -> str:
+    # Paper Metadata is prepended on every turn, independent of retrieved_claims,
+    # so the LLM always has the paper's true total claim count as ground truth -
+    # a "query"/"position"/"label_filter" route only ever retrieves a subset,
+    # and without this the model falls back on stale counts from earlier in the
+    # conversation history. See docs/audit/chat_claim_count_still_wrong_2026-09-10.md.
+    parts = [f"Paper Metadata:\n- Total extracted claims: {total_claim_count}"]
 
     if retrieved_claims:
         claim_blocks = []
@@ -372,7 +391,10 @@ def _build_context_block(retrieved_claims: list[dict], retrieved_chunks: list[di
                 f"  verbatim: \"{c['claim_text_verbatim']}\"\n"
                 f"  evidence: {evidence_text}"
             )
-        parts.append(f"Retrieved claims from this paper:\n" + "\n".join(claim_blocks))
+        parts.append(
+            "Retrieved claims from this paper (subset for this query):\n"
+            + "\n".join(claim_blocks)
+        )
 
     if retrieved_chunks:
         chunks_text = "\n---\n".join(
@@ -391,7 +413,8 @@ async def generate_response(state: AgentState):
     retrieved_chunks = state.get("retrieved_chunks") or []
     claims_by_id = {c["claim_id"]: c for c in retrieved_claims}
 
-    context_block = _build_context_block(retrieved_claims, retrieved_chunks)
+    total_claim_count = state.get("total_claim_count") or 0
+    context_block = _build_context_block(retrieved_claims, retrieved_chunks, total_claim_count)
     system_instruction = SystemMessage(content=(
         "You are a strict, paper-scoped research assistant. Answer ONLY using the "
         "context below, drawn from the single active paper. Do not use outside "

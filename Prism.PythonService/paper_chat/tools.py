@@ -9,6 +9,7 @@ turns into a refusal rather than a silent wrong answer (see PR C2,
 fix/chat-retrieval-refusal, and docs/audit/ui_chat_audit_2026-09-08.md for
 why the previous fallback-to-everything behavior made refusal unreachable).
 """
+import asyncio
 import json
 import uuid
 from datetime import datetime, timezone
@@ -34,6 +35,7 @@ LOGS_DIR = Path(__file__).parent.parent / "logs" / "chat"
 CHUNK_SIMILARITY_THRESHOLD = 0.35
 
 _pool = None
+_pool_lock = asyncio.Lock()
 _ragservice: RAGService | None = None
 
 
@@ -62,10 +64,19 @@ def _log_chat_retrieval(active_file_id: str, query: str, scores: list[float], re
 
 
 async def _get_pool():
+    # get_total_claim_count and query_paper_claims now both resolve this pool
+    # concurrently (via asyncio.gather in agent.py's execute_tools), so the
+    # first-call initialization needs to be lock-guarded: without it, two
+    # coroutines racing here would both see `_pool is None`, and the second
+    # would hand back a pool object that's been constructed but not yet
+    # open()'d, which hangs the first connection acquire against it.
     global _pool
     if _pool is None:
-        _pool = create_db_connection_pool()
-        await _pool.open()
+        async with _pool_lock:
+            if _pool is None:
+                pool = create_db_connection_pool()
+                await pool.open()
+                _pool = pool
     return _pool
 
 
@@ -238,6 +249,31 @@ async def query_paper_claims(
     except Exception as exc:
         print(f" [WARN] query_paper_claims failed for active_file_id={active_file_id}: {exc!r}")
         return []
+
+
+async def get_total_claim_count(active_file_id: str) -> int:
+    """Non-tool helper used directly by the agent graph (like
+    query_paper_chunks_scored) to fetch the paper's true total claim count
+    on every turn, regardless of which retrieval route the router picked -
+    see docs/audit/chat_claim_count_still_wrong_2026-09-10.md. Never raises;
+    0 if there's no extraction yet for this paper or the lookup fails."""
+    try:
+        document_extractor_id = await _resolve_document_extractor_id(active_file_id)
+        if document_extractor_id is None:
+            return 0
+
+        pool = await _get_pool()
+        async with pool.connection() as conn:
+            async with conn.cursor() as cur:
+                await cur.execute(
+                    "SELECT COUNT(*) FROM paper_claims WHERE document_extractor_id = %s",
+                    (document_extractor_id,),
+                )
+                row = await cur.fetchone()
+                return row[0] if row else 0
+    except Exception as exc:
+        print(f" [WARN] get_total_claim_count failed for active_file_id={active_file_id}: {exc!r}")
+        return 0
 
 
 async def _search_chunks_scored(
