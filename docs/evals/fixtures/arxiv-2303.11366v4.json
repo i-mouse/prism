@@ -1,138 +1,154 @@
 {
   "header": {
-    "prompt_hash": "31021b91b11a",
+    "prompt_hash": "de7af7e2def8",
     "matcher_fingerprint": "52401482adf2",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
-    "generated_at": "2026-09-05T11:12:42.579904+00:00",
+    "generated_at": "2026-09-09T13:14:12.370122+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
-    "extraction_run_id": "a9580aad-dfd2-416d-acbf-07c9618d32d8",
+    "extraction_run_id": "d6213e31-51b3-4c1d-8bcb-a3bdbe7aa650",
     "matcher_gold_pass_rate": 1.0,
-    "matcher_gold_verified_at": "2026-09-09T10:00:40.840625+00:00"
+    "matcher_gold_verified_at": "2026-09-09T13:15:44.846265+00:00"
   },
   "claims": [
     {
       "index": 0,
       "label": "supported",
-      "claim_summary": "Reflexion achieves significant performance gains across sequential decision-making, coding, and reasoning tasks",
+      "claim_summary": "Reflexion reinforces language agents using linguistic feedback rather than weight updates",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback."
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "Reflexion handles diverse feedback types and improves baseline agent performance across tasks",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Reflexion is flexible enough to incorporate various types (scalar values or free-form language) and sources (external or internally simulated) of feedback signals, and obtains significant improvements over a baseline agent across diverse tasks (sequential decision-making, coding, language reasoning)."
     },
     {
-      "index": 1,
+      "index": 2,
       "label": "supported",
-      "claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, outperforming GPT-4's 80%",
+      "claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, surpassing GPT-4's 80% accuracy",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4 that achieves 80%."
     },
     {
-      "index": 2,
-      "label": "not_supported",
-      "claim_summary": "Reflexion offers multiple key advantages over traditional policy or value-based reinforcement learning",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes."
-    },
-    {
       "index": 3,
       "label": "supported",
-      "claim_summary": "Reflexion agents perform better as decision-makers, reasoners, and programmers across tasks",
+      "claim_summary": "Self-reflective feedback provides a semantic gradient guiding agents to learn from errors",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This self-reflective feedback acts as a \u2018semantic\u2019 gradient signal by providing the agent with a concrete direction to improve upon, helping it learn from prior mistakes to perform better on the task."
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "Reflexion offers advantages over traditional RL including being lightweight and interpretable",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion has several advantages compared to more traditional RL approaches like policy or value- based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes."
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "Reflexion agents demonstrate superior decision-making, reasoning, and programming capabilities across task types",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers."
     },
     {
-      "index": 4,
+      "index": 6,
       "label": "supported",
-      "claim_summary": "Reflexion improves AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
+      "claim_summary": "Reflexion improves performance on AlfWorld by 22%, HotPotQA by 20%, and HumanEval by 11%",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%."
     },
     {
-      "index": 5,
+      "index": 7,
       "label": "supported",
-      "claim_summary": "Self-reflection in LLMs enables learning complex tasks within a few trials",
+      "claim_summary": "Self-reflection in LLMs enables agents to learn complex tasks within a few trials",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "We explore this emergent property of self-reflection in LLMs and empirically show that self-reflection is extremely useful to learn complex tasks over a handful of trials."
     },
     {
-      "index": 6,
+      "index": 8,
       "label": "supported",
-      "claim_summary": "Reflexion beats strong baselines across tasks and reaches state-of-the-art in code generation",
+      "claim_summary": "Reflexion beats strong baselines across tasks and reaches state-of-the-art on code benchmarks",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "We show that Reflexion achieves improvements over strong baselines across several tasks, and achieves state-of-the-art results on various code generation benchmarks."
     },
     {
-      "index": 7,
+      "index": 9,
       "label": "supported",
-      "claim_summary": "ReAct + Reflexion solves 130 of 134 ALFWorld tasks, outperforming baseline ReAct",
+      "claim_summary": "Reflexion boosts baseline results by 22% on AlfWorld, 20% on HotPotQA, and 11% on HumanEval",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Most notably, Reflexion improves performance over strong baselines by 22% in AlfWorld, 20% in HotPotQA, and 11% on HumanEval."
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "ReAct with Reflexion completes 130 of 134 AlfWorld tasks using a simple heuristic",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning."
     },
     {
-      "index": 8,
+      "index": 11,
       "label": "supported",
-      "claim_summary": "Reflexion outperforms all baseline methods on HotPotQA over iterative learning steps",
+      "claim_summary": "Self-reflection distills failed trajectories into actionable future self-hints for decision making",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion eliminates almost all of these cases by using self-reflection to distill long, failed trajectories into relevant experiences that can are used as \"self-hints\" in the future."
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "Reflexion outperforms baseline reasoning approaches by significant margins across multiple learning steps",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Reflexion outperforms all baseline approaches by significant margins over several learning steps."
     },
     {
-      "index": 9,
+      "index": 13,
       "label": "supported",
-      "claim_summary": "Baseline methods fail to improve on failed HotPotQA tasks in subsequent trials",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Furthermore, ReAct-only, CoT-only, and CoT (GT)-only implementations fail to probabilistically improve on any tasks, meaning that no failed tasks from the first trial from any of the baseline approaches were able to be solved in subsequent trials using a temperature of 0.7"
-    },
-    {
-      "index": 10,
-      "label": "supported",
-      "claim_summary": "Reflexion improves CoT (GT) accuracy by 14% without ground truth answers",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Still, the CoT (GT) agent is unable to correctly infer the correct answer for 39% of the questions, but Reflexion helps the agent to correct its mistakes without access to the ground truth answer to improve its accuracy by 14%."
-    },
-    {
-      "index": 11,
-      "label": "supported",
-      "claim_summary": "Self-reflection provides an 8% boost over standard episodic memory on HotPotQA",
+      "claim_summary": "Self-reflection adds an 8% absolute performance boost over episodic memory alone",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage."
     },
     {
-      "index": 12,
+      "index": 14,
       "label": "supported",
-      "claim_summary": "Reflexion sets new state-of-the-art results across Python and Rust benchmarks except MBPP Python",
+      "claim_summary": "Reflexion sets new state-of-the-art accuracy on Python and Rust code generation benchmarks",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Reflexion outperforms all baseline accuracies and sets new state-of-the-art standards on all benchmarks for Python and Rust except for MBPP Python 1."
     },
     {
-      "index": 13,
-      "label": "supported",
-      "claim_summary": "Omitting internal test generation drops accuracy to 52%, below the 60% baseline",
+      "index": 15,
+      "label": "not_supported",
+      "claim_summary": "Reflexion agents significantly outperform widely-used decision-making methods via self-reflection",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "3 shows an inferior 52% vs 60% (baseline) accuracy, which suggests that the agent is unable to determine if the current implementation is correct without unit tests."
+      "claim_text_verbatim": "We empirically show that Reflexion agents significantly outperform currently widely-used decision-making approaches by utilizing self-reflection."
     }
   ],
   "matches": [
     {
       "expected_id": "REFLEX-M01",
-      "actual_index": 1
+      "actual_index": 2
     },
     {
       "expected_id": "REFLEX-M02",
-      "actual_index": 4
+      "actual_index": 6
     },
     {
       "expected_id": "REFLEX-M03",
@@ -144,11 +160,11 @@
     },
     {
       "expected_id": "REFLEX-M05",
-      "actual_index": 11
+      "actual_index": 13
     },
     {
       "expected_id": "REFLEX-M06",
-      "actual_index": 13
+      "actual_index": null
     },
     {
       "expected_id": "REFLEX-M07",
@@ -156,11 +172,11 @@
     },
     {
       "expected_id": "REFLEX-M08",
-      "actual_index": 3
+      "actual_index": 5
     },
     {
       "expected_id": "REFLEX-M09",
-      "actual_index": 4
+      "actual_index": 9
     },
     {
       "expected_id": "REFLEX-M11",
@@ -168,11 +184,11 @@
     },
     {
       "expected_id": "REFLEX-M12",
-      "actual_index": 2
+      "actual_index": null
     },
     {
       "expected_id": "REFLEX-M13",
-      "actual_index": null
+      "actual_index": 0
     }
   ]
 }
