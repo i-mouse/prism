@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { motion, useMotionValue, animate } from "framer-motion";
+import { X } from "lucide-react";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 export type SheetState = "peek" | "half" | "full";
@@ -42,6 +43,7 @@ export function ChatBottomSheet({
   onStateChange,
   bottomContent,
   children,
+  onRequestClose,
 }: {
   state: SheetState;
   onStateChange: (state: SheetState) => void;
@@ -51,6 +53,9 @@ export function ChatBottomSheet({
   /** Message list — fills the space above bottomContent; naturally collapses
    *  to ~0 height at "peek" since there's no room left for it there. */
   children: ReactNode;
+  /** Optional close affordance rendered next to the drag handle, letting the
+   *  caller fully hide the sheet — distinct from collapsing to "peek". */
+  onRequestClose?: () => void;
 }) {
   useBodyScrollLock(state !== "peek");
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -193,9 +198,24 @@ export function ChatBottomSheet({
           role="button"
           tabIndex={0}
           aria-label="Resize chat sheet"
-          className="flex shrink-0 touch-none justify-center pb-2 pt-2.5"
+          className="relative flex shrink-0 touch-none justify-center pb-2 pt-2.5"
         >
           <div className="h-1 w-4 rounded-full bg-hairline" />
+          {onRequestClose && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRequestClose();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              aria-label="Close chat"
+              title="Close chat"
+              className="absolute right-3 top-0.5 rounded-md p-1 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
         </div>
         <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
         <div ref={bottomRef} className="shrink-0">
