@@ -1,165 +1,261 @@
 {
   "header": {
-    "prompt_hash": "d80431580ddb",
+    "prompt_hash": "0bcf9d44e619",
     "matcher_fingerprint": "52401482adf2",
     "model_name": "gemini-3.6-flash",
     "matcher_model": "gemini-3.6-flash",
-    "generated_at": "2026-09-10T07:13:06.593067+00:00",
+    "generated_at": "2026-09-10T09:05:36.277866+00:00",
     "paper_id": "arxiv-2201.11903v6",
     "filename": "cot.pdf",
-    "extraction_run_id": "a29aa69e-22be-4547-b5da-747c32b76f82",
-    "matcher_gold_pass_rate": 1.0,
-    "matcher_gold_verified_at": "2026-09-10T07:14:26.447705+00:00"
+    "extraction_run_id": "edbfc5cf-5c77-45cc-be9f-08361feff15d",
+    "matcher_gold_pass_rate": 0.9333333333333333,
+    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00"
   },
   "claims": [
     {
       "index": 0,
-      "label": "supported",
-      "claim_summary": "Chain-of-thought prompting more than doubled GSM8K performance for the largest GPT and PaLM models.",
-      "missing": true,
-      "grounding_status": "Fail",
-      "claim_text_verbatim": "For instance, for GSM8K (the dataset with the lowest baseline performance), performance more than doubled for the largest GPT and PaLM models."
+      "label": "partially_supported",
+      "claim_summary": "Chain of thought allows models to allocate more computation to complex multi-step problems.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "First, chain of thought, in principle, allows models to decompose multi-step problems into intermediate steps, which means that additional computation can be allocated to problems that require more reasoning steps."
     },
     {
       "index": 1,
-      "label": "supported",
-      "claim_summary": "Chain of thought prompting significantly improves large language model complex reasoning.",
+      "label": "partially_supported",
+      "claim_summary": "Chain of thought provides interpretable reasoning steps that facilitate debugging model behavior.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We explore how generating a chain of thought\u2014a series of intermediate reasoning steps\u2014signi\ufb01cantly improves the ability of large language models to perform complex reasoning."
+      "claim_text_verbatim": "Second, a chain of thought provides an interpretable window into the behavior of the model, suggesting how it might have arrived at a particular answer and providing opportunities to debug where the reasoning path went wrong (although fully characterizing a model\u2019s computations that support an answer remains an open question)."
     },
     {
       "index": 2,
-      "label": "supported",
-      "claim_summary": "Reasoning abilities emerge naturally in sufficiently large models via chain-of-thought prompting.",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "In particular, we show how such reasoning abilities emerge naturally in suf\ufb01ciently large language models via a simple method called chain-of-thought prompting, where a few chain of thought demonstrations are provided as exemplars in prompting."
-    },
-    {
-      "index": 3,
-      "label": "supported",
-      "claim_summary": "Chain-of-thought prompting improves performance on arithmetic, commonsense, and symbolic reasoning.",
-      "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "Experiments on three large language models show that chain-of-thought prompting improves performance on a range of arithmetic, commonsense, and symbolic reasoning tasks."
-    },
-    {
-      "index": 4,
-      "label": "supported",
-      "claim_summary": "PaLM 540B with eight chain-of-thought exemplars achieves SOTA on GSM8K.",
-      "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "For instance, prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the GSM8K benchmark of math word problems, surpassing even \ufb01netuned GPT-3 with a veri\ufb01er."
-    },
-    {
-      "index": 5,
       "label": "partially_supported",
-      "claim_summary": "Chain-of-thought prompting outperforms standard prompting across arithmetic, commonsense, and symbolic benchmarks.",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "We present empirical evaluations on arithmetic, commonsense, and symbolic reasoning benchmarks, showing that chain-of-thought prompting outperforms standard prompting, sometimes to a striking degree."
-    },
-    {
-      "index": 6,
-      "label": "supported",
-      "claim_summary": "PaLM 540B with chain-of-thought prompting outperforms standard prompting and sets GSM8K SOTA.",
-      "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "Figure 2 illustrates one such result\u2014on the GSM8K benchmark of math word problems (Cobbe et al., 2021), chain-of-thought prompting with PaLM 540B outperforms standard prompting by a large margin and achieves new state-of-the-art performance."
-    },
-    {
-      "index": 7,
-      "label": "partially_supported",
-      "claim_summary": "Chain-of-thought reasoning is potentially applicable to any task humans solve via language.",
+      "claim_summary": "Chain-of-thought reasoning applies broadly to any task humans solve through natural language.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Third, chain-of-thought reasoning can be used for tasks such as math word problems, commonsense reasoning, and symbolic manipulation, and is potentially applicable (at least in principle) to any task that humans can solve via language."
     },
     {
-      "index": 8,
+      "index": 3,
       "label": "partially_supported",
-      "claim_summary": "Chain-of-thought reasoning is readily elicited in large off-the-shelf models via few-shot exemplars.",
-      "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "Finally, chain-of-thought reasoning can be readily elicited in suf\ufb01ciently large off-the-shelf language models simply by including examples of chain of thought sequences into the exemplars of few-shot prompting."
-    },
-    {
-      "index": 9,
-      "label": "supported",
-      "claim_summary": "Chain-of-thought prompting with 540B model rivals task-specific finetuned models and reaches GSM8K SOTA.",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Strikingly, chain-of-thought prompting when used with the 540B parameter language model performs comparably with task-speci\ufb01c \ufb01netuned models on several tasks, even achieving new state of the art on the challenging GSM8K benchmark (Cobbe et al., 2021)."
-    },
-    {
-      "index": 10,
-      "label": "supported",
-      "claim_summary": "Chain-of-thought prompting performance gains emerge as model scale increases.",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "First, Figure 4 shows that chain-of-thought prompting is an emergent ability of model scale (Wei et al., 2022b)."
-    },
-    {
-      "index": 11,
-      "label": "partially_supported",
-      "claim_summary": "Chain-of-thought prompting only yields performance gains for models around 100B parameters or larger.",
+      "claim_summary": "Chain-of-thought prompting only yields performance gains on language models around 100B parameters or larger.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "That is, chain-of-thought prompting does not positively impact performance for small models, and only yields performance gains when used with models of \u223c100B parameters."
     },
     {
-      "index": 12,
-      "label": "supported",
-      "claim_summary": "PaLM 540B with chain-of-thought prompting achieves new state-of-the-art on GSM8K, SVAMP, and MAWPS.",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Figure 4 shows how PaLM 540B uses chain-of-thought prompting to achieve new state of the art on GSM8K, SVAMP, and MAWPS (though note that standard prompting already passed the prior best for SVAMP)."
-    },
-    {
-      "index": 13,
+      "index": 4,
       "label": "partially_supported",
-      "claim_summary": "PaLM with chain-of-thought prompting reaches within 2% of SOTA on AQuA and ASDiv.",
+      "claim_summary": "PaLM with chain-of-thought prompting performs within 2% of state-of-the-art on AQuA and ASDiv.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "On the other two datasets, AQuA and ASDiv, PaLM with chain-of-thought prompting reaches within 2% of the state of the art (Appendix Table 2)."
     },
     {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "Generating intermediate reasoning steps significantly improves complex reasoning in large language models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We explore how generating a chain of thought\u2014a series of intermediate reasoning steps\u2014signi\ufb01cantly improves the ability of large language models to perform complex reasoning."
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought reasoning emerges naturally in sufficiently large language models via few-shot prompting.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In particular, we show how such reasoning abilities emerge naturally in suf\ufb01ciently large language models via a simple method called chain-of-thought prompting, where a few chain of thought demonstrations are provided as exemplars in prompting."
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting improves performance across arithmetic, commonsense, and symbolic reasoning benchmarks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Experiments on three large language models show that chain-of-thought prompting improves performance on a range of arithmetic, commonsense, and symbolic reasoning tasks."
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with eight chain-of-thought exemplars achieves SOTA on GSM8K, beating finetuned GPT-3.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "For instance, prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the GSM8K benchmark of math word problems, surpassing even \ufb01netuned GPT-3 with a veri\ufb01er."
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting outperforms standard prompting across arithmetic, commonsense, and symbolic reasoning tasks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We present empirical evaluations on arithmetic, commonsense, and symbolic reasoning benchmarks, showing that chain-of-thought prompting outperforms standard prompting, sometimes to a striking degree."
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with chain-of-thought prompting substantially outperforms standard prompting and sets SOTA on GSM8K.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Figure 2 illustrates one such result\u2014on the GSM8K benchmark of math word problems (Cobbe et al., 2021), chain-of-thought prompting with PaLM 540B outperforms standard prompting by a large margin and achieves new state-of-the-art performance."
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "Prompting requires no large training datasets and lets a single checkpoint perform diverse tasks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "A prompting only approach is important because it does not require a large training dataset and because a single model checkpoint can perform many tasks without loss of generality."
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought reasoning is elicited in off-the-shelf large language models purely via few-shot prompting.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Finally, chain-of-thought reasoning can be readily elicited in suf\ufb01ciently large off-the-shelf language models simply by including examples of chain of thought sequences into the exemplars of few-shot prompting."
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting with 540B models matches task-specific finetuned models and achieves GSM8K SOTA.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Strikingly, chain-of-thought prompting when used with the 540B parameter language model performs comparably with task-speci\ufb01c \ufb01netuned models on several tasks, even achieving new state of the art on the challenging GSM8K benchmark (Cobbe et al., 2021)."
+    },
+    {
       "index": 14,
       "label": "supported",
-      "claim_summary": "All tested sets of chain-of-thought prompts substantially outperform standard prompting baselines.",
+      "claim_summary": "Chain-of-thought prompting capability emerges as language model scale increases.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "First, Figure 4 shows that chain-of-thought prompting is an emergent ability of model scale (Wei et al., 2022b)."
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Performance gains from chain-of-thought prompting are larger on more complicated reasoning tasks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Second, chain-of-thought prompting has larger performance gains for more-complicated problems."
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting more than doubled performance on GSM8K for largest GPT and PaLM models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For instance, for GSM8K (the dataset with the lowest baseline performance), performance more than doubled for the largest GPT and PaLM models."
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting on 175B+ models compares favorably against prior fine-tuned state-of-the-art baselines.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Third, chain-of-thought prompting via GPT-3 175B and PaLM 540B compares favorably to prior state of the art, which typically \ufb01netunes a task-speci\ufb01c model on a labeled training dataset."
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with chain-of-thought prompting achieves new state-of-the-art results on GSM8K, SVAMP, and MAWPS.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Figure 4 shows how PaLM 540B uses chain-of-thought prompting to achieve new state of the art on GSM8K, SVAMP, and MAWPS (though note that standard prompting already passed the prior best for SVAMP)."
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "Equation-only prompting fails to match chain of thought on GSM8K, showing natural language steps are critical.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Figure 5 shows that equation only prompting does not help much for GSM8K, which implies that the semantics of the questions in GSM8K are too challenging to directly translate into an equation without the natural language reasoning steps in chain of thought."
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "Variable compute alone does not explain chain-of-thought gains; intermediate natural language steps provide specific utility.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This variant performs about the same as the baseline, which suggests that variable computation by itself is not the reason for the success of chain-of-thought prompting, and that there appears to be utility from expressing intermediate steps via natural language."
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "Placing reasoning after the answer yields baseline performance, confirming sequential reasoning steps drive performance.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This variant performs about the same as the baseline, which suggests that the sequential reasoning embodied in the chain of thought is useful for reasons beyond just activating knowledge."
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting consistently outperforms standard prompting across different annotators' prompt sets.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Although there is variance among different chain of thought annotations, as would be expected when using exemplar-based prompting (Le Scao and Rush, 2021; Reynolds and McDonell, 2021; Zhao et al., 2021), all sets of chain of thought prompts outperform the standard baseline by a large margin."
     },
     {
-      "index": 15,
+      "index": 23,
       "label": "supported",
-      "claim_summary": "PaLM 540B with chain-of-thought beats prior StrategyQA SOTA and human sports enthusiasts.",
+      "claim_summary": "Chain-of-thought prompting effectiveness is robust to variations in linguistic annotation style.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This result implies that successful use of chain of thought does not depend on a particular linguistic style."
+    },
+    {
+      "index": 24,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting is robust to variations in exemplar order, quantity, annotators, and language models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In addition to robustness to annotators, independently-written chains of thought, different exemplars, and various language models, we also \ufb01nd that chain-of-thought prompting for arithmetic reasoning is robust to different exemplar orders and varying numbers of exemplars (see Appendix A.2)."
+    },
+    {
+      "index": 25,
+      "label": "supported",
+      "claim_summary": "PaLM 540B with chain-of-thought outperforms prior SOTA on StrategyQA and beats humans on sports understanding.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "With chain-of-thought prompting, PaLM 540B achieved strong performance relative to baselines, outperforming the prior state of the art on StrategyQA (75.6% vs 69.4%) and outperforming an unaided sports enthusiast on sports understanding (95.4% vs 84%)."
     },
     {
-      "index": 16,
+      "index": 26,
       "label": "supported",
-      "claim_summary": "Chain-of-thought prompting enables symbolic reasoning and facilitates length generalization on longer inputs.",
+      "claim_summary": "Chain-of-thought prompting enhances performance across diverse commonsense reasoning benchmarks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "These results demonstrate that chain-of-thought prompting can also improve performance on tasks requiring a range of commonsense reasoning abilities (though note that gain was minimal on CSQA)."
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting enables symbolic reasoning and out-of-domain length generalization.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "We show that chain-of-thought prompting not only enables language models to perform symbolic reasoning tasks that are challenging in the standard prompting setting, but also facilitates length generalization to inference-time inputs longer than those seen in the few-shot exemplars."
     },
     {
-      "index": 17,
+      "index": 28,
       "label": "supported",
-      "claim_summary": "Chain-of-thought prompting with PaLM 540B achieves nearly 100% accuracy on symbolic reasoning tasks.",
+      "claim_summary": "PaLM 540B achieves near 100% accuracy on in-domain symbolic reasoning tasks with chain-of-thought prompting.",
       "missing": false,
-      "grounding_status": "Pass",
+      "grounding_status": "Partial",
       "claim_text_verbatim": "With PaLM 540B, chain-of-thought prompting leads to almost 100% solve rates (note that standard prompting already solves coin \ufb02ip with PaLM 540, though not for LaMDA 137B)."
     },
     {
-      "index": 18,
+      "index": 29,
       "label": "supported",
-      "claim_summary": "Chain-of-thought reasoning emerges at scale, enabling models to solve tasks with flat scaling curves.",
+      "claim_summary": "Chain-of-thought prompting enables large language models to generalize to longer sequence lengths at test time.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hence, chain-of-thought prompting facilitates length generalization beyond seen chains of thought for language models of suf\ufb01cient scale."
+    },
+    {
+      "index": 30,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought reasoning is an emergent property enabling large models to solve tasks with flat standard scaling curves.",
       "missing": false,
       "grounding_status": "Pass",
       "claim_text_verbatim": "Through experiments on arithmetic, symbolic, and commonsense reasoning, we \ufb01nd that chain-of-thought reasoning is an emergent property of model scale that allows suf\ufb01ciently large language models to perform reasoning tasks that otherwise have \ufb02at scaling curves."
@@ -168,19 +264,19 @@
   "matches": [
     {
       "expected_id": "COT-M01",
-      "actual_index": 4
+      "actual_index": 8
     },
     {
       "expected_id": "COT-M02",
-      "actual_index": 11
+      "actual_index": 3
     },
     {
       "expected_id": "COT-M03",
-      "actual_index": null
+      "actual_index": 19
     },
     {
       "expected_id": "COT-M04",
-      "actual_index": 14
+      "actual_index": 22
     },
     {
       "expected_id": "COT-M05",
@@ -196,15 +292,15 @@
     },
     {
       "expected_id": "COT-M08",
-      "actual_index": 16
+      "actual_index": 29
     },
     {
       "expected_id": "COT-M09",
-      "actual_index": null
+      "actual_index": 26
     },
     {
       "expected_id": "COT-M10",
-      "actual_index": 8
+      "actual_index": null
     },
     {
       "expected_id": "COT-M11",
@@ -212,7 +308,7 @@
     },
     {
       "expected_id": "COT-M12",
-      "actual_index": 7
+      "actual_index": 2
     }
   ]
 }

@@ -56,3 +56,5 @@ keys.txt
 
 # Aspire local orchestration cache
 aspire.config.json
+
+.gemini/

@@ -12,6 +12,32 @@
     }
   },
   {
+    "example_type": "ablation_table_negative_result",
+    "input_excerpt": "Section 5.4 Ablation: Removing the Self-Reflection Module. Table 4 shows that GridSolver drops from 88% to 61% accuracy when the self-reflection module is removed, and the failure analysis reveals the agent repeats the same invalid move rather than trying alternatives.",
+    "note": "This claim lives deep in the paper - an ablation subsection well past the Abstract, Introduction, and headline Results. It's exactly as extractable as a front-of-paper claim: it's a table-derived, numeric assertion about GridSolver's own behavior (what the self-reflection module contributes). Do not let the fact that you've already extracted a strong batch of claims from the Abstract/Introduction/Results feel like a reason to stop before reaching Ablations - this is precisely the kind of claim that gets crowded out if extraction stops early.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "Table 4 shows that GridSolver drops from 88% to 61% accuracy when the self-reflection module is removed, and the failure analysis reveals the agent repeats the same invalid move rather than trying alternatives.",
+          "claim_summary": "Removing self-reflection drops GridSolver's accuracy from 88% to 61%"
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "late_paper_diagnostic_table_claim",
+    "input_excerpt": "Section 6.2 Error Analysis. Table 7 shows an inferior 54% vs 71% (baseline) success rate on tasks requiring multi-step lookahead, which suggests the planner cannot reliably backtrack once committed to an early action.",
+    "note": "Another late-paper (Error Analysis, Section 6.2) table-derived claim, this one drawing an explicit inference from the comparison (\"which suggests the planner cannot reliably backtrack\"). Extract the full sentence, inference included - the inference is itself part of what the paper is asserting about its own method's limitation, not just the raw percentages. Claims like this are easy to miss because they read like a negative or diagnostic result rather than a headline win, but a self-diagnosed weakness is exactly as much a claim as a self-reported strength.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "Table 7 shows an inferior 54% vs 71% (baseline) success rate on tasks requiring multi-step lookahead, which suggests the planner cannot reliably backtrack once committed to an early action.",
+          "claim_summary": "Planner scores 54% vs 71% baseline on multi-step lookahead, suggesting a backtracking failure"
+        }
+      ]
+    }
+  },
+  {
     "example_type": "abstract_broad_and_narrow_together",
     "input_excerpt": "Abstract. We introduce PromptAgent, a general framework that outperforms state-of-the-art agent architectures across diverse reasoning benchmarks.\n\nSection 3 Results. PromptAgent achieves 82.1% on GSM8K compared to the best prior prompting method's 78.3%, a 3.8-point improvement.",
     "note": "Both the broad Abstract claim AND the narrow Results claim must be extracted. They have different scopes and will be audited to different verdicts. Extracting only the narrow one hides the overreaching claim from audit.",
