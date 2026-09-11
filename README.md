@@ -91,10 +91,7 @@ Container App runs single revision mode — traffic auto-swaps on healthy deploy
 Prism's architecture and design choices are documented in detail:
 * **[Decisions Log](docs/decisions.md)** — Append-only record of architecture, schema, and prompt design decisions.
 * **[Developer Runbook](docs/RUNBOOK.md)** — Local dev gotchas, deployment failure modes, eval fixture regeneration.
-* **[Pipeline Audit (2026-09-04)](docs/audit/pipeline_audit_2026-09-04.md)**
-* **[Defects Audit (2026-09-04)](docs/audit/two_defects_2026-09-04.md)**
 * **[Architecture Review (2026-09-05)](docs/audit/pipeline_architecture_review_2026-09-05.md)**
-* **[Pending Bugs (2026-09-05)](docs/audit/upload_pending_bugs_2026-09-05.md)**
 
 ## License
 
