@@ -1,4 +1,42 @@
 ## PRISM.Web Deployment
+
+## Chat: refusal-query routing and claim-count limit fixes — 2026-09-10
+**Context:** The chat router misidentified queries for refused claims (e.g. "strongest refusals") as full-text search queries instead of label filters, returning zero results. Additionally, queries requesting all claims were arbitrarily capped at a low limit, truncating full-paper summaries.
+**Decision:** Updated the RetrievalRoute prompt in gent.py to better map refusal synonyms to claim_label_filter. Raised the _METADATA_LOOKUP_LIMIT in 	ools.py from 25 to 50 to accommodate larger realistic claim sets without truncating them.
+**Alternatives:** N/A.
+**Consequences:** Users can successfully query for unsupported/refused claims, and full-paper claim summaries capture up to 50 claims.
+
+## Chat: citation rendering structural reconstruction — 2026-09-10
+**Context:** Markdown structures (like lists and paragraphs) that spanned across a citation were being shattered into independent parser instances by the frontend's per-fragment rendering, causing the chat UI to display unreadable dense paragraphs.
+**Decision:** Reconstructed one continuous markdown string per message on the frontend. Replaced ClaimReferenceBlock objects with custom <cite> tags and processed the unified string through a single <ChatMarkdown> pass. The backend generate_response prompt was simplified to cite naturally using [claim:ID].
+**Alternatives:** Migrating to a structured JSON output (e.g. esponse_schema) was rejected because it requires full response buffering, which breaks the token-by-token streaming UX.
+**Consequences:** Markdown structures now render correctly while securely embedding inline verdict pills, and the token-by-token streaming UX remains intact.
+
+## Auditor: scope-checking added — 2026-09-10
+**Context:** The claim auditor incorrectly labeled Trap Claims (Pattern A and B) as supported because it graded the truth of literal statements (did the authors say this?) rather than scope-vs-evidence (did they prove the full breadth?). Finding a verbatim quote in the abstract satisfied its supported definition.
+**Decision:** Tightened the supported verdict definition in prompts/audit_claim_system.md to require evidence from experimental results, data, or proofs. Explicitly instructed that quoting an assertion from the Abstract or Introduction is not sufficient.
+**Alternatives:** N/A
+**Consequences:** Trap claims now properly trigger partially_supported or 
+ot_supported depending on underlying evidence.
+
+## Extraction: positioning claims captured and ceiling raised — 2026-09-10
+**Context:** The extractor was silently missing deep empirical claims because an earlier fix over-indexed on the abstract and intro, exhausting the model's self-imposed claim count limit.
+**Decision:** Raised the claim-count ceiling in prompts/extract_claims_system.md from 15-30 to 25-45. Added few-shot examples for empirical claims in late-paper sections to remind the model to continue extracting.
+**Alternatives:** N/A
+**Consequences:** Positioning and superiority claims are now captured. However, this fix caused collateral damage in empirical claim extraction (e.g., dropping REFLEX-M06 and REACT-M10), causing positive_hits to drop from 13/23 to 10/23. The y_grounding_reject metric also increased to 1 as intended.
+
+## Matcher gold-set verification moved to frozen-fixture pattern — 2026-09-10
+**Context:** The eval matcher used for semantic verification was @pytest.mark.integration and skipped by default in CI, risking semantic drift and relying on live models during verification.
+**Decision:** Moved the matcher gold-set verification to a frozen-fixture pattern, reverting an earlier live-CI attempt.
+**Alternatives:** Running live integration tests in CI was reverted to restore secretless CI and avoid secret management overhead.
+**Consequences:** Semantic equivalence verification is now stable, deterministic, and safe for secretless CI.
+
+## Eval integrity: SKIPPED status for transient failures — 2026-09-10
+**Context:** Transient failures in the grounding stage were caught and defaulted to FAIL, artificially deflating eval scores and falsely registering as false rejections.
+**Decision:** Changed the exception handler in grounding.py to return GroundingStatus.SKIPPED. Updated scorer.py and matrix_runner.py to correctly exclude SKIPPED claims from the denominators (total_negatives and positive_total).
+**Alternatives:** N/A
+**Consequences:** Eval scores now accurately isolate model performance from transient infrastructure errors.
+
 Deploy Prism.Web to Azure: run .\deploy.ps1 from Prism.Web/. Script enforces nginx port 7000, forces --no-cache build, verifies image, and creates unique revision suffix. 
 Container App is in single revision mode so traffic auto-swaps on healthy deploys.
 
@@ -689,3 +727,4 @@ the number up happens AFTER the harness is measuring it.
   and its name is misleading. Migration to drop it deferred until we touch
   that schema for another reason. Documented so a future reader doesn't
   trust the column name.
+
