@@ -380,9 +380,7 @@ def _build_context_block(
         claim_blocks = []
         for c in retrieved_claims:
             evidence_text = "; ".join(
-                f'"{e.get("source_text", "")}" '
-                f'(Status: {e.get("grounding_status", "Unknown")}, '
-                f'{e.get("source_section") or "unknown section"})'
+                f'"{e.get("source_text", "")}" ({e.get("source_section") or "unknown section"})'
                 for e in (c.get("evidence_spans") or [])[:2]
             ) or "none"
             claim_blocks.append(
@@ -441,19 +439,9 @@ async def generate_response(state: AgentState):
         "plain sentence instead of quoting it - write something like \"Claim 3 is "
         "partial: the paper cites one relevant passage but doesn't fully back the "
         "assertion,\" never \"reason: cited evidence supports the claim across 1 "
-        "passage.\"\n\n"
-        "The claim's label field reflects the system's audit verdict - if "
-        "label=not_supported, present the claim as not supported, and explain "
-        "why using the reason field. Evidence spans with Status: Fail could "
-        "not be verified as real quotes from the paper - never present a "
-        "Fail'd span as confirmed evidence, and never let plausible-looking "
-        "quote text override the stored label. If you believe the grounding "
-        "verdict seems questionable, you may note that grounding is "
-        "imperfect, but still report the system's actual verdict rather than "
-        "substituting your own judgment of the raw text. When the user "
-        "explicitly asks to see evidence, quote it, but state its "
-        "verification status honestly alongside it.\n\n"
-        "If the retrieved claims and "
+        "passage.\" The one exception is evidence text itself: when the user asks "
+        "for evidence, quote the listed evidence spans verbatim, since that's the "
+        "paper's own words, not internal metadata. If the retrieved claims and "
         "text are topically related but do not clearly support the specific "
         "comparison or conclusion being asked, say plainly \"The paper doesn't "
         "demonstrate this\" instead of stretching a partial or unsupported claim "
