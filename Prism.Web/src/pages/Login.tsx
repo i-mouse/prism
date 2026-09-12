@@ -1,7 +1,5 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { LogIn } from "lucide-react";
-import { PrismLogo } from "@/components/PrismLogo";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 
 const LANDING_URL = import.meta.env.VITE_LANDING_URL || "/";
@@ -36,6 +34,7 @@ export function Login() {
   }
 
   const handleGoogleSignIn = async () => {
+    console.log('TODO: wire in PR 2b');
     await signInWithGoogle();
     navigate(redirectTo, { replace: true });
   };
@@ -46,94 +45,103 @@ export function Login() {
   };
 
   return (
-    <div className="relative min-h-dvh w-full overflow-hidden flex items-center justify-center font-sans">
+    <div className="relative min-h-dvh w-full flex flex-col font-sans bg-[#F9F9F8] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
       
-      {/* Light weight animation styles */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-30px); }
-        }
-        @keyframes ripple {
-          0% { transform: scale(0.5); opacity: 0; }
-          20% { opacity: 0.6; }
-          100% { transform: scale(1.5); opacity: 0; }
-        }
-      `}</style>
-
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 -z-20 bg-gradient-to-t from-orange-400 via-orange-100 to-orange-50"></div>
-      
-      {/* Animated Concentric circles */}
-      <div className="absolute inset-0 -z-10 flex items-center justify-center overflow-hidden pointer-events-none">
-        <div className="absolute w-[600px] h-[600px] border-[1.5px] border-white rounded-full opacity-0" style={{ animation: 'ripple 12s linear infinite' }} />
-        <div className="absolute w-[600px] h-[600px] border-[1.5px] border-white rounded-full opacity-0" style={{ animation: 'ripple 12s linear infinite 3s' }} />
-        <div className="absolute w-[600px] h-[600px] border-[1.5px] border-white rounded-full opacity-0" style={{ animation: 'ripple 12s linear infinite 6s' }} />
-        <div className="absolute w-[600px] h-[600px] border-[1.5px] border-white rounded-full opacity-0" style={{ animation: 'ripple 12s linear infinite 9s' }} />
-      </div>
-
-
-      {/* Top Left Logo */}
-      <a 
-        href={LANDING_URL}
-        target={isExternalLanding ? "_blank" : undefined}
-        rel={isExternalLanding ? "noreferrer" : undefined}
-        className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2.5 z-20 hover:opacity-80 transition-opacity"
-      >
-        <div className="flex items-center justify-center w-8 h-8 bg-slate-900 rounded-lg">
-          <PrismLogo className="w-5 h-5" />
+      {/* Top Nav */}
+      <header className="flex items-center justify-between px-6 py-6 sm:px-8 w-full max-w-7xl mx-auto">
+        {/* Wordmark */}
+        <div className="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="text-ink">
+            <defs>
+              <linearGradient id="prism-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#ef4444" />
+                <stop offset="50%" stopColor="#f97316" />
+                <stop offset="100%" stopColor="#eab308" />
+              </linearGradient>
+            </defs>
+            <polygon points="12 4 4 18 20 18" fill="url(#prism-gradient)" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          </svg>
+          <span className="font-['Georgia','Times_New_Roman',serif] text-ink text-xl tracking-wide font-medium">
+            PRISM
+          </span>
         </div>
-        <span className="font-bold text-slate-900 text-lg tracking-tight">Prism</span>
-      </a>
 
-      {/* Center Card */}
-      <div className="relative z-10 w-full max-w-[440px] mx-4 rounded-[2rem] bg-white shadow-[0_8px_40px_rgba(0,0,0,0.06)] overflow-hidden border border-white/60">
+        {/* Secondary Links */}
+        <nav className="flex items-center gap-6">
+          <a
+            href={isExternalLanding ? LANDING_URL : "#"}
+            className="text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+          >
+            Live demo
+          </a>
+          <a
+            href="https://github.com/i-mouse/prism"
+            target="_blank"
+            rel="noreferrer"
+            className="text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            href="#"
+            className="text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+          >
+            Blog
+          </a>
+        </nav>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         
-        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-orange-50 to-white -z-10" />
-
-        <div className="px-8 pt-10 pb-8 flex flex-col items-center">
-          
-          <div className="flex items-center justify-center w-[52px] h-[52px] bg-white rounded-[1.25rem] shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-gray-100 mb-6">
-             <LogIn className="w-[22px] h-[22px] text-gray-800 ml-0.5" strokeWidth={2.5} />
+        {/* Headline & Tagline */}
+        <div className="text-center mb-10 max-w-2xl mx-auto">
+          <div className="text-xs font-semibold tracking-[0.2em] text-ink-muted uppercase mb-3">
+            Welcome to PRISM
           </div>
-
-          <h1 className="text-[26px] font-bold text-gray-900 mb-[6px] text-center tracking-tight">
-            Sign in to Prism
+          <h1 className="font-['Georgia','Times_New_Roman',serif] text-3xl sm:text-4xl md:text-5xl font-medium text-ink leading-tight mb-4">
+            Audit any paper's claims<br />
+            against its own evidence
           </h1>
-          
-          <p className="text-[14px] text-gray-500 text-center mb-8 leading-relaxed max-w-[320px]">
-            Make a new doc to bring your words, data, and teams together. For free
+          <p className="text-base text-ink-muted max-w-xl mx-auto leading-relaxed">
+            A grounding-checked second opinion on research papers, for reviewers and readers before they cite.
           </p>
+        </div>
 
-          <div className="w-full space-y-[14px]">
-            
-            <button 
+        {/* Login Card */}
+        <div className="w-full max-w-[400px] bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+          
+          <div className="flex flex-col gap-3">
+            <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-2 h-[46px] bg-white rounded-xl border border-gray-200/80 shadow-sm hover:bg-gray-50 text-gray-800 text-[14px] font-medium transition-colors"
+              className="w-full flex items-center justify-center gap-3 h-11 bg-white rounded-md border border-gray-300 shadow-sm text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-[#ea580c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#ea580c] transition-colors"
             >
               <GoogleLogo className="w-5 h-5" />
               Continue with Google
             </button>
 
-            {/* Separator */}
-            <div className="flex items-center gap-4 py-1">
-              <div className="flex-1 border-b-[2px] border-dotted border-gray-200"></div>
-              <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wide">Or</span>
-              <div className="flex-1 border-b-[2px] border-dotted border-gray-200"></div>
-            </div>
-
-            <button 
+            <button
               type="button"
               onClick={handleGuestSignIn}
-              className="w-full h-[46px] bg-[#1c1c1e] hover:bg-black text-white rounded-xl text-[14px] font-medium transition-colors shadow-sm"
+              className="w-full flex items-center justify-center h-11 bg-transparent rounded-md border border-gray-200 text-gray-700 text-sm font-normal hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-900 transition-colors"
             >
-              Guest Access
+              Continue as guest
             </button>
-            
           </div>
+          
         </div>
-      </div>
+
+        {/* Legal Text */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-gray-400">
+            By continuing, you agree to the{" "}
+            <Link to="/terms" className="hover:text-gray-600 underline underline-offset-2">Terms</Link>
+            {" "}and{" "}
+            <Link to="/privacy" className="hover:text-gray-600 underline underline-offset-2">Privacy Policy</Link>.
+          </p>
+        </div>
+      </main>
     </div>
   );
 }
