@@ -3,6 +3,8 @@ import { AppShell } from "@/components/AppShell";
 import { AuthProvider } from "@/lib/AuthContext";
 import { RequireAuth } from "@/components/RequireAuth";
 import { Login } from "@/pages/Login";
+import { Privacy } from "@/pages/Privacy";
+import { Terms } from "@/pages/Terms";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -11,6 +13,8 @@ function App() {
       <SelectedClaimProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route
             path="/"
             element={
