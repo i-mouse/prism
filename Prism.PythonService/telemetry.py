@@ -14,6 +14,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 
 def init_telemetry(service_name: str) -> trace.Tracer:
@@ -27,6 +28,9 @@ def init_telemetry(service_name: str) -> trace.Tracer:
 
     if os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT"):
         provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+        
+    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+        configure_azure_monitor(connection_string=os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
 
     trace.set_tracer_provider(provider)
     return trace.get_tracer(service_name)
