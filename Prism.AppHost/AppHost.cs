@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Aspire.Hosting.Azure;
+using Azure.Provisioning.KeyVault;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -101,6 +102,19 @@ var pythonAPIIdentity = builder.ExecutionContext.IsPublishMode
 var pythonWorkerIdentity = builder.ExecutionContext.IsPublishMode
     ? builder.AddAzureUserAssignedIdentity("prism-pythonWorker-identity")
     : null;
+var apiserviceIdentity = builder.ExecutionContext.IsPublishMode
+    ? builder.AddAzureUserAssignedIdentity("prism-apiservice-identity")
+    : null;
+
+if (keyVault is not null)
+{
+    if (pythonAPIIdentity is not null)
+        pythonAPIIdentity.WithRoleAssignments(keyVault, KeyVaultBuiltInRole.KeyVaultSecretsUser);
+    if (pythonWorkerIdentity is not null)
+        pythonWorkerIdentity.WithRoleAssignments(keyVault, KeyVaultBuiltInRole.KeyVaultSecretsUser);
+    if (apiserviceIdentity is not null)
+        apiserviceIdentity.WithRoleAssignments(keyVault, KeyVaultBuiltInRole.KeyVaultSecretsUser);
+}
 
 var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 
@@ -272,6 +286,11 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
 if (appInsights is not null) apiservice.WithReference(appInsights);
 if (keyVault is not null) apiservice.WithReference(keyVault);
 
+if (apiserviceIdentity is not null)
+{
+    apiservice.WithAzureUserAssignedIdentity(apiserviceIdentity);
+}
+
  // PR5: AddNpmApp alone runs `npm run dev` locally but isn't picked up by `aspire
  // deploy` at all - it never appears in the publish pipeline (confirmed via a live
  // deploy: zero mentions of prism-ai-reactUI in the log, no Container App created).
@@ -290,8 +309,7 @@ if (keyVault is not null) apiservice.WithReference(keyVault);
 
 builder.AddJavaScriptApp("prism-ai-reactUI", "../Prism.Web")
     .WithNpm(install: true)
-    .WithHttpEndpoint(port: 7000, name: "reactUI", env: "VITE_PORT")
-    .WithEnvironment("VITE_API_BASE_URL", apiservice.GetEndpoint("https"))
+    .WithHttpEndpoint(port: 7000, targetPort: 80, name: "reactUI", env: "VITE_PORT")
     .WithReference(apiservice)
     .WithExternalHttpEndpoints();
 

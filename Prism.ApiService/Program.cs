@@ -106,7 +106,7 @@ if (corsAllowedOrigins is null || corsAllowedOrigins.Length == 0)
 {
     corsAllowedOrigins = builder.Environment.IsDevelopment()
         ? new[] { "http://localhost:5173", "http://localhost:7000" }
-        : Array.Empty<string>();
+        : new[] { "https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io" };
 }
 
 builder.Services.Configure<CorsSettings>(options => options.AllowedOrigins = corsAllowedOrigins);
