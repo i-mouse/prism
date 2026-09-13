@@ -1,6 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
+import { useMsal, useIsAuthenticated } from "@azure/msal-react";
+import { InteractionStatus } from "@azure/msal-browser";
+import { loginRequest } from "@/lib/msalConfig";
 
 const LANDING_URL = import.meta.env.VITE_LANDING_URL || "/";
 const isExternalLanding = LANDING_URL !== "/";
@@ -17,9 +20,12 @@ function GoogleLogo({ className }: { className?: string }) {
 }
 
 export function Login() {
-  const { user, isLoading, signInWithGoogle, signInAsGuest } = useAuth();
+  const { user, isLoading, signInAsGuest } = useAuth();
+  const { instance, inProgress } = useMsal();
+  const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
   const location = useLocation();
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const redirectTo = (location.state as { from?: string } | null)?.from ?? "/";
 
@@ -29,20 +35,34 @@ export function Login() {
     }
   }, [isLoading, user, navigate, redirectTo]);
 
-  if (!isLoading && user) {
+  // [nightfix] Listen to MSAL state and navigate when redirect flow finishes
+  useEffect(() => {
+    if (isAuthenticated && inProgress === InteractionStatus.None) {
+      navigate(redirectTo, { replace: true });
+    }
+  }, [isAuthenticated, inProgress, navigate, redirectTo]);
+
+  if ((!isLoading && user) || (isAuthenticated && inProgress === InteractionStatus.None)) {
     return null;
   }
 
   const handleGoogleSignIn = async () => {
-    console.log('TODO: wire in PR 2b');
-    await signInWithGoogle();
-    navigate(redirectTo, { replace: true });
+    setGoogleLoading(true);
+    try {
+      // loginRedirect navigates away — this component unmounts after the call.
+      await instance.loginRedirect(loginRequest);
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      setGoogleLoading(false);
+    }
   };
 
   const handleGuestSignIn = async () => {
     await signInAsGuest();
     navigate(redirectTo, { replace: true });
   };
+
+  const isRedirecting = googleLoading || inProgress === InteractionStatus.HandleRedirect;
 
   return (
     <div className="relative min-h-dvh w-full flex flex-col font-sans bg-[#F9F9F8] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
@@ -115,10 +135,11 @@ export function Login() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 h-11 bg-white rounded-md border border-gray-300 shadow-sm text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-[#ea580c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#ea580c] transition-colors"
+              disabled={isRedirecting}
+              className="w-full flex items-center justify-center gap-3 h-11 bg-white rounded-md border border-gray-300 shadow-sm text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-[#ea580c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#ea580c] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <GoogleLogo className="w-5 h-5" />
-              Continue with Google
+              {isRedirecting ? "Redirecting…" : "Continue with Google"}
             </button>
 
             <button

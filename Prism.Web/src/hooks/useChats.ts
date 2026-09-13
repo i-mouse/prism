@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ChatListItem } from "@/types/api";
+import { acquireAccessToken } from "@/lib/auth";
 
-export function useChats(userId: string) {
+export function useChats() {
   const [chats, setChats] = useState<ChatListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchChats = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/chats/${userId}`);
+      const headers: HeadersInit = {};
+      const token = await acquireAccessToken();
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch("/api/chats", { headers, credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch chats");
       const data: ChatListItem[] = await res.json();
       setChats(data);
@@ -17,7 +24,7 @@ export function useChats(userId: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     fetchChats();

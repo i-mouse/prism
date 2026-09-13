@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Prism.ApiService.Data.Converters;
+using Prism.ApiService.Features.Auth;
 
 namespace Prism.ApiService.Features.PaperSubmission;
 
@@ -19,6 +20,14 @@ public static class SubmitPaperEndpoint
     {
         app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,AzureBlobStorageService storageService, CancellationToken ct) =>
         {
+            // Resolve user identity: JWT sub claim (Google) or HttpOnly guest-session cookie.
+            // Never trust a UserId from the request body — that was the previous insecure pattern.
+            var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+
             if (request == null || request.Files == null || request.Files.Count == 0)
             {
                 return Results.Problem(detail: "Request is blank", statusCode: StatusCodes.Status400BadRequest);
@@ -34,7 +43,7 @@ public static class SubmitPaperEndpoint
             var result = new
             {
               Message = "Paper received",
-              UserId = request.UserId
+              UserId = userId
             };
             var correlationId = httpContext.GetCorrelationId();
              foreach (var file in request.Files)
@@ -52,8 +61,8 @@ public static class SubmitPaperEndpoint
 
                 var stream = file.OpenReadStream();
                 await storageService.UploadFileAsync(stream,file.FileName,file.ContentType,ct);
-                await AddToDatabase(fileId,file, request.ChatId, request.UserId, dBContext, ct);
-                var contract = new PrismUploaded(fileId.ToString(),request.UserId,file.FileName,request.ConnectionId,request.ChatId);
+                await AddToDatabase(fileId,file, request.ChatId, userId, dBContext, ct);
+                var contract = new PrismUploaded(fileId.ToString(),userId,file.FileName,request.ConnectionId,request.ChatId);
                 await publishEndpoint.Publish(contract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
                 {
                     if (correlationId is not null)
@@ -67,7 +76,7 @@ public static class SubmitPaperEndpoint
 
             return Results.Ok(result);
 
-        }  ).WithName("SubmitPaper") .DisableAntiforgery();
+        }  ).WithName("SubmitPaper") .DisableAntiforgery().AllowAnonymous();
 
         app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, PrismDBContext dbContext, CancellationToken ct) =>
         {
@@ -148,8 +157,17 @@ public static class SubmitPaperEndpoint
 
     public static void MapChatHistoryEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/chats/{userId}", async (string userId, PrismDBContext dbContext, CancellationToken ct) =>
+        // Route changed from /api/chats/{userId} to /api/chats to avoid exposing
+        // the userId in the URL and to prevent cross-user data access. The userId
+        // is now resolved server-side from the authenticated JWT or guest cookie.
+        app.MapGet("/api/chats", async (HttpContext httpContext, PrismDBContext dbContext, CancellationToken ct) =>
         {
+            var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+
             var userChats = await dbContext.PrismDocuments
                 .Where(doc => doc.UserId == userId)
                 .Where(doc => dbContext.FileRecords.Any(f => f.ChatId == doc.ChatId))
@@ -179,7 +197,8 @@ public static class SubmitPaperEndpoint
 
             return Results.Ok(userChats);
         })
-        .WithName("GetUserChats");
+        .WithName("GetUserChats")
+        .AllowAnonymous();
 
         // Backfill endpoint: lets the client recover file summaries it may have
         // missed via SignalR (closed tab, dropped connection, page never open).

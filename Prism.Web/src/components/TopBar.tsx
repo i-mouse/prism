@@ -16,8 +16,11 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
   const isGuest = user?.provider === "guest";
   const avatarInitial = isGuest ? "G" : user?.name?.[0]?.toUpperCase() ?? "?";
 
-  const handleSignOut = () => {
-    signOut();
+  const handleSignOut = async () => {
+    await signOut();
+    // For guest users signOut() resolves synchronously (no redirect).
+    // For Google users signOut() calls MSAL logoutRedirect() and navigates away,
+    // so the navigate below only runs for guests.
     navigate("/login");
   };
 
