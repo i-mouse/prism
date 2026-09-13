@@ -49,10 +49,9 @@ export function AppShell() {
   const [searchParams, setSearchParams] = useSearchParams();
   const routeClaimId = searchParams.get("claim");
   const { user } = useAuth();
-  const userId = user?.id ?? "demo-user-01";
 
   const { activeChatId, setActiveChatId, activePaperId, setActivePaperId } = useActivePaper();
-  const { chats, refetch: refetchChats } = useChats(userId);
+  const { chats, refetch: refetchChats } = useChats();
   const { data: paperClaims, isLoading, refetch: refetchClaims } = usePaperClaims(activePaperId);
   const { joinChat, on, off, getConnectionId } = useSignalR();
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
@@ -235,7 +234,6 @@ export function AppShell() {
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <Sidebar
-            userId={userId}
             activeChatId={activeChatId}
             chats={chats}
             refetchChats={refetchChats}

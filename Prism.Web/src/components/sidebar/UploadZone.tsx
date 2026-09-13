@@ -3,9 +3,9 @@ import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { acquireAccessToken } from "@/lib/auth";
 
 interface UploadZoneProps {
-  userId: string;
   getConnectionId: () => string | null;
   joinChat: (chatId: string) => Promise<void>;
   onUploaded: (chatId: string, fileId: string, file: File) => void;
@@ -19,7 +19,7 @@ export interface UploadZoneHandle {
 }
 
 export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function UploadZone(
-  { userId, getConnectionId, joinChat, onUploaded, refetchChats, collapsed = false },
+  { getConnectionId, joinChat, onUploaded, refetchChats, collapsed = false },
   ref
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,12 +47,21 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
       await joinChat(chatId);
 
       const formData = new FormData();
-      formData.append("UserId", userId);
+      // UserId intentionally omitted — backend resolves identity from JWT or
+      // the prism-guest-session HttpOnly cookie. Never trust client-supplied IDs.
       formData.append("ConnectionId", connectionId);
       formData.append("ChatId", chatId);
       formData.append("Files", file);
 
-      const res = await fetch("/api/papers", { method: "POST", body: formData });
+      // Acquire a Bearer token for Google-authenticated users. Guest users have
+      // no token; the guest-session cookie is sent automatically by the browser.
+      const headers: HeadersInit = {};
+      const token = await acquireAccessToken();
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch("/api/papers", { method: "POST", body: formData, headers, credentials: "include" });
       if (!res.ok) {
         const message = await res.text().catch(() => "");
         throw new Error(message || `Upload failed: ${res.statusText}`);
@@ -60,7 +69,7 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
 
       refetchChats();
 
-      const filesRes = await fetch(`/api/chats/${chatId}/files`);
+      const filesRes = await fetch(`/api/chats/${chatId}/files`, { credentials: "include" });
       if (filesRes.ok) {
         const chatFiles: Array<{ fileId: string }> = await filesRes.json();
         const fileId = chatFiles[0]?.fileId;

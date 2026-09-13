@@ -8,7 +8,6 @@ import { SidebarFooter } from "@/components/sidebar/SidebarFooter";
 import { ChevronLeft, ChevronRight, X, FileText } from "lucide-react";
 
 interface SidebarProps {
-  userId: string;
   activeChatId: string;
   chats: ChatListItem[];
   refetchChats: () => void;
@@ -24,7 +23,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  userId,
   activeChatId,
   chats,
   refetchChats,
@@ -68,7 +66,6 @@ export function Sidebar({
       <div className="pb-6">
         <UploadZone
           ref={uploadZoneRef}
-          userId={userId}
           getConnectionId={getConnectionId}
           joinChat={joinChat}
           refetchChats={refetchChats}

@@ -1,10 +1,14 @@
 
 using System.Data.Common;
 using System.Diagnostics;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using Prism.ApiService.Configuration;
 using Prism.ApiService.Data;
+using Prism.ApiService.Features.Auth;
 using Prism.ApiService.Features.PaperSubmission;
 using Prism.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +27,32 @@ var builder = WebApplication.CreateBuilder(args);
 // installed - the API service exported zero spans as a result.
 builder.AddServiceDefaults();
 
+// Key Vault: AppHost's .WithReference(keyVault) injects the vault URI as the
+// "prism-secrets" connection string, but does NOT load secrets into IConfiguration.
+// We must wire the AzureKeyVault config provider explicitly so Microsoft.Identity.Web
+// (and any future secret reads) can resolve values by Key Vault secret name.
+// DefaultAzureCredential resolves via the Managed Identity that AppHost already
+// provisions with KeyVaultSecretsUser role on apiservice.
+// Skipped locally when the connection string is absent (no vault in Aspire local mode).
+var keyVaultUri = builder.Configuration.GetConnectionString("prism-secrets");
+if (!string.IsNullOrEmpty(keyVaultUri))
+{
+    builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), new DefaultAzureCredential());
+}
+
+// JWT Bearer auth via Entra External ID (CIAM).
+// AddMicrosoftIdentityWebApi sets MapInboundClaims = false by default, meaning
+// JWT claims are passed through with their original names ("sub", "email", etc.)
+// rather than being remapped to WS-Fed/SOAP long-form URIs.
+// Consequence: read the authenticated user's ID as httpContext.User.FindFirst("sub")?.Value,
+// NOT ClaimTypes.NameIdentifier. This deviates from the plan's assumed code and is
+// intentional — the plan assumed the old MapInboundClaims=true default. See PR description.
+builder.Services.AddAuthentication()
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthorization();
+
 builder.Services.AddOpenApi();
+
 
 builder.Services.AddProblemDetails(options =>
 {
@@ -143,6 +172,11 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseCorrelationId();
+// UseAuthentication/UseAuthorization must come after routing middleware and before
+// endpoint mapping. Guest endpoints are anonymous — RequireAuthorization() is NEVER
+// called globally; each endpoint opts into auth individually.
+app.UseAuthentication();
+app.UseAuthorization();
 
 using (var scope = app.Services.CreateAsyncScope())
 {
@@ -170,6 +204,7 @@ using (var scope = app.Services.CreateAsyncScope())
 app.MapPaperEndPoint();
 app.MapChatEndPoint();
 app.MapChatHistoryEndpoints();
+app.MapGuestAuthEndpoints();
 
 // Fast liveness probe for Azure Container Apps - no DB/Qdrant ping, must return 200 quickly
 // even under load. A deeper /readiness endpoint can come post-V1.
