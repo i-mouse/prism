@@ -72,6 +72,7 @@ export function useChatStream(chatId: string | null, activeFileId: string | null
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ chat_id: chatId, active_file_id: activeFileId, message }),
+          credentials: "include",
           signal: controller.signal,
         });
 

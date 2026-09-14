@@ -14,7 +14,7 @@ export function usePaperClaims(paperId: string | null) {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/papers/${paperId}/claims`);
+      const res = await fetch(`/api/papers/${paperId}/claims`, { credentials: "include" });
       if (!res.ok) throw new Error(`Failed to load claims: ${res.status}`);
       const json: PaperClaimsResponse = await res.json();
       setData(json);

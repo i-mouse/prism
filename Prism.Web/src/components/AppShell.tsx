@@ -102,7 +102,7 @@ export function AppShell() {
 
   const fetchChatFiles = async (chatId: string) => {
     try {
-      const res = await fetch(`/api/chats/${chatId}/files`);
+      const res = await fetch(`/api/chats/${chatId}/files`, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to load chat files");
       const files: Array<{ fileId: string }> = await res.json();
       setActivePaperId(files[0]?.fileId ?? null);
