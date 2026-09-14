@@ -10,6 +10,7 @@ from memory_db import create_db_connection_pool
 from paper_chat.agent import build_paper_chat_graph
 from paper_chat.blocks import ClaimReferenceBlock, TextBlock, block_to_sse
 from correlation import correlation_id_var, get_correlation_id
+from extraction.prompt_version import get_prompt_version
 from telemetry import init_telemetry
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
@@ -46,6 +47,10 @@ async def lifespan(app: FastAPI):
     app.state.checkpointer = AsyncPostgresSaver(app.state.pool)
     app.state.compiled_agent = workflow.compile(checkpointer=app.state.checkpointer)
     app.state.paper_chat_graph = build_paper_chat_graph(app.state.checkpointer)
+
+    # Hashed once here and served from memory by GET /api/system/prompt-version -
+    # never re-read/re-hashed per request.
+    app.state.prompt_version = get_prompt_version()
 
     print("[OK] Checkpointer and Agent ready", flush=True)
 
@@ -116,6 +121,26 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
 @pythonAPI.get("/health", include_in_schema=False)
 async def health():
     return {"status": "healthy"}
+
+
+@pythonAPI.get("/api/system/prompt-version")
+async def get_current_prompt_version(http_request: Request):
+    """Returns the pipeline's current prompt-version hash, cached at startup
+    (see lifespan above) - Prism.ApiService compares this against the
+    prompt_version stored per extraction run to decide whether a cached
+    result was produced by the prompts currently in use."""
+    return {"promptVersion": http_request.app.state.prompt_version}
+
+
+@pythonAPI.delete("/api/chat/{chatid}/checkpoint")
+async def delete_chat_checkpoint(chatid: str, http_request: Request):
+    """Deletes all LangGraph checkpoint rows for one thread (chat_id). Called by
+    Prism.ApiService on guest logout - guest chat history is not persisted once
+    the guest session ends, unlike Google-authenticated users' chats. Leaves the
+    underlying paper/claims data (document_extractors, paper_claims) untouched -
+    those are shared/reused across sessions via content-hash dedupe."""
+    await http_request.app.state.checkpointer.adelete_thread(chatid)
+    return {"status": "deleted"}
 
 
 class ChatAskRequest(BaseModel):

@@ -63,8 +63,16 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
 
       const res = await fetch("/api/papers", { method: "POST", body: formData, headers, credentials: "include" });
       if (!res.ok) {
-        const message = await res.text().catch(() => "");
-        throw new Error(message || `Upload failed: ${res.statusText}`);
+        // The backend returns a ProblemDetails body (e.g. the guest 2-paper
+        // limit) — surface its "detail" text instead of a generic message.
+        const body = await res.text().catch(() => "");
+        let detail: string | undefined;
+        try {
+          detail = JSON.parse(body)?.detail;
+        } catch {
+          // not JSON — fall through to the generic message below
+        }
+        throw new Error(detail || body || `Upload failed: ${res.statusText}`);
       }
 
       refetchChats();
@@ -79,7 +87,8 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
       }
     } catch (err) {
       console.error("Upload error:", err);
-      toast.error("Upload failed. Please check if the backend is running.");
+      const message = err instanceof Error && err.message ? err.message : "Upload failed. Please check if the backend is running.";
+      toast.error(message);
     } finally {
       setUploading(false);
     }

@@ -257,6 +257,8 @@ export function AppShell() {
             activeChatId={activeChatId}
             onViewEvidence={setSelectedClaimId}
             onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
+            isGoogleUser={user?.provider === "google"}
+            getConnectionId={getConnectionId}
           />
         </main>
         

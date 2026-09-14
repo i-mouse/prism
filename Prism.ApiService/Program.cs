@@ -112,6 +112,10 @@ builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(sp =>
 
  builder.Services.AddScoped<AzureBlobStorageService>();
 
+ // Caches the pipeline's current prompt-version hash for the process lifetime -
+ // fetched from Prism.PythonService at most once, never re-hashed per request.
+ builder.Services.AddSingleton<PromptVersionProvider>();
+
  builder.Services.AddHostedService<RabbitMqListenerService>();
 
 // Local Aspire dev resolves the python service through service discovery (`services:...:0`);

@@ -186,6 +186,7 @@ async def main():
 
                                 emitter = ProgressEmitter(channel, file_id=file_id, chat_id=chat_id)
                                 await emitter.emit_stage("preparing")
+                                await emitter.emit_stage_detail("preparing", "Reading the document...")
 
                                 # 1. Download file asynchronously using threads
                                 local_path = os.path.join("downloads", file_name)
@@ -241,6 +242,7 @@ async def main():
 
                                 current_stage = "extracting"
                                 await emitter.emit_stage("extracting")
+                                await emitter.emit_stage_detail("extracting", "Finding claims...")
                                 print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction', flush=True)
                                 with tracer.start_as_current_span("extract_claims") as span:
                                     span.set_attribute("correlation_id", correlation_id)
@@ -254,9 +256,7 @@ async def main():
 
                                 current_stage = "grounding"
                                 await emitter.emit_stage("grounding")
-                                await emitter.emit_stage_detail(
-                                    "grounding", f"Verifying evidence spans for {len(extraction.claims)} claims"
-                                )
+                                await emitter.emit_stage_detail("grounding", "Checking each claim against the evidence...")
                                 print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting grounding', flush=True)
                                 with tracer.start_as_current_span("ground_extraction") as span:
                                     span.set_attribute("correlation_id", correlation_id)
@@ -271,7 +271,7 @@ async def main():
 
                                 current_stage = "finalizing"
                                 await emitter.emit_stage("finalizing")
-                                await emitter.emit_stage_detail("finalizing", "Writing results")
+                                await emitter.emit_stage_detail("finalizing", "Double-checking the grounding...")
                                 print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} writing to DB', flush=True)
                                 with tracer.start_as_current_span("writer.write") as span:
                                     span.set_attribute("correlation_id", correlation_id)
@@ -295,7 +295,7 @@ async def main():
                                     f"{refused} refused · {partial} partial",
                                 )
 
-                                await emitter.emit_stage("done")
+                                await emitter.emit_stage_detail("done", "Done")
 
                                 # 5. Inject memory using our globally compiled agent!
                                 config = {"configurable": {"thread_id": chat_id}}

@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Upload } from "lucide-react";
+import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -25,6 +26,11 @@ interface MatrixViewProps {
   activeChatId: string;
   onViewEvidence: (claimId: string) => void;
   onUploadClick: () => void;
+  // Re-run (Google-authenticated users only, never guests) — isGoogleUser gates
+  // the banner in PaperHeader, getConnectionId supplies the SignalR connection
+  // the re-triggered pipeline reports progress back to.
+  isGoogleUser?: boolean;
+  getConnectionId?: () => string | null;
 }
 
 type SortMode = "position" | "support";
@@ -49,10 +55,46 @@ export function MatrixView({
   activeChatId,
   onViewEvidence,
   onUploadClick,
+  isGoogleUser = false,
+  getConnectionId,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
   const [activeTab, setActiveTab] = useState<"claims" | "overview">("claims");
+  const [isRerunning, setIsRerunning] = useState(false);
   const claims = paperClaims?.claims ?? [];
+
+  // Cleared whenever the claims payload's completedAt changes — that happens
+  // both on first load and, meaningfully, once a re-run finishes and produces
+  // a fresh extraction run (a new completedAt timestamp).
+  useEffect(() => {
+    setIsRerunning(false);
+  }, [paperClaims?.completedAt]);
+
+  const handleRerun = async () => {
+    if (!activePaperId) return;
+    const connectionId = getConnectionId?.();
+    if (!connectionId) {
+      toast.error("Realtime connection not ready. Please wait a moment and try again.");
+      return;
+    }
+    setIsRerunning(true);
+    try {
+      const res = await fetch(`/api/papers/${activePaperId}/rerun`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ chatId: activeChatId, connectionId }),
+      });
+      if (!res.ok) {
+        const message = await res.text().catch(() => "");
+        throw new Error(message || `Re-run failed: ${res.statusText}`);
+      }
+    } catch (err) {
+      console.error("Re-run error:", err);
+      toast.error("Re-run failed to start. Please try again.");
+      setIsRerunning(false);
+    }
+  };
 
   const sortedClaims = useMemo(() => {
     if (sortMode === "support") {
@@ -175,14 +217,18 @@ export function MatrixView({
 
   return (
     <AnimatePresence mode="wait">
-      {paperClaims.extractionStatus !== "Completed" ? (
+      {paperClaims.extractionStatus !== "Completed" || isRerunning ? (
         <motion.div
           key="activity"
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.2 }}
           className="h-full overflow-y-auto"
         >
-          <PaperActivityView fileId={activePaperId} fileName={paperClaims.fileName} extractionStatus={paperClaims.extractionStatus} />
+          <PaperActivityView
+            fileId={activePaperId}
+            fileName={paperClaims.fileName}
+            extractionStatus={isRerunning ? "In progress" : paperClaims.extractionStatus}
+          />
         </motion.div>
       ) : (
         <motion.div
@@ -197,6 +243,10 @@ export function MatrixView({
               fileName={paperClaims.fileName}
               extractionStatus={paperClaims.extractionStatus}
               completedAt={paperClaims.completedAt}
+              showRerun={isGoogleUser && paperClaims.extractionStatus === "Completed" && paperClaims.promptVersion != null}
+              isCurrentPromptVersion={paperClaims.isCurrentPromptVersion}
+              onRerun={handleRerun}
+              rerunning={isRerunning}
             />
 
             <div className="mt-6 flex items-center gap-6 border-b border-hairline px-1">
