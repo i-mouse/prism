@@ -9,6 +9,7 @@ public class PrismDBContext : DbContext
 
     public DbSet<PrismDocument> PrismDocuments { get; set; }
     public DbSet<FileRecord> FileRecords { get; set; }
+    public DbSet<ChatFile> ChatFiles { get; set; }
     public DbSet<Domain> Domains { get; set; }
     public DbSet<DocumentExtractor> DocumentExtractors { get; set; }
     public DbSet<PaperClaim> PaperClaims { get; set; }
@@ -26,10 +27,28 @@ public class PrismDBContext : DbContext
         modelBuilder.Entity<FileRecord>(entity =>
         {
             entity.HasKey(f => f.FileId);
+            // Partial unique index: many rows may have a null hash (nothing relies
+            // on that today, but it keeps the constraint from ever blocking a
+            // legitimate insert before the hash is known), while any two non-null
+            // hashes must be unique - that uniqueness is what the dedupe check in
+            // SubmitPaperEndpoint relies on to find "have we seen this content before".
+            entity.HasIndex(f => f.ContentHash)
+                  .IsUnique()
+                  .HasFilter("content_hash IS NOT NULL");
+        });
+
+        modelBuilder.Entity<ChatFile>(entity =>
+        {
+            entity.HasKey(cf => new { cf.ChatId, cf.FileId });
             entity.HasOne<PrismDocument>()
                   .WithMany()
-                  .HasForeignKey(f => f.ChatId)
+                  .HasForeignKey(cf => cf.ChatId)
                   .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<FileRecord>()
+                  .WithMany()
+                  .HasForeignKey(cf => cf.FileId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(cf => cf.FileId);
         });
 
         modelBuilder.Entity<Domain>(entity =>

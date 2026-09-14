@@ -38,6 +38,8 @@ export interface PaperClaimsResponse {
   completedAt: string | null;
   summary: ClaimsSummary;
   claims: ClaimDto[];
+  promptVersion?: string | null;
+  isCurrentPromptVersion?: boolean | null;
 }
 
 export interface ChatListItem {

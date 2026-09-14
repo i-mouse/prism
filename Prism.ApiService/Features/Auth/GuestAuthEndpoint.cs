@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Prism.ApiService.Data;
 
 namespace Prism.ApiService.Features.Auth;
 
@@ -36,8 +38,36 @@ public static class GuestAuthEndpoints
         // Clears the guest session cookie. Called on sign-out for guest users.
         // For Google-authenticated users the frontend calls MSAL logoutRedirect()
         // and this endpoint is not needed, but calling it is harmless.
-        app.MapPost("/api/auth/logout", (HttpContext httpContext) =>
+        app.MapPost("/api/auth/logout", async (HttpContext httpContext, PrismDBContext dbContext, IHttpClientFactory httpClientFactory, ILogger<Program> logger, CancellationToken ct) =>
         {
+            // Guest chat history isn't persisted once the session ends (unlike
+            // Google-authenticated users' chats, which keep full persistence) — the
+            // underlying paper/claims data is left untouched (it's shared/reused by
+            // the content-hash dedupe), only this guest's LangGraph chat memory
+            // (checkpoints, keyed by chat_id as thread_id) is deleted. Must resolve
+            // and act on the guest id BEFORE the cookie is deleted below.
+            var isAuthenticated = httpContext.User.Identity?.IsAuthenticated == true;
+            if (!isAuthenticated && httpContext.Request.Cookies.TryGetValue(CookieName, out var guestId) && !string.IsNullOrEmpty(guestId))
+            {
+                var chatIds = await dbContext.PrismDocuments
+                    .Where(d => d.UserId == guestId)
+                    .Select(d => d.ChatId)
+                    .ToListAsync(ct);
+
+                var client = httpClientFactory.CreateClient("pythonapi");
+                foreach (var chatId in chatIds)
+                {
+                    try
+                    {
+                        await client.DeleteAsync($"/api/chat/{chatId}/checkpoint", ct);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed to delete checkpoint for guest chat {ChatId} on logout", chatId);
+                    }
+                }
+            }
+
             httpContext.Response.Cookies.Delete(CookieName, new CookieOptions
             {
                 HttpOnly = true,

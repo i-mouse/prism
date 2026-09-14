@@ -1,4 +1,4 @@
-import { Share2, Download, MoreHorizontal, FileText, HardDrive, Calendar, File } from "lucide-react";
+import { Share2, Download, MoreHorizontal, FileText, HardDrive, Calendar, File, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,13 @@ interface PaperHeaderProps {
   pageCount?: number;
   uploadedAt?: string;
   onCancel?: () => void;
+  // Re-run option (Google-authenticated users only, never guests) — shown when
+  // this result came from a cached/prior extraction run and we know how its
+  // prompt_version compares to the pipeline's current one.
+  showRerun?: boolean;
+  isCurrentPromptVersion?: boolean | null;
+  onRerun?: () => void;
+  rerunning?: boolean;
 }
 
 const secondaryButtonClass =
@@ -32,20 +39,25 @@ const verdictDotClass = {
   other: "bg-verdict-other-icon",
 } as const;
 
-export function PaperHeader({ 
-  fileName, 
-  extractionStatus, 
+export function PaperHeader({
+  fileName,
+  extractionStatus,
   completedAt,
   fileSize,
   pageCount,
   uploadedAt,
-  onCancel
+  onCancel,
+  showRerun = false,
+  isCurrentPromptVersion,
+  onRerun,
+  rerunning = false,
 }: PaperHeaderProps) {
   const status = extractionStatusMeta[extractionStatus];
   const verdict = extractionStatusToVerdict[extractionStatus];
   const comingSoon = () => toast("Coming soon");
 
   return (
+    <div className="flex flex-col gap-3">
     <div className="flex items-start md:items-center justify-between gap-4">
       <div className="flex items-center gap-3 md:gap-4 min-w-0">
         <div className="hidden md:flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EEF2FF] border border-[#E0E7FF]">
@@ -156,6 +168,30 @@ export function PaperHeader({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+    </div>
+
+    {showRerun && (
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-hairline bg-surface-subtle px-4 py-2.5">
+        <span className="font-sans text-xs text-ink-secondary">
+          {isCurrentPromptVersion
+            ? "Re-running will use the same pipeline and will likely return the same result."
+            : "A newer pipeline version is available. Re-running may improve results — or may return the same output. There's no way to know without running it."}
+        </span>
+        <Button
+          variant={isCurrentPromptVersion ? "ghost" : "outline"}
+          size="sm"
+          onClick={onRerun}
+          disabled={rerunning}
+          className={cn(
+            "gap-1.5 rounded-lg font-sans text-sm",
+            isCurrentPromptVersion ? "text-ink-tertiary hover:text-ink-secondary" : secondaryButtonClass
+          )}
+        >
+          <RefreshCw className={cn("h-4 w-4", rerunning && "animate-spin")} />
+          {rerunning ? "Re-running..." : isCurrentPromptVersion ? "Re-run anyway" : "Re-run"}
+        </Button>
+      </div>
+    )}
     </div>
   );
 }

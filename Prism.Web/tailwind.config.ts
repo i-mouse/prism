@@ -47,6 +47,18 @@ export default {
           hover: "oklch(0.646 0.222 41.116)",
           subtle: "oklch(0.98 0.016 73.684)",
         },
+        // Unified 4-color status system for the audit progress screen
+        // (PaperActivityView) — the SAME tokens drive both the stepper dots
+        // and the log panel's bracketed stage tags, so the two never drift
+        // into separate palettes again. pending/active reuse existing
+        // ink-tertiary/brand tones; complete/failed match the emerald-500/
+        // red-500 shades already used throughout the app.
+        status: {
+          pending: "oklch(0.705 0.015 286.067)",
+          active: "oklch(0.705 0.213 47.604)",
+          complete: "oklch(0.696 0.170 162.480)",
+          failed: "oklch(0.637 0.237 25.331)",
+        },
         supported: {
           DEFAULT: "oklch(0.55 0.10 145)",
           bg: "oklch(0.98 0.02 145)",

@@ -24,6 +24,36 @@ const STAGE_LABELS: Record<ExtractionStage, string> = {
 
 type RowStatus = "completed" | "current" | "pending" | "failed";
 
+// Single source of truth for the 4-color status system — the stepper dots
+// and the log panel's bracketed stage tags both read from these instead of
+// each hardcoding their own palette.
+const STATUS_TEXT_CLASS: Record<RowStatus, string> = {
+  completed: "text-status-complete",
+  current: "text-status-active",
+  pending: "text-status-pending",
+  failed: "text-status-failed",
+};
+
+const STATUS_BG_CLASS: Record<RowStatus, string> = {
+  completed: "bg-status-complete",
+  current: "bg-status-active",
+  pending: "bg-status-pending",
+  failed: "bg-status-failed",
+};
+
+const STATUS_BORDER_CLASS: Record<RowStatus, string> = {
+  completed: "border-status-complete",
+  current: "border-status-active",
+  pending: "border-status-pending",
+  failed: "border-status-failed",
+};
+
+function formatElapsed(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+  const s = (totalSeconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
 export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperActivityViewProps) {
   const progress = useExtractionProgress(fileId);
   const { on, off } = useSignalR();
@@ -34,6 +64,18 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
   const hasFailed = progress?.latestStage === "failed" || extractionStatus === "Failed";
   const currentIndex = (progress && !hasFailed) ? STAGE_ORDER.indexOf(progress.latestStage) : 0;
   const failedIndex = hasFailed ? (progress?.failedStage ? STAGE_ORDER.indexOf(progress.failedStage) : 1) : -1;
+  const isDone = progress?.latestStage === "done";
+
+  const startTimeRef = useRef<number>(Date.now());
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  useEffect(() => {
+    if (hasFailed || isDone) return;
+    const interval = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [hasFailed, isDone]);
 
   useEffect(() => {
     const handler = (payload: unknown) => {
@@ -87,6 +129,16 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
     return "pending";
   };
 
+  // Same status computation the stepper uses, keyed by a log line's stage
+  // string instead of a STAGE_ORDER index — so a log tag and its matching
+  // stepper dot always render the same color for the same underlying state.
+  const statusForStage = (stage: string): RowStatus => {
+    if (stage === "failed") return "failed";
+    const index = STAGE_ORDER.indexOf(stage as ExtractionStage);
+    if (index === -1) return "pending";
+    return getStatus(index);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -135,38 +187,38 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                     <div
                       className={cn(
                         "absolute left-[11px] top-7 bottom-[-16px] border-l-2 border-dashed",
-                        status === "completed" ? "border-emerald-500" : "border-hairline"
+                        status === "completed" ? STATUS_BORDER_CLASS.completed : "border-hairline"
                       )}
                     />
                   )}
-                  
+
                   <div className="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center bg-surface mt-0.5">
                     {status === "completed" && (
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-white">
+                      <div className={cn("flex h-6 w-6 items-center justify-center rounded-full text-white", STATUS_BG_CLASS.completed)}>
                         <Check className="h-4 w-4" strokeWidth={3} />
                       </div>
                     )}
                     {status === "current" && (
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full border border-brand text-brand">
-                        <div className="h-2 w-2 rounded-full bg-brand" />
+                      <div className={cn("flex h-6 w-6 items-center justify-center rounded-full border", STATUS_BORDER_CLASS.current, STATUS_TEXT_CLASS.current)}>
+                        <div className={cn("h-2 w-2 rounded-full", STATUS_BG_CLASS.current)} />
                       </div>
                     )}
-                    {status === "pending" && <div className="h-5 w-5 rounded-full border border-hairline" />}
+                    {status === "pending" && <div className={cn("h-5 w-5 rounded-full border", STATUS_BORDER_CLASS.pending)} />}
                     {status === "failed" && (
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white">
+                      <div className={cn("flex h-6 w-6 items-center justify-center rounded-full text-white", STATUS_BG_CLASS.failed)}>
                         <XCircle className="h-4 w-4" />
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex-1 pt-1">
                     <div className="flex items-center justify-between">
                       <div className={cn(
                         "font-sans text-sm font-semibold",
                         status === "completed" && "text-ink",
-                        status === "current" && "text-brand",
+                        status === "current" && STATUS_TEXT_CLASS.current,
                         status === "pending" && "text-ink-tertiary",
-                        status === "failed" && "text-red-500"
+                        status === "failed" && STATUS_TEXT_CLASS.failed
                       )}>
                         {STAGE_LABELS[stage]}
                       </div>
@@ -175,7 +227,7 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                       </div>
                     </div>
                     {(status === "completed" || status === "current" || status === "failed") && logForStage && (
-                      <div className={cn("font-sans text-xs mt-1", status === "failed" ? "text-red-500" : "text-ink-secondary")}>
+                      <div className={cn("font-sans text-xs mt-1", status === "failed" ? STATUS_TEXT_CLASS.failed : "text-ink-secondary")}>
                         {logForStage.message}
                       </div>
                     )}
@@ -200,13 +252,14 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
           <div className="flex-1 flex flex-col overflow-hidden rounded-xl bg-[#18181B] shadow-inner w-full max-h-[400px]">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-brand animate-pulse" />
+                <div className={cn("h-2 w-2 rounded-full animate-pulse", STATUS_BG_CLASS.current)} />
                 <span className="font-sans text-sm text-white/90">Analysis in progress...</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 rounded-full border border-brand/30 px-2 py-0.5">
-                  <div className="h-3 w-3 rounded-full border-[1.5px] border-brand border-t-transparent animate-spin" />
-                  <span className="font-sans text-xs font-medium text-brand">{STAGE_LABELS[progress?.latestStage || "preparing"]}</span>
+                <span className="font-mono text-xs text-white/50 tabular-nums">{formatElapsed(elapsedSeconds)}</span>
+                <div className={cn("flex items-center gap-1.5 rounded-full border px-2 py-0.5", "border-status-active/30")}>
+                  <div className={cn("h-3 w-3 rounded-full border-[1.5px] border-t-transparent animate-spin", STATUS_BORDER_CLASS.current)} />
+                  <span className={cn("font-sans text-xs font-medium", STATUS_TEXT_CLASS.current)}>{STAGE_LABELS[progress?.latestStage || "preparing"]}</span>
                 </div>
                 <button className="rounded-md p-1 text-white/50 hover:bg-white/10 hover:text-white transition-colors">
                   <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -226,20 +279,24 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                   Waiting for logs...
                 </div>
               ) : (
-                <div className="space-y-1">
-                  {logs.map((log) => {
-                    let stageColor = "text-white/70";
-                    if (log.stage === "extracting" || log.stage === "grounding") stageColor = "text-brand";
-                    if (log.stage === "done") stageColor = "text-emerald-400";
-                    if (log.isError) stageColor = "text-red-400";
-                    
+                <div>
+                  {logs.map((log, i) => {
+                    // Same status the matching stepper dot uses, so a log
+                    // line's stage tag always matches its dot's color.
+                    const status = statusForStage(log.isError ? "failed" : log.stage);
+                    const stageColor = STATUS_TEXT_CLASS[status];
+                    const isNewGroup = i > 0 && logs[i - 1].stage !== log.stage;
+
                     return (
-                      <div key={log.id} className="break-words leading-relaxed">
+                      <div
+                        key={log.id}
+                        className={cn("break-words leading-relaxed", i === 0 ? "" : isNewGroup ? "mt-4" : "mt-1")}
+                      >
                         <span className="text-white/40 mr-3">[{log.time}]</span>
                         <span className={cn("mr-2 font-semibold", stageColor)}>
                           [{STAGE_LABELS[log.stage as ExtractionStage] || log.stage}]
                         </span>
-                        <span className={log.isError ? "text-red-300" : "text-white/90"}>
+                        <span className={log.isError ? STATUS_TEXT_CLASS.failed : "text-white/90"}>
                           {log.message}
                         </span>
                       </div>

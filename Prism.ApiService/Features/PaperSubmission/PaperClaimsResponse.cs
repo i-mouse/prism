@@ -6,7 +6,11 @@ public record PaperClaimsResponse(
     string ExtractionStatus,
     DateTime? CompletedAt,
     ClaimsSummary Summary,
-    IReadOnlyList<ClaimDto> Claims);
+    IReadOnlyList<ClaimDto> Claims,
+    string? PromptVersion = null,
+    bool? IsCurrentPromptVersion = null);
+
+public record RerunPaperRequest(string ChatId, string ConnectionId);
 
 public record ClaimsSummary(
     int Total,

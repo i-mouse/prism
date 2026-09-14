@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Prism.ApiService.Data.Converters;
 using Prism.ApiService.Features.Auth;
+using Prism.ApiService.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace Prism.ApiService.Features.PaperSubmission;
 
@@ -18,7 +22,7 @@ public static class SubmitPaperEndpoint
 
     public static void MapPaperEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,AzureBlobStorageService storageService, CancellationToken ct) =>
+        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,AzureBlobStorageService storageService, IHubContext<DocumentHub, IDocumentClient> hubContext, CancellationToken ct) =>
         {
             // Resolve user identity: JWT sub claim (Google) or HttpOnly guest-session cookie.
             // Never trust a UserId from the request body — that was the previous insecure pattern.
@@ -40,6 +44,29 @@ public static class SubmitPaperEndpoint
             {
                 return Results.Problem(detail: "Prism audits one paper at a time. Upload a single PDF.", statusCode: StatusCodes.Status400BadRequest);
             }
+
+            // Guests (no validated JWT) are capped at 2 papers per cookie-session -
+            // Google-authenticated users are never capped. Counted via distinct
+            // ChatFiles.FileId across every chat this guest owns, so a dedupe hit
+            // (linking to an already-existing file) still counts toward the cap.
+            var isGuest = httpContext.User.Identity?.IsAuthenticated != true;
+            if (isGuest)
+            {
+                var guestFileCount = await (
+                    from cf in dBContext.ChatFiles
+                    join d in dBContext.PrismDocuments on cf.ChatId equals d.ChatId
+                    where d.UserId == userId
+                    select cf.FileId
+                ).Distinct().CountAsync(ct);
+
+                if (guestFileCount >= 2)
+                {
+                    return Results.Problem(
+                        detail: "Guest limit reached. Sign in to upload more than 2 papers.",
+                        statusCode: StatusCodes.Status403Forbidden);
+                }
+            }
+
             var result = new
             {
               Message = "Paper received",
@@ -53,15 +80,41 @@ public static class SubmitPaperEndpoint
                     return Results.Problem(statusCode: 413, detail: "File exceeds 20MB limit");
                 }
 
-                var fileId = Guid.NewGuid();
                 using var activity = PrismTelemetry.ActivitySource.StartActivity("paper.upload");
                 activity?.SetTag("file.name", file.FileName);
                 activity?.SetTag("chat.id", request.ChatId);
                 activity?.SetTag("correlation.id", correlationId);
 
+                // Hash the content BEFORE any blob upload or pipeline work — an
+                // already-audited paper (by content, not just by name) is recognized
+                // here regardless of who uploaded it originally or which session
+                // this is, and the expensive blob upload + pipeline is skipped
+                // entirely below when it matches.
+                string contentHash;
+                using (var hashStream = file.OpenReadStream())
+                {
+                    contentHash = Convert.ToHexStringLower(await SHA256.HashDataAsync(hashStream, ct));
+                }
+
+                var existingFile = await dBContext.FileRecords
+                    .FirstOrDefaultAsync(f => f.ContentHash == contentHash, ct);
+
+                if (existingFile != null)
+                {
+                    await HandleCacheHitAsync(existingFile, request, userId, hubContext, dBContext, ct);
+                    continue;
+                }
+
+                var fileId = Guid.NewGuid();
+
+                await NotifyProgress(hubContext, fileId, request.ChatId, "preparing",
+                    "Checking if we've seen this paper before...");
+                await NotifyProgress(hubContext, fileId, request.ChatId, "preparing",
+                    "New paper — starting audit");
+
                 var stream = file.OpenReadStream();
                 await storageService.UploadFileAsync(stream,file.FileName,file.ContentType,ct);
-                await AddToDatabase(fileId,file, request.ChatId, userId, dBContext, ct);
+                await AddToDatabase(fileId,file, request.ChatId, userId, contentHash, dBContext, ct);
                 var contract = new PrismUploaded(fileId.ToString(),userId,file.FileName,request.ConnectionId,request.ChatId);
                 await publishEndpoint.Publish(contract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
                 {
@@ -78,7 +131,68 @@ public static class SubmitPaperEndpoint
 
         }  ).WithName("SubmitPaper") .DisableAntiforgery().AllowAnonymous();
 
-        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, HttpContext httpContext, PrismDBContext dbContext, CancellationToken ct) =>
+        app.MapPost("/api/papers/{paperId}/rerun", async (Guid paperId, HttpContext httpContext, [FromBody] RerunPaperRequest request, PrismDBContext dbContext, IPublishEndpoint publishEndpoint, CancellationToken ct) =>
+        {
+            var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+
+            // Re-run is a Google-authenticated-only feature — guests never see the
+            // option, and the server enforces that independently of the UI.
+            if (httpContext.User.Identity?.IsAuthenticated != true)
+            {
+                return Results.Problem(detail: "Guests cannot trigger a re-run.", statusCode: StatusCodes.Status403Forbidden);
+            }
+
+            if (request == null || string.IsNullOrEmpty(request.ChatId) || string.IsNullOrEmpty(request.ConnectionId))
+            {
+                return Results.Problem(detail: "ChatId and ConnectionId are required.", statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            var file = await dbContext.FileRecords
+                .Where(f => f.FileId == paperId)
+                .Select(f => new { f.FileId, f.FileName })
+                .FirstOrDefaultAsync(ct);
+
+            if (file == null)
+            {
+                return Results.NotFound();
+            }
+
+            var isOwner = await (
+                from cf in dbContext.ChatFiles
+                join d in dbContext.PrismDocuments on cf.ChatId equals d.ChatId
+                where cf.FileId == paperId && d.UserId == userId
+                select cf.FileId
+            ).AnyAsync(ct);
+
+            if (!isOwner)
+            {
+                return Results.Problem(detail: "You do not have access to this paper.", statusCode: StatusCodes.Status403Forbidden);
+            }
+
+            // Deliberately bypasses the content-hash dedupe check in the upload
+            // endpoint above — re-run means "force a fresh pipeline run", so this
+            // publishes straight to the pipeline unconditionally. write_extraction_result
+            // (Python) always inserts a brand-new document_extractor/extraction_run
+            // row, so the previous run's claims are never overwritten.
+            var correlationId = httpContext.GetCorrelationId();
+            var contract = new PrismUploaded(file.FileId.ToString(), userId, file.FileName, request.ConnectionId, request.ChatId);
+            await publishEndpoint.Publish(contract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
+            {
+                if (correlationId is not null)
+                {
+                    publishContext.Headers.Set("x-correlation-id", correlationId);
+                }
+            }), ct);
+
+            return Results.Ok(new { Message = "Re-run started" });
+        })
+        .WithName("RerunPaper");
+
+        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, HttpContext httpContext, PrismDBContext dbContext, PromptVersionProvider promptVersionProvider, CancellationToken ct) =>
         {
             var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
             if (string.IsNullOrEmpty(userId))
@@ -91,7 +205,7 @@ public static class SubmitPaperEndpoint
 
             var file = await dbContext.FileRecords
                 .Where(f => f.FileId == paperId)
-                .Select(f => new { f.FileId, f.FileName, f.Summary, f.ChatId })
+                .Select(f => new { f.FileId, f.FileName, f.Summary })
                 .FirstOrDefaultAsync(ct);
 
             if (file == null)
@@ -99,12 +213,17 @@ public static class SubmitPaperEndpoint
                 return Results.NotFound();
             }
 
-            var ownerId = await dbContext.PrismDocuments
-                .Where(d => d.ChatId == file.ChatId)
-                .Select(d => d.UserId)
-                .FirstOrDefaultAsync(ct);
+            // A deduped file can be linked to many chats/users — ownership means
+            // "does this user own at least one chat linked to this file", not a
+            // single ChatId lookup like before.
+            var isOwner = await (
+                from cf in dbContext.ChatFiles
+                join d in dbContext.PrismDocuments on cf.ChatId equals d.ChatId
+                where cf.FileId == paperId && d.UserId == userId
+                select cf.FileId
+            ).AnyAsync(ct);
 
-            if (ownerId != userId)
+            if (!isOwner)
             {
                 return Results.Problem(detail: "You do not have access to this paper.", statusCode: StatusCodes.Status403Forbidden);
             }
@@ -159,13 +278,40 @@ public static class SubmitPaperEndpoint
                 claims.Count(c => c.Label == ClaimLabel.PartiallySupported),
                 claims.Count(c => c.Label == ClaimLabel.NotSupported));
 
+            // Surfaces whether this extraction was produced by the prompts currently
+            // in use, so the frontend can offer Google-authenticated users a "Re-run"
+            // option on cache-hit results with an accurate expectation ("may improve
+            // results" vs "will likely return the same result").
+            string? storedPromptVersion = null;
+            try
+            {
+                using var fieldsDoc = JsonDocument.Parse(extractor.Fields);
+                if (fieldsDoc.RootElement.TryGetProperty("prompt_version", out var pv))
+                {
+                    storedPromptVersion = pv.GetString();
+                }
+            }
+            catch (JsonException)
+            {
+                // Fields is malformed/legacy — leave storedPromptVersion null rather than fail the request.
+            }
+
+            bool? isCurrentPromptVersion = null;
+            if (storedPromptVersion != null)
+            {
+                var currentPromptVersion = await promptVersionProvider.GetCurrentPromptVersionAsync(ct);
+                isCurrentPromptVersion = currentPromptVersion != null && storedPromptVersion == currentPromptVersion;
+            }
+
             return Results.Ok(new PaperClaimsResponse(
                 file.FileId,
                 file.FileName,
                 file.Summary != null ? "Completed" : "In progress",
                 extractor.CreatedAt,
                 summary,
-                claimDtos));
+                claimDtos,
+                storedPromptVersion,
+                isCurrentPromptVersion));
         })
         .WithName("GetPaperClaims");
 
@@ -186,12 +332,13 @@ public static class SubmitPaperEndpoint
 
             var userChats = await dbContext.PrismDocuments
                 .Where(doc => doc.UserId == userId)
-                .Where(doc => dbContext.FileRecords.Any(f => f.ChatId == doc.ChatId))
+                .Where(doc => dbContext.ChatFiles.Any(cf => cf.ChatId == doc.ChatId))
                 .Select(doc => new
                 {
                     ChatId = doc.ChatId,
-                    File = dbContext.FileRecords
-                        .Where(f => f.ChatId == doc.ChatId)
+                    File = dbContext.ChatFiles
+                        .Where(cf => cf.ChatId == doc.ChatId)
+                        .Join(dbContext.FileRecords, cf => cf.FileId, f => f.FileId, (cf, f) => f)
                         .OrderByDescending(f => f.UploadedAt)
                         .First(),
                     UploadedAt = doc.UploadedAt
@@ -246,8 +393,9 @@ public static class SubmitPaperEndpoint
                 return Results.Problem(detail: "You do not have access to this chat.", statusCode: StatusCodes.Status403Forbidden);
             }
 
-            var files = await dbContext.FileRecords
-                .Where(f => f.ChatId == chatGuid)
+            var files = await dbContext.ChatFiles
+                .Where(cf => cf.ChatId == chatGuid)
+                .Join(dbContext.FileRecords, cf => cf.FileId, f => f.FileId, (cf, f) => f)
                 .OrderBy(f => f.UploadedAt)
                 .Select(f => new
                 {
@@ -264,7 +412,112 @@ public static class SubmitPaperEndpoint
         .WithName("GetChatFiles");
     }
 
-    public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, PrismDBContext prismDBContext, CancellationToken ct)
+    // Sends one ExtractionProgress SignalR event. PascalCase property names below
+    // are intentional — the SignalR JSON hub protocol's default camelCase naming
+    // policy converts them to the fileId/chatId/stage/detail shape the frontend's
+    // ExtractionProgressEvent type expects, matching what the Python pipeline sends.
+    private static Task NotifyProgress(
+        IHubContext<DocumentHub, IDocumentClient> hubContext,
+        Guid fileId,
+        string chatId,
+        string stage,
+        string? detail = null)
+    {
+        return hubContext.Clients.Group($"chat-{chatId}").ExtractionProgress(new
+        {
+            FileId = fileId.ToString(),
+            ChatId = chatId,
+            Stage = stage,
+            Detail = detail
+        });
+    }
+
+    // Cache-hit path: the paper's content hash already matches an existing
+    // FileRecord, so the blob upload and the entire extraction pipeline are
+    // skipped — the new chat is linked to the existing file via ChatFiles and
+    // the client is walked through the same live-status sequence as a fresh
+    // upload, just emitted back-to-back with no server-side delay (any pacing
+    // for readability is a frontend concern).
+    private static async Task HandleCacheHitAsync(
+        FileRecord existingFile,
+        SubmitPaperRequest request,
+        string userId,
+        IHubContext<DocumentHub, IDocumentClient> hubContext,
+        PrismDBContext dbContext,
+        CancellationToken ct)
+    {
+        if (!Guid.TryParse(request.ChatId, out var chatGuid))
+        {
+            return;
+        }
+
+        await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
+            "Checking if we've seen this paper before...");
+
+        var auditedAt = await dbContext.DocumentExtractors
+            .Where(e => e.FileId == existingFile.FileId)
+            .OrderByDescending(e => e.CreatedAt)
+            .Select(e => (DateTime?)e.CreatedAt)
+            .FirstOrDefaultAsync(ct) ?? existingFile.UploadedAt;
+
+        await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
+            $"Found it — already audited on {auditedAt:MMM d, yyyy}");
+
+        await LinkExistingFileToChatAsync(chatGuid, existingFile.FileId, userId, existingFile.FileName, dbContext, ct);
+
+        await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "finalizing",
+            "Loading your results...");
+        await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "done", "Done");
+
+        await hubContext.Clients.Group($"chat-{request.ChatId}").DocumentProcessed(new
+        {
+            FileId = existingFile.FileId.ToString(),
+            FileName = existingFile.FileName,
+            ConnectionId = request.ConnectionId,
+            ChatId = request.ChatId,
+            Status = "Completed",
+            Summary = existingFile.Summary
+        });
+    }
+
+    private static async Task LinkExistingFileToChatAsync(
+        Guid chatId,
+        Guid fileId,
+        string userId,
+        string fileName,
+        PrismDBContext prismDBContext,
+        CancellationToken ct)
+    {
+        var existingChat = await prismDBContext.PrismDocuments
+            .FirstOrDefaultAsync(a => a.ChatId == chatId, ct);
+
+        if (existingChat == null)
+        {
+            prismDBContext.PrismDocuments.Add(new PrismDocument
+            {
+                UserId = userId,
+                ChatTitle = $"Chat: {fileName}",
+                UploadedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                Status = "Completed",
+                ChatId = chatId
+            });
+        }
+        else
+        {
+            existingChat.UploadedAt = DateTime.UtcNow;
+            existingChat.Status = "Completed";
+        }
+
+        if (!await prismDBContext.ChatFiles.AnyAsync(cf => cf.ChatId == chatId && cf.FileId == fileId, ct))
+        {
+            prismDBContext.ChatFiles.Add(new ChatFile { ChatId = chatId, FileId = fileId });
+        }
+
+        await prismDBContext.SaveChangesAsync(ct);
+    }
+
+    public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, string contentHash, PrismDBContext prismDBContext, CancellationToken ct)
     {
         var chatGuid = Guid.Parse(chatId);
 
@@ -289,13 +542,19 @@ public static class SubmitPaperEndpoint
             existingRecord.Status = "In progress";
         }
 
+        // ContentHash is written only once the blob upload above has already
+        // succeeded (the caller only reaches AddToDatabase after that call
+        // returns without throwing), so a failed upload never leaves a dangling
+        // hash that would falsely dedupe a later, successful upload of the same content.
         prismDBContext.FileRecords.Add(new FileRecord
         {
             FileId = fileId,
             FileName = file.FileName,
             UploadedAt = DateTime.UtcNow,
-            ChatId = chatGuid
+            ContentHash = contentHash
         });
+
+        prismDBContext.ChatFiles.Add(new ChatFile { ChatId = chatGuid, FileId = fileId });
 
         await prismDBContext.SaveChangesAsync(ct);
     }
