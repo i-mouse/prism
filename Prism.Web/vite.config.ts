@@ -22,6 +22,16 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    define: {
+      // signalRService connects directly to the API origin (browser-to-backend,
+      // per AppHost.cs's WithExternalHttpEndpoints comment) rather than through
+      // the /api proxy below, so it needs the same resolved `target` as that
+      // proxy - otherwise import.meta.env.VITE_API_BASE_URL is undefined in any
+      // dev run that doesn't set it explicitly (Aspire F5 only injects the
+      // services__apiservice__* vars, not VITE_API_BASE_URL itself), producing
+      // a hub URL of "undefined/hubs/document".
+      'import.meta.env.VITE_API_BASE_URL': JSON.stringify(target),
+    },
     server: {
       port: parseInt(env.VITE_PORT) || 5173, 
       strictPort: true,

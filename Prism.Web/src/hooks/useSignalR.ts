@@ -5,6 +5,10 @@ import type { ExtractionProgressEvent, ExtractionStage } from "@/types/api";
 export function useSignalR() {
   useEffect(() => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    if (!baseUrl) {
+      console.error("VITE_API_BASE_URL is not set; skipping SignalR connection.");
+      return;
+    }
     signalRService.start(baseUrl).catch(() => {
       // Errors are already logged inside signalRService; nothing further to do here.
     });
