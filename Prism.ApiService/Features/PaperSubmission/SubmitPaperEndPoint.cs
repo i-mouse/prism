@@ -78,19 +78,35 @@ public static class SubmitPaperEndpoint
 
         }  ).WithName("SubmitPaper") .DisableAntiforgery().AllowAnonymous();
 
-        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, PrismDBContext dbContext, CancellationToken ct) =>
+        app.MapGet("/api/papers/{paperId}/claims", async (Guid paperId, HttpContext httpContext, PrismDBContext dbContext, CancellationToken ct) =>
         {
+            var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+
             using var activity = PrismTelemetry.ActivitySource.StartActivity("paper.claims.read");
             activity?.SetTag("paper.id", paperId);
 
             var file = await dbContext.FileRecords
                 .Where(f => f.FileId == paperId)
-                .Select(f => new { f.FileId, f.FileName, f.Summary })
+                .Select(f => new { f.FileId, f.FileName, f.Summary, f.ChatId })
                 .FirstOrDefaultAsync(ct);
 
             if (file == null)
             {
                 return Results.NotFound();
+            }
+
+            var ownerId = await dbContext.PrismDocuments
+                .Where(d => d.ChatId == file.ChatId)
+                .Select(d => d.UserId)
+                .FirstOrDefaultAsync(ct);
+
+            if (ownerId != userId)
+            {
+                return Results.Problem(detail: "You do not have access to this paper.", statusCode: StatusCodes.Status403Forbidden);
             }
             var labelConverter = new ClaimLabelConverter();
             var statusConverter = new GroundingStatusConverter();
@@ -202,11 +218,32 @@ public static class SubmitPaperEndpoint
 
         // Backfill endpoint: lets the client recover file summaries it may have
         // missed via SignalR (closed tab, dropped connection, page never open).
-        app.MapGet("/api/chats/{chatId}/files", async (string chatId, PrismDBContext dbContext, CancellationToken ct) =>
+        app.MapGet("/api/chats/{chatId}/files", async (string chatId, HttpContext httpContext, PrismDBContext dbContext, CancellationToken ct) =>
         {
+            var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Results.Unauthorized();
+            }
+
             if (!Guid.TryParse(chatId, out var chatGuid))
             {
                 return Results.Problem(detail: "Invalid chatId", statusCode: StatusCodes.Status400BadRequest);
+            }
+
+            var ownerId = await dbContext.PrismDocuments
+                .Where(d => d.ChatId == chatGuid)
+                .Select(d => d.UserId)
+                .FirstOrDefaultAsync(ct);
+
+            if (ownerId == null)
+            {
+                return Results.NotFound();
+            }
+
+            if (ownerId != userId)
+            {
+                return Results.Problem(detail: "You do not have access to this chat.", statusCode: StatusCodes.Status403Forbidden);
             }
 
             var files = await dbContext.FileRecords

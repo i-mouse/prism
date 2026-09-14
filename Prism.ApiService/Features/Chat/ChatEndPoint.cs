@@ -5,6 +5,8 @@ using Prism.ApiService.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using Prism.ApiService.Data;
+using Prism.ApiService.Features.Auth;
 
 namespace Prism.ApiService.Features.Chat;
 
@@ -13,8 +15,39 @@ public static class ChatEndPoint
 
     public static void MapChatEndPoint(this IEndpointRouteBuilder app)
     {
-      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, ILogger<PaperChatAskRequest> logger, CancellationToken ct) =>
+      app.MapPost("/api/chat/ask/stream", async (HttpContext httpContext, [FromBody] PaperChatAskRequest request, IHttpClientFactory httpClientFactory, PrismDBContext dbContext, ILogger<PaperChatAskRequest> logger, CancellationToken ct) =>
         {
+            var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+            if (string.IsNullOrEmpty(userId))
+            {
+                httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
+            }
+
+            if (!Guid.TryParse(request.chat_id, out var chatGuid))
+            {
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                await httpContext.Response.WriteAsync("Invalid chat_id", ct);
+                return;
+            }
+
+            var ownerId = await dbContext.PrismDocuments
+                .Where(d => d.ChatId == chatGuid)
+                .Select(d => d.UserId)
+                .FirstOrDefaultAsync(ct);
+
+            if (ownerId == null)
+            {
+                httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+                return;
+            }
+
+            if (ownerId != userId)
+            {
+                httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return;
+            }
+
             // Paper-scoped chat (Slice 3a): proxies the Python SSE stream through to the
             // client unbuffered. Bypasses RabbitMQ - direct C# -> Python HTTP call.
             var client = httpClientFactory.CreateClient("pythonapi");
@@ -73,8 +106,34 @@ public static class ChatEndPoint
         .WithName("AskPaperChatStream")
         .DisableAntiforgery();
 
-      app.MapGet("/api/chat/{chatId}/history", async(string chatId,IHttpClientFactory httpClientFactory, IWebHostEnvironment env, ILogger<PaperChatAskRequest> logger, CancellationToken ct)=>
+      app.MapGet("/api/chat/{chatId}/history", async(string chatId, HttpContext httpContext, IHttpClientFactory httpClientFactory, PrismDBContext dbContext, IWebHostEnvironment env, ILogger<PaperChatAskRequest> logger, CancellationToken ct)=>
         {
+          var userId = GuestAuthEndpoints.ResolveUserId(httpContext);
+          if (string.IsNullOrEmpty(userId))
+          {
+              return Results.Unauthorized();
+          }
+
+          if (!Guid.TryParse(chatId, out var chatGuid))
+          {
+              return Results.Problem(detail: "Invalid chatId", statusCode: StatusCodes.Status400BadRequest);
+          }
+
+          var ownerId = await dbContext.PrismDocuments
+              .Where(d => d.ChatId == chatGuid)
+              .Select(d => d.UserId)
+              .FirstOrDefaultAsync(ct);
+
+          if (ownerId == null)
+          {
+              return Results.NotFound();
+          }
+
+          if (ownerId != userId)
+          {
+              return Results.Problem(detail: "You do not have access to this chat.", statusCode: StatusCodes.Status403Forbidden);
+          }
+
           try
           {
             var client =  httpClientFactory.CreateClient("pythonapi");

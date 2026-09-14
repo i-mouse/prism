@@ -13,7 +13,6 @@ import { PublicClientApplication, type Configuration } from "@azure/msal-browser
 // NEVER hard-code real tenant/client IDs here. This file is committed.
 // ---------------------------------------------------------------------------
 
-debugger;
 const msalConfig: Configuration = {
   auth: {
     clientId: import.meta.env.VITE_AZURE_CLIENT_ID ?? "PLACEHOLDER_CLIENT_ID",
