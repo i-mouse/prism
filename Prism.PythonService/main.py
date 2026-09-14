@@ -186,7 +186,7 @@ async def main():
 
                                 emitter = ProgressEmitter(channel, file_id=file_id, chat_id=chat_id)
                                 await emitter.emit_stage("preparing")
-                                await emitter.emit_stage_detail("preparing", "Reading the document...")
+                                await emitter.emit_stage_detail("preparing", f"Loading file: {file_name}")
 
                                 # 1. Download file asynchronously using threads
                                 local_path = os.path.join("downloads", file_name)
@@ -242,7 +242,7 @@ async def main():
 
                                 current_stage = "extracting"
                                 await emitter.emit_stage("extracting")
-                                await emitter.emit_stage_detail("extracting", "Finding claims...")
+                                await emitter.emit_stage_detail("extracting", "Scanning text for verifiable claims...")
                                 print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction', flush=True)
                                 with tracer.start_as_current_span("extract_claims") as span:
                                     span.set_attribute("correlation_id", correlation_id)
@@ -295,7 +295,7 @@ async def main():
                                     f"{refused} refused · {partial} partial",
                                 )
 
-                                await emitter.emit_stage_detail("done", "Done")
+                                await emitter.emit_stage_detail("done", "Audit complete — ready for chat")
 
                                 # 5. Inject memory using our globally compiled agent!
                                 config = {"configurable": {"thread_id": chat_id}}

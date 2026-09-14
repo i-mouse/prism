@@ -38,16 +38,21 @@ export interface ExtractionProgressState {
 // blow away the other. Assumes a SignalR connection is already being
 // started elsewhere (AppShell calls useSignalR()); this hook only
 // subscribes/unsubscribes to the event.
-export function useExtractionProgress(fileId: string | null) {
+//
+// Filters by chatId rather than fileId: chatId is generated client-side and
+// known before the upload's POST request is even sent, while fileId only
+// comes back once that request resolves — filtering on fileId would silently
+// drop every progress event emitted before then.
+export function useExtractionProgress(chatId: string | null) {
   const [state, setState] = useState<ExtractionProgressState | null>(null);
 
   useEffect(() => {
     setState(null);
-    if (!fileId) return;
+    if (!chatId) return;
 
     const handler = (payload: unknown) => {
       const event = payload as ExtractionProgressEvent;
-      if (event?.fileId !== fileId) return;
+      if (event?.chatId !== chatId) return;
 
       setState((prev) => {
         if (event.stage === "failed") {
@@ -81,7 +86,7 @@ export function useExtractionProgress(fileId: string | null) {
 
     signalRService.on("ExtractionProgress", handler);
     return () => signalRService.off("ExtractionProgress", handler);
-  }, [fileId]);6
+  }, [chatId]);
 
   return state;
 }

@@ -24,6 +24,15 @@ interface MatrixViewProps {
   isLoading: boolean;
   activePaperId: string | null;
   activeChatId: string;
+  // Set from just after an upload starts until the real fileId comes back —
+  // lets the activity log mount and start listening before that HTTP round
+  // trip resolves instead of missing the earliest progress messages.
+  pendingUpload?: { chatId: string; fileName: string } | null;
+  // True while a cache-hit paper's inline Continue/Re-run decision hasn't
+  // been resolved yet — keeps the activity view showing even though
+  // paperClaims already reports "Completed" for a previously-audited paper.
+  cacheHitPending?: boolean;
+  onCacheHitResolved?: () => void;
   onViewEvidence: (claimId: string) => void;
   onUploadClick: () => void;
   // Re-run (Google-authenticated users only, never guests) — isGoogleUser gates
@@ -53,6 +62,9 @@ export function MatrixView({
   isLoading,
   activePaperId,
   activeChatId,
+  pendingUpload = null,
+  cacheHitPending = false,
+  onCacheHitResolved,
   onViewEvidence,
   onUploadClick,
   isGoogleUser = false,
@@ -96,6 +108,14 @@ export function MatrixView({
     }
   };
 
+  // Wraps handleRerun for the inline cache-hit decision block: resolving the
+  // decision immediately is safe here because isRerunning flips to true in
+  // the same call, so the activity view keeps showing without a flicker.
+  const handleCacheHitRerun = async () => {
+    onCacheHitResolved?.();
+    await handleRerun();
+  };
+
   const sortedClaims = useMemo(() => {
     if (sortMode === "support") {
       return [...claims].sort(sortBySupport);
@@ -113,7 +133,7 @@ export function MatrixView({
     };
   }, [claims]);
 
-  if (!activePaperId) {
+  if (!activePaperId && !pendingUpload) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-12 px-4 py-8 md:px-6 lg:py-16">
         <div className="w-full max-w-2xl">
@@ -199,6 +219,32 @@ export function MatrixView({
     );
   }
 
+  // An upload is in flight and the real fileId hasn't come back yet — render
+  // the activity log against chatId alone rather than falling through to the
+  // generic skeleton below, and keep the same AnimatePresence/key="activity"
+  // shape the post-load branch uses so this doesn't remount (and lose the
+  // logs it's already collected) once paperClaims loads a moment later.
+  if (pendingUpload && !paperClaims) {
+    return (
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="activity"
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.2 }}
+          className="h-full overflow-y-auto"
+        >
+          <PaperActivityView
+            key={activeChatId}
+            fileId={activePaperId}
+            chatId={pendingUpload.chatId}
+            fileName={pendingUpload.fileName}
+            extractionStatus="In progress"
+          />
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
   if (isLoading && !paperClaims) {
     return (
       <div className="h-full overflow-y-auto px-8 py-6">
@@ -217,7 +263,7 @@ export function MatrixView({
 
   return (
     <AnimatePresence mode="wait">
-      {paperClaims.extractionStatus !== "Completed" || isRerunning ? (
+      {paperClaims.extractionStatus !== "Completed" || isRerunning || cacheHitPending ? (
         <motion.div
           key="activity"
           exit={{ opacity: 0, scale: 0.98 }}
@@ -225,9 +271,15 @@ export function MatrixView({
           className="h-full overflow-y-auto"
         >
           <PaperActivityView
+            key={activeChatId}
             fileId={activePaperId}
+            chatId={activeChatId}
             fileName={paperClaims.fileName}
-            extractionStatus={isRerunning ? "In progress" : paperClaims.extractionStatus}
+            extractionStatus={isRerunning || cacheHitPending ? "In progress" : paperClaims.extractionStatus}
+            isCacheHitPending={cacheHitPending}
+            isGoogleUser={isGoogleUser}
+            onCacheHitContinue={onCacheHitResolved}
+            onCacheHitRerun={handleCacheHitRerun}
           />
         </motion.div>
       ) : (
@@ -319,7 +371,7 @@ export function MatrixView({
             )}
           </div>
 
-          <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} />
+          {activePaperId && <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} />}
         </motion.div>
       )}
     </AnimatePresence>

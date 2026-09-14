@@ -67,12 +67,8 @@ public static class SubmitPaperEndpoint
                 }
             }
 
-            var result = new
-            {
-              Message = "Paper received",
-              UserId = userId
-            };
             var correlationId = httpContext.GetCorrelationId();
+            var isCacheHit = false;
              foreach (var file in request.Files)
              {
                 if (file.Length > 20_000_000)
@@ -101,6 +97,7 @@ public static class SubmitPaperEndpoint
 
                 if (existingFile != null)
                 {
+                    isCacheHit = true;
                     await HandleCacheHitAsync(existingFile, request, userId, hubContext, dBContext, ct);
                     continue;
                 }
@@ -126,6 +123,12 @@ public static class SubmitPaperEndpoint
 
              }
 
+            var result = new
+            {
+              Message = "Paper received",
+              UserId = userId,
+              IsCacheHit = isCacheHit
+            };
 
             return Results.Ok(result);
 
@@ -434,10 +437,12 @@ public static class SubmitPaperEndpoint
 
     // Cache-hit path: the paper's content hash already matches an existing
     // FileRecord, so the blob upload and the entire extraction pipeline are
-    // skipped — the new chat is linked to the existing file via ChatFiles and
-    // the client is walked through the same live-status sequence as a fresh
-    // upload, just emitted back-to-back with no server-side delay (any pacing
-    // for readability is a frontend concern).
+    // skipped. Progress messaging stops after "Found it..." — the client
+    // renders an inline decision (Continue/Re-run) instead of an automatic
+    // finalizing/done sequence, and resumes the log itself once the user
+    // chooses. The file is linked to the chat here regardless of that later
+    // choice, so the paper is never left in an ambiguous state if the user
+    // never returns to decide (see IsCacheHit response field / frontend).
     private static async Task HandleCacheHitAsync(
         FileRecord existingFile,
         SubmitPaperRequest request,
@@ -464,10 +469,6 @@ public static class SubmitPaperEndpoint
             $"Found it — already audited on {auditedAt:MMM d, yyyy}");
 
         await LinkExistingFileToChatAsync(chatGuid, existingFile.FileId, userId, existingFile.FileName, dbContext, ct);
-
-        await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "finalizing",
-            "Loading your results...");
-        await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "done", "Done");
 
         await hubContext.Clients.Group($"chat-{request.ChatId}").DocumentProcessed(new
         {

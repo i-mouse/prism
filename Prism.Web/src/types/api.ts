@@ -74,3 +74,9 @@ export interface ExtractionProgressEvent {
   failedStage?: ExtractionStage;
   detail?: string;
 }
+
+export interface SubmitPaperResponse {
+  message: string;
+  userId: string;
+  isCacheHit: boolean;
+}

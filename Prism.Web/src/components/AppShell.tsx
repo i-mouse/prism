@@ -56,7 +56,17 @@ export function AppShell() {
   const { joinChat, on, off, getConnectionId } = useSignalR();
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
   const [fileSizeLabels, setFileSizeLabels] = useState<Record<string, string>>({});
-  
+
+  // Set the moment an upload begins (before the POST resolves) so the log
+  // panel can mount immediately instead of waiting on fileId, which the
+  // backend only hands back once the request completes. Cleared once the
+  // real fileId arrives (or the upload fails).
+  const [pendingUpload, setPendingUpload] = useState<{ chatId: string; fileName: string } | null>(null);
+  // The paperId of a paper whose most recent upload was a cache hit and
+  // whose inline Continue/Re-run decision hasn't been resolved yet. Cleared
+  // once the user picks one of those options.
+  const [cacheHitPaperId, setCacheHitPaperId] = useState<string | null>(null);
+
   const drawerOpen = selectedClaimId !== null;
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const uploadZoneRef = useRef<UploadZoneHandle>(null);
@@ -86,6 +96,15 @@ export function AppShell() {
       joinChat(activeChatId).catch((err) => console.error("Failed to join chat group:", err));
     }
   }, [activeChatId, joinChat]);
+
+  // Once real claims data exists for the active paper, the normal
+  // paperClaims-driven rendering in MatrixView takes over — drop the
+  // upload-in-flight placeholder so it doesn't linger or fight with it.
+  useEffect(() => {
+    if (pendingUpload && activePaperId && paperClaims) {
+      setPendingUpload(null);
+    }
+  }, [pendingUpload, activePaperId, paperClaims]);
 
   useEffect(() => {
     const handleDocumentProcessed = (data: unknown) => {
@@ -117,10 +136,15 @@ export function AppShell() {
     if (routeChatId && routeChatId !== activeChatId) {
       setActiveChatId(routeChatId);
       fetchChatFiles(routeChatId);
+      // Navigating to a different chat (e.g. picking another paper from the
+      // sidebar) while an unrelated upload is still in flight must not leave
+      // that upload's placeholder showing here.
+      setPendingUpload((prev) => (prev && prev.chatId !== routeChatId ? null : prev));
     } else if (!routeChatId && activeChatId) {
       // Empty state
       setActiveChatId("");
       setActivePaperId(null);
+      setPendingUpload(null);
     }
   }, [routeChatId]);
 
@@ -132,16 +156,49 @@ export function AppShell() {
     [navigate]
   );
 
-  const handleUploaded = useCallback(
-    (chatId: string, fileId: string, file: File) => {
+  const handleUploadStarted = useCallback(
+    (chatId: string, file: File) => {
       setFileSizeLabels((prev) => ({ ...prev, [chatId]: formatFileSize(file.size) }));
       setIsMobileSidebarOpen(false);
       setActiveChatId(chatId);
-      setActivePaperId(fileId);
+      setActivePaperId(null);
+      setCacheHitPaperId(null);
+      setPendingUpload({ chatId, fileName: file.name });
       navigate(`/paper/${chatId}`);
     },
     [navigate, setActiveChatId, setActivePaperId]
   );
+
+  const handleUploaded = useCallback(
+    (chatId: string, fileId: string, file: File, isCacheHit: boolean) => {
+      setFileSizeLabels((prev) => ({ ...prev, [chatId]: formatFileSize(file.size) }));
+      setIsMobileSidebarOpen(false);
+      setPendingUpload(null);
+      setActiveChatId(chatId);
+      setActivePaperId(fileId);
+      setCacheHitPaperId(isCacheHit ? fileId : null);
+      navigate(`/paper/${chatId}`);
+    },
+    [navigate, setActiveChatId, setActivePaperId]
+  );
+
+  const handleUploadFailed = useCallback(
+    (chatId: string) => {
+      setPendingUpload((prev) => (prev?.chatId === chatId ? null : prev));
+      // Only bail back to the empty state if the user hasn't already
+      // navigated elsewhere while the failed upload was in flight.
+      if (activeChatId === chatId) {
+        setActiveChatId("");
+        setActivePaperId(null);
+        navigate("/");
+      }
+    },
+    [activeChatId, navigate, setActiveChatId, setActivePaperId]
+  );
+
+  const handleCacheHitResolved = useCallback(() => {
+    setCacheHitPaperId(null);
+  }, []);
 
   const isDesktopCollapsed = localStorage.getItem("prism_sidebar_collapsed") === "true";
   const [desktopCollapsed, setDesktopCollapsed] = useState(isDesktopCollapsed);
@@ -240,7 +297,9 @@ export function AppShell() {
             getConnectionId={getConnectionId}
             joinChat={joinChat}
             fileSizeLabels={fileSizeLabels}
+            onUploadStarted={handleUploadStarted}
             onUploaded={handleUploaded}
+            onUploadFailed={handleUploadFailed}
             onSelectChat={handleSelectChat}
             uploadZoneRef={uploadZoneRef}
             collapsed={belowLg ? false : desktopCollapsed}
@@ -255,6 +314,9 @@ export function AppShell() {
             isLoading={isLoading}
             activePaperId={activePaperId}
             activeChatId={activeChatId}
+            pendingUpload={pendingUpload}
+            cacheHitPending={cacheHitPaperId !== null && cacheHitPaperId === activePaperId}
+            onCacheHitResolved={handleCacheHitResolved}
             onViewEvidence={setSelectedClaimId}
             onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
             isGoogleUser={user?.provider === "google"}
