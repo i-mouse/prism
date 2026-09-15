@@ -14,7 +14,9 @@ interface SidebarProps {
   getConnectionId: () => string | null;
   joinChat: (chatId: string) => Promise<void>;
   fileSizeLabels: Record<string, string>;
-  onUploaded: (chatId: string, fileId: string, file: File) => void;
+  onUploadStarted: (chatId: string, file: File) => void;
+  onUploaded: (chatId: string, fileId: string, file: File, isCacheHit: boolean) => void;
+  onUploadFailed: (chatId: string) => void;
   onSelectChat: (chatId: string) => void;
   uploadZoneRef?: Ref<UploadZoneHandle>;
   collapsed?: boolean;
@@ -29,7 +31,9 @@ export function Sidebar({
   getConnectionId,
   joinChat,
   fileSizeLabels,
+  onUploadStarted,
   onUploaded,
+  onUploadFailed,
   onSelectChat,
   uploadZoneRef,
   collapsed = false,
@@ -69,7 +73,9 @@ export function Sidebar({
           getConnectionId={getConnectionId}
           joinChat={joinChat}
           refetchChats={refetchChats}
+          onUploadStarted={onUploadStarted}
           onUploaded={onUploaded}
+          onUploadFailed={onUploadFailed}
           collapsed={collapsed}
         />
       </div>

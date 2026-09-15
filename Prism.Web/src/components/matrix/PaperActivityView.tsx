@@ -6,9 +6,19 @@ import type { ExtractionStage, ExtractionProgressEvent } from "@/types/api";
 import { cn } from "@/lib/utils";
 
 interface PaperActivityViewProps {
-  fileId: string;
+  // null until the upload's POST response resolves — chatId is what the
+  // component actually listens on, since it's known up front.
+  fileId: string | null;
+  chatId: string;
   fileName: string;
   extractionStatus: string;
+  // Cache-hit inline decision (Continue / Re-run). Undefined/false outside
+  // of a cache-hit upload flow.
+  isCacheHitPending?: boolean;
+  isGoogleUser?: boolean;
+  onCacheHitContinue?: () => void;
+  onCacheHitRerun?: () => void;
+  onCacheHitCancel?: () => void;
 }
 
 const STAGE_ORDER: ExtractionStage[] = ["preparing", "extracting", "grounding", "finalizing", "done"];
@@ -48,23 +58,96 @@ const STATUS_BORDER_CLASS: Record<RowStatus, string> = {
   failed: "border-status-failed",
 };
 
+// Mirrors AUDIT_STRUCTURE_CONCURRENCY in Prism.PythonService/extraction/engine.py.
+// There's no per-claim completion event on the wire, only per-claim "started"
+// messages, so completion is inferred from the concurrency ceiling: once more
+// than this many claims have started, each additional start implies an
+// earlier one finished and released a semaphore slot.
+const AUDIT_STRUCTURE_CONCURRENCY = 5;
+
+const CLAIM_BURST_PATTERN = /^Auditing claim (\d+) of (\d+):/;
+
+// Cache-hit messages arrive back-to-back with no natural spacing (the server
+// emits them synchronously, one after another, with no processing delay in
+// between) — this is how long each one stays visible before the next is
+// revealed. Only messages in the cache-hit flow are paced; the fresh-pipeline
+// sequence already arrives naturally spaced by real processing time.
+const CACHE_HIT_LOG_PACE_MS = 250;
+
+interface LogEntry {
+  id: string;
+  time: string;
+  stage: string;
+  message: string;
+  isError?: boolean;
+  isBurstStatus?: boolean;
+}
+
 function formatElapsed(totalSeconds: number): string {
   const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
   const s = (totalSeconds % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 }
 
-export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperActivityViewProps) {
-  const progress = useExtractionProgress(fileId);
+function nowTime(): string {
+  return new Date().toLocaleTimeString("en-US", { hour12: false });
+}
+
+export function PaperActivityView({
+  fileId,
+  chatId,
+  fileName,
+  extractionStatus,
+  isCacheHitPending = false,
+  isGoogleUser = false,
+  onCacheHitContinue,
+  onCacheHitRerun,
+  onCacheHitCancel,
+}: PaperActivityViewProps) {
+  const progress = useExtractionProgress(chatId);
   const { on, off } = useSignalR();
-  const [logs, setLogs] = useState<{ id: string; time: string; stage: string; message: string; isError?: boolean }[]>([]);
+  const [logState, setLogState] = useState({ visible: [] as LogEntry[], pending: [] as LogEntry[] });
+  const logs = logState.visible;
+  const pendingLogs = logState.pending;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [cacheHitDecisionMade, setCacheHitDecisionMade] = useState(false);
 
-  const hasFailed = progress?.latestStage === "failed" || extractionStatus === "Failed";
-  const currentIndex = (progress && !hasFailed) ? STAGE_ORDER.indexOf(progress.latestStage) : 0;
+  const cacheHitFlowRef = useRef(false);
+  const cacheHitContinuePendingRef = useRef(false);
+  const auditBurstSeenRef = useRef<Set<number>>(new Set());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLogState((prev) => {
+        if (prev.pending.length === 0) return prev;
+        const [next, ...rest] = prev.pending;
+        return {
+          visible: [...prev.visible, next],
+          pending: rest,
+        };
+      });
+    }, CACHE_HIT_LOG_PACE_MS);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Cache-hit tail state (Continue -> "Loading your results..." -> "Audit
+  // complete — ready for chat") is driven entirely by frontend-synthesized
+  // log lines, not real ExtractionProgress events, so the left-hand stepper
+  // is advanced from those lines directly rather than from `progress`.
+  const cacheHitTailStage: ExtractionStage | null = logs.some((l) => l.message === "Audit complete — ready for chat")
+    ? "done"
+    : logs.some((l) => l.message === "Loading your results...")
+    ? "finalizing"
+    : null;
+  const effectiveStage = cacheHitTailStage ?? progress?.latestStage;
+
+  const hasFailed = effectiveStage === "failed" || extractionStatus === "Failed";
+  const currentIndex = (effectiveStage && !hasFailed) ? STAGE_ORDER.indexOf(effectiveStage) : 0;
   const failedIndex = hasFailed ? (progress?.failedStage ? STAGE_ORDER.indexOf(progress.failedStage) : 1) : -1;
-  const isDone = progress?.latestStage === "done";
+  const isDone = effectiveStage === "done";
 
   const startTimeRef = useRef<number>(Date.now());
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -80,7 +163,7 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
   useEffect(() => {
     const handler = (payload: unknown) => {
       const ev = payload as ExtractionProgressEvent;
-      if (ev.fileId !== fileId) return;
+      if (ev.chatId !== chatId) return;
 
       // Bare stage-transition events carry no detail and fire once per stage -
       // the left-hand checklist already reflects the transition, so skip them
@@ -92,19 +175,67 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
         else if (ev.stage === "failed") msg = `Failed during ${ev.failedStage ?? "processing"}`;
         else return;
       }
-      const time = new Date().toLocaleTimeString("en-US", { hour12: false });
+      const time = nowTime();
 
-      setLogs((prev) => [...prev, {
+      // Claim-audit bursts (up to AUDIT_STRUCTURE_CONCURRENCY claims fire
+      // near-simultaneously, batch after batch) collapse into one ticking
+      // status line instead of flooding the log with one entry per claim.
+      // This only happens during the extracting stage's audit/structure
+      // fan-out — extraction's other messages are sequential, not bursty.
+      const burstMatch = ev.stage === "extracting" ? msg.match(CLAIM_BURST_PATTERN) : null;
+      if (burstMatch) {
+        const claimNumber = parseInt(burstMatch[1], 10);
+        const total = parseInt(burstMatch[2], 10);
+        auditBurstSeenRef.current.add(claimNumber);
+        const seen = auditBurstSeenRef.current.size;
+        const completed = Math.max(0, seen - AUDIT_STRUCTURE_CONCURRENCY);
+        const inProgress = Math.min(AUDIT_STRUCTURE_CONCURRENCY, seen - completed);
+        const statusMessage = `Auditing claims — ${inProgress} in progress, ${completed} of ${total} complete.`;
+
+        setLogState((prev) => {
+          const visible = prev.visible;
+          const last = visible[visible.length - 1];
+          const entry: LogEntry = {
+            id: last?.isBurstStatus ? last.id : crypto.randomUUID(),
+            time,
+            stage: ev.stage,
+            message: statusMessage,
+            isBurstStatus: true,
+          };
+          return {
+            ...prev,
+            visible: last?.isBurstStatus ? [...visible.slice(0, -1), entry] : [...visible, entry],
+          };
+        });
+        return;
+      }
+
+      const entry: LogEntry = {
         id: crypto.randomUUID(),
         time,
         stage: ev.stage,
         message: msg,
-        isError: ev.stage === "failed"
-      }]);
+        isError: ev.stage === "failed",
+      };
+
+      if (ev.stage === "preparing" && msg.startsWith("Found it")) {
+        cacheHitFlowRef.current = true;
+      }
+
+      setLogState((prev) => {
+        if (cacheHitFlowRef.current) {
+          return { ...prev, pending: [...prev.pending, entry] };
+        } else {
+          return { ...prev, visible: [...prev.visible, entry] };
+        }
+      });
     };
     on("ExtractionProgress", handler);
-    return () => off("ExtractionProgress", handler);
-  }, [fileId, on, off]);
+
+    return () => {
+      off("ExtractionProgress", handler);
+    };
+  }, [chatId, on, off]);
 
   useEffect(() => {
     if (autoScroll && scrollRef.current) {
@@ -112,12 +243,50 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
     }
   }, [logs, autoScroll]);
 
+  // Once the paced Continue tail has fully drained into view, the decision
+  // is truly resolved — hand control back so the parent can swap in results.
+  useEffect(() => {
+    if (!cacheHitContinuePendingRef.current) return;
+    if (pendingLogs.length > 0) return;
+    if (!logs.some((l) => l.message === "Audit complete — ready for chat")) return;
+    cacheHitContinuePendingRef.current = false;
+    onCacheHitContinue?.();
+  }, [pendingLogs, logs, onCacheHitContinue]);
+
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
     const isAtBottom = scrollHeight - scrollTop - clientHeight < 20;
     setAutoScroll(isAtBottom);
   };
+
+  const handleCacheHitContinueClick = () => {
+    setCacheHitDecisionMade(true);
+    cacheHitContinuePendingRef.current = true;
+    const time = nowTime();
+    setLogState((prev) => ({
+      ...prev,
+      pending: [
+        ...prev.pending,
+        { id: crypto.randomUUID(), time, stage: "finalizing", message: "Loading your results..." },
+        { id: crypto.randomUUID(), time, stage: "done", message: "Audit complete — ready for chat" },
+      ]
+    }));
+  };
+
+  const handleCacheHitRerunClick = () => {
+    setCacheHitDecisionMade(true);
+    // Nothing further should be paced — the re-triggered run is a real
+    // fresh-pipeline sequence, naturally spaced by processing time.
+    cacheHitFlowRef.current = false;
+    onCacheHitRerun?.();
+  };
+
+  const showCacheHitDecision =
+    isCacheHitPending &&
+    !cacheHitDecisionMade &&
+    pendingLogs.length === 0 &&
+    logs.some((l) => l.message.startsWith("Found it — already audited"));
 
   const getStatus = (index: number): RowStatus => {
     if (hasFailed) {
@@ -157,13 +326,15 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
               : "Auditing Paper"}
           </p>
         </div>
-        <button 
+        <button
           onClick={() => {
+            if (!fileId) return;
             if (confirm("Are you sure you want to cancel the audit?")) {
               fetch(`/api/papers/${fileId}/cancel`, { method: "POST" }).catch(console.error);
             }
           }}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-subtle hover:text-ink transition-colors"
+          disabled={!fileId}
+          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-subtle hover:text-ink transition-colors disabled:opacity-40 disabled:pointer-events-none"
         >
           Cancel
           <X className="h-4 w-4" />
@@ -259,7 +430,7 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                 <span className="font-mono text-xs text-white/50 tabular-nums">{formatElapsed(elapsedSeconds)}</span>
                 <div className={cn("flex items-center gap-1.5 rounded-full border px-2 py-0.5", "border-status-active/30")}>
                   <div className={cn("h-3 w-3 rounded-full border-[1.5px] border-t-transparent animate-spin", STATUS_BORDER_CLASS.current)} />
-                  <span className={cn("font-sans text-xs font-medium", STATUS_TEXT_CLASS.current)}>{STAGE_LABELS[progress?.latestStage || "preparing"]}</span>
+                  <span className={cn("font-sans text-xs font-medium", STATUS_TEXT_CLASS.current)}>{STAGE_LABELS[effectiveStage || "preparing"]}</span>
                 </div>
                 <button className="rounded-md p-1 text-white/50 hover:bg-white/10 hover:text-white transition-colors">
                   <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -268,7 +439,7 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                 </button>
               </div>
             </div>
-            <div 
+            <div
               ref={scrollRef}
               onScroll={handleScroll}
               className="flex-1 overflow-y-auto p-4 font-mono text-sm relative"
@@ -302,13 +473,43 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
                       </div>
                     );
                   })}
+
+                  {showCacheHitDecision && (
+                    <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4">
+                      <div className="font-sans text-sm text-white/90">This paper is already in our system.</div>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          onClick={handleCacheHitContinueClick}
+                          className="rounded-md bg-brand px-3 py-1.5 font-sans text-xs font-medium text-white hover:bg-brand-hover transition-colors"
+                        >
+                          Continue
+                        </button>
+                        {isGoogleUser && (
+                          <button
+                            onClick={handleCacheHitRerunClick}
+                            className="rounded-md border border-white/20 px-3 py-1.5 font-sans text-xs font-medium text-white/80 hover:bg-white/10 transition-colors"
+                          >
+                            Re-run
+                          </button>
+                        )}
+                        {!isGoogleUser && (
+                          <button
+                            onClick={() => onCacheHitCancel?.()}
+                            className="rounded-md border border-white/20 px-3 py-1.5 font-sans text-xs font-medium text-white/80 hover:bg-white/10 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
-              
+
               {/* Scroll Indicator */}
               {!autoScroll && (
                 <div className="sticky bottom-2 left-1/2 -translate-x-1/2 inline-flex">
-                  <button 
+                  <button
                     onClick={() => setAutoScroll(true)}
                     className="rounded-full bg-white/10 backdrop-blur px-3 py-1 text-xs text-white hover:bg-white/20"
                   >
@@ -318,7 +519,7 @@ export function PaperActivityView({ fileId, fileName, extractionStatus }: PaperA
               )}
             </div>
           </div>
-          
+
           {/* BELOW BOTH COLUMNS — COUNTER STRIP */}
           <div className="mt-4 flex flex-col md:flex-row gap-4 pt-2">
             <div className="flex-1 flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">

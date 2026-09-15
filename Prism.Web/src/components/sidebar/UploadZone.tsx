@@ -4,11 +4,17 @@ import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { acquireAccessToken } from "@/lib/auth";
+import type { SubmitPaperResponse } from "@/types/api";
 
 interface UploadZoneProps {
   getConnectionId: () => string | null;
   joinChat: (chatId: string) => Promise<void>;
-  onUploaded: (chatId: string, fileId: string, file: File) => void;
+  // Fires as soon as chatId is generated and the SignalR group joined —
+  // before the POST is sent — so the log panel can mount and start
+  // listening early instead of missing the earliest progress messages.
+  onUploadStarted: (chatId: string, file: File) => void;
+  onUploaded: (chatId: string, fileId: string, file: File, isCacheHit: boolean) => void;
+  onUploadFailed: (chatId: string) => void;
   refetchChats: () => void;
   collapsed?: boolean;
 }
@@ -19,7 +25,7 @@ export interface UploadZoneHandle {
 }
 
 export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function UploadZone(
-  { getConnectionId, joinChat, onUploaded, refetchChats, collapsed = false },
+  { getConnectionId, joinChat, onUploadStarted, onUploaded, onUploadFailed, refetchChats, collapsed = false },
   ref
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +51,10 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
     setUploading(true);
     try {
       await joinChat(chatId);
+      // Mount the log panel now, before the POST is sent — otherwise the
+      // earliest progress messages (which the backend can emit synchronously
+      // during the request) fire while nothing is listening yet.
+      onUploadStarted(chatId, file);
 
       const formData = new FormData();
       // UserId intentionally omitted — backend resolves identity from JWT or
@@ -75,6 +85,8 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
         throw new Error(detail || body || `Upload failed: ${res.statusText}`);
       }
 
+      const submitResponse: SubmitPaperResponse = await res.json();
+
       refetchChats();
 
       const filesRes = await fetch(`/api/chats/${chatId}/files`, { credentials: "include" });
@@ -82,13 +94,14 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
         const chatFiles: Array<{ fileId: string }> = await filesRes.json();
         const fileId = chatFiles[0]?.fileId;
         if (fileId) {
-          onUploaded(chatId, fileId, file);
+          onUploaded(chatId, fileId, file, submitResponse.isCacheHit === true);
         }
       }
     } catch (err) {
       console.error("Upload error:", err);
       const message = err instanceof Error && err.message ? err.message : "Upload failed. Please check if the backend is running.";
       toast.error(message);
+      onUploadFailed(chatId);
     } finally {
       setUploading(false);
     }

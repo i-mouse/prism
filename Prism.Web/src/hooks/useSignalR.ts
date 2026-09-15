@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { signalRService } from "@/services/signalRService";
 import type { ExtractionProgressEvent, ExtractionStage } from "@/types/api";
 
@@ -14,14 +14,26 @@ export function useSignalR() {
     });
   }, []);
 
-  return {
-    joinChat: (chatId: string) => signalRService.joinChat(chatId),
-    on: (event: string, callback: (...args: unknown[]) => void) =>
-      signalRService.on(event, callback),
-    off: (event: string, callback?: (...args: unknown[]) => void) =>
-      signalRService.off(event, callback),
-    getConnectionId: () => signalRService.connectionId,
-  };
+  // Stable identities (empty deps) are load-bearing, not just tidiness:
+  // these are consumed as useEffect dependencies elsewhere (e.g.
+  // PaperActivityView's SignalR message listener, AppShell's join/
+  // DocumentProcessed effects) — a fresh function reference every render
+  // was tearing those effects down and rebuilding them on every render
+  // instead of only when the thing they actually depend on (chatId)
+  // changed. They only ever delegate to the signalRService singleton, so
+  // memoizing them is safe.
+  const joinChat = useCallback((chatId: string) => signalRService.joinChat(chatId), []);
+  const on = useCallback(
+    (event: string, callback: (...args: unknown[]) => void) => signalRService.on(event, callback),
+    []
+  );
+  const off = useCallback(
+    (event: string, callback?: (...args: unknown[]) => void) => signalRService.off(event, callback),
+    []
+  );
+  const getConnectionId = useCallback(() => signalRService.connectionId, []);
+
+  return { joinChat, on, off, getConnectionId };
 }
 
 export interface ExtractionProgressState {
@@ -38,16 +50,21 @@ export interface ExtractionProgressState {
 // blow away the other. Assumes a SignalR connection is already being
 // started elsewhere (AppShell calls useSignalR()); this hook only
 // subscribes/unsubscribes to the event.
-export function useExtractionProgress(fileId: string | null) {
+//
+// Filters by chatId rather than fileId: chatId is generated client-side and
+// known before the upload's POST request is even sent, while fileId only
+// comes back once that request resolves — filtering on fileId would silently
+// drop every progress event emitted before then.
+export function useExtractionProgress(chatId: string | null) {
   const [state, setState] = useState<ExtractionProgressState | null>(null);
 
   useEffect(() => {
     setState(null);
-    if (!fileId) return;
+    if (!chatId) return;
 
     const handler = (payload: unknown) => {
       const event = payload as ExtractionProgressEvent;
-      if (event?.fileId !== fileId) return;
+      if (event?.chatId !== chatId) return;
 
       setState((prev) => {
         if (event.stage === "failed") {
@@ -81,7 +98,7 @@ export function useExtractionProgress(fileId: string | null) {
 
     signalRService.on("ExtractionProgress", handler);
     return () => signalRService.off("ExtractionProgress", handler);
-  }, [fileId]);6
+  }, [chatId]);
 
   return state;
 }
