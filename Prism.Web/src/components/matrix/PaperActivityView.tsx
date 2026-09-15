@@ -18,6 +18,7 @@ interface PaperActivityViewProps {
   isGoogleUser?: boolean;
   onCacheHitContinue?: () => void;
   onCacheHitRerun?: () => void;
+  onCacheHitCancel?: () => void;
 }
 
 const STAGE_ORDER: ExtractionStage[] = ["preparing", "extracting", "grounding", "finalizing", "done"];
@@ -101,37 +102,35 @@ export function PaperActivityView({
   isGoogleUser = false,
   onCacheHitContinue,
   onCacheHitRerun,
+  onCacheHitCancel,
 }: PaperActivityViewProps) {
   const progress = useExtractionProgress(chatId);
   const { on, off } = useSignalR();
-  const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [pendingLogs, setPendingLogs] = useState<LogEntry[]>([]);
+  const [logState, setLogState] = useState({ visible: [] as LogEntry[], pending: [] as LogEntry[] });
+  const logs = logState.visible;
+  const pendingLogs = logState.pending;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const [cacheHitDecisionMade, setCacheHitDecisionMade] = useState(false);
 
-  // Whether messages currently belong to a cache-hit sequence and should be
-  // paced rather than appended instantly. Detected from message content
-  // (the "Found it — already audited" line only occurs on that path) rather
-  // than the isCacheHitPending prop, because SignalR messages can arrive
-  // before that prop's HTTP response round trip has resolved.
   const cacheHitFlowRef = useRef(false);
   const cacheHitContinuePendingRef = useRef(false);
   const auditBurstSeenRef = useRef<Set<number>>(new Set());
 
-  // One tick shifts a single message from the pending (cache-hit) queue into
-  // the visible log — cleared on unmount so a user navigating away mid
-  // sequence never leaves a dangling interval running.
   useEffect(() => {
     const interval = setInterval(() => {
-      setPendingLogs((prev) => {
-        if (prev.length === 0) return prev;
-        const [next, ...rest] = prev;
-        setLogs((logsPrev) => [...logsPrev, next]);
-        return rest;
+      setLogState((prev) => {
+        if (prev.pending.length === 0) return prev;
+        const [next, ...rest] = prev.pending;
+        return {
+          visible: [...prev.visible, next],
+          pending: rest,
+        };
       });
     }, CACHE_HIT_LOG_PACE_MS);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   // Cache-hit tail state (Continue -> "Loading your results..." -> "Audit
@@ -193,8 +192,9 @@ export function PaperActivityView({
         const inProgress = Math.min(AUDIT_STRUCTURE_CONCURRENCY, seen - completed);
         const statusMessage = `Auditing claims — ${inProgress} in progress, ${completed} of ${total} complete.`;
 
-        setLogs((prev) => {
-          const last = prev[prev.length - 1];
+        setLogState((prev) => {
+          const visible = prev.visible;
+          const last = visible[visible.length - 1];
           const entry: LogEntry = {
             id: last?.isBurstStatus ? last.id : crypto.randomUUID(),
             time,
@@ -202,7 +202,10 @@ export function PaperActivityView({
             message: statusMessage,
             isBurstStatus: true,
           };
-          return last?.isBurstStatus ? [...prev.slice(0, -1), entry] : [...prev, entry];
+          return {
+            ...prev,
+            visible: last?.isBurstStatus ? [...visible.slice(0, -1), entry] : [...visible, entry],
+          };
         });
         return;
       }
@@ -215,23 +218,23 @@ export function PaperActivityView({
         isError: ev.stage === "failed",
       };
 
-      // "Found it — already audited..." only occurs on the cache-hit path
-      // (a fresh upload's first "preparing" message is shared with the
-      // cache-hit path, but its second message is "New paper — starting
-      // audit" instead) — seeing it means everything from here on, including
-      // the frontend-synthesized Continue messages, should be paced.
-      if (ev.stage === "preparing" && msg.startsWith("Found it — already audited")) {
+      if (ev.stage === "preparing" && msg.startsWith("Found it")) {
         cacheHitFlowRef.current = true;
       }
 
-      if (cacheHitFlowRef.current) {
-        setPendingLogs((prev) => [...prev, entry]);
-      } else {
-        setLogs((prev) => [...prev, entry]);
-      }
+      setLogState((prev) => {
+        if (cacheHitFlowRef.current) {
+          return { ...prev, pending: [...prev.pending, entry] };
+        } else {
+          return { ...prev, visible: [...prev.visible, entry] };
+        }
+      });
     };
     on("ExtractionProgress", handler);
-    return () => off("ExtractionProgress", handler);
+
+    return () => {
+      off("ExtractionProgress", handler);
+    };
   }, [chatId, on, off]);
 
   useEffect(() => {
@@ -261,11 +264,14 @@ export function PaperActivityView({
     setCacheHitDecisionMade(true);
     cacheHitContinuePendingRef.current = true;
     const time = nowTime();
-    setPendingLogs((prev) => [
+    setLogState((prev) => ({
       ...prev,
-      { id: crypto.randomUUID(), time, stage: "finalizing", message: "Loading your results..." },
-      { id: crypto.randomUUID(), time, stage: "done", message: "Audit complete — ready for chat" },
-    ]);
+      pending: [
+        ...prev.pending,
+        { id: crypto.randomUUID(), time, stage: "finalizing", message: "Loading your results..." },
+        { id: crypto.randomUUID(), time, stage: "done", message: "Audit complete — ready for chat" },
+      ]
+    }));
   };
 
   const handleCacheHitRerunClick = () => {
@@ -484,6 +490,14 @@ export function PaperActivityView({
                             className="rounded-md border border-white/20 px-3 py-1.5 font-sans text-xs font-medium text-white/80 hover:bg-white/10 transition-colors"
                           >
                             Re-run
+                          </button>
+                        )}
+                        {!isGoogleUser && (
+                          <button
+                            onClick={() => onCacheHitCancel?.()}
+                            className="rounded-md border border-white/20 px-3 py-1.5 font-sans text-xs font-medium text-white/80 hover:bg-white/10 transition-colors"
+                          >
+                            Cancel
                           </button>
                         )}
                       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { signalRService } from "@/services/signalRService";
 import type { ExtractionProgressEvent, ExtractionStage } from "@/types/api";
 
@@ -14,14 +14,26 @@ export function useSignalR() {
     });
   }, []);
 
-  return {
-    joinChat: (chatId: string) => signalRService.joinChat(chatId),
-    on: (event: string, callback: (...args: unknown[]) => void) =>
-      signalRService.on(event, callback),
-    off: (event: string, callback?: (...args: unknown[]) => void) =>
-      signalRService.off(event, callback),
-    getConnectionId: () => signalRService.connectionId,
-  };
+  // Stable identities (empty deps) are load-bearing, not just tidiness:
+  // these are consumed as useEffect dependencies elsewhere (e.g.
+  // PaperActivityView's SignalR message listener, AppShell's join/
+  // DocumentProcessed effects) — a fresh function reference every render
+  // was tearing those effects down and rebuilding them on every render
+  // instead of only when the thing they actually depend on (chatId)
+  // changed. They only ever delegate to the signalRService singleton, so
+  // memoizing them is safe.
+  const joinChat = useCallback((chatId: string) => signalRService.joinChat(chatId), []);
+  const on = useCallback(
+    (event: string, callback: (...args: unknown[]) => void) => signalRService.on(event, callback),
+    []
+  );
+  const off = useCallback(
+    (event: string, callback?: (...args: unknown[]) => void) => signalRService.off(event, callback),
+    []
+  );
+  const getConnectionId = useCallback(() => signalRService.connectionId, []);
+
+  return { joinChat, on, off, getConnectionId };
 }
 
 export interface ExtractionProgressState {

@@ -33,6 +33,9 @@ interface MatrixViewProps {
   // paperClaims already reports "Completed" for a previously-audited paper.
   cacheHitPending?: boolean;
   onCacheHitResolved?: () => void;
+  // Guests see Cancel instead of Re-run on the inline decision — resets
+  // the view back to the upload dropzone so a different file can be picked.
+  onCacheHitCancel?: () => void;
   onViewEvidence: (claimId: string) => void;
   onUploadClick: () => void;
   // Re-run (Google-authenticated users only, never guests) — isGoogleUser gates
@@ -65,6 +68,7 @@ export function MatrixView({
   pendingUpload = null,
   cacheHitPending = false,
   onCacheHitResolved,
+  onCacheHitCancel,
   onViewEvidence,
   onUploadClick,
   isGoogleUser = false,
@@ -219,41 +223,11 @@ export function MatrixView({
     );
   }
 
-  // An upload is in flight and the real fileId hasn't come back yet — render
-  // the activity log against chatId alone rather than falling through to the
-  // generic skeleton below, and keep the same AnimatePresence/key="activity"
-  // shape the post-load branch uses so this doesn't remount (and lose the
-  // logs it's already collected) once paperClaims loads a moment later.
-  if (pendingUpload && !paperClaims) {
-    return (
-      <AnimatePresence mode="wait">
-        <motion.div
-          key="activity"
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 0.2 }}
-          className="h-full overflow-y-auto"
-        >
-          <PaperActivityView
-            key={activeChatId}
-            fileId={activePaperId}
-            chatId={pendingUpload.chatId}
-            fileName={pendingUpload.fileName}
-            extractionStatus="In progress"
-          />
-        </motion.div>
-      </AnimatePresence>
-    );
-  }
+  const isCacheHitLoading = cacheHitPending && !paperClaims;
+  const showSkeleton = (!pendingUpload && !paperClaims && !isCacheHitLoading) || (isLoading && !paperClaims && !isCacheHitLoading);
+  const showActivityView = pendingUpload || isCacheHitLoading || (paperClaims && (paperClaims.extractionStatus !== "Completed" || isRerunning || cacheHitPending));
 
-  if (isLoading && !paperClaims) {
-    return (
-      <div className="h-full overflow-y-auto px-8 py-6">
-        <MatrixSkeleton />
-      </div>
-    );
-  }
-
-  if (!paperClaims) {
+  if (showSkeleton) {
     return (
       <div className="h-full overflow-y-auto px-8 py-6">
         <MatrixSkeleton />
@@ -263,7 +237,7 @@ export function MatrixView({
 
   return (
     <AnimatePresence mode="wait">
-      {paperClaims.extractionStatus !== "Completed" || isRerunning || cacheHitPending ? (
+      {showActivityView ? (
         <motion.div
           key="activity"
           exit={{ opacity: 0, scale: 0.98 }}
@@ -273,16 +247,17 @@ export function MatrixView({
           <PaperActivityView
             key={activeChatId}
             fileId={activePaperId}
-            chatId={activeChatId}
-            fileName={paperClaims.fileName}
-            extractionStatus={isRerunning || cacheHitPending ? "In progress" : paperClaims.extractionStatus}
+            chatId={pendingUpload?.chatId || activeChatId}
+            fileName={pendingUpload?.fileName || paperClaims?.fileName || ""}
+            extractionStatus={(!paperClaims || isRerunning || cacheHitPending) ? "In progress" : paperClaims.extractionStatus}
             isCacheHitPending={cacheHitPending}
             isGoogleUser={isGoogleUser}
             onCacheHitContinue={onCacheHitResolved}
             onCacheHitRerun={handleCacheHitRerun}
+            onCacheHitCancel={onCacheHitCancel}
           />
         </motion.div>
-      ) : (
+      ) : paperClaims ? (
         <motion.div
           key="matrix"
           initial={{ opacity: 0, y: 8 }}
@@ -373,7 +348,7 @@ export function MatrixView({
 
           {activePaperId && <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} />}
         </motion.div>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }

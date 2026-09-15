@@ -200,6 +200,19 @@ export function AppShell() {
     setCacheHitPaperId(null);
   }, []);
 
+  // Guest "Cancel" on the inline decision: the ownership link
+  // (PrismDocuments/ChatFiles) that HandleCacheHitAsync already committed is
+  // left in place rather than actively unlinked — it's harmless (IDOR checks
+  // already gate every read on it, and it's invisible/inert to everyone but
+  // this guest) and there's no backend endpoint for undoing it. Just reset
+  // to the empty upload state so a different file can be picked immediately.
+  const handleCacheHitCancel = useCallback(() => {
+    setCacheHitPaperId(null);
+    setActiveChatId("");
+    setActivePaperId(null);
+    navigate("/");
+  }, [navigate, setActiveChatId, setActivePaperId]);
+
   const isDesktopCollapsed = localStorage.getItem("prism_sidebar_collapsed") === "true";
   const [desktopCollapsed, setDesktopCollapsed] = useState(isDesktopCollapsed);
 
@@ -317,6 +330,7 @@ export function AppShell() {
             pendingUpload={pendingUpload}
             cacheHitPending={cacheHitPaperId !== null && cacheHitPaperId === activePaperId}
             onCacheHitResolved={handleCacheHitResolved}
+            onCacheHitCancel={handleCacheHitCancel}
             onViewEvidence={setSelectedClaimId}
             onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
             isGoogleUser={user?.provider === "google"}
