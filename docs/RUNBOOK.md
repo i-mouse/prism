@@ -114,3 +114,7 @@ Root cause fix: reduce `AUDIT_CONCURRENCY` or prefetch, revisit paper-concurrent
 `az containerapp revision list --query "[?properties.active]"` shows *actual* running state.
 
 Always verify with the second after any deploy. Never trust `properties.template`.
+### Visual Studio Debugger File Lock Trap (2026-09-16)
+**Symptom:** Code changes appear to have no effect even after a restart (dotnet run silently fails to replace the running binary).
+**Cause:** A Visual Studio debugger left attached to a previous run holds a file lock on the built API DLL.
+**Fix:** Fully detach/close the debugger (or kill dotnet.exe processes) before restarting.
