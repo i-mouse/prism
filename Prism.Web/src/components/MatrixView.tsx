@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Upload } from "lucide-react";
-import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -16,7 +15,6 @@ import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { cn } from "@/lib/utils";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
-import { acquireAccessToken } from "@/lib/auth";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
@@ -39,11 +37,7 @@ interface MatrixViewProps {
   onCacheHitCancel?: () => void;
   onViewEvidence: (claimId: string) => void;
   onUploadClick: () => void;
-  // Re-run (Google-authenticated users only, never guests) — isGoogleUser gates
-  // the banner in PaperHeader, getConnectionId supplies the SignalR connection
-  // the re-triggered pipeline reports progress back to.
   isGoogleUser?: boolean;
-  getConnectionId?: () => string | null;
 }
 
 type SortMode = "position" | "support";
@@ -73,59 +67,10 @@ export function MatrixView({
   onViewEvidence,
   onUploadClick,
   isGoogleUser = false,
-  getConnectionId,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
   const [activeTab, setActiveTab] = useState<"claims" | "overview">("claims");
-  const [isRerunning, setIsRerunning] = useState(false);
   const claims = paperClaims?.claims ?? [];
-
-  // Cleared whenever the claims payload's completedAt changes — that happens
-  // both on first load and, meaningfully, once a re-run finishes and produces
-  // a fresh extraction run (a new completedAt timestamp).
-  useEffect(() => {
-    setIsRerunning(false);
-  }, [paperClaims?.completedAt]);
-
-  const handleRerun = async () => {
-    if (!activePaperId) return;
-    const connectionId = getConnectionId?.();
-    if (!connectionId) {
-      toast.error("Realtime connection not ready. Please wait a moment and try again.");
-      return;
-    }
-    setIsRerunning(true);
-    try {
-      const headers: HeadersInit = { "Content-Type": "application/json" };
-      const token = await acquireAccessToken();
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-
-      const res = await fetch(`/api/papers/${activePaperId}/rerun`, {
-        method: "POST",
-        headers,
-        credentials: "include",
-        body: JSON.stringify({ chatId: activeChatId, connectionId }),
-      });
-      if (!res.ok) {
-        const message = await res.text().catch(() => "");
-        throw new Error(message || `Re-run failed: ${res.statusText}`);
-      }
-    } catch (err) {
-      console.error("Re-run error:", err);
-      toast.error("Re-run failed to start. Please try again.");
-      setIsRerunning(false);
-    }
-  };
-
-  // Wraps handleRerun for the inline cache-hit decision block: resolving the
-  // decision immediately is safe here because isRerunning flips to true in
-  // the same call, so the activity view keeps showing without a flicker.
-  const handleCacheHitRerun = async () => {
-    onCacheHitResolved?.();
-    await handleRerun();
-  };
 
   const sortedClaims = useMemo(() => {
     if (sortMode === "support") {
@@ -232,7 +177,7 @@ export function MatrixView({
 
   const isCacheHitLoading = cacheHitPending && !paperClaims;
   const showSkeleton = (!pendingUpload && !paperClaims && !isCacheHitLoading) || (isLoading && !paperClaims && !isCacheHitLoading);
-  const showActivityView = pendingUpload || isCacheHitLoading || (paperClaims && (paperClaims.extractionStatus !== "Completed" || isRerunning || cacheHitPending));
+  const showActivityView = pendingUpload || isCacheHitLoading || (paperClaims && (paperClaims.extractionStatus !== "Completed" || cacheHitPending));
 
   if (showSkeleton) {
     return (
@@ -256,11 +201,10 @@ export function MatrixView({
             fileId={activePaperId}
             chatId={pendingUpload?.chatId || activeChatId}
             fileName={pendingUpload?.fileName || paperClaims?.fileName || ""}
-            extractionStatus={(!paperClaims || isRerunning || cacheHitPending) ? "In progress" : paperClaims.extractionStatus}
+            extractionStatus={(!paperClaims || cacheHitPending) ? "In progress" : paperClaims.extractionStatus}
             isCacheHitPending={cacheHitPending}
             isGoogleUser={isGoogleUser}
             onCacheHitContinue={onCacheHitResolved}
-            onCacheHitRerun={handleCacheHitRerun}
             onCacheHitCancel={onCacheHitCancel}
           />
         </motion.div>
@@ -277,10 +221,6 @@ export function MatrixView({
               fileName={paperClaims.fileName}
               extractionStatus={paperClaims.extractionStatus}
               completedAt={paperClaims.completedAt}
-              showRerun={isGoogleUser && paperClaims.extractionStatus === "Completed" && paperClaims.promptVersion != null}
-              isCurrentPromptVersion={paperClaims.isCurrentPromptVersion}
-              onRerun={handleRerun}
-              rerunning={isRerunning}
             />
 
             <div className="mt-6 flex items-center gap-6 border-b border-hairline px-1">

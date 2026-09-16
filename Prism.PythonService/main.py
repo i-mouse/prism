@@ -211,11 +211,11 @@ async def main():
 
                                 if is_pdf:
                                     await emitter.emit_stage_detail(
-                                        "preparing", f"Parsed {page_count} pages, {chunk_count} chunks"
+                                        "preparing", f"Read {page_count} pages"
                                     )
                                 else:
                                     await emitter.emit_stage_detail(
-                                        "preparing", f"Transcribed audio, {chunk_count} chunks"
+                                        "preparing", "Transcribed audio"
                                     )
 
                                 # ============================================
@@ -271,7 +271,7 @@ async def main():
 
                                 current_stage = "finalizing"
                                 await emitter.emit_stage("finalizing")
-                                await emitter.emit_stage_detail("finalizing", "Double-checking the grounding...")
+                                await emitter.emit_stage_detail("finalizing", "Verifying evidence...")
                                 print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} writing to DB', flush=True)
                                 with tracer.start_as_current_span("writer.write") as span:
                                     span.set_attribute("correlation_id", correlation_id)
@@ -295,6 +295,9 @@ async def main():
                                     f"{refused} refused · {partial} partial",
                                 )
 
+                                # Add a minimum-visibility delay so the final counts don't flash
+                                # by too quickly before transitioning to the completed view.
+                                await asyncio.sleep(1.5)
                                 await emitter.emit_stage_detail("done", "Audit complete — ready for chat")
 
                                 # 5. Inject memory using our globally compiled agent!

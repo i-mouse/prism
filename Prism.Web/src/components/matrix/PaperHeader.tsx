@@ -1,4 +1,4 @@
-import { Share2, Download, MoreHorizontal, FileText, HardDrive, Calendar, File, RefreshCw } from "lucide-react";
+import { Share2, Download, MoreHorizontal, FileText, HardDrive, Calendar, File } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,13 +20,6 @@ interface PaperHeaderProps {
   pageCount?: number;
   uploadedAt?: string;
   onCancel?: () => void;
-  // Re-run option (Google-authenticated users only, never guests) — shown when
-  // this result came from a cached/prior extraction run and we know how its
-  // prompt_version compares to the pipeline's current one.
-  showRerun?: boolean;
-  isCurrentPromptVersion?: boolean | null;
-  onRerun?: () => void;
-  rerunning?: boolean;
 }
 
 const secondaryButtonClass =
@@ -47,10 +40,6 @@ export function PaperHeader({
   pageCount,
   uploadedAt,
   onCancel,
-  showRerun = false,
-  isCurrentPromptVersion,
-  onRerun,
-  rerunning = false,
 }: PaperHeaderProps) {
   const status = extractionStatusMeta[extractionStatus];
   const verdict = extractionStatusToVerdict[extractionStatus];
@@ -170,28 +159,6 @@ export function PaperHeader({
       </div>
     </div>
 
-    {showRerun && (
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-hairline bg-surface-subtle px-4 py-2.5">
-        <span className="font-sans text-xs text-ink-secondary">
-          {isCurrentPromptVersion
-            ? "Re-running will use the same pipeline and will likely return the same result."
-            : "A newer pipeline version is available. Re-running may improve results — or may return the same output. There's no way to know without running it."}
-        </span>
-        <Button
-          variant={isCurrentPromptVersion ? "ghost" : "outline"}
-          size="sm"
-          onClick={onRerun}
-          disabled={rerunning}
-          className={cn(
-            "gap-1.5 rounded-lg font-sans text-sm",
-            isCurrentPromptVersion ? "text-ink-tertiary hover:text-ink-secondary" : secondaryButtonClass
-          )}
-        >
-          <RefreshCw className={cn("h-4 w-4", rerunning && "animate-spin")} />
-          {rerunning ? "Re-running..." : isCurrentPromptVersion ? "Re-run anyway" : "Re-run"}
-        </Button>
-      </div>
-    )}
     </div>
   );
 }
