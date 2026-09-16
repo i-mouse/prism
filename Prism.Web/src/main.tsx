@@ -7,12 +7,15 @@ import '@fontsource-variable/geist'
 import './index.css'
 import App from './App.tsx'
 
+import { msalInstance } from '@/lib/msalConfig'
 import { BrowserRouter } from 'react-router-dom';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-)
+msalInstance.initialize().then(() => {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </StrictMode>,
+  )
+});

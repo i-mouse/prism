@@ -49,6 +49,14 @@ if (!string.IsNullOrEmpty(keyVaultUri))
 // intentional — the plan assumed the old MapInboundClaims=true default. See PR description.
 builder.Services.AddAuthentication()
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.Configure<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>(
+    Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
+    options =>
+    {
+        options.MapInboundClaims = false;
+    });
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddOpenApi();

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { acquireAccessToken } from "@/lib/auth";
 import type { ChatBlock, ChatTurn } from "@/types/chat";
 
 type SseFrame =
@@ -68,9 +69,15 @@ export function useChatStream(chatId: string | null, activeFileId: string | null
       setIsSending(true);
 
       try {
+        const headers: HeadersInit = { "Content-Type": "application/json" };
+        const token = await acquireAccessToken();
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const response = await fetch("/api/chat/ask/stream", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({ chat_id: chatId, active_file_id: activeFileId, message }),
           credentials: "include",
           signal: controller.signal,

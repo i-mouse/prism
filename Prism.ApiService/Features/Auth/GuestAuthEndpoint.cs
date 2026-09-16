@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Prism.ApiService.Data;
 
@@ -88,17 +88,16 @@ public static class GuestAuthEndpoints
     /// is present — endpoints should return 401 in that case.
     /// </summary>
     /// <remarks>
-    /// CLAIM MAPPING NOTE: Microsoft.Identity.Web 4.x sets MapInboundClaims = false by
-    /// default, meaning the JWT "sub" claim is NOT remapped to ClaimTypes.NameIdentifier.
-    /// Read the authenticated user's ID as User.FindFirst("sub")?.Value.
+    /// CLAIM MAPPING NOTE: MapInboundClaims is explicitly disabled in Program.cs.
+    /// Read the authenticated user's ID as User.FindFirst("oid")?.Value.
+    /// ("oid" is the stable, tenant-wide user identifier. "sub" is a pairwise identifier
+    /// that differs per app, which is incorrect for linking across our services).
     /// </remarks>
     public static string? ResolveUserId(HttpContext httpContext)
     {
         if (httpContext.User.Identity?.IsAuthenticated == true)
         {
-            // "sub" = subject claim (Entra External ID CIAM issues this as the user's
-            // immutable object ID). MapInboundClaims is false, so use the raw claim name.
-            return httpContext.User.FindFirst("sub")?.Value;
+            return httpContext.User.FindFirst("oid")?.Value;
         }
 
         return httpContext.Request.Cookies.TryGetValue(CookieName, out var guestId)

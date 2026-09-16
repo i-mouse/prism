@@ -21,13 +21,16 @@ const STORAGE_KEY = "prism.auth.user";
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function accountToUser(account: AccountInfo): User {
+  const rawName = account.name;
+  const name = (!rawName || rawName === "unknown") ? "Google User" : rawName;
+
   return {
     // MSAL surfaces the OID (object ID) as account.homeAccountId; for a
     // simpler, stable identifier we use account.localAccountId which matches
     // the Entra "oid" claim that the API can look up.
     id: account.localAccountId,
     email: account.username ?? null,
-    name: account.name ?? null,
+    name,
     provider: "google",
   };
 }
@@ -95,7 +98,6 @@ export async function acquireAccessToken(): Promise<string | null> {
  * user is redirected back and MSAL processes the callback.
  */
 export async function signInWithGoogle(): Promise<User> {
-  await msalInstance.initialize();
   await msalInstance.loginRedirect(loginRequest);
   // This line is never reached in the same navigation — MSAL redirects.
   // The AuthContext bootstrap reads the account on the post-redirect page load.

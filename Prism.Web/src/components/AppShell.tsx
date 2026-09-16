@@ -13,6 +13,7 @@ import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { formatFileSize } from "@/lib/format";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { useAuth } from "@/lib/AuthContext";
+import { acquireAccessToken } from "@/lib/auth";
 import { GuestBanner } from "@/components/GuestBanner";
 import { cn } from "@/lib/utils";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
@@ -121,7 +122,13 @@ export function AppShell() {
 
   const fetchChatFiles = async (chatId: string) => {
     try {
-      const res = await fetch(`/api/chats/${chatId}/files`, { credentials: "include" });
+      const headers: HeadersInit = {};
+      const token = await acquireAccessToken();
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`/api/chats/${chatId}/files`, { headers, credentials: "include" });
       if (!res.ok) throw new Error("Failed to load chat files");
       const files: Array<{ fileId: string }> = await res.json();
       setActivePaperId(files[0]?.fileId ?? null);
