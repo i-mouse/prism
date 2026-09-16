@@ -10,7 +10,7 @@ Prism extracts empirical claims from academic papers and rigorously audits wheth
 
 Try Prism directly in your browser using **Guest Access** — no account required.
 
-> **Google Sign-In:** UI is present but not yet functional. Use Guest Access to try the product today.
+> **Google Sign-In:** Functional and available for use. You can also use Guest Access to try the product today.
 
 Guest sessions are currently available for demo use only, making it easy for reviewers to try the product without creating an account.
 
