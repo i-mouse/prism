@@ -16,6 +16,7 @@ import { SummaryStrip } from "@/components/matrix/SummaryStrip";
 import { cn } from "@/lib/utils";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
+import { acquireAccessToken } from "@/lib/auth";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
@@ -95,9 +96,15 @@ export function MatrixView({
     }
     setIsRerunning(true);
     try {
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      const token = await acquireAccessToken();
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`/api/papers/${activePaperId}/rerun`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         credentials: "include",
         body: JSON.stringify({ chatId: activeChatId, connectionId }),
       });

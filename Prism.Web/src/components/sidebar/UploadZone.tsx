@@ -89,7 +89,13 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
 
       refetchChats();
 
-      const filesRes = await fetch(`/api/chats/${chatId}/files`, { credentials: "include" });
+      const filesHeaders: HeadersInit = {};
+      const filesToken = await acquireAccessToken();
+      if (filesToken) {
+        filesHeaders["Authorization"] = `Bearer ${filesToken}`;
+      }
+
+      const filesRes = await fetch(`/api/chats/${chatId}/files`, { headers: filesHeaders, credentials: "include" });
       if (filesRes.ok) {
         const chatFiles: Array<{ fileId: string }> = await filesRes.json();
         const fileId = chatFiles[0]?.fileId;

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Check, XCircle, X, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useExtractionProgress, useSignalR } from "@/hooks/useSignalR";
+import { acquireAccessToken } from "@/lib/auth";
 import type { ExtractionStage, ExtractionProgressEvent } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -327,12 +328,16 @@ export function PaperActivityView({
           </p>
         </div>
         <button
-          onClick={() => {
-            if (!fileId) return;
-            if (confirm("Are you sure you want to cancel the audit?")) {
-              fetch(`/api/papers/${fileId}/cancel`, { method: "POST" }).catch(console.error);
-            }
-          }}
+            onClick={() => {
+              if (!fileId) return;
+              if (confirm("Are you sure you want to cancel the audit?")) {
+                acquireAccessToken().then((token) => {
+                  const headers: HeadersInit = {};
+                  if (token) headers["Authorization"] = `Bearer ${token}`;
+                  return fetch(`/api/papers/${fileId}/cancel`, { method: "POST", headers, credentials: "include" });
+                }).catch(console.error);
+              }
+            }}
           disabled={!fileId}
           className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-subtle hover:text-ink transition-colors disabled:opacity-40 disabled:pointer-events-none"
         >
