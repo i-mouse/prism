@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
-import { Check, XCircle, X, Terminal } from "lucide-react";
+import { Check, XCircle, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useExtractionProgress, useSignalR } from "@/hooks/useSignalR";
-import { acquireAccessToken } from "@/lib/auth";
 import type { ExtractionStage, ExtractionProgressEvent } from "@/types/api";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +17,6 @@ interface PaperActivityViewProps {
   isCacheHitPending?: boolean;
   isGoogleUser?: boolean;
   onCacheHitContinue?: () => void;
-  onCacheHitRerun?: () => void;
   onCacheHitCancel?: () => void;
 }
 
@@ -102,7 +100,6 @@ export function PaperActivityView({
   isCacheHitPending = false,
   isGoogleUser = false,
   onCacheHitContinue,
-  onCacheHitRerun,
   onCacheHitCancel,
 }: PaperActivityViewProps) {
   const progress = useExtractionProgress(chatId);
@@ -275,13 +272,7 @@ export function PaperActivityView({
     }));
   };
 
-  const handleCacheHitRerunClick = () => {
-    setCacheHitDecisionMade(true);
-    // Nothing further should be paced — the re-triggered run is a real
-    // fresh-pipeline sequence, naturally spaced by processing time.
-    cacheHitFlowRef.current = false;
-    onCacheHitRerun?.();
-  };
+
 
   const showCacheHitDecision =
     isCacheHitPending &&
@@ -303,7 +294,7 @@ export function PaperActivityView({
   // string instead of a STAGE_ORDER index — so a log tag and its matching
   // stepper dot always render the same color for the same underlying state.
   const statusForStage = (stage: string): RowStatus => {
-    if (stage === "failed") return "failed";
+    if (stage === "failed") return hasFailed ? "failed" : "pending";
     const index = STAGE_ORDER.indexOf(stage as ExtractionStage);
     if (index === -1) return "pending";
     return getStatus(index);
@@ -327,23 +318,6 @@ export function PaperActivityView({
               : "Auditing Paper"}
           </p>
         </div>
-        <button
-            onClick={() => {
-              if (!fileId) return;
-              if (confirm("Are you sure you want to cancel the audit?")) {
-                acquireAccessToken().then((token) => {
-                  const headers: HeadersInit = {};
-                  if (token) headers["Authorization"] = `Bearer ${token}`;
-                  return fetch(`/api/papers/${fileId}/cancel`, { method: "POST", headers, credentials: "include" });
-                }).catch(console.error);
-              }
-            }}
-          disabled={!fileId}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-secondary hover:bg-surface-subtle hover:text-ink transition-colors disabled:opacity-40 disabled:pointer-events-none"
-        >
-          Cancel
-          <X className="h-4 w-4" />
-        </button>
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
@@ -472,7 +446,7 @@ export function PaperActivityView({
                         <span className={cn("mr-2 font-semibold", stageColor)}>
                           [{STAGE_LABELS[log.stage as ExtractionStage] || log.stage}]
                         </span>
-                        <span className={log.isError ? STATUS_TEXT_CLASS.failed : "text-white/90"}>
+                        <span className={status === "failed" ? STATUS_TEXT_CLASS.failed : "text-white/90"}>
                           {log.message}
                         </span>
                       </div>
@@ -489,14 +463,6 @@ export function PaperActivityView({
                         >
                           Continue
                         </button>
-                        {isGoogleUser && (
-                          <button
-                            onClick={handleCacheHitRerunClick}
-                            className="rounded-md border border-white/20 px-3 py-1.5 font-sans text-xs font-medium text-white/80 hover:bg-white/10 transition-colors"
-                          >
-                            Re-run
-                          </button>
-                        )}
                         {!isGoogleUser && (
                           <button
                             onClick={() => onCacheHitCancel?.()}

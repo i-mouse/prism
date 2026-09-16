@@ -341,7 +341,6 @@ export function AppShell() {
             onViewEvidence={setSelectedClaimId}
             onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
             isGoogleUser={user?.provider === "google"}
-            getConnectionId={getConnectionId}
           />
         </main>
         
