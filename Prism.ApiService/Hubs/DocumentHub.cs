@@ -24,6 +24,17 @@ public class DocumentHub: Hub<IDocumentClient>
         _logger.LogInformation("Connection {ConnectionId} joined group chat-{ChatId}", Context.ConnectionId, chatId);
     }
 
+    // Called by the client when it switches to a different chat, so group
+    // membership doesn't grow unbounded for the life of the connection —
+    // without this, a connection that visits N chats stays subscribed to
+    // all N groups forever (or until disconnect), receiving broadcasts for
+    // chats it's no longer viewing.
+    public async Task LeaveChat(string chatId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"chat-{chatId}");
+        _logger.LogInformation("Connection {ConnectionId} left group chat-{ChatId}", Context.ConnectionId, chatId);
+    }
+
     public override Task OnConnectedAsync()
     {
         _logger.LogInformation("SignalR connection established: {ConnectionId}", Context.ConnectionId);

@@ -23,7 +23,7 @@ public static class SubmitPaperEndpoint
 
     public static void MapPaperEndPoint(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,AzureBlobStorageService storageService, IHubContext<DocumentHub, IDocumentClient> hubContext, CancellationToken ct) =>
+        app.MapPost("/api/papers", async (HttpContext httpContext, [FromForm] SubmitPaperRequest request,PrismDBContext dBContext, IfileUploader fileUploader,IPublishEndpoint publishEndpoint,AzureBlobStorageService storageService, IHubContext<DocumentHub, IDocumentClient> hubContext, IHttpClientFactory httpClientFactory, CancellationToken ct) =>
         {
             // Resolve user identity: JWT sub claim (Google) or HttpOnly guest-session cookie.
             // Never trust a UserId from the request body — that was the previous insecure pattern.
@@ -99,63 +99,9 @@ public static class SubmitPaperEndpoint
 
                 if (existingFile != null)
                 {
-                    if (existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Completed)
-                    {
-                        isCacheHit = true;
-                        await HandleCacheHitAsync(existingFile, request, userId, hubContext, dBContext, ct);
-                        continue;
-                    }
-                    else if (existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Pending || 
-                             existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.InProgress)
-                    {
-                        // Link the file to the new chat so it appears in the sidebar
-                        await LinkExistingFileToChatAsync(Guid.Parse(request.ChatId), existingFile.FileId, userId, existingFile.FileName, dBContext, ct);
-                        
-                        var originalChatId = await dBContext.ChatFiles
-                            .Where(cf => cf.FileId == existingFile.FileId)
-                            .Select(cf => cf.ChatId)
-                            .FirstOrDefaultAsync(ct);
-
-                        if (originalChatId != Guid.Empty)
-                        {
-                            // Join the existing in-progress job's SignalR group
-                            await hubContext.Groups.AddToGroupAsync(request.ConnectionId, $"chat-{originalChatId}");
-                        }
-                        
-                        continue;
-                    }
-                    else
-                    {
-                        // Status == Failed: Reset the existing record for a fresh retry.
-                        // We do NOT create a new FileId or a new FileRecord row because 
-                        // ContentHash is strictly unique in the DB schema.
-                        existingFile.Status = Prism.ApiService.Data.Schemas.ExtractionStatus.Pending;
-                        existingFile.Summary = null;
-                        existingFile.UploadedAt = DateTime.UtcNow;
-                        
-                        await LinkExistingFileToChatAsync(Guid.Parse(request.ChatId), existingFile.FileId, userId, existingFile.FileName, dBContext, ct);
-                        
-                        var retryFileId = existingFile.FileId;
-                        
-                        await NotifyProgress(hubContext, retryFileId, request.ChatId, "preparing",
-                            "Checking if we've seen this paper before...");
-                        await NotifyProgress(hubContext, retryFileId, request.ChatId, "preparing",
-                            "Previous audit failed — starting fresh extraction");
-
-                        var retryStream = file.OpenReadStream();
-                        await storageService.UploadFileAsync(retryStream, file.FileName, file.ContentType, ct);
-                        
-                        var retryContract = new PrismUploaded(retryFileId.ToString(), userId, file.FileName, request.ConnectionId, request.ChatId);
-                        await publishEndpoint.Publish(retryContract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
-                        {
-                            if (correlationId is not null)
-                            {
-                                publishContext.Headers.Set("x-correlation-id", correlationId);
-                            }
-                        }), ct);
-                        
-                        continue;
-                    }
+                    isCacheHit = existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Completed;
+                    await HandleExistingFileAsync(existingFile, request, userId, dBContext, hubContext, httpClientFactory, publishEndpoint, storageService, file, correlationId, ct);
+                    continue;
                 }
 
                 var fileId = Guid.NewGuid();
@@ -167,7 +113,31 @@ public static class SubmitPaperEndpoint
 
                 var stream = file.OpenReadStream();
                 await storageService.UploadFileAsync(stream,file.FileName,file.ContentType,ct);
-                await AddToDatabase(fileId,file, request.ChatId, userId, contentHash, dBContext, ct);
+                
+                try
+                {
+                    await AddToDatabase(fileId,file, request.ChatId, userId, contentHash, dBContext, ct);
+                }
+                catch (DbUpdateException)
+                {
+                    // A concurrent upload beat us to the database insert and claimed this
+                    // ContentHash. Re-fetch whichever row won and hand it to the exact
+                    // same existing-file dispatch every other cache-hit/join/retry case
+                    // goes through — there is no separate "race" code path left to drift
+                    // from those (there used to be one; it's why this branch used to emit
+                    // a different message than the ordinary Pending/InProgress join).
+                    var winnerFile = await dBContext.FileRecords
+                        .FirstOrDefaultAsync(f => f.ContentHash == contentHash, ct);
+
+                    if (winnerFile == null)
+                    {
+                        throw;
+                    }
+
+                    await HandleExistingFileAsync(winnerFile, request, userId, dBContext, hubContext, httpClientFactory, publishEndpoint, storageService, file, correlationId, ct);
+                    continue;
+                }
+
                 var contract = new PrismUploaded(fileId.ToString(),userId,file.FileName,request.ConnectionId,request.ChatId);
                 await publishEndpoint.Publish(contract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
                 {
@@ -491,7 +461,94 @@ public static class SubmitPaperEndpoint
         });
     }
 
-    // Cache-hit path: the paper's content hash already matches an existing
+    // Single dispatch for "this content-hash already has a FileRecord" —
+    // covers every way that fact can be discovered: the initial lookup
+    // finding one, or a concurrent upload losing the insert race and
+    // re-querying the winner. All four ExtractionStatus values funnel
+    // through here so there is exactly one place that links the chat,
+    // joins/notifies over SignalR, and injects the chat summary — not four
+    // near-copies (cache-hit / join-in-progress / failed-retry / race
+    // recovery) that drift independently, which is what let the race-
+    // recovery branch and the ordinary join branch emit different messages
+    // for what is, from the client's point of view, the same event.
+    private static async Task HandleExistingFileAsync(
+        FileRecord existingFile,
+        SubmitPaperRequest request,
+        string userId,
+        PrismDBContext dbContext,
+        IHubContext<DocumentHub, IDocumentClient> hubContext,
+        IHttpClientFactory httpClientFactory,
+        IPublishEndpoint publishEndpoint,
+        AzureBlobStorageService storageService,
+        IFormFile file,
+        string? correlationId,
+        CancellationToken ct)
+    {
+        switch (existingFile.Status)
+        {
+            case Prism.ApiService.Data.Schemas.ExtractionStatus.Completed:
+                await HandleCacheHitAsync(existingFile, request, userId, hubContext, httpClientFactory, dbContext, ct);
+                return;
+
+            case Prism.ApiService.Data.Schemas.ExtractionStatus.Pending:
+            case Prism.ApiService.Data.Schemas.ExtractionStatus.InProgress:
+                await LinkExistingFileToChatAsync(Guid.Parse(request.ChatId), existingFile.FileId, userId, existingFile.FileName, dbContext, ct);
+
+                // Ordered by the owning chat's CreatedAt (write-once at chat
+                // creation, never mutated elsewhere) so which chat's SignalR
+                // group we join is deterministic — the original uploader's
+                // chat, not whatever order Postgres happens to return once a
+                // file is linked to 3+ chats.
+                var originalChatId = await dbContext.ChatFiles
+                    .Where(cf => cf.FileId == existingFile.FileId)
+                    .Join(dbContext.PrismDocuments, cf => cf.ChatId, d => d.ChatId, (cf, d) => new { cf.ChatId, d.CreatedAt })
+                    .OrderBy(x => x.CreatedAt)
+                    .Select(x => x.ChatId)
+                    .FirstOrDefaultAsync(ct);
+
+                if (originalChatId != Guid.Empty)
+                {
+                    await hubContext.Groups.AddToGroupAsync(request.ConnectionId, $"chat-{originalChatId}");
+                }
+
+                // Every path that can discover an in-progress file lands
+                // here — an ordinary join against a not-yet-finished run, or
+                // a concurrent upload that lost the insert race — so it
+                // always gets the same "you're joining, not starting"
+                // feedback instead of sometimes being silent.
+                await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
+                    "Joining an audit already in progress...");
+                return;
+
+            default: // Failed — reset for a fresh retry. Can't use a new FileId/
+                     // FileRecord row here because ContentHash is a unique constraint.
+                existingFile.Status = Prism.ApiService.Data.Schemas.ExtractionStatus.Pending;
+                existingFile.Summary = null;
+                existingFile.UploadedAt = DateTime.UtcNow;
+
+                await LinkExistingFileToChatAsync(Guid.Parse(request.ChatId), existingFile.FileId, userId, existingFile.FileName, dbContext, ct);
+
+                await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
+                    "Checking if we've seen this paper before...");
+                await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
+                    "Previous audit failed — starting fresh extraction");
+
+                var retryStream = file.OpenReadStream();
+                await storageService.UploadFileAsync(retryStream, file.FileName, file.ContentType, ct);
+
+                var retryContract = new PrismUploaded(existingFile.FileId.ToString(), userId, file.FileName, request.ConnectionId, request.ChatId);
+                await publishEndpoint.Publish(retryContract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
+                {
+                    if (correlationId is not null)
+                    {
+                        publishContext.Headers.Set("x-correlation-id", correlationId);
+                    }
+                }), ct);
+                return;
+        }
+    }
+
+    // Cache-hit path: the paper's content hash already matches a Completed
     // FileRecord, so the blob upload and the entire extraction pipeline are
     // skipped. Progress messaging stops after "Found it..." — the client
     // renders an inline decision (Continue/Re-run) instead of an automatic
@@ -508,6 +565,7 @@ public static class SubmitPaperEndpoint
         SubmitPaperRequest request,
         string userId,
         IHubContext<DocumentHub, IDocumentClient> hubContext,
+        IHttpClientFactory httpClientFactory,
         PrismDBContext dbContext,
         CancellationToken ct)
     {
@@ -530,13 +588,28 @@ public static class SubmitPaperEndpoint
         // FileId that /claims will still 403 on, since ownership isn't
         // linked yet. Every message below must come after this line, not
         // just the first one.
-        await LinkExistingFileToChatAsync(chatGuid, existingFile.FileId, userId, existingFile.FileName, dbContext, ct);
+        var isNewLink = await LinkExistingFileToChatAsync(chatGuid, existingFile.FileId, userId, existingFile.FileName, dbContext, ct);
 
         await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
             "Checking if we've seen this paper before...");
 
         await NotifyProgress(hubContext, existingFile.FileId, request.ChatId, "preparing",
             $"Found it — already audited on {auditedAt:MMM d, yyyy}");
+
+        // A cache hit skips the pipeline entirely, so nothing would otherwise
+        // inject the "processing completed" summary turn a fresh extraction's
+        // own chat_id gets automatically (Prism.PythonService/main.py). Every
+        // chat that reaches a Completed file should get that same summary
+        // turn in its own conversation — see the RabbitMqListenerService
+        // side for the equivalent injection when a *joined* (Pending/
+        // InProgress) chat's shared run finishes instead. Only on a genuinely
+        // new link, though — a repeat cache hit against a chat that already
+        // owns this file (double-submit, retried request) must not inject a
+        // second copy of the same summary turn.
+        if (isNewLink)
+        {
+            await ChatSummaryInjector.InjectAsync(httpClientFactory, request.ChatId, existingFile.Summary, ct);
+        }
 
         await hubContext.Clients.Group($"chat-{request.ChatId}").DocumentProcessed(new
         {
@@ -549,7 +622,12 @@ public static class SubmitPaperEndpoint
         });
     }
 
-    private static async Task LinkExistingFileToChatAsync(
+    // Returns true when this call created a new ChatFile link (this chat had
+    // never been linked to this file before), false when the link already
+    // existed — callers that only want to act once per chat+file pair (see
+    // HandleCacheHitAsync's summary injection) key off this instead of
+    // re-deriving the same AnyAsync check themselves.
+    private static async Task<bool> LinkExistingFileToChatAsync(
         Guid chatId,
         Guid fileId,
         string userId,
@@ -568,22 +646,22 @@ public static class SubmitPaperEndpoint
                 ChatTitle = $"Chat: {fileName}",
                 UploadedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
-                Status = "Completed",
                 ChatId = chatId
             });
         }
         else
         {
             existingChat.UploadedAt = DateTime.UtcNow;
-            existingChat.Status = "Completed";
         }
 
-        if (!await prismDBContext.ChatFiles.AnyAsync(cf => cf.ChatId == chatId && cf.FileId == fileId, ct))
+        var alreadyLinked = await prismDBContext.ChatFiles.AnyAsync(cf => cf.ChatId == chatId && cf.FileId == fileId, ct);
+        if (!alreadyLinked)
         {
             prismDBContext.ChatFiles.Add(new ChatFile { ChatId = chatId, FileId = fileId });
         }
 
         await prismDBContext.SaveChangesAsync(ct);
+        return !alreadyLinked;
     }
 
     public static async Task AddToDatabase(Guid fileId, IFormFile file, string chatId, string userId, string contentHash, PrismDBContext prismDBContext, CancellationToken ct)
@@ -601,14 +679,12 @@ public static class SubmitPaperEndpoint
                 ChatTitle = $"Chat: {file.FileName}",
                 UploadedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
-                Status = "In progress",
                 ChatId = chatGuid
             });
         }
         else
         {
             existingRecord.UploadedAt = DateTime.UtcNow;
-            existingRecord.Status = "In progress";
         }
 
         // ContentHash is written only once the blob upload above has already

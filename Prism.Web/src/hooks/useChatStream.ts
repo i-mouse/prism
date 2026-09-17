@@ -33,6 +33,19 @@ function markLastTurnDone(turns: ChatTurn[]): ChatTurn[] {
   return [...turns.slice(0, -1), { ...last, isStreaming: false }];
 }
 
+// Shape returned by GET /api/chat/{chatId}/history (Prism.PythonService/api.py,
+// get_chat_history) — flattened plain-text messages from the LangGraph
+// checkpoint, role "ai"/"user" rather than the frontend's "assistant"/"user".
+// Historical messages carry no claim_reference block structure (the history
+// endpoint only ever serializes plain content), so they're restored as
+// plain-text blocks — only messages from the live SSE stream in the current
+// session get interactive citation pills. Fixing that would mean persisting
+// block structure server-side, out of scope here.
+interface HistoryMessage {
+  role: "user" | "ai";
+  content: string;
+}
+
 export function useChatStream(chatId: string | null, activeFileId: string | null) {
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const [isSending, setIsSending] = useState(false);
@@ -44,6 +57,45 @@ export function useChatStream(chatId: string | null, activeFileId: string | null
       controllerRef.current?.abort();
     };
   }, []);
+
+  // Restores prior conversation on mount (the parent remounts this hook via
+  // `key={activeChatId}` on paper switch — see PaperChatStrip) instead of
+  // always starting from an empty transcript. Failures fall back to an empty
+  // transcript rather than blocking a fresh conversation.
+  useEffect(() => {
+    if (!chatId) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const headers: HeadersInit = {};
+        const token = await acquireAccessToken();
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const res = await fetch(`/api/chat/${chatId}/history`, { headers, credentials: "include" });
+        if (!res.ok || cancelled) return;
+
+        const data: { messages: HistoryMessage[] } = await res.json();
+        if (cancelled || !data.messages?.length) return;
+
+        setTurns(
+          data.messages.map((m) => ({
+            role: m.role === "ai" ? "assistant" : "user",
+            blocks: [{ type: "text", content: m.content }],
+            timestamp: Date.now(),
+          }))
+        );
+      } catch {
+        // Leave turns empty — a history-fetch failure shouldn't block chat.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [chatId]);
 
   const clear = useCallback(() => {
     controllerRef.current?.abort();

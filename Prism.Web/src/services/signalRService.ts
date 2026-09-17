@@ -59,6 +59,7 @@ class SignalRService {
   }
 
   async joinChat(chatId: string): Promise<void> {
+    const previousChatId = this.currentChatId;
     this.currentChatId = chatId;
     if (!this.connection || this.connection.state !== signalR.HubConnectionState.Connected) {
       return;
@@ -68,6 +69,19 @@ class SignalRService {
       console.log(`✅ Joined SignalR group for chat ${chatId}`);
     } catch (err) {
       console.error('❌ Failed to join chat group:', err);
+    }
+
+    // Leave the previous chat's group only after successfully joining the new
+    // one, so the connection is never briefly a member of zero groups. Without
+    // this, group membership is permanently additive for the life of the
+    // connection — switching between N chats leaves it subscribed to all N.
+    if (previousChatId && previousChatId !== chatId) {
+      try {
+        await this.connection.invoke('LeaveChat', previousChatId);
+        console.log(`👋 Left SignalR group for chat ${previousChatId}`);
+      } catch (err) {
+        console.error('❌ Failed to leave previous chat group:', err);
+      }
     }
   }
 
