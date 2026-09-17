@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 import agent_service
 from agent_service import workflow
 from pydantic import BaseModel
@@ -256,6 +256,28 @@ async def get_chat_history(chatid: str, http_request: Request):
     except Exception as e:
         print(f"Error while processing get chat history: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class InjectSummaryRequest(BaseModel):
+    summary: str
+
+
+@pythonAPI.post("/api/chat/{chatid}/inject-summary")
+async def inject_summary(chatid: str, body: InjectSummaryRequest, http_request: Request):
+    """Injects a synthetic 'processing completed' AI message into a chat's
+    LangGraph checkpoint without running the agent graph. Called by
+    Prism.ApiService for chats that reach a Completed file without running
+    the extraction pipeline themselves - a cache hit, or a chat that joined
+    while another chat's run was still Pending/InProgress. A chat whose own
+    upload actually ran the pipeline gets this same message directly from
+    main.py's own aupdate_state call instead; this exists so every other
+    chat linked to the file gets it too, rather than none."""
+    config = {"configurable": {"thread_id": chatid}}
+    msg = AIMessage(
+        content=f"**Processing completed**\n\n**Summary:**\n\n{body.summary}\n\nYou can now ask questions about this document."
+    )
+    await http_request.app.state.compiled_agent.aupdate_state(config=config, values={"messages": [msg]}, as_node="agent")
+    return {"status": "injected"}
 
 # --- SYSTEM RESET (NUCLEAR OPTION) ---
 @pythonAPI.delete("/api/system/reset")

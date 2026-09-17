@@ -15,13 +15,15 @@ public class RabbitMqListenerService : BackgroundService
     private readonly IConnectionFactory _connectionFactory;
     private readonly IHubContext<DocumentHub,IDocumentClient> _hubContext;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<RabbitMqListenerService> _logger;
 
-    public RabbitMqListenerService(IConnectionFactory connectionFactory, IHubContext<DocumentHub, IDocumentClient> hubContext , IServiceScopeFactory serviceScopeFactory, ILogger<RabbitMqListenerService> logger)
+    public RabbitMqListenerService(IConnectionFactory connectionFactory, IHubContext<DocumentHub, IDocumentClient> hubContext , IServiceScopeFactory serviceScopeFactory, IHttpClientFactory httpClientFactory, ILogger<RabbitMqListenerService> logger)
     {
         _connectionFactory = connectionFactory;
-        _hubContext = hubContext;   
+        _hubContext = hubContext;
         _serviceScopeFactory = serviceScopeFactory;
+        _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -93,14 +95,47 @@ public class RabbitMqListenerService : BackgroundService
        using (var scope = _serviceScopeFactory.CreateScope())
        {
         var dbContext = scope.ServiceProvider.GetRequiredService<PrismDBContext>();
+        var fileGuid = Guid.Parse(fileIdStr);
 
-        var obj = await dbContext.FileRecords.FindAsync(new object?[] { Guid.Parse(fileIdStr) }, stoppingToken);
+        var obj = await dbContext.FileRecords.FindAsync(new object?[] { fileGuid }, stoppingToken);
         if(obj!=null)
             {
                 obj.Summary = summary;
                 obj.Status = finalStatus;
                 obj.UploadedAt = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync(stoppingToken);
+
+                // main.py injects the summary directly into the chat_id that
+                // actually ran this pipeline (the chat in this message's own
+                // "chatId" field). Any OTHER chat already linked to this file —
+                // one that joined via the Pending/InProgress path while this
+                // run was still in flight — never gets that injection, so it
+                // never gets a summary turn at all unless we do it here. Every
+                // chat that ends up owning a Completed file should get exactly
+                // one summary turn; see ChatSummaryInjector / SubmitPaperEndPoint's
+                // HandleCacheHitAsync for the equivalent cache-hit case.
+                if (finalStatus == Prism.ApiService.Data.Schemas.ExtractionStatus.Completed && Guid.TryParse(chatId, out var chatGuid))
+                {
+                    var otherChatIds = await dbContext.ChatFiles
+                        .Where(cf => cf.FileId == fileGuid && cf.ChatId != chatGuid)
+                        .Select(cf => cf.ChatId)
+                        .ToListAsync(stoppingToken);
+
+                    // Fire-and-forget, deliberately not awaited: a file can be
+                    // linked to many chats (61, for one paper, in tonight's
+                    // testing alone), and awaiting each injection here would
+                    // block this consumer - a single-threaded receive loop -
+                    // from picking up the next queued message for as long as
+                    // the whole fan-out takes. ChatSummaryInjector already
+                    // treats a failed injection as best-effort (it swallows
+                    // its own exceptions), so not awaiting it here changes
+                    // nothing about failure handling - only how soon the
+                    // consumer is free to process the next message.
+                    foreach (var otherChatId in otherChatIds)
+                    {
+                        _ = ChatSummaryInjector.InjectAsync(_httpClientFactory, otherChatId.ToString(), summary, stoppingToken);
+                    }
+                }
             }
        }
 
