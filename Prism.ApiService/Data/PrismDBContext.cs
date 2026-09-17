@@ -27,6 +27,7 @@ public class PrismDBContext : DbContext
         modelBuilder.Entity<FileRecord>(entity =>
         {
             entity.HasKey(f => f.FileId);
+            entity.Property(e => e.Status).HasConversion<string>();
             // Partial unique index: many rows may have a null hash (nothing relies
             // on that today, but it keeps the constraint from ever blocking a
             // legitimate insert before the hash is known), while any two non-null

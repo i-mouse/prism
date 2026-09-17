@@ -65,6 +65,10 @@ export function PaperHeader({
                   {completedAt ? `Completed ${relativeTime(completedAt)}` : status.label}
                 </span>
               </>
+            ) : extractionStatus === "Failed" ? (
+              <span className="font-sans text-xs md:text-sm text-refused truncate">
+                Audit failed
+              </span>
             ) : (
               <span className="font-sans text-xs md:text-sm text-ink-secondary truncate">
                 Auditing paper

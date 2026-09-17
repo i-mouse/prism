@@ -9,6 +9,7 @@ public class FileRecord
     public Guid FileId { get; set; }
     public string FileName { get; set; } = string.Empty;
     public string? Summary { get; set; } // Nullable, filled in later by Python
+    public Prism.ApiService.Data.Schemas.ExtractionStatus Status { get; set; } = Prism.ApiService.Data.Schemas.ExtractionStatus.Pending;
     public DateTime UploadedAt { get; set; }
 
     // SHA-256 hex digest (64 chars) of the uploaded file's bytes, computed

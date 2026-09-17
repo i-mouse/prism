@@ -14,6 +14,7 @@ using Prism.ApiService.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Prism.ApiService.Extensions;
 
 namespace Prism.ApiService.Features.PaperSubmission;
 
@@ -93,13 +94,68 @@ public static class SubmitPaperEndpoint
                 }
 
                 var existingFile = await dBContext.FileRecords
+                    .OrderByDescending(f => f.UploadedAt)
                     .FirstOrDefaultAsync(f => f.ContentHash == contentHash, ct);
 
                 if (existingFile != null)
                 {
-                    isCacheHit = true;
-                    await HandleCacheHitAsync(existingFile, request, userId, hubContext, dBContext, ct);
-                    continue;
+                    if (existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Completed)
+                    {
+                        isCacheHit = true;
+                        await HandleCacheHitAsync(existingFile, request, userId, hubContext, dBContext, ct);
+                        continue;
+                    }
+                    else if (existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Pending || 
+                             existingFile.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.InProgress)
+                    {
+                        // Link the file to the new chat so it appears in the sidebar
+                        await LinkExistingFileToChatAsync(Guid.Parse(request.ChatId), existingFile.FileId, userId, existingFile.FileName, dBContext, ct);
+                        
+                        var originalChatId = await dBContext.ChatFiles
+                            .Where(cf => cf.FileId == existingFile.FileId)
+                            .Select(cf => cf.ChatId)
+                            .FirstOrDefaultAsync(ct);
+
+                        if (originalChatId != Guid.Empty)
+                        {
+                            // Join the existing in-progress job's SignalR group
+                            await hubContext.Groups.AddToGroupAsync(request.ConnectionId, $"chat-{originalChatId}");
+                        }
+                        
+                        continue;
+                    }
+                    else
+                    {
+                        // Status == Failed: Reset the existing record for a fresh retry.
+                        // We do NOT create a new FileId or a new FileRecord row because 
+                        // ContentHash is strictly unique in the DB schema.
+                        existingFile.Status = Prism.ApiService.Data.Schemas.ExtractionStatus.Pending;
+                        existingFile.Summary = null;
+                        existingFile.UploadedAt = DateTime.UtcNow;
+                        
+                        await LinkExistingFileToChatAsync(Guid.Parse(request.ChatId), existingFile.FileId, userId, existingFile.FileName, dBContext, ct);
+                        
+                        var retryFileId = existingFile.FileId;
+                        
+                        await NotifyProgress(hubContext, retryFileId, request.ChatId, "preparing",
+                            "Checking if we've seen this paper before...");
+                        await NotifyProgress(hubContext, retryFileId, request.ChatId, "preparing",
+                            "Previous audit failed — starting fresh extraction");
+
+                        var retryStream = file.OpenReadStream();
+                        await storageService.UploadFileAsync(retryStream, file.FileName, file.ContentType, ct);
+                        
+                        var retryContract = new PrismUploaded(retryFileId.ToString(), userId, file.FileName, request.ConnectionId, request.ChatId);
+                        await publishEndpoint.Publish(retryContract, Pipe.Execute<PublishContext<PrismUploaded>>(publishContext =>
+                        {
+                            if (correlationId is not null)
+                            {
+                                publishContext.Headers.Set("x-correlation-id", correlationId);
+                            }
+                        }), ct);
+                        
+                        continue;
+                    }
                 }
 
                 var fileId = Guid.NewGuid();
@@ -208,7 +264,7 @@ public static class SubmitPaperEndpoint
 
             var file = await dbContext.FileRecords
                 .Where(f => f.FileId == paperId)
-                .Select(f => new { f.FileId, f.FileName, f.Summary })
+                .Select(f => new { f.FileId, f.FileName, f.Summary, f.Status })
                 .FirstOrDefaultAsync(ct);
 
             if (file == null)
@@ -309,7 +365,7 @@ public static class SubmitPaperEndpoint
             return Results.Ok(new PaperClaimsResponse(
                 file.FileId,
                 file.FileName,
-                file.Summary != null ? "Completed" : "In progress",
+                file.Status.ToFrontendString(),
                 extractor.CreatedAt,
                 summary,
                 claimDtos,
@@ -350,7 +406,7 @@ public static class SubmitPaperEndpoint
                 {
                     ChatId = x.ChatId,
                     FileName = x.File.FileName,
-                    ExtractionStatus = x.File.Summary != null ? "Completed" : "In progress",
+                    ExtractionStatus = x.File.Status.ToFrontendString(),
                     UploadedAt = x.UploadedAt
                 })
                 .OrderByDescending(doc => doc.UploadedAt)
@@ -406,7 +462,7 @@ public static class SubmitPaperEndpoint
                     FileName = f.FileName,
                     Summary = f.Summary,
                     UploadedAt = f.UploadedAt,
-                    Status = f.Summary != null ? "Completed" : "In progress"
+                    Status = f.Status.ToFrontendString()
                 })
                 .ToListAsync(ct);
 
@@ -564,7 +620,8 @@ public static class SubmitPaperEndpoint
             FileId = fileId,
             FileName = file.FileName,
             UploadedAt = DateTime.UtcNow,
-            ContentHash = contentHash
+            ContentHash = contentHash,
+            Status = Prism.ApiService.Data.Schemas.ExtractionStatus.InProgress
         });
 
         prismDBContext.ChatFiles.Add(new ChatFile { ChatId = chatGuid, FileId = fileId });

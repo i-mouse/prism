@@ -109,16 +109,16 @@ export function AppShell() {
 
   useEffect(() => {
     const handleDocumentProcessed = (data: unknown) => {
-      const payload = data as { chatId?: string };
+      const payload = data as { chatId?: string; fileId?: string };
       refetchChats();
-      if (payload?.chatId && payload.chatId === activeChatId) {
+      if ((payload?.chatId && payload.chatId === activeChatId) || (payload?.fileId && payload.fileId === activePaperId)) {
         refetchClaims();
       }
     };
 
     on("DocumentProcessed", handleDocumentProcessed);
     return () => off("DocumentProcessed", handleDocumentProcessed);
-  }, [on, off, activeChatId, refetchChats, refetchClaims]);
+  }, [on, off, activeChatId, activePaperId, refetchChats, refetchClaims]);
 
   const fetchChatFiles = async (chatId: string) => {
     try {
