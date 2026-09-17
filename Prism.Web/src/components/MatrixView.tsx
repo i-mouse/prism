@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Upload } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";

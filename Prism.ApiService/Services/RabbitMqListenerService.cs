@@ -86,6 +86,9 @@ public class RabbitMqListenerService : BackgroundService
         var fileIdStr = fileIdProp.ToString();
         var chatId = chatIdProp.ToString();
         var summary = summaryProp.ToString();
+        
+        var statusString = dataObject.TryGetProperty("status", out var statusProp) ? statusProp.ToString() : "Completed";
+        var finalStatus = statusString == "Error" ? Prism.ApiService.Data.Schemas.ExtractionStatus.Failed : Prism.ApiService.Data.Schemas.ExtractionStatus.Completed;
 
        using (var scope = _serviceScopeFactory.CreateScope())
        {
@@ -95,6 +98,7 @@ public class RabbitMqListenerService : BackgroundService
         if(obj!=null)
             {
                 obj.Summary = summary;
+                obj.Status = finalStatus;
                 obj.UploadedAt = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync(stoppingToken);
             }

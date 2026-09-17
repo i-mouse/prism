@@ -55,7 +55,7 @@ export interface ExtractionProgressState {
 // known before the upload's POST request is even sent, while fileId only
 // comes back once that request resolves — filtering on fileId would silently
 // drop every progress event emitted before then.
-export function useExtractionProgress(chatId: string | null) {
+export function useExtractionProgress(chatId: string | null, fileId: string | null) {
   const [state, setState] = useState<ExtractionProgressState | null>(null);
 
   useEffect(() => {
@@ -64,7 +64,8 @@ export function useExtractionProgress(chatId: string | null) {
 
     const handler = (payload: unknown) => {
       const event = payload as ExtractionProgressEvent;
-      if (event?.chatId !== chatId) return;
+      // Accept events targeting this chat, OR events for this file (from an original joined chat)
+      if (event?.chatId !== chatId && (!fileId || event?.fileId !== fileId)) return;
 
       setState((prev) => {
         if (event.stage === "failed") {
@@ -98,7 +99,7 @@ export function useExtractionProgress(chatId: string | null) {
 
     signalRService.on("ExtractionProgress", handler);
     return () => signalRService.off("ExtractionProgress", handler);
-  }, [chatId]);
+  }, [chatId, fileId]);
 
   return state;
 }

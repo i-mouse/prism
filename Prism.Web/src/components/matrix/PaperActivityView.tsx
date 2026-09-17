@@ -102,7 +102,7 @@ export function PaperActivityView({
   onCacheHitContinue,
   onCacheHitCancel,
 }: PaperActivityViewProps) {
-  const progress = useExtractionProgress(chatId);
+  const progress = useExtractionProgress(chatId, fileId);
   const { on, off } = useSignalR();
   const [logState, setLogState] = useState({ visible: [] as LogEntry[], pending: [] as LogEntry[] });
   const logs = logState.visible;
@@ -161,7 +161,7 @@ export function PaperActivityView({
   useEffect(() => {
     const handler = (payload: unknown) => {
       const ev = payload as ExtractionProgressEvent;
-      if (ev.chatId !== chatId) return;
+      if (ev.chatId !== chatId && (!fileId || ev.fileId !== fileId)) return;
 
       // Bare stage-transition events carry no detail and fire once per stage -
       // the left-hand checklist already reflects the transition, so skip them
@@ -233,7 +233,7 @@ export function PaperActivityView({
     return () => {
       off("ExtractionProgress", handler);
     };
-  }, [chatId, on, off]);
+  }, [chatId, fileId, on, off]);
 
   useEffect(() => {
     if (autoScroll && scrollRef.current) {
