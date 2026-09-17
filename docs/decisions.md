@@ -1,5 +1,15 @@
 ## PRISM.Web Deployment
 
+## ExtractionStatus Cache-Hit Fix - 2026-09-17
+**Context:** The API previously inferred a paper's completion status by checking if the `Summary` field was non-empty, failing to distinguish between a real summary and a failed-attempt error message. This led to permanently failed papers appearing as "Audit Complete" (cache hits) with empty claim lists. Additionally, the cache-hit logic wasn't status-aware, and the `ContentHash` unique database constraint prevented falling through to generate a new `FileId` for retry extractions.
+**Decision:** 
+1. Replaced the inferred status with an explicit `ExtractionStatus` enum (`Pending`, `InProgress`, `Completed`, `Failed`).
+2. Updated `SubmitPaperEndPoint` to branch intelligently on cache hits: `Completed` serves the cache hit, `Pending`/`InProgress` joins the existing chat/SignalR subscription, and `Failed` initiates a retry.
+3. Overcame the `ContentHash` unique constraint on retry by resetting the existing `FileRecord` to `Pending` and wiping the old `Summary`, reusing the exact same `FileId` for the fresh extraction. 
+4. Corrected the migration backfill SQL to accurately identify failed historical rows.
+**Alternatives:** Attempting to fall through and create a `Guid.NewGuid()` for the `Failed` branch (resulted in a 500 DB unique constraint violation). Preserving the old `Summary` error text (rejected: wiping it is a deliberate trade-off to ensure a clean state and prevent the UI from surfacing stale errors during the retry).
+**Consequences:** True extraction status is accurately rendered, failed papers can be seamlessly retried without DB constraints failing, and new tabs joining in-progress papers no longer trigger duplicate extractions.
+
 ## Entra External ID (CIAM) - 2026-09-15/16
 **Context:** Need a customer-facing demo identity, not an employee identity (workforce Entra ID).
 **Decision:** Confirmed Entra External ID (CIAM) as the auth product in use. Documented the Instance and TenantId config shape (separate keys, not a combined Authority string) and the exact issuer format for this tenant.
