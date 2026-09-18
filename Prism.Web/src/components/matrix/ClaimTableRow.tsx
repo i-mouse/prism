@@ -24,15 +24,18 @@ export function ClaimTableRow({ claim, onViewEvidence }: ClaimTableRowProps) {
         isSelected ? "bg-slate-50" : "hover:bg-slate-50"
       )}
     >
-      <div className="min-w-0 pr-4 text-slate-800 text-sm">
-        <p className={cn("line-clamp-2 leading-snug", isSelected && "font-medium")}>
-          {claim.claimSummary}
-        </p>
-        {claim.missing && (
-          <p className="mt-0.5 text-[11px] text-red-600">
-            No supporting evidence found
+      <div className="min-w-0 pr-4 text-slate-800 text-sm flex items-start gap-3">
+        <span className="text-slate-400 font-mono text-xs mt-[3px] shrink-0 w-5 text-right select-none">{claim.position}.</span>
+        <div className="flex-1 min-w-0">
+          <p className={cn("line-clamp-2 leading-snug", isSelected && "font-medium")}>
+            {claim.claimSummary}
           </p>
-        )}
+          {claim.missing && (
+            <p className="mt-0.5 text-[11px] text-red-600">
+              No supporting evidence found
+            </p>
+          )}
+        </div>
       </div>
       <div className="flex justify-start">
         <VerdictPill verdict={verdict} size="sm" />

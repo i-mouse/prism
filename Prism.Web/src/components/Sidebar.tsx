@@ -10,9 +10,6 @@ import {
   ChevronRight,
   X,
   FileText,
-  Home,
-  BookOpen,
-  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,12 +31,6 @@ interface SidebarProps {
   onToggleCollapse?: () => void;
   onCloseMobile?: () => void;
 }
-
-const navItems = [
-  { label: "Home", Icon: Home },
-  { label: "Recent Papers", Icon: BookOpen },
-  { label: "Settings", Icon: Settings },
-];
 
 export function Sidebar({
   activeChatId,
@@ -63,16 +54,16 @@ export function Sidebar({
   return (
     <aside className="flex h-full flex-col border-r border-hairline bg-surface overflow-y-auto w-full">
       {/* ── Logo area ─────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 pt-5 pb-4">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <PrismLogo className={cn("shrink-0", collapsed ? "h-7 w-7" : "h-7 w-7")} />
+      <div className="flex items-center justify-between px-4 pt-6 pb-5">
+        <div className="flex items-center gap-3 min-w-0">
+          <PrismLogo className={cn("shrink-0 drop-shadow-sm", collapsed ? "h-8 w-8 mx-auto" : "h-8 w-8")} />
           {!collapsed && (
-            <div className="min-w-0">
-              <div className="font-sans font-black text-2xl text-slate-900 leading-tight tracking-tight">
+            <div className="min-w-0 flex flex-col justify-center">
+              <div className="font-sans font-black text-2xl tracking-tighter text-slate-900 leading-none">
                 PRISM
               </div>
-              <div className="font-sans text-xs text-slate-500 leading-tight">
-                Audit the claims. Verify the evidence.
+              <div className="font-sans text-[11px] font-medium text-slate-500 uppercase tracking-widest mt-1">
+                Paper Intelligence
               </div>
             </div>
           )}
@@ -113,21 +104,7 @@ export function Sidebar({
         />
       </div>
 
-      {/* ── Nav links ────────────────────────────── */}
-      {!collapsed && (
-        <nav className="px-3 pb-4">
-          {navItems.map(({ label, Icon }) => (
-            <button
-              key={label}
-              type="button"
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {label}
-            </button>
-          ))}
-        </nav>
-      )}
+
 
       {/* ── Current paper ─────────────────────────── */}
       {activeChat && !collapsed && (

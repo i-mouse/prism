@@ -61,8 +61,8 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
                 className={cn(
                   "flex items-center gap-1.5 rounded-full border px-4 py-1 text-sm font-medium transition-colors",
                   isActive
-                    ? "border-slate-800 bg-slate-800 text-white"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                    ? "border-slate-300 bg-slate-100 text-slate-900 shadow-sm"
+                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 )}
               >
                 {/* Colour dot for status filters */}
@@ -84,7 +84,7 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
                     className={cn(
                       "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 font-mono text-[10px] font-semibold",
                       isActive
-                        ? "bg-white/20 text-white"
+                        ? "bg-slate-300 text-slate-800"
                         : "bg-slate-100 text-slate-600"
                     )}
                   >
@@ -105,6 +105,13 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
 
       {/* ── Claims list ── */}
       <div className="flex flex-col border-t border-slate-100">
+        {/* Table Header */}
+        <div className="grid grid-cols-[minmax(0,1fr)_160px_140px] gap-6 items-center px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+          <div className="font-sans text-xs font-semibold text-slate-500 uppercase tracking-wider">Claim</div>
+          <div className="font-sans text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</div>
+          <div className="font-sans text-xs font-semibold text-slate-500 uppercase tracking-wider text-right pr-4">Action</div>
+        </div>
+
         {paginatedClaims.length === 0 ? (
           <div className="py-8 text-center font-sans text-sm text-slate-500">
             No claims match this filter.

@@ -21,20 +21,20 @@ export function PrismLogo({ className }: { className?: string }) {
           />
         </mask>
         <radialGradient id={topGrad} cx="50%" cy="16%" r="75%">
-          <stop offset="0%" stopColor="#f59e0b" />
-          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+          <stop offset="0%" stopColor="#0f172a" />
+          <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
         </radialGradient>
         <radialGradient id={leftGrad} cx="14%" cy="84%" r="75%">
-          <stop offset="0%" stopColor="#db2777" />
-          <stop offset="100%" stopColor="#db2777" stopOpacity="0" />
+          <stop offset="0%" stopColor="#6366f1" />
+          <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
         </radialGradient>
         <radialGradient id={rightGrad} cx="86%" cy="84%" r="75%">
-          <stop offset="0%" stopColor="#14b8a6" />
-          <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
         </radialGradient>
       </defs>
       <g mask={`url(#${maskId})`}>
-        <rect x="0" y="0" width="100" height="100" fill="#f59e0b" />
+        <rect x="0" y="0" width="100" height="100" fill="#0f172a" />
         <rect x="0" y="0" width="100" height="100" fill={`url(#${leftGrad})`} />
         <rect x="0" y="0" width="100" height="100" fill={`url(#${rightGrad})`} />
         <rect x="0" y="0" width="100" height="100" fill={`url(#${topGrad})`} />
