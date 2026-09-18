@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUp, ChevronDown, Copy, MessageCircle, RotateCw, Square, Sparkles } from "lucide-react";
+import { ArrowUp, ChevronDown, Copy, MessageCircle, Square, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { useChatStream } from "@/hooks/useChatStream";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
@@ -113,7 +113,6 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
     }
   };
 
-  const handleRegenerate = () => toast("Regenerate coming soon");
 
   const handleInputFocus = () => {
     if (!isLgUp && sheetState === "peek") setSheetState("half");
@@ -127,7 +126,6 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
       isSending={isSending}
       onClaimClick={handleClaimClick}
       onCopy={handleCopy}
-      onRegenerate={handleRegenerate}
       onFollowUp={sendMessage}
     />
   );
@@ -272,7 +270,6 @@ function MessageList({
   isSending,
   onClaimClick,
   onCopy,
-  onRegenerate,
   onFollowUp,
 }: {
   turns: ChatTurn[];
@@ -280,7 +277,6 @@ function MessageList({
   isSending: boolean;
   onClaimClick: (claimId: string) => void;
   onCopy: (turn: ChatTurn) => void;
-  onRegenerate: () => void;
   onFollowUp: (prompt: string) => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -345,7 +341,7 @@ function MessageList({
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      <div ref={scrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-3">
+      <div ref={scrollRef} className="min-h-0 flex-1 space-y-6 overflow-y-auto bg-slate-50 p-6 pb-40">
         {turns.map((turn, i) =>
           turn.role === "user" ? (
             <UserTurnBubble key={i} turn={turn} />
@@ -357,7 +353,6 @@ function MessageList({
               isSending={isSending}
               onClaimClick={onClaimClick}
               onCopy={() => onCopy(turn)}
-              onRegenerate={onRegenerate}
               onFollowUp={onFollowUp}
             />
           )
@@ -382,9 +377,17 @@ function MessageList({
 function UserTurnBubble({ turn }: { turn: ChatTurn }) {
   const text = turn.blocks.map((b) => (b.type === "text" ? b.content : "")).join("");
   return (
-    <div className="flex justify-end">
-      <div className="bg-slate-800 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] text-sm">
-        {text}
+    <div className="flex justify-end gap-3 items-start">
+      <div className="flex flex-col items-end max-w-[80%]">
+        <div className="bg-[#fdf2ece6] text-slate-900 rounded-2xl rounded-tr-sm px-5 py-4 text-sm shadow-sm">
+          {text}
+        </div>
+        <div className="text-[10px] text-slate-400 mt-1.5 mr-1 font-medium">
+          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </div>
+      </div>
+      <div className="bg-slate-800 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
+        N
       </div>
     </div>
   );
@@ -396,7 +399,6 @@ function AssistantTurn({
   isSending,
   onClaimClick,
   onCopy,
-  onRegenerate,
   onFollowUp,
 }: {
   turn: ChatTurn;
@@ -404,7 +406,6 @@ function AssistantTurn({
   isSending: boolean;
   onClaimClick: (claimId: string) => void;
   onCopy: () => void;
-  onRegenerate: () => void;
   onFollowUp: (prompt: string) => void;
 }) {
   const isThinking = isSending && turn.isStreaming && turn.blocks.length === 0;
@@ -414,9 +415,9 @@ function AssistantTurn({
 
   if (isThinking) {
     return (
-      <div className="flex gap-3">
-        <Sparkles className="h-6 w-6 text-red-500 mt-1 shrink-0" />
-        <div className="flex items-center gap-1.5 pt-1.5">
+      <div className="flex gap-4">
+        <GradientSparkle className="h-6 w-6 shrink-0 mt-1" />
+        <div className="flex items-center gap-1.5 pt-1.5 bg-white border border-slate-200 shadow-sm rounded-2xl rounded-tl-sm px-5 py-4">
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "150ms" }} />
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "300ms" }} />
@@ -426,18 +427,25 @@ function AssistantTurn({
   }
 
   return (
-    <div>
-      <div className="group flex gap-3">
-        <Sparkles className="h-6 w-6 text-red-500 mt-1 shrink-0" />
-        <div className="bg-white border border-slate-200 shadow-sm rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-sm text-slate-800 prose prose-sm prose-slate space-y-3 whitespace-pre-wrap max-w-none [contain:layout_paint]">
-          <ChatMarkdown
-            content={turnToMarkdown(turn, showCursor)}
-            claimsById={claimsById(turn)}
-            onClaimClick={onClaimClick}
-          />
+    <div className="flex flex-col">
+      <div className="group flex gap-4">
+        <div className="shrink-0 mt-2">
+          <GradientSparkle className="h-6 w-6" />
+        </div>
+        <div className="flex flex-col w-full max-w-[85%]">
+          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl rounded-tl-sm p-5 text-sm text-slate-800 prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-slate-900 prose-p:leading-relaxed prose-a:text-blue-600 prose-li:marker:text-slate-400 [contain:layout_paint]">
+            <ChatMarkdown
+              content={turnToMarkdown(turn, showCursor)}
+              claimsById={claimsById(turn)}
+              onClaimClick={onClaimClick}
+            />
+          </div>
 
           {isDone && (
-            <div className="mt-2 flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+            <div className="mt-2 flex items-center justify-end gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 px-2">
+              <span className="text-[10px] text-slate-400 mr-auto ml-1 font-medium">
+                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
               <button
                 type="button"
                 onClick={onCopy}
@@ -448,11 +456,17 @@ function AssistantTurn({
               </button>
               <button
                 type="button"
-                onClick={onRegenerate}
-                title="Regenerate"
+                title="Helpful"
                 className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
               >
-                <RotateCw className="h-3.5 w-3.5" />
+                <ThumbsUp className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                title="Not helpful"
+                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+              >
+                <ThumbsDown className="h-3.5 w-3.5" />
               </button>
             </div>
           )}
@@ -460,13 +474,13 @@ function AssistantTurn({
       </div>
 
       {showFollowUps && (
-        <div className="ml-9 mt-3 flex flex-wrap gap-2">
+        <div className="ml-10 mt-3 flex flex-wrap gap-2">
           {followUpsFor(turn).map((prompt) => (
             <button
               key={prompt}
               type="button"
               onClick={() => onFollowUp(prompt)}
-              className="rounded-full border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
+              className="rounded-full border border-slate-200 bg-white px-4 py-1.5 font-sans text-sm text-slate-600 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-900"
             >
               {prompt}
             </button>
@@ -477,6 +491,18 @@ function AssistantTurn({
   );
 }
 
+const GradientSparkle = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="url(#sparkle-grad)" className={className}>
+    <defs>
+      <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop stopColor="#f97316" offset="0%" />
+        <stop stopColor="#ec4899" offset="100%" />
+      </linearGradient>
+    </defs>
+    <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z" />
+  </svg>
+);
+
 function ChatInput({
   onSend,
   onStop,
@@ -486,35 +512,43 @@ function ChatInput({
   isChatOpen,
   setIsChatOpen,
   isLgUp,
+  fileName,
 }: {
-  onSend: (message: string) => void;
+  onSend: (msg: string) => void;
   onStop: () => void;
   isSending: boolean;
-  placeholder: string;
+  placeholder?: string;
   onFocus?: () => void;
   isChatOpen?: boolean;
-  setIsChatOpen?: (open: boolean | ((prev: boolean) => boolean)) => void;
+  setIsChatOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   isLgUp?: boolean;
+  fileName?: string;
 }) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
+  const adjustHeight = () => {
     const el = textareaRef.current;
-    if (el) {
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight}px`;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 96)}px`; // max-h-24
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [message]);
+
+  const handleSubmit = () => {
+    if (!message.trim() || isSending) return;
+    onSend(message);
+    setMessage("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
     }
   };
 
-  const handleSubmit = () => {
-    const trimmed = message.trim();
-    if (!trimmed || isSending) return;
-    onSend(trimmed);
-    setMessage("");
-    const el = textareaRef.current;
-    if (el) el.style.height = "auto";
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -526,81 +560,70 @@ function ChatInput({
 
   if (isLgUp && setIsChatOpen !== undefined && isChatOpen !== undefined) {
     return (
-      <div
-        className={cn(
-          "flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-lg transition-shadow duration-150 z-50",
-          "focus-within:border-slate-300 focus-within:shadow-xl"
-        )}
-        onClick={() => textareaRef.current?.focus()}
-      >
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsChatOpen((v) => !v);
-          }}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-slate-100"
-          aria-label={isChatOpen ? "Close chat" : "Open chat"}
-          title={isChatOpen ? "Close chat" : "Open chat"}
+      <div className="flex flex-col items-center w-full">
+        <div
+          className={cn(
+            "bg-white border border-slate-200 shadow-lg rounded-full px-4 py-2 flex items-center gap-3 w-full transition-shadow duration-150 z-50",
+            "focus-within:border-slate-300 focus-within:shadow-xl"
+          )}
+          onClick={() => textareaRef.current?.focus()}
         >
-          <Sparkles className="h-4 w-4 text-red-500" strokeWidth={1.5} />
-        </button>
+          <GradientSparkle className="h-6 w-6 shrink-0" />
 
-        <textarea
-          ref={textareaRef}
-          value={message}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          onFocus={onFocus}
-          placeholder={placeholder}
-          disabled={isSending}
-          rows={1}
-          className="flex-1 min-w-0 resize-none overflow-y-auto bg-transparent font-sans text-sm text-slate-800 placeholder:text-slate-400 outline-none disabled:opacity-60 max-h-24 pt-0.5"
-        />
+          <textarea
+            ref={textareaRef}
+            value={message}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onFocus={onFocus}
+            placeholder={placeholder}
+            disabled={isSending}
+            rows={1}
+            className="flex-1 min-w-0 resize-none overflow-y-auto bg-transparent font-sans text-sm text-slate-900 placeholder:text-slate-400 outline-none disabled:opacity-60 max-h-24 pt-2.5"
+          />
 
-        {isSending ? (
-          <button
-            type="button"
-            onClick={onStop}
-            className="flex shrink-0 items-center justify-center rounded-xl bg-slate-800 text-white shadow-sm transition-all hover:bg-slate-900 p-2"
-          >
-            <Square className="h-4 w-4" fill="currentColor" />
+          <button className="text-slate-400 hover:text-slate-600 transition-colors p-2 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
-        ) : (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSubmit();
-            }}
-            disabled={!message.trim()}
-            className={cn(
-              "flex shrink-0 items-center justify-center rounded-xl transition-all duration-150 p-2",
-              message.trim() && !isSending
-                ? "bg-slate-800 text-white hover:bg-slate-900 shadow-sm"
-                : "bg-slate-100 text-slate-400 cursor-not-allowed"
-            )}
-            aria-label="Send"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </button>
-        )}
+
+          {isSending ? (
+            <button
+              type="button"
+              onClick={onStop}
+              className="flex shrink-0 items-center justify-center rounded-full bg-slate-800 text-white shadow-md transition-all hover:bg-slate-900 w-10 h-10"
+            >
+              <Square className="h-4 w-4" fill="currentColor" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSubmit();
+              }}
+              disabled={!message.trim()}
+              className={cn(
+                "flex shrink-0 items-center justify-center rounded-full transition-all duration-150 w-10 h-10",
+                message.trim() && !isSending
+                  ? "bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-md hover:scale-105"
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
+              )}
+              aria-label="Send"
+            >
+              <ArrowUp className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-slate-400 mt-3 text-center px-4">
+          Responses are based only on the content of {fileName ?? "this paper"}. Always verify important information.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="shrink-0 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:px-6 lg:pb-4 lg:pt-3">
-      <div
-        className={cn(
-          "flex w-full items-end gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm",
-          "transition-all duration-150",
-          "focus-within:border-slate-300 focus-within:shadow-md"
-        )}
-      >
-        <div className="flex h-6 w-6 shrink-0 items-center justify-center mb-1">
-          <Sparkles className="h-4 w-4 text-red-500" strokeWidth={1.5} />
-        </div>
+    <div className="flex flex-col border-t border-hairline bg-white pb-safe pt-2">
+      <div className="flex items-end gap-2 px-3 pb-3">
         <textarea
           ref={textareaRef}
           value={message}
@@ -610,16 +633,13 @@ function ChatInput({
           placeholder={placeholder}
           disabled={isSending}
           rows={1}
-          className={cn(
-            "max-h-24 flex-1 resize-none overflow-y-auto bg-transparent mb-1",
-            "font-sans text-sm text-slate-800 placeholder:text-slate-400 outline-none"
-          )}
+          className="max-h-32 min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-hairline bg-surface-subtle px-4 py-2.5 font-sans text-sm text-ink placeholder:text-ink-tertiary focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-60"
         />
         {isSending ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex shrink-0 items-center justify-center rounded-xl bg-slate-800 text-white shadow-sm transition-all hover:bg-slate-900 p-2"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-white shadow-sm transition-opacity hover:opacity-90"
           >
             <Square className="h-4 w-4" fill="currentColor" />
           </button>
@@ -628,15 +648,9 @@ function ChatInput({
             type="button"
             onClick={handleSubmit}
             disabled={!message.trim()}
-            className={cn(
-              "flex shrink-0 items-center justify-center rounded-xl transition-all duration-150 p-2",
-              message.trim() && !isSending
-                ? "bg-slate-800 text-white hover:bg-slate-900 shadow-sm"
-                : "bg-slate-100 text-slate-400 cursor-not-allowed"
-            )}
-            aria-label="Send"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-800 text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            <ArrowUp className="h-4 w-4" />
+            <ArrowUp className="h-5 w-5" />
           </button>
         )}
       </div>
