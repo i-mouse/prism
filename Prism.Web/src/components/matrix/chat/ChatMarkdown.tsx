@@ -62,8 +62,8 @@ export function ChatMarkdown({ content, claimsById, onClaimClick }: ChatMarkdown
           {children}
         </blockquote>
       ),
-      ul: ({ children }) => <ul className="my-1 list-disc space-y-0.5 pl-5">{children}</ul>,
-      ol: ({ children }) => <ol className="my-1 list-decimal space-y-0.5 pl-5">{children}</ol>,
+      ul: ({ children }) => <ul className="list-disc pl-5 my-2">{children}</ul>,
+      ol: ({ children }) => <ol className="list-decimal pl-5 my-2">{children}</ol>,
       li: ({ children }) => <li className="leading-[1.45]">{children}</li>,
       code: ({ className, children, ...props }) => {
         const isBlock = /language-/.test(className ?? "");

@@ -136,7 +136,7 @@ export const UploadZone = forwardRef<UploadZoneHandle, UploadZoneProps>(function
       />
       <Button
         className={cn(
-          "h-auto w-full gap-2 rounded-lg bg-brand px-4 py-2.5 font-sans text-sm font-medium text-white hover:bg-brand-hover focus-visible:ring-2 focus-visible:ring-brand-subtle transition-all duration-150 ease-smooth",
+          "h-auto w-full gap-2 rounded-lg bg-slate-800 px-4 py-2.5 font-sans text-sm font-medium text-white hover:bg-slate-900 focus-visible:ring-2 focus-visible:ring-slate-400 transition-all duration-150 ease-smooth",
           collapsed ? "px-0 justify-center min-w-[2.75rem]" : ""
         )}
         disabled={uploading}

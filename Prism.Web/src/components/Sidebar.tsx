@@ -5,7 +5,16 @@ import { UploadZone, type UploadZoneHandle } from "@/components/sidebar/UploadZo
 import { CurrentContextCard } from "@/components/sidebar/CurrentContextCard";
 import { PaperListItem } from "@/components/sidebar/PaperListItem";
 import { SidebarFooter } from "@/components/sidebar/SidebarFooter";
-import { ChevronLeft, ChevronRight, X, FileText } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  FileText,
+  Home,
+  BookOpen,
+  Settings,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   activeChatId: string;
@@ -14,6 +23,8 @@ interface SidebarProps {
   getConnectionId: () => string | null;
   joinChat: (chatId: string) => Promise<void>;
   fileSizeLabels: Record<string, string>;
+  /** completedAt from PaperClaimsResponse — used for "Completed X ago" in CurrentContextCard */
+  completedAt?: string | null;
   onUploadStarted: (chatId: string, file: File) => void;
   onUploaded: (chatId: string, fileId: string, file: File, isCacheHit: boolean) => void;
   onUploadFailed: (chatId: string) => void;
@@ -24,6 +35,12 @@ interface SidebarProps {
   onCloseMobile?: () => void;
 }
 
+const navItems = [
+  { label: "Home", Icon: Home },
+  { label: "Recent Papers", Icon: BookOpen },
+  { label: "Settings", Icon: Settings },
+];
+
 export function Sidebar({
   activeChatId,
   chats,
@@ -31,6 +48,7 @@ export function Sidebar({
   getConnectionId,
   joinChat,
   fileSizeLabels,
+  completedAt,
   onUploadStarted,
   onUploaded,
   onUploadFailed,
@@ -43,31 +61,46 @@ export function Sidebar({
   const activeChat = chats.find((c) => c.chatId === activeChatId) ?? null;
 
   return (
-    <aside className="flex h-full flex-col overflow-y-auto border-r border-hairline bg-surface py-6 px-3 w-full">
-      <div className="flex items-center justify-between pb-4">
-        <div className="flex items-center gap-2 px-1">
-          <PrismLogo className="h-6 w-6 shrink-0" />
-          {!collapsed && <span className="font-sans font-semibold text-ink transition-opacity">Prism</span>}
+    <aside className="flex h-full flex-col border-r border-hairline bg-surface overflow-y-auto w-full">
+      {/* ── Logo area ─────────────────────────────── */}
+      <div className="flex items-center justify-between px-4 pt-5 pb-4">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <PrismLogo className={cn("shrink-0", collapsed ? "h-7 w-7" : "h-7 w-7")} />
+          {!collapsed && (
+            <div className="min-w-0">
+              <div className="font-sans font-black text-2xl text-slate-900 leading-tight tracking-tight">
+                PRISM
+              </div>
+              <div className="font-sans text-xs text-slate-500 leading-tight">
+                Audit the claims. Verify the evidence.
+              </div>
+            </div>
+          )}
         </div>
-        
-        {/* Desktop Collapse Toggle */}
-        <button 
-          onClick={onToggleCollapse} 
-          className="hidden lg:flex items-center justify-center h-6 w-6 text-ink-tertiary hover:text-ink transition-colors"
+
+        {/* Desktop collapse toggle */}
+        <button
+          onClick={onToggleCollapse}
+          className="hidden lg:flex items-center justify-center h-6 w-6 text-ink-tertiary hover:text-ink transition-colors shrink-0"
         >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
         </button>
 
-        {/* Mobile Close Button */}
-        <button 
-          onClick={onCloseMobile} 
+        {/* Mobile close button */}
+        <button
+          onClick={onCloseMobile}
           className="lg:hidden flex items-center justify-center h-8 w-8 text-ink-secondary hover:text-ink transition-colors"
         >
           <X className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="pb-6">
+      {/* ── Upload & Analyze ─────────────────────── */}
+      <div className={cn("px-3 pb-4", collapsed && "px-2")}>
         <UploadZone
           ref={uploadZoneRef}
           getConnectionId={getConnectionId}
@@ -80,33 +113,50 @@ export function Sidebar({
         />
       </div>
 
-      {activeChat && !collapsed && (
-        <>
-          <div className="pb-2 px-1 font-sans text-[10px] uppercase tracking-wider text-ink-tertiary">
-            CURRENT PAPER
-          </div>
-          <div className="pb-6">
-            <CurrentContextCard
-              fileName={activeChat.fileName}
-              fileSizeLabel={fileSizeLabels[activeChatId]}
-              extractionStatus={activeChat.extractionStatus}
-            />
-          </div>
-        </>
+      {/* ── Nav links ────────────────────────────── */}
+      {!collapsed && (
+        <nav className="px-3 pb-4">
+          {navItems.map(({ label, Icon }) => (
+            <button
+              key={label}
+              type="button"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {label}
+            </button>
+          ))}
+        </nav>
       )}
 
-      {!collapsed && (
-        <div className="pb-2 px-1 font-sans text-[10px] uppercase tracking-wider text-ink-tertiary">
-          RECENT PAPERS
+      {/* ── Current paper ─────────────────────────── */}
+      {activeChat && !collapsed && (
+        <div className="px-3 pb-4">
+          <div className="mb-2 px-1 font-sans text-[10px] uppercase tracking-wider text-ink-tertiary">
+            Current Paper
+          </div>
+          <CurrentContextCard
+            fileName={activeChat.fileName}
+            fileSizeLabel={fileSizeLabels[activeChatId]}
+            extractionStatus={activeChat.extractionStatus}
+            completedAt={completedAt}
+          />
         </div>
       )}
-      
-      <div className="flex flex-col gap-1 flex-1">
+
+      {/* ── Recent papers ─────────────────────────── */}
+      {!collapsed && (
+        <div className="mb-2 px-4 font-sans text-[10px] uppercase tracking-wider text-ink-tertiary">
+          Recent Papers
+        </div>
+      )}
+
+      <div className={cn("flex flex-col gap-0.5 flex-1 pb-3", collapsed ? "px-2" : "px-3")}>
         {chats.length === 0 ? (
           !collapsed ? (
-            <div className="px-1 py-4 flex flex-col items-center justify-center text-center gap-2">
-              <FileText className="h-8 w-8 text-ink-tertiary" />
-              <div className="font-sans text-sm text-ink-secondary space-y-1">
+            <div className="px-1 py-6 flex flex-col items-center justify-center text-center gap-2">
+              <FileText className="h-7 w-7 text-ink-tertiary" />
+              <div className="font-sans text-xs text-ink-secondary space-y-0.5">
                 <p>No papers yet.</p>
                 <p>Upload one to get started.</p>
               </div>
@@ -125,6 +175,7 @@ export function Sidebar({
         )}
       </div>
 
+      {/* ── Footer ───────────────────────────────── */}
       {!collapsed && <SidebarFooter />}
     </aside>
   );

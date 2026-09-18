@@ -1,4 +1,4 @@
-import { Share2, Download, MoreHorizontal, FileText, HardDrive, Calendar, File } from "lucide-react";
+import { Share2, Download, ChevronDown, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { ExtractionStatus } from "@/types/api";
-import { extractionStatusMeta, extractionStatusToVerdict } from "@/lib/claimMeta";
 import { relativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -22,126 +21,119 @@ interface PaperHeaderProps {
   onCancel?: () => void;
 }
 
-const secondaryButtonClass =
-  "gap-1.5 rounded-lg border border-hairline bg-surface px-3 py-1.5 font-sans text-sm text-ink hover:border-hairline-strong hover:bg-surface";
-
-const verdictDotClass = {
-  supported: "bg-verdict-supported-icon",
-  partial: "bg-verdict-partial-icon",
-  refused: "bg-verdict-refused-icon",
-  other: "bg-verdict-other-icon",
-} as const;
+const actionButtonClass =
+  "h-9 flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 font-sans text-sm text-slate-700 hover:border-slate-300 hover:bg-slate-50";
 
 export function PaperHeader({
   fileName,
   extractionStatus,
   completedAt,
-  fileSize,
-  pageCount,
-  uploadedAt,
   onCancel,
 }: PaperHeaderProps) {
-  const status = extractionStatusMeta[extractionStatus];
-  const verdict = extractionStatusToVerdict[extractionStatus];
+  const isCompleted = extractionStatus === "Completed";
+  const isFailed = extractionStatus === "Failed";
   const comingSoon = () => toast("Coming soon");
 
+  const statusText = isCompleted
+    ? completedAt
+      ? `Completed ${relativeTime(completedAt)}`
+      : "Completed"
+    : isFailed
+      ? "Audit failed"
+      : "Auditing paper…";
+
   return (
-    <div className="flex flex-col gap-3">
-    <div className="flex items-start md:items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4">
+      {/* Left: PDF badge + filename + status */}
       <div className="flex items-center gap-3 md:gap-4 min-w-0">
-        <div className="hidden md:flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EEF2FF] border border-[#E0E7FF]">
-          <FileText className="h-6 w-6 text-[#6366F1]" />
+        {/* Red PDF icon badge */}
+        <div className="hidden md:flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500 text-white">
+          <FileText className="h-6 w-6" strokeWidth={1.5} />
         </div>
+
         <div className="min-w-0">
+          {/* Filename + PDF pill */}
           <div className="flex items-center gap-2">
-            <div className="truncate font-sans text-lg md:text-2xl font-semibold text-ink leading-tight">{fileName}</div>
-            <span className="rounded-full bg-surface-subtle border border-hairline px-2 py-0.5 font-sans text-[10px] font-medium text-ink-secondary uppercase tracking-wider">PDF</span>
+            <h1 className="truncate font-sans text-lg md:text-2xl font-bold text-slate-900 leading-tight">
+              {fileName}
+            </h1>
+            <span className="shrink-0 rounded-md bg-red-100 px-1.5 py-0.5 font-sans text-[10px] font-bold text-red-600 uppercase tracking-wider">
+              PDF
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 mt-1">
-            {extractionStatus === "Completed" ? (
-              <>
-                <span className={cn("h-1.5 w-1.5 rounded-full", verdictDotClass[verdict])} />
-                <span className="font-sans text-xs md:text-sm text-ink-secondary truncate">
-                  {completedAt ? `Completed ${relativeTime(completedAt)}` : status.label}
-                </span>
-              </>
-            ) : extractionStatus === "Failed" ? (
-              <span className="font-sans text-xs md:text-sm text-refused truncate">
-                Audit failed
-              </span>
-            ) : (
-              <span className="font-sans text-xs md:text-sm text-ink-secondary truncate">
-                Auditing paper
-              </span>
-            )}
+
+          {/* Status row */}
+          <div className="mt-0.5 flex items-center gap-1.5">
+            <span
+              className={cn(
+                "inline-block h-1.5 w-1.5 rounded-full shrink-0",
+                isCompleted
+                  ? "bg-green-500"
+                  : isFailed
+                    ? "bg-red-500"
+                    : "bg-slate-500 animate-pulse"
+              )}
+            />
+            <span
+              className={cn(
+                "font-sans text-xs md:text-sm",
+                isFailed ? "text-red-700" : "text-slate-500"
+              )}
+            >
+              {statusText}
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="hidden lg:flex items-center gap-8 mr-auto ml-12">
-        {fileSize && (
-          <div className="flex items-center gap-3">
-            <HardDrive className="h-4 w-4 text-ink-tertiary" />
-            <div className="flex flex-col">
-              <span className="font-sans text-xs font-semibold text-ink">{fileSize}</span>
-              <span className="font-sans text-[10px] text-ink-secondary">File size</span>
-            </div>
-          </div>
-        )}
-        {pageCount !== undefined && (
-          <div className="flex items-center gap-3">
-            <File className="h-4 w-4 text-ink-tertiary" />
-            <div className="flex flex-col">
-              <span className="font-sans text-xs font-semibold text-ink">{pageCount} pages</span>
-              <span className="font-sans text-[10px] text-ink-secondary">Document</span>
-            </div>
-          </div>
-        )}
-        {uploadedAt && (
-          <div className="flex items-center gap-3">
-            <Calendar className="h-4 w-4 text-ink-tertiary" />
-            <div className="flex flex-col">
-              <span className="font-sans text-xs font-semibold text-ink">{uploadedAt}</span>
-              <span className="font-sans text-[10px] text-ink-secondary">Uploaded</span>
-            </div>
-          </div>
-        )}
-      </div>
-
+      {/* Right: action buttons */}
       <div className="flex shrink-0 items-center gap-2">
         {extractionStatus !== "Completed" && onCancel ? (
-          <Button variant="outline" size="sm" onClick={onCancel} className={cn(secondaryButtonClass, "hidden md:flex")}>
-            <Share2 className="h-4 w-4 hidden" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onCancel}
+            className={cn(actionButtonClass, "hidden md:flex")}
+          >
             Cancel
           </Button>
         ) : (
           <>
-            <Button variant="outline" size="sm" onClick={comingSoon} className={cn(secondaryButtonClass, "hidden md:flex")}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={comingSoon}
+              className={cn(actionButtonClass, "hidden md:flex")}
+            >
               <Share2 className="h-4 w-4" />
               Share
             </Button>
-            <Button variant="outline" size="sm" onClick={comingSoon} className={cn(secondaryButtonClass, "hidden md:flex")}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={comingSoon}
+              className={cn(actionButtonClass, "hidden md:flex")}
+            >
               <Download className="h-4 w-4" />
               Export
-            </Button>
-            <Button variant="outline" size="sm" onClick={comingSoon} className={cn(secondaryButtonClass, "hidden md:flex px-3")}>
-              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </>
         )}
 
-        {/* Mobile: Share/Export/More collapse into one overflow menu */}
+        {/* Mobile overflow menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className={cn(secondaryButtonClass, "flex md:hidden px-2")}>
-              <MoreHorizontal className="h-4 w-4" />
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(actionButtonClass, "flex md:hidden px-2")}
+            >
+              <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             {extractionStatus !== "Completed" && onCancel ? (
-              <DropdownMenuItem onSelect={onCancel}>
-                Cancel
-              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={onCancel}>Cancel</DropdownMenuItem>
             ) : (
               <>
                 <DropdownMenuItem onSelect={comingSoon}>
@@ -152,17 +144,11 @@ export function PaperHeader({
                   <Download className="mr-2 h-4 w-4" />
                   Export
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={comingSoon}>
-                  <MoreHorizontal className="mr-2 h-4 w-4" />
-                  More
-                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
-
     </div>
   );
 }

@@ -260,56 +260,63 @@ export function AppShell() {
     e.stopPropagation();
     dragCounter.current = 0;
     setIsDraggingOver(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       uploadZoneRef.current?.handleFiles(e.dataTransfer.files);
     }
   };
 
   return (
-    <div 
-      className="h-dvh-safe flex flex-col overflow-hidden relative"
+    <div
+      className="h-dvh-safe flex flex-col overflow-hidden relative bg-surface-subtle"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      {/* Drag-over overlay */}
       {isDraggingOver && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-brand-subtle/80 backdrop-blur pointer-events-none">
           <div className="font-sans text-3xl font-semibold text-brand">Drop to audit</div>
         </div>
       )}
+
       <Toaster />
+
+      {/* Mobile TopBar — hidden on desktop (sidebar carries the logo there) */}
       <TopBar onMenuClick={() => setIsMobileSidebarOpen(true)} />
+
       {user?.provider === "guest" && <GuestBanner />}
+
+      {/* ── 3-pane layout ───────────────────────────────────────────────── */}
       <div
         className={cn(
-          "flex flex-1 overflow-hidden transition-[grid-template-columns] duration-200 ease-smooth",
-          // grid-auto-rows defaults to `auto`, which sizes the single implicit
-          // row to its content's max-content height rather than clamping to
-          // this container's own (flex-bounded) height - with 1024px+ content
-          // taller than the viewport (an 18-claim list, say), that inflated
-          // row pushed the chat panel's bottom past the viewport where
-          // overflow-hidden clipped it invisibly rather than scrolling to it.
-          // minmax(0,1fr) makes the row fill exactly the container's height
-          // and lets `main`'s own min-h-0/overflow-y-auto do the scrolling.
+          "flex flex-1 overflow-hidden",
           "lg:grid lg:grid-rows-[minmax(0,1fr)]",
-          drawerOpen ? (desktopCollapsed ? "lg:grid-cols-[64px_minmax(0,1fr)_400px]" : "lg:grid-cols-[240px_minmax(0,1fr)_400px]") : (desktopCollapsed ? "lg:grid-cols-[64px_minmax(0,1fr)]" : "lg:grid-cols-[240px_minmax(0,1fr)]")
+          drawerOpen
+            ? desktopCollapsed
+              ? "lg:grid-cols-[64px_minmax(0,1fr)_400px]"
+              : "lg:grid-cols-[260px_minmax(0,1fr)_400px]"
+            : desktopCollapsed
+              ? "lg:grid-cols-[64px_minmax(0,1fr)]"
+              : "lg:grid-cols-[260px_minmax(0,1fr)]"
         )}
       >
-        {/* Mobile Sidebar Overlay */}
+        {/* ── Mobile sidebar overlay backdrop ─────────────────────────── */}
         {isMobileSidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm lg:hidden"
             onClick={() => setIsMobileSidebarOpen(false)}
           />
         )}
-        
-        {/* Sidebar */}
-        <div className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 lg:w-auto transform transition-transform duration-200 ease-smooth lg:static lg:translate-x-0 lg:block",
-          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}>
+
+        {/* ── Left Sidebar ─────────────────────────────────────────────── */}
+        <div
+          className={cn(
+            "fixed inset-y-0 left-0 z-50 w-72 lg:w-auto transform transition-transform duration-200 ease-smooth lg:static lg:translate-x-0 lg:block",
+            isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
           <Sidebar
             activeChatId={activeChatId}
             chats={chats}
@@ -317,6 +324,7 @@ export function AppShell() {
             getConnectionId={getConnectionId}
             joinChat={joinChat}
             fileSizeLabels={fileSizeLabels}
+            completedAt={paperClaims?.completedAt}
             onUploadStarted={handleUploadStarted}
             onUploaded={handleUploaded}
             onUploadFailed={handleUploadFailed}
@@ -328,36 +336,46 @@ export function AppShell() {
           />
         </div>
 
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface relative">
-          <MatrixView
-            paperClaims={paperClaims}
-            isLoading={isLoading}
-            activePaperId={activePaperId}
-            activeChatId={activeChatId}
-            pendingUpload={pendingUpload}
-            cacheHitPending={cacheHitPaperId !== null && cacheHitPaperId === activePaperId}
-            onCacheHitResolved={handleCacheHitResolved}
-            onCacheHitCancel={handleCacheHitCancel}
-            onViewEvidence={setSelectedClaimId}
-            onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
-            isGoogleUser={user?.provider === "google"}
-          />
+        {/* ── Main Content ─────────────────────────────────────────────── */}
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface-subtle relative">
+          {/* Inner white card container with slight inset */}
+          <div className="flex h-full flex-col overflow-hidden lg:m-3 lg:rounded-xl lg:border lg:border-hairline lg:bg-surface lg:shadow-card">
+            <MatrixView
+              paperClaims={paperClaims}
+              isLoading={isLoading}
+              activePaperId={activePaperId}
+              activeChatId={activeChatId}
+              pendingUpload={pendingUpload}
+              cacheHitPending={cacheHitPaperId !== null && cacheHitPaperId === activePaperId}
+              onCacheHitResolved={handleCacheHitResolved}
+              onCacheHitCancel={handleCacheHitCancel}
+              onViewEvidence={setSelectedClaimId}
+              onUploadClick={() => uploadZoneRef.current?.openFilePicker()}
+              isGoogleUser={user?.provider === "google"}
+            />
+          </div>
         </main>
-        
-        {/* Evidence Drawer Mobile Overlay */}
+
+        {/* ── Evidence Drawer mobile backdrop ──────────────────────────── */}
         {drawerOpen && (
-          <div 
+          <div
             className="fixed inset-0 z-[55] bg-ink/40 backdrop-blur-sm lg:hidden"
             onClick={() => setSelectedClaimId(null)}
           />
         )}
 
-        <div className={cn(
-          "fixed inset-y-0 right-0 z-[60] w-full md:w-[400px] lg:w-auto transform transition-transform duration-200 ease-smooth lg:static lg:block shadow-drawer",
-          drawerOpen ? "translate-x-0" : "translate-x-full lg:hidden"
-        )}>
+        {/* ── Right Evidence Drawer ─────────────────────────────────────── */}
+        <div
+          className={cn(
+            "fixed inset-y-0 right-0 z-[60] w-full md:w-[400px] lg:w-auto transform transition-transform duration-200 ease-smooth lg:static lg:block",
+            drawerOpen ? "translate-x-0" : "translate-x-full lg:hidden"
+          )}
+        >
           {drawerOpen && (
-            <EvidenceDrawer paperClaims={paperClaims} onClose={() => setSelectedClaimId(null)} />
+            <EvidenceDrawer
+              paperClaims={paperClaims}
+              onClose={() => setSelectedClaimId(null)}
+            />
           )}
         </div>
       </div>

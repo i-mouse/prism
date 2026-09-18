@@ -1,4 +1,4 @@
-import { Check, AlertTriangle, X } from "lucide-react";
+import { Check, Minus, X, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type Verdict = "supported" | "partial" | "refused" | "other";
@@ -7,42 +7,39 @@ const config = {
   supported: {
     label: "SUPPORTED",
     Icon: Check,
-    classes: "bg-verdict-supported-bg text-verdict-supported-text",
-    iconClass: "text-verdict-supported-icon",
+    classes: "bg-green-100 text-green-700",
+    iconContainerClass: "bg-green-700",
   },
   partial: {
-    label: "PARTIAL",
-    Icon: AlertTriangle,
-    classes: "bg-verdict-partial-bg text-verdict-partial-text",
-    iconClass: "text-verdict-partial-icon",
+    label: "PARTIALLY SUPPORTED",
+    Icon: Minus,
+    classes: "bg-orange-100 text-orange-700",
+    iconContainerClass: "bg-orange-700",
   },
   refused: {
     label: "NOT SUPPORTED",
     Icon: X,
-    classes: "bg-verdict-refused-bg text-verdict-refused-text",
-    iconClass: "text-verdict-refused-icon",
+    classes: "bg-red-100 text-red-700",
+    iconContainerClass: "bg-red-700",
   },
   other: {
     label: "OTHER",
     Icon: AlertTriangle,
-    classes: "bg-verdict-other-bg text-verdict-other-text",
-    iconClass: "text-verdict-other-icon",
+    classes: "bg-slate-100 text-slate-700",
+    iconContainerClass: "bg-slate-700",
   },
 } as const;
 
-// Literal per-verdict class names — Tailwind's scanner only picks up
-// string literals, so this can't be built with template interpolation.
 export const verdictBorderClass: Record<Verdict, string> = {
-  supported: "bg-verdict-supported-border",
-  partial: "bg-verdict-partial-border",
-  refused: "bg-verdict-refused-border",
-  other: "bg-verdict-other-border",
+  supported: "bg-green-200",
+  partial: "bg-orange-200",
+  refused: "bg-red-200",
+  other: "bg-slate-200",
 };
 
 export function VerdictPill({
   verdict,
   label,
-  size = "default",
   className,
 }: {
   verdict: Verdict;
@@ -54,16 +51,13 @@ export function VerdictPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full font-mono uppercase tracking-wider",
-        size === "default" && "gap-1.5 px-2.5 py-1 text-xs",
-        size === "sm" && "gap-1.5 px-2 py-0.5 text-[10px]",
-        size === "xs" && "px-1.5 py-0.5 text-[9px]",
+        "inline-flex items-center gap-1.5 rounded-full whitespace-nowrap text-xs font-bold px-2.5 py-1",
         c.classes,
         className
       )}
     >
-      <c.Icon className={cn(size === "xs" ? "h-2.5 w-2.5" : "h-3 w-3", c.iconClass)} strokeWidth={2.5} />
-      {label ?? c.label}
+      <c.Icon className="h-3 w-3 stroke-[3]" />
+      {label || c.label}
     </span>
   );
 }

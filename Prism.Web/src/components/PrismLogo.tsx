@@ -2,28 +2,43 @@ import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 export function PrismLogo({ className }: { className?: string }) {
-  const gradientId = useId();
+  const maskId = useId();
+  const topGrad = useId();
+  const leftGrad = useId();
+  const rightGrad = useId();
 
   return (
-    <svg
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn("h-6 w-6", className)}
-    >
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className={cn("h-6 w-6", className)}>
       <defs>
-        <linearGradient id={gradientId} x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#ec4899" />
-          <stop offset="50%" stopColor="#f97316" />
-          <stop offset="100%" stopColor="#fbbf24" />
-        </linearGradient>
+        <mask id={maskId}>
+          <path
+            d="M 50 16 L 86 84 L 14 84 Z"
+            fill="none"
+            stroke="white"
+            strokeWidth="14"
+            strokeLinejoin="miter"
+            strokeMiterlimit="3"
+          />
+        </mask>
+        <radialGradient id={topGrad} cx="50%" cy="16%" r="75%">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={leftGrad} cx="14%" cy="84%" r="75%">
+          <stop offset="0%" stopColor="#db2777" />
+          <stop offset="100%" stopColor="#db2777" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id={rightGrad} cx="86%" cy="84%" r="75%">
+          <stop offset="0%" stopColor="#14b8a6" />
+          <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
+        </radialGradient>
       </defs>
-      <path
-        d="M 50 15 L 85 85 L 15 85 Z"
-        fill="none"
-        stroke={`url(#${gradientId})`}
-        strokeWidth="14"
-        strokeLinejoin="round"
-      />
+      <g mask={`url(#${maskId})`}>
+        <rect x="0" y="0" width="100" height="100" fill="#f59e0b" />
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${leftGrad})`} />
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${rightGrad})`} />
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${topGrad})`} />
+      </g>
     </svg>
   );
 }

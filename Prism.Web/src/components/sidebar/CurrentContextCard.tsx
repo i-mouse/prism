@@ -1,37 +1,60 @@
 import { FileText } from "lucide-react";
 import type { ExtractionStatus } from "@/types/api";
-import { extractionStatusMeta } from "@/lib/claimMeta";
+import { relativeTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 interface CurrentContextCardProps {
   fileName: string;
   fileSizeLabel?: string | null;
   extractionStatus: ExtractionStatus;
+  completedAt?: string | null;
 }
 
-export function CurrentContextCard({ fileName, fileSizeLabel, extractionStatus }: CurrentContextCardProps) {
-  const status = extractionStatusMeta[extractionStatus];
-  const StatusIcon = status.Icon;
-  const statusText =
-    extractionStatus === "Completed"
-      ? "Ready to analyze"
-      : extractionStatus === "Failed"
-        ? "Failed"
-        : "Analyzing…";
+export function CurrentContextCard({
+  fileName,
+  extractionStatus,
+  completedAt,
+}: CurrentContextCardProps) {
+  const isCompleted = extractionStatus === "Completed";
+  const isFailed = extractionStatus === "Failed";
+  const isInProgress = !isCompleted && !isFailed;
+
+  const statusText = isCompleted
+    ? completedAt
+      ? `Completed ${relativeTime(completedAt)}`
+      : "Completed"
+    : isFailed
+      ? "Failed"
+      : "Analyzing…";
 
   return (
-    <div className="space-y-3 rounded-md border border-border bg-surface p-4">
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent-subtle/60">
-          <FileText className="h-4 w-4 text-accent" />
-        </div>
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-ink">{fileName}</div>
-          <div className="text-xs text-ink-muted">PDF{fileSizeLabel ? ` · ${fileSizeLabel}` : ""}</div>
-        </div>
+    <div className="flex items-center gap-3 rounded-lg border border-hairline bg-surface-subtle px-3 py-2.5">
+      {/* Red PDF badge */}
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500 text-white">
+        <FileText className="h-4 w-4" strokeWidth={1.5} />
       </div>
-      <div className="flex items-center gap-1.5">
-        <StatusIcon className={`h-4 w-4 ${status.textClass}`} />
-        <span className="text-xs text-ink-muted">{statusText}</span>
+
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-sans text-sm font-semibold text-ink">{fileName}</div>
+        <div className="mt-0.5 flex items-center gap-1.5">
+          {/* Status dot */}
+          <span
+            className={cn(
+              "inline-block h-1.5 w-1.5 rounded-full shrink-0",
+              isCompleted
+                ? "bg-verdict-supported-icon"
+                : isFailed
+                  ? "bg-verdict-refused-icon"
+                  : "bg-brand animate-pulse"
+            )}
+          />
+          {/* Status text */}
+          {isInProgress ? (
+            <span className="font-sans text-[11px] text-brand">{statusText}</span>
+          ) : (
+            <span className="font-sans text-[11px] text-ink-secondary">{statusText}</span>
+          )}
+        </div>
       </div>
     </div>
   );

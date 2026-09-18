@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Upload } from "lucide-react";
+import { Upload, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -9,12 +9,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PaperHeader } from "@/components/matrix/PaperHeader";
 import { ClaimList } from "@/components/matrix/ClaimList";
-import { SummaryStrip } from "@/components/matrix/SummaryStrip";
-import { cn } from "@/lib/utils";
+import { AuditSummaryCard } from "@/components/matrix/AuditSummaryCard";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
+import { useAuth } from "@/lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
 
@@ -23,17 +30,9 @@ interface MatrixViewProps {
   isLoading: boolean;
   activePaperId: string | null;
   activeChatId: string;
-  // Set from just after an upload starts until the real fileId comes back —
-  // lets the activity log mount and start listening before that HTTP round
-  // trip resolves instead of missing the earliest progress messages.
   pendingUpload?: { chatId: string; fileName: string } | null;
-  // True while a cache-hit paper's inline Continue/Re-run decision hasn't
-  // been resolved yet — keeps the activity view showing even though
-  // paperClaims already reports "Completed" for a previously-audited paper.
   cacheHitPending?: boolean;
   onCacheHitResolved?: () => void;
-  // Guests see Cancel instead of Re-run on the inline decision — resets
-  // the view back to the upload dropzone so a different file can be picked.
   onCacheHitCancel?: () => void;
   onViewEvidence: (claimId: string) => void;
   onUploadClick: () => void;
@@ -55,6 +54,46 @@ function sortBySupport(a: ClaimDto, b: ClaimDto) {
   return a.position - b.position;
 }
 
+// ── User profile pill rendered in the top-right corner of the main content ──
+function UserProfileButton() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const isGuest = user?.provider === "guest";
+  const displayName = isGuest ? "Guest" : (user?.name ?? "User");
+  const initial = displayName[0]?.toUpperCase() ?? "?";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/login");
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex h-9 items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 shadow-sm transition-colors hover:bg-slate-50 outline-none">
+          {/* Avatar circle */}
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-800 font-sans text-xs font-semibold text-white">
+            {initial}
+          </div>
+          <span className="hidden font-sans text-sm font-medium text-slate-700 md:block">
+            {displayName}
+          </span>
+          <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        {isGuest && (
+          <DropdownMenuItem onSelect={() => navigate("/login")}>
+            Sign in
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function MatrixView({
   paperClaims,
   isLoading,
@@ -69,7 +108,6 @@ export function MatrixView({
   isGoogleUser = false,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
-  const [activeTab, setActiveTab] = useState<"claims" | "overview">("claims");
   const claims = paperClaims?.claims ?? [];
 
   const sortedClaims = useMemo(() => {
@@ -89,86 +127,79 @@ export function MatrixView({
     };
   }, [claims]);
 
+  // ── Empty state ───────────────────────────────────────────────────────────
   if (!activePaperId && !pendingUpload) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-12 px-4 py-8 md:px-6 lg:py-16">
-        <div className="w-full max-w-2xl">
-          {/* Zone A — HERO DROP ZONE */}
-          <div 
-            className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-hairline p-8 md:p-12 transition-all duration-200 hover:border-brand hover:bg-brand-subtle group"
-            onClick={onUploadClick}
-          >
-            <Upload className="h-12 w-12 text-ink-tertiary transition-colors group-hover:text-brand" strokeWidth={1.5} />
-            <h1 className="mt-4 font-sans text-2xl font-semibold text-ink">
-              Drop a research paper
-            </h1>
-            <p className="mt-2 font-mono text-xs text-ink-tertiary">
-              PDF · up to 50MB · no account needed
-            </p>
-          </div>
+      <div className="flex h-full flex-col">
+        {/* Top-right user profile — visible even on empty state */}
+        <div className="flex shrink-0 items-center justify-end px-4 py-3 md:px-6">
+          <UserProfileButton />
+        </div>
 
-          {/* Zone B — HOW IT WORKS STRIP */}
-          <div className="mt-12 hidden md:grid grid-cols-3 gap-4 relative">
-            {/* Desktop Connector Line */}
-            <div className="absolute top-8 left-1/6 right-1/6 h-px border-t border-dashed border-hairline z-0" />
-            
-            <div className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand font-mono text-xs text-white">1</div>
-              <div className="mt-3 font-sans text-sm font-semibold text-ink">Extractor</div>
-              <div className="mt-1 font-sans text-xs text-ink-secondary">Pulls every claim from the paper.</div>
-            </div>
-            
-            <div className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-verdict-supported-icon font-mono text-xs text-white">2</div>
-              <div className="mt-3 font-sans text-sm font-semibold text-ink">Auditor</div>
-              <div className="mt-1 font-sans text-xs text-ink-secondary">Reasons against the paper's own text.</div>
-            </div>
-
-            <div className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-verdict-refused-icon font-mono text-xs text-white">3</div>
-              <div className="mt-3 font-sans text-sm font-semibold text-ink">Verdict</div>
-              <div className="mt-1 font-sans text-xs text-ink-secondary">Refuses to affirm what isn't supported.</div>
-            </div>
-          </div>
-
-          {/* Mobile How It Works Strip */}
-          <div className="mt-8 flex flex-col gap-3 md:hidden">
-            <div className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand font-mono text-xs text-white">1</div>
-              <div>
-                <div className="font-sans text-sm font-semibold text-ink">Extractor</div>
-                <div className="font-sans text-xs text-ink-secondary">Pulls every claim from the paper.</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-verdict-supported-icon font-mono text-xs text-white">2</div>
-              <div>
-                <div className="font-sans text-sm font-semibold text-ink">Auditor</div>
-                <div className="font-sans text-xs text-ink-secondary">Reasons against the paper's own text.</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-verdict-refused-icon font-mono text-xs text-white">3</div>
-              <div>
-                <div className="font-sans text-sm font-semibold text-ink">Verdict</div>
-                <div className="font-sans text-xs text-ink-secondary">Refuses to affirm what isn't supported.</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Zone C — METRIC FOOTER */}
-          <div className="mt-12 text-center">
-            <p className="font-sans text-sm text-ink-secondary">
-              <span className="font-mono gradient-brand font-semibold text-base">10 of 14</span> correct refusals on adversarial test cases
-            </p>
-            <a 
-              href="https://github.com/i-mouse/prism#eval" 
-              target="_blank" 
-              rel="noreferrer"
-              className="mt-2 inline-flex items-center gap-1 font-sans text-xs text-brand hover:text-brand-hover"
+        <div className="flex flex-1 flex-col items-center justify-center gap-12 px-4 pb-8 md:px-6">
+          <div className="w-full max-w-2xl">
+            {/* Drop zone */}
+            <div
+              className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-8 md:p-12 transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 group"
+              onClick={onUploadClick}
             >
-              See the eval →
-            </a>
+              <Upload className="h-12 w-12 text-slate-300 transition-colors group-hover:text-slate-500" strokeWidth={1.5} />
+              <h1 className="mt-4 font-sans text-2xl font-semibold text-ink">
+                Drop a research paper
+              </h1>
+              <p className="mt-2 font-mono text-xs text-ink-tertiary">
+                PDF · up to 50MB · no account needed
+              </p>
+            </div>
+
+            {/* How it works — desktop */}
+            <div className="mt-12 hidden md:grid grid-cols-3 gap-4 relative">
+              <div className="absolute top-8 left-1/6 right-1/6 h-px border-t border-dashed border-hairline z-0" />
+              {[
+                { n: 1, label: "Extractor", sub: "Pulls every claim from the paper.", color: "bg-slate-700" },
+                { n: 2, label: "Auditor", sub: "Reasons against the paper's own text.", color: "bg-verdict-supported-icon" },
+                { n: 3, label: "Verdict", sub: "Refuses to affirm what isn't supported.", color: "bg-verdict-refused-icon" },
+              ].map(({ n, label, sub, color }) => (
+                <div key={n} className="relative z-10 flex flex-col items-center rounded-xl border border-hairline bg-surface p-5 text-center">
+                  <div className={`flex h-6 w-6 items-center justify-center rounded-full ${color} font-mono text-xs text-white`}>{n}</div>
+                  <div className="mt-3 font-sans text-sm font-semibold text-ink">{label}</div>
+                  <div className="mt-1 font-sans text-xs text-ink-secondary">{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* How it works — mobile */}
+            <div className="mt-8 flex flex-col gap-3 md:hidden">
+              {[
+                { n: 1, label: "Extractor", sub: "Pulls every claim from the paper.", color: "bg-slate-700" },
+                { n: 2, label: "Auditor", sub: "Reasons against the paper's own text.", color: "bg-verdict-supported-icon" },
+                { n: 3, label: "Verdict", sub: "Refuses to affirm what isn't supported.", color: "bg-verdict-refused-icon" },
+              ].map(({ n, label, sub, color }) => (
+                <div key={n} className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+                  <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${color} font-mono text-xs text-white`}>{n}</div>
+                  <div>
+                    <div className="font-sans text-sm font-semibold text-ink">{label}</div>
+                    <div className="font-sans text-xs text-ink-secondary">{sub}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Metric footer */}
+            <div className="mt-12 text-center">
+              <p className="font-sans text-sm text-ink-secondary">
+                <span className="font-mono font-semibold text-base text-slate-800">10 of 14</span>{" "}
+                correct refusals on adversarial test cases
+              </p>
+              <a
+                href="https://github.com/i-mouse/prism#eval"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-flex items-center gap-1 font-sans text-xs text-slate-500 hover:text-slate-700"
+              >
+                See the eval →
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -176,12 +207,17 @@ export function MatrixView({
   }
 
   const isCacheHitLoading = cacheHitPending && !paperClaims;
-  const showSkeleton = (!pendingUpload && !paperClaims && !isCacheHitLoading) || (isLoading && !paperClaims && !isCacheHitLoading);
-  const showActivityView = pendingUpload || isCacheHitLoading || (paperClaims && (paperClaims.extractionStatus !== "Completed" || cacheHitPending));
+  const showSkeleton =
+    (!pendingUpload && !paperClaims && !isCacheHitLoading) ||
+    (isLoading && !paperClaims && !isCacheHitLoading);
+  const showActivityView =
+    pendingUpload ||
+    isCacheHitLoading ||
+    (paperClaims && (paperClaims.extractionStatus !== "Completed" || cacheHitPending));
 
   if (showSkeleton) {
     return (
-      <div className="h-full overflow-y-auto px-8 py-6">
+      <div className="h-full overflow-y-auto px-4 py-6 md:px-8">
         <MatrixSkeleton />
       </div>
     );
@@ -216,101 +252,81 @@ export function MatrixView({
           transition={{ duration: 0.3, delay: 0.1 }}
           className="flex h-full min-h-0 flex-col"
         >
-          <div className="shrink-0 px-3 py-3 md:px-8 md:pt-4 md:pb-0">
-            <PaperHeader
-              fileName={paperClaims.fileName}
-              extractionStatus={paperClaims.extractionStatus}
-              completedAt={paperClaims.completedAt}
-            />
+          {/* ── Top bar: paper header + user profile ── */}
+          <div className="shrink-0 px-4 pt-4 pb-3 md:px-6 md:pt-5">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <PaperHeader
+                  fileName={paperClaims.fileName}
+                  extractionStatus={paperClaims.extractionStatus}
+                  completedAt={paperClaims.completedAt}
+                />
+              </div>
+              {/* User profile — top right of main content area */}
+              <div className="shrink-0 hidden md:flex items-center">
+                <UserProfileButton />
+              </div>
+            </div>
+          </div>
 
-            <div className="mt-6 flex items-center gap-6 border-b border-hairline px-1">
-              <button 
-                onClick={() => setActiveTab("claims")}
-                className={cn(
-                  "relative flex items-center gap-2 pb-3 font-sans text-sm font-semibold",
-                  activeTab === "claims" ? "text-brand" : "text-ink-secondary hover:text-ink"
-                )}
-              >
-                Claims
-                <span className={cn(
-                  "flex h-5 items-center justify-center rounded-full px-2 font-mono text-xs font-semibold",
-                  activeTab === "claims" ? "bg-brand-subtle text-brand" : "bg-surface-subtle text-ink-tertiary"
-                )}>
-                  {claims.length}
-                </span>
-                {activeTab === "claims" && <div className="absolute -bottom-px left-0 right-0 h-0.5 bg-brand" />}
-              </button>
-              <button 
-                onClick={() => setActiveTab("overview")}
-                className={cn(
-                  "relative pb-3 font-sans text-sm font-semibold",
-                  activeTab === "overview" ? "text-brand" : "text-ink-secondary hover:text-ink"
-                )}
-              >
-                Overview
-                {activeTab === "overview" && <div className="absolute -bottom-px left-0 right-0 h-0.5 bg-brand" />}
-              </button>
+          {/* ── Scrollable content region ── */}
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            {/* Audit Summary Card — white elevated card on slate-50 canvas */}
+            <div className="px-4 pb-4 md:px-6">
+              <AuditSummaryCard summary={derivedSummary} />
             </div>
 
-            {activeTab === "claims" && (
-              <div className="mb-2 flex items-center justify-end gap-3 py-3 md:mb-3">
-                <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-                  <SelectTrigger
-                    className="gap-1 rounded-lg border-hairline bg-surface px-2 py-1 font-sans text-xs text-ink hover:border-hairline-strong focus-visible:ring-2 focus-visible:ring-brand-subtle md:px-3 md:py-1.5 md:text-sm lg:!h-8"
-                  >
-                    <span className="text-ink-tertiary">Sort:</span>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="position" className="focus:bg-surface-subtle focus:text-ink">
-                      Position
-                    </SelectItem>
-                    <SelectItem value="support" className="focus:bg-surface-subtle focus:text-ink">
-                      Support
-                    </SelectItem>
-                    <SelectItem
-                      value="section"
-                      disabled
-                      className="cursor-not-allowed opacity-50 focus:bg-surface-subtle focus:text-ink"
-                    >
-                      Section
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Claims table — wrapped in a white card for elevation */}
+            <div className="px-4 pb-6 md:px-6">
+              <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <ClaimList 
+                  claims={sortedClaims} 
+                  onViewEvidence={onViewEvidence}
+                  sortControl={
+                    <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+                      <SelectTrigger className="gap-1 rounded-lg border-slate-200 bg-white px-2 py-1 font-sans text-xs text-slate-700 hover:border-slate-300 focus-visible:ring-2 focus-visible:ring-slate-300 md:px-3 md:py-1.5 md:text-sm lg:!h-8">
+                        <span className="text-slate-400">Sort by:</span>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="position" className="focus:bg-slate-50 focus:text-slate-900">
+                          Claim number (asc)
+                        </SelectItem>
+                        <SelectItem value="support" className="focus:bg-slate-50 focus:text-slate-900">
+                          Support level
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  }
+                />
               </div>
-            )}
-            
-            {activeTab === "overview" && (
-              <div className="mb-2 py-3 md:mb-3" />
-            )}
+            </div>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-24 pt-2 md:px-8 lg:pb-6">
-            {activeTab === "claims" ? (
-              <ClaimList claims={sortedClaims} onViewEvidence={onViewEvidence} />
-            ) : (
-              <SummaryStrip summary={derivedSummary} />
-            )}
-          </div>
-
-          {activePaperId && <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} />}
+          {/* ── Floating chat input — pinned to bottom ── */}
+          {activePaperId && (
+            <>
+              <div className="shrink-0 border-t border-slate-100 bg-slate-50">
+                <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} fileName={paperClaims.fileName} />
+              </div>
+            </>
+          )}
         </motion.div>
       ) : null}
     </AnimatePresence>
   );
 }
 
-
-
 function MatrixSkeleton() {
   return (
     <div className="space-y-6">
-      <Skeleton className="h-32 w-full rounded-lg" />
-      <Skeleton className="h-20 w-full rounded-lg" />
-      <div className="space-y-3">
-        <Skeleton className="h-24 w-full rounded-lg" />
-        <Skeleton className="h-24 w-full rounded-lg" />
-        <Skeleton className="h-24 w-full rounded-lg" />
+      <Skeleton className="h-24 w-full rounded-xl" />
+      <Skeleton className="h-28 w-full rounded-xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-lg" />
       </div>
     </div>
   );

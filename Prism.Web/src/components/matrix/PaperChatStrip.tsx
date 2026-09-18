@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUp, ChevronDown, ChevronUp, Copy, MessageCircle, RotateCw, Square } from "lucide-react";
+import { ArrowUp, ChevronDown, Copy, MessageCircle, RotateCw, Square, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useChatStream } from "@/hooks/useChatStream";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { ChatMarkdown, citeMarker, cursorMarker, type ChatCiteInfo } from "@/components/matrix/chat/ChatMarkdown";
-import { ChatResizeHandle } from "@/components/matrix/chat/ChatResizeHandle";
-import { DEFAULT_CHAT_HEIGHT, clampChatHeight } from "@/components/matrix/chat/chatHeight";
 import { ChatBottomSheet, type SheetState } from "@/components/matrix/chat/ChatBottomSheet";
 import type { ChatBlock, ChatTurn } from "@/types/chat";
 import { cn } from "@/lib/utils";
@@ -14,10 +12,10 @@ import { cn } from "@/lib/utils";
 interface PaperChatStripProps {
   chatId: string;
   activeFileId: string;
+  fileName?: string;
 }
 
 const SUGGESTED_PROMPTS = ["What are the main claims?", "Show me the strongest refusals"];
-const CHAT_HEIGHT_STORAGE_KEY = "prism.chatHeight";
 
 // Approximates "the agent declined to answer" from block shape alone —
 // there's no explicit refusal flag on the wire, so this is a best-effort
@@ -46,13 +44,6 @@ function useIsLgUp() {
   }, []);
 
   return isLgUp;
-}
-
-function readStoredHeight(): number {
-  if (typeof window === "undefined") return DEFAULT_CHAT_HEIGHT;
-  const raw = window.localStorage.getItem(CHAT_HEIGHT_STORAGE_KEY);
-  const parsed = raw ? Number(raw) : NaN;
-  return Number.isFinite(parsed) ? clampChatHeight(parsed) : DEFAULT_CHAT_HEIGHT;
 }
 
 type ClaimReferenceBlock = Extract<ChatBlock, { type: "claim_reference" }>;
@@ -99,32 +90,13 @@ function followUpsFor(turn: ChatTurn): string[] {
   return ["Which claims support this?", "Show me the evidence"];
 }
 
-function PrismAvatar() {
-  return (
-    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-brand/20 bg-brand-subtle">
-      <div className="h-2 w-2 rotate-45 rounded-sm bg-brand" />
-    </div>
-  );
-}
-
-export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
+export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStripProps) {
   const { turns, isSending, error, sendMessage, abort } = useChatStream(chatId, activeFileId);
   const { highlightClaim } = useSelectedClaim();
   const isLgUp = useIsLgUp();
-
-  const [chatHeight, setChatHeight] = useState(readStoredHeight);
-  const panelRef = useRef<HTMLDivElement>(null);
   const [sheetState, setSheetState] = useState<SheetState>("peek");
-  // Collapsing never unmounts this component (or the useChatStream hook
-  // above), so turns/scroll state survives a collapse/reopen cycle — see
-  // the "chat collapse" task. Default true: additive, no behavior change
-  // for users who never touch the toggle.
-  const [isChatOpen, setIsChatOpen] = useState(true);
-
-  const handleHeightChange = (h: number) => {
-    setChatHeight(h);
-    window.localStorage.setItem(CHAT_HEIGHT_STORAGE_KEY, String(h));
-  };
+  // Default to false for the new pill layout so it pops up nicely
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleClaimClick = (claimId: string) => {
     highlightClaim(claimId);
@@ -144,18 +116,9 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
   const handleRegenerate = () => toast("Regenerate coming soon");
 
   const handleInputFocus = () => {
-    if (sheetState === "peek") setSheetState("half");
+    if (!isLgUp && sheetState === "peek") setSheetState("half");
+    if (isLgUp) setIsChatOpen(true);
   };
-
-  const inputRow = (
-    <ChatInput
-      onSend={sendMessage}
-      onStop={abort}
-      isSending={isSending}
-      placeholder="Ask about this paper..."
-      onFocus={!isLgUp ? handleInputFocus : undefined}
-    />
-  );
 
   const messages = (
     <MessageList
@@ -169,32 +132,83 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
     />
   );
 
+  const [chatHeight, setChatHeight] = useState(400);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = chatHeight;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      // Invert delta because dragging UP increases height
+      const deltaY = startY - moveEvent.clientY;
+      const newHeight = Math.max(200, Math.min(startHeight + deltaY, window.innerHeight * 0.8));
+      setChatHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
   if (isLgUp) {
     return (
-      <div
-        ref={panelRef}
-        style={isChatOpen ? { height: chatHeight } : undefined}
-        className="flex shrink-0 flex-col border-t border-hairline bg-surface"
-      >
-        {isChatOpen && <ChatResizeHandle panelRef={panelRef} height={chatHeight} onHeightChange={handleHeightChange} />}
-        <div className="flex shrink-0 items-center justify-between px-4 py-2">
-          <span className="font-sans text-sm font-semibold text-ink">Chat</span>
-          <button
-            type="button"
-            onClick={() => setIsChatOpen((v) => !v)}
-            aria-label={isChatOpen ? "Collapse chat" : "Expand chat"}
-            title={isChatOpen ? "Collapse chat" : "Expand chat"}
-            className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
-          >
-            {isChatOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-          </button>
+      <div className="px-3 pb-4 pt-2 md:px-6 md:pb-5 relative">
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out rounded-2xl border border-slate-200 shadow-sm bg-slate-50",
+            isChatOpen ? "max-h-[80vh] opacity-100 mb-4" : "max-h-0 opacity-0 border-transparent shadow-none"
+          )}
+        >
+          <div style={{ height: isChatOpen ? chatHeight : 0 }} className="w-full flex flex-col relative transition-none">
+            <div 
+              className="w-full h-4 cursor-ns-resize flex items-center justify-center bg-slate-50 hover:bg-slate-100 border-b border-slate-200 rounded-t-2xl shrink-0" 
+              onMouseDown={handleMouseDown}
+            >
+              <div className="w-10 h-1 bg-slate-300 rounded-full" />
+            </div>
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 bg-white">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 text-slate-500" />
+                <span className="font-sans text-sm font-semibold text-slate-800">
+                  {fileName ? `Chat — ${fileName}` : "Chat"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsChatOpen(false)}
+                className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors"
+                aria-label="Close chat"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto min-h-0 pb-20">
+              {messages}
+            </div>
+          </div>
         </div>
-        {/* Hidden rather than unmounted so scroll position and any unsent
-            draft in ChatInput survive a collapse/reopen cycle. */}
-        <div className={cn("flex min-h-0 flex-1 flex-col", !isChatOpen && "hidden")}>
-          {messages}
-          {inputRow}
+
+        <div className={cn("relative z-50 transition-all duration-300", isChatOpen ? "absolute bottom-8 left-10 right-10" : "")}>
+          <ChatInput
+            onSend={sendMessage}
+            onStop={abort}
+            isSending={isSending}
+            placeholder={fileName ? `Ask about this paper (${fileName})...` : "Ask about this paper..."}
+            onFocus={handleInputFocus}
+            isChatOpen={isChatOpen}
+            setIsChatOpen={setIsChatOpen}
+            isLgUp={isLgUp}
+          />
         </div>
+        
+        <p className="mt-1.5 text-center font-sans text-[11px] text-slate-400">
+          Get answers, ask for clarification, or explore specific claims from this paper.
+        </p>
       </div>
     );
   }
@@ -215,7 +229,13 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
           ))}
         </div>
       )}
-      {inputRow}
+      <ChatInput
+        onSend={sendMessage}
+        onStop={abort}
+        isSending={isSending}
+        placeholder="Ask about this paper..."
+        onFocus={!isLgUp ? handleInputFocus : undefined}
+      />
     </div>
   );
 
@@ -363,7 +383,9 @@ function UserTurnBubble({ turn }: { turn: ChatTurn }) {
   const text = turn.blocks.map((b) => (b.type === "text" ? b.content : "")).join("");
   return (
     <div className="flex justify-end">
-      <div className="max-w-[75%] rounded-2xl rounded-br-sm bg-brand-subtle px-4 py-2.5 font-sans text-sm text-ink leading-relaxed">{text}</div>
+      <div className="bg-slate-800 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] text-sm">
+        {text}
+      </div>
     </div>
   );
 }
@@ -387,18 +409,17 @@ function AssistantTurn({
 }) {
   const isThinking = isSending && turn.isStreaming && turn.blocks.length === 0;
   const isDone = !turn.isStreaming && turn.blocks.length > 0;
-  const isStreamingWithContent = turn.isStreaming && turn.blocks.length > 0;
   const showFollowUps = isLast && isDone;
   const showCursor = !!turn.isStreaming && isLast;
 
   if (isThinking) {
     return (
       <div className="flex gap-3">
-        <PrismAvatar />
+        <Sparkles className="h-6 w-6 text-red-500 mt-1 shrink-0" />
         <div className="flex items-center gap-1.5 pt-1.5">
-          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "0ms" }} />
-          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "150ms" }} />
-          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "300ms" }} />
+          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />
+          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "150ms" }} />
+          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "300ms" }} />
         </div>
       </div>
     );
@@ -407,18 +428,13 @@ function AssistantTurn({
   return (
     <div>
       <div className="group flex gap-3">
-        <PrismAvatar />
-        <div
-          className="min-w-0 flex-1 [contain:layout_paint]"
-          style={isStreamingWithContent ? { minHeight: "1.5em" } : undefined}
-        >
-          <div className="font-sans text-sm text-ink">
-            <ChatMarkdown
-              content={turnToMarkdown(turn, showCursor)}
-              claimsById={claimsById(turn)}
-              onClaimClick={onClaimClick}
-            />
-          </div>
+        <Sparkles className="h-6 w-6 text-red-500 mt-1 shrink-0" />
+        <div className="bg-white border border-slate-200 shadow-sm rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] text-sm text-slate-800 prose prose-sm prose-slate space-y-3 whitespace-pre-wrap max-w-none [contain:layout_paint]">
+          <ChatMarkdown
+            content={turnToMarkdown(turn, showCursor)}
+            claimsById={claimsById(turn)}
+            onClaimClick={onClaimClick}
+          />
 
           {isDone && (
             <div className="mt-2 flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
@@ -426,7 +442,7 @@ function AssistantTurn({
                 type="button"
                 onClick={onCopy}
                 title="Copy"
-                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
               >
                 <Copy className="h-3.5 w-3.5" />
               </button>
@@ -434,7 +450,7 @@ function AssistantTurn({
                 type="button"
                 onClick={onRegenerate}
                 title="Regenerate"
-                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
               >
                 <RotateCw className="h-3.5 w-3.5" />
               </button>
@@ -467,12 +483,18 @@ function ChatInput({
   isSending,
   placeholder,
   onFocus,
+  isChatOpen,
+  setIsChatOpen,
+  isLgUp,
 }: {
   onSend: (message: string) => void;
   onStop: () => void;
   isSending: boolean;
   placeholder: string;
   onFocus?: () => void;
+  isChatOpen?: boolean;
+  setIsChatOpen?: (open: boolean | ((prev: boolean) => boolean)) => void;
+  isLgUp?: boolean;
 }) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -496,25 +518,89 @@ function ChatInput({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    // Enter sends (Ctrl/Cmd+Enter still does too, for existing muscle
-    // memory); Shift+Enter inserts a newline instead. isComposing guards
-    // IME input (e.g. Japanese) where Enter confirms a candidate rather
-    // than submitting the message.
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSubmit();
     }
   };
 
+  if (isLgUp && setIsChatOpen !== undefined && isChatOpen !== undefined) {
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-lg transition-shadow duration-150 z-50",
+          "focus-within:border-slate-300 focus-within:shadow-xl"
+        )}
+        onClick={() => textareaRef.current?.focus()}
+      >
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsChatOpen((v) => !v);
+          }}
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-slate-100"
+          aria-label={isChatOpen ? "Close chat" : "Open chat"}
+          title={isChatOpen ? "Close chat" : "Open chat"}
+        >
+          <Sparkles className="h-4 w-4 text-red-500" strokeWidth={1.5} />
+        </button>
+
+        <textarea
+          ref={textareaRef}
+          value={message}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={onFocus}
+          placeholder={placeholder}
+          disabled={isSending}
+          rows={1}
+          className="flex-1 min-w-0 resize-none overflow-y-auto bg-transparent font-sans text-sm text-slate-800 placeholder:text-slate-400 outline-none disabled:opacity-60 max-h-24 pt-0.5"
+        />
+
+        {isSending ? (
+          <button
+            type="button"
+            onClick={onStop}
+            className="flex shrink-0 items-center justify-center rounded-xl bg-slate-800 text-white shadow-sm transition-all hover:bg-slate-900 p-2"
+          >
+            <Square className="h-4 w-4" fill="currentColor" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSubmit();
+            }}
+            disabled={!message.trim()}
+            className={cn(
+              "flex shrink-0 items-center justify-center rounded-xl transition-all duration-150 p-2",
+              message.trim() && !isSending
+                ? "bg-slate-800 text-white hover:bg-slate-900 shadow-sm"
+                : "bg-slate-100 text-slate-400 cursor-not-allowed"
+            )}
+            aria-label="Send"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="shrink-0 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:px-6 lg:pb-4 lg:pt-3">
       <div
         className={cn(
-          "flex w-full items-end gap-2 rounded-full border border-hairline bg-surface px-5 py-3",
+          "flex w-full items-end gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm",
           "transition-all duration-150",
-          "focus-within:border-brand focus-within:ring-2 focus-within:ring-brand-subtle"
+          "focus-within:border-slate-300 focus-within:shadow-md"
         )}
       >
+        <div className="flex h-6 w-6 shrink-0 items-center justify-center mb-1">
+          <Sparkles className="h-4 w-4 text-red-500" strokeWidth={1.5} />
+        </div>
         <textarea
           ref={textareaRef}
           value={message}
@@ -525,18 +611,17 @@ function ChatInput({
           disabled={isSending}
           rows={1}
           className={cn(
-            "max-h-24 flex-1 resize-none overflow-y-auto bg-transparent",
-            "font-sans text-sm text-ink placeholder:text-ink-tertiary",
-            "focus:outline-none"
+            "max-h-24 flex-1 resize-none overflow-y-auto bg-transparent mb-1",
+            "font-sans text-sm text-slate-800 placeholder:text-slate-400 outline-none"
           )}
         />
         {isSending ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-surface transition-all hover:bg-ink-secondary"
+            className="flex shrink-0 items-center justify-center rounded-xl bg-slate-800 text-white shadow-sm transition-all hover:bg-slate-900 p-2"
           >
-            <Square className="h-3 w-3" fill="currentColor" />
+            <Square className="h-4 w-4" fill="currentColor" />
           </button>
         ) : (
           <button
@@ -544,10 +629,12 @@ function ChatInput({
             onClick={handleSubmit}
             disabled={!message.trim()}
             className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-100",
-              "bg-brand text-white hover:bg-brand-hover active:scale-95",
-              "disabled:cursor-not-allowed disabled:bg-hairline disabled:text-ink-tertiary disabled:hover:bg-hairline"
+              "flex shrink-0 items-center justify-center rounded-xl transition-all duration-150 p-2",
+              message.trim() && !isSending
+                ? "bg-slate-800 text-white hover:bg-slate-900 shadow-sm"
+                : "bg-slate-100 text-slate-400 cursor-not-allowed"
             )}
+            aria-label="Send"
           >
             <ArrowUp className="h-4 w-4" />
           </button>
