@@ -55,15 +55,15 @@ export function Sidebar({
     <aside className="flex h-full flex-col border-r border-hairline bg-surface overflow-y-auto w-full">
       {/* ── Logo area ─────────────────────────────── */}
       <div className="flex items-center justify-between px-4 pt-6 pb-5">
-        <div className="flex items-center gap-3 min-w-0">
-          <PrismLogo className={cn("shrink-0 drop-shadow-sm", collapsed ? "h-8 w-8 mx-auto" : "h-8 w-8")} />
+        <div className="flex items-center gap-4 min-w-0">
+          <PrismLogo className={cn("shrink-0", collapsed ? "h-10 w-10 mx-auto" : "h-[68px] w-[68px]")} />
           {!collapsed && (
-            <div className="min-w-0 flex flex-col justify-center">
-              <div className="font-sans font-black text-2xl tracking-tighter text-slate-900 leading-none">
+            <div className="min-w-0 flex flex-col justify-center py-1">
+              <div className="font-sans font-semibold text-3xl tracking-tight text-slate-800 leading-none">
                 PRISM
               </div>
-              <div className="font-sans text-[11px] font-medium text-slate-500 uppercase tracking-widest mt-1">
-                Paper Intelligence
+              <div className="font-sans text-[13px] text-ink-secondary mt-1.5 leading-snug">
+                Audit the claims.<br />Verify the evidence.
               </div>
             </div>
           )}

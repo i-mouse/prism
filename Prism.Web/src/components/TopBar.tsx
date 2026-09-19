@@ -36,7 +36,7 @@ export function TopBar({ onMenuClick }: { onMenuClick?: () => void }) {
           <Menu className="h-6 w-6" />
         </button>
         <Link to="/" className="flex items-center gap-2">
-          <PrismLogo className="h-6 w-6" />
+          <PrismLogo className="h-8 w-8" />
           <span className="font-sans font-semibold text-ink">Prism</span>
         </Link>
       </div>

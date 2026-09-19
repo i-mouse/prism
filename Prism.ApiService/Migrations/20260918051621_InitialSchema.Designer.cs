@@ -12,8 +12,8 @@ using Prism.ApiService.Data;
 namespace Prism.ApiService.Migrations
 {
     [DbContext(typeof(PrismDBContext))]
-    [Migration("20260917181653_DropPrismDocumentStatus")]
-    partial class DropPrismDocumentStatus
+    [Migration("20260918051621_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

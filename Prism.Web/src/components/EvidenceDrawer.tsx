@@ -140,12 +140,12 @@ export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
               variant="outline"
               onClick={openPaper}
               className={cn(
-                "w-full gap-2 rounded-lg border border-hairline bg-surface font-sans text-sm text-ink",
-                "hover:border-hairline-strong hover:bg-surface-subtle transition-colors"
+                "relative w-full rounded-lg border border-hairline bg-surface font-sans text-sm font-normal text-ink-secondary",
+                "hover:border-border-strong hover:bg-surface-subtle hover:text-ink transition-colors"
               )}
             >
-              View in document
-              <ExternalLink className="h-3.5 w-3.5" />
+              <span className="mx-auto">View in document</span>
+              <ExternalLink className="absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-tertiary" />
             </Button>
           </div>
         </div>

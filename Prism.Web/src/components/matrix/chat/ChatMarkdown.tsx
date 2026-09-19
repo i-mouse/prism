@@ -97,7 +97,7 @@ export function ChatMarkdown({ content, claimsById, onClaimClick }: ChatMarkdown
               type="button"
               onClick={() => onClaimClick?.(claimId)}
               title={claim.claim_summary}
-              className="mx-0.5 inline-flex items-center align-middle transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-subtle rounded-full"
+              className="mx-0.5 inline-flex items-center align-middle transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-subtle rounded"
             >
               <VerdictPill verdict={claimLabelToVerdict[claim.display_label]} size="xs" />
             </button>

@@ -12,7 +12,7 @@ export function AuditSummaryCard({ summary }: AuditSummaryCardProps) {
   const notSupportedPct = total > 0 ? (notSupported / total) * 100 : 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white shadow-sm p-4 md:p-6">
+    <div className="rounded-xl border border-hairline bg-surface shadow-card p-4 md:p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         {/* Left: prose summary */}
         <div className="min-w-0">

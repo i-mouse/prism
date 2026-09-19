@@ -158,28 +158,28 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
       <div className="px-3 pb-4 pt-2 md:px-6 md:pb-5 relative">
         <div
           className={cn(
-            "overflow-hidden transition-all duration-300 ease-in-out rounded-2xl border border-slate-200 shadow-sm bg-slate-50",
+            "overflow-hidden transition-all duration-300 ease-in-out rounded-2xl border border-hairline shadow-card bg-surface-subtle",
             isChatOpen ? "max-h-[80vh] opacity-100 mb-4" : "max-h-0 opacity-0 border-transparent shadow-none"
           )}
         >
           <div style={{ height: isChatOpen ? chatHeight : 0 }} className="w-full flex flex-col relative transition-none">
-            <div 
-              className="w-full h-4 cursor-ns-resize flex items-center justify-center bg-slate-50 hover:bg-slate-100 border-b border-slate-200 rounded-t-2xl shrink-0" 
+            <div
+              className="w-full h-4 cursor-ns-resize flex items-center justify-center bg-surface-subtle hover:bg-surface-muted border-b border-hairline rounded-t-2xl shrink-0"
               onMouseDown={handleMouseDown}
             >
-              <div className="w-10 h-1 bg-slate-300 rounded-full" />
+              <div className="w-10 h-1 bg-border-strong rounded-full" />
             </div>
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-3 bg-white">
+            <div className="flex shrink-0 items-center justify-between border-b border-hairline px-4 py-3 bg-surface">
               <div className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 text-slate-500" />
-                <span className="font-sans text-sm font-semibold text-slate-800">
+                <MessageCircle className="h-4 w-4 text-ink-tertiary" />
+                <span className="font-sans text-sm font-semibold text-ink">
                   {fileName ? `Chat — ${fileName}` : "Chat"}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsChatOpen(false)}
-                className="flex h-6 w-6 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors"
+                className="flex h-6 w-6 items-center justify-center rounded-full text-ink-tertiary hover:bg-surface-subtle hover:text-ink transition-colors"
                 aria-label="Close chat"
               >
                 <ChevronDown className="h-4 w-4" />
@@ -204,7 +204,7 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
           />
         </div>
         
-        <p className="mt-1.5 text-center font-sans text-[11px] text-slate-400">
+        <p className="mt-1.5 text-center font-sans text-[11px] text-slate-500">
           Get answers, ask for clarification, or explore specific claims from this paper.
         </p>
       </div>
@@ -220,7 +220,7 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
               key={prompt}
               type="button"
               onClick={() => sendMessage(prompt)}
-              className="rounded-full border border-hairline bg-surface px-3 py-1 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-brand"
+              className="rounded-md border border-hairline bg-surface px-3 py-1 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
@@ -329,7 +329,7 @@ function MessageList({
               key={prompt}
               type="button"
               onClick={() => onFollowUp(prompt)}
-              className="rounded-full border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
+              className="rounded-md border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
@@ -341,7 +341,7 @@ function MessageList({
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      <div ref={scrollRef} className="min-h-0 flex-1 space-y-6 overflow-y-auto bg-slate-50 p-6 pb-40">
+      <div ref={scrollRef} className="min-h-0 flex-1 space-y-6 overflow-y-auto bg-surface-subtle p-6 pb-40">
         {turns.map((turn, i) =>
           turn.role === "user" ? (
             <UserTurnBubble key={i} turn={turn} />
@@ -379,14 +379,14 @@ function UserTurnBubble({ turn }: { turn: ChatTurn }) {
   return (
     <div className="flex justify-end gap-3 items-start">
       <div className="flex flex-col items-end max-w-[80%]">
-        <div className="bg-[#fdf2ece6] text-slate-900 rounded-2xl rounded-tr-sm px-5 py-4 text-sm shadow-sm">
+        <div className="bg-brand-subtle text-ink rounded-2xl rounded-tr-sm px-5 py-4 text-sm shadow-sm">
           {text}
         </div>
-        <div className="text-[10px] text-slate-400 mt-1.5 mr-1 font-medium">
+        <div className="text-[10px] text-ink-tertiary mt-1.5 mr-1 font-medium">
           {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
-      <div className="bg-slate-800 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
+      <div className="bg-ink text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
         N
       </div>
     </div>
@@ -417,10 +417,10 @@ function AssistantTurn({
     return (
       <div className="flex gap-4">
         <GradientSparkle className="h-6 w-6 shrink-0 mt-1" />
-        <div className="flex items-center gap-1.5 pt-1.5 bg-white border border-slate-200 shadow-sm rounded-2xl rounded-tl-sm px-5 py-4">
-          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "0ms" }} />
-          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "150ms" }} />
-          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-slate-400" style={{ animationDelay: "300ms" }} />
+        <div className="flex items-center gap-1.5 pt-1.5 bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm px-5 py-4">
+          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "0ms" }} />
+          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "150ms" }} />
+          <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "300ms" }} />
         </div>
       </div>
     );
@@ -433,7 +433,7 @@ function AssistantTurn({
           <GradientSparkle className="h-6 w-6" />
         </div>
         <div className="flex flex-col w-full max-w-[85%]">
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl rounded-tl-sm p-5 text-sm text-slate-800 prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-slate-900 prose-p:leading-relaxed prose-a:text-blue-600 prose-li:marker:text-slate-400 [contain:layout_paint]">
+          <div className="bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm p-5 text-sm text-ink prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-ink prose-p:leading-relaxed prose-a:text-ink prose-a:underline prose-li:marker:text-ink-tertiary [contain:layout_paint]">
             <ChatMarkdown
               content={turnToMarkdown(turn, showCursor)}
               claimsById={claimsById(turn)}
@@ -443,28 +443,28 @@ function AssistantTurn({
 
           {isDone && (
             <div className="mt-2 flex items-center justify-end gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 px-2">
-              <span className="text-[10px] text-slate-400 mr-auto ml-1 font-medium">
+              <span className="text-[10px] text-ink-tertiary mr-auto ml-1 font-medium">
                 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
               <button
                 type="button"
                 onClick={onCopy}
                 title="Copy"
-                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink-secondary"
               >
                 <Copy className="h-3.5 w-3.5" />
               </button>
               <button
                 type="button"
                 title="Helpful"
-                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink-secondary"
               >
                 <ThumbsUp className="h-3.5 w-3.5" />
               </button>
               <button
                 type="button"
                 title="Not helpful"
-                className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink-secondary"
               >
                 <ThumbsDown className="h-3.5 w-3.5" />
               </button>
@@ -480,7 +480,7 @@ function AssistantTurn({
               key={prompt}
               type="button"
               onClick={() => onFollowUp(prompt)}
-              className="rounded-full border border-slate-200 bg-white px-4 py-1.5 font-sans text-sm text-slate-600 shadow-sm transition-colors hover:border-slate-300 hover:text-slate-900"
+              className="rounded-md border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary shadow-card transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
@@ -563,12 +563,12 @@ function ChatInput({
       <div className="flex flex-col items-center w-full">
         <div
           className={cn(
-            "bg-white border border-slate-200 shadow-lg rounded-full px-4 py-2 flex items-center gap-3 w-full transition-shadow duration-150 z-50",
-            "focus-within:border-slate-300 focus-within:shadow-xl"
+            "bg-surface border border-hairline rounded-lg px-3 py-1.5 flex items-center gap-2 w-full transition-colors duration-150 z-50",
+            "focus-within:border-border-strong"
           )}
           onClick={() => textareaRef.current?.focus()}
         >
-          <GradientSparkle className="h-6 w-6 shrink-0" />
+          <GradientSparkle className="h-5 w-5 shrink-0" />
 
           <textarea
             ref={textareaRef}
@@ -579,20 +579,20 @@ function ChatInput({
             placeholder={placeholder}
             disabled={isSending}
             rows={1}
-            className="flex-1 min-w-0 resize-none overflow-y-auto bg-transparent font-sans text-sm text-slate-900 placeholder:text-slate-400 outline-none disabled:opacity-60 max-h-24 pt-2.5"
+            className="flex-1 min-w-0 resize-none overflow-y-auto bg-transparent font-sans text-sm text-ink placeholder:text-ink-tertiary outline-none disabled:opacity-60 max-h-24 py-1.5"
           />
 
-          <button className="text-slate-400 hover:text-slate-600 transition-colors p-2 shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          <button className="text-ink-tertiary hover:text-ink-secondary transition-colors p-1.5 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
 
           {isSending ? (
             <button
               type="button"
               onClick={onStop}
-              className="flex shrink-0 items-center justify-center rounded-full bg-slate-800 text-white shadow-md transition-all hover:bg-slate-900 w-10 h-10"
+              className="flex shrink-0 items-center justify-center rounded-md bg-charcoal text-white transition-opacity hover:opacity-90 w-8 h-8"
             >
-              <Square className="h-4 w-4" fill="currentColor" />
+              <Square className="h-3.5 w-3.5" fill="currentColor" />
             </button>
           ) : (
             <button
@@ -603,18 +603,18 @@ function ChatInput({
               }}
               disabled={!message.trim()}
               className={cn(
-                "flex shrink-0 items-center justify-center rounded-full transition-all duration-150 w-10 h-10",
+                "flex shrink-0 items-center justify-center rounded-md transition-all duration-150 w-8 h-8",
                 message.trim() && !isSending
-                  ? "bg-gradient-to-r from-orange-400 to-pink-500 text-white shadow-md hover:scale-105"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                  ? "bg-charcoal text-white hover:opacity-90"
+                  : "bg-surface-muted text-ink-tertiary cursor-not-allowed"
               )}
               aria-label="Send"
             >
-              <ArrowUp className="h-5 w-5" />
+              <ArrowUp className="h-4 w-4" />
             </button>
           )}
         </div>
-        <div className="text-xs text-slate-400 mt-3 text-center px-4">
+        <div className="text-xs text-slate-500 mt-2 text-center px-4">
           Responses are based only on the content of {fileName ?? "this paper"}. Always verify important information.
         </div>
       </div>
@@ -622,7 +622,7 @@ function ChatInput({
   }
 
   return (
-    <div className="flex flex-col border-t border-hairline bg-white pb-safe pt-2">
+    <div className="flex flex-col border-t border-hairline bg-surface pb-safe pt-2">
       <div className="flex items-end gap-2 px-3 pb-3">
         <textarea
           ref={textareaRef}
@@ -639,7 +639,7 @@ function ChatInput({
           <button
             type="button"
             onClick={onStop}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-white shadow-sm transition-opacity hover:opacity-90"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-charcoal text-white shadow-sm transition-opacity hover:opacity-90"
           >
             <Square className="h-4 w-4" fill="currentColor" />
           </button>
@@ -648,7 +648,7 @@ function ChatInput({
             type="button"
             onClick={handleSubmit}
             disabled={!message.trim()}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-800 text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-charcoal text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             <ArrowUp className="h-5 w-5" />
           </button>

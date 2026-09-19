@@ -21,17 +21,17 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
       data-claim-id={claim.id}
       onClick={onViewEvidence}
       className={cn(
-        "grid grid-cols-[minmax(0,1fr)_160px_140px] gap-6 items-center p-4 border-b border-slate-100 cursor-pointer transition-colors duration-100 group",
-        isSelected ? "bg-slate-50" : "hover:bg-slate-50"
+        "grid grid-cols-[minmax(0,1fr)_190px_140px] gap-6 items-center px-4 py-5 border-b border-gray-200 cursor-pointer transition-colors duration-100 group",
+        isSelected ? "bg-surface-subtle" : "hover:bg-surface-subtle"
       )}
     >
-      <div className="min-w-0 pr-4 text-slate-800 text-sm flex items-start gap-3">
-        <span className="text-slate-400 font-mono text-xs mt-[3px] shrink-0 w-5 text-right select-none">{claim.position}.</span>
+      <div className="min-w-0 pr-4 text-ink text-[15px] flex items-start gap-3">
+        <span className="text-ink-tertiary font-mono text-xs mt-[4px] shrink-0 w-5 text-right select-none">{claim.position}.</span>
         <div className="flex-1 min-w-0">
-          <p className={cn("line-clamp-2 leading-snug", isSelected && "font-medium")}>
+          <p className={cn("line-clamp-2 leading-relaxed", isSelected && "font-medium")}>
             {claim.claimSummary}
           </p>
-          <p className="mt-0.5 text-[11px] text-red-600">
+          <p className="mt-1 text-[11px] text-verdict-refused-text">
             No supporting evidence found
           </p>
         </div>
@@ -40,7 +40,7 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
         <VerdictPill verdict={verdict} size="sm" />
       </div>
       <div>
-        <span className={cn("text-slate-500 hover:text-slate-800 font-medium text-sm no-underline flex items-center justify-end gap-1", isSelected && "text-slate-800")}>
+        <span className={cn("text-ink-tertiary hover:text-ink font-medium text-sm no-underline flex items-center justify-end gap-1", isSelected && "text-ink")}>
           View evidence <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </div>

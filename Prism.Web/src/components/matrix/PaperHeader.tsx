@@ -22,7 +22,7 @@ interface PaperHeaderProps {
 }
 
 const actionButtonClass =
-  "h-9 flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 font-sans text-sm text-slate-700 hover:border-slate-300 hover:bg-slate-50";
+  "h-9 flex items-center justify-center gap-1.5 rounded-lg border border-hairline bg-surface px-3 font-sans text-sm text-ink-secondary hover:border-hairline-strong hover:bg-surface-subtle";
 
 export function PaperHeader({
   fileName,
@@ -46,18 +46,18 @@ export function PaperHeader({
     <div className="flex items-center justify-between gap-4">
       {/* Left: PDF badge + filename + status */}
       <div className="flex items-center gap-3 md:gap-4 min-w-0">
-        {/* Red PDF icon badge */}
-        <div className="hidden md:flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-500 text-white">
+        {/* PDF icon badge — ink-black; red is reserved for claim verdicts */}
+        <div className="hidden md:flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ink text-white">
           <FileText className="h-6 w-6" strokeWidth={1.5} />
         </div>
 
         <div className="min-w-0">
           {/* Filename + PDF pill */}
           <div className="flex items-center gap-2">
-            <h1 className="truncate font-sans text-lg md:text-2xl font-bold text-slate-900 leading-tight">
+            <h1 className="truncate font-sans text-lg md:text-2xl font-bold text-ink leading-tight">
               {fileName}
             </h1>
-            <span className="shrink-0 rounded-md bg-red-100 px-1.5 py-0.5 font-sans text-[10px] font-bold text-red-600 uppercase tracking-wider">
+            <span className="shrink-0 rounded-md bg-surface-subtle px-1.5 py-0.5 font-sans text-[10px] font-bold text-ink-tertiary uppercase tracking-wider">
               PDF
             </span>
           </div>
@@ -68,16 +68,16 @@ export function PaperHeader({
               className={cn(
                 "inline-block h-1.5 w-1.5 rounded-full shrink-0",
                 isCompleted
-                  ? "bg-green-500"
+                  ? "bg-status-complete"
                   : isFailed
-                    ? "bg-red-500"
-                    : "bg-slate-500 animate-pulse"
+                    ? "bg-status-failed"
+                    : "bg-status-active animate-pulse"
               )}
             />
             <span
               className={cn(
                 "font-sans text-xs md:text-sm",
-                isFailed ? "text-red-700" : "text-slate-500"
+                isFailed ? "text-status-failed" : "text-ink-secondary"
               )}
             >
               {statusText}

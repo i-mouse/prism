@@ -20,7 +20,7 @@ export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: P
         className={cn(
           "mx-auto flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
           isActive
-            ? "bg-slate-100 text-slate-800"
+            ? "bg-surface-muted text-ink"
             : "text-ink-tertiary hover:bg-surface-subtle hover:text-ink-secondary"
         )}
       >
@@ -42,7 +42,7 @@ export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: P
       <div
         className={cn(
           "flex h-7 w-7 shrink-0 items-center justify-center rounded-md",
-          isActive ? "text-slate-700" : "text-ink-tertiary"
+          isActive ? "text-ink" : "text-ink-tertiary"
         )}
       >
         <FileText className="h-4 w-4" strokeWidth={1.5} />
@@ -63,13 +63,14 @@ export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: P
         </div>
       </div>
 
-      {/* Status dot */}
+      {/* Status dot — extraction status, not a claim verdict, so this uses
+          the status token family rather than verdict colors. */}
       {chat.extractionStatus === "Completed" ? (
-        <span className="shrink-0 h-1.5 w-1.5 rounded-full bg-verdict-supported-icon" />
+        <span className="shrink-0 h-1.5 w-1.5 rounded-full bg-status-complete" />
       ) : chat.extractionStatus === "Failed" ? (
-        <span className="shrink-0 h-1.5 w-1.5 rounded-full bg-verdict-refused-icon" />
+        <span className="shrink-0 h-1.5 w-1.5 rounded-full bg-status-failed" />
       ) : (
-        <span className="shrink-0 h-2.5 w-2.5 rounded-full border-[1.5px] border-slate-500 border-t-transparent animate-spin" />
+        <span className="shrink-0 h-2.5 w-2.5 rounded-full border-[1.5px] border-ink-tertiary border-t-transparent animate-spin" />
       )}
     </button>
   );

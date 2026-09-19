@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ClaimDto, ClaimLabel } from "@/types/api";
 import { ClaimTableRow } from "@/components/matrix/ClaimTableRow";
 import { AbsenceRow } from "@/components/matrix/AbsenceRow";
@@ -20,10 +21,33 @@ const filterPills: { label: string; value: FilterMode }[] = [
   { label: "Not Supported", value: "not_supported" },
 ];
 
+const filterDotClass: Record<Exclude<FilterMode, "all">, string> = {
+  supported: "bg-verdict-supported-icon",
+  partially_supported: "bg-verdict-partial-icon",
+  not_supported: "bg-verdict-refused-icon",
+};
+
 const filterBadgeCount = (claims: ClaimDto[], value: FilterMode) => {
   if (value === "all") return claims.length;
   return claims.filter((c) => displayLabel(c) === value).length;
 };
+
+// Builds a compact page list with ellipsis gaps, e.g. [1, "…", 4, 5, 6, "…", 12].
+function buildPageList(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const pages = new Set([1, total, current - 1, current, current + 1]);
+  const sorted = [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+
+  const result: (number | "ellipsis")[] = [];
+  let prev = 0;
+  for (const p of sorted) {
+    if (prev && p - prev > 1) result.push("ellipsis");
+    result.push(p);
+    prev = p;
+  }
+  return result;
+}
 
 export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProps) {
   const [filter, setFilter] = useState<FilterMode>("all");
@@ -40,16 +64,20 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
     setCurrentPage(1);
   }, [filter]);
 
-  const totalPages = Math.ceil(visibleClaims.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(visibleClaims.length / itemsPerPage));
+  // Defensive clamp: guards against a stale currentPage briefly outliving a
+  // shrunken claim list (e.g. a filter change firing before its own reset
+  // effect above runs) rather than slicing into an out-of-range page.
+  const safePage = Math.min(currentPage, totalPages);
   const paginatedClaims = visibleClaims.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    (safePage - 1) * itemsPerPage,
+    safePage * itemsPerPage
   );
 
   return (
     <div className="flex flex-col">
       {/* ── Filter & Sort bar ── */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4 border-b border-hairline">
         <div className="flex flex-wrap items-center gap-2">
           {filterPills.map(({ label, value }) => {
             const count = filterBadgeCount(claims, value);
@@ -59,33 +87,22 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
                 key={value}
                 onClick={() => setFilter(value)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full border px-4 py-1 text-sm font-medium transition-colors",
+                  "flex items-center gap-1.5 rounded-md border px-4 py-1 text-sm font-medium transition-colors",
                   isActive
-                    ? "border-slate-300 bg-slate-100 text-slate-900 shadow-sm"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    ? "border-ink bg-ink text-white"
+                    : "border-hairline bg-surface text-ink-secondary hover:border-border-strong hover:bg-surface-subtle hover:text-ink"
                 )}
               >
                 {/* Colour dot for status filters */}
                 {value !== "all" && (
-                  <span
-                    className={cn(
-                      "h-1.5 w-1.5 rounded-full shrink-0",
-                      value === "supported"
-                        ? "bg-green-500"
-                        : value === "partially_supported"
-                          ? "bg-orange-500"
-                          : "bg-red-500"
-                    )}
-                  />
+                  <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", filterDotClass[value])} />
                 )}
                 {label}
                 {count > 0 && (
                   <span
                     className={cn(
-                      "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 font-mono text-[10px] font-semibold",
-                      isActive
-                        ? "bg-slate-300 text-slate-800"
-                        : "bg-slate-100 text-slate-600"
+                      "flex h-5 min-w-5 items-center justify-center rounded px-1.5 font-mono text-[10px] font-semibold",
+                      isActive ? "bg-white/20 text-white" : "bg-surface-muted text-ink-tertiary"
                     )}
                   >
                     {count}
@@ -95,7 +112,7 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
             );
           })}
         </div>
-        
+
         {sortControl && (
           <div className="flex shrink-0">
             {sortControl}
@@ -104,16 +121,16 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
       </div>
 
       {/* ── Claims list ── */}
-      <div className="flex flex-col border-t border-slate-100">
+      <div className="flex flex-col">
         {/* Table Header */}
-        <div className="grid grid-cols-[minmax(0,1fr)_160px_140px] gap-6 items-center px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-          <div className="font-sans text-xs font-semibold text-slate-500 uppercase tracking-wider">Claim</div>
-          <div className="font-sans text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</div>
-          <div className="font-sans text-xs font-semibold text-slate-500 uppercase tracking-wider text-right pr-4">Action</div>
+        <div className="grid grid-cols-[minmax(0,1fr)_190px_140px] gap-6 items-center px-4 py-2.5 border-b border-hairline bg-surface-subtle/60">
+          <div className="font-sans text-xs font-semibold text-ink-tertiary uppercase tracking-wider">Claim</div>
+          <div className="font-sans text-xs font-semibold text-ink-tertiary uppercase tracking-wider">Status</div>
+          <div className="font-sans text-xs font-semibold text-ink-tertiary uppercase tracking-wider text-right pr-4">Action</div>
         </div>
 
         {paginatedClaims.length === 0 ? (
-          <div className="py-8 text-center font-sans text-sm text-slate-500">
+          <div className="py-8 text-center font-sans text-sm text-ink-tertiary">
             No claims match this filter.
           </div>
         ) : (
@@ -137,25 +154,48 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
 
       {/* ── Pagination Footer ── */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 py-4 border-t border-slate-100 bg-white">
+        <div className="flex items-center justify-center gap-1.5 py-4 border-t border-hairline bg-surface">
           <button
             type="button"
-            disabled={currentPage === 1}
+            aria-label="Previous page"
+            disabled={safePage === 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="text-sm font-medium text-slate-600 hover:text-slate-900 disabled:opacity-50 disabled:hover:text-slate-600 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
           >
-            Previous
+            <ChevronLeft className="h-4 w-4" />
           </button>
-          <span className="text-sm text-slate-500">
-            Page {currentPage} of {totalPages}
-          </span>
+
+          {buildPageList(safePage, totalPages).map((p, idx) =>
+            p === "ellipsis" ? (
+              <span key={`ellipsis-${idx}`} className="px-1.5 font-sans text-sm text-ink-tertiary select-none">
+                …
+              </span>
+            ) : (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setCurrentPage(p)}
+                aria-current={p === safePage ? "page" : undefined}
+                className={cn(
+                  "flex h-8 min-w-8 items-center justify-center rounded-md px-2 font-sans text-sm font-medium transition-colors",
+                  p === safePage
+                    ? "bg-ink text-white"
+                    : "text-ink-secondary hover:bg-surface-subtle hover:text-ink"
+                )}
+              >
+                {p}
+              </button>
+            )
+          )}
+
           <button
             type="button"
-            disabled={currentPage === totalPages}
+            aria-label="Next page"
+            disabled={safePage === totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="text-sm font-medium text-slate-600 hover:text-slate-900 disabled:opacity-50 disabled:hover:text-slate-600 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
           >
-            Next
+            <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       )}

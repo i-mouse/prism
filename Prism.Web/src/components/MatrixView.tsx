@@ -71,15 +71,15 @@ function UserProfileButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex h-9 items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 shadow-sm transition-colors hover:bg-slate-50 outline-none">
+        <button className="flex h-9 items-center gap-2 rounded-lg border border-hairline bg-surface px-2.5 shadow-sm transition-colors hover:bg-surface-subtle outline-none">
           {/* Avatar circle */}
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-800 font-sans text-xs font-semibold text-white">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink font-sans text-xs font-semibold text-white">
             {initial}
           </div>
-          <span className="hidden font-sans text-sm font-medium text-slate-700 md:block">
+          <span className="hidden font-sans text-sm font-medium text-ink-secondary md:block">
             {displayName}
           </span>
-          <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+          <ChevronDown className="h-3.5 w-3.5 text-ink-tertiary" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -271,28 +271,29 @@ export function MatrixView({
 
           {/* ── Scrollable content region ── */}
           <div className="min-h-0 flex-1 overflow-y-auto">
-            {/* Audit Summary Card — white elevated card on slate-50 canvas */}
+            {/* Audit Summary Card — elevated card on the paper canvas */}
             <div className="px-4 pb-4 md:px-6">
               <AuditSummaryCard summary={derivedSummary} />
             </div>
 
-            {/* Claims table — wrapped in a white card for elevation */}
+            {/* Claims table — wrapped in a card for elevation */}
             <div className="px-4 pb-6 md:px-6">
-              <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <ClaimList 
-                  claims={sortedClaims} 
+              <div className="rounded-xl border border-hairline bg-surface shadow-card overflow-hidden">
+                <ClaimList
+                  key={activePaperId}
+                  claims={sortedClaims}
                   onViewEvidence={onViewEvidence}
                   sortControl={
                     <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
-                      <SelectTrigger className="gap-1 rounded-lg border-slate-200 bg-white px-2 py-1 font-sans text-xs text-slate-700 hover:border-slate-300 focus-visible:ring-2 focus-visible:ring-slate-300 md:px-3 md:py-1.5 md:text-sm lg:!h-8">
-                        <span className="text-slate-400">Sort by:</span>
+                      <SelectTrigger className="gap-1 rounded-lg border-hairline bg-surface px-2 py-1 font-sans text-xs text-ink-secondary hover:border-hairline-strong focus-visible:ring-2 focus-visible:ring-ink/20 md:px-3 md:py-1.5 md:text-sm lg:!h-8">
+                        <span className="text-ink-tertiary">Sort by:</span>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="position" className="focus:bg-slate-50 focus:text-slate-900">
+                        <SelectItem value="position" className="focus:bg-surface-subtle focus:text-ink">
                           Claim number (asc)
                         </SelectItem>
-                        <SelectItem value="support" className="focus:bg-slate-50 focus:text-slate-900">
+                        <SelectItem value="support" className="focus:bg-surface-subtle focus:text-ink">
                           Support level
                         </SelectItem>
                       </SelectContent>
