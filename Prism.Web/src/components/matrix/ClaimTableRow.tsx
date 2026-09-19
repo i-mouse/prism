@@ -6,19 +6,18 @@ import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { VerdictPill } from "@/components/VerdictPill";
 import { cn } from "@/lib/utils";
 
-interface AbsenceRowProps {
+interface ClaimTableRowProps {
   claim: ClaimDto;
   onViewEvidence: () => void;
 }
 
-export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
+export function ClaimTableRow({ claim, onViewEvidence }: ClaimTableRowProps) {
   const verdict = claimLabelToVerdict[displayLabel(claim)];
   const { selectedClaimId } = useSelectedClaim();
   const isSelected = selectedClaimId === claim.id;
 
   return (
     <div
-      data-claim-id={claim.id}
       onClick={onViewEvidence}
       className={cn(
         "grid grid-cols-[minmax(0,1fr)_190px_140px] gap-6 items-center px-4 py-5 border-b border-gray-200 cursor-pointer transition-colors duration-100 group",
@@ -31,9 +30,11 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
           <p className={cn("line-clamp-2 leading-relaxed", isSelected && "font-medium")}>
             {claim.claimSummary}
           </p>
-          <p className="mt-1 text-[11px] text-verdict-refused-text">
-            No supporting evidence found
-          </p>
+          {claim.missing && (
+            <p className="mt-1 text-[11px] text-verdict-refused-text">
+              No supporting evidence found
+            </p>
+          )}
         </div>
       </div>
       <div className="flex justify-start">

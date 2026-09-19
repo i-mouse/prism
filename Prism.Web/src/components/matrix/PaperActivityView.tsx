@@ -459,7 +459,7 @@ export function PaperActivityView({
                       <div className="mt-3 flex gap-2">
                         <button
                           onClick={handleCacheHitContinueClick}
-                          className="rounded-md bg-brand px-3 py-1.5 font-sans text-xs font-medium text-white hover:bg-brand-hover transition-colors"
+                          className="rounded-md bg-charcoal px-3 py-1.5 font-sans text-xs font-medium text-white hover:opacity-90 transition-colors"
                         >
                           Continue
                         </button>

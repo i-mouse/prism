@@ -8,38 +8,55 @@ export default {
         // Prism design tokens — OKLCH-tuned for perceptual uniformity.
         // See docs/design for the design brief.
         ink: {
-          DEFAULT: "oklch(0.145 0 0)",
+          // Locked paper-theme text token — do not deviate without asking.
+          DEFAULT: "#1A1917",
           muted: "oklch(0.55 0 0)",
           subtle: "oklch(0.72 0 0)",
           // Restyle tokens (PRISM_DESIGN_SYSTEM.md §1) — additive alongside
-          // muted/subtle above until call sites migrate.
-          secondary: "oklch(0.442 0.017 285.786)",
-          tertiary: "oklch(0.705 0.015 286.067)",
+          // muted/subtle above until call sites migrate. Re-hued off the old
+          // 285 (blue-violet) axis onto a warm axis to match the paper theme
+          // and the "no blue anywhere" rule — chroma is low enough that this
+          // reads as neutral gray either way.
+          secondary: "oklch(0.442 0.017 80)",
+          tertiary: "oklch(0.705 0.015 80)",
         },
         surface: {
-          DEFAULT: "oklch(1 0 0)",
-          alt: "oklch(0.98 0.012 285)",
-          sunken: "oklch(0.97 0 0)",
+          // Locked paper-theme background token — do not deviate without asking.
+          DEFAULT: "#FAF9F5",
+          alt: "#F5F3EC",
+          sunken: "#ECE9DD",
           // Restyle tokens (PRISM_DESIGN_SYSTEM.md §1) — additive alongside
           // alt/sunken above until call sites migrate.
-          subtle: "oklch(0.985 0 0)",
-          muted: "oklch(0.967 0.001 286.375)",
+          subtle: "#F1EFE6",
+          muted: "#ECE9DD",
         },
         border: {
-          DEFAULT: "oklch(0.92 0 0)",
-          strong: "oklch(0.85 0 0)",
+          // Locked paper-theme border token — do not deviate without asking.
+          DEFAULT: "#E7E4DA",
+          strong: "#D6D2C4",
         },
         // Restyle hairline tokens (PRISM_DESIGN_SYSTEM.md §1) — border
         // aliases used by the restyled surfaces.
         hairline: {
-          DEFAULT: "oklch(0.920 0.004 286.320)",
-          strong: "oklch(0.871 0.006 286.286)",
+          DEFAULT: "#E7E4DA",
+          strong: "#D6D2C4",
         },
+        // Primary-CTA surface — a lighter charcoal than `ink` (#1A1917),
+        // used only for genuine primary-action buttons (Upload & Analyze,
+        // chat send/stop, cache-hit Continue). Every other ink-black surface
+        // (badges, avatars, overlays, code blocks) stays on `ink` itself.
+        charcoal: {
+          DEFAULT: "#343533",
+        },
+        // Accent is monochrome/ink-black per the locked design tokens — no
+        // blue anywhere in the UI. DEFAULT/foreground double as the
+        // shadcn "accent" hover-fill pairing (e.g. select/dropdown items).
         accent: {
-          DEFAULT: "oklch(0.5 0.22 285)",
-          hover: "oklch(0.45 0.22 285)",
-          subtle: "oklch(0.96 0.03 285)",
-          fg: "oklch(1 0 0)",
+          DEFAULT: "#F1EFE6",
+          hover: "#1A1917",
+          subtle: "#F1EFE6",
+          fg: "#FFFFFF",
+          foreground: "#1A1917",
         },
         // Restyle brand tokens (PRISM_DESIGN_SYSTEM.md §1).
         brand: {
@@ -138,11 +155,18 @@ export default {
         display: ['"Manrope Variable"', '"Inter Variable"', "ui-sans-serif", "sans-serif"],
         mono: ['"JetBrains Mono Variable"', "ui-monospace", "monospace"],
       },
+      // Locked: nothing rounder than 6px, anywhere (except literal circles
+      // via `rounded-full`, which this scale doesn't touch). Every step is
+      // capped centrally here so no component needs a one-off override.
       borderRadius: {
         xs: "4px",
         sm: "6px",
-        md: "8px",
-        lg: "10px",
+        md: "6px",
+        lg: "6px",
+        xl: "6px",
+        "2xl": "6px",
+        "3xl": "6px",
+        "4xl": "6px",
       },
       boxShadow: {
         card: "0 1px 2px 0 oklch(0.145 0 0 / 0.04), 0 1px 3px 0 oklch(0.145 0 0 / 0.06)",

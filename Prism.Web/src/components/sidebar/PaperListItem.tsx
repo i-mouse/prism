@@ -11,7 +11,6 @@ interface PaperListItemProps {
 }
 
 export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: PaperListItemProps) {
-
   if (collapsed) {
     return (
       <button
@@ -19,11 +18,13 @@ export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: P
         onClick={onSelect}
         title={chat.fileName}
         className={cn(
-          "mx-auto flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
-          isActive ? "bg-brand-subtle text-brand" : "text-ink-tertiary hover:bg-surface-subtle hover:text-ink-secondary"
+          "mx-auto flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
+          isActive
+            ? "bg-surface-muted text-ink"
+            : "text-ink-tertiary hover:bg-surface-subtle hover:text-ink-secondary"
         )}
       >
-        <FileText className="h-5 w-5" />
+        <FileText className="h-4 w-4" />
       </button>
     );
   }
@@ -33,41 +34,44 @@ export function PaperListItem({ chat, isActive, onSelect, collapsed = false }: P
       type="button"
       onClick={onSelect}
       className={cn(
-        "group flex w-full items-start gap-3 rounded-lg border-l-2 border-transparent px-3 py-2.5 text-left transition-colors hover:bg-surface-subtle",
-        isActive && "border-brand bg-brand-subtle hover:bg-brand-subtle"
+        "group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors",
+        isActive ? "bg-surface-subtle" : "hover:bg-surface-subtle"
       )}
     >
-      <div className={cn(
-        "mt-0.5 shrink-0 rounded-md border border-hairline bg-surface p-1.5",
-        isActive ? "text-brand border-brand/20" : "text-ink-tertiary"
-      )}>
+      {/* Document icon */}
+      <div
+        className={cn(
+          "flex h-7 w-7 shrink-0 items-center justify-center rounded-md",
+          isActive ? "text-ink" : "text-ink-tertiary"
+        )}
+      >
         <FileText className="h-4 w-4" strokeWidth={1.5} />
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="truncate font-sans text-sm font-semibold text-ink">{chat.fileName}</div>
-        <div className="mt-1 flex items-center gap-1.5 font-sans text-[11px] font-medium">
-           {chat.extractionStatus === "Completed" ? (
-              <>
-                 <div className="flex h-3 w-3 items-center justify-center rounded-full bg-verdict-supported-icon text-white">
-                   <svg className="h-2 w-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                 </div>
-                 <span className="text-ink-secondary">Ready · {relativeTime(chat.uploadedAt)}</span>
-              </>
-           ) : chat.extractionStatus === "Failed" ? (
-              <>
-                 <div className="flex h-3 w-3 items-center justify-center rounded-full bg-verdict-refused-icon text-white">
-                    <svg className="h-2 w-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                 </div>
-                 <span className="text-ink-secondary">Failed · {relativeTime(chat.uploadedAt)}</span>
-              </>
-           ) : (
-              <>
-                 <div className="h-3.5 w-3.5 rounded-full border-[1.5px] border-brand border-t-transparent animate-spin" />
-                 <span className="text-brand">Analyzing...</span>
-              </>
-           )}
+
+      {/* Text */}
+      <div className="min-w-0 flex-1">
+        <div
+          className={cn(
+            "truncate font-sans text-sm",
+            isActive ? "font-semibold text-ink" : "font-medium text-ink-secondary"
+          )}
+        >
+          {chat.fileName}
+        </div>
+        <div className="font-sans text-[11px] text-ink-tertiary">
+          {relativeTime(chat.uploadedAt)}
         </div>
       </div>
+
+      {/* Status dot — extraction status, not a claim verdict, so this uses
+          the status token family rather than verdict colors. */}
+      {chat.extractionStatus === "Completed" ? (
+        <span className="shrink-0 h-1.5 w-1.5 rounded-full bg-status-complete" />
+      ) : chat.extractionStatus === "Failed" ? (
+        <span className="shrink-0 h-1.5 w-1.5 rounded-full bg-status-failed" />
+      ) : (
+        <span className="shrink-0 h-2.5 w-2.5 rounded-full border-[1.5px] border-ink-tertiary border-t-transparent animate-spin" />
+      )}
     </button>
   );
 }

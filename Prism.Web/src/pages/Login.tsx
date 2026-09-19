@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useMsal, useIsAuthenticated } from "@azure/msal-react";
 import { InteractionStatus } from "@azure/msal-browser";
 import { AuthButtons } from "@/components/AuthButtons";
+import { PrismLogo } from "@/components/PrismLogo";
 
 const LANDING_URL = import.meta.env.VITE_LANDING_URL || "/";
 const isExternalLanding = LANDING_URL !== "/";
@@ -41,29 +42,14 @@ export function Login() {
       <header className="flex items-center justify-between px-6 py-6 sm:px-8 w-full max-w-7xl mx-auto">
         {/* Wordmark */}
         <div className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="text-ink">
-            <defs>
-              <linearGradient id="prism-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ef4444" />
-                <stop offset="50%" stopColor="#f97316" />
-                <stop offset="100%" stopColor="#eab308" />
-              </linearGradient>
-            </defs>
-            <polygon points="12 4 4 18 20 18" fill="url(#prism-gradient)" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-          </svg>
-          <span className="font-['Georgia','Times_New_Roman',serif] text-ink text-xl tracking-wide font-medium">
+          <PrismLogo className="h-8 w-8" />
+          <span className="font-sans font-semibold text-2xl tracking-tight text-slate-800">
             PRISM
           </span>
         </div>
 
         {/* Secondary Links */}
         <nav className="flex items-center gap-6">
-          <a
-            href={isExternalLanding ? LANDING_URL : "#"}
-            className="text-sm font-medium text-ink-muted hover:text-ink transition-colors"
-          >
-            Live demo
-          </a>
           <a
             href="https://github.com/i-mouse/prism"
             target="_blank"

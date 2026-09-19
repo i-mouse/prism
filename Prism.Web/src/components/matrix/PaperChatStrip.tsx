@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUp, ChevronDown, ChevronUp, Copy, MessageCircle, RotateCw, Square } from "lucide-react";
+import { ArrowUp, ChevronDown, Copy, MessageCircle, Square, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { useChatStream } from "@/hooks/useChatStream";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { ChatMarkdown, citeMarker, cursorMarker, type ChatCiteInfo } from "@/components/matrix/chat/ChatMarkdown";
-import { ChatResizeHandle } from "@/components/matrix/chat/ChatResizeHandle";
-import { DEFAULT_CHAT_HEIGHT, clampChatHeight } from "@/components/matrix/chat/chatHeight";
 import { ChatBottomSheet, type SheetState } from "@/components/matrix/chat/ChatBottomSheet";
 import type { ChatBlock, ChatTurn } from "@/types/chat";
 import { cn } from "@/lib/utils";
@@ -14,10 +12,10 @@ import { cn } from "@/lib/utils";
 interface PaperChatStripProps {
   chatId: string;
   activeFileId: string;
+  fileName?: string;
 }
 
 const SUGGESTED_PROMPTS = ["What are the main claims?", "Show me the strongest refusals"];
-const CHAT_HEIGHT_STORAGE_KEY = "prism.chatHeight";
 
 // Approximates "the agent declined to answer" from block shape alone —
 // there's no explicit refusal flag on the wire, so this is a best-effort
@@ -46,13 +44,6 @@ function useIsLgUp() {
   }, []);
 
   return isLgUp;
-}
-
-function readStoredHeight(): number {
-  if (typeof window === "undefined") return DEFAULT_CHAT_HEIGHT;
-  const raw = window.localStorage.getItem(CHAT_HEIGHT_STORAGE_KEY);
-  const parsed = raw ? Number(raw) : NaN;
-  return Number.isFinite(parsed) ? clampChatHeight(parsed) : DEFAULT_CHAT_HEIGHT;
 }
 
 type ClaimReferenceBlock = Extract<ChatBlock, { type: "claim_reference" }>;
@@ -99,32 +90,13 @@ function followUpsFor(turn: ChatTurn): string[] {
   return ["Which claims support this?", "Show me the evidence"];
 }
 
-function PrismAvatar() {
-  return (
-    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-brand/20 bg-brand-subtle">
-      <div className="h-2 w-2 rotate-45 rounded-sm bg-brand" />
-    </div>
-  );
-}
-
-export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
+export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStripProps) {
   const { turns, isSending, error, sendMessage, abort } = useChatStream(chatId, activeFileId);
   const { highlightClaim } = useSelectedClaim();
   const isLgUp = useIsLgUp();
-
-  const [chatHeight, setChatHeight] = useState(readStoredHeight);
-  const panelRef = useRef<HTMLDivElement>(null);
   const [sheetState, setSheetState] = useState<SheetState>("peek");
-  // Collapsing never unmounts this component (or the useChatStream hook
-  // above), so turns/scroll state survives a collapse/reopen cycle — see
-  // the "chat collapse" task. Default true: additive, no behavior change
-  // for users who never touch the toggle.
-  const [isChatOpen, setIsChatOpen] = useState(true);
-
-  const handleHeightChange = (h: number) => {
-    setChatHeight(h);
-    window.localStorage.setItem(CHAT_HEIGHT_STORAGE_KEY, String(h));
-  };
+  // Default to false for the new pill layout so it pops up nicely
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleClaimClick = (claimId: string) => {
     highlightClaim(claimId);
@@ -141,21 +113,11 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
     }
   };
 
-  const handleRegenerate = () => toast("Regenerate coming soon");
 
   const handleInputFocus = () => {
-    if (sheetState === "peek") setSheetState("half");
+    if (!isLgUp && sheetState === "peek") setSheetState("half");
+    if (isLgUp) setIsChatOpen(true);
   };
-
-  const inputRow = (
-    <ChatInput
-      onSend={sendMessage}
-      onStop={abort}
-      isSending={isSending}
-      placeholder="Ask about this paper..."
-      onFocus={!isLgUp ? handleInputFocus : undefined}
-    />
-  );
 
   const messages = (
     <MessageList
@@ -164,37 +126,87 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
       isSending={isSending}
       onClaimClick={handleClaimClick}
       onCopy={handleCopy}
-      onRegenerate={handleRegenerate}
       onFollowUp={sendMessage}
     />
   );
 
+  const [chatHeight, setChatHeight] = useState(400);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = chatHeight;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      // Invert delta because dragging UP increases height
+      const deltaY = startY - moveEvent.clientY;
+      const newHeight = Math.max(200, Math.min(startHeight + deltaY, window.innerHeight * 0.8));
+      setChatHeight(newHeight);
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
   if (isLgUp) {
     return (
-      <div
-        ref={panelRef}
-        style={isChatOpen ? { height: chatHeight } : undefined}
-        className="flex shrink-0 flex-col border-t border-hairline bg-surface"
-      >
-        {isChatOpen && <ChatResizeHandle panelRef={panelRef} height={chatHeight} onHeightChange={handleHeightChange} />}
-        <div className="flex shrink-0 items-center justify-between px-4 py-2">
-          <span className="font-sans text-sm font-semibold text-ink">Chat</span>
-          <button
-            type="button"
-            onClick={() => setIsChatOpen((v) => !v)}
-            aria-label={isChatOpen ? "Collapse chat" : "Expand chat"}
-            title={isChatOpen ? "Collapse chat" : "Expand chat"}
-            className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
-          >
-            {isChatOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-          </button>
+      <div className="px-3 pb-4 pt-2 md:px-6 md:pb-5 relative">
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out rounded-2xl border border-hairline shadow-card bg-surface-subtle",
+            isChatOpen ? "max-h-[80vh] opacity-100 mb-4" : "max-h-0 opacity-0 border-transparent shadow-none"
+          )}
+        >
+          <div style={{ height: isChatOpen ? chatHeight : 0 }} className="w-full flex flex-col relative transition-none">
+            <div
+              className="w-full h-4 cursor-ns-resize flex items-center justify-center bg-surface-subtle hover:bg-surface-muted border-b border-hairline rounded-t-2xl shrink-0"
+              onMouseDown={handleMouseDown}
+            >
+              <div className="w-10 h-1 bg-border-strong rounded-full" />
+            </div>
+            <div className="flex shrink-0 items-center justify-between border-b border-hairline px-4 py-3 bg-surface">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 text-ink-tertiary" />
+                <span className="font-sans text-sm font-semibold text-ink">
+                  {fileName ? `Chat — ${fileName}` : "Chat"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsChatOpen(false)}
+                className="flex h-6 w-6 items-center justify-center rounded-full text-ink-tertiary hover:bg-surface-subtle hover:text-ink transition-colors"
+                aria-label="Close chat"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto min-h-0 pb-20">
+              {messages}
+            </div>
+          </div>
         </div>
-        {/* Hidden rather than unmounted so scroll position and any unsent
-            draft in ChatInput survive a collapse/reopen cycle. */}
-        <div className={cn("flex min-h-0 flex-1 flex-col", !isChatOpen && "hidden")}>
-          {messages}
-          {inputRow}
+
+        <div className={cn("relative z-50 transition-all duration-300", isChatOpen ? "absolute bottom-8 left-10 right-10" : "")}>
+          <ChatInput
+            onSend={sendMessage}
+            onStop={abort}
+            isSending={isSending}
+            placeholder={fileName ? `Ask about this paper (${fileName})...` : "Ask about this paper..."}
+            onFocus={handleInputFocus}
+            isChatOpen={isChatOpen}
+            setIsChatOpen={setIsChatOpen}
+            isLgUp={isLgUp}
+          />
         </div>
+        
+        <p className="mt-1.5 text-center font-sans text-[11px] text-slate-500">
+          Get answers, ask for clarification, or explore specific claims from this paper.
+        </p>
       </div>
     );
   }
@@ -208,14 +220,20 @@ export function PaperChatStrip({ chatId, activeFileId }: PaperChatStripProps) {
               key={prompt}
               type="button"
               onClick={() => sendMessage(prompt)}
-              className="rounded-full border border-hairline bg-surface px-3 py-1 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-brand"
+              className="rounded-md border border-hairline bg-surface px-3 py-1 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
           ))}
         </div>
       )}
-      {inputRow}
+      <ChatInput
+        onSend={sendMessage}
+        onStop={abort}
+        isSending={isSending}
+        placeholder="Ask about this paper..."
+        onFocus={!isLgUp ? handleInputFocus : undefined}
+      />
     </div>
   );
 
@@ -252,7 +270,6 @@ function MessageList({
   isSending,
   onClaimClick,
   onCopy,
-  onRegenerate,
   onFollowUp,
 }: {
   turns: ChatTurn[];
@@ -260,7 +277,6 @@ function MessageList({
   isSending: boolean;
   onClaimClick: (claimId: string) => void;
   onCopy: (turn: ChatTurn) => void;
-  onRegenerate: () => void;
   onFollowUp: (prompt: string) => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -313,7 +329,7 @@ function MessageList({
               key={prompt}
               type="button"
               onClick={() => onFollowUp(prompt)}
-              className="rounded-full border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
+              className="rounded-md border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
@@ -325,7 +341,7 @@ function MessageList({
 
   return (
     <div className="relative flex h-full min-h-0 flex-col">
-      <div ref={scrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-3">
+      <div ref={scrollRef} className="min-h-0 flex-1 space-y-6 overflow-y-auto bg-surface-subtle p-6 pb-40">
         {turns.map((turn, i) =>
           turn.role === "user" ? (
             <UserTurnBubble key={i} turn={turn} />
@@ -337,7 +353,6 @@ function MessageList({
               isSending={isSending}
               onClaimClick={onClaimClick}
               onCopy={() => onCopy(turn)}
-              onRegenerate={onRegenerate}
               onFollowUp={onFollowUp}
             />
           )
@@ -362,8 +377,18 @@ function MessageList({
 function UserTurnBubble({ turn }: { turn: ChatTurn }) {
   const text = turn.blocks.map((b) => (b.type === "text" ? b.content : "")).join("");
   return (
-    <div className="flex justify-end">
-      <div className="max-w-[75%] rounded-2xl rounded-br-sm bg-brand-subtle px-4 py-2.5 font-sans text-sm text-ink leading-relaxed">{text}</div>
+    <div className="flex justify-end gap-3 items-start">
+      <div className="flex flex-col items-end max-w-[80%]">
+        <div className="bg-brand-subtle text-ink rounded-2xl rounded-tr-sm px-5 py-4 text-sm shadow-sm">
+          {text}
+        </div>
+        <div className="text-[10px] text-ink-tertiary mt-1.5 mr-1 font-medium">
+          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </div>
+      </div>
+      <div className="bg-ink text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
+        N
+      </div>
     </div>
   );
 }
@@ -374,7 +399,6 @@ function AssistantTurn({
   isSending,
   onClaimClick,
   onCopy,
-  onRegenerate,
   onFollowUp,
 }: {
   turn: ChatTurn;
@@ -382,20 +406,18 @@ function AssistantTurn({
   isSending: boolean;
   onClaimClick: (claimId: string) => void;
   onCopy: () => void;
-  onRegenerate: () => void;
   onFollowUp: (prompt: string) => void;
 }) {
   const isThinking = isSending && turn.isStreaming && turn.blocks.length === 0;
   const isDone = !turn.isStreaming && turn.blocks.length > 0;
-  const isStreamingWithContent = turn.isStreaming && turn.blocks.length > 0;
   const showFollowUps = isLast && isDone;
   const showCursor = !!turn.isStreaming && isLast;
 
   if (isThinking) {
     return (
-      <div className="flex gap-3">
-        <PrismAvatar />
-        <div className="flex items-center gap-1.5 pt-1.5">
+      <div className="flex gap-4">
+        <GradientSparkle className="h-6 w-6 shrink-0 mt-1" />
+        <div className="flex items-center gap-1.5 pt-1.5 bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm px-5 py-4">
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "0ms" }} />
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "150ms" }} />
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "300ms" }} />
@@ -405,14 +427,13 @@ function AssistantTurn({
   }
 
   return (
-    <div>
-      <div className="group flex gap-3">
-        <PrismAvatar />
-        <div
-          className="min-w-0 flex-1 [contain:layout_paint]"
-          style={isStreamingWithContent ? { minHeight: "1.5em" } : undefined}
-        >
-          <div className="font-sans text-sm text-ink">
+    <div className="flex flex-col">
+      <div className="group flex gap-4">
+        <div className="shrink-0 mt-2">
+          <GradientSparkle className="h-6 w-6" />
+        </div>
+        <div className="flex flex-col w-full max-w-[85%]">
+          <div className="bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm p-5 text-sm text-ink prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-ink prose-p:leading-relaxed prose-a:text-ink prose-a:underline prose-li:marker:text-ink-tertiary [contain:layout_paint]">
             <ChatMarkdown
               content={turnToMarkdown(turn, showCursor)}
               claimsById={claimsById(turn)}
@@ -421,22 +442,31 @@ function AssistantTurn({
           </div>
 
           {isDone && (
-            <div className="mt-2 flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+            <div className="mt-2 flex items-center justify-end gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100 px-2">
+              <span className="text-[10px] text-ink-tertiary mr-auto ml-1 font-medium">
+                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
               <button
                 type="button"
                 onClick={onCopy}
                 title="Copy"
-                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink-secondary"
               >
                 <Copy className="h-3.5 w-3.5" />
               </button>
               <button
                 type="button"
-                onClick={onRegenerate}
-                title="Regenerate"
-                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink"
+                title="Helpful"
+                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink-secondary"
               >
-                <RotateCw className="h-3.5 w-3.5" />
+                <ThumbsUp className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                title="Not helpful"
+                className="rounded-md p-1.5 text-ink-tertiary transition-colors hover:bg-surface-subtle hover:text-ink-secondary"
+              >
+                <ThumbsDown className="h-3.5 w-3.5" />
               </button>
             </div>
           )}
@@ -444,13 +474,13 @@ function AssistantTurn({
       </div>
 
       {showFollowUps && (
-        <div className="ml-9 mt-3 flex flex-wrap gap-2">
+        <div className="ml-10 mt-3 flex flex-wrap gap-2">
           {followUpsFor(turn).map((prompt) => (
             <button
               key={prompt}
               type="button"
               onClick={() => onFollowUp(prompt)}
-              className="rounded-full border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-brand"
+              className="rounded-md border border-hairline bg-surface px-4 py-1.5 font-sans text-sm text-ink-secondary shadow-card transition-colors hover:border-brand hover:text-brand"
             >
               {prompt}
             </button>
@@ -461,60 +491,139 @@ function AssistantTurn({
   );
 }
 
+const GradientSparkle = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="url(#sparkle-grad)" className={className}>
+    <defs>
+      <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop stopColor="#f97316" offset="0%" />
+        <stop stopColor="#ec4899" offset="100%" />
+      </linearGradient>
+    </defs>
+    <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z" />
+  </svg>
+);
+
 function ChatInput({
   onSend,
   onStop,
   isSending,
   placeholder,
   onFocus,
+  isChatOpen,
+  setIsChatOpen,
+  isLgUp,
+  fileName,
 }: {
-  onSend: (message: string) => void;
+  onSend: (msg: string) => void;
   onStop: () => void;
   isSending: boolean;
-  placeholder: string;
+  placeholder?: string;
   onFocus?: () => void;
+  isChatOpen?: boolean;
+  setIsChatOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  isLgUp?: boolean;
+  fileName?: string;
 }) {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
+  const adjustHeight = () => {
     const el = textareaRef.current;
-    if (el) {
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight}px`;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 96)}px`; // max-h-24
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [message]);
+
+  const handleSubmit = () => {
+    if (!message.trim() || isSending) return;
+    onSend(message);
+    setMessage("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
     }
   };
 
-  const handleSubmit = () => {
-    const trimmed = message.trim();
-    if (!trimmed || isSending) return;
-    onSend(trimmed);
-    setMessage("");
-    const el = textareaRef.current;
-    if (el) el.style.height = "auto";
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    // Enter sends (Ctrl/Cmd+Enter still does too, for existing muscle
-    // memory); Shift+Enter inserts a newline instead. isComposing guards
-    // IME input (e.g. Japanese) where Enter confirms a candidate rather
-    // than submitting the message.
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSubmit();
     }
   };
 
+  if (isLgUp && setIsChatOpen !== undefined && isChatOpen !== undefined) {
+    return (
+      <div className="flex flex-col items-center w-full">
+        <div
+          className={cn(
+            "bg-surface border border-hairline rounded-lg px-3 py-1.5 flex items-center gap-2 w-full transition-colors duration-150 z-50",
+            "focus-within:border-border-strong"
+          )}
+          onClick={() => textareaRef.current?.focus()}
+        >
+          <GradientSparkle className="h-5 w-5 shrink-0" />
+
+          <textarea
+            ref={textareaRef}
+            value={message}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onFocus={onFocus}
+            placeholder={placeholder}
+            disabled={isSending}
+            rows={1}
+            className="flex-1 min-w-0 resize-none overflow-y-auto bg-transparent font-sans text-sm text-ink placeholder:text-ink-tertiary outline-none disabled:opacity-60 max-h-24 py-1.5"
+          />
+
+          <button className="text-ink-tertiary hover:text-ink-secondary transition-colors p-1.5 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+
+          {isSending ? (
+            <button
+              type="button"
+              onClick={onStop}
+              className="flex shrink-0 items-center justify-center rounded-md bg-charcoal text-white transition-opacity hover:opacity-90 w-8 h-8"
+            >
+              <Square className="h-3.5 w-3.5" fill="currentColor" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSubmit();
+              }}
+              disabled={!message.trim()}
+              className={cn(
+                "flex shrink-0 items-center justify-center rounded-md transition-all duration-150 w-8 h-8",
+                message.trim() && !isSending
+                  ? "bg-charcoal text-white hover:opacity-90"
+                  : "bg-surface-muted text-ink-tertiary cursor-not-allowed"
+              )}
+              aria-label="Send"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-slate-500 mt-2 text-center px-4">
+          Responses are based only on the content of {fileName ?? "this paper"}. Always verify important information.
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="shrink-0 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:px-6 lg:pb-4 lg:pt-3">
-      <div
-        className={cn(
-          "flex w-full items-end gap-2 rounded-full border border-hairline bg-surface px-5 py-3",
-          "transition-all duration-150",
-          "focus-within:border-brand focus-within:ring-2 focus-within:ring-brand-subtle"
-        )}
-      >
+    <div className="flex flex-col border-t border-hairline bg-surface pb-safe pt-2">
+      <div className="flex items-end gap-2 px-3 pb-3">
         <textarea
           ref={textareaRef}
           value={message}
@@ -524,32 +633,24 @@ function ChatInput({
           placeholder={placeholder}
           disabled={isSending}
           rows={1}
-          className={cn(
-            "max-h-24 flex-1 resize-none overflow-y-auto bg-transparent",
-            "font-sans text-sm text-ink placeholder:text-ink-tertiary",
-            "focus:outline-none"
-          )}
+          className="max-h-32 min-h-[40px] flex-1 resize-none overflow-y-auto rounded-2xl border border-hairline bg-surface-subtle px-4 py-2.5 font-sans text-sm text-ink placeholder:text-ink-tertiary focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand disabled:opacity-60"
         />
         {isSending ? (
           <button
             type="button"
             onClick={onStop}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-surface transition-all hover:bg-ink-secondary"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-charcoal text-white shadow-sm transition-opacity hover:opacity-90"
           >
-            <Square className="h-3 w-3" fill="currentColor" />
+            <Square className="h-4 w-4" fill="currentColor" />
           </button>
         ) : (
           <button
             type="button"
             onClick={handleSubmit}
             disabled={!message.trim()}
-            className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-100",
-              "bg-brand text-white hover:bg-brand-hover active:scale-95",
-              "disabled:cursor-not-allowed disabled:bg-hairline disabled:text-ink-tertiary disabled:hover:bg-hairline"
-            )}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-charcoal text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            <ArrowUp className="h-4 w-4" />
+            <ArrowUp className="h-5 w-5" />
           </button>
         )}
       </div>

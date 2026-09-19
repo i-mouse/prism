@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Prism.ApiService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,6 +28,22 @@ namespace Prism.ApiService.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "file_records",
+                columns: table => new
+                {
+                    file_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    file_name = table.Column<string>(type: "text", nullable: false),
+                    summary = table.Column<string>(type: "text", nullable: true),
+                    status = table.Column<string>(type: "text", nullable: false),
+                    uploaded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    content_hash = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_file_records", x => x.file_id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "prism_documents",
                 columns: table => new
                 {
@@ -35,33 +51,11 @@ namespace Prism.ApiService.Migrations
                     user_id = table.Column<string>(type: "text", nullable: false),
                     uploaded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: false),
                     chat_title = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_prism_documents", x => x.chat_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "file_records",
-                columns: table => new
-                {
-                    file_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    file_name = table.Column<string>(type: "text", nullable: false),
-                    summary = table.Column<string>(type: "text", nullable: true),
-                    uploaded_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    chat_id = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_file_records", x => x.file_id);
-                    table.ForeignKey(
-                        name: "fk_file_records_prism_documents_chat_id",
-                        column: x => x.chat_id,
-                        principalTable: "prism_documents",
-                        principalColumn: "chat_id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,6 +88,30 @@ namespace Prism.ApiService.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "chat_files",
+                columns: table => new
+                {
+                    chat_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    file_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_chat_files", x => new { x.chat_id, x.file_id });
+                    table.ForeignKey(
+                        name: "fk_chat_files_file_records_file_id",
+                        column: x => x.file_id,
+                        principalTable: "file_records",
+                        principalColumn: "file_id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "fk_chat_files_prism_documents_chat_id",
+                        column: x => x.chat_id,
+                        principalTable: "prism_documents",
+                        principalColumn: "chat_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "paper_claims",
                 columns: table => new
                 {
@@ -106,6 +124,7 @@ namespace Prism.ApiService.Migrations
                     grounding_status = table.Column<string>(type: "text", nullable: false),
                     missing = table.Column<bool>(type: "boolean", nullable: false),
                     reason = table.Column<string>(type: "text", nullable: true),
+                    position = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     evidence_spans = table.Column<string>(type: "jsonb", nullable: true)
@@ -120,6 +139,16 @@ namespace Prism.ApiService.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "domains",
+                columns: new[] { "id", "created_at", "is_active", "name", "prompt_schema", "updated_at" },
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), new DateTime(2026, 8, 9, 0, 0, 0, 0, DateTimeKind.Utc), true, "research-paper", "{}", new DateTime(2026, 8, 9, 0, 0, 0, 0, DateTimeKind.Utc) });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_chat_files_file_id",
+                table: "chat_files",
+                column: "file_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_document_extractors_domain_id",
@@ -138,9 +167,11 @@ namespace Prism.ApiService.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_file_records_chat_id",
+                name: "ix_file_records_content_hash",
                 table: "file_records",
-                column: "chat_id");
+                column: "content_hash",
+                unique: true,
+                filter: "content_hash IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "ix_paper_claims_document_extractor_id_label",
@@ -151,13 +182,24 @@ namespace Prism.ApiService.Migrations
                 name: "ix_paper_claims_extraction_run_id",
                 table: "paper_claims",
                 column: "extraction_run_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_paper_claims_extraction_run_id_position",
+                table: "paper_claims",
+                columns: new[] { "extraction_run_id", "position" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "chat_files");
+
+            migrationBuilder.DropTable(
                 name: "paper_claims");
+
+            migrationBuilder.DropTable(
+                name: "prism_documents");
 
             migrationBuilder.DropTable(
                 name: "document_extractors");
@@ -167,9 +209,6 @@ namespace Prism.ApiService.Migrations
 
             migrationBuilder.DropTable(
                 name: "file_records");
-
-            migrationBuilder.DropTable(
-                name: "prism_documents");
         }
     }
 }
