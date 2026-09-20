@@ -95,8 +95,26 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
   const { highlightClaim } = useSelectedClaim();
   const isLgUp = useIsLgUp();
   const [sheetState, setSheetState] = useState<SheetState>("peek");
-  // Default to false for the new pill layout so it pops up nicely
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  // Persisted per-chat to sessionStorage (same pattern as useActivePaper.ts)
+  // so the panel's open/closed state survives a remount of this component -
+  // e.g. from a backgrounded-tab reload - instead of resetting to the
+  // default every time. Default to false for the new pill layout so it pops
+  // up nicely on a chat that's never been opened yet.
+  const [isChatOpen, setIsChatOpen] = useState(() => {
+    try {
+      return sessionStorage.getItem(`prism_chat_open_${chatId}`) === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(`prism_chat_open_${chatId}`, String(isChatOpen));
+    } catch {
+      // ignore (private browsing / quota)
+    }
+  }, [chatId, isChatOpen]);
 
   const handleClaimClick = (claimId: string) => {
     highlightClaim(claimId);
