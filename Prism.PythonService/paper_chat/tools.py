@@ -106,7 +106,7 @@ async def _resolve_document_extractor_id(active_file_id: str) -> uuid.UUID | Non
 
 _CLAIM_COLUMNS = (
     "id, claim_text_verbatim, claim_summary, label, missing, "
-    "grounding_status, reason, evidence_spans, position"
+    "grounding_status, reason, evidence_spans, position, effective_status"
 )
 
 _VALID_CLAIM_LABELS = {"supported", "partially_supported", "not_supported"}
@@ -134,11 +134,12 @@ async def query_paper_claims(
       position=N       : fetch the one claim at that number (0, 1, 2, ...).
                           Use for "claim 11", "show me claim 3", "what does
                           claim 5 say", etc.
-      label_filter=STR  : fetch every claim with that audit label.
-                          Values: "supported", "partially_supported",
-                          "not_supported". Use for "which claims are
-                          refused?", "show partial claims", "any supported
-                          claims?", etc.
+      label_filter=STR  : fetch every claim whose effective_status (the
+                          grounding-aware final verdict, not the extractor's
+                          raw label) matches. Values: "supported",
+                          "partially_supported", "not_supported". Use for
+                          "which claims are refused?", "show partial
+                          claims", "any supported claims?", etc.
       no_evidence_only=True : fetch every claim with zero evidence spans -
                           not just "not_supported" by label (a not_supported
                           claim can carry refuting evidence, which is not
@@ -156,8 +157,12 @@ async def query_paper_claims(
     Precedence: position > label_filter > no_evidence_only > query > all.
     Filter: active_file_id (resolved to the paper's latest document_extractor_id).
     Returns: list of {claim_id, position, claim_summary, claim_text_verbatim,
-                      label, missing, grounding_status, reason,
-                      evidence_spans (top-2)}.
+                      label, effective_status, missing, grounding_status,
+                      reason, evidence_spans (top-2)}. effective_status is
+                      the Postgres-computed, grounding-aware final status
+                      ("not_supported" when missing=true, else label) -
+                      use this, not label, wherever a claim's support
+                      status is presented as ground truth.
     Empty list if no matches, an unrecognized label_filter value, a
     position that doesn't exist, or no extraction yet for this paper -
     never raises (see module docstring).
@@ -194,7 +199,7 @@ async def query_paper_claims(
                         f"""
                         SELECT {_CLAIM_COLUMNS}
                         FROM paper_claims
-                        WHERE document_extractor_id = %s AND label = %s
+                        WHERE document_extractor_id = %s AND effective_status = %s
                         ORDER BY position ASC
                         LIMIT {_METADATA_LOOKUP_LIMIT}
                         """,
@@ -260,6 +265,7 @@ async def query_paper_claims(
                 "claim_summary": row["claim_summary"],
                 "claim_text_verbatim": row["claim_text_verbatim"],
                 "label": row["label"],
+                "effective_status": row["effective_status"],
                 "missing": row["missing"],
                 "grounding_status": row["grounding_status"],
                 "reason": row["reason"],

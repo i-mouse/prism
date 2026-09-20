@@ -89,6 +89,20 @@ public class PrismDBContext : DbContext
     entity.Property(x => x.Label).HasConversion(new ClaimLabelConverter());
     entity.Property(x => x.GroundingStatus).HasConversion(new GroundingStatusConverter());
 
+    // Postgres-computed, never written from C#: guarantees the "final,
+    // grounding-aware" status shown to users and chat can never drift from
+    // its source columns (label/missing), unlike an app-layer computation
+    // that has to be kept in sync by convention. missing already captures
+    // the per-span grounding aggregate (see extraction/grounding.py) - no
+    // evidence_spans jsonb inspection needed here.
+    entity.Property<string>("EffectiveStatus")
+          .IsRequired()
+          .HasColumnName("effective_status")
+          .HasComputedColumnSql(
+              "CASE WHEN \"missing\" THEN 'not_supported' ELSE \"label\" END",
+              stored: true)
+          .ValueGeneratedOnAddOrUpdate();
+
     entity.OwnsMany(x => x.EvidenceSpans, b =>
 {
     b.ToJson();
