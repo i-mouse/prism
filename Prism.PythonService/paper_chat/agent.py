@@ -55,6 +55,13 @@ REFUSAL_OUT_OF_SCOPE_MESSAGE = (
     "this paper. For an overall summary, see the Overview tab."
 )
 
+# generate_response's cancellation fallback (see docs/decisions.md "Known gap:
+# aborted chat leaves an orphaned unanswered question"). Appended to whatever
+# text had already streamed when the client disconnected; the plain
+# placeholder is only used when nothing had been generated yet.
+CANCELLED_RESPONSE_PLACEHOLDER = "Response interrupted — please ask again."
+CANCELLED_RESPONSE_SUFFIX = " [response interrupted]"
+
 # Below this raw cosine score (well under CHUNK_SIMILARITY_THRESHOLD from
 # paper_chat/tools.py), a chunk carries no meaningful topical signal at all.
 # Used only in check_empty to tell a genuinely out-of-scope question (e.g.
@@ -107,7 +114,7 @@ class RetrievalRoute(BaseModel):
             "and raw supporting text."
         )
     )
-    claim_lookup: Literal["position", "label_filter", "query", "all"] = Field(
+    claim_lookup: Literal["position", "label_filter", "query", "all", "no_evidence"] = Field(
         default="query",
         description=(
             "How query_paper_claims should look up claims. 'position': the user "
@@ -118,14 +125,22 @@ class RetrievalRoute(BaseModel):
             "any supported claims?', 'show me refusals', 'strongest refusals', "
             "'unsupported claims', 'any partial claims?', 'what's supported?' - "
             "set claim_label_filter to 'supported', 'partially_supported', or "
-            "'not_supported' to match. 'all': the user "
+            "'not_supported' to match. 'no_evidence': the user specifically asked "
+            "about claims that have NO evidence/supporting quotes at all, e.g. "
+            "'claims with no evidence', 'which claims have no supporting quotes', "
+            "'what wasn't found in the paper at all' - a claim can be labeled "
+            "not_supported for either a refuting quote OR a total absence of "
+            "evidence; this mode fetches only the latter. Do not use label_filter "
+            "for this - 'not_supported' by label alone includes claims that DO "
+            "have (refuting) evidence. 'all': the user "
             "asked about the paper's OVERALL audit state rather than one label or "
             "claim, e.g. 'any refusal?', 'how many claims in total', 'how many "
-            "are supported vs refused' - fetches every claim so it can be counted "
-            "exactly. 'query': anything else - a topical question best answered "
-            "by full-text search over claim content, e.g. 'claims about "
-            "hallucination'. Precedence when a question could fit more than one: "
-            "position > label_filter > query > all."
+            "are supported vs refused', 'list all claims and count them' - fetches "
+            "every claim so it can be counted exactly. 'query': anything else - a "
+            "topical question best answered by full-text search over claim "
+            "content, e.g. 'claims about hallucination'. Precedence when a "
+            "question could fit more than one: position > label_filter > "
+            "no_evidence > query > all."
         ),
     )
     claim_position: int | None = Field(
@@ -239,12 +254,15 @@ async def execute_tools(state: AgentState):
         print(f" [TOOLS] route_decision={route!r} restricted a tool; calling both anyway")
 
     # query_paper_claims itself also enforces this precedence (position >
-    # label_filter > query > all) - built explicitly here too so each call
-    # only carries the one argument that's actually relevant to claim_lookup.
+    # label_filter > no_evidence > query > all) - built explicitly here too
+    # so each call only carries the one argument that's actually relevant to
+    # claim_lookup.
     if claim_lookup == "position":
         claims_tool_input = {"active_file_id": active_file_id, "position": claim_position}
     elif claim_lookup == "label_filter":
         claims_tool_input = {"active_file_id": active_file_id, "label_filter": claim_label_filter}
+    elif claim_lookup == "no_evidence":
+        claims_tool_input = {"active_file_id": active_file_id, "no_evidence_only": True}
     elif claim_lookup == "all":
         claims_tool_input = {"active_file_id": active_file_id}
     else:
@@ -272,13 +290,14 @@ async def execute_tools(state: AgentState):
 def check_empty(state: AgentState) -> str:
     """Routes to generate_response only when something confidently supports
     an answer. What "confident" means depends on claim_lookup:
-      - position/label_filter/all are explicit metadata/identity lookups,
-        not fuzzy topical matches - any non-empty result IS the answer,
-        whatever label those claims happen to carry (e.g. a label_filter of
-        "not_supported" returning 3 claims is a complete, correct answer to
-        "which claims are refused?", not a low-confidence one). label_filter
-        and all also treat a genuinely empty result as answerable ("zero
-        claims with that label" is itself the correct answer) rather than a
+      - position/label_filter/all/no_evidence are explicit metadata/identity
+        lookups, not fuzzy topical matches - any non-empty result IS the
+        answer, whatever label those claims happen to carry (e.g. a
+        label_filter of "not_supported" returning 3 claims is a complete,
+        correct answer to "which claims are refused?", not a low-confidence
+        one). label_filter, all, and no_evidence also treat a genuinely
+        empty result as answerable ("zero claims with that label"/"zero
+        claims lack evidence" is itself the correct answer) rather than a
         refusal. A position miss is the one case that IS a refusal: the
         user named a specific claim number that doesn't exist.
       - query (the default topical FTS mode) keeps the original confidence
@@ -302,7 +321,7 @@ def check_empty(state: AgentState) -> str:
         print(" [CHECK_EMPTY] position lookup found no such claim - refusing")
         return "refuse_unsupported"
 
-    if claim_lookup in ("label_filter", "all"):
+    if claim_lookup in ("label_filter", "all", "no_evidence"):
         print(f" [CHECK_EMPTY] {claim_lookup} lookup returned {len(claims)} claims, proceeding to generate")
         return "respond"
 
@@ -453,6 +472,14 @@ async def generate_response(state: AgentState):
         "substituting your own judgment of the raw text. When the user "
         "explicitly asks to see evidence, quote it, but state its "
         "verification status honestly alongside it.\n\n"
+        "A claim whose evidence is \"none\" is not missing data or a claim "
+        "you should skip - the auditor searched the paper and found zero "
+        "supporting quotes, which is itself a complete, meaningful, correct "
+        "audit outcome (as valid and countable as any other claim). Always "
+        "include it when listing or counting claims, and when asked about it "
+        "directly, say plainly that no supporting evidence was found for it "
+        "in the paper - never omit it, hedge around it, or imply the data is "
+        "broken.\n\n"
         "If the retrieved claims and "
         "text are topically related but do not clearly support the specific "
         "comparison or conclusion being asked, say plainly \"The paper doesn't "
@@ -483,11 +510,15 @@ async def generate_response(state: AgentState):
         "correctly wherever you place the marker, so just write naturally; you "
         "don't need to hand-format a specific line layout.\n\n"
         "For a question about the paper's overall audit state (e.g. \"any "
-        "refusal?\", \"how many supported?\", \"how many claims in total\"), the "
-        "claims listed below already include every claim for this paper - give "
-        "the exact count in one sentence (including zero if nothing matches), "
-        "then list them if it adds value. For a question about one specific label "
-        "(e.g. \"which claims are refused?\", \"show partial claims\"), say how "
+        "refusal?\", \"how many supported?\", \"how many claims in total\", "
+        "\"list all claims and count them\"), the \"Total extracted claims\" "
+        "number in Paper Metadata above is the exact, authoritative count - "
+        "state that number, do not re-derive a count by enumerating the "
+        "claims listed below (that list and the true total are the same "
+        "size for this kind of question, but counting them yourself risks "
+        "an off-by-one; just quote the metadata number). Then list them if "
+        "it adds value. For a question about one specific label (e.g. "
+        "\"which claims are refused?\", \"show partial claims\"), say how "
         "many there are in one sentence, then list every one of them - if none "
         "were retrieved, say plainly that none exist rather than guessing.\n\n"
         f"{context_block}"
@@ -497,39 +528,58 @@ async def generate_response(state: AgentState):
 
     buffer = ""
     full_text = ""
-    async for chunk in llm.astream(messages_for_llm):
-        delta = get_safe_text(chunk.content)
-        if not delta:
-            continue
-        buffer += delta
-        full_text += delta
+    try:
+        async for chunk in llm.astream(messages_for_llm):
+            delta = get_safe_text(chunk.content)
+            if not delta:
+                continue
+            buffer += delta
+            full_text += delta
 
-        while True:
-            match = CITATION_MARKER_RE.search(buffer)
-            if not match:
-                break
-            pre = buffer[:match.start()]
-            if pre:
-                writer({"type": "text", "content": pre})
-            claim_id = match.group(1)
-            claim = claims_by_id.get(claim_id)
-            if claim is not None:
-                writer({
-                    "type": "claim_reference",
-                    "claim_id": claim_id,
-                    "claim_summary": claim["claim_summary"],
-                    "display_label": claim["label"],
-                })
-            buffer = buffer[match.end():]
+            while True:
+                match = CITATION_MARKER_RE.search(buffer)
+                if not match:
+                    break
+                pre = buffer[:match.start()]
+                if pre:
+                    writer({"type": "text", "content": pre})
+                claim_id = match.group(1)
+                claim = claims_by_id.get(claim_id)
+                if claim is not None:
+                    writer({
+                        "type": "claim_reference",
+                        "claim_id": claim_id,
+                        "claim_summary": claim["claim_summary"],
+                        "display_label": claim["label"],
+                    })
+                buffer = buffer[match.end():]
 
-        last_bracket = buffer.rfind("[")
-        if last_bracket != -1 and "]" not in buffer[last_bracket:]:
-            safe_len = last_bracket
-        else:
-            safe_len = len(buffer)
-        if safe_len > 0:
-            writer({"type": "text", "content": buffer[:safe_len]})
-            buffer = buffer[safe_len:]
+            last_bracket = buffer.rfind("[")
+            if last_bracket != -1 and "]" not in buffer[last_bracket:]:
+                safe_len = last_bracket
+            else:
+                safe_len = len(buffer)
+            if safe_len > 0:
+                writer({"type": "text", "content": buffer[:safe_len]})
+                buffer = buffer[safe_len:]
+    except asyncio.CancelledError:
+        # Defense in depth: if this node's own task is ever directly
+        # cancelled (confirmed NOT to happen via api.py's current disconnect
+        # handling - see the fix in api.py's event_stream, which decouples
+        # graph execution from the SSE response lifecycle so this node runs
+        # to its normal completion instead - but kept here in case a future
+        # caller genuinely cancels the task), return normally instead of
+        # re-raising so LangGraph's runner commits this as an ordinary
+        # successful node result rather than an ERROR write. Whatever text
+        # had already streamed (full_text accumulates every delta
+        # unconditionally, regardless of citation-marker buffering) is kept
+        # rather than discarded.
+        content = (
+            f"{full_text.rstrip()}{CANCELLED_RESPONSE_SUFFIX}"
+            if full_text.strip()
+            else CANCELLED_RESPONSE_PLACEHOLDER
+        )
+        return {"messages": [AIMessage(content=content)]}
 
     if buffer:
         writer({"type": "text", "content": buffer})

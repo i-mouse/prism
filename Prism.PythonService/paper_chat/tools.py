@@ -124,6 +124,7 @@ async def query_paper_claims(
     query: str | None = None,
     position: int | None = None,
     label_filter: str | None = None,
+    no_evidence_only: bool = False,
     limit: int = 5,
 ) -> list[dict]:
     """
@@ -138,6 +139,12 @@ async def query_paper_claims(
                           "not_supported". Use for "which claims are
                           refused?", "show partial claims", "any supported
                           claims?", etc.
+      no_evidence_only=True : fetch every claim with zero evidence spans -
+                          not just "not_supported" by label (a not_supported
+                          claim can carry refuting evidence, which is not
+                          the same as no evidence at all). Use for "claims
+                          with no evidence", "which claims have no
+                          supporting quotes", etc.
       query=STR         : full-text search over claim text.
                           Use for topical questions, e.g. "claims about
                           hallucination".
@@ -146,7 +153,7 @@ async def query_paper_claims(
                           "summary of claims", "how many claims in total",
                           "any refusal?", etc.
 
-    Precedence: position > label_filter > query > all.
+    Precedence: position > label_filter > no_evidence_only > query > all.
     Filter: active_file_id (resolved to the paper's latest document_extractor_id).
     Returns: list of {claim_id, position, claim_summary, claim_text_verbatim,
                       label, missing, grounding_status, reason,
@@ -192,6 +199,20 @@ async def query_paper_claims(
                         LIMIT {_METADATA_LOOKUP_LIMIT}
                         """,
                         (document_extractor_id, label_filter),
+                    )
+                    rows = await cur.fetchall()
+                elif no_evidence_only:
+                    mode = "no_evidence"
+                    await cur.execute(
+                        f"""
+                        SELECT {_CLAIM_COLUMNS}
+                        FROM paper_claims
+                        WHERE document_extractor_id = %s
+                          AND (evidence_spans IS NULL OR jsonb_array_length(evidence_spans) = 0)
+                        ORDER BY position ASC
+                        LIMIT {_METADATA_LOOKUP_LIMIT}
+                        """,
+                        (document_extractor_id,),
                     )
                     rows = await cur.fetchall()
                 elif query is not None:
