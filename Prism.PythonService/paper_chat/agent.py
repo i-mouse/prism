@@ -405,7 +405,7 @@ def _build_context_block(
                 for e in (c.get("evidence_spans") or [])[:2]
             ) or "none"
             claim_blocks.append(
-                f"- Claim {c['position']} (claim_id={c['claim_id']}) label={c['label']} "
+                f"- Claim {c['position']} (claim_id={c['claim_id']}) status={c['effective_status']} "
                 f"grounding_status={c['grounding_status']} missing={c['missing']} "
                 f"reason={c.get('reason') or 'n/a'}\n"
                 f"  summary: {c['claim_summary']}\n"
@@ -451,9 +451,9 @@ async def generate_response(state: AgentState):
         "Each claim below carries internal audit metadata set by Prism's own "
         "grounding pipeline, not by you - answer from it honestly rather than "
         "re-deriving your own verdict, but never expose it as data. Concretely: "
-        "never write the field names themselves (label, reason, grounding_status, "
+        "never write the field names themselves (status, reason, grounding_status, "
         "missing, evidence_spans) and never format anything as \"field: value\". "
-        "Translate a claim's label into plain language instead of naming it - "
+        "Translate a claim's status into plain language instead of naming it - "
         "supported means the paper's evidence confirms it, partially_supported "
         "means the evidence is relevant but doesn't fully back it, not_supported "
         "means the evidence doesn't back it. Paraphrase the internal reason in one "
@@ -461,13 +461,18 @@ async def generate_response(state: AgentState):
         "partial: the paper cites one relevant passage but doesn't fully back the "
         "assertion,\" never \"reason: cited evidence supports the claim across 1 "
         "passage.\"\n\n"
-        "The claim's label field reflects the system's audit verdict - if "
-        "label=not_supported, present the claim as not supported, and explain "
-        "why using the reason field. Evidence spans with Status: Fail could "
-        "not be verified as real quotes from the paper - never present a "
-        "Fail'd span as confirmed evidence, and never let plausible-looking "
-        "quote text override the stored label. If you believe the grounding "
-        "verdict seems questionable, you may note that grounding is "
+        "The claim's status field is the system's final, grounding-checked audit "
+        "verdict (already accounting for whether the cited evidence actually holds "
+        "up, not just the extractor's first-pass read) - if status=not_supported, "
+        "present the claim as not supported, and explain why using the reason "
+        "field, EVEN IF the claim's own wording or a quoted passage sounds "
+        "convincing on its face. The stored status is never something you "
+        "re-derive, second-guess, or override by re-reading the verbatim/evidence "
+        "text yourself - a claim that reads as if it should be supported but is "
+        "marked not_supported must still be presented as not supported. Evidence "
+        "spans with Status: Fail could not be verified as real quotes from the "
+        "paper - never present a Fail'd span as confirmed evidence. If you believe "
+        "the grounding verdict seems questionable, you may note that grounding is "
         "imperfect, but still report the system's actual verdict rather than "
         "substituting your own judgment of the raw text. When the user "
         "explicitly asks to see evidence, quote it, but state its "
@@ -521,6 +526,21 @@ async def generate_response(state: AgentState):
         "\"which claims are refused?\", \"show partial claims\"), say how "
         "many there are in one sentence, then list every one of them - if none "
         "were retrieved, say plainly that none exist rather than guessing.\n\n"
+        "When a question asks you to categorize, group, or break down 3+ claims "
+        "by status (e.g. \"categorize them\", \"break these down\", \"show all "
+        "small steps\"), follow this exact structure every time, no variation: "
+        "three sections in this fixed order - Supported, Partially Supported, "
+        "Not Supported (omit a section entirely if it would be empty, never show "
+        "it with a zero count) - each headed by exactly that label as a bold "
+        "line (e.g. \"**Supported (N)**\"), never a numbered \"Step\" or renamed "
+        "heading. Every claim in every section gets its [claim:<claim_id>] "
+        "marker - never fall back to plain prose without markers, even in a long "
+        "list. Decide which section a claim belongs in by reading its status "
+        "field only, the same field the rest of this prompt already tells you "
+        "never to re-derive. End with exactly one tally line summing the section "
+        "counts to the total - do not show intermediate running sums or "
+        "multi-step arithmetic unless the user explicitly asked to see the "
+        "working.\n\n"
         f"{context_block}"
     ))
 
@@ -550,7 +570,11 @@ async def generate_response(state: AgentState):
                         "type": "claim_reference",
                         "claim_id": claim_id,
                         "claim_summary": claim["claim_summary"],
-                        "display_label": claim["label"],
+                        # effective_status, not raw label: the pill must never
+                        # show a grounding-overridden claim (missing=true) as
+                        # its extractor's optimistic label - see docs/decisions.md
+                        # "effective_status" entry.
+                        "display_label": claim["effective_status"],
                     })
                 buffer = buffer[match.end():]
 
