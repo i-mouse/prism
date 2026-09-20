@@ -118,3 +118,13 @@ Always verify with the second after any deploy. Never trust `properties.template
 **Symptom:** Code changes appear to have no effect even after a restart (dotnet run silently fails to replace the running binary).
 **Cause:** A Visual Studio debugger left attached to a previous run holds a file lock on the built API DLL.
 **Fix:** Fully detach/close the debugger (or kill dotnet.exe processes) before restarting.
+
+### Aspire DCP Crash from Manual Docker Restart (2026-09-20)
+**Symptom:** AppHost crashes repeatedly with Aspire.Hosting.Dcp.DcpExecutor throwing "Sequence contains more than one matching element", killing the orchestrator's resource watchers.
+**Cause:** Directly running docker restart on an Aspire-managed container bypasses Aspire's lifecycle commands, causing a duplicate resource entry that crashes the DCP orchestrator. Confirmed root cause via log inspection, reproduced 3 times.
+**Fix:** Never manually docker restart Aspire-managed containers. Always use Aspire's own dashboard or lifecycle commands.
+
+### Postgres Connection Pool Exhaustion (2026-09-20)
+**Symptom:** A background eval run or extraction task fails silently while appearing to hang ("process still running").
+**Cause:** A Postgres connection pool exhaustion (observed occurring after the Aspire DCP crash mentioned above).
+**Fix:** Check actual eval result files (sizes/content) rather than trusting process liveness. If a pool exhaustion occurs, verify connection leaks or restart the Postgres container properly via Aspire.

@@ -1,10 +1,32 @@
 ## PRISM.Web Deployment
 
-## Known gap: aborted chat leaves an orphaned unanswered question - 2026-09-18
-**Context:** Verified live (`Prism.PythonService/paper_chat/agent.py`, `api.py`) what happens when a client disconnects mid-stream on `/api/chat/ask/stream` (e.g. switching papers before the response arrives, the same trigger as the chat-history-on-switch fix this session). The disconnect handling itself has no bug: `api.py`'s `is_disconnected()` check correctly fires and returns, and since `generate_response` (`paper_chat/agent.py`) only calls `return {"messages": [AIMessage(content=full_text)]}` once its streaming loop completes naturally, a cancelled node never reaches that line and LangGraph never checkpoints a partial or full assistant reply. Confirmed directly against the raw `checkpoint_writes` table: 5 aborted sends (4s/10s/30s cutoffs, one having already streamed ~4.2KB of real content to the client) produced exactly 5 human-message writes and zero AI-message writes. But the human's message is checkpointed immediately when the graph run starts, independent of whether a reply ever follows - so every aborted send leaves a permanently unanswered question sitting in that chat's history. This was invisible before this session's chat-history-restore fix (history was never fetched on mount); it becomes visible now that history is restored on paper switch.
-**Decision:** Known gap, not fixed here - same treatment as this session's citation-pills-on-restored-history limitation (chat-history-on-switch piece): a real fix needs a deliberate LangGraph checkpoint design decision (e.g. write a placeholder/error AIMessage on cancellation, or defer persisting the human turn until a response completes), deferred to a future session. Recoverable today by asking again; the orphaned question does not block or corrupt anything else in the chat.
-**Alternatives:** N/A - no fix attempted this session, by explicit instruction, to avoid mixing a checkpoint-design change into the SignalR-lifecycle/chat-history diff already under review.
-**Consequences:** Users who abort a chat send (paper switch, tab close, network blip) will see their own question persist with no answer once chat history restore ships. No data corruption or crash; purely a UX gap pending a future, deliberate fix.
+## effective_status: Postgres GENERATED ALWAYS AS (...) STORED column - 2026-09-20
+**Context:** Need a final, grounding-aware claim status that overrides the initial extraction label when evidence fails (`missing=true`).
+**Decision:** Chosen to use a Postgres `GENERATED ALWAYS AS (...) STORED` column over an application-computed field in C# or Python. The key reasoning is that a generated column cannot be written to directly, so it structurally cannot drift from its source columns (`label`, `missing`), unlike app-layer logic duplicated across two languages that has to be kept in sync by convention. Note that `label`, `missing`, and `grounding_status` remain unchanged and still solely drive the eval harness's by_label/by_omission/by_grounding_reject metrics - `effective_status` is a display-layer addition only.
+**Alternatives:** Application-computed field.
+**Consequences:** Single source of truth for display status.
+
+## Known gap: Router non-determinism - 2026-09-20
+**Context:** The same free-text phrasing (a user restating a claim's own wording and asking about it) sometimes routes to different `claim_lookup` modes across identical repeated calls.
+**Decision:** OPEN/unresolved. Not caused by anything in this session's changes, pre-existing router behavior, first surfaced this session through repeated live testing.
+
+## Known gap: generate_response hallucination on claim status - 2026-09-20
+**Context:** In at least one observed run, `generate_response` answered incorrectly about a claim's support status even when the correct claim data (including the correct `effective_status`) was confirmed present in its context - and falsely stated the entry wasn't provided.
+**Decision:** OPEN/unresolved. This session's system-prompt strengthening (explicit instruction not to override stored status even when a claim's wording sounds convincing) may have improved this but has NOT been confirmed across repeated testing - mark as open pending further manual verification, not closed.
+
+## Known gap: Bug 4 (tab-switch/streaming state loss) - 2026-09-20
+**Context:** Live UI testing shows a response can appear blank after switching browser tabs mid-stream and returning, recovering correctly only after a second tab switch. Static code analysis found no visibilitychange/remount logic anywhere in the frontend.
+**Decision:** OPEN/unresolved. Leading hypothesis is Chromium suspending IntersectionObserver callbacks while a tab is hidden, affecting the auto-scroll-to-bottom logic in `PaperChatStrip.tsx` - UNCONFIRMED, live reproduction blocked this session by upload-related safety guardrails, no fix attempted.
+
+## Missing Claims Data (Local Dev Hazard) - 2026-09-20
+**Context:** At least two previously-extracted papers' claims data (reflexion, chain-of-thought) went missing from the local dev database at some point this session.
+**Decision:** This is a fresh confirmed occurrence of the same known issue class: the documented "Postgres volume password drift" local-dev hazard.
+
+## Resolved: aborted chat leaves an orphaned unanswered question - 2026-09-20
+**Context:** Verified live (`Prism.PythonService/paper_chat/agent.py`, `api.py`) what happens when a client disconnects mid-stream on `/api/chat/ask/stream` (e.g. switching papers before the response arrives, the same trigger as the chat-history-on-switch fix this session). The disconnect handling itself had no bug, but an aborted send left a permanently unanswered question sitting in that chat's history. 
+**Decision:** Fixed. The record is corrected on HOW it was actually fixed: not by catching `CancelledError` in `generate_response` (that path turned out to rarely fire - live debugging found the node isn't actually cancelled, it keeps running to completion detached from the dead connection), but by decoupling graph execution into an independent background task in `api.py` that commits regardless of the SSE connection's fate. Note the `CancelledError` catch remains as defense-in-depth for a narrower scenario, not the primary fix.
+**Alternatives:** N/A
+**Consequences:** Users who abort a chat send (paper switch, tab close, network blip) will have their answer processed and saved to chat history seamlessly.
 
 ## ExtractionStatus Cache-Hit Fix - 2026-09-17
 **Context:** The API previously inferred a paper's completion status by checking if the `Summary` field was non-empty, failing to distinguish between a real summary and a failed-attempt error message. This led to permanently failed papers appearing as "Audit Complete" (cache hits) with empty claim lists. Additionally, the cache-hit logic wasn't status-aware, and the `ContentHash` unique database constraint prevented falling through to generate a new `FileId` for retry extractions.
