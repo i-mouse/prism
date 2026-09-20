@@ -48,6 +48,12 @@ async def lifespan(app: FastAPI):
     app.state.compiled_agent = workflow.compile(checkpointer=app.state.checkpointer)
     app.state.paper_chat_graph = build_paper_chat_graph(app.state.checkpointer)
 
+    # Holds strong references to paper-chat graph runs that outlive a
+    # disconnected client's SSE request (see _run_paper_chat_graph) - asyncio
+    # only holds a weak reference to a Task via the event loop, so a task
+    # with no other referent can be garbage-collected mid-run.
+    app.state.background_chat_tasks: set[asyncio.Task] = set()
+
     # Hashed once here and served from memory by GET /api/system/prompt-version -
     # never re-read/re-hashed per request.
     app.state.prompt_version = get_prompt_version()
@@ -175,6 +181,31 @@ def serialize_event_to_sse(event) -> str | None:
         return None
 
 
+async def _run_paper_chat_graph(graph, initial_state, config, queue: "asyncio.Queue") -> None:
+    """Drains graph.astream() into `queue`, scheduled as an independent
+    asyncio.Task (see paper_chat_ask below) rather than awaited inline by
+    event_stream. A client disconnect only cancels the SSE-sending task, not
+    this one - without that decoupling, abandoning graph.astream() mid-flight
+    tears down LangGraph's own commit bookkeeping for the in-flight
+    generate_response node before it finishes, silently dropping its
+    checkpoint write even though the node itself keeps running to a normal,
+    successful completion regardless (LangGraph's AsyncBackgroundExecutor
+    does not cancel node tasks on exit by default - confirmed live via
+    asyncio.all_tasks() during this fix's investigation). Running this
+    consumption loop independently keeps LangGraph's normal per-step commit
+    path alive for the full duration of the node, so a disconnected chat
+    turn still finishes and persists like any other. See docs/decisions.md
+    "Known gap: aborted chat leaves an orphaned unanswered question"."""
+    try:
+        async for event in graph.astream(
+            initial_state, config, stream_mode=["custom", "messages"]
+        ):
+            await queue.put(("event", event))
+        await queue.put(("done", None))
+    except Exception as exc:
+        await queue.put(("error", exc))
+
+
 @pythonAPI.post("/api/chat/ask/stream")
 async def paper_chat_ask(request: ChatAskRequest, contextrequest: Request):
     """Paper-scoped chat: streams typed blocks (text / claim_reference) over SSE.
@@ -183,30 +214,53 @@ async def paper_chat_ask(request: ChatAskRequest, contextrequest: Request):
     it can coexist with the legacy general-chat endpoint above - legacy
     deletion is Slice 3c, out of scope here.
     """
+    graph = contextrequest.app.state.paper_chat_graph
+    config = {"configurable": {"thread_id": request.chat_id}}
+    initial_state = {
+        "messages": [HumanMessage(content=request.message)],
+        "active_file_id": request.active_file_id,
+    }
+    queue: asyncio.Queue = asyncio.Queue()
+    # Not awaited inline - see _run_paper_chat_graph docstring for why this
+    # must be an independent task, decoupled from event_stream's lifecycle.
+    # Held in app.state.background_chat_tasks (and removed on completion) so
+    # it isn't garbage-collected mid-run once paper_chat_ask returns and this
+    # local variable goes out of scope.
+    background_tasks = contextrequest.app.state.background_chat_tasks
+    run_task = asyncio.ensure_future(
+        _run_paper_chat_graph(graph, initial_state, config, queue)
+    )
+    background_tasks.add(run_task)
+    run_task.add_done_callback(background_tasks.discard)
+
     async def event_stream():
         try:
-            graph = contextrequest.app.state.paper_chat_graph
-            config = {"configurable": {"thread_id": request.chat_id}}
-            initial_state = {
-                "messages": [HumanMessage(content=request.message)],
-                "active_file_id": request.active_file_id,
-            }
-            async for event in graph.astream(
-                initial_state, config, stream_mode=["custom", "messages"]
-            ):
-                if await contextrequest.is_disconnected():
-                    print(f" [CANCEL] paper chat stream: client disconnected, chat_id={request.chat_id}", flush=True)
+            while True:
+                kind, payload = await queue.get()
+                if kind == "done":
+                    if not await contextrequest.is_disconnected():
+                        yield 'data: {"type": "done"}\n\n'
                     return
-                frame = serialize_event_to_sse(event)
+                if kind == "error":
+                    print(f" [FAIL] paper chat stream error: {payload!r}", flush=True)
+                    if not await contextrequest.is_disconnected():
+                        yield f'data: {{"type": "error", "message": {json.dumps(str(payload))}}}\n\n'
+                    return
+                if await contextrequest.is_disconnected():
+                    print(
+                        f" [CANCEL] paper chat stream: client disconnected, chat_id={request.chat_id} "
+                        "- letting the run finish in the background so the answer still gets persisted",
+                        flush=True,
+                    )
+                    continue
+                frame = serialize_event_to_sse(payload)
                 if frame:
                     yield frame
-            yield 'data: {"type": "done"}\n\n'
         except asyncio.CancelledError:
+            # event_stream's own task was cancelled - run_task (above) is a
+            # separate task and is deliberately left running.
             print(f" [CANCEL] paper chat stream cancelled, chat_id={request.chat_id}", flush=True)
             raise
-        except Exception as exc:
-            print(f" [FAIL] paper chat stream error: {exc!r}", flush=True)
-            yield f'data: {{"type": "error", "message": {json.dumps(str(exc))}}}\n\n'
 
     return StreamingResponse(
         event_stream(),
