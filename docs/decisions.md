@@ -6,6 +6,10 @@
 **Alternatives:** Application-computed field.
 **Consequences:** Single source of truth for display status.
 
+## Known gap: streaming top-anchor effect doesn't reliably fire - 2026-09-21
+**Context:** `scrollToAnchor()` in `PaperChatStrip.tsx` (introduced in `17d8a25`/PR #81 alongside the padding-overshoot fix, mount-restore, and auto-scroll-at-bottom effects) is meant to anchor the view to the start of a new assistant turn as it streams in. Live testing this session found `scrollRoot.scrollTop` frozen at its pre-send value across all 3 test sends (1 short response, 2 long responses) - the effect did not visibly move the viewport at all, before, during, or after the response completed.
+**Decision:** OPEN/unresolved. Root cause not yet found - candidates include a stale/null `lastAssistantBubbleRef` at the moment the effect reads it, or `isNewTurn`/`isAtBottomRef` not evaluating as expected against the actual runtime turn sequence, but neither was confirmed. Needs an instrumented pass (temporary logging on the effect's dependencies and branch conditions) before any fix is attempted - not a guess-and-patch, since the effect touches the same scroll state as the other two effects from the same commit. Not confirmed to be worse than pre-`17d8a25` behavior (that baseline scrolled to raw `scrollHeight` on every turn count change), just non-functional as the intended enhancement. Separately confirmed (same session): `scrollToAnchor()` only ever targets the assistant's own bubble ref, never the user's message - so even when/if it does fire, the user's own question is not what it keeps in view.
+
 ## Known gap: Router non-determinism - 2026-09-20
 **Context:** The same free-text phrasing (a user restating a claim's own wording and asking about it) sometimes routes to different `claim_lookup` modes across identical repeated calls.
 **Decision:** OPEN/unresolved. Not caused by anything in this session's changes, pre-existing router behavior, first surfaced this session through repeated live testing.

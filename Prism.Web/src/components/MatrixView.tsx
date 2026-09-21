@@ -329,6 +329,7 @@ export function MatrixView({
                   chatId={activeChatId}
                   activeFileId={activePaperId}
                   fileName={currentPaperClaims?.fileName}
+                  paperClaims={claims}
                   scrollPositions={chatScrollPositionsRef}
                 />
               </div>

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { ArrowUp, ChevronDown, Copy, MessageCircle, Square, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
@@ -7,12 +7,19 @@ import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { ChatMarkdown, citeMarker, cursorMarker, type ChatCiteInfo } from "@/components/matrix/chat/ChatMarkdown";
 import { ChatBottomSheet, type SheetState } from "@/components/matrix/chat/ChatBottomSheet";
 import type { ChatBlock, ChatTurn } from "@/types/chat";
+import type { ClaimDto } from "@/types/api";
+import { displayLabel } from "@/lib/claim-display";
 import { cn } from "@/lib/utils";
 
 interface PaperChatStripProps {
   chatId: string;
   activeFileId: string;
   fileName?: string;
+  // Full claim list for the active paper (MatrixView already fetches this
+  // for the claims table) - needed here so a citation marker can resolve
+  // to a real pill even when it didn't arrive as a live claim_reference
+  // block, e.g. a history-restored turn (see claimsById below).
+  paperClaims: ClaimDto[];
   // Keyed by chatId, held by MatrixView (which doesn't remount on paper
   // switch) so a chat's scroll position survives this component's own
   // per-chat remount (key={activeChatId} in MatrixView). See MessageList.
@@ -77,18 +84,40 @@ function turnToPlainText(turn: ChatTurn): string {
     .trim();
 }
 
+// A live turn's text blocks never contain this literally - the backend
+// (Prism.PythonService/paper_chat/agent.py, generate_response) buffers its
+// own [claim:<id>] markers out into separate claim_reference blocks before
+// ever flushing a "text" block. But a history-restored turn (see
+// useChatStream.ts's fetchHistoryMessages comment) IS just the model's raw
+// saved content as a single text block, brackets and all - the backend only
+// ever persists the flat string, never the block split. Converting any
+// leftover raw marker here means both sources render the same way, instead
+// of a reload/tab-return silently downgrading a citation to dead bracket
+// text with no pill.
+const RAW_CITATION_RE = /\[claim:([a-zA-Z0-9-]+)\]/g;
+
+function convertRawCitations(text: string): string {
+  return text.replace(RAW_CITATION_RE, (_match, claimId: string) => citeMarker(claimId));
+}
+
 // Reassembles the block stream into ONE continuous markdown string (citations
 // become inline `![](cite:<id>)` markers, see ChatMarkdown.tsx) instead of
 // mounting a separate <ChatMarkdown> per TextBlock — the backend splits text
 // at every citation, and parsing each fragment in isolation shatters markdown
 // structures (lists, paragraphs) that span across a citation.
 function turnToMarkdown(turn: ChatTurn, showCursor: boolean): string {
-  const body = turn.blocks.map((b) => (b.type === "text" ? b.content : citeMarker(b.claim_id))).join("");
+  const body = turn.blocks
+    .map((b) => (b.type === "text" ? convertRawCitations(b.content) : citeMarker(b.claim_id)))
+    .join("");
   return showCursor ? body + cursorMarker() : body;
 }
 
-function claimsById(turn: ChatTurn): Record<string, ChatCiteInfo> {
-  const map: Record<string, ChatCiteInfo> = {};
+// Turn-scoped claim_reference blocks take priority (they carry the
+// effective_status the backend actually verified for THIS answer), falling
+// back to the full-paper map for a marker with no such block - which is
+// every marker in a history-restored turn, per convertRawCitations above.
+function claimsById(turn: ChatTurn, paperClaimsById: Record<string, ChatCiteInfo>): Record<string, ChatCiteInfo> {
+  const map: Record<string, ChatCiteInfo> = { ...paperClaimsById };
   for (const b of turn.blocks) {
     if (b.type === "claim_reference") {
       map[b.claim_id] = { claim_summary: b.claim_summary, display_label: b.display_label };
@@ -112,10 +141,17 @@ function followUpsFor(turn: ChatTurn): string[] {
   return ["Which claims support this?", "Show me the evidence"];
 }
 
-export function PaperChatStrip({ chatId, activeFileId, fileName, scrollPositions }: PaperChatStripProps) {
+export function PaperChatStrip({ chatId, activeFileId, fileName, paperClaims, scrollPositions }: PaperChatStripProps) {
   const { turns, isSending, error, sendMessage, abort } = useChatStream(chatId, activeFileId);
   const { highlightClaim } = useSelectedClaim();
   const isLgUp = useIsLgUp();
+  const paperClaimsById = useMemo(() => {
+    const map: Record<string, ChatCiteInfo> = {};
+    for (const c of paperClaims) {
+      map[c.id] = { claim_summary: c.claimSummary, display_label: displayLabel(c) };
+    }
+    return map;
+  }, [paperClaims]);
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   // Persisted per-chat to sessionStorage (same pattern as useActivePaper.ts)
   // so the panel's open/closed state survives a remount of this component -
@@ -164,6 +200,7 @@ export function PaperChatStrip({ chatId, activeFileId, fileName, scrollPositions
       chatId={chatId}
       scrollPositions={scrollPositions}
       turns={turns}
+      paperClaimsById={paperClaimsById}
       error={error}
       isSending={isSending}
       onClaimClick={handleClaimClick}
@@ -249,6 +286,9 @@ export function PaperChatStrip({ chatId, activeFileId, fileName, scrollPositions
         <p className="mt-1.5 text-center font-sans text-[11px] text-slate-500">
           Get answers, ask for clarification, or explore specific claims from this paper.
         </p>
+        <p className="text-center font-sans text-[11px] text-slate-500">
+          Answers stay within this paper — no outside sources.
+        </p>
       </div>
     );
   }
@@ -310,6 +350,7 @@ function MessageList({
   chatId,
   scrollPositions,
   turns,
+  paperClaimsById,
   error,
   isSending,
   onClaimClick,
@@ -319,6 +360,7 @@ function MessageList({
   chatId: string;
   scrollPositions: React.RefObject<Map<string, number>>;
   turns: ChatTurn[];
+  paperClaimsById: Record<string, ChatCiteInfo>;
   error: string | null;
   isSending: boolean;
   onClaimClick: (claimId: string) => void;
@@ -532,6 +574,7 @@ function MessageList({
               isLast={i === turns.length - 1}
               isSending={isSending}
               bubbleRef={i === turns.length - 1 ? lastAssistantBubbleRef : undefined}
+              paperClaimsById={paperClaimsById}
               onClaimClick={onClaimClick}
               onCopy={() => onCopy(turn)}
               onFollowUp={onFollowUp}
@@ -579,6 +622,7 @@ function AssistantTurn({
   isLast,
   isSending,
   bubbleRef,
+  paperClaimsById,
   onClaimClick,
   onCopy,
   onFollowUp,
@@ -587,6 +631,7 @@ function AssistantTurn({
   isLast: boolean;
   isSending: boolean;
   bubbleRef?: React.RefObject<HTMLDivElement | null>;
+  paperClaimsById: Record<string, ChatCiteInfo>;
   onClaimClick: (claimId: string) => void;
   onCopy: () => void;
   onFollowUp: (prompt: string) => void;
@@ -619,7 +664,7 @@ function AssistantTurn({
           <div className="bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm p-5 text-sm text-ink prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-ink prose-p:leading-relaxed prose-a:text-ink prose-a:underline prose-li:marker:text-ink-tertiary [contain:layout]">
             <ChatMarkdown
               content={turnToMarkdown(turn, showCursor)}
-              claimsById={claimsById(turn)}
+              claimsById={claimsById(turn, paperClaimsById)}
               onClaimClick={onClaimClick}
             />
           </div>
