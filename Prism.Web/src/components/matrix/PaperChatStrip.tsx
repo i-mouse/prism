@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { ArrowUp, ChevronDown, Copy, MessageCircle, Square, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +13,10 @@ interface PaperChatStripProps {
   chatId: string;
   activeFileId: string;
   fileName?: string;
+  // Keyed by chatId, held by MatrixView (which doesn't remount on paper
+  // switch) so a chat's scroll position survives this component's own
+  // per-chat remount (key={activeChatId} in MatrixView). See MessageList.
+  scrollPositions: React.RefObject<Map<string, number>>;
 }
 
 const SUGGESTED_PROMPTS = ["What are the main claims?", "Show me the strongest refusals"];
@@ -44,6 +48,24 @@ function useIsLgUp() {
   }, []);
 
   return isLgUp;
+}
+
+// The scrollable message list carries a large bottom padding (`pb-40`,
+// see its className below) so the floating "jump to bottom" button and the
+// composer never cover the last message - but that padding counts toward
+// the container's own `scrollHeight`. Snapping to `scrollHeight` directly
+// (as every "scroll to bottom" call here used to) overshoots into that
+// padding, landing past the real last message - and sometimes even past
+// its own follow-up buttons - into blank space instead of flush with them.
+// Anchoring to the sentinel's bottom edge instead (a 1px marker placed
+// immediately after the real content, before the padding - see sentinelRef
+// below) reaches the same "scrolled to the true bottom" position without
+// the overshoot.
+function bottomScrollTop(root: HTMLElement, sentinel: HTMLElement): number {
+  const rootRect = root.getBoundingClientRect();
+  const sentinelRect = sentinel.getBoundingClientRect();
+  const sentinelBottom = sentinelRect.bottom - rootRect.top + root.scrollTop;
+  return Math.max(0, sentinelBottom - root.clientHeight);
 }
 
 type ClaimReferenceBlock = Extract<ChatBlock, { type: "claim_reference" }>;
@@ -90,7 +112,7 @@ function followUpsFor(turn: ChatTurn): string[] {
   return ["Which claims support this?", "Show me the evidence"];
 }
 
-export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStripProps) {
+export function PaperChatStrip({ chatId, activeFileId, fileName, scrollPositions }: PaperChatStripProps) {
   const { turns, isSending, error, sendMessage, abort } = useChatStream(chatId, activeFileId);
   const { highlightClaim } = useSelectedClaim();
   const isLgUp = useIsLgUp();
@@ -139,6 +161,8 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
 
   const messages = (
     <MessageList
+      chatId={chatId}
+      scrollPositions={scrollPositions}
       turns={turns}
       error={error}
       isSending={isSending}
@@ -283,6 +307,8 @@ export function PaperChatStrip({ chatId, activeFileId, fileName }: PaperChatStri
 }
 
 function MessageList({
+  chatId,
+  scrollPositions,
   turns,
   error,
   isSending,
@@ -290,6 +316,8 @@ function MessageList({
   onCopy,
   onFollowUp,
 }: {
+  chatId: string;
+  scrollPositions: React.RefObject<Map<string, number>>;
   turns: ChatTurn[];
   error: string | null;
   isSending: boolean;
@@ -301,7 +329,81 @@ function MessageList({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef(true);
   const [showJumpToBottom, setShowJumpToBottom] = useState(false);
-  const prevTurnCountRef = useRef(turns.length);
+  // The DOM node of whichever assistant turn is currently last - used as the
+  // scroll anchor for a new/streaming response (see effect below) instead of
+  // the container's ever-growing scrollHeight.
+  const lastAssistantBubbleRef = useRef<HTMLDivElement>(null);
+  const prevLastTurnIdRef = useRef<string | null>(null);
+  // Guards the mount-time restore below to firing exactly once per mount
+  // (this component remounts per chatId via PaperChatStrip's key), the first
+  // time the scrollable container actually exists in the DOM - which is only
+  // once `turns` goes non-empty (see the conditional render below).
+  const hasRestoredRef = useRef(false);
+  const hasTurns = turns.length > 0;
+  // Mirrors the container's scrollTop on every 'scroll' event (cheap - a ref
+  // write, no re-render) so the unmount-save effect below has a value to
+  // read. It can't read scrollRef.current directly at that point: React nulls
+  // out DOM refs for an unmounting subtree BEFORE running that subtree's own
+  // effect cleanups, so scrollRef.current is already null by the time an
+  // unmount cleanup runs - this ref is what stands in for it.
+  const lastScrollTopRef = useRef(0);
+
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root) return;
+    const handleScroll = () => {
+      lastScrollTopRef.current = root.scrollTop;
+    };
+    root.addEventListener("scroll", handleScroll, { passive: true });
+    return () => root.removeEventListener("scroll", handleScroll);
+  }, [hasTurns]);
+
+  // Runs BEFORE paint so there is no frame at the wrong scroll position: a
+  // returning chat snaps straight to its saved scrollTop, a chat with no
+  // saved position (never opened/scrolled before) snaps straight to the
+  // bottom. Deliberately separate from the streaming/new-turn effect below,
+  // which still runs (see isNewTurn there) but is now a no-op for this same
+  // transition since isAtBottomRef/anchor logic there only ever *adds*
+  // motion on top of whatever this effect already settled on.
+  useLayoutEffect(() => {
+    if (!hasTurns || hasRestoredRef.current) return;
+    hasRestoredRef.current = true;
+    const root = scrollRef.current;
+    const sentinel = sentinelRef.current;
+    if (!root || !sentinel) return;
+    const saved = scrollPositions.current.get(chatId);
+    root.scrollTop = saved != null ? saved : bottomScrollTop(root, sentinel);
+    lastScrollTopRef.current = root.scrollTop;
+  }, [hasTurns, chatId, scrollPositions]);
+
+  // Persists this chat's scroll position when the user navigates away (this
+  // component unmounts - PaperChatStrip is keyed by chatId, so every paper
+  // switch is an unmount of the previously-active chat's strip). The save
+  // itself only happens once, at unmount (reading the continuously-updated
+  // lastScrollTopRef above, since the DOM ref is unavailable by then - see
+  // that ref's own comment) rather than on every scroll tick, which keeps
+  // this to a single map write per departure with nothing to throttle. It
+  // also naturally solves the "streaming completes while backgrounded" edge
+  // case: once unmounted, nothing in this component runs again (the backend
+  // keeps generating, but recovery on return goes through useChatStream's
+  // history fetch, not this component), so the saved position can only ever
+  // reflect the user's own last scroll, never content that arrived after
+  // they left.
+  //
+  // Guarded on hasRestoredRef so a React StrictMode dev-mode double-invoke
+  // of this effect - which mounts, cleans up, and remounts a component once,
+  // synchronously, before any real content has loaded - can't write a bogus
+  // 0 into the map from lastScrollTopRef's untouched initial value. Without
+  // this guard that phantom cleanup fires while `turns` is still empty (the
+  // mount-restore layout effect above hasn't run yet, so hasRestoredRef is
+  // still false), permanently poisoning this chatId's entry before the real
+  // restore ever gets a chance to read it.
+  useEffect(() => {
+    return () => {
+      if (!hasRestoredRef.current) return;
+      scrollPositions.current.set(chatId, lastScrollTopRef.current);
+    };
+  }, [chatId, scrollPositions]);
 
   useEffect(() => {
     const root = scrollRef.current;
@@ -320,21 +422,81 @@ function MessageList({
   }, []);
 
   useEffect(() => {
-    const grew = turns.length !== prevTurnCountRef.current;
-    prevTurnCountRef.current = turns.length;
-    if (!grew && turns.length === 0) return;
+    const root = scrollRef.current;
+    const sentinel = sentinelRef.current;
+    if (!root || !sentinel) return;
 
-    if (isAtBottomRef.current) {
-      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-    } else if (turns.length > 0) {
+    if (turns.length === 0) {
+      prevLastTurnIdRef.current = null;
+      return;
+    }
+
+    const lastTurn = turns[turns.length - 1];
+    const isNewTurn = lastTurn.id !== prevLastTurnIdRef.current;
+    // Captured before being overwritten below: true exactly on the same
+    // turns-went-from-empty-to-non-empty transition the mount-restore layout
+    // effect above fires on (both key off prevLastTurnIdRef starting null).
+    const isInitialPopulation = prevLastTurnIdRef.current === null;
+    prevLastTurnIdRef.current = lastTurn.id;
+    // Only (re)decide where to scroll when a NEW turn appears, not on every
+    // chunk appended to the one already last. A turn's own top edge never
+    // moves as its content grows - later turns are only ever appended below
+    // it - so re-running this on every SSE chunk would just repeat the same
+    // scroll call for no benefit. It was also the actual bug: targeting the
+    // container's scrollHeight (which DOES grow every chunk) on every chunk
+    // is what dragged the view past the start of any response taller than
+    // the viewport.
+    if (!isNewTurn) return;
+
+    // While a turn is actively streaming in, anchor to ITS top edge so the
+    // start of the response stays visible as it grows, rather than the
+    // container's absolute bottom.
+    const scrollToAnchor = () => {
+      const anchor = lastAssistantBubbleRef.current;
+      if (!anchor) return;
+      const rootRect = root.getBoundingClientRect();
+      const anchorRect = anchor.getBoundingClientRect();
+      root.scrollTo({ top: anchorRect.top - rootRect.top + root.scrollTop, behavior: "smooth" });
+    };
+    const isStreamingTurn = lastTurn.role === "assistant" && lastTurn.isStreaming;
+
+    if (isInitialPopulation) {
+      // A history-hydrated turn (not streaming) was already positioned -
+      // restored to its saved scrollTop, or defaulted to bottom for a
+      // chat with no saved position - by the mount-restore layout effect
+      // above, synchronously before paint. Redoing that here as an instant
+      // jump-to-bottom would stomp a restored (non-bottom) position. Only
+      // a genuinely new send on a chat that had zero prior turns (this
+      // population IS the first message, streaming in live) needs this
+      // effect to do anything, so the usual top-anchor kicks in immediately
+      // instead of waiting one more turn.
+      if (isStreamingTurn) scrollToAnchor();
+      return;
+    }
+
+    if (!isAtBottomRef.current) {
       setShowJumpToBottom(true);
+      return;
+    }
+
+    if (isStreamingTurn) {
+      scrollToAnchor();
+    } else {
+      // Instant, not smooth: this branch is only reached when the last
+      // turn isn't actively streaming (the anchor check above already
+      // requires isStreaming for the smooth/top-anchor path), which in
+      // practice means a new turn was appended (e.g. a follow-up sent)
+      // while the user was already scrolled to the bottom of an existing
+      // conversation. Animating that "glide" reads as a full page reload.
+      root.scrollTo({ top: bottomScrollTop(root, sentinel), behavior: "auto" });
     }
   }, [turns]);
 
   const scrollToBottom = () => {
     const el = scrollRef.current;
-    if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    const sentinel = sentinelRef.current;
+    if (!el || !sentinel) return;
+    el.scrollTo({ top: bottomScrollTop(el, sentinel), behavior: "smooth" });
     setShowJumpToBottom(false);
   };
 
@@ -369,6 +531,7 @@ function MessageList({
               turn={turn}
               isLast={i === turns.length - 1}
               isSending={isSending}
+              bubbleRef={i === turns.length - 1 ? lastAssistantBubbleRef : undefined}
               onClaimClick={onClaimClick}
               onCopy={() => onCopy(turn)}
               onFollowUp={onFollowUp}
@@ -415,6 +578,7 @@ function AssistantTurn({
   turn,
   isLast,
   isSending,
+  bubbleRef,
   onClaimClick,
   onCopy,
   onFollowUp,
@@ -422,6 +586,7 @@ function AssistantTurn({
   turn: ChatTurn;
   isLast: boolean;
   isSending: boolean;
+  bubbleRef?: React.RefObject<HTMLDivElement | null>;
   onClaimClick: (claimId: string) => void;
   onCopy: () => void;
   onFollowUp: (prompt: string) => void;
@@ -433,7 +598,7 @@ function AssistantTurn({
 
   if (isThinking) {
     return (
-      <div className="flex gap-4">
+      <div ref={bubbleRef} className="flex gap-4">
         <GradientSparkle className="h-6 w-6 shrink-0 mt-1" />
         <div className="flex items-center gap-1.5 pt-1.5 bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm px-5 py-4">
           <span className="h-1.5 w-1.5 animate-thinking-dot rounded-full bg-ink-tertiary" style={{ animationDelay: "0ms" }} />
@@ -445,13 +610,13 @@ function AssistantTurn({
   }
 
   return (
-    <div className="flex flex-col">
+    <div ref={bubbleRef} className="flex flex-col">
       <div className="group flex gap-4">
         <div className="shrink-0 mt-2">
           <GradientSparkle className="h-6 w-6" />
         </div>
         <div className="flex flex-col w-full max-w-[85%]">
-          <div className="bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm p-5 text-sm text-ink prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-ink prose-p:leading-relaxed prose-a:text-ink prose-a:underline prose-li:marker:text-ink-tertiary [contain:layout_paint]">
+          <div className="bg-surface border border-hairline shadow-card rounded-2xl rounded-tl-sm p-5 text-sm text-ink prose prose-sm prose-slate max-w-none prose-headings:font-semibold prose-headings:text-ink prose-p:leading-relaxed prose-a:text-ink prose-a:underline prose-li:marker:text-ink-tertiary [contain:layout]">
             <ChatMarkdown
               content={turnToMarkdown(turn, showCursor)}
               claimsById={claimsById(turn)}

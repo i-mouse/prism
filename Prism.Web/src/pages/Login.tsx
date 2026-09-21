@@ -6,9 +6,6 @@ import { InteractionStatus } from "@azure/msal-browser";
 import { AuthButtons } from "@/components/AuthButtons";
 import { PrismLogo } from "@/components/PrismLogo";
 
-const LANDING_URL = import.meta.env.VITE_LANDING_URL || "/";
-const isExternalLanding = LANDING_URL !== "/";
-
 export function Login() {
   const { user, isLoading } = useAuth();
   const { inProgress } = useMsal();
