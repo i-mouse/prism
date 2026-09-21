@@ -8,6 +8,7 @@ export type ChatBlock =
     };
 
 export interface ChatTurn {
+  id: string;
   role: "user" | "assistant";
   blocks: ChatBlock[];
   timestamp: number;

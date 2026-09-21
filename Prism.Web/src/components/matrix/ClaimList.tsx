@@ -10,6 +10,11 @@ interface ClaimListProps {
   claims: ClaimDto[];
   onViewEvidence: (claimId: string) => void;
   sortControl?: React.ReactNode;
+  // Identifies which paper `claims` belongs to. ClaimList is no longer
+  // remounted per paper (MatrixView.tsx used to key it on this value) - this
+  // drives an in-place reset of filter/page state instead, so switching
+  // papers doesn't tear down and rebuild the whole claims table.
+  paperId: string | null;
 }
 
 type FilterMode = "all" | ClaimLabel;
@@ -49,7 +54,7 @@ function buildPageList(current: number, total: number): (number | "ellipsis")[] 
   return result;
 }
 
-export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProps) {
+export function ClaimList({ claims, onViewEvidence, sortControl, paperId }: ClaimListProps) {
   const [filter, setFilter] = useState<FilterMode>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
@@ -63,6 +68,15 @@ export function ClaimList({ claims, onViewEvidence, sortControl }: ClaimListProp
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
+
+  // Reset filter/page when switching to a different paper - replaces the
+  // free reset a key-based remount used to give (MatrixView.tsx no longer
+  // keys this component on paperId, since neither of these two pieces of
+  // state needs a hard unmount to reset safely).
+  useEffect(() => {
+    setFilter("all");
+    setCurrentPage(1);
+  }, [paperId]);
 
   const totalPages = Math.max(1, Math.ceil(visibleClaims.length / itemsPerPage));
   // Defensive clamp: guards against a stale currentPage briefly outliving a

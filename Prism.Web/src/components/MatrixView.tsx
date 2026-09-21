@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Upload, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -108,7 +108,23 @@ export function MatrixView({
   isGoogleUser = false,
 }: MatrixViewProps) {
   const [sortMode, setSortMode] = useState<SortMode>("position");
-  const claims = paperClaims?.claims ?? [];
+  // Survives PaperChatStrip's per-chat remount (key={activeChatId}) because
+  // MatrixView itself never remounts on paper switch (no key at its own call
+  // site in AppShell.tsx) - a ref here, not state, so a scroll event doesn't
+  // trigger a re-render of this whole view.
+  const chatScrollPositionsRef = useRef<Map<string, number>>(new Map());
+  // usePaperClaims doesn't null its data just because activePaperId changed
+  // (that re-triggers the full-page skeleton below - see usePaperClaims.ts)
+  // so `paperClaims` can briefly still be the PREVIOUS paper's response
+  // after a switch. Every display value below is derived from this
+  // paper-matched view instead of raw `paperClaims`, so a switch renders an
+  // honest brief "0 claims" rather than the previous paper's claims under
+  // the new paper's identity. `showSkeleton`/`showActivityView` further
+  // below intentionally keep reading raw `paperClaims` - its mere presence,
+  // not which paper it's for, is what should decide whether to show the
+  // skeleton, or that regresses right back to a full remount every switch.
+  const currentPaperClaims = paperClaims?.paperId === activePaperId ? paperClaims : null;
+  const claims = currentPaperClaims?.claims ?? [];
 
   const sortedClaims = useMemo(() => {
     if (sortMode === "support") {
@@ -257,9 +273,9 @@ export function MatrixView({
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <PaperHeader
-                  fileName={paperClaims.fileName}
-                  extractionStatus={paperClaims.extractionStatus}
-                  completedAt={paperClaims.completedAt}
+                  fileName={currentPaperClaims?.fileName ?? "Loading paper…"}
+                  extractionStatus={currentPaperClaims?.extractionStatus ?? "In progress"}
+                  completedAt={currentPaperClaims?.completedAt ?? null}
                 />
               </div>
               {/* User profile — top right of main content area */}
@@ -280,7 +296,7 @@ export function MatrixView({
             <div className="px-4 pb-6 md:px-6">
               <div className="rounded-xl border border-hairline bg-surface shadow-card overflow-hidden">
                 <ClaimList
-                  key={activePaperId}
+                  paperId={activePaperId}
                   claims={sortedClaims}
                   onViewEvidence={onViewEvidence}
                   sortControl={
@@ -308,7 +324,13 @@ export function MatrixView({
           {activePaperId && (
             <>
               <div className="shrink-0 border-t border-slate-100 bg-slate-50">
-                <PaperChatStrip key={activeChatId} chatId={activeChatId} activeFileId={activePaperId} fileName={paperClaims.fileName} />
+                <PaperChatStrip
+                  key={activeChatId}
+                  chatId={activeChatId}
+                  activeFileId={activePaperId}
+                  fileName={currentPaperClaims?.fileName}
+                  scrollPositions={chatScrollPositionsRef}
+                />
               </div>
             </>
           )}
