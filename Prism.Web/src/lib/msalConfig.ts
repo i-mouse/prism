@@ -23,9 +23,11 @@ function requireEnv(name: string, value: string | undefined): string {
   return value;
 }
 
+const clientId = requireEnv("VITE_AZURE_CLIENT_ID", import.meta.env.VITE_AZURE_CLIENT_ID);
+
 const msalConfig: Configuration = {
   auth: {
-    clientId: requireEnv("VITE_AZURE_CLIENT_ID", import.meta.env.VITE_AZURE_CLIENT_ID),
+    clientId,
     authority: requireEnv("VITE_AZURE_AUTHORITY", import.meta.env.VITE_AZURE_AUTHORITY),
     redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI ?? window.location.origin,
     postLogoutRedirectUri: "/login",
@@ -45,6 +47,15 @@ const msalConfig: Configuration = {
 // https://learn.microsoft.com/en-us/entra/external-id/customers/tutorial-single-page-app-react-sign-in-prepare-app
 export const loginRequest = {
   scopes: ["openid", "profile"],
+};
+
+// Scopes for API access tokens (e.g. the Authorization header sent to
+// /api/chats). Unlike loginRequest, this includes "<clientId>/.default" so
+// the token carries this app's own API permissions — required by the
+// backend's audience check. Used by acquireTokenSilent/acquireTokenRedirect
+// in auth.ts, not by the sign-in redirect.
+export const apiTokenRequest = {
+  scopes: ["openid", "profile", `${clientId}/.default`],
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
