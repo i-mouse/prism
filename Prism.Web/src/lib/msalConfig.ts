@@ -13,10 +13,20 @@ import { PublicClientApplication, type Configuration } from "@azure/msal-browser
 // NEVER hard-code real tenant/client IDs here. This file is committed.
 // ---------------------------------------------------------------------------
 
+function requireEnv(name: string, value: string | undefined): string {
+  if (!value) {
+    throw new Error(
+      `Missing required environment variable ${name}. Set it in .env.local (dev) or the ` +
+        `Azure Container Apps environment (prod) — see the comment block above this function.`,
+    );
+  }
+  return value;
+}
+
 const msalConfig: Configuration = {
   auth: {
-    clientId: import.meta.env.VITE_AZURE_CLIENT_ID ?? "PLACEHOLDER_CLIENT_ID",
-    authority: import.meta.env.VITE_AZURE_AUTHORITY ?? "https://login.microsoftonline.com/PLACEHOLDER_TENANT_ID",
+    clientId: requireEnv("VITE_AZURE_CLIENT_ID", import.meta.env.VITE_AZURE_CLIENT_ID),
+    authority: requireEnv("VITE_AZURE_AUTHORITY", import.meta.env.VITE_AZURE_AUTHORITY),
     redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI ?? window.location.origin,
     postLogoutRedirectUri: "/login",
   },
@@ -27,16 +37,14 @@ const msalConfig: Configuration = {
   },
 };
 
-// Scopes the SPA requests in the access token — must match the API's audience.
-// For Entra External ID the default scope is openid + the API scope defined
-// in the App Registration. Adjust "api://<clientId>/access" once the scope is
-// created in the portal.
+// Scopes requested at sign-in. openid + profile are the standard OIDC scopes
+// for a plain sign-in flow. Do NOT add "<clientId>/.default" here — that
+// scope shape requests a custom API permission bundle, not basic login, and
+// causes AADSTS70011 (invalid scope) against an Entra External ID (CIAM)
+// tenant. See the MSAL.js React SPA tutorial for CIAM:
+// https://learn.microsoft.com/en-us/entra/external-id/customers/tutorial-single-page-app-react-sign-in-prepare-app
 export const loginRequest = {
-  scopes: [
-    "openid",
-    "profile",
-    `${import.meta.env.VITE_AZURE_CLIENT_ID ?? "PLACEHOLDER_CLIENT_ID"}/.default`,
-  ],
+  scopes: ["openid", "profile"],
 };
 
 export const msalInstance = new PublicClientApplication(msalConfig);
