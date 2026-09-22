@@ -1,4 +1,4 @@
-﻿import { msalInstance, loginRequest } from "@/lib/msalConfig";
+﻿import { msalInstance, loginRequest, apiTokenRequest } from "@/lib/msalConfig";
 import type { AccountInfo } from "@azure/msal-browser";
 
 export type AuthProvider = "google" | "guest";
@@ -81,13 +81,13 @@ export async function acquireAccessToken(): Promise<string | null> {
 
   try {
     const result = await msalInstance.acquireTokenSilent({
-      ...loginRequest,
+      ...apiTokenRequest,
       account: accounts[0],
     });
     return result.accessToken;
   } catch {
     // Token refresh failed — let MSAL redirect to re-authenticate.
-    await msalInstance.acquireTokenRedirect({ ...loginRequest, account: accounts[0] });
+    await msalInstance.acquireTokenRedirect({ ...apiTokenRequest, account: accounts[0] });
     return null;
   }
 }
