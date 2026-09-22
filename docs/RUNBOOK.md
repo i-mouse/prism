@@ -128,3 +128,18 @@ Always verify with the second after any deploy. Never trust `properties.template
 **Symptom:** A background eval run or extraction task fails silently while appearing to hang ("process still running").
 **Cause:** A Postgres connection pool exhaustion (observed occurring after the Aspire DCP crash mentioned above).
 **Fix:** Check actual eval result files (sizes/content) rather than trusting process liveness. If a pool exhaustion occurs, verify connection leaks or restart the Postgres container properly via Aspire.
+
+### Fresh Postgres after a reset never gets migrated (2026-09-22)
+**Symptom:** After a production Postgres reset (new/empty database), the API comes up healthy but requests fail with missing-table/relation errors — the schema was never created.
+**Cause:** `RUN_MIGRATIONS_ON_STARTUP=false` in production (set intentionally — see `docs/decisions.md`, "migrations gated behind RUN_MIGRATIONS_ON_STARTUP" — to avoid every replica racing to apply migrations on a normal restart). That gate also means a genuinely empty database is never migrated automatically; something has to flip it on for one startup.
+**Fix (one-time, already used successfully this deploy cycle):**
+```powershell
+az containerapp update -n apiservice -g prism-rg --set-env-vars RUN_MIGRATIONS_ON_STARTUP=true
+```
+Then confirm migrations actually ran via the Aspire dashboard or container logs (look for EF Core's migration-applied log lines) before trusting the API against the new database.
+
+Afterward you can optionally flip it back:
+```powershell
+az containerapp update -n apiservice -g prism-rg --set-env-vars RUN_MIGRATIONS_ON_STARTUP=false
+```
+EF Core migrations are idempotent on rerun, so leaving `RUN_MIGRATIONS_ON_STARTUP=true` is also safe — the tradeoff is just the every-replica-races-on-restart risk noted above, not data loss.
