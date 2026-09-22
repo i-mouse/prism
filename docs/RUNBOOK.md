@@ -128,3 +128,10 @@ Always verify with the second after any deploy. Never trust `properties.template
 **Symptom:** A background eval run or extraction task fails silently while appearing to hang ("process still running").
 **Cause:** A Postgres connection pool exhaustion (observed occurring after the Aspire DCP crash mentioned above).
 **Fix:** Check actual eval result files (sizes/content) rather than trusting process liveness. If a pool exhaustion occurs, verify connection leaks or restart the Postgres container properly via Aspire.
+
+### Rollback in Single-Revision Mode
+**Gotcha:** Container Apps in single-revision mode don't allow you to just "activate an old revision" via the Azure Portal UI, because the portal only shows the single active one.
+**Fix:** To redeploy a previous image tag, update the container app with the old tag directly. This forces a new revision to be created from that old tag, keeping single-revision mode happy:
+```powershell
+az containerapp update -n <app-name> -g prism-rg --image <acr-name>.azurecr.io/<repo-name>:<old-tag>
+```
