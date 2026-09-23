@@ -133,7 +133,7 @@ When `uv run python -m eval.check_fixture_freshness` fails, consult this table (
 
 - **RapidFuzz vs table citations:** `RAPIDFUZZ_THRESHOLD = 88` may be too strict for table extractions which often lose layout or spacing during PDF parsing, causing valid tabular quotes to fail Stage 1 lexical matching.
 - **Scope-checking bluntness:** The auditor uses generalized reasoning instructions to catch broad claims (generalization-without-test). It may sometimes struggle with subtle scope nuances in complex papers.
-- **`stance: refutes` never observed:** [NOT VERIFIED - User Reported]. While the `stance` field supports "refutes", it has been reported that this is not observed populating in production extraction runs.
+- **`stance: refutes` never observed:** Confirmed 2026-09-23 by direct query against the production database: 0 `refutes` across 200+ grounded spans. The `stance` field accepts "refutes", but no span has been assigned it in production extraction runs. Nothing downstream consumes `stance` yet, so labels and eval numbers are unaffected.
 - **PDF ligature mojibake:** PyMuPDF extraction sometimes produces ligatures (ﬁ, ﬂ) that break exact string matching. *Mitigation:* `eval/matcher.py` uses `unicodedata.normalize("NFKC", text)` to decompose these for the matcher.
 - **Held-out paper gap:** The golden set is heavily concentrated on 3 specific papers (Reflexion, CoT, ReAct). There is limited evaluation of performance on entirely held-out unseen domains.
 

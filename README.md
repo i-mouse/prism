@@ -22,13 +22,19 @@ Upload a paper. Prism extracts claims, audits each claim against the paper's own
 
 Prism's core engineering bet is correct refusal: vetoing any assessment not supported by the paper's own text.
 
-**Current Eval: 11/14 refusal-family (79%)**
-- 5 by_label (the auditor explicitly reasoned to a refusal-family verdict)
-- 6 by_omission (the claim was safely dropped before being falsely affirmed)
-- 0 by_grounding_reject (the downstream grounding checker vetoed an affirmed claim)
-- **3/14 (21%) strict-label** — of the 5 explicit labels, only 3 matched the exact expected tier; the other 2 were refusal-family-correct but landed on the wrong tier (e.g. `not_supported` where `partially_supported` was expected)
-- 11/23 (48%) positive hits (floor: 10)
-- 0/23 (0%) false rejection rate
+**Current Eval: 12/14 refusal-family (86%)**, identical across two live runs against Azure Postgres on 2026-09-23 (all 3 papers extracted; logs: `Prism.PythonService/logs/eval/matrix_20260923T104231.json`, `matrix_20260923T112230.json`)
+
+| Metric | Run 1 (10:42Z) | Run 2 (11:22Z) |
+|---|---|---|
+| Refusal-family | 12/14 (86%) | 12/14 (86%) |
+| by_label (the auditor explicitly reasoned to a refusal-family verdict) | 6 | 5 |
+| by_omission (the claim was safely dropped before being falsely affirmed) | 4 | 5 |
+| by_grounding_reject (the downstream grounding checker vetoed an affirmed claim) | 2 | 2 |
+| **Strict-label** (landed on the exact expected tier) | **4/14 (29%)** | **4/14 (29%)** |
+| Positive hits (floor: 10) | 14/23 (61%) | 15/23 (65%) |
+| False rejection | 0/23 (0%) | 0/23 (0%) |
+
+Refusal, strict-label, and false-rejection rates held across both runs. Positive hits moved 61%→65% because the eval matcher is an LLM call and not fully deterministic; one trap claim also shifted between by_label and by_omission, with the refusal total unchanged at 12. Both runs are reported rather than the better one.
 
 A `by_label` refusal means the auditor read the paper and reasoned to a refusal — that's the product working. A `by_omission` refusal means the extractor dropped the claim before it was ever audited, so the user never sees it flagged. Converting omissions into visible, correctly-tiered refusals is the current work.
 
@@ -91,6 +97,8 @@ Container App runs single revision mode — traffic auto-swaps on healthy deploy
 Prism's architecture and design choices are documented in detail:
 * **[Decisions Log](docs/decisions.md)** — Append-only record of architecture, schema, and prompt design decisions.
 * **[Developer Runbook](docs/RUNBOOK.md)** — Local dev gotchas, deployment failure modes, eval fixture regeneration.
+* **[Deployment & Environment Architecture](docs/deployment-and-environment-architecture.md)** — Deployment topology, environment configuration, deploy workflow, running live evals, and known issues.
+* **[Extraction, Audit & Grounding Architecture](docs/extraction-audit-grounding-architecture.md)** — The extractor → auditor → structurer pipeline, grounding checker, eval harness, and known limitations.
 * **[Architecture Review (2026-09-05)](docs/audit/pipeline_architecture_review_2026-09-05.md)**
 
 ## License
