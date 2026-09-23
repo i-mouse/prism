@@ -1,5 +1,21 @@
 ## PRISM.Web Deployment
 
+## First two valid live eval runs against Azure Postgres - 2026-09-23
+**Context:** First two valid live eval runs against Azure Postgres, all 3 golden papers (Reflexion, CoT, ReAct) extracted. `uv run python -m eval.matrix_runner --source db --paper all`, 0 skipped in both runs.
+**Decision:** Report both runs as a range rather than picking one. Refusal, strict-label, and false-rejection were identical across runs; positive hits varied from matcher (LLM) stochasticity, and one trap claim shifted between by_label and by_omission with the refusal total held at 12.
+
+| Metric | Run 1 (10:42Z) | Run 2 (11:22Z) |
+|---|---|---|
+| Refusal-family | 12/14 (86%) | 12/14 (86%) |
+| by_label / by_omission / by_grounding_reject | 6 / 4 / 2 | 5 / 5 / 2 |
+| Strict-label | 4/14 (29%) | 4/14 (29%) |
+| Positive hits | 14/23 (61%) | 15/23 (65%) |
+| False rejection | 0/23 (0%) | 0/23 (0%) |
+
+**Consequences:** README, blog post, and landing-page stats updated to this range. Logs: `Prism.PythonService/logs/eval/matrix_20260923T104231.json`, `Prism.PythonService/logs/eval/matrix_20260923T112230.json`.
+
+**Note for later (out of scope here):** this file's ordering has drifted - the `# Prism Technical Decisions` header, glossary, and template sit mid-file below newer entries, and a stray `## PRISM.Web Deployment` heading sits at the top. Needs a separate cleanup pass.
+
 ## effective_status: Postgres GENERATED ALWAYS AS (...) STORED column - 2026-09-20
 **Context:** Need a final, grounding-aware claim status that overrides the initial extraction label when evidence fails (`missing=true`).
 **Decision:** Chosen to use a Postgres `GENERATED ALWAYS AS (...) STORED` column over an application-computed field in C# or Python. The key reasoning is that a generated column cannot be written to directly, so it structurally cannot drift from its source columns (`label`, `missing`), unlike app-layer logic duplicated across two languages that has to be kept in sync by convention. Note that `label`, `missing`, and `grounding_status` remain unchanged and still solely drive the eval harness's by_label/by_omission/by_grounding_reject metrics - `effective_status` is a display-layer addition only.

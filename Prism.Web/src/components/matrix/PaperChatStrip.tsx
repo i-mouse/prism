@@ -283,9 +283,6 @@ export function PaperChatStrip({ chatId, activeFileId, fileName, paperClaims, sc
           />
         </div>
         
-        <p className="mt-1.5 text-center font-sans text-[11px] text-slate-500">
-          Get answers, ask for clarification, or explore specific claims from this paper.
-        </p>
         <p className="text-center font-sans text-[11px] text-slate-500">
           Answers stay within this paper — no outside sources.
         </p>
@@ -740,7 +737,6 @@ function ChatInput({
   isChatOpen,
   setIsChatOpen,
   isLgUp,
-  fileName,
 }: {
   onSend: (msg: string) => void;
   onStop: () => void;
@@ -841,9 +837,6 @@ function ChatInput({
               <ArrowUp className="h-4 w-4" />
             </button>
           )}
-        </div>
-        <div className="text-xs text-slate-500 mt-2 text-center px-4">
-          Responses are based only on the content of {fileName ?? "this paper"}. Always verify important information.
         </div>
       </div>
     );
