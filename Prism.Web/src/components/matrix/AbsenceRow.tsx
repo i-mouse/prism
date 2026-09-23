@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import type { ClaimDto } from "@/types/api";
 import { claimLabelToVerdict } from "@/lib/claimMeta";
-import { displayLabel } from "@/lib/claim-display";
+import { claimEvidenceNote, displayLabel } from "@/lib/claim-display";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { VerdictPill } from "@/components/VerdictPill";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,8 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
   const verdict = claimLabelToVerdict[displayLabel(claim)];
   const { selectedClaimId } = useSelectedClaim();
   const isSelected = selectedClaimId === claim.id;
+  const note = claimEvidenceNote(claim);
+  const noteIsRefusal = note.state !== "invalid" && note.state !== "check_incomplete";
 
   return (
     <div
@@ -31,9 +33,11 @@ export function AbsenceRow({ claim, onViewEvidence }: AbsenceRowProps) {
           <p className={cn("line-clamp-2 leading-relaxed", isSelected && "font-medium")}>
             {claim.claimSummary}
           </p>
-          <p className="mt-1 text-[11px] text-verdict-refused-text">
-            No supporting evidence found
-          </p>
+          {note.listText && (
+            <p className={cn("mt-1 text-[11px]", noteIsRefusal ? "text-verdict-refused-text" : "text-ink-tertiary")}>
+              {note.listText}
+            </p>
+          )}
         </div>
       </div>
       <div className="flex justify-start">

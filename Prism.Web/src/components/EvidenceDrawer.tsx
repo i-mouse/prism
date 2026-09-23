@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { claimLabelToVerdict } from "@/lib/claimMeta";
-import { displayLabel } from "@/lib/claim-display";
+import { claimEvidenceNote, displayLabel } from "@/lib/claim-display";
 import { VerdictPill } from "@/components/VerdictPill";
 import type { PaperClaimsResponse } from "@/types/api";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
   const claim = claimIndex >= 0 ? allClaims[claimIndex] : null;
   const claimPosition = claim ? claim.position : claimIndex + 1;
   const firstSpan = claim?.evidenceSpans[0];
+  const note = claim ? claimEvidenceNote(claim) : null;
 
   const openPaper = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -109,10 +110,17 @@ export function EvidenceDrawer({ paperClaims, onClose }: EvidenceDrawerProps) {
             </section>
           )}
 
-          {/* ── No evidence note ─────────────────────── */}
-          {claim.missing && (
-            <div className="mt-4 rounded-lg border border-verdict-refused-border/30 bg-verdict-refused-bg p-3 font-sans text-sm text-verdict-refused-text">
-              The auditor considered available passages but found none sufficient to support this claim.
+          {/* ── Evidence note (same state as the list row) ── */}
+          {note?.drawerText && (
+            <div
+              className={cn(
+                "mt-4 rounded-lg border p-3 font-sans text-sm",
+                note.state === "invalid" || note.state === "check_incomplete"
+                  ? "border-hairline bg-surface-subtle text-ink-secondary"
+                  : "border-verdict-refused-border/30 bg-verdict-refused-bg text-verdict-refused-text"
+              )}
+            >
+              {note.drawerText}
             </div>
           )}
 
