@@ -809,6 +809,7 @@ Six of nine previously-100%-rejected claims flipped straight to Pass under the w
 - **LangGraph checkpointer race on startup** â€” `DuplicateObject` / `UniqueViolation` on the `CREATE INDEX` in checkpointer setup; cosmetic, does not block functionality.
 - **Rate limits** â€” Gemini free tier: Flash 20 RPD, Flash Lite 500 RPD. Extraction consumes 2 Flash + ~14 Flash Lite per paper, capping throughput at ~10 papers/day.
 - **Prompt-in-file coupling** â€” prompt hash changes if any byte of the `.md` or `.json` file changes, including whitespace; consequence of the auto-hash design (accepted trade-off).
+- **Blob Storage naming collision** â€” Uploads are keyed in Azure Blob Storage by the raw, original filename (e.g. `paper.pdf`), not by `FileId`. Two independent uploads sharing the same filename will silently overwrite each other in storage, independent of mock mode. This also makes blob deletion by `FileId` unsafe, as it risks deleting the underlying blob for a legitimate upload.
 
 ## Baseline correct-refusal rate: expected low â€” 2026-08-11
 Context: Antigravity data-shape audit revealed that the current

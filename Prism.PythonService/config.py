@@ -66,6 +66,10 @@ class PrismSettings(BaseSettings):
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000
 
+    # Mock mode
+    prism_mock_extraction: bool = False
+    prism_mock_stage_delay_sec: int = 0
+
     # Nuclear system-reset endpoint guard - unset disables the endpoint (403)
     system_admin_token: str | None = None
 

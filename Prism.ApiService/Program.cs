@@ -9,6 +9,7 @@ using Microsoft.Identity.Web;
 using Prism.ApiService.Configuration;
 using Prism.ApiService.Data;
 using Prism.ApiService.Features.Auth;
+using Prism.ApiService.Features.Mock;
 using Prism.ApiService.Features.PaperSubmission;
 using Prism.ApiService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -217,6 +218,7 @@ app.MapPaperEndPoint();
 app.MapChatEndPoint();
 app.MapChatHistoryEndpoints();
 app.MapGuestAuthEndpoints();
+app.MapMockEndpoints();
 
 // Fast liveness probe for Azure Container Apps - no DB/Qdrant ping, must return 200 quickly
 // even under load. A deeper /readiness endpoint can come post-V1.

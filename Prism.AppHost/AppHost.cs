@@ -4,6 +4,9 @@ using Azure.Provisioning.KeyVault;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var mockExtraction = builder.ExecutionContext.IsPublishMode
+    ? "false"
+    : "true";  // flip to "false" manually when not actively testing mock mode
 // PR5: Azure Container Apps environment - only meaningful in publish mode (aspire
 // deploy); F5 ignores it since there's nothing to run locally for a compute
 // environment. Provisions the managed environment, Log Analytics workspace,
@@ -214,6 +217,8 @@ var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.Python
                         .WithEnvironment("LLM_ROUTER_MODEL", "gemini-3.5-flash-lite")
                         .WithEnvironment("LLM_SUMMARY_MODEL", "gemini-3.5-flash-lite")
                         .WithEnvironment("PRISM_DEBUG", "1")
+                        .WithEnvironment("PRISM_MOCK_EXTRACTION", mockExtraction)
+                        .WithEnvironment("PRISM_MOCK_STAGE_DELAY_SEC", "5")
                         .WithUv()
                         .WithDebugging()
                         .WaitFor(postgres).WaitFor(rabbitMQ).WaitFor(blobs)
@@ -259,6 +264,7 @@ else
 
 var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithEnvironment("DEPLOYMENT_REGION","US-East")
+                     .WithEnvironment("PRISM_MOCK_EXTRACTION", mockExtraction)
                      // Migrations must not run on Container App startup in prod - concurrent
                      // replica starts would race for the migration lock (docs/deployment_notes.md,
                      // "Migration strategy"). Run once manually post-deploy instead. Locally

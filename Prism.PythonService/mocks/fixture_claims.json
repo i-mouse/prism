@@ -1,0 +1,288 @@
+{
+  "metadata": {
+    "research_objective": "Mock: Test the Prism UI states.",
+    "headline_conclusion": "Mock extraction allows rapid UI iteration.",
+    "sample_characteristics": "15 Mock claims spanning all states.",
+    "baselines_compared": "Real extraction.",
+    "ablation_studies": "None reported.",
+    "experimental_confounds": "None apparent.",
+    "author_acknowledged_limitations": "This is just a mock.",
+    "extrapolated_implications": "Mock mode rules.",
+    "empirical_results": "100% coverage.",
+    "prompt_version": "mock-v1",
+    "model_used": "MOCK_MODE",
+    "extracted_at": "2026-09-23T12:48:12.142409+00:00"
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "Mock Claim 1: Testing supported / Pass / missing=False",
+      "claim_summary": "Mock Summary 1 (supported-Pass)",
+      "label": "supported",
+      "grounding_status": "Pass",
+      "missing": false,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 1",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 2: Testing supported / Partial / missing=False",
+      "claim_summary": "Mock Summary 2 (supported-Partial)",
+      "label": "supported",
+      "grounding_status": "Partial",
+      "missing": false,
+      "reason": "Generated mock reason for Partial",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 2",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 3: Testing partially_supported / Pass / missing=False",
+      "claim_summary": "Mock Summary 3 (partially_supported-Pass)",
+      "label": "partially_supported",
+      "grounding_status": "Pass",
+      "missing": false,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 3",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 4: Testing partially_supported / Partial / missing=False",
+      "claim_summary": "Mock Summary 4 (partially_supported-Partial)",
+      "label": "partially_supported",
+      "grounding_status": "Partial",
+      "missing": false,
+      "reason": "Generated mock reason for Partial",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 4",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 5: Testing not_supported / Pass / missing=True",
+      "claim_summary": "Mock Summary 5 (not_supported-Pass)",
+      "label": "not_supported",
+      "grounding_status": "Pass",
+      "missing": true,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 5",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 6: Testing not_supported / Fail / missing=False",
+      "claim_summary": "Mock Summary 6 (not_supported-Fail)",
+      "label": "not_supported",
+      "grounding_status": "Fail",
+      "missing": false,
+      "reason": "Generated mock reason for Fail",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 6",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Fail",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 7: Testing supported / Skipped / missing=False",
+      "claim_summary": "Mock Summary 7 (supported-Skipped)",
+      "label": "supported",
+      "grounding_status": "Skipped",
+      "missing": false,
+      "reason": "Generated mock reason for Skipped",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 7",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Skipped",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 8: Testing supported / Pass / missing=False",
+      "claim_summary": "Mock Summary 8 (supported-Pass)",
+      "label": "supported",
+      "grounding_status": "Pass",
+      "missing": false,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 8",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 9: Testing supported / Partial / missing=False",
+      "claim_summary": "Mock Summary 9 (supported-Partial)",
+      "label": "supported",
+      "grounding_status": "Partial",
+      "missing": false,
+      "reason": "Generated mock reason for Partial",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 9",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 10: Testing partially_supported / Pass / missing=False",
+      "claim_summary": "Mock Summary 10 (partially_supported-Pass)",
+      "label": "partially_supported",
+      "grounding_status": "Pass",
+      "missing": false,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 10",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 11: Testing partially_supported / Partial / missing=False",
+      "claim_summary": "Mock Summary 11 (partially_supported-Partial)",
+      "label": "partially_supported",
+      "grounding_status": "Partial",
+      "missing": false,
+      "reason": "Generated mock reason for Partial",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 11",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 12: Testing not_supported / Pass / missing=True",
+      "claim_summary": "Mock Summary 12 (not_supported-Pass)",
+      "label": "not_supported",
+      "grounding_status": "Pass",
+      "missing": true,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 12",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 13: Testing not_supported / Fail / missing=False",
+      "claim_summary": "Mock Summary 13 (not_supported-Fail)",
+      "label": "not_supported",
+      "grounding_status": "Fail",
+      "missing": false,
+      "reason": "Generated mock reason for Fail",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 13",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Fail",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 14: Testing supported / Skipped / missing=False",
+      "claim_summary": "Mock Summary 14 (supported-Skipped)",
+      "label": "supported",
+      "grounding_status": "Skipped",
+      "missing": false,
+      "reason": "Generated mock reason for Skipped",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 14",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Skipped",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "claim_text_verbatim": "Mock Claim 15: Testing supported / Pass / missing=False",
+      "claim_summary": "Mock Summary 15 (supported-Pass)",
+      "label": "supported",
+      "grounding_status": "Pass",
+      "missing": false,
+      "reason": "Generated mock reason for Pass",
+      "evidence_spans": [
+        {
+          "source_text": "Mock evidence text for claim 15",
+          "source_section": "Section M",
+          "section_header": "Mock Header",
+          "page_number": 1,
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    }
+  ]
+}

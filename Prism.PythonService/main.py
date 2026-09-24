@@ -20,7 +20,7 @@ from langchain_core.messages import AIMessage
 from extraction.engine import extract_metadata, extract_claims
 from extraction.grounding import ground_extraction
 from extraction.writer import write_extraction_result, RESEARCH_PAPER_DOMAIN_ID
-from extraction.schemas import PaperMetadataFinal
+from extraction.schemas import PaperMetadataFinal, ClaimFinal
 from extraction.prompt_version import get_prompt_version
 from extraction.pipeline_events import ProgressEmitter, Stage
 from correlation import set_correlation_id
@@ -78,6 +78,17 @@ def extract_pdf_text_sync(local_path: str) -> tuple[str, int]:
     return final_text, page_count
 
 async def main():
+    if settings.prism_mock_extraction:
+        aspire_env = os.environ.get("ASPIRE_ENVIRONMENT", "")
+        if aspire_env.lower() == "production":
+            raise RuntimeError("MOCK MODE FATAL ERROR: Cannot run mock mode in Production environment.")
+        
+        db_host = settings.prism_db_host.lower()
+        if not (db_host in ("localhost", "127.0.0.1") or db_host.endswith(".docker.internal")):
+            raise RuntimeError(f"MOCK MODE FATAL ERROR: db_host '{settings.prism_db_host}' is not in the local allow-list. Aborting to protect live DB.")
+        
+        print(f"[MOCK] PRISM_MOCK_EXTRACTION is enabled (delay={settings.prism_mock_stage_delay_sec}s). Safety gates passed.", flush=True)
+
     service = AIService()
     rag_service = await RAGService.create()
 
@@ -203,71 +214,99 @@ async def main():
                                 else:
                                     final_text = await service.transcribe_audio(file_path=local_path)
 
-                                # 3. LLM Processing
-                                text_summary = await service.analyize_text(text=final_text)
-
-                                # 4. Save to Qdrant (natively async - AsyncQdrantClient, no thread needed)
-                                chunk_count = await rag_service.add_document_to_qdrant(file_name, final_text, file_id)
-
-                                if is_pdf:
-                                    await emitter.emit_stage_detail(
-                                        "preparing", f"Read {page_count} pages"
-                                    )
+                                if settings.prism_mock_extraction:
+                                    print(f'[MOCK] Fixture claims written for {file_id} — NOT a real extraction', flush=True)
+                                    text_summary = "MOCK SUMMARY: This is a simulated extraction for UI iteration."
+                                    
+                                    # Load fixture data
+                                    fixture_path = os.path.join("mocks", "fixture_claims.json")
+                                    with open(fixture_path, "r", encoding="utf-8") as f:
+                                        fixture_data = json.load(f)
+                                        
+                                    metadata_final = PaperMetadataFinal(**fixture_data["metadata"])
+                                    grounded = [ClaimFinal(**c) for c in fixture_data["claims"]]
+                                    
+                                    delay = settings.prism_mock_stage_delay_sec
+                                    
+                                    await emitter.emit_stage_detail("preparing", "Mock: Extracted text")
+                                    if delay: await asyncio.sleep(delay)
+                                    
+                                    current_stage = "extracting"
+                                    await emitter.emit_stage("extracting")
+                                    await emitter.emit_stage_detail("extracting", "Mock: Scanning text for verifiable claims...")
+                                    if delay: await asyncio.sleep(delay)
+                                    
+                                    current_stage = "grounding"
+                                    await emitter.emit_stage("grounding")
+                                    await emitter.emit_stage_detail("grounding", "Mock: Checking each claim against the evidence...")
+                                    if delay: await asyncio.sleep(delay)
+                                    
                                 else:
-                                    await emitter.emit_stage_detail(
-                                        "preparing", "Transcribed audio"
+                                    # 3. LLM Processing
+                                    text_summary = await service.analyize_text(text=final_text)
+
+                                    # 4. Save to Qdrant (natively async - AsyncQdrantClient, no thread needed)
+                                    chunk_count = await rag_service.add_document_to_qdrant(file_name, final_text, file_id)
+
+                                    if is_pdf:
+                                        await emitter.emit_stage_detail(
+                                            "preparing", f"Read {page_count} pages"
+                                        )
+                                    else:
+                                        await emitter.emit_stage_detail(
+                                            "preparing", "Transcribed audio"
+                                        )
+
+                                    # ============================================
+                                    # NEW: Extraction pipeline (metadata + claims + grounding + DB write)
+                                    # ============================================
+                                    print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting metadata extraction', flush=True)
+                                    with tracer.start_as_current_span("extract_metadata") as span:
+                                        span.set_attribute("correlation_id", correlation_id)
+                                        span.set_attribute("paper_id", file_id)
+                                        metadata_response = await extract_metadata(
+                                            paper_text=final_text,
+                                            chat_id=chat_id,
+                                            correlation_id=correlation_id,
+                                        )
+
+                                    metadata_final = PaperMetadataFinal(
+                                        **metadata_response.metadata.model_dump(),
+                                        prompt_version=get_prompt_version(),
+                                        model_used=settings.llm_extraction_model,
+                                        extracted_at=datetime.now(timezone.utc),
                                     )
 
-                                # ============================================
-                                # NEW: Extraction pipeline (metadata + claims + grounding + DB write)
-                                # ============================================
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting metadata extraction', flush=True)
-                                with tracer.start_as_current_span("extract_metadata") as span:
-                                    span.set_attribute("correlation_id", correlation_id)
-                                    span.set_attribute("paper_id", file_id)
-                                    metadata_response = await extract_metadata(
-                                        paper_text=final_text,
-                                        chat_id=chat_id,
-                                        correlation_id=correlation_id,
-                                    )
+                                    await emitter.emit_stage_detail("preparing", "Extracted paper metadata")
 
-                                metadata_final = PaperMetadataFinal(
-                                    **metadata_response.metadata.model_dump(),
-                                    prompt_version=get_prompt_version(),
-                                    model_used=settings.llm_extraction_model,
-                                    extracted_at=datetime.now(timezone.utc),
-                                )
+                                    current_stage = "extracting"
+                                    await emitter.emit_stage("extracting")
+                                    await emitter.emit_stage_detail("extracting", "Scanning text for verifiable claims...")
+                                    print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction', flush=True)
+                                    with tracer.start_as_current_span("extract_claims") as span:
+                                        span.set_attribute("correlation_id", correlation_id)
+                                        span.set_attribute("paper_id", file_id)
+                                        extraction = await extract_claims(
+                                            paper_text=final_text,
+                                            chat_id=chat_id,
+                                            correlation_id=correlation_id,
+                                            on_detail=lambda d: emitter.emit_stage_detail("extracting", d),
+                                        )
 
-                                await emitter.emit_stage_detail("preparing", "Extracted paper metadata")
-
-                                current_stage = "extracting"
-                                await emitter.emit_stage("extracting")
-                                await emitter.emit_stage_detail("extracting", "Scanning text for verifiable claims...")
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction', flush=True)
-                                with tracer.start_as_current_span("extract_claims") as span:
-                                    span.set_attribute("correlation_id", correlation_id)
-                                    span.set_attribute("paper_id", file_id)
-                                    extraction = await extract_claims(
-                                        paper_text=final_text,
-                                        chat_id=chat_id,
-                                        correlation_id=correlation_id,
-                                        on_detail=lambda d: emitter.emit_stage_detail("extracting", d),
-                                    )
-
-                                current_stage = "grounding"
-                                await emitter.emit_stage("grounding")
-                                await emitter.emit_stage_detail("grounding", "Checking each claim against the evidence...")
-                                print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting grounding', flush=True)
-                                with tracer.start_as_current_span("ground_extraction") as span:
-                                    span.set_attribute("correlation_id", correlation_id)
-                                    span.set_attribute("paper_id", file_id)
-                                    grounded = await ground_extraction(
-                                        extraction=extraction,
-                                        paper_text=final_text,
-                                        chat_id=chat_id,
-                                        correlation_id=correlation_id,
-                                        on_progress=emitter.emit_grounding_progress,
-                                    )
+                                    current_stage = "grounding"
+                                    await emitter.emit_stage("grounding")
+                                    await emitter.emit_stage_detail("grounding", "Checking each claim against the evidence...")
+                                    print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting grounding', flush=True)
+                                    with tracer.start_as_current_span("ground_extraction") as span:
+                                        span.set_attribute("correlation_id", correlation_id)
+                                        span.set_attribute("paper_id", file_id)
+                                        grounded = await ground_extraction(
+                                            extraction=extraction,
+                                            paper_text=final_text,
+                                            chat_id=chat_id,
+                                            correlation_id=correlation_id,
+                                            on_progress=emitter.emit_grounding_progress,
+                                        )
 
                                 current_stage = "finalizing"
                                 await emitter.emit_stage("finalizing")

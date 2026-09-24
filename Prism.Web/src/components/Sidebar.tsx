@@ -2,6 +2,7 @@ import type { Ref } from "react";
 import type { ChatListItem } from "@/types/api";
 import { PrismLogo } from "@/components/PrismLogo";
 import { UploadZone, type UploadZoneHandle } from "@/components/sidebar/UploadZone";
+import { MockCleanupButton } from "@/components/sidebar/MockCleanupButton";
 import { CurrentContextCard } from "@/components/sidebar/CurrentContextCard";
 import { PaperListItem } from "@/components/sidebar/PaperListItem";
 import { SidebarFooter } from "@/components/sidebar/SidebarFooter";
@@ -102,6 +103,7 @@ export function Sidebar({
           onUploadFailed={onUploadFailed}
           collapsed={collapsed}
         />
+        <MockCleanupButton onSuccess={refetchChats} collapsed={collapsed} chats={chats} />
       </div>
 
 
