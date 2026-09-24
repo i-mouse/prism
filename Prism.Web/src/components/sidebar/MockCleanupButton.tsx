@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -11,43 +11,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { acquireAccessToken } from "@/lib/auth";
+import { useMockStatus } from "@/hooks/useMockStatus";
 
 interface MockCleanupButtonProps {
   onSuccess: () => void;
   collapsed?: boolean;
-  chats?: any[];
+  chats?: unknown[];
 }
 
 export function MockCleanupButton({ onSuccess, collapsed, chats }: MockCleanupButtonProps) {
-  const [enabled, setEnabled] = useState(false);
-  const [fileCount, setFileCount] = useState(0);
-  const [chatFileCount, setChatFileCount] = useState(0);
+  const { enabled, mockFileCount: fileCount, mockChatFileCount: chatFileCount, fetchStatus } = useMockStatus(chats);
   const [isOpen, setIsOpen] = useState(false);
   const [isCleaning, setIsCleaning] = useState(false);
-
-  const fetchStatus = async () => {
-    try {
-      const headers: HeadersInit = {};
-      const token = await acquireAccessToken();
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
-      const response = await fetch("/api/mock/status", { headers, credentials: "include" });
-      if (response.ok) {
-        const data = await response.json();
-        setEnabled(data.enabled);
-        setFileCount(data.mockFileCount);
-        setChatFileCount(data.mockChatFileCount || 0);
-      }
-    } catch (e) {
-      console.error("Failed to fetch mock status", e);
-    }
-  };
-
-  // Fetch on mount, and re-fetch whenever the parent's chat list refreshes
-  useEffect(() => {
-    fetchStatus();
-  }, [chats]);
 
   if (!enabled) {
     return null;
