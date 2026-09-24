@@ -54,7 +54,7 @@ export function AppShell() {
 
   const { activeChatId, setActiveChatId, activePaperId, setActivePaperId } = useActivePaper();
   const { chats, refetch: refetchChats } = useChats();
-  const { data: paperClaims, isLoading, refetch: refetchClaims } = usePaperClaims(activePaperId);
+  const { data: paperClaims, refetch: refetchClaims } = usePaperClaims(activePaperId);
   const { joinChat, on, off, getConnectionId } = useSignalR();
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
   const [fileSizeLabels, setFileSizeLabels] = useState<Record<string, string>>({});
@@ -181,7 +181,6 @@ export function AppShell() {
     (chatId: string, fileId: string, file: File, isCacheHit: boolean) => {
       setFileSizeLabels((prev) => ({ ...prev, [chatId]: formatFileSize(file.size) }));
       setIsMobileSidebarOpen(false);
-      setPendingUpload(null);
       setActiveChatId(chatId);
       setActivePaperId(fileId);
       setCacheHitPaperId(isCacheHit ? fileId : null);
@@ -344,7 +343,6 @@ export function AppShell() {
           <div className="flex h-full flex-col overflow-hidden lg:m-3 lg:rounded-xl lg:border lg:border-hairline lg:bg-surface lg:shadow-card">
             <MatrixView
               paperClaims={paperClaims}
-              isLoading={isLoading}
               activePaperId={activePaperId}
               activeChatId={activeChatId}
               pendingUpload={pendingUpload}

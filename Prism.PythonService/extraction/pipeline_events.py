@@ -17,7 +17,7 @@ import aio_pika
 
 QUEUE_NAME = "document_processed_queue"
 
-Stage = Literal["preparing", "extracting", "grounding", "finalizing", "done", "failed"]
+Stage = Literal["preparing", "extracting", "auditing", "grounding", "finalizing", "done", "failed"]
 
 
 class ExtractionProgressEvent(TypedDict, total=False):

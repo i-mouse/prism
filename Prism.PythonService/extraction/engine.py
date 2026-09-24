@@ -355,14 +355,6 @@ async def _audit_and_structure_claim(
     claim_summary = claim["claim_summary"]
 
     async with semaphore:
-        if on_detail is not None:
-            summary = claim_summary or claim_text_verbatim
-            truncated = summary[:70] + "..." if len(summary) > 70 else summary
-            try:
-                await on_detail(f'Auditing claim {claim_number} of {total_claims}: "{truncated}"')
-            except Exception:
-                pass  # progress emission never breaks extraction
-
         with tracer.start_as_current_span("auditor") as span:
             span.set_attribute("correlation_id", correlation_id or "")
             span.set_attribute("chat_id", chat_id)
@@ -398,6 +390,8 @@ async def extract_claims(
     chat_id: str,
     correlation_id: str | None = None,
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
+    on_audit_start: Optional[Callable[[], Awaitable[None]]] = None,
+    on_audit_detail: Optional[Callable[[str], Awaitable[None]]] = None,
 ) -> ClaimsExtractionResponse:
     """Extracts structured claims from paper_text via a sequential three-call pipeline.
 
@@ -426,12 +420,36 @@ async def extract_claims(
         except Exception:
             pass  # progress emission never breaks extraction
 
+    if on_audit_start is not None:
+        try:
+            await on_audit_start()
+        except Exception:
+            pass
+
+    claims_done = 0
+    total_claims = len(claims)
+
+    async def _report_claim_done() -> None:
+        nonlocal claims_done
+        claims_done += 1
+        if on_audit_detail is not None:
+            try:
+                await on_audit_detail(f"Audited {claims_done} of {total_claims} claims")
+            except Exception:
+                pass  # progress emission never breaks extraction
+
+    async def _audit_wrapper(*args, **kwargs):
+        try:
+            return await _audit_and_structure_claim(*args, **kwargs)
+        finally:
+            await _report_claim_done()
+
     semaphore = asyncio.Semaphore(AUDIT_STRUCTURE_CONCURRENCY)
     results = await asyncio.gather(
         *(
-            _audit_and_structure_claim(
+            _audit_wrapper(
                 semaphore, paper_text, claim, chat_id, correlation_id,
-                claim_number=i + 1, total_claims=len(claims), on_detail=on_detail,
+                claim_number=i + 1, total_claims=total_claims, on_detail=None,
             )
             for i, claim in enumerate(claims)
         ),
