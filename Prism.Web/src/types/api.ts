@@ -60,6 +60,7 @@ export interface FileListItem {
 export type ExtractionStage =
   | "preparing"
   | "extracting"
+  | "auditing"
   | "grounding"
   | "finalizing"
   | "done"

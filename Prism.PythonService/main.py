@@ -197,7 +197,6 @@ async def main():
 
                                 emitter = ProgressEmitter(channel, file_id=file_id, chat_id=chat_id)
                                 await emitter.emit_stage("preparing")
-                                await emitter.emit_stage_detail("preparing", f"Loading file: {file_name}")
 
                                 # 1. Download file asynchronously using threads
                                 local_path = os.path.join("downloads", file_name)
@@ -243,6 +242,7 @@ async def main():
                                     
                                 else:
                                     # 3. LLM Processing
+                                    await emitter.emit_stage_detail("preparing", "Summarizing and generating embeddings...")
                                     text_summary = await service.analyize_text(text=final_text)
 
                                     # 4. Save to Qdrant (natively async - AsyncQdrantClient, no thread needed)
@@ -283,6 +283,12 @@ async def main():
                                     await emitter.emit_stage("extracting")
                                     await emitter.emit_stage_detail("extracting", "Scanning text for verifiable claims...")
                                     print(f'[extraction] chat_id={chat_id} correlation_id={correlation_id} starting claims extraction', flush=True)
+
+                                    async def _on_audit_start():
+                                        nonlocal current_stage
+                                        current_stage = "auditing"
+                                        await emitter.emit_stage("auditing")
+
                                     with tracer.start_as_current_span("extract_claims") as span:
                                         span.set_attribute("correlation_id", correlation_id)
                                         span.set_attribute("paper_id", file_id)
@@ -291,6 +297,8 @@ async def main():
                                             chat_id=chat_id,
                                             correlation_id=correlation_id,
                                             on_detail=lambda d: emitter.emit_stage_detail("extracting", d),
+                                            on_audit_start=_on_audit_start,
+                                            on_audit_detail=lambda d: emitter.emit_stage_detail("auditing", d),
                                         )
 
                                     current_stage = "grounding"

@@ -27,7 +27,6 @@ import { displayLabel } from "@/lib/claim-display";
 
 interface MatrixViewProps {
   paperClaims: PaperClaimsResponse | null;
-  isLoading: boolean;
   activePaperId: string | null;
   activeChatId: string;
   pendingUpload?: { chatId: string; fileName: string } | null;
@@ -96,7 +95,6 @@ function UserProfileButton() {
 
 export function MatrixView({
   paperClaims,
-  isLoading,
   activePaperId,
   activeChatId,
   pendingUpload = null,
@@ -223,9 +221,7 @@ export function MatrixView({
   }
 
   const isCacheHitLoading = cacheHitPending && !paperClaims;
-  const showSkeleton =
-    (!pendingUpload && !paperClaims && !isCacheHitLoading) ||
-    (isLoading && !paperClaims && !isCacheHitLoading);
+  const showSkeleton = !pendingUpload && !paperClaims && !isCacheHitLoading;
   const showActivityView =
     pendingUpload ||
     isCacheHitLoading ||

@@ -20,11 +20,12 @@ interface PaperActivityViewProps {
   onCacheHitCancel?: () => void;
 }
 
-const STAGE_ORDER: ExtractionStage[] = ["preparing", "extracting", "grounding", "finalizing", "done"];
+const STAGE_ORDER: ExtractionStage[] = ["preparing", "extracting", "auditing", "grounding", "finalizing", "done"];
 
 const STAGE_LABELS: Record<ExtractionStage, string> = {
   preparing: "Preparing",
   extracting: "Extracting",
+  auditing: "Auditing",
   grounding: "Grounding",
   finalizing: "Finalizing",
   done: "Done",
@@ -61,10 +62,7 @@ const STATUS_BORDER_CLASS: Record<RowStatus, string> = {
 // There's no per-claim completion event on the wire, only per-claim "started"
 // messages, so completion is inferred from the concurrency ceiling: once more
 // than this many claims have started, each additional start implies an
-// earlier one finished and released a semaphore slot.
-const AUDIT_STRUCTURE_CONCURRENCY = 5;
 
-const CLAIM_BURST_PATTERN = /^Auditing claim (\d+) of (\d+):/;
 
 // Cache-hit messages arrive back-to-back with no natural spacing (the server
 // emits them synchronously, one after another, with no processing delay in
@@ -113,7 +111,6 @@ export function PaperActivityView({
 
   const cacheHitFlowRef = useRef(false);
   const cacheHitContinuePendingRef = useRef(false);
-  const auditBurstSeenRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -174,39 +171,6 @@ export function PaperActivityView({
         else return;
       }
       const time = nowTime();
-
-      // Claim-audit bursts (up to AUDIT_STRUCTURE_CONCURRENCY claims fire
-      // near-simultaneously, batch after batch) collapse into one ticking
-      // status line instead of flooding the log with one entry per claim.
-      // This only happens during the extracting stage's audit/structure
-      // fan-out — extraction's other messages are sequential, not bursty.
-      const burstMatch = ev.stage === "extracting" ? msg.match(CLAIM_BURST_PATTERN) : null;
-      if (burstMatch) {
-        const claimNumber = parseInt(burstMatch[1], 10);
-        const total = parseInt(burstMatch[2], 10);
-        auditBurstSeenRef.current.add(claimNumber);
-        const seen = auditBurstSeenRef.current.size;
-        const completed = Math.max(0, seen - AUDIT_STRUCTURE_CONCURRENCY);
-        const inProgress = Math.min(AUDIT_STRUCTURE_CONCURRENCY, seen - completed);
-        const statusMessage = `Auditing claims — ${inProgress} in progress, ${completed} of ${total} complete.`;
-
-        setLogState((prev) => {
-          const visible = prev.visible;
-          const last = visible[visible.length - 1];
-          const entry: LogEntry = {
-            id: last?.isBurstStatus ? last.id : crypto.randomUUID(),
-            time,
-            stage: ev.stage,
-            message: statusMessage,
-            isBurstStatus: true,
-          };
-          return {
-            ...prev,
-            visible: last?.isBurstStatus ? [...visible.slice(0, -1), entry] : [...visible, entry],
-          };
-        });
-        return;
-      }
 
       const entry: LogEntry = {
         id: crypto.randomUUID(),
