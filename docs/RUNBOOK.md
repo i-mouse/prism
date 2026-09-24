@@ -80,6 +80,36 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 * **Gold-set pass floor:** 0.9 (90%). If a real run comes in below that, do not commit the fixture update — the matcher itself needs fixing (model or prompt) first, not the freshness gate.
 * **None of this touches CI:** the eval harness is fully offline in CI (see `docs/decisions.md`, "Revert live-matcher CI back to frozen-fixture design") — all three regen commands above are run locally by a developer, and only their *output* (the committed fixture JSON) is what CI reads.
 
+## 7. Mock Extraction Mode — Local Testing Only
+
+* **Purpose:** Bypasses the real extraction pipeline (Qdrant embedding +
+  all 3 LLM calls) to reproduce UI states and the SignalR tab-switch
+  reconnect race cheaply, without burning Gemini quota or waiting minutes
+  per paper.
+* **Enable:** `Prism.AppHost/AppHost.cs` — `mockExtraction` variable (shared
+  across `pythonWorker` and `apiservice`, currently `"true"` for local dev,
+  hard-locked `"false"` on publish via `IsPublishMode`). Flip it manually,
+  restart Aspire — this does NOT hot-reload; env vars are injected at
+  orchestrator startup only.
+* **`PRISM_MOCK_STAGE_DELAY_SEC`** (pythonWorker only) — adds an artificial
+  delay between mock pipeline stages, giving you a window to trigger the
+  reconnect race by switching browser tabs mid-"extracting"/"grounding".
+* **Gotcha — cache-hit skips the delay entirely.** Re-uploading the SAME
+  file (by ContentHash, not filename) after its first mock run hits
+  `HandleCacheHitAsync`, which fires `DocumentProcessed` synchronously
+  with no delay. Use a fresh file (or the cleanup button, below) for every
+  race-repro attempt — a repeat upload will not reproduce the race.
+* **Cleanup:** "Clean up mock data" button (sidebar, visible only when
+  mock mode is enabled) deletes all `MOCK_MODE`-tagged rows across
+  `ChatFiles`/`PaperClaims`/`DocumentExtractors`/`FileRecords`/orphaned
+  `PrismDocuments`, in that FK-safe order. Does NOT touch Blob Storage —
+  mock-uploaded PDFs still accumulate there (low cost, not automated;
+  see Known Limitations in decisions.md for why — blob naming collision
+  risk).
+* **Safety:** double-gated — refuses if `ASPIRE_ENVIRONMENT=Production`,
+  and the cleanup endpoint separately refuses on the same check. Both
+  checks live server-side, not just UI visibility.
+  
 ## Common deployment failure modes
 
 ### PrismSettings field rename crashes on boot

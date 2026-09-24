@@ -15,6 +15,7 @@ import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { useAuth } from "@/lib/AuthContext";
 import { acquireAccessToken } from "@/lib/auth";
 import { GuestBanner } from "@/components/GuestBanner";
+import { MockBanner } from "@/components/MockBanner";
 import { cn } from "@/lib/utils";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -287,6 +288,7 @@ export function AppShell() {
       <TopBar onMenuClick={() => setIsMobileSidebarOpen(true)} />
 
       {user?.provider === "guest" && <GuestBanner />}
+      <MockBanner />
 
       {/* ── 3-pane layout ───────────────────────────────────────────────── */}
       <div
