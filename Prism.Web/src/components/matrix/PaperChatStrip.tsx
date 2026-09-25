@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { ArrowUp, ChevronDown, Copy, MessageCircle, Square, ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import { useChatStream } from "@/hooks/useChatStream";
+import type { ChatStreamStore } from "@/lib/chat-stream-store";
 import { useSelectedClaim } from "@/contexts/SelectedClaimContext";
 import { ChatMarkdown, citeMarker, cursorMarker, type ChatCiteInfo } from "@/components/matrix/chat/ChatMarkdown";
 import { ChatBottomSheet, type SheetState } from "@/components/matrix/chat/ChatBottomSheet";
@@ -24,6 +25,11 @@ interface PaperChatStripProps {
   // switch) so a chat's scroll position survives this component's own
   // per-chat remount (key={activeChatId} in MatrixView). See MessageList.
   scrollPositions: React.RefObject<Map<string, number>>;
+  // Owned by MatrixView, which doesn't remount on a paper switch. This
+  // component is a VIEW of the active chat's slice of it - it starts sends
+  // and stops them, but owns neither the fetch nor the AbortController, so
+  // its own remount can no longer kill a stream. See chat-stream-store.ts.
+  chatStreams: ChatStreamStore;
 }
 
 const SUGGESTED_PROMPTS = ["What are the main claims?", "Show me the strongest refusals"];
@@ -141,8 +147,8 @@ function followUpsFor(turn: ChatTurn): string[] {
   return ["Which claims support this?", "Show me the evidence"];
 }
 
-export function PaperChatStrip({ chatId, activeFileId, fileName, paperClaims, scrollPositions }: PaperChatStripProps) {
-  const { turns, isSending, error, sendMessage, abort } = useChatStream(chatId, activeFileId);
+export function PaperChatStrip({ chatId, activeFileId, fileName, paperClaims, scrollPositions, chatStreams }: PaperChatStripProps) {
+  const { turns, isSending, error, sendMessage, abort } = useChatStream(chatId, activeFileId, chatStreams);
   const { highlightClaim } = useSelectedClaim();
   const isLgUp = useIsLgUp();
   const paperClaimsById = useMemo(() => {

@@ -20,6 +20,7 @@ import { ClaimList } from "@/components/matrix/ClaimList";
 import { AuditSummaryCard } from "@/components/matrix/AuditSummaryCard";
 import { PaperActivityView } from "@/components/matrix/PaperActivityView";
 import { PaperChatStrip } from "@/components/matrix/PaperChatStrip";
+import { useChatStreamStore } from "@/hooks/useChatStream";
 import { useAuth } from "@/lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
@@ -111,6 +112,14 @@ export function MatrixView({
   // site in AppShell.tsx) - a ref here, not state, so a scroll event doesn't
   // trigger a re-render of this whole view.
   const chatScrollPositionsRef = useRef<Map<string, number>>(new Map());
+  // Owns every paper-scoped chat STREAM, not merely a snapshot of its turns.
+  // Same lifetime argument as chatScrollPositionsRef above, and it must stay
+  // above the `!activePaperId` early return below: this component survives a
+  // paper switch, the skeleton/activity branch and that early return, so a
+  // send started in one chat keeps streaming (and lands in its own chat) while
+  // the user reads another, instead of being aborted by PaperChatStrip's
+  // per-chat remount. See chat-stream-store.ts.
+  const chatStreams = useChatStreamStore();
   // usePaperClaims doesn't null its data just because activePaperId changed
   // (that re-triggers the full-page skeleton below - see usePaperClaims.ts)
   // so `paperClaims` can briefly still be the PREVIOUS paper's response
@@ -327,6 +336,7 @@ export function MatrixView({
                   fileName={currentPaperClaims?.fileName}
                   paperClaims={claims}
                   scrollPositions={chatScrollPositionsRef}
+                  chatStreams={chatStreams}
                 />
               </div>
             </>

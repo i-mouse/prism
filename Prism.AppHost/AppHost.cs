@@ -6,7 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var mockExtraction = builder.ExecutionContext.IsPublishMode
     ? "false"
-    : "true";  // flip to "false" manually when not actively testing mock mode
+    : "false";  // flip to "false" manually when not actively testing mock mode
 // PR5: Azure Container Apps environment - only meaningful in publish mode (aspire
 // deploy); F5 ignores it since there's nothing to run locally for a compute
 // environment. Provisions the managed environment, Log Analytics workspace,
