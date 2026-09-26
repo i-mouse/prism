@@ -18,6 +18,10 @@ interface SidebarProps {
   activeChatId: string;
   chats: ChatListItem[];
   refetchChats: () => void;
+  /** Mock cleanup deletes rows AppShell caches by chatId/paperId, so it
+   *  refetches chats AND drops those caches. Kept separate from
+   *  refetchChats so an ordinary upload doesn't needlessly clear them. */
+  onMockCleanup: () => void;
   getConnectionId: () => string | null;
   joinChat: (chatId: string) => Promise<void>;
   fileSizeLabels: Record<string, string>;
@@ -37,6 +41,7 @@ export function Sidebar({
   activeChatId,
   chats,
   refetchChats,
+  onMockCleanup,
   getConnectionId,
   joinChat,
   fileSizeLabels,
@@ -103,7 +108,7 @@ export function Sidebar({
           onUploadFailed={onUploadFailed}
           collapsed={collapsed}
         />
-        <MockCleanupButton onSuccess={refetchChats} collapsed={collapsed} chats={chats} />
+        <MockCleanupButton onSuccess={onMockCleanup} collapsed={collapsed} chats={chats} />
       </div>
 
 
