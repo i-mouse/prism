@@ -54,7 +54,11 @@ export function AppShell() {
 
   const { activeChatId, setActiveChatId, activePaperId, setActivePaperId } = useActivePaper();
   const { chats, refetch: refetchChats } = useChats();
-  const { data: paperClaims, refetch: refetchClaims } = usePaperClaims(activePaperId);
+  const {
+    data: paperClaims,
+    refetch: refetchClaims,
+    clearCache: clearClaimsCache,
+  } = usePaperClaims(activePaperId);
   const { joinChat, on, off, getConnectionId } = useSignalR();
   const { selectedClaimId, setSelectedClaimId } = useSelectedClaim();
   const [fileSizeLabels, setFileSizeLabels] = useState<Record<string, string>>({});
@@ -121,7 +125,27 @@ export function AppShell() {
     return () => off("DocumentProcessed", handleDocumentProcessed);
   }, [on, off, activeChatId, activePaperId, refetchChats, refetchClaims]);
 
+  // chatId -> the fileId GET /api/chats/{chatId}/files resolved for it.
+  // Safe to reuse for the rest of the session: a chat's file never changes
+  // once set. Every upload mints a brand-new chatId (UploadZone.tsx), and
+  // the cache-hit path links the already-stored file to that new chat
+  // rather than adding a second file to an existing one.
+  const chatFileIdCacheRef = useRef<Map<string, string>>(new Map());
+  // The chatId whose paper resolution is allowed to win, mirroring
+  // usePaperClaims' latestPaperIdRef. Without it, switching A->B quickly
+  // and having A's /files response land last sets activePaperId to A's
+  // file while chat B is active - and MatrixView's paperId guard cannot
+  // catch that, because paperClaims.paperId and activePaperId would agree
+  // (both A) while the chat strip below is showing B.
+  const latestChatIdRef = useRef<string | null>(routeChatId ?? null);
+
   const fetchChatFiles = async (chatId: string) => {
+    const cachedFileId = chatFileIdCacheRef.current.get(chatId);
+    if (cachedFileId) {
+      setActivePaperId(cachedFileId);
+      return;
+    }
+
     try {
       const headers: HeadersInit = {};
       const token = await acquireAccessToken();
@@ -129,11 +153,24 @@ export function AppShell() {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
+      // files[0] is the OLDEST file: this endpoint orders by UploadedAt
+      // ascending, while GET /api/chats picks each chat's NEWEST file. The
+      // two only disagree for a chat with 2+ files, which nothing in the UI
+      // can currently produce. If fileId is ever added to /api/chats so
+      // this call can be skipped entirely, that ordering mismatch must be
+      // fixed first - otherwise such a chat would silently resolve to a
+      // different file than it does today.
       const res = await fetch(`/api/chats/${chatId}/files`, { headers, credentials: "include" });
       if (!res.ok) throw new Error("Failed to load chat files");
       const files: Array<{ fileId: string }> = await res.json();
-      setActivePaperId(files[0]?.fileId ?? null);
+      if (latestChatIdRef.current !== chatId) return;
+      const fileId = files[0]?.fileId ?? null;
+      if (fileId) {
+        chatFileIdCacheRef.current.set(chatId, fileId);
+      }
+      setActivePaperId(fileId);
     } catch (err) {
+      if (latestChatIdRef.current !== chatId) return;
       console.error("Failed to resolve paper for chat:", err);
       setActivePaperId(null);
     }
@@ -141,6 +178,8 @@ export function AppShell() {
 
   // Sync route param -> active paper
   useEffect(() => {
+    // Anything still in flight for a different chat is stale as of now.
+    latestChatIdRef.current = routeChatId ?? null;
     if (routeChatId && routeChatId !== activeChatId) {
       setActiveChatId(routeChatId);
       fetchChatFiles(routeChatId);
@@ -182,6 +221,10 @@ export function AppShell() {
       setFileSizeLabels((prev) => ({ ...prev, [chatId]: formatFileSize(file.size) }));
       setIsMobileSidebarOpen(false);
       setActiveChatId(chatId);
+      // The upload already resolved this chat's file from the very same
+      // /files endpoint fetchChatFiles uses, so seed the cache here and
+      // spare the round-trip if the user leaves this paper and comes back.
+      chatFileIdCacheRef.current.set(chatId, fileId);
       setActivePaperId(fileId);
       setCacheHitPaperId(isCacheHit ? fileId : null);
       navigate(`/paper/${chatId}`);
@@ -219,6 +262,15 @@ export function AppShell() {
     setActivePaperId(null);
     navigate("/");
   }, [navigate, setActiveChatId, setActivePaperId]);
+
+  // Mock cleanup deletes ChatFiles/FileRecords rows outright - the one path
+  // that can invalidate either cache with no UI action that would otherwise
+  // clear them. Dropping both wholesale is cheap insurance.
+  const handleMockCleanup = useCallback(() => {
+    chatFileIdCacheRef.current.clear();
+    clearClaimsCache();
+    refetchChats();
+  }, [clearClaimsCache, refetchChats]);
 
   const isDesktopCollapsed = localStorage.getItem("prism_sidebar_collapsed") === "true";
   const [desktopCollapsed, setDesktopCollapsed] = useState(isDesktopCollapsed);
@@ -322,6 +374,7 @@ export function AppShell() {
             activeChatId={activeChatId}
             chats={chats}
             refetchChats={refetchChats}
+            onMockCleanup={handleMockCleanup}
             getConnectionId={getConnectionId}
             joinChat={joinChat}
             fileSizeLabels={fileSizeLabels}
