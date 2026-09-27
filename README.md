@@ -10,7 +10,7 @@ Prism extracts empirical claims from academic papers and rigorously audits wheth
 
 Try Prism directly in your browser using **Guest Access** — no account required.
 
-> **Google Sign-In:** Functional and available for use. You can also use Guest Access to try the product today.
+> **Google Sign-In:** Fully functional (name and email claims are now correctly mapped for all new sign-ups and re-registrations). Existing legacy accounts must re-register to see their name instead of a placeholder. You can also use Guest Access to try the product today.
 
 Guest sessions are currently available for demo use only, making it easy for reviewers to try the product without creating an account.
 
@@ -86,7 +86,7 @@ Hit a local-dev snag? Check the [Developer Runbook](docs/RUNBOOK.md) first — i
 
 Backend services deploy via `aspire deploy` — apiservice, pythonAPI, pythonWorker, messaging, storage, Postgres. Managed identities and Key Vault provisioned automatically; secrets reach containers as `secretref:` values, never plaintext env vars.
 
-The React frontend uses `Prism.Web/deploy.ps1` — a hardened manual push that preflights nginx.conf, prunes Docker layers, builds with a unique tag, and verifies cache-control headers landed on the live URL. This exists because `aspire deploy` builds its own reactUI container that overwrites the custom nginx.conf. Root fix (`AppHost.cs` `PublishAsDockerFile`) tracked for v1.0.2.
+The React frontend uses `Prism.Web/deploy.ps1` — a hardened manual push that preflights nginx.conf, builds with `:latest` tag, and verifies nginx listens on port 7000 on the built image. This exists because `aspire deploy` builds its own reactUI container that overwrites the custom nginx.conf. Root fix (`AppHost.cs` `PublishAsDockerFile`) tracked for v1.0.2.
 
 Deploy secrets templated in `Prism.AppHost/.deploy.env.template`; `.deploy.env` gitignored. nginx listens on port 7000 to align with Azure Container Apps' probe.
 

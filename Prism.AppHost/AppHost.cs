@@ -235,8 +235,8 @@ var pythonWorker = builder.AddPythonApp("prism-ai-pythonWorker","../Prism.Python
                         .PublishAsAzureContainerApp((infra, app) =>
                         {
                             var container = app.Template.Containers.Single().Value!;
-                            container.Resources.Cpu = 2.0;
-                            container.Resources.Memory = "4Gi";
+                            container.Resources.Cpu = 4.0;
+                            container.Resources.Memory = "8Gi";
                         });
 
 if (appInsights is not null) pythonWorker.WithReference(appInsights);

@@ -1,7 +1,7 @@
 # Deployment & Environment Architecture
 
 > **Single source of truth** for how Prism is deployed, configured, and operated.
-> All facts derived from source inspection (2026-09-23). Items marked **NOT VERIFIED** could not be confirmed without running live commands (`az`, `docker`, etc.) — treat them as assumptions until verified.
+> All facts derived from source inspection (2026-09-23). Items marked **NOT VERIFIED** could not be confirmed without running live commands (`az`, `docker`, etc.) — treat them as assumptions until verified. (Note: `docs/deployment_notes.md` still exists in the repo but is superseded by this document as the single source of truth).
 
 ---
 
@@ -146,8 +146,8 @@ Managed Identity (automatic)          →  for Postgres Entra auth, Blob Storage
 | | `ConnectionStrings__messaging` | Aspire-generated |
 | | `ConnectionStrings__storage` | Aspire-generated |
 | | `PYTHON_API_URL` | Aspire service reference |
-| | `RUN_MIGRATIONS_ON_STARTUP` | `"false"` (AppHost.cs, publish mode) |
-| | `CORS_ALLOWED_ORIGINS` | Hardcoded fallback in code if unset |
+| | `RUN_MIGRATIONS_ON_STARTUP` | `"false"` (AppHost.cs, publish mode). Migrations are run manually post-deploy via `az containerapp update` toggling this to true. |
+| | `CORS_ALLOWED_ORIGINS` | Env var controlling allowed origins. Hardcoded fallback in code if unset. |
 | | `DEPLOYMENT_REGION` | `"US-East"` (AppHost.cs L261) |
 | **pythonAPI / pythonWorker** | `AI_API_KEY` | Key Vault → `secretref:gemini-api-key` |
 | | `GROQ_API_KEY` | Key Vault → `secretref:groq-api-key` |

@@ -825,3 +825,18 @@ the number up happens AFTER the harness is measuring it.
   that schema for another reason. Documented so a future reader doesn't
   trust the column name.
 
+
+## Chat: Paper-scoped chat stream ownership moved to MatrixView - 2026-09-26
+**Context:** Switching papers mid-stream caused the active chat component (PaperChatStrip) to unmount. This aborted the fetch mid-stream and cached the half-written turn as if it were a settled response, leaving the UI stuck with an incomplete answer.
+**Decision:** Moved the ChatStreamStore instantiation from the per-chat hook up into MatrixView, which survives paper switches. PaperChatStrip now selects its chat's slice from the parent's store, meaning its own unmount is inert. Tab visibility changes now also trigger recovery across all chats rather than just the active one.
+**Consequences:** Switching papers mid-stream no longer aborts the stream. The response continues processing in the background, and returning to the tab safely recovers missed responses.
+
+## Cache chat file and completed-paper claims per session - 2026-09-26
+**Context:** Switching papers caused redundant fetch requests for previously loaded claims, resulting in a UI flicker. Rapidly switching between papers could also cause race conditions where a stale response overwrote the current paper's state.
+**Decision:** Introduced a session-level completedClaimsCacheRef in usePaperClaims that preserves completed-paper claims. Added a latestPaperIdRef guard to ensure that slow fetches do not overwrite the data of the currently active paper if the user switches away before the fetch completes.
+**Consequences:** Redundant requests on paper switches are eliminated, stopping the UI flicker. Stale-response races are structurally prevented.
+
+## Google IdP Name/Email Claims Resolution - 2026-09-27
+**Context:** Nitin confirmed via live testing that Google sign-in now shows his correct name instead of the generic "Google User" placeholder, prompting a review of the 2026-09-15/16 decision entry which listed this as a "Known gap, not yet fixed."
+**Decision:** Verified that the underlying Entra CIAM attribute mapping fix IS successfully active. However, as noted in the original entry, this fix only applies to new sign-ups and users who re-register. Existing legacy accounts created before the fix will still see empty claims until they re-register.
+**Consequences:** The gap is considered resolved at the infrastructure level. No code changes are required, but documentation is updated to clarify the boundary between new/re-registered accounts (fixed) and legacy accounts (requires re-registration).

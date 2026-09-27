@@ -87,8 +87,8 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
   reconnect race cheaply, without burning Gemini quota or waiting minutes
   per paper.
 * **Enable:** `Prism.AppHost/AppHost.cs` — `mockExtraction` variable (shared
-  across `pythonWorker` and `apiservice`, currently `"true"` for local dev,
-  hard-locked `"false"` on publish via `IsPublishMode`). Flip it manually,
+  across `pythonWorker` and `apiservice`, currently `"false"` for local dev,
+  hard-locked `"false"` on publish via `IsPublishMode`). Flip it manually to `"true"`,
   restart Aspire — this does NOT hot-reload; env vars are injected at
   orchestrator startup only.
 * **`PRISM_MOCK_STAGE_DELAY_SEC`** (pythonWorker only) — adds an artificial
