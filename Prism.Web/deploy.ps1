@@ -17,6 +17,13 @@ if ($status) {
 # 2. Pull latest
 git pull
 
+# 2b. Resolve the commit being built for an immutable image tag
+$sha = git rev-parse --short HEAD
+if (-not $sha) {
+    Write-Error "Could not resolve short commit hash. Aborting."
+}
+Write-Host "Building commit $sha" -ForegroundColor Yellow
+
 # 3. Preflight: verify nginx.conf listens on 7000
 $nginxCheck = Select-String -Path "nginx.conf" -Pattern "listen 7000;"
 if (-not $nginxCheck) {
@@ -25,7 +32,9 @@ if (-not $nginxCheck) {
 
 # 4. Build fresh (no cache to avoid stale nginx.conf)
 Write-Host "Building fresh Docker image (no cache)..." -ForegroundColor Yellow
-docker build --no-cache -t prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:latest .
+docker build --no-cache `
+  -t prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:latest `
+  -t prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:$sha .
 
 # 5. Verify image contents BEFORE push
 $imageNginx = docker run --rm --entrypoint sh prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:latest -c "grep listen /etc/nginx/conf.d/default.conf"
@@ -38,6 +47,7 @@ Write-Host "Image nginx config verified: $imageNginx" -ForegroundColor Green
 Write-Host "Pushing to ACR..." -ForegroundColor Yellow
 az acr login --name prismenvacrudnvqoy3me2bs
 docker push prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:latest
+docker push prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:$sha
 
 # 7. Deploy with unique revision suffix
 $suffix = Get-Date -Format "yyyyMMddHHmmss"
