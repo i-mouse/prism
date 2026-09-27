@@ -52,6 +52,15 @@ docker push prismenvacrudnvqoy3me2bs.azurecr.io/prism-ai-reactui:$sha
 # 7. Deploy with unique revision suffix
 $suffix = Get-Date -Format "yyyyMMddHHmmss"
 Write-Host "Deploying revision $suffix..." -ForegroundColor Yellow
+
+# Pin ingress target port before the revision deploy: aspire deploy resets it to
+# 80 and nothing restored it, so ingress silently pointed at the wrong port.
+# Note: containerapp update takes no --target-port; ingress is app-scoped config.
+az containerapp ingress update `
+  --name prism-ai-reactui `
+  --resource-group prism-rg `
+  --target-port 7000
+
 az containerapp update `
   --name prism-ai-reactui `
   --resource-group prism-rg `
