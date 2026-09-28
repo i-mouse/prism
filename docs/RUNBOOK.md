@@ -110,7 +110,80 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
   and the cleanup endpoint separately refuses on the same check. Both
   checks live server-side, not just UI visibility.
   
-## Common deployment failure modes
+## Decommissioned state and relaunch
+
+As of 2026-09-28 there is no deployed environment. All seven Container Apps were
+stopped and cancellation of the Azure subscription was initiated on the same date.
+See `docs/decisions.md`, "Live environment decommissioned — 2026-09-28".
+
+**What is offline**
+* The hosted demo URL and the apiservice URL — neither resolves.
+* Google / Entra sign-in. The sign-in setup (Entra External ID, the Google
+  identity provider, the app registrations) has to be re-created before any
+  relaunch. Whether the Entra tenant itself survived the cancellation is
+  unverified.
+* Deployed data. Azure deletes resources and their data after its retention
+  window, so the deployed Postgres, Blob Storage and Qdrant contents should be
+  treated as gone, not as something to recover.
+
+**What still works**
+* The full local Aspire stack under F5 — unchanged.
+* The fixture eval (`matrix_runner --source fixture`) and CI, which have always
+  been offline and secretless.
+
+**What is unavailable while offline**
+* `eval-live.ps1` and every live-only check — anything that reads the deployed
+  database, hits the deployed API, or inspects running Container Apps.
+* Live eval runs against Azure Postgres. The last valid pair is recorded in
+  `docs/decisions.md` (2026-09-23) and is the number README quotes.
+
+### Cost-safe relaunch checklist
+
+Work through this in order. Steps 1-2 exist because the shutdown was triggered
+by always-on cost with no cap and no alert in front of it; do not skip them and
+plan to come back.
+
+1. **Land the safety prerequisites first — before any deploy.** None of these
+   need Azure, so all of them can be built and tested against the local stack
+   now. See `docs/observability-and-cost-plan.md` for the full sequence.
+   * A global daily extraction cap, so total spend has a ceiling that does not
+     depend on per-user accounting being correct.
+   * An inbound rate limiter on the upload, chat-stream and hub routes.
+   * The `JoinChat` ownership check on the SignalR hub — today any connection
+     can join any chat's broadcast group.
+   * The honest-status fixes, so a failed run stops reporting itself as a
+     completed one. Without these, a cost spike and a silent failure look
+     identical from the outside.
+2. **Create the budget before the first deploy, not after.** Scope it to the
+   resource group, enable forecasted alerts as well as actual, and include a
+   100% threshold. A budget created after the resources exist has already
+   missed the first spike.
+3. **New or reactivated subscription.** Confirm the cancellation state first,
+   then provision into a fresh resource group.
+4. **Deploy both tracks.** `aspire deploy` for the backend, then
+   `Prism.Web/deploy.ps1` for the frontend — the procedures are unchanged, see
+   README "Deployment" and `docs/deployment-and-environment-architecture.md`.
+   Do not restate them here.
+5. **Trigger migrations once.** `RUN_MIGRATIONS_ON_STARTUP` is false in the
+   deployed configuration by design; a fresh database is never migrated
+   automatically. See "Fresh Postgres after a reset never gets migrated" below.
+6. **Re-create the sign-in setup.** Entra External ID, the Google identity
+   provider, and the app registrations, then update the redirect URIs and
+   `CORS_ALLOWED_ORIGINS` to the new hostnames.
+7. **Right-size before go-live.** Measure peak CPU and memory on the worker
+   under a real paper, then set its size from that measurement rather than from
+   the current 4.0 / 8Gi, which was chosen to stop an OOM kill and was never
+   revisited. Pin the worker's maximum replicas — it is the one app container
+   that is not pinned. Delete Redis unless caching has actually been
+   implemented by then; it was provisioned and never used.
+8. **Stop everything after each demo.** Stop all app containers and then verify
+   each one reads `Stopped` in the portal or via `az containerapp show`.
+   Stopping the UI alone leaves the expensive containers running.
+9. **Never run `aspire deploy` or `deploy.ps1` against a stopped environment.**
+   Both will start containers back up as a side effect of deploying, which is
+   how a stopped environment quietly becomes a running one again.
+
+## Common deployment failure modes (as observed on the last deployment)
 
 ### PrismSettings field rename crashes on boot
 Two-step deploy required. See "Deploying a PR that changes PrismSettings fields" below.

@@ -1,11 +1,13 @@
 # Deployment & Environment Architecture
 
+> **Status — offline since 2026-09-28.** All seven Container Apps were stopped and cancellation of the Azure subscription was initiated on the same date. Nothing described below is currently running; this document is now the record of the last deployed state and the basis for a relaunch. See `docs/decisions.md`, "Live environment decommissioned — 2026-09-28", and the cost-safe relaunch checklist in [docs/RUNBOOK.md](RUNBOOK.md#decommissioned-state-and-relaunch).
+
 > **Single source of truth** for how Prism is deployed, configured, and operated.
-> All facts derived from source inspection (2026-09-23). Items marked **NOT VERIFIED** could not be confirmed without running live commands (`az`, `docker`, etc.) — treat them as assumptions until verified. (Note: `docs/deployment_notes.md` still exists in the repo but is superseded by this document as the single source of truth).
+> All facts derived from source inspection (2026-09-23), with corrections from the portal on 2026-09-28 marked inline. Items marked **NOT VERIFIED** could not be confirmed without running live commands (`az`, `docker`, etc.) — treat them as assumptions until verified. (Note: `docs/deployment_notes.md` still exists in the repo but is superseded by this document as the single source of truth).
 
 ---
 
-## 1. Current Deployment Architecture
+## 1. Last deployed architecture (offline since 2026-09-28)
 
 ### Runtime Topology
 
@@ -70,7 +72,7 @@ flowchart TD
 | `prism-ai-reactui` | `Prism.Web/Dockerfile` (nginx) | **Public** | 7000 | NOT VERIFIED | NOT VERIFIED | — |
 | `apiservice` | `Prism.ApiService/Dockerfile` | **Public** | 8080 | 1 min / 1 max | Aspire default | Managed Identity |
 | `prism-ai-pythonAPI` | `Prism.PythonService/Dockerfile` | Internal | 8000 | 1 min / 1 max | 2.0 / 4Gi | Managed Identity |
-| `prism-ai-pythonWorker` | `Prism.PythonService/Dockerfile.worker` | Internal | — (no HTTP) | — | 2.0 / 4Gi | Managed Identity |
+| `prism-ai-pythonWorker` | `Prism.PythonService/Dockerfile.worker` | Internal | — (no HTTP) | **1 min / 10 max, no scale rules** | **4.0 / 8Gi** | Managed Identity |
 | `messaging` | RabbitMQ 4.3 (Aspire-managed) | Internal | — | — | — | Username/password |
 | `qdrant` | Qdrant 1.18 (Aspire-managed) | Internal | — | — | — | API key |
 | `redis-cache` | Redis (Aspire-managed) | Internal | — | — | — | — |
@@ -84,7 +86,9 @@ flowchart TD
 
 ### Key Architecture Constraints
 
-- **All app containers pinned to 1 replica** — no SignalR backplane configured; in-memory group routing requires exactly one `apiservice` instance. (`AppHost.cs` L281-285, `docs/deployment_notes.md` §Replica pin)
+- **`apiservice` and `pythonAPI` pinned to 1 replica; `pythonWorker` is NOT pinned** — corrected 2026-09-28. The pin exists because there is no SignalR backplane: in-memory group routing requires exactly one `apiservice` instance. `AppHost.cs:176-177` and `AppHost.cs:289-290` set `MinReplicas`/`MaxReplicas` to 1 for `pythonAPI` and `apiservice` respectively. The `pythonWorker` block (`AppHost.cs:235-240`) sets CPU and memory only — no `Scale` values — and the portal confirmed it ran at **1 min / 10 max with no scale rules**. The comment at `AppHost.cs:169-170` claiming "all three app containers at a fixed 1 replica" is wrong. This matters for cost and for spend ceilings: the worker's `prefetch_count=1` (`main.py:130`) only bounds concurrent papers while exactly one worker replica exists.
+- **Container cost tracked allocated size, not traffic** — every app container had a minimum replica count of at least 1, so all seven ran continuously. Roughly 40% of spend was `pythonWorker` and roughly 25% `pythonAPI`; the five smaller containers were roughly 30% combined. Pinning the worker's maximum replicas and removing Redis are both relaunch prerequisites.
+- **Redis was provisioned and never used** — `AppHost.cs:30` reserves it for future response caching; no caching logic was ever implemented, so it was a continuously-running container doing nothing.
 - **RabbitMQ runs without a persistent volume in prod** — Azure Files (SMB) doesn't preserve the `0600` permission on `.erlang.cookie` that Erlang requires. Queue state is lost on container restart. (`AppHost.cs` L58-71)
 - **Redis provisioned but caching logic not yet implemented** — reserved for future response caching. (`AppHost.cs` L27)
 
@@ -464,5 +468,5 @@ RabbitMQ swap to Azure Service Bus was attempted and reverted (4 bugs in Aspire 
 | reactUI replica count / CPU / memory in prod | Not declared in AppHost.cs (reactUI not managed by Aspire publish) | `az containerapp show -n prism-ai-reactui -g prism-rg` |
 | Whether live image matches current `main` HEAD | Would require ACR tag inspection or revision metadata | `az containerapp revision list` + `az acr repository show-tags` |
 | Current live value of `RUN_MIGRATIONS_ON_STARTUP` | Manual `az containerapp update` override may be active | `az containerapp show -n apiservice -g prism-rg --query "properties.template.containers[0].env"` |
-| Aspire dashboard accessibility in prod | Code says no public ingress, but not verified live | `az containerapp env dashboard show` |
+| ~~Aspire dashboard accessibility in prod~~ | **RESOLVED 2026-09-28 (portal).** The Aspire dashboard existed in the deployed environment as a Container Apps **managed component**, reachable behind Entra login and requiring **Contributor or Owner** on the environment — not a public URL, and not "no ingress" either. The comment at `AppHost.cs:326-328` is wrong on both counts, including the CLI it names. | Managed via `az containerapp env dotnet-component` (preview), not `az containerapp env dashboard show` |
 | `CORS_ALLOWED_ORIGINS` env var set on live apiservice | Code has a hardcoded fallback; unclear if env var is also set | `az containerapp show` env inspection |

@@ -1,3 +1,4 @@
+
 # MCP Readiness Audit
 
 ## Executive summary

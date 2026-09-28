@@ -2,17 +2,17 @@
 
 > **Autonomous Empirical Claim-Auditing Engine for Research Papers**
 
+> **Status — live demo offline since 2026-09-28.** The hosted Azure environment has been decommissioned. Run Prism locally with the [Quick Start](#quick-start-local-dev) below. Recorded walkthrough: to be linked. Demo on request. Relaunch path: [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch).
+
 Prism extracts empirical claims from academic papers and rigorously audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism performs a peer-reviewer's core job: auditing a single paper's headline findings against its own data and text.
 
-## Live Demo
+## Live Demo — offline
 
-**[Prism Live Demo](https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/)**
+The hosted demo ran at `https://prism-ai-reactui.nicesky-c6f0b846.centralindia.azurecontainerapps.io/` until 2026-09-28, when the Azure environment was decommissioned. That URL no longer resolves and is kept here only as a record of what was deployed. To see the product now, run it locally via the [Quick Start](#quick-start-local-dev), or ask for a demo.
 
-Try Prism directly in your browser using **Guest Access** — no account required.
+While it was up, Prism could be tried directly in the browser using **Guest Access** — no account required. Guest sessions were for demo use only, so reviewers could try the product without creating an account.
 
-> **Google Sign-In:** Fully functional (name and email claims are now correctly mapped for all new sign-ups and re-registrations). Existing legacy accounts must re-register to see their name instead of a placeholder. You can also use Guest Access to try the product today.
-
-Guest sessions are currently available for demo use only, making it easy for reviewers to try the product without creating an account.
+> **Google Sign-In:** was fully functional at decommission — name and email claims were correctly mapped for new sign-ups and re-registrations, and legacy accounts had to re-register to see their name instead of a placeholder. The sign-in setup (Entra External ID, the Google identity provider, and the app registrations) has to be re-created before any relaunch.
 
 Upload a paper. Prism extracts claims, audits each claim against the paper's own evidence, and presents the results in a claim-support matrix.
 
@@ -84,13 +84,15 @@ Hit a local-dev snag? Check the [Developer Runbook](docs/RUNBOOK.md) first — i
 
 ## Deployment
 
-Backend services deploy via `aspire deploy` — apiservice, pythonAPI, pythonWorker, messaging, storage, Postgres. Managed identities and Key Vault provisioned automatically; secrets reach containers as `secretref:` values, never plaintext env vars.
+> Nothing is deployed right now — the environment was decommissioned on 2026-09-28. The procedure below is the record of how it was deployed and the basis for any relaunch. Before redeploying, work through [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch), which lists the cost and safety prerequisites that must land first.
+
+Backend services deployed via `aspire deploy` — apiservice, pythonAPI, pythonWorker, messaging, storage, Postgres. Managed identities and Key Vault provisioned automatically; secrets reach containers as `secretref:` values, never plaintext env vars.
 
 The React frontend uses `Prism.Web/deploy.ps1` — a hardened manual push that preflights nginx.conf, builds with `:latest` tag, and verifies nginx listens on port 7000 on the built image. This exists because `aspire deploy` builds its own reactUI container that overwrites the custom nginx.conf. Root fix (`AppHost.cs` `PublishAsDockerFile`) tracked for v1.0.2.
 
 Deploy secrets templated in `Prism.AppHost/.deploy.env.template`; `.deploy.env` gitignored. nginx listens on port 7000 to align with Azure Container Apps' probe.
 
-Container App runs single revision mode — traffic auto-swaps on healthy deploys. Always verify actual running state with `az containerapp revision list --query "[?properties.active]"` after any deploy; `properties.template` shows *desired* config, not what's actually live.
+The Container App ran in single revision mode — traffic auto-swapped on healthy deploys. Always verify actual running state with `az containerapp revision list --query "[?properties.active]"` after any deploy; `properties.template` shows *desired* config, not what is actually running.
 
 ## Architecture & Decisions
 
