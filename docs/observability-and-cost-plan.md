@@ -1,6 +1,6 @@
 # Observability and Cost Plan
 
-> As of 2026-09-28. Derived from a read-only discovery pass over the codebase
+> As of 2026-09-29. Derived from a read-only discovery pass over the codebase
 > and a verification pass against pinned package sources and the local logs.
 > Every row is tagged VERIFIED (read in source), INFERRED (reasoned from source,
 > not observed running), or UNVERIFIED (needs a live check or a manual test).
@@ -16,7 +16,9 @@ is the gap this plan closes.
 **Non-goals.** Explicitly out of scope here, so they stop competing for
 attention: MCP, Azure AI Foundry, Redis caching, multi-agent architectures,
 Content Safety, customer-facing dashboards, database audit tables, third-party
-LLM observability platforms, and any change to prompts or to the eval harness.
+LLM observability platforms, and any change to prompts.
+* Improving the eval (matcher adjudication, scorer reporting) is allowed; tuning prompts to move a score is not.
+* Azure-hosted alerting, until a relaunch.
 
 ## 2. Status
 
@@ -26,13 +28,15 @@ decommissioned — 2026-09-28"). That splits the work cleanly:
 | Build step | Needs cloud? | State |
 |---|---|---|
 | 1 Honest status | No | Ready — testable on the local Aspire stack |
-| 2 See the spend | No | Ready — verify against the local Aspire dashboard |
-| 3 Protect the budget | No | Ready — enforcement is application-level |
-| 4 Alerts and budget | **Yes** | **Paused until relaunch** |
-| 5 SignalR ownership check | No | Ready |
-| 6 MCP | No (local only) | Gated — see `docs/audit/mcp_readiness.md` |
+| 2 Eval honesty | No | Needs your 14-row hand-check for the match map |
+| 3 Caps and 429 | No | Ready |
+| 4 See the spend | No | Ready — verify against the local Aspire dashboard |
+| 5 Guards | No | Ready (golden page counts measured 2026-09-29) |
+| 6 Demo mode | No | Blocked (PR 6 must not start until log hygiene issues are closed in PR 4) |
+| 7 Local alerts | No | Ready |
+| 8 MCP | No (local only) | Gated — see `docs/audit/mcp_readiness.md` |
 
-Four of six need no subscription. Being offline blocks very little of this.
+None of the eight steps needs a subscription; the cloud alerts block in Section 5 is deferred. Being offline blocks very little of this.
 
 ---
 
@@ -52,12 +56,13 @@ Four of six need no subscription. Being offline blocks very little of this.
 | A3.1 | No explicit timeout on any LLM call, google-genai or LiteLLM | `engine.py:92,160`; `grounding.py:162` | COST | VERIFIED |
 | A3.6 | No jitter anywhere; `Retry-After` never read on the Python LLM paths | `engine.py:48`; `grounding.py:44`; `main.py:461` | COST | VERIFIED |
 | A4 | No token usage or cost read or logged on any LLM call | `engine.py:127-128`; `grounding.py:170`; `agent.py:205,216,613` | COST | VERIFIED |
+| A5 | Every provider 429 (rate limit, quota or spend cap) is treated as transient and retried; nothing stops a run when a cap is hit | `engine.py:46-58; grounding.py:46-56` | COST | VERIFIED |
 
 ### B — Silent failures and status honesty
 
 | ID | Finding | file:line | Impact | Status |
 |---|---|---|---|---|
-| B1.1 | Claims dropped when audit or structure fails; no counter, no record | `engine.py:456,461-466` | VISIBILITY | VERIFIED + measured |
+| B1.1 | Claims dropped when audit or structure fails; no counter, no record. 60 of the 76 lost claims belong to prompt version 5acbc4f65ac1 (an earlier window). At the current prompt hash 0bcf9d44e619: 284 extracted, 284 persisted, 0 lost, across 10 runs that reached the writer, on the 3 golden papers. One current-hash run died pre-writer and falls outside the 84-run denominator. | `engine.py:456,461-466` | VISIBILITY | VERIFIED + measured |
 | B1.5 | A failed summary returns an error string and the paper is still marked `Completed` | `ai_service.py:30-35` → `main.py:246,368` | VISIBILITY | VERIFIED |
 | B1.6-8 | Postgres/Qdrant failure returns `[]`, which the graph renders as "out of scope for this paper" | `tools.py:276-278,348-350` → `agent.py:340-341` | VISIBILITY | VERIFIED |
 | B1.10 | Bare `catch` with no log at all on summary injection | `Services/ChatSummaryInjector.cs:27-32` | VISIBILITY | VERIFIED |
@@ -75,7 +80,7 @@ Four of six need no subscription. Being offline blocks very little of this.
 
 | ID | Finding | file:line | Impact | Status |
 |---|---|---|---|---|
-| C1.3 | Python telemetry sets its provider after `configure_azure_monitor` has already set one, so the OTLP exporter and the `SERVICE_NAME` resource are discarded | `Prism.PythonService/telemetry.py:27-35` | VISIBILITY | **INFERRED** — mechanism VERIFIED in package source, effect not observed live |
+| C1.3 | Python telemetry sets its provider after `configure_azure_monitor` has already set one, so the OTLP exporter and the `SERVICE_NAME` resource are discarded | `Prism.PythonService/telemetry.py:27-35` | VISIBILITY | **INFERRED.** Mechanism verified in package source. Cannot run locally: configure_azure_monitor is guarded by the connection-string env var (telemetry.py:24-26). Observe at relaunch. |
 | C1.6 | No sampler configured in either language, so the distro default (rate-limited, 5 traces/s) is in effect | (absent) | VISIBILITY | VERIFIED (default); effect UNVERIFIED |
 | C2.1 | No GenAI semantic conventions, no `gen_ai.*` attributes, no LiteLLM OTel callback | (absent) | VISIBILITY | VERIFIED |
 | C3.2 | `prompt_version` is on no span and no metric — only in the DB and in file logs | `writer.py:161`; `engine.py:125` | VISIBILITY | VERIFIED |
@@ -87,13 +92,21 @@ Four of six need no subscription. Being offline blocks very little of this.
 
 ### D — Log hygiene
 
+PR 6 must not start until these are closed in PR 4.
+
 | ID | Finding | file:line | Impact | Status |
 |---|---|---|---|---|
-| D1.2 | `response_raw` is the model's full output, so paper text lands in the log files | `engine.py:113,129` | SAFETY | VERIFIED |
-| D1.5 | `logs/chat/` stores the user's raw question text verbatim | `paper_chat/tools.py:53-60` | SAFETY | VERIFIED |
-| D1.6 | Paper text also leaves via stdout on the dropped-claim and malformed-response lines | `engine.py:207,270,462-464` | SAFETY | VERIFIED |
+| D1.2 | `response_raw` is the model's full output, so paper text lands in the log files | `engine.py:113,129` | HYGIENE | VERIFIED |
+| D1.5 | `logs/chat/` stores the user's raw question text verbatim | `paper_chat/tools.py:53-60` | HYGIENE | VERIFIED |
+| D1.6 | Paper text also leaves via stdout on the dropped-claim and malformed-response lines | `engine.py:207,270,462-464` | HYGIENE | VERIFIED |
 | D1.7 | Logs write to ephemeral container disk, never shipped anywhere | `engine.py:44`; `Dockerfile.worker:13-14` | VISIBILITY | VERIFIED |
-| D1.8 | No rotation, no pruning, no size cap — one file per LLM call, forever | (absent) | SAFETY | VERIFIED |
+| D1.8 | No rotation, no pruning, no size cap — one file per LLM call, forever | (absent) | HYGIENE | VERIFIED |
+
+### E — Eval integrity
+* **VERIFIED** from the attribution run: the scorer credits "no matched claim" as a correct refusal (`eval/scorer.py:69-72`). Matcher errs in both directions; 11/14 (fixture run 2026-09-20) is not citeable until the 14-row adjudication. Note 6 of 11 credits are `by_omission`. 3 of the 6 `by_omission` rows are persisted claims the matcher failed to pair (REFLEX-M12, REFLEX-M13, COT-M10). REFLEX-M13 is persisted as supported/Pass and was credited as a refusal. 3 rows are real extractor omissions (REFLEX-M11, COT-M11, REACT-M12). Two rows were failed because the matcher paired them to the wrong claim (REFLEX-M09, COT-M08). REACT-M12 (73.2) is in the borderline band. REFLEX-M13's golden summary may say more than its verbatim sentence; settle in adjudication.
+
+### F — Local demo exposure
+* **VERIFIED** from the topology run: the hub URL is absolute (`signalRService.ts:24`) and `vite.config.ts` has no `/hubs` proxy; no guest-only flag exists (`AuthButtons.tsx` always shows Google); /api/mock/status is anonymous and runs its DB queries even when mock mode is off (MockCleanupEndpoint.cs:11-20); /api/mock/cleanup is anonymous and refuses only when mock mode is off or the environment is Production; Swagger/OpenAPI is live in Development; `/api/system/reset` is gated only by a token.
 
 ### Measured evidence for B1.1
 
@@ -128,7 +141,7 @@ Drops cluster by `prompt_version`: one version accounts for 60 of the 76.
 Ordered, not parallel. Each step is only worth doing once the one before it
 makes its effect visible.
 
-### 1 — Honest status *(code-only)*
+### 1 - Honest status *(code-only)*
 
 A failed run must stop reporting itself as a completed one.
 
@@ -141,89 +154,86 @@ A failed run must stop reporting itself as a completed one.
 * **Files likely touched:** `ai_service.py`, `main.py`, `paper_chat/tools.py`,
   `paper_chat/agent.py`, `Middleware/GlobalExceptionHandler.cs`,
   `components/matrix/PaperActivityView.tsx`
-* **Eval impact:** none expected — no extraction logic changes. Prompt files
+* **Eval impact:** none expected - no extraction logic changes. Prompt files
   stay untouched, so the prompt hash must not change. Confirm with
   `get_prompt_version()` before and after.
 * **Status:** [ ] not started
 
-### 2 — See the spend *(code-only; verify on the local Aspire dashboard)*
+### 2 - Eval honesty
 
-* **Problem IDs:** A4, C1.3, C2.1, C3.2, C3.5, C4.1, B1.1, B1.14, D1.2, D1.5, D1.6, D1.8, A3.1
-* **Done when:**
-  * One structured log line per LLM call carrying stage, model,
-    `prompt_version`, tokens in/out, computed cost, latency and
-    `correlation_id` — across extraction, grounding, and chat including the
-    streaming path.
-  * One structured log line per HTTP request carrying user, route, status and
-    duration.
-  * Counters exist for: fallback model fired, claims extracted vs persisted,
-    and `SKIPPED`.
-  * `prompt_version` is attached to spans, not only to rows and files.
-  * Every LLM call has an explicit timeout.
-  * Log hygiene: raw model output and user question text stop being written to
-    disk and stdout; rotation is in place.
-  * The Python telemetry provider ordering is fixed — **after** the live check
-    in §7 confirms the effect, not before.
-* **Files likely touched:** `extraction/engine.py`, `extraction/grounding.py`,
-  `paper_chat/agent.py`, `paper_chat/tools.py`, `telemetry.py`, `main.py`,
-  `api.py`, `Prism.ApiService/Program.cs`
-* **Eval impact:** none if confined to instrumentation. If any extraction code
-  path is touched, run `matrix_runner` before and after and compare.
+* **Problem IDs:** E (Eval integrity)
+* **Done when:** read-only adjudication sheet (each grounding-negative gold row next to its 3 closest persisted claims); a human-decided, committed match map; the scorer reports "matcher miss" separately from "extractor omission"; the eval report records the prompt hash.
+* **Files likely touched:** `eval/scorer.py`, `eval/matrix_runner.py`
+* **Eval impact:** scorer only, no prompt change; policy change logged in decisions.md.
+* **Status:** [ ] not started (Blocked by 14-row adjudication)
+
+### 3 - Caps and 429
+
+* **Problem IDs:** A1.1, A1.2, A1.4, A2.1, A2.2, A5, A2.7, A3.6 (A2.4 moved to step 5; A3.6 = no jitter and Retry-After never read on the Python LLM paths)
+* **Done when:**  global daily extraction cap, which lands first because it does not depend on per-user accounting being correct (one DB count); per-user daily papers; guests 2 papers per session (note the per-guest cap is not a protection; the global daily cap and per-IP limit are); guest sessions limited per IP per day (only after forwarded headers are verified); chat questions per user per day. All are config values, not constants in code. The ASP.NET limiter returns 429 explicitly (default is 503), with Retry-After and a JSON "code" (quota_daily | rate_burst), partitioned by `oid` for authenticated users. A re-run cooldown prevents bypasses (A2.7) and provider-side `Retry-After` is respected (A3.6). The UI shows the message inline on upload and in chat, with a countdown; never console-only. A circuit breaker handles provider 429s: after N consecutive 429s across primary and fallback the run stops with a named reason. Rate limit, quota and spend cap look alike, so do not parse error text. Includes the JoinChat ownership check (A1.4), using the same ResolveUserId ownership join the REST endpoints use.
+* **Files likely touched:** `Prism.ApiService/Program.cs`, `Features/PaperSubmission/SubmitPaperEndPoint.cs`, `Features/Auth/GuestAuthEndpoint.cs`, `Hubs/DocumentHub.cs`, `extraction/engine.py`, `extraction/grounding.py`
+* **Eval impact:** none.
 * **Status:** [ ] not started
 
-### 3 — Protect the budget *(code-only)*
+### 4 - See the spend *(code-only; verify on the local Aspire dashboard)*
 
-Ordered deliberately: the global cap lands first because it does not depend on
-per-user accounting being correct.
-
-* **Problem IDs:** A1.1, A1.2, A2.1, A2.2, A2.4, A2.7, A3.6
-* **Done when:**
-  1. A global daily extraction cap enforced by a single database count.
-  2. Per-user caps on top of it.
-  3. A re-run cooldown.
-  4. A rate limiter returning **429** — partitioned by `oid` for authenticated
-     users; by IP for guests **only after** forwarded headers are verified to
-     arrive (see §7), since without that every guest shares one partition.
-  5. Input-size guards: page count, extracted-text length, max claims.
-* **Files likely touched:** `Prism.ApiService/Program.cs`,
-  `Features/PaperSubmission/SubmitPaperEndPoint.cs`,
-  `Features/Auth/GuestAuthEndpoint.cs`, `main.py`, `extraction/engine.py`
-* **Eval impact:** a max-claims guard changes extraction output. Run
-  `matrix_runner` before and after; set the cap above the observed maximum
-  (33 claims in the local logs) so it does not truncate real papers. Prompt
-  files untouched — the hash must not change.
+* **Problem IDs:** A4, C2.1, C3.2, C3.5, C4.1, B1.1, B1.14, D1.2, D1.5, D1.6, D1.8, A3.1 (Moved: C1.3 deferred to relaunch)
+* **Done when:** one structured record per LLM call carrying stage, model, prompt_version, tokens in/out, cost, latency, correlation_id; one structured log line per HTTP request carrying user, route, status and duration; counters exist for: fallback model fired, claims extracted vs persisted, and SKIPPED; prompt_version is attached to spans, not only to rows and files; explicit timeouts on every LLM call; OTel gen_ai.* attributes so the Aspire GenAI view works; confirm the local OTLP path reaches the Aspire dashboard. Logging policy, four buckets:
+  (a) product data (questions, answers, claims) in Postgres only;
+  (b) telemetry with no content;
+  (c) debug content capture, opt-in, local only, sent to the Aspire dashboard (in memory), OFF in demo mode;
+  (d) six audit events: sign-in, upload, re-run, delete, cap hit, 429 returned, carrying user id, time and result, no content. Stored as structured log events, not a DB table (database audit tables are a non-goal in Section 1).
+  Content logs on disk are removed; rotation for what remains. A daily dollar cap inside Prism, enabled once per-call cost exists. On a free-tier key the dollar figure is notional (tokens x list price), still useful as a usage cap.
+* **Files likely touched:** `extraction/engine.py`, `extraction/grounding.py`, `paper_chat/agent.py`, `paper_chat/tools.py`, `telemetry.py`, `main.py`, `api.py`, `Prism.ApiService/Program.cs`
+* **Eval impact:** none if confined to instrumentation. If any extraction code path is touched, run matrix_runner before and after and compare.
 * **Status:** [ ] not started
 
-### 4 — Alerts and budget *(cloud — deferred to relaunch)*
+### 5 - Guards
+
+* **Problem IDs:** A2.4
+* **Done when:** page limit set from the measured page count of the three golden PDFs plus a margin; text-length limit (the real cost driver); max claims 50, a named constant, above the prompt ceiling of 45. Over the limit fails the run with a reason; never truncate. Each run records found-count right after extraction; a run that never reaches the writer = FAILED; the UI warns when saved is less than found; PR 4 emits the extracted-vs-persisted counter; PR 5 stores found and saved per run and shows it in the UI; the eval fails closed on any lost run; no exclusion. Per-claim persistence of audit failures is built only if the counter shows losses at the current hash.
+* **Files likely touched:** `main.py`, `extraction/engine.py`
+* **Eval impact:** fixture before/after, unit tests with fake model responses, one real run on the three golden papers under a spend cap.
+* **Status:** [ ] not started
+
+### 6 - Demo mode
+
+* **Problem IDs:** F (Local demo exposure)
+* **Done when:** Aspire Dev Tunnels (integration is Preview), exposing only the UI endpoint, with anonymous access; serve a built UI, not the Vite dev server (nginx container or vite preview; pick after a spike that tests WebSocket through the tunnel). If vite preview: preview.allowedHosts must list the tunnel host and /hubs needs a WebSocket proxy. Hub URL must be relative. Decide before starting: seed the 3 golden papers (no loader exists yet) or allow uploads; SPA boots without `VITE_AZURE_*`; Swagger behind a config flag; a guest-only flag; `/api/mock/status` not registered in demo mode, `/api/mock/*` off in demo; verify no route to `pythonAPI /api/system/reset` and keep `SYSTEM_ADMIN_TOKEN` unset. Fallback: a Cloudflare named tunnel with Cloudflare Access. Rejected: the Cloudflare quick tunnel (no SSE support, 200 concurrent-request cap, testing only).
+* **Files likely touched:** `Prism.AppHost/AppHost.cs`, `Prism.Web/vite.config.ts`, `Prism.Web/src/services/signalRService.ts`, `Prism.Web/src/components/auth/AuthButtons.tsx`, `Prism.ApiService/Program.cs`, `Prism.ApiService/Features/Mock/MockCleanupEndpoint.cs`
+* **Eval impact:** none.
+* **Status:** [ ] not started (Blocked: PR 6 must not start until hygiene issues are closed in PR 4)
+
+### Deferred: Alerts and budget *(cloud)*
 
 * **Problem IDs:** E2.1, E1.4, C1.6
 * **Done when:** a failed-request spike alert, a worker-exception alert, an
   LLM call-count or spend-threshold alert, and an Azure budget scoped to the
-  resource group with forecasted and 100% thresholds — all defined before the
+  resource group with forecasted and 100% thresholds - all defined before the
   first deploy, not after. Probes declared in code rather than left to
   platform defaults.
 * **Files likely touched:** `Prism.AppHost/AppHost.cs`
 * **Eval impact:** none.
-* **Status:** [ ] deferred — no subscription
+* **Status:** [ ] deferred - no subscription
 
-### 5 — SignalR `JoinChat` ownership check *(code-only)*
+### 7 - Local alerts
 
-* **Problem IDs:** A1.4
-* **Done when:** `JoinChat` verifies the caller owns the chat before adding the
-  connection to its group, using the same `ResolveUserId` ownership join the
-  REST endpoints already use.
-* **Files likely touched:** `Hubs/DocumentHub.cs`
+* **Problem IDs:** E1.4, E2.1, C1.6
+* **Done when:** an Uptime Kuma container in AppHost; four monitors: apiservice /health, pythonAPI /health, worker heartbeat (push), pipeline problem (push from Prism on failure or cap hit); phone notifications via ntfy; the push token lives in user-secrets. Rejected for now: Prometheus + Alertmanager + Grafana (too heavy). Azure Monitor equivalents are documented for a relaunch. Alerts work only while the machine is on. Use an unguessable ntfy topic.
+* **Files likely touched:** `Prism.AppHost/AppHost.cs`
 * **Eval impact:** none.
 * **Status:** [ ] not started
 
-### 6 — MCP *(local only; gated)*
+### 8 - MCP *(local only; gated)*
 
 * **Done when:** not before the REST API readiness blocker, the extractor
   `by_omission` gap, and the proof pack are all closed. See
   `docs/audit/mcp_readiness.md` (standing recommendation: do not build now) and
   `docs/mcp-integration-plan.md` (scope and tenancy, design intent only).
-* **Eval impact:** none — read-only tools over already-audited data.
+* **Eval impact:** none - read-only tools over already-audited data.
 * **Status:** [ ] gated
+
+Budget, stated once: count caps now; an in-app daily dollar cap after step 4; the Gemini project spend cap in Google AI Studio as backstop (only if the key is on a paid, billing-linked project). No amounts in the repo.
 
 ---
 
@@ -232,32 +242,41 @@ per-user accounting being correct.
 | Doubt | Current best answer | How to settle it |
 |---|---|---|
 | Retry ceiling | ~409 provider calls for one pass at N=20 claims / S=40 spans; ~1,227 with consumer redelivery. A redelivery path does exist — republish-and-ack with an incremented `x-attempt`. | Confirm the mechanism at `main.py:444` and `:466-476`. The bound depends on the broker not supplying `x-delivery-count`; because the retry publishes a *new* message, a quorum-queue migration would reset the counter and remove the bound. Inspect a redelivered message's headers in the RabbitMQ management UI. |
-| `AUDIT_CONCURRENCY` | **1**, a module literal with no env override | `grounding.py:41` is authoritative. `docs/decisions.md:429` (2026-08-27) says it was raised to 10 via an env var — no such variable exists in `config.py`, `AppHost.cs`, either Dockerfile, or CI. `docs/extraction-audit-grounding-architecture.md:72` agrees with the code. Doc is wrong; not corrected here because `decisions.md` is append-only. |
+| `AUDIT_CONCURRENCY` | **1**, a module literal with no env override. Corrected by decisions.md entry 2026-09-29. | `grounding.py:41` is authoritative. `docs/decisions.md:429` (2026-08-27) says it was raised to 10 via an env var — no such variable exists in `config.py`, `AppHost.cs`, either Dockerfile, or CI. `docs/extraction-audit-grounding-architecture.md:72` agrees with the code. Doc was wrong; corrected by an appended decisions.md entry, 2026-09-29. |
 | Encrypted-PDF behaviour | `fitz.open` does not raise; `load_page` raises `ValueError`, which `except fitz.FileDataError` does not catch — so it falls to the transient handler and ends `Failed` after 3 attempts. **But** if MuPDF reports 0 pages for an unauthenticated document, `IndexError` is raised instead and iteration silently ends, producing empty text and a `Completed` paper. | Manual test, both branches: `python -c "import fitz; d=fitz.open('enc.pdf'); print(d.needs_pass, d.page_count)"`, then upload the same file and record whether it lands `Failed` or `Completed` with zero claims. |
 | Worker scaling | **Resolved 2026-09-28 (portal): 1 min / 10 max, no scale rules.** The worker was the one app container never pinned. `prefetch_count=1` only bounds concurrent papers while exactly one replica exists. | Settled. Pin the maximum before relaunch. |
+| Golden-PDF page counts | Measured 2026-09-29 (PR 1 Phase 0): Reflexion 19 pp / 59,395 chars; CoT 43 / 135,670; ReAct 33 / 110,255; max 43 pp / 135,670 chars. | Parser: `main.py:67` `extract_pdf_text_sync`. |
+| `AUDIT_STRUCTURE_CONCURRENCY` | **5**, `engine.py:42`, module literal, no env override, created per run. | |
+| SSE through Dev Tunnels | | pending |
+| The 14-row adjudication | | pending |
 
 ## 7. Live checks
 
-Deferred — there is no environment to run them against. Results left blank
-deliberately; fill in at relaunch.
+Cloud rows: deferred — there is no environment to run them against. Results left blank deliberately; fill in at relaunch.
+Local rows: fill in during PR 6.
 
 | Check | How | Result |
 |---|---|---|
-| Python service role name in Application Insights | KQL: `traces \| summarize by cloud_RoleName` | |
-| Sampling retained percentage | KQL: `requests \| summarize sum(itemCount), count()` | |
-| Worker replica range after relaunch | `az containerapp show --query "properties.template.scale"` | |
-| Azure budget exists and alerts | `az consumption budget list` | |
-| `X-Forwarded-For` reaches apiservice | log the header on one request | |
-| Aspire dashboard login in a private window | open the managed component URL | |
-| Log disk usage on worker and API containers | `du -sh /app/logs` in an exec session | |
-| Probe configuration per Container App | `az containerapp show --query "...containers[0].probes"` | |
-| Encrypted PDF, end to end | upload a password-protected file | |
-| Scanned PDF, end to end | upload an image-only file | |
+| Python service role name in Application Insights | KQL: `traces \| summarize by cloud_RoleName` | at relaunch |
+| Sampling retained percentage | KQL: `requests \| summarize sum(itemCount), count()` | at relaunch |
+| Worker replica range after relaunch | `az containerapp show --query "properties.template.scale"` | at relaunch |
+| Azure budget exists and alerts | `az consumption budget list` | at relaunch |
+| SSE through the tunnel | manually verify streaming | pending |
+| Forwarded client-IP header through the tunnel | check API logs | pending |
+| /swagger, /openapi, /api/system/reset | confirm unreachable via tunnel | pending |
+| Encrypted PDF, end to end | upload a password-protected file | pending |
+| Scanned PDF, end to end | upload an image-only file | pending |
 
 ---
 
 ## 8. Currency notes, 2026
 
+* **Cloudflare quick tunnels:** testing only, 200-request cap, no SSE.
+  https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/
+* **Aspire Dev Tunnels:** private by default, anonymous opt-in, dev-time only, integration is Preview.
+  https://aspire.dev/integrations/devtools/dev-tunnels/
+* **Gemini API project spend caps, with an enforcement lag of about 10 minutes.** A separate billing-account tier cap also returns 429.
+  https://blog.google/innovation-and-ai/technology/developers-tools/more-control-over-gemini-api-costs/
 * **OTel GenAI semantic conventions are still Development status.** Pin
   versions, adopt nothing that is still moving, and keep message-content
   capture off — the content-capture switch would put paper text and user
@@ -290,8 +309,10 @@ deliberately; fill in at relaunch.
 | ID | Item | Status | Evidence / PR | Last verified |
 |---|---|---|---|---|
 | 1 | Honest status | Not started | — | 2026-09-28 |
-| 2 | See the spend | Not started | — | 2026-09-28 |
-| 3 | Protect the budget | Not started | — | 2026-09-28 |
-| 4 | Alerts and budget | Deferred — no subscription | — | 2026-09-28 |
-| 5 | SignalR `JoinChat` ownership check | Not started | — | 2026-09-28 |
-| 6 | MCP | Gated — see `docs/audit/mcp_readiness.md` | — | 2026-09-28 |
+| 2 | Eval honesty | Not started | — | 2026-09-28 |
+| 3 | Caps and 429 | Not started | — | 2026-09-28 |
+| 4 | See the spend | Not started | — | 2026-09-28 |
+| 5 | Guards | Not started | — | 2026-09-28 |
+| 6 | Demo mode | Not started | — | 2026-09-28 |
+| 7 | Local alerts | Not started | — | 2026-09-28 |
+| 8 | MCP | Gated — see `docs/audit/mcp_readiness.md` | — | 2026-09-28 |

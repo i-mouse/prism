@@ -864,3 +864,28 @@ the number up happens AFTER the harness is measuring it.
 **Context:** Nitin confirmed via live testing that Google sign-in now shows his correct name instead of the generic "Google User" placeholder, prompting a review of the 2026-09-15/16 decision entry which listed this as a "Known gap, not yet fixed."
 **Decision:** Verified that the underlying Entra CIAM attribute mapping fix IS successfully active. However, as noted in the original entry, this fix only applies to new sign-ups and users who re-register. Existing legacy accounts created before the fix will still see empty claims until they re-register.
 **Consequences:** The gap is considered resolved at the infrastructure level. No code changes are required, but documentation is updated to clarify the boundary between new/re-registered accounts (fixed) and legacy accounts (requires re-registration).
+
+---
+
+## Correction: AUDIT_CONCURRENCY is 1, not 10 - 2026-09-29
+**Context:** The 2026-08-27 entry "LiteLLM provider abstraction for span
+audit call" says AUDIT_CONCURRENCY was raised from 5 to 10. A git search
+(`git log --all -S"AUDIT_CONCURRENCY = 10"`) finds no commit that ever
+contained that value.
+**Decision:** Correct the record. Append-only, so the 08-27 entry is not
+edited. Code today: AUDIT_CONCURRENCY = 1 (grounding.py:41, module
+literal, no env override). History: 5 in 5cd9757, 1 in 844c748; the
+reason is not recorded. AUDIT_STRUCTURE_CONCURRENCY = 5 (engine.py:42,
+module literal). Both semaphores are created per extraction run, not per
+process; the worker uses prefetch_count=1 (main.py:130), so each worker
+instance handles one paper at a time.
+**Alternatives:** Edit the 08-27 entry: rejected, decisions.md is
+append-only.
+**Consequences:** Span audits run one at a time, so grounding time per
+paper grows with span count; to be measured in PR 4. Other claims in the
+08-27 entry should be checked against code before being cited: the 08-27
+entry's AUDIT_MODEL / AUDIT_FALLBACK_MODEL do not exist under those names.
+Span grounding uses LLM_GROUNDING_MODEL / LLM_GROUNDING_FALLBACK_MODEL
+(config.py llm_grounding_model / llm_grounding_fallback_model, no defaults).
+The claim auditor is a different call: LLM_CLAIM_AUDIT_MODEL /
+LLM_CLAIM_AUDIT_FALLBACK_MODEL. groq_api_key exists.
