@@ -42,7 +42,9 @@ def test_loads_real_matrix_eval():
     spec = load_matrix(REAL_MATRIX_PATH)
 
     assert len(spec.papers) == 3
-    assert spec.pass_threshold_refusal_rate == 0.70
+    # Re-baselined 2026-09-30 from 0.70 to 0.35 after the omission-credit
+    # scorer fix - see docs/decisions.md.
+    assert spec.pass_threshold_refusal_rate == 0.35
     assert spec.pass_threshold_positive_floor == 10
 
 

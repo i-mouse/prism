@@ -20,16 +20,20 @@ import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 from eval.data_source import read_from_db, read_from_fixture, read_matches_from_fixture
+from eval.match_map import load_match_map
 from eval.matrix_loader import MatrixSpec, PaperSpec, load_matrix
 from eval.scorer import score
 from eval.types import EvalReport
+from extraction.prompt_version import get_prompt_version
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 LOGS_DIR = Path(__file__).parent.parent / "logs" / "eval"
 DEFAULT_MATRIX_PATH = REPO_ROOT / "docs" / "evals" / "matrix_eval.json"
 DEFAULT_FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures"
+DEFAULT_MATCH_MAP_PATH = REPO_ROOT / "docs" / "evals" / "match_map.json"
 
 
 @dataclass
@@ -52,8 +56,9 @@ class MatrixReport:
     total_negatives: int
     refusal_rate: float
     refused_by_label: int
-    refused_by_omission: int
     refused_by_grounding: int
+    wrongly_affirmed: int
+    not_extracted: int
     positive_hits: int
     positive_total: int
     false_rejections: int
@@ -64,6 +69,62 @@ class MatrixReport:
     strict_correct_refusals: int
     strict_refusal_rate: float
     skipped: int
+
+
+@dataclass
+class MatchMapGate:
+    """Whether the human-adjudicated match map (docs/evals/match_map.json)
+    backs up this run's headline number, computed against the golden ids
+    actually in scope for this run (all 37 by default, fewer under --paper).
+
+    matcher_miss = total_rows - coverage_count: rows with no adjudication
+    yet. This is a transitional bucket - it exists because match_map.json
+    starts as an all-null skeleton and gets filled in by hand over time, not
+    because it's a fourth scoring outcome alongside REFUSED/WRONGLY_AFFIRMED/
+    NOT_EXTRACTED. It is reported, never credited, and never overrides the
+    per-row outcome from eval/scorer.py.
+    """
+
+    total_rows: int
+    coverage_count: int
+    matcher_miss: int
+    coverage_ok: bool
+    hash_mismatch: bool
+    current_prompt_hash: str
+    match_map_prompt_hash: Optional[str]
+    load_error: Optional[str]
+
+
+def _build_match_map_gate(golden_ids: set[str], match_map_path: Path) -> MatchMapGate:
+    current_prompt_hash = get_prompt_version()
+    total_rows = len(golden_ids)
+
+    match_map = None
+    load_error: Optional[str] = None
+    try:
+        match_map = load_match_map(match_map_path, golden_ids)
+    except FileNotFoundError:
+        load_error = f"no match map found at {match_map_path}"
+    except Exception as exc:  # malformed JSON, schema mismatch, id mismatch
+        load_error = str(exc)
+
+    coverage_count = match_map.coverage_count if match_map is not None else 0
+    match_map_prompt_hash = match_map.metadata.prompt_hash if match_map is not None else None
+
+    return MatchMapGate(
+        total_rows=total_rows,
+        coverage_count=coverage_count,
+        matcher_miss=total_rows - coverage_count,
+        coverage_ok=match_map is not None and coverage_count == total_rows,
+        hash_mismatch=(
+            match_map is not None
+            and match_map_prompt_hash is not None
+            and match_map_prompt_hash != current_prompt_hash
+        ),
+        current_prompt_hash=current_prompt_hash,
+        match_map_prompt_hash=match_map_prompt_hash,
+        load_error=load_error,
+    )
 
 
 def _display_name(result: PaperRunResult) -> str:
@@ -174,8 +235,12 @@ def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> Matrix
     strict_correct_refusals = sum(min(r.strict_correct_refusals for r in result.reports) for result in scored)
     total_negatives = sum(result.reports[0].total_negatives for result in scored)
     refused_by_label = sum(min(r.refused_by_label for r in result.reports) for result in scored)
-    refused_by_omission = sum(min(r.refused_by_omission for r in result.reports) for result in scored)
     refused_by_grounding = sum(min(r.refused_by_grounding for r in result.reports) for result in scored)
+    # wrongly_affirmed/not_extracted are bad-if-high, like false_rejections below -
+    # worst-cased with max() so a lucky run can't mask a paper that sometimes
+    # fails outright or sometimes extracts nothing for a negative row.
+    wrongly_affirmed = sum(max(r.wrongly_affirmed for r in result.reports) for result in scored)
+    not_extracted = sum(max(r.not_extracted for r in result.reports) for result in scored)
     positive_hits = sum(min(r.positive_hits for r in result.reports) for result in scored)
     positive_total = sum(result.reports[0].positive_total for result in scored)
     false_rejections = sum(max(r.false_rejections for r in result.reports) for result in scored)
@@ -195,8 +260,9 @@ def _aggregate(results: list[PaperRunResult], positive_hit_floor: int) -> Matrix
         total_negatives=total_negatives,
         refusal_rate=refusal_rate,
         refused_by_label=refused_by_label,
-        refused_by_omission=refused_by_omission,
         refused_by_grounding=refused_by_grounding,
+        wrongly_affirmed=wrongly_affirmed,
+        not_extracted=not_extracted,
         positive_hits=positive_hits,
         positive_total=positive_total,
         false_rejections=false_rejections,
@@ -239,6 +305,7 @@ def _print_verbose_false_rejections(results: list[PaperRunResult]) -> list[str]:
 def _print_report(
     results: list[PaperRunResult],
     aggregate: MatrixReport,
+    gate: MatchMapGate,
     threshold_refusal_rate: float,
     log_relpath: Path,
     exit_code: int,
@@ -279,10 +346,27 @@ def _print_report(
     lines.append("Prism Eval Results")
     lines.append("=" * 64)
 
+    if gate.hash_mismatch:
+        lines.append("!" * 64)
+        lines.append("WARNING: match_map.json was adjudicated at a different prompt_hash.")
+        lines.append(f"  match_map.json prompt_hash: {gate.match_map_prompt_hash}")
+        lines.append(f"  this run's prompt_hash:     {gate.current_prompt_hash}")
+        lines.append("  A map adjudicated at one hash is invalid once the prompt changes -")
+        lines.append("  re-adjudicate before trusting any refusal-rate headline.")
+        lines.append("!" * 64)
+
+    if gate.load_error:
+        lines.append(f"WARNING: match_map.json could not be used - {gate.load_error}")
+
     if aggregate.skipped > 0:
         lines.append(f"{aggregate.skipped} claims SKIPPED (transient errors) — not scored")
         lines.append(
             f"INCOMPLETE — {aggregate.skipped} spans not evaluated, cannot compute headline metric"
+        )
+    elif not gate.coverage_ok:
+        lines.append(
+            f"HEADLINE SUPPRESSED — match map coverage {gate.coverage_count}/{gate.total_rows}. "
+            "Number is not citeable."
         )
     else:
         lines.append(
@@ -295,8 +379,14 @@ def _print_report(
         "— refused via exact expected_label match only, no omission/grounding-rejection credit"
     )
     lines.append(f"  by label:            {aggregate.refused_by_label}")
-    lines.append(f"  by omission:         {aggregate.refused_by_omission}")
     lines.append(f"  by grounding reject: {aggregate.refused_by_grounding}")
+    lines.append(f"  wrongly affirmed:    {aggregate.wrongly_affirmed}  (FAIL - not credited)")
+    lines.append(f"  not extracted:       {aggregate.not_extracted}  (no claim emitted - not credited)")
+    lines.append(f"  skipped:             {aggregate.skipped}  (transient grounding error - excluded from denominator)")
+    lines.append(
+        f"  matcher_miss:        {gate.matcher_miss}  (no match-map adjudication yet - "
+        f"coverage {gate.coverage_count}/{gate.total_rows})"
+    )
     lines.append(
         f"Positive hits:        {aggregate.positive_hits}/{aggregate.positive_total} ({positive_pct}%) "
         f"(floor: {aggregate.positive_hit_floor}) [{floor_tag}] "
@@ -322,6 +412,7 @@ def _write_log(
     args: argparse.Namespace,
     results: list[PaperRunResult],
     aggregate: MatrixReport,
+    gate: MatchMapGate,
     timestamp: datetime,
 ) -> Path:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -349,6 +440,7 @@ def _write_log(
         "args": {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         "papers": papers_json,
         "aggregate": asdict(aggregate),
+        "match_map_gate": asdict(gate),
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
     return log_path
@@ -361,6 +453,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repeat", type=int, default=1, help="matcher runs per paper; reports variance")
     parser.add_argument("--matrix-path", type=Path, default=DEFAULT_MATRIX_PATH)
     parser.add_argument("--fixture-dir", type=Path, default=DEFAULT_FIXTURE_DIR)
+    parser.add_argument("--match-map-path", type=Path, default=DEFAULT_MATCH_MAP_PATH)
     parser.add_argument(
         "--verbose", action="store_true", help="list each false-rejection (positive-support row the grounder refused)"
     )
@@ -388,20 +481,22 @@ async def _run(args: argparse.Namespace) -> int:
 
     aggregate = _aggregate(results, matrix_spec.pass_threshold_positive_floor)
 
-    exit_code = (
-        0
-        if aggregate.scored_papers > 0
+    golden_ids = {row.id for paper in papers for row in paper.expected_rows}
+    gate = _build_match_map_gate(golden_ids, args.match_map_path)
+
+    metric_pass = (
+        aggregate.scored_papers > 0
         and aggregate.refusal_rate_valid
         and aggregate.refusal_rate >= matrix_spec.pass_threshold_refusal_rate
-        else 1
     )
+    exit_code = 0 if metric_pass and gate.coverage_ok else 1
 
     timestamp = datetime.now(timezone.utc)
-    log_path = _write_log(args, results, aggregate, timestamp)
+    log_path = _write_log(args, results, aggregate, gate, timestamp)
     log_relpath = log_path.relative_to(Path(__file__).parent.parent)
 
     _print_report(
-        results, aggregate, matrix_spec.pass_threshold_refusal_rate, log_relpath, exit_code, verbose=args.verbose
+        results, aggregate, gate, matrix_spec.pass_threshold_refusal_rate, log_relpath, exit_code, verbose=args.verbose
     )
 
     return exit_code

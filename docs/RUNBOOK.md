@@ -80,7 +80,19 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 * **Gold-set pass floor:** 0.9 (90%). If a real run comes in below that, do not commit the fixture update — the matcher itself needs fixing (model or prompt) first, not the freshness gate.
 * **None of this touches CI:** the eval harness is fully offline in CI (see `docs/decisions.md`, "Revert live-matcher CI back to frozen-fixture design") — all three regen commands above are run locally by a developer, and only their *output* (the committed fixture JSON) is what CI reads.
 
-## 7. Mock Extraction Mode — Local Testing Only
+## 7. Match Map Adjudication (fuzzy pre-fill + human review)
+
+* **Purpose:** `docs/evals/match_map.json` is the human-adjudicated record of which actual claim corresponds to each of the 37 golden rows in `matrix_eval.json` — `matrix_runner.py`'s coverage gate suppresses the headline refusal-rate percentage (and forces exit code 1) until every row is adjudicated. `eval/suggest_match_map.py` speeds up that review by pre-filling a fuzzy-match candidate per row; it never adjudicates anything itself.
+* **Step 1 — generate suggestions:** `uv run python -m eval.suggest_match_map`. For each golden row, this fuzzy-matches (`rapidfuzz.fuzz.token_sort_ratio`, same library as `extraction/grounding.py` Stage 1) `claim_text_verbatim` against every actual claim in that *same paper's* fixture (`docs/evals/fixtures/*.json`), and writes the best candidate's fingerprint, score, and a ~120-char text snippet into that row's `suggested` field in `match_map.json` — or leaves `suggested: null` if nothing scores above 60. It prints a 37-line console summary (golden id, score, snippet or `NO CANDIDATE — likely not extracted`) — review this by eye, not the JSON.
+* **Step 2 — hand-adjudicate:** for each row, based on the console output and your own judgment:
+  * **Confirmed match:** copy `suggested.claim_fingerprint` into `claim_fingerprint`, and fill in `decided_by` (your name), `decided_on` (date), and `reason` (why you're confident this is the right claim).
+  * **Genuine omission:** leave `claim_fingerprint` (and `persisted_claim_id`) `null`, and fill in `decided_by`/`decided_on`/`reason: "no claim extracted, confirmed"`.
+  * A row only counts toward coverage once `claim_fingerprint` or `persisted_claim_id` is non-null — see `MatchMapRow.is_adjudicated` in `eval/match_map.py`.
+* **Gotcha — a suggestion is not an adjudication, at any score.** `suggest_match_map.py` writes `suggested` only; it never touches `persisted_claim_id`, `claim_fingerprint`, `decided_by`, `decided_on`, or `reason`, and the coverage gate deliberately ignores `suggested` entirely. A high score (even 100.0) still requires a human to copy it over by hand — auto-accepting suggestions would silently reintroduce the exact omission-credit bug removed from `eval/scorer.py` (see `docs/decisions.md`), just one level up in the matching step instead of the scoring step.
+* **Gotcha — matching is scoped per paper.** A golden row is only fuzzy-matched against claims from its own paper's fixture, never across papers, so a coincidentally similar claim in a different paper can't produce a false suggestion.
+* **Re-run safety:** `suggest_match_map.py` can be re-run any time (e.g. after `dump_fixture` regenerates a fixture) — it only ever overwrites the `suggested` field, so already-adjudicated rows are untouched.
+
+## 8. Mock Extraction Mode — Local Testing Only
 
 * **Purpose:** Bypasses the real extraction pipeline (Qdrant embedding +
   all 3 LLM calls) to reproduce UI states and the SignalR tab-switch
