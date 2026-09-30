@@ -40,6 +40,11 @@ export interface PaperClaimsResponse {
   claims: ClaimDto[];
   promptVersion?: string | null;
   isCurrentPromptVersion?: boolean | null;
+  // Only set when extractionStatus is "Failed" - the authoritative, fetched
+  // cause of the failure. See ExtractionProgressEvent.reason for the live
+  // (fast-path) equivalent; the two are written from the same source string
+  // on the backend and must never disagree.
+  failureReason?: string | null;
 }
 
 export interface ChatListItem {
@@ -74,6 +79,10 @@ export interface ExtractionProgressEvent {
   total?: number;
   failedStage?: ExtractionStage;
   detail?: string;
+  // Only present on a stage:"failed" event - the live (fast-path) cause of
+  // the failure. See PaperClaimsResponse.failureReason for the fetched,
+  // authoritative equivalent.
+  reason?: string;
 }
 
 export interface SubmitPaperResponse {

@@ -3,11 +3,15 @@
 Both tools are hard-filtered by active_file_id: query_paper_claims resolves
 the file's most recent document_extractors row and scopes the paper_claims
 query to it; query_paper_chunks scopes the Qdrant search to points whose
-payload.file_id matches. Neither tool ever raises - retrieval failures are
-logged and surfaced as an empty list, which the agent's check_empty node
-turns into a refusal rather than a silent wrong answer (see PR C2,
-fix/chat-retrieval-refusal, and docs/audit/ui_chat_audit_2026-09-08.md for
-why the previous fallback-to-everything behavior made refusal unreachable).
+payload.file_id matches. A query that legitimately finds nothing returns an
+empty list, which the agent's check_empty node turns into a refusal rather
+than a silent wrong answer (see PR C2, fix/chat-retrieval-refusal, and
+docs/audit/ui_chat_audit_2026-09-08.md for why the previous
+fallback-to-everything behavior made refusal unreachable). A genuine
+retrieval failure (DB/Qdrant unreachable, query error) is a different case
+and must not collapse into that same empty list - it raises RetrievalError
+instead, so execute_tools/check_empty can route it to its own refusal
+message rather than the misleading "out of scope for this paper" one.
 """
 import asyncio
 import json
@@ -22,6 +26,12 @@ from memory_db import create_db_connection_pool
 from RAGService import RAGService
 
 LOGS_DIR = Path(__file__).parent.parent / "logs" / "chat"
+
+
+class RetrievalError(Exception):
+    """A genuine retrieval failure (DB or Qdrant unreachable, query error),
+    as opposed to a query that legitimately found nothing. Callers must not
+    treat this the same as an empty result - see agent.py's check_empty."""
 
 # Cosine similarity floor below which a retrieved chunk is excluded from
 # chat context entirely. Introduced in PR C2 (fix/chat-retrieval-refusal) to
@@ -275,7 +285,7 @@ async def query_paper_claims(
         return results
     except Exception as exc:
         print(f" [WARN] query_paper_claims failed for active_file_id={active_file_id}: {exc!r}")
-        return []
+        raise RetrievalError(f"query_paper_claims failed for active_file_id={active_file_id}") from exc
 
 
 async def get_total_claim_count(active_file_id: str) -> int:
@@ -347,7 +357,7 @@ async def query_paper_chunks(active_file_id: str, query: str, limit: int = 5) ->
         return filtered
     except Exception as exc:
         print(f" [WARN] query_paper_chunks failed for active_file_id={active_file_id}: {exc!r}")
-        return []
+        raise RetrievalError(f"query_paper_chunks failed for active_file_id={active_file_id}") from exc
 
 
 async def query_paper_chunks_scored(
@@ -360,4 +370,4 @@ async def query_paper_chunks_scored(
         return await _search_chunks_scored(active_file_id, query, limit)
     except Exception as exc:
         print(f" [WARN] query_paper_chunks_scored failed for active_file_id={active_file_id}: {exc!r}")
-        return [], []
+        raise RetrievalError(f"query_paper_chunks_scored failed for active_file_id={active_file_id}") from exc

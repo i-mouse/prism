@@ -43,6 +43,10 @@ export interface ExtractionProgressState {
   latestDetail?: string;
   finalizingSummary?: string;
   failedStage?: ExtractionStage;
+  // Live (fast-path) failure cause. PaperActivityView prefers the fetched
+  // PaperClaimsResponse.failureReason once it lands; this is what shows
+  // before that fetch resolves.
+  failedReason?: string;
 }
 
 // Tracks extraction progress for one paper as cumulative state rather than
@@ -72,6 +76,7 @@ export function useExtractionProgress(chatId: string | null, fileId: string | nu
           return {
             latestStage: "failed",
             failedStage: event.failedStage,
+            failedReason: event.reason,
             finalizingSummary: prev?.finalizingSummary,
           };
         }

@@ -41,12 +41,12 @@ def test_extract_claims_runs_extractor_audit_structure_pipeline(monkeypatch):
     max_concurrent = 0
     calls = {"json": 0, "freetext": 0, "structured": 0}
 
-    async def fake_call_gemini_json(messages, chat_id, correlation_id, log_subdir):
+    async def fake_call_gemini_json(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model):
         calls["json"] += 1
         assert log_subdir == "extraction"
         return EXTRACTOR_RESULT
 
-    async def fake_call_gemini_freetext(messages, chat_id, correlation_id, log_subdir):
+    async def fake_call_gemini_freetext(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model):
         nonlocal concurrent, max_concurrent
         assert log_subdir == "audit"
         concurrent += 1
@@ -61,7 +61,7 @@ def test_extract_claims_runs_extractor_audit_structure_pipeline(monkeypatch):
                 return audit_text
         raise AssertionError(f"unrecognized claim in audit call: {user_msg!r}")
 
-    async def fake_call_gemini_structured(messages, response_schema, chat_id, correlation_id, log_subdir):
+    async def fake_call_gemini_structured(messages, response_schema, chat_id, correlation_id, log_subdir, model_name, fallback_model):
         assert log_subdir == "structure"
         assert response_schema is ClaimLLM
         calls["structured"] += 1

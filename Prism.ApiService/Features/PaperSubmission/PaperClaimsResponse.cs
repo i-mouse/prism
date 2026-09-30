@@ -8,7 +8,12 @@ public record PaperClaimsResponse(
     ClaimsSummary Summary,
     IReadOnlyList<ClaimDto> Claims,
     string? PromptVersion = null,
-    bool? IsCurrentPromptVersion = null);
+    bool? IsCurrentPromptVersion = null,
+    // Only set when ExtractionStatus is "Failed" - the same FileRecord.Summary
+    // column also carries the AI-generated paper summary for a Completed
+    // paper, so this is named for what it means here, not for the column it
+    // reads from. Null for every other status.
+    string? FailureReason = null);
 
 public record RerunPaperRequest(string ChatId, string ConnectionId);
 

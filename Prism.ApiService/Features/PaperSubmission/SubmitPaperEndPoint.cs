@@ -266,13 +266,18 @@ public static class SubmitPaperEndpoint
 
             if (extractor == null)
             {
+                var status = file.Status.ToFrontendString();
+                var failureReason = file.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Failed
+                    ? file.Summary
+                    : null;
                 return Results.Ok(new PaperClaimsResponse(
                     file.FileId,
                     file.FileName,
-                    "Pending",
+                    status,
                     null,
                     new ClaimsSummary(0, 0, 0, 0),
-                    new List<ClaimDto>()));
+                    new List<ClaimDto>(),
+                    FailureReason: failureReason));
             }
 
             var claims = await dbContext.PaperClaims
@@ -332,6 +337,16 @@ public static class SubmitPaperEndpoint
                 isCurrentPromptVersion = currentPromptVersion != null && storedPromptVersion == currentPromptVersion;
             }
 
+            // A DocumentExtractor row existing normally means this paper Completed -
+            // every failure branch fails before the writer ever runs. The one
+            // exception: a later malformed completion message (B1.12) can overwrite
+            // an already-Completed file's Status/Summary to Failed independently of
+            // whether an extractor row exists. Guard the same way as the no-extractor
+            // branch above rather than assume this can only be Completed here.
+            var happyPathFailureReason = file.Status == Prism.ApiService.Data.Schemas.ExtractionStatus.Failed
+                ? file.Summary
+                : null;
+
             return Results.Ok(new PaperClaimsResponse(
                 file.FileId,
                 file.FileName,
@@ -340,7 +355,8 @@ public static class SubmitPaperEndpoint
                 summary,
                 claimDtos,
                 storedPromptVersion,
-                isCurrentPromptVersion));
+                isCurrentPromptVersion,
+                FailureReason: happyPathFailureReason));
         })
         .WithName("GetPaperClaims");
 

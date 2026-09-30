@@ -15,6 +15,10 @@ interface PaperHeaderProps {
   fileName: string;
   extractionStatus: ExtractionStatus;
   completedAt: string | null;
+  // Total claims once Completed - distinguishes a genuinely zero-claim
+  // paper from the ordinary case in the status line, instead of both
+  // reading identically as "Completed". Undefined while still running.
+  claimCount?: number;
   fileSize?: string;
   pageCount?: number;
   uploadedAt?: string;
@@ -28,6 +32,7 @@ export function PaperHeader({
   fileName,
   extractionStatus,
   completedAt,
+  claimCount,
   onCancel,
 }: PaperHeaderProps) {
   const isCompleted = extractionStatus === "Completed";
@@ -35,9 +40,11 @@ export function PaperHeader({
   const comingSoon = () => toast("Coming soon");
 
   const statusText = isCompleted
-    ? completedAt
-      ? `Completed ${relativeTime(completedAt)}`
-      : "Completed"
+    ? claimCount === 0
+      ? "Completed — No Claims Found"
+      : completedAt
+        ? `Completed ${relativeTime(completedAt)}`
+        : "Completed"
     : isFailed
       ? "Audit failed"
       : "Auditing paper…";

@@ -25,6 +25,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import type { ClaimDto, ClaimLabel, PaperClaimsResponse } from "@/types/api";
 import { displayLabel } from "@/lib/claim-display";
+import { selectActivityViewFailureProps } from "@/lib/activityViewLogic";
 
 interface MatrixViewProps {
   paperClaims: PaperClaimsResponse | null;
@@ -244,6 +245,8 @@ export function MatrixView({
     );
   }
 
+  const activityFailureProps = selectActivityViewFailureProps(paperClaims, activePaperId, cacheHitPending);
+
   return (
     <AnimatePresence mode="wait">
       {showActivityView ? (
@@ -258,11 +261,13 @@ export function MatrixView({
             fileId={activePaperId}
             chatId={pendingUpload?.chatId || activeChatId}
             fileName={pendingUpload?.fileName || paperClaims?.fileName || ""}
-            extractionStatus={(!paperClaims || cacheHitPending) ? "In progress" : paperClaims.extractionStatus}
+            extractionStatus={activityFailureProps.extractionStatus}
+            failureReason={activityFailureProps.failureReason}
             isCacheHitPending={cacheHitPending}
             isGoogleUser={isGoogleUser}
             onCacheHitContinue={onCacheHitResolved}
             onCacheHitCancel={onCacheHitCancel}
+            onChooseDifferentFile={onUploadClick}
           />
         </motion.div>
       ) : paperClaims ? (
@@ -281,6 +286,7 @@ export function MatrixView({
                   fileName={currentPaperClaims?.fileName ?? "Loading paper…"}
                   extractionStatus={currentPaperClaims?.extractionStatus ?? "In progress"}
                   completedAt={currentPaperClaims?.completedAt ?? null}
+                  claimCount={currentPaperClaims?.summary.total}
                 />
               </div>
               {/* User profile — top right of main content area */}

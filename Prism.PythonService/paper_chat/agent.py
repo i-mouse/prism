@@ -45,6 +45,7 @@ from pydantic import BaseModel, Field
 from config import settings
 from paper_chat.tools import (
     CHUNK_SIMILARITY_THRESHOLD,
+    RetrievalError,
     get_total_claim_count,
     query_paper_chunks_scored,
     query_paper_claims,
@@ -61,6 +62,13 @@ REFUSAL_OUT_OF_SCOPE_MESSAGE = (
 # placeholder is only used when nothing had been generated yet.
 CANCELLED_RESPONSE_PLACEHOLDER = "Response interrupted — please ask again."
 CANCELLED_RESPONSE_SUFFIX = " [response interrupted]"
+
+# Shown when a retrieval tool raised RetrievalError (a genuine DB/Qdrant
+# failure) rather than legitimately finding nothing - must read as an error,
+# not as "this paper doesn't cover that" (REFUSAL_OUT_OF_SCOPE_MESSAGE).
+RETRIEVAL_ERROR_MESSAGE = (
+    "Something went wrong retrieving information for this paper. Please try again."
+)
 
 # Below this raw cosine score (well under CHUNK_SIMILARITY_THRESHOLD from
 # paper_chat/tools.py), a chunk carries no meaningful topical signal at all.
@@ -97,6 +105,7 @@ class AgentState(TypedDict):
     retrieved_chunks: list[dict]
     chunk_scores: list[float]
     total_claim_count: int
+    retrieval_failed: bool
     route_decision: str
     claim_lookup: str
     claim_position: int | None
@@ -272,11 +281,23 @@ async def execute_tools(state: AgentState):
     # ="all") so the LLM always has the paper's true claim total as ground
     # truth, even when retrieval only returned a subset - see
     # docs/audit/chat_claim_count_still_wrong_2026-09-10.md.
-    claims, (chunks, chunk_scores), total_claim_count = await asyncio.gather(
-        query_paper_claims.ainvoke(claims_tool_input),
-        query_paper_chunks_scored(active_file_id=active_file_id, query=query, limit=5),
-        get_total_claim_count(active_file_id),
-    )
+    try:
+        claims, (chunks, chunk_scores), total_claim_count = await asyncio.gather(
+            query_paper_claims.ainvoke(claims_tool_input),
+            query_paper_chunks_scored(active_file_id=active_file_id, query=query, limit=5),
+            get_total_claim_count(active_file_id),
+        )
+    except RetrievalError as exc:
+        # A genuine retrieval failure, not "found nothing" - check_empty must
+        # route this to refuse_retrieval_error, not refuse_out_of_scope.
+        print(f" [TOOLS] retrieval failed: {exc!r}")
+        return {
+            "retrieved_claims": [],
+            "retrieved_chunks": [],
+            "chunk_scores": [],
+            "total_claim_count": 0,
+            "retrieval_failed": True,
+        }
 
     print(f" [TOOLS] retrieved_claims={len(claims)} retrieved_chunks={len(chunks)} chunk_scores={chunk_scores} total_claim_count={total_claim_count}")
     return {
@@ -284,6 +305,7 @@ async def execute_tools(state: AgentState):
         "retrieved_chunks": chunks,
         "chunk_scores": chunk_scores,
         "total_claim_count": total_claim_count,
+        "retrieval_failed": False,
     }
 
 
@@ -309,6 +331,10 @@ def check_empty(state: AgentState) -> str:
         CHUNK_SIMILARITY_THRESHOLD - as in-scope-but-unsupported. Neither
         signal at all means the question doesn't relate to this paper.
     """
+    if state.get("retrieval_failed"):
+        print(" [CHECK_EMPTY] retrieval_failed=True - routing to refuse_retrieval_error")
+        return "refuse_retrieval_error"
+
     claims = state.get("retrieved_claims") or []
     chunks = state.get("retrieved_chunks") or []
     chunk_scores = state.get("chunk_scores") or []
@@ -346,6 +372,13 @@ async def refusal_out_of_scope_node(state: AgentState):
     writer = get_stream_writer()
     writer({"type": "text", "content": REFUSAL_OUT_OF_SCOPE_MESSAGE})
     return {"messages": [AIMessage(content=REFUSAL_OUT_OF_SCOPE_MESSAGE)]}
+
+
+async def refusal_retrieval_error_node(state: AgentState):
+    print(" [REFUSE] Node: refusal_retrieval_error_node executing")
+    writer = get_stream_writer()
+    writer({"type": "text", "content": RETRIEVAL_ERROR_MESSAGE})
+    return {"messages": [AIMessage(content=RETRIEVAL_ERROR_MESSAGE)]}
 
 
 def _build_unsupported_message(retrieved_claims: list[dict], retrieved_chunks: list[dict]) -> str:
@@ -681,6 +714,7 @@ def build_paper_chat_graph(checkpointer):
     workflow.add_node("execute_tools", execute_tools)
     workflow.add_node("refusal_out_of_scope_node", refusal_out_of_scope_node)
     workflow.add_node("refusal_unsupported_node", refusal_unsupported_node)
+    workflow.add_node("refusal_retrieval_error_node", refusal_retrieval_error_node)
     workflow.add_node("generate_response", generate_response)
 
     workflow.add_edge(START, "rewrite_query")
@@ -689,10 +723,12 @@ def build_paper_chat_graph(checkpointer):
     workflow.add_conditional_edges("execute_tools", check_empty, {
         "refuse_out_of_scope": "refusal_out_of_scope_node",
         "refuse_unsupported": "refusal_unsupported_node",
+        "refuse_retrieval_error": "refusal_retrieval_error_node",
         "respond": "generate_response",
     })
     workflow.add_edge("refusal_out_of_scope_node", END)
     workflow.add_edge("refusal_unsupported_node", END)
+    workflow.add_edge("refusal_retrieval_error_node", END)
     workflow.add_edge("generate_response", END)
 
     return workflow.compile(checkpointer=checkpointer)
