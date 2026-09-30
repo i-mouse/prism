@@ -53,6 +53,7 @@ None of the eight steps needs a subscription; the cloud alerts block in Section 
 | A2.2 | That cap resets on demand — the guest-session endpoint is anonymous and uncapped | `Features/Auth/GuestAuthEndpoint.cs:17-36` | COST | VERIFIED |
 | A2.4 | No page-count, text-length, token-estimate or max-claims guard before LLM spend | (absent) | COST | VERIFIED |
 | A2.7 | Re-run bypasses dedupe with no quota or cooldown | `SubmitPaperEndPoint.cs:163-222` | COST | VERIFIED |
+| A2.8 | The guest quota (A2.1) is consumed at upload time - `FileRecord`/`ChatFile` rows are created (`:710,719`) and counted toward `guestFileCount >= 2` (`:63-68`) before the pipeline has run at all, let alone before it's known whether the file will fail cheaply (corrupt/password-protected/scanned - fails before any LLM call, near-zero cost) or expensively (fails deep into extraction, after real LLM spend). A cheap pre-LLM failure consumes a guest session slot identically to an expensive one, even though A2.1/A2.2's stated purpose is protecting against LLM spend specifically, not upload volume. | `SubmitPaperEndPoint.cs:63-68,710-719` | COST | VERIFIED |
 | A3.1 | No explicit timeout on any LLM call, google-genai or LiteLLM | `engine.py:92,160`; `grounding.py:162` | COST | VERIFIED |
 | A3.6 | No jitter anywhere; `Retry-After` never read on the Python LLM paths | `engine.py:48`; `grounding.py:44`; `main.py:461` | COST | VERIFIED |
 | A4 | No token usage or cost read or logged on any LLM call | `engine.py:127-128`; `grounding.py:170`; `agent.py:205,216,613` | COST | VERIFIED |
@@ -68,13 +69,21 @@ None of the eight steps needs a subscription; the cloud alerts block in Section 
 | B1.10 | Bare `catch` with no log at all on summary injection | `Services/ChatSummaryInjector.cs:27-32` | VISIBILITY | VERIFIED |
 | B1.12 | Malformed completion message is acked and discarded; paper stays `InProgress` forever | `RabbitMqListenerService.cs:79-86` | VISIBILITY | VERIFIED |
 | B1.14 | Extracted-vs-persisted claim counts never recorded together per run | `engine.py:419`; `writer.py:159` | VISIBILITY | VERIFIED |
+| B1.15 | A dead-lettered message (any `message.reject(requeue=False)` in main.py) produces no log line, no metric, and no user-visible signal beyond the paper's own status; there is no documented replay path for the DLQ. Assigned to step 4 (structured log line on dead-letter) and step 7 (DLQ depth monitor). No DLQ code changed in this PR. | `main.py` (every `requeue=False` site: `:445,476,507,538,575`); `dlx_prism_exchange`/`prism_failed` declared at `main.py:176-177` with nothing consuming them | VISIBILITY | VERIFIED |
 | B2.3 | Password-protected PDF raises `ValueError`, which `except fitz.FileDataError` does not catch | `pymupdf/__init__.py:5775-5776`; `main.py:382,433` | VISIBILITY | **UNVERIFIED** — see §6 |
 | B2.4 | Scanned/image-only PDF yields empty text and completes successfully with zero claims | (no guard) `main.py:212` | VISIBILITY | VERIFIED |
 | B2.5 | Every unhandled exception reports as 500, including oversize-body rejections | `Middleware/GlobalExceptionHandler.cs:22` | VISIBILITY | VERIFIED |
 | B3.2 | `Completed` with zero claims renders identically to a genuine zero-claim paper | `PaperActivityView.tsx:278-282`; `ClaimList.tsx:148` | VISIBILITY | VERIFIED |
+| B3.3 | A terminal failure updates `FileRecord.Status` to `Failed` (sidebar shows it correctly) but the main-pane stepper never leaves its in-progress state: 4 of 5 terminal branches in `main.py` never emitted a `stage="failed"` event, the "Working on your paper..." card ignored `hasFailed` entirely, and no failure reason ever reached the screen. Fixed in this PR (see B3.4 for the deeper root cause found during the fix). | `main.py` (all `except` branches, pre-fix); `PaperActivityView.tsx:466-475` (unconditional card, pre-fix) | VISIBILITY | VERIFIED + FIXED |
+| B3.4 | Root cause underneath B3.3: `GET /api/papers/{paperId}/claims` hardcoded `extractionStatus: "Pending"` whenever no `DocumentExtractors` row exists yet — true for every paper before the writer runs, not just failed ones — instead of reading the already-selected `file.Status`. `GET /api/chats` reads the real column two lines away and was never affected. Fixed in this PR. | `SubmitPaperEndPoint.cs:267-276` (pre-fix) vs. `:379` (already correct) | VISIBILITY | VERIFIED + FIXED |
+| B3.5 | **Regression introduced and closed within this same PR sequence — not a pre-existing finding.** B3.3's own fix (the malformed-completion-message branch, B1.12) wrote `FileRecord.Status = Failed` and overwrote `Summary` keyed only by `fileId`, with no check on the record's current state. A duplicate or late completion message — plausible in production: the retry path is republish-and-ack and RabbitMQ has no persistent volume — for an already-`Completed` file would silently flip it to `Failed` and destroy its real summary, an audit-data-loss bug worse than the stuck-`InProgress` bug B1.12 fixed. The normal (non-malformed) completion branch had the identical hole independently of B1.12, predating this PR sequence entirely. Both writes are now guarded by `RabbitMqListenerService.ShouldApplyStatusTransition`: a transition is applied only from `Pending`/`InProgress`; any message for an already-terminal (`Completed` or `Failed`) file is logged and ignored, including the SignalR broadcast. | `Services/RabbitMqListenerService.cs` (malformed branch and normal completion branch, both pre-guard) | SAFETY | **INTRODUCED AND FIXED WITHIN THIS PR** |
+| B3.6 | Stale `paperClaims` data from the previously-viewed paper was passed as initial props into a freshly-mounted `PaperActivityView`, during the render where `activePaperId` had already moved on (e.g. to `null` at the start of a new upload) but `paperClaims` hadn't caught up yet (`usePaperClaims` resets it via an effect, one render behind). This permanently committed a wrong, borrowed failure line into the new paper's own log strip (plus a one-frame flash of false "Failed" on its header/stepper) — found via manual smoke test (uploading a healthy file immediately after a failed one), not automated. Fixed by deriving `extractionStatus`/`failureReason` only when `paperClaims.paperId === activePaperId` (`selectActivityViewFailureProps`), and by making the synthesized-line effect idempotent against React 18 StrictMode's dev-only double-invoke (a ref-based guard, `shouldSynthesizeFailureLine`) as an independent correctness property of the effect itself. | `MatrixView.tsx` (pre-fix, ~261-262); `PaperActivityView.tsx` (synthesis effect, pre-fix) | VISIBILITY | **FOUND VIA MANUAL TEST — FIXED WITHIN THIS PR** |
+| B3.7 | The fetched-only failed-stage fallback (no live `ExtractionProgress` event this mount) defaulted to a hardcoded stage index, showing a specific wrong step as failed - e.g. a corrupt PDF that live-failed at "Preparing" instead showed "Extracting" as failed after a page refresh. Found via the same manual smoke test as B3.6. Fixed by rendering an unknown-stage failure as neutral (every stepper row "pending") instead of guessing (`stepperRowStatus`, `failedIndex === -1`). **Known limitation, not fixed here:** the true `failedStage` is not persisted anywhere the fetched path can read it back - only the live event carries it. This only affects the fallback (no-live-event) rendering path; worth persisting only if it becomes a recurring point of confusion. | `PaperActivityView.tsx` (pre-fix, `failedIndex` fallback and `getStatus`) | VISIBILITY | **FOUND VIA MANUAL TEST — FIXED WITHIN THIS PR** |
 | B4.1 | No React error boundary anywhere | (absent, `Prism.Web/src`) | VISIBILITY | VERIFIED |
 | B4.2 | No browser telemetry of any kind | `Prism.Web/package.json` | VISIBILITY | VERIFIED |
 | B4.3 | After 5 failed reconnects SignalR dies with only a `console.warn` | `services/signalRService.ts:5,37-40` | VISIBILITY | VERIFIED |
+
+**Known gap under B3.3, not fixed here:** if the worker process itself dies mid-job (killed, OOM, crashes) rather than raising a handled exception, no failure event and no completion message of any kind is ever published — the paper remains `InProgress` indefinitely, on both the fetched and live paths, since neither ever fires. A dead process cannot announce its own death; closing this needs a stale-job detector (e.g. a max-age check against `FileRecord.UploadedAt` while `Status == InProgress`), which is out of scope for this PR. Recorded here so it isn't mistaken for something this PR already covers.
 
 ### C — Telemetry
 
@@ -145,19 +154,26 @@ makes its effect visible.
 
 A failed run must stop reporting itself as a completed one.
 
-* **Problem IDs:** B1.5, B1.6-8, B2.3, B2.4, B2.5, B3.2
+* **Problem IDs:** B1.5, B1.6-8, B2.3, B2.4, B2.5, B3.2, B3.3, B3.4, B3.5, B3.6, B3.7 (B3.5 is a regression introduced by this same step's own B1.12 fix; B3.6 and B3.7 were found via manual smoke test, not code review; all three closed before this step shipped)
 * **Done when:** a failed summary no longer marks a paper `Completed`; an
   empty, scanned or password-protected PDF reaches a real `Failed` state with a
   message that names the cause; a retrieval failure in chat surfaces as an
   error rather than "out of scope for this paper"; `Completed` with zero claims
-  is distinguishable in the UI from a genuine zero-claim paper.
-* **Files likely touched:** `ai_service.py`, `main.py`, `paper_chat/tools.py`,
+  is distinguishable in the UI from a genuine zero-claim paper; a `Failed`
+  paper's stepper leaves its in-progress state and names the cause, both from
+  a live event and from a fetched/refreshed page (B3.3, B3.4).
+* **Files likely touched:** `ai_service.py`, `main.py`,
+  `extraction/pipeline_events.py`, `paper_chat/tools.py`,
   `paper_chat/agent.py`, `Middleware/GlobalExceptionHandler.cs`,
-  `components/matrix/PaperActivityView.tsx`
+  `Services/RabbitMqListenerService.cs`,
+  `Features/PaperSubmission/SubmitPaperEndPoint.cs`,
+  `Features/PaperSubmission/PaperClaimsResponse.cs`,
+  `components/matrix/PaperActivityView.tsx`,
+  `components/matrix/PaperHeader.tsx`, `components/MatrixView.tsx`
 * **Eval impact:** none expected - no extraction logic changes. Prompt files
   stay untouched, so the prompt hash must not change. Confirm with
   `get_prompt_version()` before and after.
-* **Status:** [ ] not started
+* **Status:** [x] implemented, uncommitted (working tree) - see §9
 
 ### 2 - Eval honesty
 
@@ -169,7 +185,7 @@ A failed run must stop reporting itself as a completed one.
 
 ### 3 - Caps and 429
 
-* **Problem IDs:** A1.1, A1.2, A1.4, A2.1, A2.2, A5, A2.7, A3.6 (A2.4 moved to step 5; A3.6 = no jitter and Retry-After never read on the Python LLM paths)
+* **Problem IDs:** A1.1, A1.2, A1.4, A2.1, A2.2, A2.8, A5, A2.7, A3.6 (A2.4 moved to step 5; A3.6 = no jitter and Retry-After never read on the Python LLM paths; A2.8 found and recorded, not implemented, in this PR - not yet reflected in this step's Done-when prose)
 * **Done when:**  global daily extraction cap, which lands first because it does not depend on per-user accounting being correct (one DB count); per-user daily papers; guests 2 papers per session (note the per-guest cap is not a protection; the global daily cap and per-IP limit are); guest sessions limited per IP per day (only after forwarded headers are verified); chat questions per user per day. All are config values, not constants in code. The ASP.NET limiter returns 429 explicitly (default is 503), with Retry-After and a JSON "code" (quota_daily | rate_burst), partitioned by `oid` for authenticated users. A re-run cooldown prevents bypasses (A2.7) and provider-side `Retry-After` is respected (A3.6). The UI shows the message inline on upload and in chat, with a countdown; never console-only. A circuit breaker handles provider 429s: after N consecutive 429s across primary and fallback the run stops with a named reason. Rate limit, quota and spend cap look alike, so do not parse error text. Includes the JoinChat ownership check (A1.4), using the same ResolveUserId ownership join the REST endpoints use.
 * **Files likely touched:** `Prism.ApiService/Program.cs`, `Features/PaperSubmission/SubmitPaperEndPoint.cs`, `Features/Auth/GuestAuthEndpoint.cs`, `Hubs/DocumentHub.cs`, `extraction/engine.py`, `extraction/grounding.py`
 * **Eval impact:** none.
@@ -177,7 +193,7 @@ A failed run must stop reporting itself as a completed one.
 
 ### 4 - See the spend *(code-only; verify on the local Aspire dashboard)*
 
-* **Problem IDs:** A4, C2.1, C3.2, C3.5, C4.1, B1.1, B1.14, D1.2, D1.5, D1.6, D1.8, A3.1 (Moved: C1.3 deferred to relaunch)
+* **Problem IDs:** A4, C2.1, C3.2, C3.5, C4.1, B1.1, B1.14, B1.15, D1.2, D1.5, D1.6, D1.8, A3.1 (Moved: C1.3 deferred to relaunch; B1.15 = structured log line on dead-letter, not the DLQ depth monitor itself - that's step 7)
 * **Done when:** one structured record per LLM call carrying stage, model, prompt_version, tokens in/out, cost, latency, correlation_id; one structured log line per HTTP request carrying user, route, status and duration; counters exist for: fallback model fired, claims extracted vs persisted, and SKIPPED; prompt_version is attached to spans, not only to rows and files; explicit timeouts on every LLM call; OTel gen_ai.* attributes so the Aspire GenAI view works; confirm the local OTLP path reaches the Aspire dashboard. Logging policy, four buckets:
   (a) product data (questions, answers, claims) in Postgres only;
   (b) telemetry with no content;
@@ -218,7 +234,7 @@ A failed run must stop reporting itself as a completed one.
 
 ### 7 - Local alerts
 
-* **Problem IDs:** E1.4, E2.1, C1.6
+* **Problem IDs:** E1.4, E2.1, C1.6, B1.15 (B1.15's DLQ depth monitor half; the structured log line half is step 4)
 * **Done when:** an Uptime Kuma container in AppHost; four monitors: apiservice /health, pythonAPI /health, worker heartbeat (push), pipeline problem (push from Prism on failure or cap hit); phone notifications via ntfy; the push token lives in user-secrets. Rejected for now: Prometheus + Alertmanager + Grafana (too heavy). Azure Monitor equivalents are documented for a relaunch. Alerts work only while the machine is on. Use an unguessable ntfy topic.
 * **Files likely touched:** `Prism.AppHost/AppHost.cs`
 * **Eval impact:** none.
@@ -308,7 +324,7 @@ Local rows: fill in during PR 6.
 
 | ID | Item | Status | Evidence / PR | Last verified |
 |---|---|---|---|---|
-| 1 | Honest status | Not started | — | 2026-09-28 |
+| 1 | Honest status | Implemented, uncommitted (working tree); includes B3.3/B3.4/B3.5/B3.6/B3.7 follow-up | prompt hash unchanged 0bcf9d44e619; 94 passed/0 failed/1 deselected (Python); 9/9 (C#); tsc -b exit 0; 10/10 (frontend, node --test, new activityViewLogic.test.ts) | 2026-09-30 |
 | 2 | Eval honesty | Not started | — | 2026-09-28 |
 | 3 | Caps and 429 | Not started | — | 2026-09-28 |
 | 4 | See the spend | Not started | — | 2026-09-28 |
