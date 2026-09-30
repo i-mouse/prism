@@ -64,6 +64,41 @@ def _download_blob_to_file(container_client: ContainerClient, blob_name: str, lo
     with open(local_path, "wb") as f:
         container_client.download_blob(blob_name).readinto(f)
 
+# Short, user-safe cause strings. Used as-is for BOTH the fetched path
+# (FileRecord.Summary, surfaced via PaperClaimsResponse.FailureReason) and
+# the live path (ExtractionProgressEvent.reason) - one string per failure
+# kind so the two paths can never disagree (B3.3 fix). Never interpolate
+# str(exception) into any of these: an exception message is uncontrolled
+# text (could echo a DB value, an SDK response fragment, etc.) and these
+# strings now reach the screen, not just server logs - the raw exception
+# still goes to print()/traceback/span, never to the screen.
+CORRUPT_PDF_REASON = "corrupted PDF - cannot extract text"
+PASSWORD_PROTECTED_REASON = "password-protected PDF - cannot extract text"
+SCANNED_PDF_REASON = "scanned or image-only PDF - no extractable text"
+FK_VIOLATION_REASON = "we couldn't process this file"
+GENERIC_FAILURE_REASON = "we couldn't process this file"
+
+
+class PdfPasswordProtectedError(Exception):
+    """Raised when a PDF requires a password. Deterministic at open time -
+    checked immediately after fitz.open() instead of letting
+    Document.load_page() raise ValueError partway through iteration, which
+    would be ambiguous with the IndexError a 0-page encrypted doc also
+    raises during that same iteration."""
+
+
+class ScannedPdfError(Exception):
+    """Raised when a PDF opens fine but yields no extractable text (e.g.
+    scanned/image-only pages with no text layer)."""
+
+
+def _raise_if_no_extractable_text(text: str) -> None:
+    """Called right after PDF text extraction, before any LLM call. Exact
+    empty/whitespace-only check - no length threshold, that's PR 5 (Guards)."""
+    if not text.strip():
+        raise ScannedPdfError(SCANNED_PDF_REASON)
+
+
 def extract_pdf_text_sync(local_path: str) -> tuple[str, int]:
     """Synchronous PDF extraction wrapper so it doesn't block the async loop.
 
@@ -72,6 +107,8 @@ def extract_pdf_text_sync(local_path: str) -> tuple[str, int]:
     """
     final_text = ''
     with fitz.open(local_path) as doc:
+        if doc.needs_pass or doc.is_encrypted:
+            raise PdfPasswordProtectedError(PASSWORD_PROTECTED_REASON)
         page_count = doc.page_count
         for page in doc:
             final_text += page.get_text()
@@ -210,6 +247,7 @@ async def main():
                                 is_pdf = extension.lower() == ".pdf"
                                 if is_pdf:
                                     final_text, page_count = await asyncio.to_thread(extract_pdf_text_sync, local_path)
+                                    _raise_if_no_extractable_text(final_text)
                                 else:
                                     final_text = await service.transcribe_audio(file_path=local_path)
 
@@ -385,13 +423,19 @@ async def main():
                                 print(f'[CORRUPT] Corrupted file detected: {file_name}', flush=True)
                                 traceback.print_exc()
 
+                                if emitter is not None:
+                                    try:
+                                        await emitter.emit_failed(current_stage, reason=CORRUPT_PDF_REASON)
+                                    except Exception:
+                                        pass  # don't let failure emission mask the original error
+
                                 error_message = {
                                     "fileId": file_id,
                                     "fileName": file_name,
                                     "connectionId": connection_id,
                                     "chatId": chat_id,
                                     "status": "Error", # Matches your React UI exactly
-                                    "summary": f"Could not process document. The file may be corrupted. Error: {str(e)}"
+                                    "summary": CORRUPT_PDF_REASON,
                                 }
 
                                 await channel.default_exchange.publish(
@@ -402,13 +446,19 @@ async def main():
                                 print(f'[DEAD] Message {file_name} sent to Dead Letter Queue.', flush=True)
 
                             # ==========================================
-                            # 2. TERMINAL ERROR (Postgres FK violation - bad file_id upstream)
+                            # 2. TERMINAL ERROR (Password-protected PDF)
                             # ==========================================
-                            except psycopg.errors.ForeignKeyViolation as e:
+                            except PdfPasswordProtectedError as e:
                                 process_span.record_exception(e)
                                 process_span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
-                                print(f'[DEAD] FK violation for {file_name} - file_id may be invalid: {e}', flush=True)
+                                print(f'[LOCKED] Password-protected file detected: {file_name}', flush=True)
                                 traceback.print_exc()
+
+                                if emitter is not None:
+                                    try:
+                                        await emitter.emit_failed(current_stage, reason=PASSWORD_PROTECTED_REASON)
+                                    except Exception:
+                                        pass  # don't let failure emission mask the original error
 
                                 error_message = {
                                     "fileId": file_id,
@@ -416,7 +466,69 @@ async def main():
                                     "connectionId": connection_id,
                                     "chatId": chat_id,
                                     "status": "Error",
-                                    "summary": f"Database FK violation. Extraction cannot proceed: {str(e)}"
+                                    "summary": PASSWORD_PROTECTED_REASON,
+                                }
+
+                                await channel.default_exchange.publish(
+                                    aio_pika.Message(body=json.dumps(error_message).encode()),
+                                    routing_key='document_processed_queue',
+                                )
+                                await message.reject(requeue=False)
+                                print(f'[DEAD] Message {file_name} sent to Dead Letter Queue (password-protected).', flush=True)
+
+                            # ==========================================
+                            # 3. TERMINAL ERROR (Scanned/image-only PDF - no extractable text)
+                            # ==========================================
+                            except ScannedPdfError as e:
+                                process_span.record_exception(e)
+                                process_span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+                                print(f'[EMPTY] No extractable text: {file_name}', flush=True)
+                                traceback.print_exc()
+
+                                if emitter is not None:
+                                    try:
+                                        await emitter.emit_failed(current_stage, reason=SCANNED_PDF_REASON)
+                                    except Exception:
+                                        pass  # don't let failure emission mask the original error
+
+                                error_message = {
+                                    "fileId": file_id,
+                                    "fileName": file_name,
+                                    "connectionId": connection_id,
+                                    "chatId": chat_id,
+                                    "status": "Error",
+                                    "summary": SCANNED_PDF_REASON,
+                                }
+
+                                await channel.default_exchange.publish(
+                                    aio_pika.Message(body=json.dumps(error_message).encode()),
+                                    routing_key='document_processed_queue',
+                                )
+                                await message.reject(requeue=False)
+                                print(f'[DEAD] Message {file_name} sent to Dead Letter Queue (no extractable text).', flush=True)
+
+                            # ==========================================
+                            # 4. TERMINAL ERROR (Postgres FK violation - bad file_id upstream)
+                            # ==========================================
+                            except psycopg.errors.ForeignKeyViolation as e:
+                                process_span.record_exception(e)
+                                process_span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+                                print(f'[DEAD] FK violation for {file_name} - file_id may be invalid: {e}', flush=True)
+                                traceback.print_exc()
+
+                                if emitter is not None:
+                                    try:
+                                        await emitter.emit_failed(current_stage, reason=FK_VIOLATION_REASON)
+                                    except Exception:
+                                        pass  # don't let failure emission mask the original error
+
+                                error_message = {
+                                    "fileId": file_id,
+                                    "fileName": file_name,
+                                    "connectionId": connection_id,
+                                    "chatId": chat_id,
+                                    "status": "Error",
+                                    "summary": FK_VIOLATION_REASON,
                                 }
 
                                 await channel.default_exchange.publish(
@@ -427,7 +539,7 @@ async def main():
                                 print(f'[DEAD] Message {file_name} sent to Dead Letter Queue (FK violation).', flush=True)
 
                             # ==========================================
-                            # 3. TRANSIENT ERROR (LLM Timeout, Network Blip, Extraction JSON)
+                            # 5. TRANSIENT ERROR (LLM Timeout, Network Blip, Extraction JSON)
                             #    Retry up to MAX_ATTEMPTS, then DLQ.
                             # ==========================================
                             except Exception as e:
@@ -435,13 +547,18 @@ async def main():
                                 process_span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
                                 traceback.print_exc()
 
-                                if emitter is not None:
-                                    try:
-                                        await emitter.emit_failed(current_stage)
-                                    except Exception:
-                                        pass  # don't let failure emission mask the original error
-
                                 if attempt >= MAX_ATTEMPTS:
+                                    # Only the truly terminal outcome reaches the screen as
+                                    # failed - a retryable attempt must not, or the UI would
+                                    # show a terminal failure (with a "Choose a different
+                                    # file" action) for a run that's about to succeed on the
+                                    # next attempt. See B3.3 Phase 1b Check 1.
+                                    if emitter is not None:
+                                        try:
+                                            await emitter.emit_failed(current_stage, reason=GENERIC_FAILURE_REASON)
+                                        except Exception:
+                                            pass  # don't let failure emission mask the original error
+
                                     print(f'[DEAD] {file_name} exceeded {MAX_ATTEMPTS} attempts, sending to DLQ', flush=True)
                                     error_message = {
                                         "fileId": file_id,
@@ -449,7 +566,7 @@ async def main():
                                         "connectionId": connection_id,
                                         "chatId": chat_id,
                                         "status": "Error",
-                                        "summary": f"Processing failed after {MAX_ATTEMPTS} attempts: {str(e)}"
+                                        "summary": GENERIC_FAILURE_REASON,
                                     }
                                     await channel.default_exchange.publish(
                                         aio_pika.Message(body=json.dumps(error_message).encode()),

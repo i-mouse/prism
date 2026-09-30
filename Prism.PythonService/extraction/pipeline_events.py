@@ -28,6 +28,7 @@ class ExtractionProgressEvent(TypedDict, total=False):
     total: Optional[int]
     failedStage: Optional[Stage]
     detail: Optional[str]
+    reason: Optional[str]
 
 
 class ProgressEmitter:
@@ -73,10 +74,14 @@ class ProgressEmitter:
             "detail": f"Linked {done}/{total} claims",
         })
 
-    async def emit_failed(self, failed_stage: Stage) -> None:
+    async def emit_failed(self, failed_stage: Stage, reason: str) -> None:
+        """reason must be a short, user-safe cause - no paper text, no stack
+        traces, no raw exception messages (log hygiene, see docs
+        §3D and this PR's B3.3 finding)."""
         await self._publish({
             "fileId": self._file_id,
             "chatId": self._chat_id,
             "stage": "failed",
             "failedStage": failed_stage,
+            "reason": reason,
         })

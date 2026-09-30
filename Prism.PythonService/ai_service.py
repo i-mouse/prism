@@ -26,13 +26,14 @@ class AIService:
                 ]
             )
             return response.choices[0].message.content
-         
+
         except AuthenticationError as ae:
                print(f"AuthenticationError: {ae}")
+               raise
 
         except Exception as e:
             print(f"Error: {e}")
-            return "Error while analyzing the prism doc"
+            raise
 
     async def transcribe_audio(self, file_path: str):
         print(f" [AUDIO] Uploading audio to Gemini: {file_path}...")
