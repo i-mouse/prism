@@ -80,7 +80,40 @@ public class RabbitMqListenerService : BackgroundService
             !dataObject.TryGetProperty("chatId", out var chatIdProp) ||
             !dataObject.TryGetProperty("summary", out var summaryProp))
         {
-            _logger.LogWarning("Missing required properties in payload. Skipping message.");
+            // Shape only (property names), never content - see log hygiene (§3 D).
+            var payloadShape = string.Join(",", dataObject.EnumerateObject().Select(p => p.Name));
+            _logger.LogWarning("Malformed completion message, shape: {Shape}. Missing required property.", payloadShape);
+
+            // Without fileId there is no row to mark Failed - log and drop is
+            // all that's possible. With fileId, the paper would otherwise be
+            // stuck InProgress forever (B1.12) - mark it Failed instead.
+            // Guarded the same way as the normal completion branch below: a
+            // duplicate/late malformed message for an already-terminal file
+            // must never flip a Completed paper to Failed and destroy its
+            // real Summary (regression found and closed within this PR).
+            if (fileIdProp.ValueKind != JsonValueKind.Undefined && Guid.TryParse(fileIdProp.ToString(), out var malformedFileGuid))
+            {
+                using var malformedScope = _serviceScopeFactory.CreateScope();
+                var malformedDbContext = malformedScope.ServiceProvider.GetRequiredService<PrismDBContext>();
+                var malformedRecord = await malformedDbContext.FileRecords.FindAsync(new object?[] { malformedFileGuid }, stoppingToken);
+                if (malformedRecord != null)
+                {
+                    if (ShouldApplyStatusTransition(malformedRecord.Status))
+                    {
+                        malformedRecord.Status = Prism.ApiService.Data.Schemas.ExtractionStatus.Failed;
+                        malformedRecord.Summary = "Processing failed: malformed completion message from the extraction worker.";
+                        malformedRecord.UploadedAt = DateTime.UtcNow;
+                        await malformedDbContext.SaveChangesAsync(stoppingToken);
+                    }
+                    else
+                    {
+                        _logger.LogWarning(
+                            "Malformed completion message for fileId={FileId} arrived after it already reached a terminal state ({Status}) - ignoring, not overwriting.",
+                            malformedFileGuid, malformedRecord.Status);
+                    }
+                }
+            }
+
             await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
             return;
         }
@@ -89,8 +122,12 @@ public class RabbitMqListenerService : BackgroundService
         var chatId = chatIdProp.ToString();
         var summary = summaryProp.ToString();
         
-        var statusString = dataObject.TryGetProperty("status", out var statusProp) ? statusProp.ToString() : "Completed";
-        var finalStatus = statusString == "Error" ? Prism.ApiService.Data.Schemas.ExtractionStatus.Failed : Prism.ApiService.Data.Schemas.ExtractionStatus.Completed;
+        var statusString = dataObject.TryGetProperty("status", out var statusProp) ? statusProp.ToString() : null;
+        var finalStatus = MapCompletionStatus(statusString);
+        if (finalStatus == Prism.ApiService.Data.Schemas.ExtractionStatus.Failed && statusString != "Error")
+        {
+            _logger.LogWarning("Completion message for fileId={FileId} had missing/unrecognized status {Status} - marking Failed", fileIdStr, statusString ?? "(missing)");
+        }
 
        using (var scope = _serviceScopeFactory.CreateScope())
        {
@@ -98,6 +135,24 @@ public class RabbitMqListenerService : BackgroundService
         var fileGuid = Guid.Parse(fileIdStr);
 
         var obj = await dbContext.FileRecords.FindAsync(new object?[] { fileGuid }, stoppingToken);
+        if (obj != null && !ShouldApplyStatusTransition(obj.Status))
+        {
+            // A duplicate or late completion message for a paper that already
+            // reached a terminal state (Completed or Failed) - RabbitMQ has no
+            // persistent volume in production and the retry path is
+            // republish-and-ack, so duplicates are plausible. Applying this
+            // would silently flip a Completed paper to Failed and destroy its
+            // real Summary - worse than the bug it would "fix". Log and ignore
+            // the whole message, including the broadcast below: the paper's
+            // true state hasn't changed, so there is nothing honest to tell
+            // connected clients that a refetch of the unchanged record
+            // wouldn't already show them.
+            _logger.LogWarning(
+                "Completion message for fileId={FileId} arrived after it already reached a terminal state ({Status}) - ignoring, not overwriting.",
+                fileIdStr, obj.Status);
+            await channel.BasicAckAsync(ea.DeliveryTag, false, stoppingToken);
+            return;
+        }
         if(obj!=null)
             {
                 obj.Summary = summary;
@@ -163,4 +218,30 @@ public class RabbitMqListenerService : BackgroundService
         // keep the aaplication  running forver and close it  when user stop the appl;ication like stop the debugging
       await Task.Delay(-1,stoppingToken);
     }
+
+    // Pure and static so it's testable without a broker. "Completed" maps to
+    // Completed; everything else - "Error", missing, empty, or any other
+    // value - maps to Failed. Callers decide separately whether an
+    // unrecognized (non-"Error") value is worth a warning log.
+    public static Prism.ApiService.Data.Schemas.ExtractionStatus MapCompletionStatus(string? statusString) =>
+        statusString switch
+        {
+            "Completed" => Prism.ApiService.Data.Schemas.ExtractionStatus.Completed,
+            _ => Prism.ApiService.Data.Schemas.ExtractionStatus.Failed,
+        };
+
+    // Pure and static so it's testable without a broker or a DbContext. A
+    // completion message (normal or malformed) is only ever allowed to move
+    // a paper OUT of Pending/InProgress. Once a paper is Completed or Failed,
+    // every later message for that fileId - a duplicate, a late retry replay,
+    // a malformed one - is logged and ignored rather than applied. RabbitMQ
+    // has no persistent volume in production and the retry path is
+    // republish-and-ack, so a duplicate delivery is plausible, not
+    // theoretical. Regression found and closed within this PR: a prior
+    // version of this guard did not exist, so a duplicate/malformed message
+    // for an already-Completed file could silently flip it to Failed and
+    // overwrite its real Summary.
+    public static bool ShouldApplyStatusTransition(Prism.ApiService.Data.Schemas.ExtractionStatus currentStatus) =>
+        currentStatus == Prism.ApiService.Data.Schemas.ExtractionStatus.Pending ||
+        currentStatus == Prism.ApiService.Data.Schemas.ExtractionStatus.InProgress;
 }
