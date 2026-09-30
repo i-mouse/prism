@@ -129,30 +129,33 @@
         {
           "id": "REFLEX-M08",
           "claim_text_verbatim": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers.",
-          "claim_summary": "Reflexion agents consistently demonstrate superior decision-making, reasoning, and programming abilities across all evaluated task types.",
+          "claim_summary": "Reflexion agents outperform baselines on all three task types tested: decision-making, reasoning, and programming.",
           "expected_label": "partially_supported",
           "expected_evidence_sections": [
             "Section 4",
+            "Table 1",
+            "Appendix A",
             "Appendix B.1"
           ],
           "grounding_negative": true,
-          "scoring_notes": "The introduction's phrasing generalizes beyond the three main tasks by claiming superiority across all three 'types of tasks' (including sequential decision-making broadly), and Appendix B.1's WebShop failure contradicts that generalization.",
+          "scoring_notes": "Intro makes an unqualified category-level claim. The paper's own results contain exceptions in two of three categories. (1) Programming: Table 1 shows Reflexion below baseline GPT-4 on MBPP Python (77.1 vs 80.1), and Section 4.3 Results concedes SOTA \"except for MBPP Python\"; Appendix A shows no gain with starchat-beta (0.26 vs 0.26). (2) Decision-making: Appendix B.1 (under Appendix B \"Decision-making\") reports WebShop runs stopped after four trials with no improvement, and the Figure 6 caption states ReAct + Reflexion fails to significantly outperform ReAct. AlfWorld, HotPotQA and HumanEval support the headline benchmarks, so partially_supported, not not_supported.",
           "why_this_case": "Checks if the system catches contradictions buried in the appendix that weaken broad introductory claims.",
           "confidence": 0.80
         },
         {
           "id": "REFLEX-M09",
           "claim_text_verbatim": "Reflexion improves performance over strong baselines by 22% in AlfWorld, 20% in HotPotQA, and 11% on HumanEval.",
-          "claim_summary": "Reflexion yields an 11% performance improvement on the HumanEval benchmark.",
+          "claim_summary": "Reflexion improves HumanEval performance by 11% over strong baselines.",
           "expected_label": "partially_supported",
           "expected_evidence_sections": [
             "Section 4",
+            "Section 4.3",
             "Table 1"
           ],
           "grounding_negative": true,
-          "scoring_notes": "The paper broadly claims an 11% improvement on 'HumanEval' in the text, but Table 1 shows this 11% boost (80.1% to 91.0%) only applies to HumanEval Python. On HumanEval Rust, the improvement is only 8% (60.0% to 68.0%).",
+          "scoring_notes": "Scores the HumanEval sub-claim only. Table 1: HumanEval (PY) 80.1 (GPT-4) -> 91.0 Reflexion, +10.9 pts, consistent with \"11%\". But the paper states conflicting baselines for the same result: Section 4.3 Analysis gives the HumanEval Python baseline as 82%, which would put the gain near 9 pts. The Intro also hedges it as \"by as much as 11%\"; Section 4 states it unhedged. Rust (60.0 -> 68.0) is a 50-hardest-problem MultiPL-E subset (Table 2 caption), not full HumanEval, so it is not used as grounds (consistent with REFLEX-M01).",
           "why_this_case": "Catches overly broad reporting of a metric that only applies to a subset of the data.",
-          "confidence": 0.80
+          "confidence": 0.65
         },
         {
           "id": "REFLEX-M11",
