@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useExtractionProgress, useSignalR } from "@/hooks/useSignalR";
 import type { ExtractionStage, ExtractionProgressEvent } from "@/types/api";
 import { cn } from "@/lib/utils";
+import { shouldSynthesizeFailureLine, stepperRowStatus, type RowStatus } from "@/lib/activityViewLogic";
 
 interface PaperActivityViewProps {
   // null until the upload's POST response resolves — chatId is what the
@@ -12,12 +13,22 @@ interface PaperActivityViewProps {
   chatId: string;
   fileName: string;
   extractionStatus: string;
+  // Authoritative failure cause once extractionStatus is "Failed" - fetched
+  // from PaperClaimsResponse.failureReason. Preferred over the live event's
+  // reason (below) once it lands; see ExtractionProgressState.failedReason.
+  failureReason?: string | null;
   // Cache-hit inline decision (Continue / Re-run). Undefined/false outside
   // of a cache-hit upload flow.
   isCacheHitPending?: boolean;
   isGoogleUser?: boolean;
   onCacheHitContinue?: () => void;
   onCacheHitCancel?: () => void;
+  // Returns the user to upload from the failed state. Deliberately not a
+  // retry/re-run: terminal content failures (corrupt/password/scanned) are
+  // deterministic on the same file, and re-run bypasses dedupe with no
+  // quota or cooldown today (A2.7, deferred to PR 3) - a retry button here
+  // would be an uncapped spend path.
+  onChooseDifferentFile?: () => void;
 }
 
 const STAGE_ORDER: ExtractionStage[] = ["preparing", "extracting", "auditing", "grounding", "finalizing", "done"];
@@ -31,8 +42,6 @@ const STAGE_LABELS: Record<ExtractionStage, string> = {
   done: "Done",
   failed: "Failed",
 };
-
-type RowStatus = "completed" | "current" | "pending" | "failed";
 
 // Single source of truth for the 4-color status system — the stepper dots
 // and the log panel's bracketed stage tags both read from these instead of
@@ -78,6 +87,11 @@ interface LogEntry {
   message: string;
   isError?: boolean;
   isBurstStatus?: boolean;
+  // True only for the fetched-only-path fallback line (no live
+  // ExtractionProgress "failed" event ever arrived this mount) - the worker
+  // never said this, so it must render visibly differently from a real
+  // pipeline event line, not just carry the same reason text.
+  synthesized?: boolean;
 }
 
 function formatElapsed(totalSeconds: number): string {
@@ -90,15 +104,21 @@ function nowTime(): string {
   return new Date().toLocaleTimeString("en-US", { hour12: false });
 }
 
+function capitalize(s: string): string {
+  return s.length ? s[0].toUpperCase() + s.slice(1) : s;
+}
+
 export function PaperActivityView({
   fileId,
   chatId,
   fileName,
   extractionStatus,
+  failureReason,
   isCacheHitPending = false,
   isGoogleUser = false,
   onCacheHitContinue,
   onCacheHitCancel,
+  onChooseDifferentFile,
 }: PaperActivityViewProps) {
   const progress = useExtractionProgress(chatId, fileId);
   const { on, off } = useSignalR();
@@ -111,6 +131,14 @@ export function PaperActivityView({
 
   const cacheHitFlowRef = useRef(false);
   const cacheHitContinuePendingRef = useRef(false);
+  // Idempotency guard for the synthesized-failure-line effect below,
+  // independent of where hasFailed's value comes from. A ref (not the
+  // `logs` state the effect also checks) because React 18 StrictMode
+  // double-invokes an effect on mount against the SAME closure before
+  // either invocation's setState is visible to the other - a state-only
+  // check can't see its own prior write yet, but a ref mutates
+  // synchronously and is shared across both invocations.
+  const hasSynthesizedFailureLineRef = useRef(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -141,8 +169,20 @@ export function PaperActivityView({
 
   const hasFailed = effectiveStage === "failed" || extractionStatus === "Failed";
   const currentIndex = (effectiveStage && !hasFailed) ? STAGE_ORDER.indexOf(effectiveStage) : 0;
-  const failedIndex = hasFailed ? (progress?.failedStage ? STAGE_ORDER.indexOf(progress.failedStage) : 1) : -1;
+  // -1 (not a hardcoded stage guess) when the real failedStage is unknown -
+  // the live event carries it, but nothing persists it for the fetched-only
+  // path (refresh, missed broadcast). Guessing a specific step here would
+  // show a wrong one as failed; -1 makes getStatus render every row neutral
+  // instead (known limitation - see B3.7 in docs/observability-and-cost-plan.md).
+  const failedIndex = hasFailed ? (progress?.failedStage ? STAGE_ORDER.indexOf(progress.failedStage) : -1) : -1;
   const isDone = effectiveStage === "done";
+
+  // Fetched (authoritative) reason wins once it lands; the live event's
+  // reason is the fast path shown before that fetch resolves; a page
+  // refresh after the run already ended has only the fetched one. Generic
+  // fallback covers the small window where hasFailed is true from
+  // extractionStatus alone but neither reason has arrived yet.
+  const effectiveFailureReason = failureReason ?? progress?.failedReason ?? "we couldn't process this file";
 
   const startTimeRef = useRef<number>(Date.now());
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -167,7 +207,7 @@ export function PaperActivityView({
       let msg = ev.detail;
       if (!msg) {
         if (ev.stage === "done") msg = "Processing complete.";
-        else if (ev.stage === "failed") msg = `Failed during ${ev.failedStage ?? "processing"}`;
+        else if (ev.stage === "failed") msg = ev.reason ?? `Failed during ${ev.failedStage ?? "processing"}`;
         else return;
       }
       const time = nowTime();
@@ -198,6 +238,36 @@ export function PaperActivityView({
       off("ExtractionProgress", handler);
     };
   }, [chatId, fileId, on, off]);
+
+  // Covers the case no live "failed" ExtractionProgress event ever arrives
+  // for this mount - a page refresh after the run already ended, or a
+  // missed/reconnect-delayed broadcast. The live handler above already logs
+  // a line when the event does arrive; this only fills the gap when it
+  // didn't, so the log strip's last line is always the failure reason
+  // before the stepper switches to the failed state (never silent).
+  //
+  // Idempotent regardless of how many times this fires with the same
+  // inputs (e.g. React 18 StrictMode's dev-only double-invoke-on-mount):
+  // hasSynthesizedFailureLineRef flips synchronously on the first run, so a
+  // second invocation against the same stale `logs` closure is a no-op.
+  useEffect(() => {
+    if (!shouldSynthesizeFailureLine(hasSynthesizedFailureLineRef.current, hasFailed, logs)) return;
+    hasSynthesizedFailureLineRef.current = true;
+    setLogState((prev) => ({
+      ...prev,
+      visible: [
+        ...prev.visible,
+        {
+          id: crypto.randomUUID(),
+          time: nowTime(),
+          stage: "failed",
+          message: effectiveFailureReason,
+          isError: true,
+          synthesized: true,
+        },
+      ],
+    }));
+  }, [hasFailed, logs, effectiveFailureReason]);
 
   useEffect(() => {
     if (autoScroll && scrollRef.current) {
@@ -244,15 +314,8 @@ export function PaperActivityView({
     pendingLogs.length === 0 &&
     logs.some((l) => l.message.startsWith("Found it — already audited"));
 
-  const getStatus = (index: number): RowStatus => {
-    if (hasFailed) {
-      if (index === failedIndex) return "failed";
-      return index < failedIndex || failedIndex === -1 ? "completed" : "pending";
-    }
-    if (index < currentIndex) return "completed";
-    if (index === currentIndex) return "current";
-    return "pending";
-  };
+  const getStatus = (index: number): RowStatus =>
+    stepperRowStatus(index, hasFailed, failedIndex, currentIndex);
 
   // Same status computation the stepper uses, keyed by a log line's stage
   // string instead of a STAGE_ORDER index — so a log tag and its matching
@@ -366,14 +429,18 @@ export function PaperActivityView({
           <div className="flex-1 flex flex-col overflow-hidden rounded-xl bg-[#18181B] shadow-inner w-full max-h-[400px]">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 shrink-0">
               <div className="flex items-center gap-2">
-                <div className={cn("h-2 w-2 rounded-full animate-pulse", STATUS_BG_CLASS.current)} />
-                <span className="font-sans text-sm text-white/90">Analysis in progress...</span>
+                <div className={cn("h-2 w-2 rounded-full", hasFailed ? STATUS_BG_CLASS.failed : cn(STATUS_BG_CLASS.current, "animate-pulse"))} />
+                <span className="font-sans text-sm text-white/90">{hasFailed ? "Processing failed" : "Analysis in progress..."}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-mono text-xs text-white/50 tabular-nums">{formatElapsed(elapsedSeconds)}</span>
-                <div className={cn("flex items-center gap-1.5 rounded-full border px-2 py-0.5", "border-status-active/30")}>
-                  <div className={cn("h-3 w-3 rounded-full border-[1.5px] border-t-transparent animate-spin", STATUS_BORDER_CLASS.current)} />
-                  <span className={cn("font-sans text-xs font-medium", STATUS_TEXT_CLASS.current)}>{STAGE_LABELS[effectiveStage || "preparing"]}</span>
+                <div className={cn("flex items-center gap-1.5 rounded-full border px-2 py-0.5", hasFailed ? "border-status-failed/30" : "border-status-active/30")}>
+                  {hasFailed ? (
+                    <XCircle className={cn("h-3 w-3", STATUS_TEXT_CLASS.failed)} />
+                  ) : (
+                    <div className={cn("h-3 w-3 rounded-full border-[1.5px] border-t-transparent animate-spin", STATUS_BORDER_CLASS.current)} />
+                  )}
+                  <span className={cn("font-sans text-xs font-medium", hasFailed ? STATUS_TEXT_CLASS.failed : STATUS_TEXT_CLASS.current)}>{hasFailed ? "Failed" : STAGE_LABELS[effectiveStage || "preparing"]}</span>
                 </div>
                 <button className="rounded-md p-1 text-white/50 hover:bg-white/10 hover:text-white transition-colors">
                   <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -401,17 +468,26 @@ export function PaperActivityView({
                     const stageColor = STATUS_TEXT_CLASS[status];
                     const isNewGroup = i > 0 && logs[i - 1].stage !== log.stage;
 
+                    // A synthesized line is never something the worker sent -
+                    // it must not read like a real pipeline event. Muted color,
+                    // "[Status]" instead of "[Failed]", and an explicit note
+                    // that it's a saved status rather than a live report.
+                    const tagLabel = log.synthesized ? "Status" : (STAGE_LABELS[log.stage as ExtractionStage] || log.stage);
+                    const tagColor = log.synthesized ? "text-white/50" : stageColor;
+                    const messageColor = log.synthesized ? "text-white/60 italic" : status === "failed" ? STATUS_TEXT_CLASS.failed : "text-white/90";
+
                     return (
                       <div
                         key={log.id}
                         className={cn("break-words leading-relaxed", i === 0 ? "" : isNewGroup ? "mt-4" : "mt-1")}
                       >
                         <span className="text-white/40 mr-3">[{log.time}]</span>
-                        <span className={cn("mr-2 font-semibold", stageColor)}>
-                          [{STAGE_LABELS[log.stage as ExtractionStage] || log.stage}]
+                        <span className={cn("mr-2 font-semibold", tagColor)}>
+                          [{tagLabel}]
                         </span>
-                        <span className={status === "failed" ? STATUS_TEXT_CLASS.failed : "text-white/90"}>
+                        <span className={messageColor}>
                           {log.message}
+                          {log.synthesized && " (saved status - not a live report)"}
                         </span>
                       </div>
                     );
@@ -457,13 +533,33 @@ export function PaperActivityView({
 
           {/* BELOW BOTH COLUMNS — COUNTER STRIP */}
           <div className="mt-4 flex flex-col md:flex-row gap-4 pt-2">
-            <div className="flex-1 flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
-              <div className="h-6 w-6 shrink-0 rounded-full border-[2.5px] border-brand border-t-transparent animate-spin" />
-              <div>
-                <div className="font-sans text-sm font-semibold text-ink">Working on your paper...</div>
-                <div className="font-sans text-xs text-ink-secondary mt-0.5">This may take a few minutes. You can safely leave this page.</div>
+            {hasFailed ? (
+              <div className={cn("flex-1 flex items-center gap-4 rounded-xl border bg-surface p-4", STATUS_BORDER_CLASS.failed)}>
+                <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white", STATUS_BG_CLASS.failed)}>
+                  <XCircle className="h-4 w-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-sans text-sm font-semibold text-ink">Couldn&apos;t process this file</div>
+                  <div className={cn("font-sans text-xs mt-0.5", STATUS_TEXT_CLASS.failed)}>{capitalize(effectiveFailureReason)}.</div>
+                </div>
+                {onChooseDifferentFile && (
+                  <button
+                    onClick={onChooseDifferentFile}
+                    className="shrink-0 rounded-md bg-charcoal px-3 py-1.5 font-sans text-xs font-medium text-white hover:opacity-90 transition-colors"
+                  >
+                    Choose a different file
+                  </button>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="flex-1 flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+                <div className="h-6 w-6 shrink-0 rounded-full border-[2.5px] border-brand border-t-transparent animate-spin" />
+                <div>
+                  <div className="font-sans text-sm font-semibold text-ink">Working on your paper...</div>
+                  <div className="font-sans text-xs text-ink-secondary mt-0.5">This may take a few minutes. You can safely leave this page.</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
