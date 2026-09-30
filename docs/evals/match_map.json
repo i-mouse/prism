@@ -1,0 +1,393 @@
+{
+  "metadata": {
+    "prompt_hash": "0bcf9d44e619",
+    "fixture_file": null,
+    "schema_version": 1
+  },
+  "rows": {
+    "REFLEX-M01": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "1e304989276689370bf4e11d6f8854b53e52143d9195971fa817bd45ce4453e3",
+        "score": 95.6,
+        "claim_text_snippet": "For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-o"
+      }
+    },
+    "REFLEX-M02": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "dce67ae2b29f639ee65485db8c37d6e65301d84ca512f1cd190bee26181a5d60",
+        "score": 68.2,
+        "claim_text_snippet": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an a"
+      }
+    },
+    "REFLEX-M03": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REFLEX-M04": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REFLEX-M05": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REFLEX-M06": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "dfdef9e8e52e83e0ab830eaadf424566b681ad979f4a382e3d626d1a631ef6a7",
+        "score": 98.2,
+        "claim_text_snippet": "3 shows an inferior 52% vs 60% (baseline) accuracy, which suggests that the agent is unable to determine if the current "
+      }
+    },
+    "REFLEX-M07": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REFLEX-M08": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "c1a547b22d14f124cd4cb6ac0c782da944f20f1f84df90c3b6e318d8d6051569",
+        "score": 100.0,
+        "claim_text_snippet": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers."
+      }
+    },
+    "REFLEX-M09": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REFLEX-M11": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "66ce9fd05db6699067745cb2b4a330dc6d836f749970d31080bffd00206db24a",
+        "score": 70.7,
+        "claim_text_snippet": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through lingui"
+      }
+    },
+    "REFLEX-M12": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REFLEX-M13": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "66ce9fd05db6699067745cb2b4a330dc6d836f749970d31080bffd00206db24a",
+        "score": 100.0,
+        "claim_text_snippet": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through lingui"
+      }
+    },
+    "COT-M01": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "21c769aae599c51bd71e5b13644157876475286f01365845c215af982073ab9a",
+        "score": 94.0,
+        "claim_text_snippet": "For instance, prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the"
+      }
+    },
+    "COT-M02": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "1b149c88f8b8839076aaeca6e41a361b69824bb51fb09ff6e9a67b3fdcbabde7",
+        "score": 96.7,
+        "claim_text_snippet": "That is, chain-of-thought prompting does not positively impact performance for small models, and only yields performance"
+      }
+    },
+    "COT-M03": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "da098b8c89e3619115354d098087c7c4c90286c7ea4e0d638720057309974399",
+        "score": 91.3,
+        "claim_text_snippet": "Figure 5 shows that equation only prompting does not help much for GSM8K, which implies that the semantics of the questi"
+      }
+    },
+    "COT-M04": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "8612e80b6b4cefbb792aea6966268c533b4e808fa5c543011d93f5de84ceafde",
+        "score": 70.3,
+        "claim_text_snippet": "Although there is variance among different chain of thought annotations, as would be expected when using exemplar-based "
+      }
+    },
+    "COT-M05": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "COT-M06": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "COT-M07": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "COT-M08": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "ac160031e38226cf1aae8c4001dc275d9ce8d92627aab84f9296f8cb03cfdb1f",
+        "score": 63.6,
+        "claim_text_snippet": "Hence, chain-of-thought prompting facilitates length generalization beyond seen chains of thought for language models of"
+      }
+    },
+    "COT-M09": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "6f8cdad761cdf461ffb79502a71bd772c9dbd2ec0a25a655025af1adee3b357f",
+        "score": 75.5,
+        "claim_text_snippet": "These results demonstrate that chain-of-thought prompting can also improve performance on tasks requiring a range of com"
+      }
+    },
+    "COT-M10": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "a07240aa4e625dfe0a930467824ac976980fdadf788fef4943ef48721ddbae26",
+        "score": 85.5,
+        "claim_text_snippet": "Finally, chain-of-thought reasoning can be readily elicited in suf\ufb01ciently large off-the-shelf language models simply by"
+      }
+    },
+    "COT-M11": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "COT-M12": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REACT-M01": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "41aff536a2bd0e817364766146bdfb1a00e18528fd6690575110add1f476c8c4",
+        "score": 99.0,
+        "claim_text_snippet": "With additional sparse reasoning, ReAct achieves signi\ufb01cantly better performance, with an absolute 10% improvement over "
+      }
+    },
+    "REACT-M02": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REACT-M03": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REACT-M05": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "aafd144c4afef567f8c7e8a576ac3083aa8558f98f082e4ae81dce703637a7ec",
+        "score": 90.1,
+        "claim_text_snippet": "As can be seen in Table 3, ReAct substantially outperforms IM-style prompting (ReAct-IM) (71 vs. 53 overall success rate"
+      }
+    },
+    "REACT-M06": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "62fdbf438487a752bccc4531d6caf5d8695fd0b46345e742f54c644792df0f36",
+        "score": 82.6,
+        "claim_text_snippet": "However, when \ufb01netuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B \ufb01netuned ReA"
+      }
+    },
+    "REACT-M07": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REACT-M08": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "a79525d3ce5f7362cec2ef36932b24b1f2b01a6f15838796e9025d8b5433443f",
+        "score": 91.6,
+        "claim_text_snippet": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29."
+      }
+    },
+    "REACT-M09": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": null
+    },
+    "REACT-M10": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "eebd7801123d10f43f018a6ccbdb45852bf2af424ae66642b345488ccba6d51e",
+        "score": 99.4,
+        "claim_text_snippet": "While two ReAct + CoT-SC methods are advantageous at one task each, they both signi\ufb01cantly and consistently outperform C"
+      }
+    },
+    "REACT-M11": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "a02748c56b36a735b6fcad88e63d4aea841682ea84696c8df43a2d17a5b423f9",
+        "score": 68.0,
+        "claim_text_snippet": "Concretely, on question answering (HotpotQA) and fact veri\ufb01cation (Fever), ReAct overcomes prevalent issues of hallucina"
+      }
+    },
+    "REACT-M12": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "bdf5826050268bd1507504423248ff74e29d3780058efa1a23956c676b572eed",
+        "score": 70.6,
+        "claim_text_snippet": "ReAct shows strong generalization to new task instances while learning solely from one to six in-context examples, consi"
+      }
+    },
+    "REACT-M13": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "4c0fd1f7fdb57f77ece47d3e5776e5e812d7f9ecadd8c3347219d670975e102b",
+        "score": 82.1,
+        "claim_text_snippet": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effective"
+      }
+    },
+    "REACT-M14": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "suggested": {
+        "claim_fingerprint": "c2afb180463af0e8bdbb9645f200d068fd094665c677fded602ddbaca76e0d95",
+        "score": 69.7,
+        "claim_text_snippet": "In this work, we present ReAct, a general paradigm to combine reasoning and acting with language models for solving dive"
+      }
+    }
+  }
+}
