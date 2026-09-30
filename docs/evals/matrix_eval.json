@@ -307,7 +307,7 @@
         {
         "id": "COT-M08",
         "claim_text_verbatim": "we show that for symbolic reasoning, chain-of-thought prompting facilitates OOD generalization to longer sequence lengths",
-        "claim_summary": "Chain-of-thought prompting enables language models to successfully generalize out-of-distribution to inputs with longer sequence lengths.",
+        "claim_summary": "For symbolic reasoning, chain-of-thought prompting helps sufficiently large models generalize to test inputs with more steps than the few-shot exemplars.",
         "expected_label": "partially_supported",
         "expected_evidence_sections": [
             "Section 5",
@@ -315,23 +315,25 @@
             "Figure 8"
         ],
         "grounding_negative": true,
-        "scoring_notes": "The paper broadly claims length generalization, but Section 5 and Table 5 reveal this was only tested on two extremely simple synthetic 'toy tasks' (concatenating 3-4 letters instead of 2, and tracking 3-4 coin flips). It was not demonstrated on complex natural language reasoning tasks.",
+        "scoring_notes": "The claim is correctly scoped to symbolic reasoning, but rests on two synthetic tasks (Section 5): last-letter concatenation (2-word names in exemplars → 3/4-word names at test) and coin flip (2 people → 3/4 people). Table 5 shows the effect only at large scale (e.g., PaLM 540B letter concat OOD-4: 0.0 → 63.0; models ≤8B stay near 0), and OOD accuracy stays below in-domain (99.4 vs 63.0). Generalizing two toy tasks to 'symbolic reasoning' and dropping Section 5's 'sufficient scale' qualifier makes this partially supported.",
         "why_this_case": "Classic generalization claim technically supported by toy experiments, but partially justified due to the limited scope.",
         "confidence": 0.90
         },
         {
         "id": "COT-M09",
-        "claim_text_verbatim": "chain-of-thought prompting can also improve performance on tasks requiring a range of commonsense reasoning abilities",
-        "claim_summary": "Chain-of-thought prompting improves the factual and logical commonsense reasoning abilities of the models.",
+        "claim_text_verbatim": "chain-of-thought prompting can also improve performance on tasks requiring a range of commonsense reasoning abilities (though note that gain was minimal on CSQA)",
+        "claim_summary": "Chain-of-thought prompting can improve final-answer accuracy on several commonsense reasoning benchmarks, with minimal gain on CSQA.",
         "expected_label": "partially_supported",
         "expected_evidence_sections": [
             "Section 4",
+            "Table 4",
+            "Appendix A.2",
             "Appendix D.1"
         ],
         "grounding_negative": true,
-        "scoring_notes": "REVIEW: While Section 4 shows improved final-answer accuracy on commonsense datasets, Appendix D.1 admits the authors never verified the factuality of the reasoning paths, noting models likely arrived at correct multiple-choice answers via incorrect reasoning paths. Thus, the claim that it improves commonsense *reasoning* is only partially supported.",
-        "why_this_case": "Exposes a major caveat buried in the appendix regarding whether the model is actually reasoning correctly on commonsense tasks.",
-        "confidence": 0.85
+        "scoring_notes": "Section 4 / Figure 7 show gains for PaLM 540B on StrategyQA, Date, Sports, and SayCan. But the method-level claim does not hold across models: Table 4 shows chain-of-thought lowering CSQA accuracy for GPT-3 175B (79.5 → 73.5) and Codex (82.3 → 77.9), and slightly lowering StrategyQA for GPT-3 (65.9 → 65.4). Appendix A.2 concedes gains did not transfer for GPT-3 on CSQA/StrategyQA. Separately, Appendix D.1 notes correct multiple-choice answers may come from incorrect reasoning and leaves factuality analysis of these chains to future work, so the evidence supports accuracy gains, not improved reasoning.",
+        "why_this_case": "Method-level claim that holds for PaLM but regresses on CSQA for GPT-3 and Codex; tests whether the auditor checks cross-model tables rather than the headline figure.",
+        "confidence": 0.75
         },
         {
         "id": "COT-M10",
@@ -361,11 +363,11 @@
         {
         "id": "COT-M12",
         "claim_text_verbatim": "is potentially applicable (at least in principle) to any task that humans can solve via language.",
-        "claim_summary": "Chain-of-thought prompting can improve performance on any natural language task that human beings solve using language.",
+        "claim_summary": "Chain-of-thought prompting is potentially applicable, at least in principle, to any task humans can solve via language.",
         "expected_label": "not_supported",
         "expected_evidence_sections": [],
         "grounding_negative": true,
-        "scoring_notes": "Matches Pattern 2 (Generalization without test). While the text broadly claims applicability to 'any task that humans can solve via language', the experiments are strictly limited to arithmetic, commonsense QA, and symbolic toy tasks. They do not test general NLP tasks like translation or summarization (which they admit is future work in Appendix A.3).",
+        "scoring_notes": "Matches Pattern 2 (Generalization without test). The claim is explicitly hedged, but the hedge doesn't create evidence: experiments cover only arithmetic, commonsense (CSQA, StrategyQA, Date, Sports, SayCan), and two synthetic symbolic tasks. Appendix A.3 concedes evaluation on other tasks (e.g., machine translation) is left to future work. No section supports the 'any task' generalization.",
         "why_this_case": "A sweeping generalization claim in the intro/methodology that is not backed by the scope of the experiments.",
         "confidence": 0.90
         }
