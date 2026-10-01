@@ -895,3 +895,59 @@ Span grounding uses LLM_GROUNDING_MODEL / LLM_GROUNDING_FALLBACK_MODEL
 (config.py llm_grounding_model / llm_grounding_fallback_model, no defaults).
 The claim auditor is a different call: LLM_CLAIM_AUDIT_MODEL /
 LLM_CLAIM_AUDIT_FALLBACK_MODEL. groq_api_key exists.
+
+## Four-bucket scorer replaces omission-credit PASS/FAIL — 2026-10-01
+**Context:** The scorer credited a golden-negative row as a correct
+refusal whenever no claim was matched to it, regardless of why. The
+extractor doesn't know which rows are grounding-negative, so an
+omission was an accident, not judgment - crediting it rewarded
+extracting less. 9 of the original 10 "correct refusals" in an earlier
+baseline were by_omission, not by_label.
+**Decision:** Replace PASS/FAIL with four explicit outcomes: refused
+(grounding-rejected or labeled not_supported/partially_supported),
+wrongly_affirmed (labeled supported, not grounded away - FAIL),
+not_extracted (no claim emitted - no credit, stays in denominator),
+skipped (transient infra failure - excluded from denominator).
+**Consequences:** Fixture refusal rate dropped from the previously
+reported 11/14 (79%) to an honest 5/14 (36%) before further fixes.
+pass_threshold.refusal_rate re-baselined 0.70 -> 0.35 to match.
+
+## Match-map adjudication gate, fingerprint-keyed — 2026-10-01
+**Context:** The LLM-as-judge matcher used to pair golden rows to
+extracted claims is non-deterministic (two identical runs gave 14 vs
+15 positive hits). Pairings need to be decided once, by a human, and
+stay fixed regardless of future matcher re-runs.
+**Decision:** docs/evals/match_map.json holds one adjudicated entry
+per golden row, keyed by claim_fingerprint (sha256 of normalized
+claim_text_verbatim, not a DB id, since paper_claims.id regenerates on
+every extraction run). matrix_runner suppresses the headline and
+forces exit 1 until coverage is 37/37. decided_by alone never counts
+as coverage - is_adjudicated requires persisted_claim_id,
+claim_fingerprint, or an explicit confirmed_no_match marker (added
+after discovering the original schema had no way to mark a genuine
+omission as adjudicated).
+**Consequences:** First real, citeable number: 5/14 (36%) refusal
+rate, PASS vs the 0.35 threshold. Margin is thin - one row's worth.
+
+## 12 golden-eval corrections after hand-auditing all 3 papers — 2026-10-01
+**Context:** Hand-checked all 14 grounding-negative rows against the
+actual Reflexion/CoT/ReAct PDFs (page images cross-checked directly,
+not model self-report alone). Found a repeated pattern: golden rows
+had quietly dropped a hedge word the paper itself used ("can",
+"potentially", "for symbolic reasoning"), making the golden claim
+stronger than what the paper actually says.
+**Decision:** Corrected claim_summary/scoring_notes on 8 rows
+(REFLEX-M08/M09, COT-M08/M09/M12, REACT-M11/M13/M14's verdict-text).
+REACT-M13 and REACT-M14 also had expected_label flipped
+not_supported -> partially_supported after confirming against the
+real tables (M13 wins 2 of 4 benchmarks; M14 replaced entirely - its
+original quote spliced two unrelated sentences to manufacture a trap
+not actually in the paper). Separately fixed 4 stale fixture pairings
+(REFLEX-M12/M13, COT-M10, REACT-M10) where a real extracted claim
+existed but the matcher never paired it.
+**Consequences:** Surfaced a live finding in the pipeline itself: of
+the 5 rows now wrongly_affirmed, all 5 show the extractor correctly
+pulling the hedged sentence verbatim, then the auditor's own
+paraphrase of that sentence dropping the hedge before grading it -
+the identical failure pattern just fixed in the golden set, one layer
+deeper. Not yet actioned; candidate for the next PR.
