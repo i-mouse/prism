@@ -43,8 +43,9 @@ def score(
     positive_hits = 0
     positive_total = 0
     refused_by_label = 0
-    refused_by_omission = 0
     refused_by_grounding = 0
+    wrongly_affirmed = 0
+    not_extracted = 0
     false_rejections = 0
     skipped = 0
 
@@ -68,19 +69,27 @@ def score(
             if actual_claim is not None and actual_claim.label == row.expected_label:
                 strict_correct_refusals += 1
             if actual_claim is None:
-                outcome = "PASS"
-                correct_refusals += 1
-                refused_by_omission += 1
+                # No claim was emitted for this golden row. The extractor has
+                # no way to know this row is grounding-negative, so silence
+                # is an accident, not a refusal - no credit, but the row still
+                # counts toward total_negatives so it can't be gamed away.
+                outcome = "NOT_EXTRACTED"
+                not_extracted += 1
             elif _was_grounded_away(actual_claim):
-                outcome = "PASS"
+                # Grounding rejection is checked before label: a claim the
+                # extractor optimistically labeled 'supported' but that the
+                # grounder vetoed is still a correct refusal, not a wrongly
+                # affirmed claim.
+                outcome = "REFUSED"
                 correct_refusals += 1
                 refused_by_grounding += 1
             elif actual_claim.label in _REFUSAL_LABELS:
-                outcome = "PASS"
+                outcome = "REFUSED"
                 correct_refusals += 1
                 refused_by_label += 1
             else:
-                outcome = "FAIL"
+                outcome = "WRONGLY_AFFIRMED"
+                wrongly_affirmed += 1
         else:
             positive_total += 1
             if actual_claim is None:
@@ -125,8 +134,9 @@ def score(
         positive_total=positive_total,
         per_row=per_row,
         refused_by_label=refused_by_label,
-        refused_by_omission=refused_by_omission,
         refused_by_grounding=refused_by_grounding,
+        wrongly_affirmed=wrongly_affirmed,
+        not_extracted=not_extracted,
         false_rejections=false_rejections,
         false_rejection_rate=false_rejection_rate,
         positive_hit_floor=positive_hit_floor,

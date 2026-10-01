@@ -46,7 +46,8 @@ class Match(BaseModel):
 # RowOutcome JSON shape, as written into logs/eval/matrix_*.json under
 # papers[].report.per_row.<expected_id>:
 #   expected_id              golden-set row id, e.g. "REACT-M13"
-#   outcome                  PASS | FAIL | POSITIVE_HIT | POSITIVE_MISS | FALSE_REJECTION | SKIPPED
+#   outcome                  REFUSED | WRONGLY_AFFIRMED | NOT_EXTRACTED | POSITIVE_HIT |
+#                            POSITIVE_MISS | FALSE_REJECTION | SKIPPED
 #   expected_label           golden-set label: supported | partially_supported | not_supported
 #   expected_claim_text_verbatim  golden-set claim quote, from matrix_eval.json (may be "" if absent)
 #   expected_claim_summary   golden-set short claim description
@@ -54,13 +55,28 @@ class Match(BaseModel):
 #   actual_claim_text_verbatim    matched claim's verbatim quote, or null if no match
 #   actual_claim_summary     matched claim's short description, or null if no match
 #   actual_grounding_status  matched claim's grounding verdict (Pass/Partial/Fail/Skipped), or null
-# The two verbatim/summary pairs exist purely for human diagnosis - reading a FAIL row
-# should not require cross-referencing matrix_eval.json and a separate DB query by hand.
+# The two verbatim/summary pairs exist purely for human diagnosis - reading a
+# WRONGLY_AFFIRMED row should not require cross-referencing matrix_eval.json
+# and a separate DB query by hand.
+#
+# For a golden-negative row (grounding_negative or expected_label=="not_supported"):
+#   REFUSED           a claim was emitted and the pipeline refused it, either by
+#                      grounding rejection (checked first) or by label
+#                      (not_supported/partially_supported). Counted toward
+#                      correct_refusals.
+#   WRONGLY_AFFIRMED   a claim was emitted, labeled 'supported', and grounding
+#                      did not reject it. FAIL - not counted anywhere as a pass.
+#   NOT_EXTRACTED      no claim was emitted for this row at all. This earns NO
+#                      credit - an omission is not evidence of judgment, since
+#                      the extractor has no way to know which golden rows are
+#                      grounding-negative. Still counted in total_negatives.
 class RowOutcome(BaseModel):
     """Per-row scoring result."""
 
     expected_id: str
-    outcome: Literal["PASS", "FAIL", "POSITIVE_HIT", "POSITIVE_MISS", "FALSE_REJECTION", "SKIPPED"]
+    outcome: Literal[
+        "REFUSED", "WRONGLY_AFFIRMED", "NOT_EXTRACTED", "POSITIVE_HIT", "POSITIVE_MISS", "FALSE_REJECTION", "SKIPPED"
+    ]
     expected_label: str
     expected_claim_text_verbatim: Optional[str] = None
     expected_claim_summary: Optional[str] = None
@@ -71,7 +87,13 @@ class RowOutcome(BaseModel):
 
 
 class EvalReport(BaseModel):
-    """Aggregated scoring result across all expected rows."""
+    """Aggregated scoring result across all expected rows.
+
+    correct_refusals = refused_by_label + refused_by_grounding only. Omission
+    (not_extracted) is NOT credited: the extractor has no way to know which
+    golden rows are grounding-negative, so an absent claim is an accident,
+    not a refusal. not_extracted still counts toward total_negatives.
+    """
 
     correct_refusals: int
     total_negatives: int
@@ -81,8 +103,9 @@ class EvalReport(BaseModel):
     per_row: dict[str, RowOutcome]
 
     refused_by_label: int
-    refused_by_omission: int
     refused_by_grounding: int
+    wrongly_affirmed: int
+    not_extracted: int
     false_rejections: int
     false_rejection_rate: float
     positive_hit_floor: int

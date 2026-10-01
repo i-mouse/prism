@@ -272,11 +272,11 @@
     },
     {
       "expected_id": "REFLEX-M12",
-      "actual_index": null
+      "actual_index": 0
     },
     {
       "expected_id": "REFLEX-M13",
-      "actual_index": null
+      "actual_index": 8
     }
   ]
 }
