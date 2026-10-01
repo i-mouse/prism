@@ -73,3 +73,37 @@ def test_coverage_count_counts_fingerprint_or_persisted_id_either_way(tmp_path):
     match_map = load_match_map(path, golden_ids={"N1", "N2", "N3"})
 
     assert match_map.coverage_count == 2
+
+
+def test_confirmed_no_match_counts_as_adjudicated(tmp_path):
+    path = tmp_path / "match_map.json"
+    _write(path, {"schema_version": 1}, {"N1": {"confirmed_no_match": True}, "N2": {}})
+
+    match_map = load_match_map(path, golden_ids={"N1", "N2"})
+
+    assert match_map.rows["N1"].is_adjudicated is True
+    assert match_map.rows["N2"].is_adjudicated is False
+    assert match_map.coverage_count == 1
+
+
+def test_confirmed_no_match_defaults_false(tmp_path):
+    path = tmp_path / "match_map.json"
+    _write(path, {"schema_version": 1}, {"N1": {}})
+
+    match_map = load_match_map(path, golden_ids={"N1"})
+
+    assert match_map.rows["N1"].confirmed_no_match is False
+
+
+def test_decided_by_alone_does_not_count_as_adjudicated(tmp_path):
+    path = tmp_path / "match_map.json"
+    _write(
+        path,
+        {"schema_version": 1},
+        {"N1": {"decided_by": "nitin", "decided_on": "2026-10-01", "reason": "x"}},
+    )
+
+    match_map = load_match_map(path, golden_ids={"N1"})
+
+    assert match_map.rows["N1"].is_adjudicated is False
+    assert match_map.coverage_count == 0

@@ -36,7 +36,8 @@ def test_generate_writes_all_null_skeleton_for_every_golden_id(tmp_path):
     written = json.loads(match_map_path.read_text(encoding="utf-8"))
     assert set(written["rows"].keys()) == {"N1", "N2", "N3"}
     for row in written["rows"].values():
-        assert all(v is None for v in row.values())
+        assert row["confirmed_no_match"] is False
+        assert all(v is None for k, v in row.items() if k != "confirmed_no_match")
     assert written["metadata"]["schema_version"] == 1
 
 

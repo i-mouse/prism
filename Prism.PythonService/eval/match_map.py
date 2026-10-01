@@ -54,6 +54,11 @@ class MatchMapRow(BaseModel):
     decided_on: Optional[str] = None
     reason: Optional[str] = None
 
+    # A human-confirmed genuine omission: the paper has no claim matching this
+    # golden row, so there is no fingerprint or claim id to record. Counts as
+    # adjudicated; decided_by alone never does - see is_adjudicated.
+    confirmed_no_match: bool = False
+
     # A suggestion for a human to review, not a decision. Deliberately
     # excluded from is_adjudicated: a row with only a `suggested` value and
     # nothing else must still count as coverage gap. Accepting this exact
@@ -63,7 +68,11 @@ class MatchMapRow(BaseModel):
 
     @property
     def is_adjudicated(self) -> bool:
-        return self.persisted_claim_id is not None or self.claim_fingerprint is not None
+        return (
+            self.persisted_claim_id is not None
+            or self.claim_fingerprint is not None
+            or self.confirmed_no_match is True
+        )
 
 
 class MatchMap(BaseModel):
