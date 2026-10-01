@@ -516,7 +516,7 @@
         "Table 2"
       ],
       "grounding_negative": true,
-      "scoring_notes": "While Table 2 shows ReAct eliminates the CoT hallucination failure mode (56% down to 0%), it also shows ReAct drastically INCREASES reasoning errors (16% to 47%). Furthermore, Table 1 shows ReAct actually performs WORSE overall than CoT on HotpotQA (27.4 vs 29.4). Therefore, claiming it 'overcomes' error propagation is partially supported at best, as it trades one error mode for another and loses overall accuracy on HotpotQA.",
+      "scoring_notes": "Table 2 (HotpotQA only, 50 human-labelled trajectories per cell) shows hallucination drops from 56% of CoT failures to 0% of ReAct failures, but ReAct still has a 6% hallucination-driven false-positive rate in success mode (vs CoT 14%), so hallucination is reduced, not eliminated. Reasoning errors grow from 16% to 47% of failures, and Section 3.3 itself concedes this factuality-vs-flexibility trade-off. Table 1: ReAct trails CoT on HotpotQA (27.4 vs 29.4 EM) while beating it on FEVER (60.9 vs 56.3). No failure-mode analysis exists for FEVER, and error propagation is never measured separately. 'Overcomes' is partially supported at best.",
       "why_this_case": "Exposes a rhetorical framing in the abstract that obscures a performance regression on one of the two featured benchmarks.",
       "confidence": 0.90
     },
@@ -537,24 +537,34 @@
     {
       "id": "REACT-M13",
       "claim_text_verbatim": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines",
-      "claim_summary": "ReAct demonstrates superior performance compared to state-of-the-art baselines on the evaluated tasks.",
-      "expected_label": "not_supported",
-      "expected_evidence_sections": [],
+      "claim_summary": "ReAct is shown to outperform state-of-the-art baselines across the diverse language and decision-making tasks it is evaluated on.",
+      "expected_label": "partially_supported",
+      "expected_evidence_sections": [
+        "Section 3.2",
+        "Section 3.3",
+        "Section 4",
+        "Table 1",
+        "Table 3",
+        "Table 4"
+      ],
       "grounding_negative": true,
-      "scoring_notes": "Matches Pattern 5 (Superiority claim vs a class failed against). While ReAct outperforms certain few-shot prompting baselines, Table 1 explicitly shows ReAct (27.4 EM) being completely crushed by the 'Supervised SoTA' (67.5 EM) on HotpotQA, and similarly on FEVER (60.9 vs 89.5). The abstract's broad claim of demonstrating effectiveness 'over state-of-the-art baselines' is directly contradicted by their own tables.",
-      "why_this_case": "A classic case of an abstract inflating 'beats other zero/few-shot prompts' into 'beats state-of-the-art baselines', which is explicitly refuted in the results table.",
-      "confidence": 0.95
+      "scoring_notes": "Pattern 5 (superiority vs a class). Holds on decision-making: ALFWorld ReAct best-of-6 71 vs BUTLER 37 (Table 3); WebShop SR 40.0 vs IL 29.1 / IL+RL 28.7 (Table 4). Fails on knowledge tasks: standalone ReAct loses to the paper's own CoT-SC baseline on HotpotQA (27.4 vs 33.4 EM) and only ties it on FEVER (60.9 vs 60.4) (Table 1); only the ReAct+CoT-SC hybrids beat CoT-SC. The Supervised SoTA row (67.5 / 89.5) is a reference line the authors concede they are far from (Section 3.3), never listed among the four Section 3.2 baselines (Standard, CoT, CoT-SC, Act).",
+      "why_this_case": "Abstract-level superiority claim that holds on two of four benchmarks. Tests whether the auditor weighs both halves instead of picking one table.",
+      "confidence": 0.85
     },
     {
       "id": "REACT-M14",
-      "claim_text_verbatim": "Recent results have hinted at the possibility of combining verbal reasoning with interactive decision making in autonomous systems... In this work, we present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks",
-      "claim_summary": "ReAct is a general paradigm applicable to combining reasoning and acting in physical autonomous systems.",
-      "expected_label": "not_supported",
-      "expected_evidence_sections": [],
+      "claim_text_verbatim": "This indicates ReAct prompting is effective across different large language models on different tasks.",
+      "claim_summary": "ReAct prompting's effectiveness generalizes across different large language models and tasks.",
+      "expected_label": "partially_supported",
+      "expected_evidence_sections": [
+        "Appendix A.1",
+        "Table 5"
+      ],
       "grounding_negative": true,
-      "scoring_notes": "Matches Pattern 2 (Generalization without test). While the introduction motivates the method using physical autonomous systems and real-world cooking examples, the experiments strictly evaluate ReAct on text-based API lookups (HotpotQA, FEVER), a text adventure game (ALFWorld), and a text-based shopping website (WebShop). There are no experiments deploying ReAct on physical robots or continuous-control systems.",
-      "why_this_case": "Tests whether the extraction engine can distinguish between broad motivating examples in the introduction and the actual scope of the experimental validation.",
-      "confidence": 0.90
+      "scoring_notes": "Pattern 2 (generalization without test). The A.1 claim rests on Table 5: two models (PaLM-540B, GPT-3 text-davinci-002) on two tasks (HotpotQA 500-question validation subset: 29.4 vs 30.8 EM; ALFWorld: 70.9 vs 78.4), with no baselines run on GPT-3. Elsewhere, Figure 3 / Section 3.3 show ReAct prompting performing worst of four methods on PaLM-8B and PaLM-62B, so effectiveness across models is not uniform even within the paper. Table 5's PaLM HotpotQA score (29.4) differs from Table 1 (27.4) because of the 500-question subset, not a contradiction.",
+      "why_this_case": "Late-paper (appendix) generalization claim. Tests both the n=2 overreach and whether the extractor reaches appendix claims at all.",
+      "confidence": 0.85
     }
   ]
 }
