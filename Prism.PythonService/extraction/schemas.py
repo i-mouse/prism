@@ -86,15 +86,68 @@ class ClaimLLM(BaseModel):
     )
 
 
-class ClaimsExtractionResponse(BaseModel):
-    """Top-level Gemini structured output response.
+# --- Audited layer (what extract_claims hands to grounding) ---
 
-    Contains a list of claims. Empty list is valid when the paper
+SpanRole = Literal["support", "limit"]
+"""Which checklist line an evidence span came from, declared by the auditor.
+support: SUPPORT_QUOTE. limit: LIMIT_QUOTE (a passage that narrows or
+contradicts the claim). Independent of SpanStance, which is the grounder's
+own judgment of the quote."""
+
+CapReason = Literal["limit", "scope", "comparison"]
+ChecklistStatus = Literal["parsed", "unparsed"]
+
+
+class AuditChecklist(BaseModel):
+    """The auditor's checklist lines, parsed deterministically from its prose.
+
+    checklist_status is "parsed" only when every line was present and valid.
+    On "unparsed" the auditor's VERDICT (if any) is kept and no cap runs.
+    Quotes are not repeated here - they live in the claim's evidence spans.
+    """
+
+    checklist_status: ChecklistStatus
+    auditor_verdict: Optional[ClaimLabel] = None
+    support_section: Optional[str] = None
+    limit_section: Optional[str] = None
+    has_limit_quote: bool = False
+    scope_match: Optional[Literal["yes", "no"]] = None
+    comparison_tested: Optional[Literal["yes", "no", "n/a"]] = None
+    problems: list[str] = Field(default_factory=list)
+    model_used: Optional[str] = None
+
+
+class AuditedSpan(EvidenceSpanLLM):
+    """An evidence span plus the checklist role it was declared under."""
+
+    role: SpanRole = "support"
+
+
+class AuditedClaim(BaseModel):
+    """One claim after the audit stage: the auditor's verdict (pre-cap), its
+    declared evidence spans, the parsed checklist and the full audit prose.
+
+    evidence_spans may be empty (SUPPORT_QUOTE and LIMIT_QUOTE both NONE) -
+    grounding already turns a span-less claim into Fail / missing.
+    """
+
+    claim_text_verbatim: str
+    claim_summary: str
+    auditor_verdict: ClaimLabel
+    evidence_spans: list[AuditedSpan]
+    checklist: AuditChecklist
+    audit_reasoning: str
+
+
+class ClaimsExtractionResponse(BaseModel):
+    """Output of extract_claims.
+
+    Contains a list of audited claims. Empty list is valid when the paper
     has no groundable empirical claims - this is the correct-refusal
     signal at extraction time.
     """
 
-    claims: list[ClaimLLM] = Field(
+    claims: list[AuditedClaim] = Field(
         ...,
         description="All empirical claims extracted from the paper. Empty if none groundable."
     )
@@ -148,6 +201,16 @@ class EvidenceSpanFinal(BaseModel):
     gate, or the LLM call errored/returned malformed output) - there is no
     stance to report for those, so None means "unknown", not a fake neutral."""
 
+    # Declared by the auditor (see SpanRole). None on rows written before B5.1.
+    role: Optional[SpanRole] = None
+
+    # Trace-only: never read by the cap, the roll-up or any label. All None on
+    # rows written before B5.1, and grounding_reasoning/grounding_model are
+    # None for spans that never reached the audit LLM.
+    grounding_reasoning: Optional[str] = None
+    grounding_model: Optional[str] = None
+    fuzz_score: Optional[float] = None
+
 
 class ClaimFinal(BaseModel):
     """Claim with pipeline-appended grounding fields.
@@ -159,12 +222,19 @@ class ClaimFinal(BaseModel):
     claim_text_verbatim: str
     claim_summary: str
     label: ClaimLabel
+    """Final label - the auditor's verdict after the post-grounding cap."""
     evidence_spans: list[EvidenceSpanFinal]
 
     # Pipeline-set fields
     grounding_status: GroundingStatus
     missing: bool = False
     reason: Optional[str] = None
+
+    # B5.1 decision trace. All None on rows written before B5.1.
+    auditor_verdict: Optional[ClaimLabel] = None
+    cap_reason: Optional[CapReason] = None
+    audit_checklist: Optional[AuditChecklist] = None
+    audit_reasoning: Optional[str] = None
 
 
 # --- Metadata extraction (Prompt 1) - LLM layer ---

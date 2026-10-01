@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Prism.ApiService.Data.Schemas;
 
@@ -16,6 +17,17 @@ public class PaperClaim
     public GroundingStatus GroundingStatus { get; set; }
     public bool Missing { get; set; }
     public string? Reason { get; set; }
+
+    // B5.1 decision trace, written by the Python worker. Null on claims
+    // extracted before B5.1. Label above is the FINAL (post-cap) label.
+    public string? AuditorVerdict { get; set; }
+    public string? CapReason { get; set; }
+
+    [Column(TypeName = "jsonb")]
+    public string? AuditChecklist { get; set; }
+
+    public string? AuditReasoning { get; set; }
+
     public int Position { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

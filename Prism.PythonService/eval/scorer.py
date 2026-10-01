@@ -60,6 +60,8 @@ def score(
         actual_claim_summary = actual_claim.claim_summary if actual_claim is not None else None
         actual_claim_text_verbatim = actual_claim.claim_text_verbatim if actual_claim is not None else None
         actual_grounding_status = actual_claim.grounding_status if actual_claim is not None else None
+        actual_auditor_verdict = actual_claim.auditor_verdict if actual_claim is not None else None
+        actual_cap_reason = actual_claim.cap_reason if actual_claim is not None else None
 
         if actual_claim is not None and _was_skipped(actual_claim):
             outcome = "SKIPPED"
@@ -113,6 +115,8 @@ def score(
             actual_claim_text_verbatim=actual_claim_text_verbatim,
             actual_claim_summary=actual_claim_summary,
             actual_grounding_status=actual_grounding_status,
+            actual_auditor_verdict=actual_auditor_verdict,
+            actual_cap_reason=actual_cap_reason,
         )
 
     refusal_rate = correct_refusals / total_negatives if total_negatives else 0.0

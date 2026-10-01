@@ -12,11 +12,15 @@ extract_claims (Prompt 2) is a sequential three-call pipeline:
   - Call #3, auditor (per claim, concurrent): free-text reasoning ending in
     a VERDICT: line and QUOTE:/SECTION: pairs. No schema - the label isn't
     committed until reasoning is done.
-  - Call #4, structurer (per claim, after its audit): turns the audit's
-    free text into a ClaimLLM JSON object. This is the only call in the
-    claims pipeline that uses response_schema.
+  - Call #4, structurer (per claim, FALLBACK only): turns the audit's free
+    text into a ClaimLLM JSON object. This is the only call in the claims
+    pipeline that uses response_schema. It runs only when the audit's
+    VERDICT line can't be read in code; otherwise the claim is built
+    deterministically from the auditor's checklist lines
+    (extraction/verdict_rules.py).
 """
 import asyncio
+import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -35,7 +39,14 @@ from extraction.prompt_loader import (
     build_gemini_messages_for_structure,
 )
 from extraction.prompt_version import get_prompt_version
-from extraction.schemas import ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
+from extraction.schemas import (
+    AuditedClaim,
+    AuditedSpan,
+    ClaimLLM,
+    ClaimsExtractionResponse,
+    MetadataExtractionResponse,
+)
+from extraction.verdict_rules import parse_audit_checklist
 
 tracer = trace.get_tracer(__name__)
 
@@ -300,13 +311,15 @@ async def _call_gemini_freetext(
     log_subdir: str,
     model_name: str,
     fallback_model: str,
-) -> str:
+) -> tuple[str, str]:
     """Calls Gemini for plain free-text output - no JSON mode, no schema.
 
     Used for the auditor call: reasoning happens in prose first, so the
     label isn't committed to structure before the evidence is weighed.
     Same retry/backoff/fallback-model behavior as _call_gemini_structured.
     Logs the request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+    Returns (text, model_actually_used) - the fallback model when the
+    primary's retries were exhausted.
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -331,7 +344,7 @@ async def _call_gemini_freetext(
         response_raw=raw_text,
     )
 
-    return raw_text
+    return raw_text, used_model
 
 
 async def _audit_and_structure_claim(
@@ -343,8 +356,15 @@ async def _audit_and_structure_claim(
     claim_number: int,
     total_claims: int,
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
-) -> ClaimLLM:
-    """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
+) -> AuditedClaim:
+    """Runs Call #3 (audit) for one claim, then builds the claim from it.
+
+    The checklist lines the auditor ends with are parsed in code. When the
+    VERDICT line is readable, the claim is built deterministically from them
+    (no structurer call). Only when the VERDICT is missing or invalid does
+    Call #4 (structure) run, as a fallback, logged with the claim's number
+    and fingerprint. A malformed checklist never drops the claim: the
+    auditor's verdict is kept and the checklist is marked "unparsed".
 
     Concurrency across claims is bounded by the shared semaphore. claim_number
     is the claim's fixed position in the extracted list (1-indexed), not a
@@ -353,14 +373,19 @@ async def _audit_and_structure_claim(
     """
     claim_text_verbatim = claim["claim_text_verbatim"]
     claim_summary = claim["claim_summary"]
+    fingerprint = hashlib.sha256(claim_text_verbatim.encode("utf-8")).hexdigest()[:12]
+    log_prefix = (
+        f"[extraction] chat_id={chat_id} correlation_id={correlation_id} "
+        f"claim_number={claim_number} claim_fingerprint={fingerprint}"
+    )
 
     async with semaphore:
         with tracer.start_as_current_span("auditor") as span:
             span.set_attribute("correlation_id", correlation_id or "")
             span.set_attribute("chat_id", chat_id)
             span.set_attribute("claim_number", claim_number)
-            audit_text = await _call_gemini_freetext(
-                messages=build_gemini_messages_for_audit(paper_text, claim_text_verbatim, claim_summary),
+            audit_text, audit_model = await _call_gemini_freetext(
+                messages=build_gemini_messages_for_audit(paper_text, claim_text_verbatim),
                 chat_id=chat_id,
                 correlation_id=correlation_id,
                 log_subdir="audit",
@@ -368,6 +393,22 @@ async def _audit_and_structure_claim(
                 fallback_model=settings.llm_claim_audit_fallback_model,
             )
 
+        parsed = parse_audit_checklist(audit_text, model_used=audit_model)
+        checklist = parsed.checklist
+        if checklist.problems:
+            print(f"{log_prefix} checklist_unparsed problems={checklist.problems}")
+
+        if checklist.auditor_verdict is not None:
+            return AuditedClaim(
+                claim_text_verbatim=claim_text_verbatim,
+                claim_summary=claim_summary,
+                auditor_verdict=checklist.auditor_verdict,
+                evidence_spans=parsed.spans,
+                checklist=checklist,
+                audit_reasoning=audit_text,
+            )
+
+        print(f"{log_prefix} structurer_fallback reason=verdict_unreadable problems={checklist.problems}")
         with tracer.start_as_current_span("structurer") as span:
             span.set_attribute("correlation_id", correlation_id or "")
             span.set_attribute("chat_id", chat_id)
@@ -382,7 +423,14 @@ async def _audit_and_structure_claim(
                 fallback_model=settings.llm_claim_audit_fallback_model,
             )
 
-    return structured
+    return AuditedClaim(
+        claim_text_verbatim=claim_text_verbatim,
+        claim_summary=claim_summary,
+        auditor_verdict=structured.label,
+        evidence_spans=[AuditedSpan(**span.model_dump(), role="support") for span in structured.evidence_spans],
+        checklist=checklist,
+        audit_reasoning=audit_text,
+    )
 
 
 async def extract_claims(
@@ -393,13 +441,14 @@ async def extract_claims(
     on_audit_start: Optional[Callable[[], Awaitable[None]]] = None,
     on_audit_detail: Optional[Callable[[str], Awaitable[None]]] = None,
 ) -> ClaimsExtractionResponse:
-    """Extracts structured claims from paper_text via a sequential three-call pipeline.
+    """Extracts audited claims from paper_text.
 
-    Call #2 (extractor) runs once over the full paper. For each extracted
-    claim, Call #3 (audit) and Call #4 (structure) run in sequence, fanned
-    out across claims with a bounded semaphore. A claim whose audit or
-    structure call fails is logged and dropped rather than failing the
-    whole extraction - downstream grounding handles missing claims correctly.
+    Call #2 (extractor) runs once over the full paper. Each extracted claim
+    is then audited (Call #3), fanned out across claims with a bounded
+    semaphore; Call #4 (structure) runs per claim only as a fallback. A claim
+    whose audit (or fallback structure) call fails is logged and dropped
+    rather than failing the whole extraction - downstream grounding handles
+    missing claims correctly.
     """
     with tracer.start_as_current_span("extractor") as span:
         span.set_attribute("correlation_id", correlation_id or "")
@@ -456,7 +505,7 @@ async def extract_claims(
         return_exceptions=True,
     )
 
-    structured_claims: list[ClaimLLM] = []
+    audited_claims: list[AuditedClaim] = []
     for claim, result in zip(claims, results):
         if isinstance(result, Exception):
             print(
@@ -464,9 +513,9 @@ async def extract_claims(
                 f"claim={claim.get('claim_text_verbatim', '')!r}: {result!r}"
             )
             continue
-        structured_claims.append(result)
+        audited_claims.append(result)
 
-    return ClaimsExtractionResponse(claims=structured_claims)
+    return ClaimsExtractionResponse(claims=audited_claims)
 
 
 async def extract_metadata(

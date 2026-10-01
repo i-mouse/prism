@@ -8,7 +8,8 @@ Four call kinds are supported:
   - "metadata": Prompt 1, paper-level metadata extraction (build_gemini_messages_for_metadata)
   - extractor: Prompt 2 Call #2, claim-only extraction, no labels (build_gemini_messages_for_extractor)
   - audit: Prompt 2 Call #3, per-claim free-text audit (build_gemini_messages_for_audit)
-  - structure: Prompt 2 Call #4, structures the audit into ClaimLLM JSON (build_gemini_messages_for_structure)
+  - structure: Prompt 2 Call #4, structures the audit into ClaimLLM JSON (build_gemini_messages_for_structure).
+    Fallback only: used when the audit's VERDICT line can't be read in code.
 """
 import json
 from pathlib import Path
@@ -98,19 +99,19 @@ def _read_prompt_file(filename: str) -> str:
 def build_gemini_messages_for_audit(
     paper_text: str,
     claim_text_verbatim: str,
-    claim_summary: str,
 ) -> list[dict]:
     """Assembles the Gemini message list for the auditor call (Call #3).
 
     No few-shot examples. The user message carries the full paper text
     plus the single claim to audit, clearly labeled so the auditor's
-    reasoning stays scoped to that one claim.
+    reasoning stays scoped to that one claim. The claim's display summary
+    is deliberately NOT sent: it is display-only, and an A/B test showed
+    the auditor's verdicts do not depend on it.
     """
     user_content = (
         f"PAPER TEXT:\n{paper_text}\n\n"
         "CLAIM TO AUDIT:\n"
-        f"CLAIM_TEXT_VERBATIM: {claim_text_verbatim}\n"
-        f"CLAIM_SUMMARY: {claim_summary}"
+        f"CLAIM_TEXT_VERBATIM: {claim_text_verbatim}"
     )
     return [
         {"role": "system", "content": _read_prompt_file("audit_claim_system.md")},

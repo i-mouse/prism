@@ -380,3 +380,27 @@ def test_total_silence_earns_zero_refusal_credit():
     assert report.positive_hits == 0
     assert report.refusal_rate_valid is False
     assert report.invalid_reason == "positive hits 0 below floor 15"
+
+
+def test_auditor_verdict_and_cap_reason_pass_through_to_row_outcome():
+    expected = [ExpectedRow(id="N5", expected_label="not_supported", grounding_negative=True)]
+    actual = [ActualClaim(index=0, label="partially_supported", auditor_verdict="supported", cap_reason="limit")]
+    matches = [Match(expected_id="N5", actual_index=0)]
+
+    row = score(expected, actual, matches).per_row["N5"]
+
+    assert row.actual_label == "partially_supported"
+    assert row.actual_auditor_verdict == "supported"
+    assert row.actual_cap_reason == "limit"
+
+
+def test_pre_b51_claims_default_new_fields_to_none_and_score_unchanged():
+    # A fixture row dumped before auditor_verdict/cap_reason existed.
+    claim = ActualClaim.model_validate({"index": 0, "label": "supported", "missing": False, "grounding_status": "Pass"})
+    assert claim.auditor_verdict is None and claim.cap_reason is None
+
+    expected = [ExpectedRow(id="N6", expected_label="not_supported", grounding_negative=True)]
+    row = score(expected, [claim], [Match(expected_id="N6", actual_index=0)]).per_row["N6"]
+
+    assert row.outcome == "WRONGLY_AFFIRMED"
+    assert row.actual_auditor_verdict is None and row.actual_cap_reason is None

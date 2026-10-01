@@ -25,7 +25,10 @@ class ActualClaim(BaseModel):
     to the SELECT still validate - they just can't contribute to
     false_rejection_rate, which is the whole point of that metric.
     claim_text_verbatim defaults to "" for the same reason - fixtures
-    dumped before this field existed still validate.
+    dumped before this field existed still validate. auditor_verdict and
+    cap_reason (B5.1) default to None for the same reason: label is the
+    FINAL post-cap label, auditor_verdict the pre-cap one, and cap_reason
+    says why they differ (None when they don't, or on pre-B5.1 fixtures).
     """
 
     index: int
@@ -34,6 +37,8 @@ class ActualClaim(BaseModel):
     claim_text_verbatim: str = ""
     missing: bool = False
     grounding_status: Optional[str] = None
+    auditor_verdict: Optional[str] = None
+    cap_reason: Optional[str] = None
 
 
 class Match(BaseModel):
@@ -55,6 +60,8 @@ class Match(BaseModel):
 #   actual_claim_text_verbatim    matched claim's verbatim quote, or null if no match
 #   actual_claim_summary     matched claim's short description, or null if no match
 #   actual_grounding_status  matched claim's grounding verdict (Pass/Partial/Fail/Skipped), or null
+#   actual_auditor_verdict   matched claim's pre-cap auditor verdict, or null (no match / pre-B5.1 data)
+#   actual_cap_reason        why the label was lowered after grounding (limit|scope|comparison), or null
 # The two verbatim/summary pairs exist purely for human diagnosis - reading a
 # WRONGLY_AFFIRMED row should not require cross-referencing matrix_eval.json
 # and a separate DB query by hand.
@@ -84,6 +91,8 @@ class RowOutcome(BaseModel):
     actual_claim_text_verbatim: Optional[str] = None
     actual_claim_summary: Optional[str] = None
     actual_grounding_status: Optional[str] = None
+    actual_auditor_verdict: Optional[str] = None
+    actual_cap_reason: Optional[str] = None
 
 
 class EvalReport(BaseModel):

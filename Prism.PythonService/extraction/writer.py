@@ -120,13 +120,19 @@ async def write_extraction_result(
                     evidence_spans_jsonb = Jsonb(
                         [span.model_dump(mode="json") for span in claim.evidence_spans]
                     )
+                    audit_checklist_jsonb = (
+                        Jsonb(claim.audit_checklist.model_dump(mode="json"))
+                        if claim.audit_checklist is not None
+                        else None
+                    )
                     await conn.execute(
                         """
                         INSERT INTO paper_claims
                             (id, document_extractor_id, extraction_run_id, claim_text_verbatim,
                              claim_summary, label, grounding_status, missing, reason,
-                             evidence_spans, position, created_at, updated_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                             evidence_spans, position, created_at, updated_at,
+                             auditor_verdict, cap_reason, audit_checklist, audit_reasoning)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """,
                         (
                             uuid.uuid4(),
@@ -142,6 +148,10 @@ async def write_extraction_result(
                             position,
                             now,
                             now,
+                            claim.auditor_verdict.value if claim.auditor_verdict is not None else None,
+                            claim.cap_reason,
+                            audit_checklist_jsonb,
+                            claim.audit_reasoning,
                         ),
                     )
     except Exception as exc:

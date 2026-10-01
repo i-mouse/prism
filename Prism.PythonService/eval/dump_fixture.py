@@ -71,7 +71,8 @@ LIMIT  1;
 """
 
 _CLAIMS_FOR_EXTRACTION_SQL = """
-SELECT pc.label, pc.claim_summary, pc.missing, pc.grounding_status, pc.claim_text_verbatim
+SELECT pc.label, pc.claim_summary, pc.missing, pc.grounding_status, pc.claim_text_verbatim,
+       pc.auditor_verdict, pc.cap_reason
 FROM   paper_claims pc
 WHERE  pc.document_extractor_id = %s
 ORDER  BY pc.created_at ASC;
@@ -123,8 +124,18 @@ async def _fetch_latest_extraction(filename: str) -> tuple[str, list[dict]] | No
             "missing": missing,
             "grounding_status": grounding_status,
             "claim_text_verbatim": claim_text_verbatim,
+            "auditor_verdict": auditor_verdict,
+            "cap_reason": cap_reason,
         }
-        for i, (label, claim_summary, missing, grounding_status, claim_text_verbatim) in enumerate(claim_rows)
+        for i, (
+            label,
+            claim_summary,
+            missing,
+            grounding_status,
+            claim_text_verbatim,
+            auditor_verdict,
+            cap_reason,
+        ) in enumerate(claim_rows)
     ]
     return str(extraction_id), claims
 

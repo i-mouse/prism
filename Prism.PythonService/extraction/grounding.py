@@ -12,7 +12,7 @@ import asyncio
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Awaitable, Callable, Optional
+from typing import Awaitable, Callable, NamedTuple, Optional
 
 import litellm
 from rapidfuzz import fuzz
@@ -21,15 +21,17 @@ from config import settings
 from extraction.prompt_loader import build_gemini_messages_for_span_audit
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import (
+    AuditedSpan,
+    CapReason,
     ClaimFinal,
     ClaimLabel,
     ClaimsExtractionResponse,
     EvidenceSpanFinal,
-    EvidenceSpanLLM,
     GroundingStatus,
     SpanAuditVerdict,
     SpanStance,
 )
+from extraction.verdict_rules import apply_verdict_cap
 
 litellm.enable_json_schema_validation = True
 
@@ -39,6 +41,12 @@ LOGS_DIR = Path(__file__).parent.parent / "logs" / "grounding"
 
 RAPIDFUZZ_THRESHOLD = 88
 AUDIT_CONCURRENCY = 1
+
+# The cap's limit span is audited under this label's rubric: "directly relevant
+# to the specific assertion, in either direction" is exactly what a narrowing
+# or contradicting passage should earn. Under the claim's own label (supported)
+# the same quote would grade Fail ("contradicts it") and the cap could never fire.
+LIMIT_SPAN_AUDIT_LABEL = ClaimLabel.PARTIALLY_SUPPORTED
 
 AUDIT_MAX_ATTEMPTS = 3
 AUDIT_BACKOFF_SECONDS = (1, 2, 4)
@@ -149,11 +157,12 @@ async def _call_litellm_audit(
     gemini_api_key: str,
     span_source_section: str,
     correlation_id: str | None = None,
-) -> SpanAuditVerdict:
+) -> tuple[SpanAuditVerdict, Optional[str]]:
     """Calls the span-audit model with retry/backoff, raising the last error
     if all attempts fail. Each attempt carries LiteLLM's built-in `fallbacks`
     so a Groq failure fails over to Gemini Flash Lite before the attempt is
-    counted as failed.
+    counted as failed. Returns (verdict, model_that_answered) - the model name
+    LiteLLM reports on the response, which is the fallback's when it took over.
     """
     last_exception: Exception | None = None
 
@@ -168,7 +177,7 @@ async def _call_litellm_audit(
                 fallbacks=[{"model": fallback_model, "api_key": gemini_api_key}],
             )
             content = response.choices[0].message.content
-            return SpanAuditVerdict.model_validate_json(content)
+            return SpanAuditVerdict.model_validate_json(content), getattr(response, "model", None)
         except Exception as exc:
             if not _is_retryable(exc):
                 print(f"[ground_extraction] correlation_id={correlation_id} audit non-retryable error for span in {span_source_section!r}: {exc!r}")
@@ -185,6 +194,13 @@ async def _call_litellm_audit(
     raise last_exception
 
 
+class SpanAuditResult(NamedTuple):
+    status: GroundingStatus
+    stance: Optional[SpanStance]
+    reasoning: Optional[str] = None
+    model: Optional[str] = None
+
+
 async def _audit_span_with_llm(
     claim_text: str,
     claim_label: ClaimLabel,
@@ -196,7 +212,7 @@ async def _audit_span_with_llm(
     fallback_model: str,
     gemini_api_key: str,
     correlation_id: str | None = None,
-) -> tuple[GroundingStatus, Optional[SpanStance]]:
+) -> SpanAuditResult:
     """Asks the audit model whether the evidence quote justifies the
     auditor's claim_label (supported/partially_supported/not_supported),
     and separately what stance the quote itself takes on the claim.
@@ -221,6 +237,9 @@ async def _audit_span_with_llm(
     extraction - but it also must not fabricate a stance value, and a
     transient service error must not be indistinguishable from a genuine
     "paper does not support this" verdict.
+
+    reasoning and model are trace-only (what the audit model said and which
+    model said it); nothing downstream branches on them.
     """
     messages = _to_litellm_messages(
         build_gemini_messages_for_span_audit(
@@ -233,7 +252,7 @@ async def _audit_span_with_llm(
 
     async with semaphore:
         try:
-            verdict = await _call_litellm_audit(
+            verdict, answered_by = await _call_litellm_audit(
                 messages=messages,
                 audit_model=audit_model,
                 fallback_model=fallback_model,
@@ -241,20 +260,16 @@ async def _audit_span_with_llm(
                 span_source_section=span_source_section,
                 correlation_id=correlation_id,
             )
-            return GroundingStatus(verdict.verdict), verdict.stance
+            return SpanAuditResult(GroundingStatus(verdict.verdict), verdict.stance, verdict.reasoning, answered_by)
         except Exception as exc:
             print(f"[ground_extraction] correlation_id={correlation_id} LLM audit failed for span in {span_source_section!r}: {exc!r}")
-            return GroundingStatus.SKIPPED, None
-
-
-def _passes_rapidfuzz(span_source_text: str, paper_text: str) -> bool:
-    return fuzz.partial_ratio(span_source_text, paper_text) >= RAPIDFUZZ_THRESHOLD
+            return SpanAuditResult(GroundingStatus.SKIPPED, None)
 
 
 async def _ground_span(
     claim_text: str,
     claim_label: ClaimLabel,
-    span: EvidenceSpanLLM,
+    span: AuditedSpan,
     paper_text: str,
     semaphore: asyncio.Semaphore,
     audit_model: str,
@@ -263,7 +278,8 @@ async def _ground_span(
     correlation_id: str | None = None,
 ) -> tuple[EvidenceSpanFinal, bool]:
     """Grounds one span. Returns (finalized span, passed_rapidfuzz)."""
-    if not _passes_rapidfuzz(span.source_text, paper_text):
+    fuzz_score = fuzz.partial_ratio(span.source_text, paper_text)
+    if fuzz_score < RAPIDFUZZ_THRESHOLD:
         final_span = EvidenceSpanFinal(
             source_text=span.source_text,
             source_section=span.source_section,
@@ -271,6 +287,8 @@ async def _ground_span(
             page_number=span.page_number,
             grounding_status=GroundingStatus.FAIL,
             stance=None,
+            role=span.role,
+            fuzz_score=fuzz_score,
         )
         return final_span, False
 
@@ -281,7 +299,7 @@ async def _ground_span(
         span_context = span.source_text
     print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars for span in {span.source_section!r}")
 
-    status, stance = await _audit_span_with_llm(
+    audit = await _audit_span_with_llm(
         claim_text=claim_text,
         claim_label=claim_label,
         span_source_text=span.source_text,
@@ -298,8 +316,12 @@ async def _ground_span(
         source_section=span.source_section,
         section_header=span.section_header,
         page_number=span.page_number,
-        grounding_status=status,
-        stance=stance,
+        grounding_status=audit.status,
+        stance=audit.stance,
+        role=span.role,
+        grounding_reasoning=audit.reasoning,
+        grounding_model=audit.model,
+        fuzz_score=fuzz_score,
     )
     return final_span, True
 
@@ -342,6 +364,13 @@ def _write_grounding_log(
         "spans_skipped_audit": spans_skipped_audit,
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
+
+
+_CAP_REASON_NOTES: dict[CapReason, str] = {
+    "limit": "Label lowered from {auditor} to {final}: another passage in the paper narrows or contradicts this claim.",
+    "scope": "Label lowered from {auditor} to {final}: what the paper tested is narrower than what the claim asserts.",
+    "comparison": "Label lowered from {auditor} to {final}: the comparison this claim makes is never tested in the paper.",
+}
 
 
 def _build_claim_reason(
@@ -458,7 +487,7 @@ async def ground_extraction(
                 except Exception:
                     pass  # progress emission never breaks grounding
 
-    async def _ground_span_tracked(claim_idx: int, claim_text: str, claim_label: ClaimLabel, span: EvidenceSpanLLM):
+    async def _ground_span_tracked(claim_idx: int, claim_text: str, claim_label: ClaimLabel, span: AuditedSpan):
         result = await _ground_span(
             claim_text=claim_text,
             claim_label=claim_label,
@@ -485,7 +514,12 @@ async def ground_extraction(
         for span in claim.evidence_spans:
             span_claim_indices.append(claim_idx)
             span_tasks.append(
-                _ground_span_tracked(claim_idx, claim.claim_text_verbatim, claim.label, span)
+                _ground_span_tracked(
+                    claim_idx,
+                    claim.claim_text_verbatim,
+                    LIMIT_SPAN_AUDIT_LABEL if span.role == "limit" else claim.auditor_verdict,
+                    span,
+                )
             )
 
     span_results = await asyncio.gather(*span_tasks) if span_tasks else []
@@ -512,7 +546,7 @@ async def ground_extraction(
                 spans_skipped_audit += 1
             else:
                 spans_failed_audit += 1
-        else:
+        elif final_span.role != "limit":
             claims_rapidfuzz_failed[claim_idx] += 1
 
     final_claims: list[ClaimFinal] = []
@@ -523,13 +557,16 @@ async def ground_extraction(
 
     for claim_idx, claim in enumerate(extraction.claims):
         spans = claims_spans[claim_idx]
-        passes = [s for s in spans if s.grounding_status == GroundingStatus.PASS]
-        partials = [s for s in spans if s.grounding_status == GroundingStatus.PARTIAL]
-        fails = [s for s in spans if s.grounding_status == GroundingStatus.FAIL]
-        skips = [s for s in spans if s.grounding_status == GroundingStatus.SKIPPED]
+        # The roll-up reads support spans only: a limit span (a passage that
+        # narrows the claim) must not make an unsupported claim look grounded.
+        support_spans = [s for s in spans if s.role != "limit"]
+        passes = [s for s in support_spans if s.grounding_status == GroundingStatus.PASS]
+        partials = [s for s in support_spans if s.grounding_status == GroundingStatus.PARTIAL]
+        fails = [s for s in support_spans if s.grounding_status == GroundingStatus.FAIL]
+        skips = [s for s in support_spans if s.grounding_status == GroundingStatus.SKIPPED]
 
         reason = _build_claim_reason(
-            claim_label=claim.label,
+            claim_label=claim.auditor_verdict,
             n_pass=len(passes),
             n_partial=len(partials),
             n_fail=len(fails),
@@ -554,15 +591,32 @@ async def ground_extraction(
             grounding_status = GroundingStatus.FAIL
             missing = True
 
+        # Post-grounding cap: a pure function of the auditor's checklist and the
+        # limit span's grounding. It only lowers the label and never feeds back
+        # into the auditor or the roll-up above.
+        limit_span = next((s for s in spans if s.role == "limit"), None)
+        final_label, cap_reason = apply_verdict_cap(
+            claim.auditor_verdict,
+            claim.checklist,
+            limit_span.grounding_status if limit_span is not None else None,
+        )
+        if cap_reason is not None and not missing:
+            # Skipped when `missing`: effective_status already reads not_supported.
+            reason = f"{reason} {_CAP_REASON_NOTES[cap_reason].format(auditor=claim.auditor_verdict.value, final=final_label.value)}"
+
         final_claims.append(
             ClaimFinal(
                 claim_text_verbatim=claim.claim_text_verbatim,
                 claim_summary=claim.claim_summary,
-                label=claim.label,
+                label=final_label,
                 evidence_spans=spans,
                 grounding_status=grounding_status,
                 missing=missing,
                 reason=reason,
+                auditor_verdict=claim.auditor_verdict,
+                cap_reason=cap_reason,
+                audit_checklist=claim.checklist,
+                audit_reasoning=claim.audit_reasoning,
             )
         )
 
