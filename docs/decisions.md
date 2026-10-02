@@ -952,3 +952,62 @@ pulling the hedged sentence verbatim, then the auditor's own
 paraphrase of that sentence dropping the hedge before grading it -
 the identical failure pattern just fixed in the golden set, one layer
 deeper. Not yet actioned; candidate for the next PR.
+
+## Golden-key corrections — 2026-10-02
+**Context:** COT-M02 was re-examined after an auditor experiment on an
+unmerged branch disagreed with its golden label. The label below was
+decided from the paper's own tables (rendered page images of cot.pdf,
+read directly, cross-checked against the PDF text layer), not from that
+auditor output. The same pass checked REFLEX-M09's pairing and every
+golden row's map-vs-fixture pairing.
+**Decision:**
+- COT-M02 (matrix_eval.json): expected_label supported ->
+  partially_supported, grounding_negative false -> true, confidence
+  0.95 -> 0.75; scoring_notes/why_this_case rewritten;
+  expected_evidence_sections gained Table 3/4/5 and Appendix A.1. The
+  sentence (p.4 Section 3.2; repeated p.8 Section 5) says gains come
+  only at ~100B, but the appendix tables show clear gains below 100B:
+  PaLM 62B GSM8K 9.6 -> 29.9, MAWPS 61.8 -> 80.3 (Table 2, p.21),
+  MultiArith 7.3 -> 73.7 (Table 3, p.21); LaMDA 68B has CoT higher in
+  19 of 20 cells across Tables 2-5; UL2 20B in 16 of 20. Appendix A.1
+  (p.16) itself puts the harm threshold at about 10B, not 100B. Below
+  10B the picture is mixed: LaMDA <=8B and GPT <=6.7B mostly lose with
+  CoT, but PaLM 8B gains in 16 of 20 cells.
+- REFLEX-M09: match_map.json row set to confirmed_no_match (fingerprint
+  cleared) and the reflexion fixture's frozen match changed 12 -> null.
+  The golden text is the Section 4 sentence (p.5, unhedged 22/20/11);
+  no extracted claim states it. Claim 12 is the Introduction sentence
+  (p.2), which hedges HumanEval ("by as much as 11%") and adds
+  "absolute ... in 12 iterative learning steps" - a different scope.
+  REFLEX-M02 -> claim 12 is unchanged; REFLEX-M09's label is unchanged.
+- REACT-M14: react fixture's frozen match changed 4 -> null. The map
+  already said confirmed_no_match (and its reason said the stale
+  pairing had been cleared), but the fixture still pointed at claim 4,
+  an unrelated intro sentence - and fixture-mode scoring reads the
+  frozen matches, not the map, so the row was being credited as a
+  refusal against the wrong claim. It was the only one of 37 rows
+  where the map and the frozen matches disagreed.
+- Rule: match_map.json is the authoritative human pairing; fixture
+  frozen matches must equal it; enforced by the new test
+  eval/tests/test_match_map_fixture_consistency.py (offline, no LLM
+  calls: confirmed_no_match must be actual_index null, a map
+  fingerprint must resolve to exactly one fixture claim whose index
+  equals the frozen actual_index).
+- REACT-M03, COT-M04 and REACT-M05 were checked against the paper
+  (Table 1 p.5, Table 6/7 p.23, Table 3 p.8 respectively) and are
+  unchanged.
+**Consequences:** No prompt, threshold or pipeline change; prompt hash
+unchanged at 0bcf9d44e619; check_fixture_freshness OK on all three
+fixtures. Fixture-mode eval (`python -m eval.matrix_runner --source
+fixture --paper all`), before -> after:
+- Refusal-family rate: 6/14 (43%) -> 6/15 (40%), PASS vs 0.35 both
+- Strict-label rate:   4/14 (29%) -> 4/15 (27%)
+- by label 5 -> 5, by grounding reject 1 -> 1
+- wrongly affirmed 5 -> 4 (REFLEX-M09 leaves)
+- not extracted 3 -> 5 (REFLEX-M09, REACT-M14 join)
+- Positive hits: 12/23 (52%) -> 12/22 (55%), floor 10 OK
+- False rejection rate: 0/23 -> 0/22; skipped 0; coverage 37/37
+Net: COT-M02 moves from POSITIVE_MISS to REFUSED (+1 refusal), and
+REACT-M14 loses a refusal it was only getting from the stale pairing
+(-1), so the refusal count is flat while the denominator grows. The
+margin over the 0.35 threshold is one row: 5/15 (33%) would fail.
