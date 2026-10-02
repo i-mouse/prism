@@ -111,6 +111,12 @@ class AuditChecklist(BaseModel):
     support_section: Optional[str] = None
     limit_section: Optional[str] = None
     has_limit_quote: bool = False
+    claim_setting: Optional[str] = None
+    """Trace-only: the model/dataset/setting the auditor says the claim is about."""
+    limit_same_setting: Optional[Literal["yes", "no", "n/a"]] = None
+    """Whether the limit quote comes from the same setting as the claim. The cap
+    counts a limit only when this is "yes"; None (missing/invalid, or a row
+    written before this field existed) never counts."""
     scope_match: Optional[Literal["yes", "no"]] = None
     comparison_tested: Optional[Literal["yes", "no", "n/a"]] = None
     problems: list[str] = Field(default_factory=list)
@@ -210,6 +216,10 @@ class EvidenceSpanFinal(BaseModel):
     grounding_reasoning: Optional[str] = None
     grounding_model: Optional[str] = None
     fuzz_score: Optional[float] = None
+    gate: Optional[Literal["token_exact", "fuzzy"]] = None
+    """Which grounding gate judged the quote: token_exact for table-row-like
+    quotes (whole-token contiguous match, fuzz_score 100.0 on a pass), fuzzy for
+    everything else. None on rows written before this field existed."""
 
 
 class ClaimFinal(BaseModel):

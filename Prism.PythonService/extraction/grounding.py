@@ -10,6 +10,7 @@ No DB writes, no worker integration - this module only grounds and logs.
 """
 import asyncio
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, NamedTuple, Optional
@@ -41,6 +42,16 @@ LOGS_DIR = Path(__file__).parent.parent / "logs" / "grounding"
 
 RAPIDFUZZ_THRESHOLD = 88
 AUDIT_CONCURRENCY = 1
+
+# Table-row-like quotes skip the fuzzy gate. PyMuPDF text puts one table cell per
+# line, so a fuzzy match lets through a wrong row (swapped numbers, or "Act ..."
+# inside "ReAct ..."); a whole-token contiguous match does not.
+TABLE_ROW_NUMERIC_SHARE = 0.4
+_NUMERIC_TOKEN_STRIP = "()[]{},.;:%"
+_HAS_DIGIT = re.compile(r"\d")
+_HAS_LETTER = re.compile(r"[A-Za-z]")
+_CAPTION_PREFIX = re.compile(r"^\s*(Figure|Fig\.|Table)\s*\d", re.IGNORECASE)
+_PANEL_PREFIX = re.compile(r"^\s*\([a-z]\)\s")
 
 # The cap's limit span is audited under this label's rubric: "directly relevant
 # to the specific assertion, in either direction" is exactly what a narrowing
@@ -266,6 +277,30 @@ async def _audit_span_with_llm(
             return SpanAuditResult(GroundingStatus.SKIPPED, None)
 
 
+def is_table_row_like(quote: str) -> bool:
+    """True when more than TABLE_ROW_NUMERIC_SHARE of the quote's whitespace
+    tokens are numbers (a digit, no letters, after stripping punctuation).
+    A caption ("Table 4: ...", "Figure 2", "(a) ...") is never table-row-like."""
+    if _CAPTION_PREFIX.match(quote) or _PANEL_PREFIX.match(quote):
+        return False
+    tokens = [t for t in (raw.strip(_NUMERIC_TOKEN_STRIP) for raw in quote.split()) if t]
+    if not tokens:
+        return False
+    numeric = sum(1 for t in tokens if _HAS_DIGIT.search(t) and not _HAS_LETTER.search(t))
+    return numeric / len(tokens) > TABLE_ROW_NUMERIC_SHARE
+
+
+def _find_token_exact(quote: str, paper_text: str) -> Optional[re.Match]:
+    """Finds the quote's whitespace-separated tokens as a contiguous run of whole
+    tokens in paper_text (any whitespace between tokens, including newlines).
+    Returns the match, whose offsets are into the original paper_text, or None."""
+    tokens = quote.split()
+    if not tokens:
+        return None
+    pattern = r"(?<!\S)" + r"\s+".join(re.escape(t) for t in tokens) + r"(?!\S)"
+    return re.search(pattern, paper_text)
+
+
 async def _ground_span(
     claim_text: str,
     claim_label: ClaimLabel,
@@ -277,9 +312,25 @@ async def _ground_span(
     gemini_api_key: str,
     correlation_id: str | None = None,
 ) -> tuple[EvidenceSpanFinal, bool]:
-    """Grounds one span. Returns (finalized span, passed_rapidfuzz)."""
+    """Grounds one span. Returns (finalized span, passed_gate).
+
+    Table-row-like quotes pass only on a whole-token exact match (fuzz_score is
+    then 100.0); every other quote uses the RapidFuzz threshold. The gate that
+    judged the quote is recorded on the span.
+    """
     fuzz_score = fuzz.partial_ratio(span.source_text, paper_text)
-    if fuzz_score < RAPIDFUZZ_THRESHOLD:
+    token_match: Optional[re.Match] = None
+    if is_table_row_like(span.source_text):
+        gate = "token_exact"
+        token_match = _find_token_exact(span.source_text, paper_text)
+        passed = token_match is not None
+        if passed:
+            fuzz_score = 100.0
+    else:
+        gate = "fuzzy"
+        passed = fuzz_score >= RAPIDFUZZ_THRESHOLD
+
+    if not passed:
         final_span = EvidenceSpanFinal(
             source_text=span.source_text,
             source_section=span.source_section,
@@ -289,14 +340,18 @@ async def _ground_span(
             stance=None,
             role=span.role,
             fuzz_score=fuzz_score,
+            gate=gate,
         )
         return final_span, False
 
-    alignment = fuzz.partial_ratio_alignment(span.source_text, paper_text)
-    if alignment.score >= RAPIDFUZZ_THRESHOLD:
-        span_context = _extract_span_context(paper_text, alignment.dest_start, alignment.dest_end)
+    if token_match is not None:
+        span_context = _extract_span_context(paper_text, token_match.start(), token_match.end())
     else:
-        span_context = span.source_text
+        alignment = fuzz.partial_ratio_alignment(span.source_text, paper_text)
+        if alignment.score >= RAPIDFUZZ_THRESHOLD:
+            span_context = _extract_span_context(paper_text, alignment.dest_start, alignment.dest_end)
+        else:
+            span_context = span.source_text
     print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars for span in {span.source_section!r}")
 
     audit = await _audit_span_with_llm(
@@ -322,6 +377,7 @@ async def _ground_span(
         grounding_reasoning=audit.reasoning,
         grounding_model=audit.model,
         fuzz_score=fuzz_score,
+        gate=gate,
     )
     return final_span, True
 

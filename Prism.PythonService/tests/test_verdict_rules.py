@@ -12,6 +12,8 @@ SUPPORT_QUOTE: Table 4 shows a 31% reduction.
 SUPPORT_SECTION: Table 4
 LIMIT_QUOTE: The saving vanishes on the longest sequences.
 LIMIT_SECTION: Appendix B
+CLAIM_SETTING: LatchNet vs baseline transformer, peak training memory, eight benchmark tasks
+LIMIT_SAME_SETTING: yes
 SCOPE_MATCH: no
 COMPARISON_TESTED: yes
 VERDICT: partially_supported"""
@@ -28,6 +30,8 @@ def test_well_formed_checklist_parses():
     assert c.auditor_verdict == ClaimLabel.PARTIALLY_SUPPORTED
     assert c.scope_match == "no"
     assert c.comparison_tested == "yes"
+    assert c.claim_setting == "LatchNet vs baseline transformer, peak training memory, eight benchmark tasks"
+    assert c.limit_same_setting == "yes"
     assert c.has_limit_quote is True
     assert c.support_section == "Table 4"
     assert c.limit_section == "Appendix B"
@@ -175,6 +179,106 @@ def test_cap_still_applies_when_only_a_section_line_is_missing():
     assert apply_verdict_cap(S, c, PASS) == (P, "limit")
 
 
+# --- same-setting lines (B2) ---
+
+
+def _without(*keys: str, text: str = WELL_FORMED) -> str:
+    return "\n".join(ln for ln in text.splitlines() if not ln.startswith(tuple(k + ":" for k in keys)))
+
+
+def test_new_lines_sit_before_scope_match_and_verdict_in_the_well_formed_example():
+    lines = [ln.split(":")[0] for ln in WELL_FORMED.splitlines() if ":" in ln and ln.split(":")[0].isupper()]
+    order = [k for k in lines if k in ("CLAIM_SETTING", "LIMIT_SAME_SETTING", "SCOPE_MATCH", "VERDICT")]
+    assert order == ["CLAIM_SETTING", "LIMIT_SAME_SETTING", "SCOPE_MATCH", "VERDICT"]
+
+
+def test_missing_limit_same_setting_is_soft_status_stays_parsed_and_scope_cap_still_fires():
+    text = _without("LIMIT_SAME_SETTING").replace("VERDICT: partially_supported", "VERDICT: supported")
+    c = parse_audit_checklist(text).checklist
+    assert c.checklist_status == "parsed"
+    assert c.problems == ["missing:LIMIT_SAME_SETTING"]
+    assert c.limit_same_setting is None
+    assert c.has_limit_quote is True and c.scope_match == "no"
+    # The limit quote is grounded, but without a usable same-setting value it does not count;
+    # the scope rule (SCOPE_MATCH == no) still caps on this same checklist.
+    assert apply_verdict_cap(S, c, PASS) == (P, "scope")
+
+
+def test_missing_limit_same_setting_still_lets_the_comparison_cap_fire():
+    text = _without("LIMIT_SAME_SETTING").replace("COMPARISON_TESTED: yes", "COMPARISON_TESTED: no")
+    c = parse_audit_checklist(text).checklist
+    assert c.checklist_status == "parsed"
+    assert apply_verdict_cap(S, c, PASS) == (N, "comparison")
+
+
+@pytest.mark.parametrize("value", ["maybe", "yes | no | n/a", "sometimes", "same"])
+def test_invalid_limit_same_setting_is_soft_and_does_not_count(value):
+    text = WELL_FORMED.replace("LIMIT_SAME_SETTING: yes", f"LIMIT_SAME_SETTING: {value}")
+    text = text.replace("SCOPE_MATCH: no", "SCOPE_MATCH: yes")
+    c = parse_audit_checklist(text).checklist
+    assert c.checklist_status == "parsed"
+    assert c.limit_same_setting is None
+    assert any(p.startswith("invalid:LIMIT_SAME_SETTING=") for p in c.problems)
+    assert apply_verdict_cap(S, c, PASS) == (S, None)
+
+
+@pytest.mark.parametrize(
+    "line,expected",
+    [
+        ("LIMIT_SAME_SETTING: yes", "yes"),
+        ("LIMIT_SAME_SETTING: NO", "no"),
+        ("LIMIT_SAME_SETTING: no (that caveat is about the 7B model)", "no"),
+        ("LIMIT_SAME_SETTING: **yes**", "yes"),
+    ],
+)
+def test_limit_same_setting_accepts_a_valid_leading_token(line, expected):
+    text = WELL_FORMED.replace("LIMIT_SAME_SETTING: yes", line)
+    c = parse_audit_checklist(text).checklist
+    assert c.limit_same_setting == expected
+    assert c.problems == [] and c.checklist_status == "parsed"
+
+
+def test_n_a_next_to_a_real_limit_quote_is_soft_recorded_and_does_not_count():
+    text = WELL_FORMED.replace("LIMIT_SAME_SETTING: yes", "LIMIT_SAME_SETTING: n/a").replace(
+        "SCOPE_MATCH: no", "SCOPE_MATCH: yes"
+    )
+    c = parse_audit_checklist(text).checklist
+    assert c.checklist_status == "parsed"
+    assert c.limit_same_setting == "n/a" and c.has_limit_quote is True
+    assert any(p.startswith("inconsistent:LIMIT_SAME_SETTING") for p in c.problems)
+    assert apply_verdict_cap(S, c, PASS) == (S, None)
+
+
+def test_n_a_with_no_limit_quote_is_clean():
+    text = WELL_FORMED.replace("LIMIT_QUOTE: The saving vanishes on the longest sequences.", "LIMIT_QUOTE: NONE")
+    text = text.replace("LIMIT_SAME_SETTING: yes", "LIMIT_SAME_SETTING: n/a")
+    c = parse_audit_checklist(text).checklist
+    assert c.problems == [] and c.limit_same_setting == "n/a" and c.has_limit_quote is False
+
+
+@pytest.mark.parametrize("missing", [["CLAIM_SETTING"], ["CLAIM_SETTING", "LIMIT_SAME_SETTING"]])
+def test_missing_claim_setting_is_soft_and_trace_only(missing):
+    c = parse_audit_checklist(_without(*missing)).checklist
+    assert c.checklist_status == "parsed"
+    assert c.claim_setting is None
+    assert all(f"missing:{k}" in c.problems for k in missing)
+
+
+def test_empty_claim_setting_is_soft():
+    text = WELL_FORMED.replace(
+        "CLAIM_SETTING: LatchNet vs baseline transformer, peak training memory, eight benchmark tasks", "CLAIM_SETTING:   "
+    )
+    c = parse_audit_checklist(text).checklist
+    assert c.checklist_status == "parsed"
+    assert c.claim_setting is None and "empty:CLAIM_SETTING" in c.problems
+
+
+def test_a_checklist_without_the_new_lines_never_caps_on_limit_but_other_rules_work():
+    old_style = AuditChecklist(checklist_status="parsed", scope_match="yes", comparison_tested="n/a", has_limit_quote=True)
+    assert old_style.limit_same_setting is None and old_style.claim_setting is None
+    assert apply_verdict_cap(S, old_style, PASS) == (S, None)
+
+
 # --- leading-token enum parsing ---
 
 
@@ -285,12 +389,13 @@ def test_garbage_and_empty_input_never_raise():
 # --- cap ---
 
 
-def _checklist(*, status="parsed", scope="yes", comparison="n/a", has_limit=False) -> AuditChecklist:
+def _checklist(*, status="parsed", scope="yes", comparison="n/a", has_limit=False, same_setting="yes") -> AuditChecklist:
     return AuditChecklist(
         checklist_status=status,
         scope_match=scope,
         comparison_tested=comparison,
         has_limit_quote=has_limit,
+        limit_same_setting=same_setting,
     )
 
 
@@ -327,6 +432,23 @@ def test_limit_quote_that_does_not_ground_never_caps(limit_status):
     assert apply_verdict_cap(S, _checklist(has_limit=True), limit_status) == (S, None)
 
 
+@pytest.mark.parametrize("limit_status", [PASS, PARTIAL])
+def test_limit_from_a_different_setting_does_not_cap(limit_status):
+    assert apply_verdict_cap(S, _checklist(has_limit=True, same_setting="no"), limit_status) == (S, None)
+
+
+@pytest.mark.parametrize("same_setting", ["no", "n/a", None])
+def test_limit_that_does_not_count_falls_through_to_scope_and_comparison(same_setting):
+    scope_no = _checklist(scope="no", has_limit=True, same_setting=same_setting)
+    assert apply_verdict_cap(S, scope_no, PASS) == (P, "scope")
+    comparison_no = _checklist(comparison="no", has_limit=True, same_setting=same_setting)
+    assert apply_verdict_cap(S, comparison_no, PASS) == (N, "comparison")
+
+
+def test_same_setting_limit_caps_as_before():
+    assert apply_verdict_cap(S, _checklist(has_limit=True, same_setting="yes"), PASS) == (P, "limit")
+
+
 def test_scope_mismatch_caps_supported_to_partial():
     assert apply_verdict_cap(S, _checklist(scope="no"), None) == (P, "scope")
 
@@ -357,15 +479,18 @@ def test_unparsed_checklist_never_caps():
 
 def test_cap_never_raises_a_label_full_truth_table():
     rank = {N: 0, P: 1, S: 2}
-    for verdict, scope, comparison, has_limit, limit_status, status in itertools.product(
+    for verdict, scope, comparison, has_limit, same_setting, limit_status, status in itertools.product(
         [S, P, N],
         ["yes", "no", None],
         ["yes", "no", "n/a", None],
         [True, False],
+        ["yes", "no", "n/a", None],
         [PASS, PARTIAL, FAIL, SKIPPED, None],
         ["parsed", "unparsed"],
     ):
-        cl = _checklist(status=status, scope=scope, comparison=comparison, has_limit=has_limit)
+        cl = _checklist(
+            status=status, scope=scope, comparison=comparison, has_limit=has_limit, same_setting=same_setting
+        )
         final, reason = apply_verdict_cap(verdict, cl, limit_status)
         assert rank[final] <= rank[verdict]
         assert (reason is None) == (final == verdict)

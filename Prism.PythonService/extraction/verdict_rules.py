@@ -22,8 +22,14 @@ UNSPECIFIED_SECTION = "Unspecified"
 
 _QUOTE_KEYS = ("SUPPORT_QUOTE", "LIMIT_QUOTE")
 _SECTION_KEYS = ("SUPPORT_SECTION", "LIMIT_SECTION")
-_ENUM_KEYS = ("SCOPE_MATCH", "COMPARISON_TESTED", "VERDICT")
-_ALL_KEYS = _QUOTE_KEYS + _SECTION_KEYS + _ENUM_KEYS
+_SETTING_KEY = "CLAIM_SETTING"
+_ENUM_KEYS = ("LIMIT_SAME_SETTING", "SCOPE_MATCH", "COMPARISON_TESTED", "VERDICT")
+_ALL_KEYS = _QUOTE_KEYS + _SECTION_KEYS + (_SETTING_KEY,) + _ENUM_KEYS
+# Lines whose absence or invalidity is recorded but never flips the status to
+# "unparsed". LIMIT_SAME_SETTING is soft by design: without a usable value the
+# limit simply does not count toward the cap, and the scope and comparison rules
+# keep working on the same checklist.
+_SOFT_KEYS = _SECTION_KEYS + (_SETTING_KEY, "LIMIT_SAME_SETTING")
 
 # A checklist line: optional markdown/bullet noise, the key, a colon, the value.
 _KEY_LINE = re.compile(
@@ -34,6 +40,7 @@ _KEY_LINE = re.compile(
 _VERDICTS = {label.value: label for label in ClaimLabel}
 _SCOPE_VALUES = ("yes", "no")
 _COMPARISON_VALUES = ("yes", "no", "n/a")
+_SAME_SETTING_VALUES = ("yes", "no", "n/a")
 
 # Markup and quote characters that may wrap or precede an enum value.
 _ENUM_LEAD_NOISE = " \t*_`\"'“”‘’"
@@ -51,6 +58,7 @@ def _leading_token_pattern(allowed: tuple[str, ...]) -> re.Pattern[str]:
 
 _SCOPE_PATTERN = _leading_token_pattern(_SCOPE_VALUES)
 _COMPARISON_PATTERN = _leading_token_pattern(_COMPARISON_VALUES)
+_SAME_SETTING_PATTERN = _leading_token_pattern(_SAME_SETTING_VALUES)
 _VERDICT_PATTERN = _leading_token_pattern(tuple(_VERDICTS))
 
 # Lower rank = harsher label. The cap only ever moves a label down this scale.
@@ -119,7 +127,11 @@ def parse_audit_checklist(audit_text: str, model_used: Optional[str] = None) -> 
         missing or empty.
       - SOFT (recorded, status stays "parsed"): SUPPORT_SECTION or
         LIMIT_SECTION missing - the quote is still usable, only its
-        location label is lost (it falls back to UNSPECIFIED_SECTION).
+        location label is lost (it falls back to UNSPECIFIED_SECTION);
+        CLAIM_SETTING missing or empty (trace-only); LIMIT_SAME_SETTING
+        missing or invalid (the limit then does not count toward the cap);
+        LIMIT_SAME_SETTING "n/a" next to a real limit quote (kept as "n/a",
+        does not count either).
     Whatever did parse (notably VERDICT and any quotes) is kept either way.
     Keys are matched case-insensitively. Enum lines accept a valid leading
     token followed by optional trailing text ("no (only two tasks)") and are
@@ -133,7 +145,19 @@ def parse_audit_checklist(audit_text: str, model_used: Optional[str] = None) -> 
     for key in _ALL_KEYS:
         if key not in values:
             problems.append(f"missing:{key}")
-            hard_problem = hard_problem or key not in _SECTION_KEYS
+            hard_problem = hard_problem or key not in _SOFT_KEYS
+
+    claim_setting: Optional[str] = None
+    if _SETTING_KEY in values:
+        claim_setting = values[_SETTING_KEY].strip() or None
+        if claim_setting is None:
+            problems.append(f"empty:{_SETTING_KEY}")
+
+    limit_same_setting: Optional[str] = None
+    if "LIMIT_SAME_SETTING" in values:
+        limit_same_setting = _leading_enum(values["LIMIT_SAME_SETTING"], _SAME_SETTING_PATTERN)
+        if limit_same_setting is None:
+            problems.append(f"invalid:LIMIT_SAME_SETTING={values['LIMIT_SAME_SETTING']!r}")
 
     verdict: Optional[ClaimLabel] = None
     if "VERDICT" in values:
@@ -186,12 +210,17 @@ def parse_audit_checklist(audit_text: str, model_used: Optional[str] = None) -> 
             )
         )
 
+    if limit_same_setting == "n/a" and has_quote["limit"]:
+        problems.append("inconsistent:LIMIT_SAME_SETTING=n/a with a limit quote")
+
     checklist = AuditChecklist(
         checklist_status="unparsed" if hard_problem else "parsed",
         auditor_verdict=verdict,
         support_section=sections["support"],
         limit_section=sections["limit"],
         has_limit_quote=has_quote["limit"],
+        claim_setting=claim_setting,
+        limit_same_setting=limit_same_setting,
         scope_match=scope_match,
         comparison_tested=comparison_tested,
         problems=problems,
@@ -210,12 +239,15 @@ def apply_verdict_cap(
     Rules, in precedence order:
       - COMPARISON_TESTED == no            -> not_supported ("comparison")
       - auditor verdict is supported and
-          (a limit quote exists and its span grounded Pass/Partial, or
-           SCOPE_MATCH == no)              -> partially_supported ("limit"
+          (a limit quote exists, LIMIT_SAME_SETTING == yes and its span
+           grounded Pass/Partial, or SCOPE_MATCH == no)
+                                           -> partially_supported ("limit"
                                               takes precedence over "scope")
     cap_reason is None whenever the label is unchanged. An unparsed checklist
     never caps, and a limit span that failed grounding or was Skipped
-    (limit_grounding Fail/Skipped/None) does not trigger the limit cap.
+    (limit_grounding Fail/Skipped/None) does not trigger the limit cap. A limit
+    from a different setting (LIMIT_SAME_SETTING no, n/a, or missing/invalid)
+    does not count; the scope and comparison rules are unaffected by it.
     """
     if checklist.checklist_status != "parsed":
         return auditor_verdict, None
@@ -226,7 +258,9 @@ def apply_verdict_cap(
     if checklist.comparison_tested == "no":
         final, reason = ClaimLabel.NOT_SUPPORTED, "comparison"
     elif auditor_verdict == ClaimLabel.SUPPORTED:
-        limit_grounded = checklist.has_limit_quote and limit_grounding in (
+        limit_grounded = (
+            checklist.has_limit_quote and checklist.limit_same_setting == "yes"
+        ) and limit_grounding in (
             GroundingStatus.PASS,
             GroundingStatus.PARTIAL,
         )

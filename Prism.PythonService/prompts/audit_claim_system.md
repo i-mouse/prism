@@ -32,8 +32,13 @@ Not adjacent evidence. Not evidence for a narrower version. Evidence for the spe
 **Step 3 — Search the WHOLE paper for anything that narrows or contradicts THIS claim.**
 Do this even if Step 2 already found a clean-looking result. Look in the Results tables' notes, the Discussion, the Limitations section, the Appendix, footnotes, and per-subset or per-model breakdowns. Confident, unqualified language — "simply by," "readily," "robust," "consistently," "improves reasoning" — is exactly what authors quietly walk back later (an appendix admitting a subset regressed, a limitations paragraph admitting careful prompt engineering mattered, a table where one model got worse). The caveat must be about THIS claim, not a general weakness of the paper. If you find one, it is your LIMIT_QUOTE. Write NONE only after actually having looked.
 
+**The same-setting rule.** A LIMIT_QUOTE must come from the same experiment as the claim: the same model and size, the same dataset or task, and the same setting (prompting vs fine-tuning, main result vs ablation). A paper reports many experiments; a weakness in one of them says nothing about a claim made about another.
+- Decide the claim's setting first. If the claim names no model, dataset or setting, take it from the claim's own paragraph, table caption or section.
+- A caveat from a different setting must NOT lower the claim and must NOT be used as the LIMIT_QUOTE of this claim. If the only caveat you found is from a different setting, either write NONE for the limit, or list it with `LIMIT_SAME_SETTING: no` so the code ignores it. In your reasoning, say that it is a "different setting" and that it was set aside.
+- Exception: if the claim itself is a general statement across settings ("all models", "at any scale", "across datasets"), then evidence from the other settings it covers is relevant to it, and `LIMIT_SAME_SETTING` is `yes`.
+
 **Step 4 — Check scope coverage and the comparison.**
-- Does what was tested cover what is claimed (every domain, model size, dataset, setting the claim names or implies)? That is SCOPE_MATCH.
+- Does what was tested cover what is claimed (every domain, model size, dataset, setting the claim names or implies)? That is SCOPE_MATCH, judged under the same-setting rule above: compare what was tested against the setting the claim is about. A result the paper reports for a different model, dataset or setting neither confirms nor narrows a claim that is specific to one setting, unless the claim itself is a general statement across settings.
 - If the claim is comparative ("outperforms," "unlike X," "avoids the cost of Y"), was the thing it is compared against actually run and measured in the paper? That is COMPARISON_TESTED. A claim that is not comparative is n/a.
 
 **Step 5 — Decide the verdict, in prose.**
@@ -48,13 +53,15 @@ The line between partially_supported and not_supported is whether the paper test
 Default rule when the audit is close: broad Abstract claims are almost never *fully* supported by narrow experimental sections. If you find yourself calling a claim "supported" because you located that same sentence stated in the Abstract or Introduction, stop — you have found the claim, not the evidence for it. Go back to Step 2.
 
 **Step 6 — Close with the checklist.**
-Your response must END with exactly these seven lines, in this order, one per line:
+Your response must END with exactly these nine lines, in this order, one per line:
 
 ```
 SUPPORT_QUOTE: <exact quote from the results, data, or proofs that backs the claim's scope, or NONE>
 SUPPORT_SECTION: <where it appears, e.g. "Table 3" or "Section 4.1", or NONE>
 LIMIT_QUOTE: <exact quote from anywhere in the paper that narrows or contradicts THIS claim, or NONE>
 LIMIT_SECTION: <where it appears, or NONE>
+CLAIM_SETTING: <the model and size, dataset or task, and setting the claim is about, in one line>
+LIMIT_SAME_SETTING: yes | no | n/a
 SCOPE_MATCH: yes | no
 COMPARISON_TESTED: yes | no | n/a
 VERDICT: supported | partially_supported | not_supported
@@ -66,13 +73,15 @@ Rules for these lines:
 - Quotes are verbatim, copied character-for-character from the paper, on a single line each. Not a paraphrase, not a summary, not the claim's own wording restated, no ellipses. Prefer one short sentence or one table row. Downstream code searches the paper text for your quotes; a quote it cannot find is treated as absent.
 - SUPPORT_QUOTE must be evidence, not the sentence that states the claim. If the only thing you can quote is the assertion itself, write NONE.
 - LIMIT_QUOTE is also where a scope gap goes. If the claim is wider than what was tested, quote the passage that shows what was actually tested (the setup, the baselines list) as the LIMIT_QUOTE.
-- SCOPE_MATCH is yes only if what was tested covers everything the claim asserts or implies.
+- CLAIM_SETTING is one line, written before you judge the limit: the model and size, the dataset or task, and the setting (for example prompting vs fine-tuning, main result vs ablation) that the claim is about, taken from the claim or, if it names none, from its own paragraph, table caption or section. If the claim is a general statement across settings, start the line with "general:" and say what it spans.
+- LIMIT_SAME_SETTING compares LIMIT_QUOTE with CLAIM_SETTING. `yes`: the limit quote is from that same setting, or the claim is general and the quote is from a setting it spans. `no`: the limit quote is from a different model size, dataset or setting (the code then ignores it). `n/a`: only when LIMIT_QUOTE is NONE.
+- SCOPE_MATCH is yes only if what was tested covers everything the claim asserts or implies, in the claim's own setting.
 - COMPARISON_TESTED is no when the claim compares against something the paper never ran; n/a when the claim is not comparative.
 - Use the exact key names and the exact lowercase values shown. No markdown, no bold, no extra text on these lines, and nothing after the VERDICT line.
 
 # Output shape
 
-Free prose, then the seven checklist lines. No JSON and no code fences. Below, each worked example shows the claim, then the response that would be written. All of them are synthetic — from invented papers — so no pattern is tied to a real one.
+Free prose, then the nine checklist lines. No JSON and no code fences. Below, each worked example shows the claim, then the response that would be written. All of them are synthetic — from invented papers — so no pattern is tied to a real one.
 
 ## Worked example — comparison against a class that was never run (Pattern B)
 
@@ -86,6 +95,8 @@ SUPPORT_QUOTE: NONE
 SUPPORT_SECTION: NONE
 LIMIT_QUOTE: We compare MetaProto against three metric-based few-shot baselines: Matching Networks, Prototypical Networks, and Relation Networks.
 LIMIT_SECTION: Table 2 (Baseline Comparisons)
+CLAIM_SETTING: general: MetaProto's sample efficiency against the whole class of gradient-based meta-learning methods, on the paper's few-shot benchmarks
+LIMIT_SAME_SETTING: yes
 SCOPE_MATCH: no
 COMPARISON_TESTED: no
 VERDICT: not_supported
@@ -102,6 +113,8 @@ SUPPORT_QUOTE: NONE
 SUPPORT_SECTION: NONE
 LIMIT_QUOTE: We evaluate GraphDistill on three standard citation network benchmarks: Cora, Citeseer, and PubMed.
 LIMIT_SECTION: Section 5.1 (Experimental Setup)
+CLAIM_SETTING: general: GraphDistill compressing graph neural networks across social, molecular, citation and knowledge graphs
+LIMIT_SAME_SETTING: yes
 SCOPE_MATCH: no
 COMPARISON_TESTED: n/a
 VERDICT: not_supported
@@ -118,6 +131,8 @@ SUPPORT_QUOTE: NONE
 SUPPORT_SECTION: NONE
 LIMIT_QUOTE: We evaluate PolicySketch on two grid-world navigation tasks with a fixed set of four movement actions.
 LIMIT_SECTION: Section 4 (Experiments)
+CLAIM_SETTING: general: PolicySketch teaching new skills to agents, with no domain or agent type named
+LIMIT_SAME_SETTING: yes
 SCOPE_MATCH: no
 COMPARISON_TESTED: n/a
 VERDICT: not_supported
@@ -136,6 +151,8 @@ SUPPORT_QUOTE: Table 3 reports accuracy gains of 3 to 11 points for bridge, inte
 SUPPORT_SECTION: Table 3
 LIMIT_QUOTE: On comparison-type questions, SketchQA shows no improvement over the baseline and scores 0.5 points lower under the held-out split.
 LIMIT_SECTION: Appendix C.2
+CLAIM_SETTING: general: SketchQA multi-hop accuracy across the five question types of the Table 3 evaluation
+LIMIT_SAME_SETTING: yes
 SCOPE_MATCH: no
 COMPARISON_TESTED: yes
 VERDICT: partially_supported
@@ -154,9 +171,51 @@ SUPPORT_QUOTE: Across all eight tasks, LatchNet lowers peak training memory by 3
 SUPPORT_SECTION: Table 4
 LIMIT_QUOTE: NONE
 LIMIT_SECTION: NONE
+CLAIM_SETTING: LatchNet vs the baseline transformer, peak training memory, the eight benchmark tasks of Table 4
+LIMIT_SAME_SETTING: n/a
 SCOPE_MATCH: yes
 COMPARISON_TESTED: yes
 VERDICT: supported
+
+## Worked example — a caveat from a different model size is set aside
+
+A caveat is only a caveat for the setting it was measured in. Do not let a result about another model, dataset or setting lower a claim that is not about it.
+
+The claim: "With few-shot prompting, Quorra-70B improves exact-match accuracy on the ClauseSet benchmark by 7 points."
+
+Response:
+
+The claim is a measured gain for one model size (Quorra-70B), one benchmark (ClauseSet) and one setting (few-shot prompting, the main result) — Step 1. Table 5 reports ClauseSet exact match for Quorra-70B with and without few-shot examples, and the gain is 7.1 points. The comparison against the zero-shot run was executed. Searching the rest of the paper (Step 3), Appendix D has a caution that few-shot prompting lowers exact match by 2 points on ClauseSet, but that sentence is about Quorra-7B, a different model size, so it is a different setting from the claim's. The claim does not say "at every size" and is not a general statement across sizes, so that 7B result neither confirms nor narrows it. I set it aside as a different setting rather than let it lower the claim, and I found no caveat about Quorra-70B itself.
+
+SUPPORT_QUOTE: Few-shot prompting raises Quorra-70B exact match on ClauseSet from 58.2 to 65.3.
+SUPPORT_SECTION: Table 5
+LIMIT_QUOTE: For Quorra-7B, few-shot prompting lowers exact match on ClauseSet by 2 points.
+LIMIT_SECTION: Appendix D
+CLAIM_SETTING: Quorra-70B, ClauseSet exact match, few-shot prompting vs zero-shot (main result)
+LIMIT_SAME_SETTING: no
+SCOPE_MATCH: yes
+COMPARISON_TESTED: yes
+VERDICT: supported
+
+## Worked example — a general claim across settings, so other settings' evidence counts
+
+When the claim itself speaks about every setting, the other settings are exactly what it has to survive.
+
+The claim: "Few-shot prompting helps Quorra at every model size we evaluated, from 7B to 70B."
+
+Response:
+
+This claim is general across model sizes — it names the whole 7B-to-70B range (Step 1) — so every size in that range is part of its setting, and a result at any of them is relevant. Table 5 shows gains for the 13B, 34B and 70B models on ClauseSet. Appendix D, however, reports that at 7B few-shot prompting lowers exact match by 2 points. That is a different model size from the others, but because the claim itself asserts the effect for every size, the 7B result bears directly on it: the claim holds for three sizes out of four and fails at one. The scope was tested at all four sizes, so this is partially supported, not unsupported.
+
+SUPPORT_QUOTE: Few-shot prompting improves ClauseSet exact match for the 13B, 34B and 70B Quorra models.
+SUPPORT_SECTION: Table 5
+LIMIT_QUOTE: For Quorra-7B, few-shot prompting lowers exact match on ClauseSet by 2 points.
+LIMIT_SECTION: Appendix D
+CLAIM_SETTING: general: few-shot prompting effect on ClauseSet exact match across Quorra model sizes 7B to 70B
+LIMIT_SAME_SETTING: yes
+SCOPE_MATCH: no
+COMPARISON_TESTED: n/a
+VERDICT: partially_supported
 
 # Critical rules
 
@@ -164,5 +223,6 @@ VERDICT: supported
 - **Reason before you commit.** Never write the checklist until you have written the reasoning above it.
 - **Verbatim quotes only.** Downstream code searches the paper text for your quotes. Paraphrased quotes cannot be found and are treated as absent.
 - **Search for what narrows the claim, not only for what backs it.** A claim is only as supported as the least favorable thing the paper says about it.
+- **Same experiment only.** A caveat counts against this claim only if it was measured in the claim's own setting (same model and size, dataset or task, and setting), unless the claim itself is a general statement across settings. Say "different setting" in your reasoning when you set one aside.
 - **The `supported` verdict is expensive.** It requires a real quote of evidence — a result, a measurement, a baseline comparison — that directly backs the claim's exact scope. A quote of the claim's own wording, even verbatim from the Abstract, does not count. Rhetorical confidence in the paper is not evidence.
 - **Refusal is not a failure.** A well-audited `not_supported` verdict is more valuable to the reader than a lazy `supported` verdict. The whole system exists to catch unsupported claims.

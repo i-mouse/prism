@@ -33,13 +33,15 @@ SPAN_RESULTS = {}  # span text -> SpanAuditResult
 AUDIT_LABELS_SEEN: dict[str, ClaimLabel] = {}
 
 
-def _checklist(*, scope="yes", comparison="n/a", has_limit=False, status="parsed") -> AuditChecklist:
+def _checklist(*, scope="yes", comparison="n/a", has_limit=False, status="parsed", same_setting="yes") -> AuditChecklist:
     return AuditChecklist(
         checklist_status=status,
         auditor_verdict=ClaimLabel.SUPPORTED,
         scope_match=scope,
         comparison_tested=comparison,
         has_limit_quote=has_limit,
+        claim_setting="LatchNet memory on the eight benchmark tasks",
+        limit_same_setting=same_setting,
         model_used="auditor-x",
     )
 
@@ -149,6 +151,22 @@ def test_limit_quote_not_found_in_paper_does_not_cap_and_does_not_hurt_the_rollu
     assert FABRICATED_QUOTE not in AUDIT_LABELS_SEEN  # never reached the audit LLM
 
 
+def test_grounded_limit_span_from_a_different_setting_does_not_cap_through_the_pipeline():
+    SPAN_RESULTS[SUPPORT_QUOTE] = _result(GroundingStatus.PASS)
+    SPAN_RESULTS[LIMIT_QUOTE] = _result(GroundingStatus.PASS, "refutes")
+    claim = _claim(
+        [
+            AuditedSpan(source_text=SUPPORT_QUOTE, source_section="Table 4", role="support"),
+            AuditedSpan(source_text=LIMIT_QUOTE, source_section="Appendix B", role="limit"),
+        ],
+        _checklist(has_limit=True, same_setting="no"),
+    )
+    [final] = _ground(claim)
+    assert final.label == ClaimLabel.SUPPORTED and final.cap_reason is None
+    assert final.evidence_spans[1].grounding_status == GroundingStatus.PASS  # still grounded and traced
+    assert final.audit_checklist.limit_same_setting == "no"
+
+
 def test_skipped_limit_span_does_not_cap():
     SPAN_RESULTS[SUPPORT_QUOTE] = _result(GroundingStatus.PASS)
     SPAN_RESULTS[LIMIT_QUOTE] = grounding.SpanAuditResult(GroundingStatus.SKIPPED, None)
@@ -252,7 +270,7 @@ def test_old_rows_without_new_keys_still_validate():
     }
     span = EvidenceSpanFinal(**old_span)
     assert span.role is None and span.grounding_reasoning is None
-    assert span.grounding_model is None and span.fuzz_score is None
+    assert span.grounding_model is None and span.fuzz_score is None and span.gate is None
 
     claim = ClaimFinal(
         claim_text_verbatim="c",
@@ -270,5 +288,6 @@ def test_audit_checklist_json_shape_for_jsonb():
     assert dumped["checklist_status"] == "parsed"
     assert dumped["model_used"] == "auditor-x"
     assert dumped["auditor_verdict"] == "supported"
+    assert dumped["limit_same_setting"] == "yes" and dumped["claim_setting"]
     # quotes are not duplicated into the checklist column
     assert "support_quote" not in dumped and "limit_quote" not in dumped
