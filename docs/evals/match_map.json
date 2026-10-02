@@ -90,11 +90,12 @@
     },
     "REFLEX-M09": {
       "persisted_claim_id": null,
-      "claim_fingerprint": "dce67ae2b29f639ee65485db8c37d6e65301d84ca512f1cd190bee26181a5d60",
+      "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
-      "suggested": null
+      "decided_on": "2026-10-02",
+      "reason": "No extracted claim states the Section 4 sentence (unhedged 22/20/11). Claim 12 is the Introduction sentence, which hedges HumanEval ('by as much as 11%') and adds 'absolute ... in 12 iterative learning steps'. That is a different scope from this row, and claim 12 stays mapped to REFLEX-M02.",
+      "suggested": null,
+      "confirmed_no_match": true
     },
     "REFLEX-M11": {
       "persisted_claim_id": null,

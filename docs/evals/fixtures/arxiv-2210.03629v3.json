@@ -328,7 +328,7 @@
     },
     {
       "expected_id": "REACT-M14",
-      "actual_index": 4
+      "actual_index": null
     }
   ]
 }

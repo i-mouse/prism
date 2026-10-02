@@ -218,16 +218,20 @@
         "id": "COT-M02",
         "claim_text_verbatim": "chain-of-thought prompting does not positively impact performance for small models, and only yields performance gains when used with models of ~100B parameters.",
         "claim_summary": "Chain-of-thought prompting only improves reasoning accuracy on language models with approximately 100 billion parameters or more.",
-        "expected_label": "supported",
+        "expected_label": "partially_supported",
         "expected_evidence_sections": [
             "Section 3.2",
             "Figure 4",
-            "Table 2"
+            "Table 2",
+            "Table 3",
+            "Table 4",
+            "Table 5",
+            "Appendix A.1"
         ],
-        "grounding_negative": false,
-        "scoring_notes": "Table 2 and Figure 4 show that smaller models (PaLM 8B, GPT 6.7B, LaMDA 8B) perform worse or similarly with CoT, while the ~100B+ models (PaLM 540B, GPT-3 175B, LaMDA 137B) show massive gains.",
-        "why_this_case": "Core finding regarding the emergent nature of chain-of-thought reasoning.",
-        "confidence": 0.95
+        "grounding_negative": true,
+        "scoring_notes": "The sentence (p.4 Section 3.2; repeated p.8 Section 5) says chain-of-thought gains come only at ~100B parameters, but the paper's own appendix tables show clear gains below 100B. PaLM 62B: GSM8K 9.6 -> 29.9 and MAWPS 61.8 -> 80.3 (Table 2, p.21), MultiArith 7.3 -> 73.7 (Table 3, p.21). LaMDA 68B: CoT higher in 19 of 20 cells across Tables 2-5. UL2 20B: 16 of 20. Appendix A.1 (p.16) puts the harm threshold at about 10B, not 100B. Below 10B the picture is mixed: LaMDA <=8B and GPT <=6.7B mostly lose with CoT, but PaLM 8B gains in 16 of 20 cells. Values read from rendered table images.",
+        "why_this_case": "The paper's headline scale threshold is contradicted by its own appendix tables.",
+        "confidence": 0.75
         },
         {
         "id": "COT-M03",
