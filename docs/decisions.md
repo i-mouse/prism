@@ -1011,3 +1011,155 @@ Net: COT-M02 moves from POSITIVE_MISS to REFUSED (+1 refusal), and
 REACT-M14 loses a refusal it was only getting from the stale pairing
 (-1), so the refusal count is flat while the denominator grows. The
 margin over the 0.35 threshold is one row: 5/15 (33%) would fail.
+
+## B5.1 auditor checklist - measured, not merged - 2026-10-02
+**Context:** The B5.1 experiment tried to make the claim auditor catch
+caveats it was missing. The code is NOT in main. It lives on the
+unmerged branch fix/b5.1-auditor-checklist, preserved by tag
+archive/b5.1-checklist-attempt. Replay inputs and outputs are on disk in
+Prism.PythonService/scratch/b51_replay/ (gitignored). Every statement
+below is marked OBSERVED (read from a saved file or the session) or
+INFERRED (reasoning, not directly measured). Figures marked "session
+notes" come from the author's session, not from a saved file.
+
+**Problem:**
+- OBSERVED: the auditor tends to stop at the first supporting evidence
+  and misses caveats. The golden trap rows show three shapes: caveat
+  elsewhere in the paper, scope wider than what was tested, untested
+  comparison.
+- OBSERVED: an earlier theory (the extractor's claim_summary strips
+  hedges before the auditor sees them) was ruled out by an A/B test:
+  removing claim_summary changed nothing.
+
+**Design tried:**
+- Checklist lines in the auditor output (SUPPORT_QUOTE, LIMIT_QUOTE,
+  CLAIM_SETTING, LIMIT_SAME_SETTING, SCOPE_MATCH, COMPARISON_TESTED,
+  VERDICT), parsed in code.
+- A deterministic cap that can only lower a label, never raise one.
+- 4 trace columns on paper_claims.
+- A token-exact gate for table-row quotes (fuzzy gate kept for prose).
+- A same-setting rule: the cap applies only when LIMIT_SAME_SETTING is
+  yes.
+
+**Pre-registered marks and results:**
+- Marks for the corrected-key (v3) replays were written before the runs
+  (they are coded in scratch/b51_replay/report_v3.py): wrongly affirmed
+  <= 2; positive hits >= 11 of 22; false rejections <= 1; golden-positive
+  rows lowered by cap = 0; COT-M08/M09/M10 all refused; unparsed <= 2
+  and failed audits = 0.
+- Marks for the first (old-key) replay: NOT RECORDED in any saved file.
+- OBSERVED, first replay on the OLD golden key (out/run_a, out/run_b;
+  denominators 14 negatives / 23 positives, so not comparable to v3):
+  both runs refusal-family 9/14, wrongly affirmed 2, not extracted 3,
+  positive hits 9/23, false rejections 2/23. The harness flagged both
+  BELOW the positive-hit floor of 10 ("mark invalid"). Which of the
+  unrecorded marks failed: NOT RECORDED. (out/run2, an earlier old-key
+  run: refusal-family 8/13, wrongly affirmed 2, positive hits 7/23,
+  false rejections 1/23, skipped 1.)
+- OBSERVED, v3 on the CORRECTED key (22 positives, 15 trap rows;
+  out/v3_baseline, out/v3_a, out/v3_b; baseline = main prompt, same
+  harness, recomputed from committed fixtures):
+
+  | metric                  | baseline | v3_a  | v3_b  |
+  |-------------------------|----------|-------|-------|
+  | refusal-family          | 6/15     | 9/15  | 7/15  |
+  | strict-label refusals   | 4/15     | 8/15  | 6/15  |
+  | wrongly affirmed        | 4        | 1     | 3     |
+  | not extracted           | 5        | 5     | 5     |
+  | positive hits           | 12/22    | 9/22  | 11/22 |
+  | false rejections        | 0/22     | 2/22  | 1/22  |
+
+- OBSERVED, marks that FAILED in v3_a: positive hits 9 (< 11); false
+  rejections 2 (> 1). Passed: wrongly affirmed 1, cap-lowered positives
+  0, COT-M08/09/10 all refused, unparsed 0 and failed audits 0.
+- OBSERVED, marks that FAILED in v3_b: wrongly affirmed 3 (> 2);
+  COT-M08 and COT-M10 wrongly affirmed (mark 5). Passed: positive hits
+  11, false rejections 1, cap-lowered positives 0, unparsed 0 and failed
+  audits 0.
+- OBSERVED, tally of refusals plus positive hits: baseline 6 + 12 = 18;
+  v3_a 9 + 9 = 18; v3_b 7 + 11 = 18. The checklist moved rows between
+  the two buckets and left the total unchanged, so the net effect on this
+  eval is neutral. (INFERRED: the refusal gain is paid for by positive
+  rows lost.)
+
+**Findings:**
+- OBSERVED: the cap fired 0 times in v3 on the 22 linked claims (cap
+  stats: no reasons in either run). So the cap contributed nothing; any
+  label lowering came from the auditor's own verdict.
+- OBSERVED (session notes): COT-M12: the auditor wrote LIMIT_QUOTE NONE
+  in both v3 runs, although the v3_b reasoning mentions the Appendix A.3
+  discussion. The checklist box and the reasoning disagree. In both v3
+  runs COT-M12 was wrongly affirmed (baseline: refused).
+- OBSERVED: COT-M01: the auditor marked the limit as a different setting
+  (LIMIT_SAME_SETTING no) and still lowered the verdict itself in v3_a
+  (POSITIVE_MISS, final partially_supported; v3_b and baseline: hit).
+  OBSERVED in the design: the setting field gates only the cap, not the
+  auditor's own verdict.
+- OBSERVED: 7 of the 22 linked claims changed final label across the
+  four replay runs (run_a, run_b, v3_a, v3_b): REFLEX-M13, COT-M01,
+  COT-M04, COT-M08, COT-M10, COT-M12, REACT-M03. COT-M01, COT-M08 and
+  COT-M10 differ between v3_a and v3_b, which ran identical code
+  (v3_report section 4 also lists three CoT-paper claims with differing
+  auditor verdicts between the two runs). run_a and run_b differ on
+  REFLEX-M13. INFERRED: run-to-run variance is as large as the effects
+  being measured.
+- OBSERVED: the same-setting rule plus the gate put COT-M04 and
+  REACT-M03 back to supported in both v3 runs (REACT-M05 also went from
+  false rejection to hit in both). INFERRED: these are targeted rows,
+  tuned on in-sample data; not evidence of generalization.
+- OBSERVED: false rejections came from quote choice and quote format,
+  not the cap. REACT-M08 and REACT-M10 (v3_a): the auditor chose a
+  caption sentence as its one support quote and the judge rejected it
+  (INFERRED: the judge context lacked the numbers). REFLEX-M06 (v3_b):
+  the quote had "|" separators and was classed prose, fuzzy score 80.4,
+  Fail. OBSERVED (session notes): after removing "|" a whole-token match
+  succeeds and the fuzzy score is 92.5.
+- OBSERVED: the old (main) prompt also quoted bare table rows. In
+  old_vs_new/results.json (3 runs per claim, fuzzy gate 88 only),
+  REACT-M03 and REACT-M05 had table-row quotes below 88 in every OLD run
+  (84.6 and 86.7 for REACT-M03), so all quotes passed in 0 of 3 OLD runs
+  per claim; COT-M04 passed 3 of 3. The session-notes figure "1 of 3"
+  is NOT reproduced from this file. INFERRED: baseline hits on table
+  rows were fragile.
+- OBSERVED (session notes): gate impact report: of 70 saved quotes, 4
+  changed, all table rows fail -> pass; property tests ran over all
+  three PDFs.
+- OBSERVED (session notes): PyMuPDF find_tables() left 2 of 4 tables
+  undetected and merged rows; raw get_text() was cleaner. pymupdf4llm
+  was not installed, so it is untested.
+- OBSERVED: grounding model per span (v3_report section 8): v3_a
+  gemini-3.1-flash-lite 27, openai/gpt-oss-20b 3; v3_b
+  gemini-3.1-flash-lite 26, openai/gpt-oss-20b 2, 1 span without audit
+  model. OBSERVED (session notes): Groq gpt-oss-20b has an 8,000
+  tokens-per-minute limit. INFERRED: the Flash Lite spans are fallbacks
+  after that limit (the saved requested/answered pairs show Flash Lite
+  as requested and answered, so the fallback itself is not visible
+  there). Production AUDIT_CONCURRENCY is 1. This belongs to the
+  caps-and-429 step, not to B5.1.
+- A rule lowering "supported + Partial grounding" to partially_supported
+  was evaluated on saved data and rejected. Numbers: NOT RECORDED.
+- OBSERVED: after the golden-key fix, 15 of 37 golden rows have no
+  matched extracted claim: 10 positives (REFLEX-M03/M04/M07, COT-M05/
+  M06/M07, REACT-M02/M06/M07/M09) and 5 trap rows (REFLEX-M09/M11,
+  COT-M11, REACT-M12/M14). Checked against the per-row outcomes of the
+  v3 baseline and both v3 runs (identical in all three): 22 rows linked
+  + 15 not = 37; 22 positives, 15 trap rows. The stated count is
+  correct. Extractor recall is separate work.
+
+**Decision:** Not merged. The branch stays preserved by tag
+archive/b5.1-checklist-attempt. Reasons: (1) marks failed in both v3
+runs, each on different marks; (2) the net effect is neutral (18 vs 18
+vs 18); (3) run-to-run variance on identical code is as large as the
+effects; (4) four replays on the same 22 rows mean further tuning on
+them would be in-sample.
+
+**Next, in order:**
+1. Variance-aware eval: repeat each configuration at least 3-5 times
+   and report the range, not a single number.
+2. A held-out paper with hand-labelled rows.
+3. Port the table-row token-exact gate plus "|" separator normalization
+   as its own PR (no prompt change).
+4. Candidate auditor designs, each with marks written first: allow
+   several support quotes; quote the sentence that states a table's
+   result; make the setting field gate the auditor's own verdict and not
+   only the cap; vote across repeated audits.
