@@ -22,23 +22,13 @@ Upload a paper. Prism extracts claims, audits each claim against the paper's own
 
 Prism's core engineering bet is correct refusal: vetoing any assessment not supported by the paper's own text.
 
-**Current Eval: 12/14 refusal-family (86%)**, identical across two live runs against Azure Postgres on 2026-09-23 (all 3 papers extracted; logs: `Prism.PythonService/logs/eval/matrix_20260923T104231.json`, `matrix_20260923T112230.json`)
+**Golden set (3 papers, fixture run 2026-10-03):** refusal-family 6/16 (38%), strict-label 4/16, positive hits 12/21, false rejections 0/21, match-map coverage 37/37.
 
-| Metric | Run 1 (10:42Z) | Run 2 (11:22Z) |
-|---|---|---|
-| Refusal-family | 12/14 (86%) | 12/14 (86%) |
-| by_label (the auditor explicitly reasoned to a refusal-family verdict) | 6 | 5 |
-| by_omission (the claim was safely dropped before being falsely affirmed) | 4 | 5 |
-| by_grounding_reject (the downstream grounding checker vetoed an affirmed claim) | 2 | 2 |
-| **Strict-label** (landed on the exact expected tier) | **4/14 (29%)** | **4/14 (29%)** |
-| Positive hits (floor: 10) | 14/23 (61%) | 15/23 (65%) |
-| False rejection | 0/23 (0%) | 0/23 (0%) |
+**Held-out paper (arXiv 2609.20812v3, sealed, never tuned on, single run, raw counts only):** refusal-family 1/2, positive hits 8/10, false rejections 0/10, coverage 12/12.
 
-Refusal, strict-label, and false-rejection rates held across both runs. Positive hits moved 61%→65% because the eval matcher is an LLM call and not fully deterministic; one trap claim also shifted between by_label and by_omission, with the refusal total unchanged at 12. Both runs are reported rather than the better one.
-
-A `by_label` refusal means the auditor read the paper and reasoned to a refusal — that's the product working. A `by_omission` refusal means the extractor dropped the claim before it was ever audited, so the user never sees it flagged. Converting omissions into visible, correctly-tiered refusals is the current work.
-
-Eval runs are transient-failure-aware: infrastructure errors during grounding return `SKIPPED` rather than defaulting to `FAIL`, so a rate-limit blip doesn't masquerade as a false rejection or deflate the score.
+**Notes:**
+1. The old 86% refusal rate came from a scorer that credited claims never extracted; it was replaced.
+2. On the held-out paper, one compound abstract claim decides 6 of 12 rows, and the 8 hits rest on 4 distinct claims.
 
 ## How it works
 
