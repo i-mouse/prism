@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "prompt_hash": "0bcf9d44e619",
+    "fixture_file": "arxiv-2609.20812v3.json",
+    "schema_version": 1
+  },
+  "rows": {
+    "HELD-M01": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M02": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M03": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M04": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M05": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M06": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M07": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M08": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M09": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M10": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M11": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "HELD-M12": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    }
+  }
+}
