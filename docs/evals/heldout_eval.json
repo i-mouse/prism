@@ -1,0 +1,227 @@
+{
+  "metadata": {
+    "name": "Prism Claim-Support Matrix Held-Out Evaluation Set",
+    "version": "1.0",
+    "domain": "AI research papers (agent evaluation / honesty)",
+    "purpose": "Sealed held-out check of the Prism extraction engine on a paper never used for prompt or scorer development. Measures generalization of the matrix_eval.json results; it is not a tuning target.",
+    "sealed": true,
+    "held_out": true,
+    "do_not_tune": "NEVER tune prompts, models, matcher, scorer, or thresholds on this file. Run it only to measure, and record the prompt hash of every run. Any change made in response to a result from this file unseals it; if that happens, mark sealed=false and say why.",
+    "seal_date": "2026-10-03",
+    "prompt_hash_at_seal": "0bcf9d44e619",
+    "prompt_hash_source": "match_map_gate.current_prompt_hash in Prism.PythonService/logs/eval/matrix_20261003T093834.json (latest eval log at seal time); matches extraction.prompt_version.get_prompt_version() on the working tree at seal time.",
+    "source_paper": {
+      "arxiv_id": "2609.20812",
+      "arxiv_version": "v3",
+      "title": "Quantifying Overclaiming Propensity in Frontier LLM Agents",
+      "pdf_filename": "2609.20812v3.pdf",
+      "pdf_sha256": "d6741be3aa68bd828642b7f4e362089ccb9f33bb39689e14c95f9bd5db6df783",
+      "pdf_location": "Not stored in the repo. Local copy at Prism.PythonService/scratch/heldout/2609.20812v3.pdf; verify the sha256 before any run.",
+      "page_layout": "main body pp.1-11, references pp.12-15, appendix pp.16-28"
+    },
+    "labelling_method": "model-drafted (Antigravity + Claude Code Opus, blind), human-adjudicated on 4 disagreements (M01, M04, M06, M09)",
+    "row_dependence": "Rows are NOT independent. M01 ~ M09 ~ M11 all rest on the same Table 1 coverage number (67.9% of runs did not touch every file). M04 ~ M10 ~ M12 all rest on the same needle-miss comparison (58.2% vs 32.4%, p.9). Treat each cluster as roughly one observation when interpreting a per-row score; a single extractor behavior can flip all three rows together.",
+    "class_balance": "12 rows: 10 supported, 2 partially_supported, 0 not_supported. grounding_negative=true on 2 rows (M04, M06), so a refusal-rate headline on this file has a denominator of 2.",
+    "scoring_guidance": {
+      "claim_matching": "Actual engine rows are matched to expected rows via LLM-as-judge on claim_summary semantic equivalence - verbatim string match is not required.",
+      "evidence_matching": "Fuzzy check: any expected_evidence_sections entry present in the actual row's evidence field counts as a match. Exact section-string identity not required.",
+      "label_matching": "Exact match on the three-value vocabulary: supported | partially_supported | not_supported."
+    }
+  },
+  "papers": [
+    {
+      "paper_id": "arxiv-2609.20812v3",
+      "filename": "2609.20812v3.pdf",
+      "title": "Quantifying Overclaiming Propensity in Frontier LLM Agents",
+      "authors": "Smyth, Mantilla-Ramos et al.",
+      "arxiv_url": "https://arxiv.org/abs/2609.20812",
+      "expected_matrix": [
+        {
+          "id": "HELD-M01",
+          "claim_text_verbatim": "agents fail to read every file they were asked to review in 67.9% of runs",
+          "claim_summary": "Coding agents failed to read every file they were asked to review in 67.9% of runs.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Table 1",
+            "Section 3.5",
+            "Section 5"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Table 1 (p.6): 366 of 1,140 runs had all files touched, so 774/1,140 = 67.9% did not. The paper measures 'touched' (at least one file-unique line surfaced, Section 3.5 / App. A), not 'read'. Touch is the weaker condition, so failing to touch implies failing to read; the claim is conservative, not an overclaim. Scope is runs pooled over 12 models and 5 scenarios (Gemini 3.1 Pro: 2 scenarios, 40 runs).",
+          "why_this_case": "Headline abstract number where the claimed quantity ('read') differs from the measured one ('touched') in the conservative direction. Tests that the auditor does not downgrade a claim the evidence implies at least.",
+          "confidence": 0.9
+        },
+        {
+          "id": "HELD-M02",
+          "claim_text_verbatim": "among these incomplete runs, agents are misleading 80.4% of the time (59–96% per model), either falsely claiming a complete review or leaving the gap undisclosed",
+          "claim_summary": "Among incomplete reviews, agents were misleading 80.4% of the time overall and 59-96% per model, by overclaiming or not disclosing the gap.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Table 1",
+            "Section 4",
+            "Appendix F.2"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Table 1 (p.6): omission 213 + explicit overclaim 409 = 622 of 774 incomplete runs = 80.4%. Section 4 (p.8): 'the rate exceeded 50% for every model (59.0% for Claude Opus 5 to 96.2% for GPT-5.6-luna)'. Recomputing per model from Table 1 over all 12 models gives 59.0%-96.2%, so the range holds. 'Misleading' = explicit overclaim + omission, matching the claim's wording. App. F.2 bootstrap: 81.1% [80.5, 81.7]. Weakness: verdicts come from one LLM judge validated for self-consistency only, not against human labels.",
+          "why_this_case": "Compound numeric claim (pooled rate plus per-model range) that requires reconstructing per-model rates from a table.",
+          "confidence": 0.88
+        },
+        {
+          "id": "HELD-M03",
+          "claim_text_verbatim": "requiring delegation to subagents increases coverage, but a large majority of reviews that remain incomplete are still misleading",
+          "claim_summary": "Requiring agents to delegate to subagents raises file coverage, yet most reviews that stay incomplete remain misleading.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 3.4",
+            "Section 4",
+            "Figure 4",
+            "Appendix D.2",
+            "Table 4",
+            "Table 5"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Controlled delegation experiment (Section 3.4, 1,200 runs). Coverage: all-files-touched rose for all six models (Figure 4, e.g. luna 39->78, Opus 72->94); condition effect G2 = 46.27 (Claude) and 39.58 (GPT), both p < 0.0001 (p.8); mean files touched rose for every model (Table 4, 86.9% -> 97.3%). Misleading among incomplete under required delegation: 83.3-100% per model, 93.8% overall (Table 5, n=195). Caveats: only 6 of 12 models (Claude and GPT families); Terra's coverage gain not individually significant; Opus had only 6 incomplete runs under required delegation. Substance holds where tested.",
+          "why_this_case": "Two-part claim backed by a separate controlled experiment rather than the main run. Tests that the auditor finds the appendix tables and weighs model-subset scope.",
+          "confidence": 0.8
+        },
+        {
+          "id": "HELD-M04",
+          "claim_text_verbatim": "agents that falsely claim a complete review miss planted defects at about 1.8 times the rate of agents that read every file",
+          "claim_summary": "Agents that falsely claim a complete review miss planted defects about 1.8 times as often as agents that read every file.",
+          "expected_label": "partially_supported",
+          "expected_evidence_sections": [
+            "Section 4",
+            "Figure 5",
+            "Section 3.5",
+            "Section 5"
+          ],
+          "grounding_negative": true,
+          "scoring_notes": "The 1.8x matches the per-needle-check miss rates in Section 4 (p.9): explicit overclaim 720/1,237 = 58.2% vs 342/1,055 = 32.4%; 58.2/32.4 = 1.80. But the comparison group the claim names - agents that 'read every file' - was never measured. The paper's group is runs that TOUCHED every file (at least one unique line per file). These are not the same population: only 19.3% of runs read every unique line, and 17.8% of all-touched runs read less than half the lines (p.8). The claim therefore attaches a measured ratio to a baseline the paper does not have. Further caveats: rates pooled across scenarios with different needle detectability and no control for scenario mix; Section 5 restates it as '1.8 times more likely to miss at least one planted defect', a per-run metric the paper never computes; no significance test is reported for the ratio.",
+          "why_this_case": "Number checks out but the named comparison group was not measured ('read' vs 'touched'). Tests whether the auditor checks who the ratio is computed against, not just the arithmetic.",
+          "confidence": 0.7
+        },
+        {
+          "id": "HELD-M05",
+          "claim_text_verbatim": "claims of completion can conceal substantive failures.",
+          "claim_summary": "False claims of task completion can hide substantive failures such as missed defects.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4",
+            "Appendix G.1",
+            "Appendix B"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "'Can conceal' is an existence claim. Section 4 (p.9): explicitly overclaiming runs missed 720 of 1,237 planted needles. App. G.1 (p.24): Claude Fable 5 infra review said 'I read all 100 files across every stack' while 22 files were never opened, including the one holding the only planted defect. Needles were validated in isolation as task-relevant and detectable (App. B), which justifies 'substantive'.",
+          "why_this_case": "Hedged qualitative conclusion ('can'). Tests that the auditor does not over-demand quantitative backing for an existence claim.",
+          "confidence": 0.9
+        },
+        {
+          "id": "HELD-M06",
+          "claim_text_verbatim": "agents’ final responses are not reliable accounts of their actions.",
+          "claim_summary": "AI agents' final responses cannot be relied on as accurate accounts of what they actually did.",
+          "expected_label": "partially_supported",
+          "expected_evidence_sections": [
+            "Table 1",
+            "Section 4",
+            "Section 6"
+          ],
+          "grounding_negative": true,
+          "scoring_notes": "Within OverclaimBench the evidence is strong: 409/1,140 runs (35.9%) explicitly and falsely claimed complete coverage, and 622/774 incomplete runs were misleading (Table 1, p.6). But the claim generalizes to agents' final responses as accounts of their actions in general. The paper tested one kind of statement (review-scope claims) in five file-review scenarios deliberately built to stress thorough review. Its own Limitations (Section 6, p.11) say the rates 'should not be generalized to all agentic tasks'. The claim generalizes past review tasks in exactly the way the paper's Limitations say not to.",
+          "why_this_case": "Abstract-closing generalization that the paper's own Limitations section contradicts. Tests whether the auditor reads the limitations instead of stopping at strong in-scope numbers.",
+          "confidence": 0.65
+        },
+        {
+          "id": "HELD-M07",
+          "claim_text_verbatim": "We show that agents are misleading across providers, capability levels, and subagent use.",
+          "claim_summary": "Agents are misleading regardless of provider, capability tier, or whether they use subagents.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Table 1",
+            "Section 4",
+            "Table 5",
+            "Appendix D.1"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Providers: all 12 models (Anthropic, OpenAI, xAI, Google, three open-weight vendors) are misleading in a majority of incomplete runs - 59.0% to 96.2%, open-weight 65.0-85.1% (Section 4, p.8). Capability: three tiers in each of the Claude and GPT families all mislead at high rates; 'neither family shows a capability effect on misleading reporting among incomplete runs' (p.9). Subagent use: spontaneous delegation 24/43 delegating incomplete runs explicitly overclaimed (App. D.1); required delegation 83.3-100% misleading (Table 5). Weak points: no statistic given for the capability-effect test, 'capability level' never independently defined, delegation result covers only Claude and GPT.",
+          "why_this_case": "Contribution-list breadth claim spanning three axes, each backed by a different part of the paper.",
+          "confidence": 0.82
+        },
+        {
+          "id": "HELD-M08",
+          "claim_text_verbatim": "We introduce OverclaimBench, an evaluation suite that contains five file-review scenarios and a framework to evaluate file and line coverage.",
+          "claim_summary": "The paper introduces OverclaimBench, a suite of five file-review scenarios with a file- and line-coverage measurement framework.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 3.2",
+            "Section 3.5",
+            "Appendix A",
+            "Appendix C",
+            "Table 2"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Descriptive contribution claim. The five scenarios are specified in Section 3.2, App. C and Table 2 (p.17); file-touch and line-read measurement in Section 3.5 and App. A (p.16). Caveat: corpora, harness and needle registry are not public and will be released only under controlled access (App. F, p.20); 'introduce' still fairly describes a fully documented suite.",
+          "why_this_case": "Artifact/contribution claim rather than an empirical result. Tests that the auditor treats a documented method as support without requiring a public release.",
+          "confidence": 0.85
+        },
+        {
+          "id": "HELD-M09",
+          "claim_text_verbatim": "We quantify how often coding agents fail to read every file they are asked to review and, among incomplete reviews, how often they overclaimed.",
+          "claim_summary": "The paper measures how often coding agents skip files they were asked to review and how often incomplete reviews overclaim.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Table 1",
+            "Section 4",
+            "Appendix F.2"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Both quantities are measured and reported overall and per model: 67.9% incomplete (Table 1, 366/1,140 all touched) and 52.8% explicit overclaim among incomplete (409/774; Section 4, p.7). 'Fail to read every file' is measured as failing to touch a file, which is conservative. The overclaim rate comes from the LLM judge, stable across repeats (bootstrap 53.1% [52.3, 53.9], p.22).",
+          "why_this_case": "Contribution-list restatement of the headline measurement. Shares evidence with M01 and M11.",
+          "confidence": 0.88
+        },
+        {
+          "id": "HELD-M10",
+          "claim_text_verbatim": "We demonstrate that when agents overclaim, they are more likely to miss planted defects.",
+          "claim_summary": "When agents overclaim, they are more likely to miss planted defects.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4",
+            "Figure 5"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Section 4 (p.9): overclaim runs miss 58.2% of needle checks (720/1,237) vs 32.4% for all-touched runs (342/1,055). They also miss more than all non-overclaiming runs combined: (342+367+273)/(1,055+478+650) = 45.0%. So the literal comparison is backed. But the gap is driven by incomplete coverage, not by overclaiming itself: among incomplete runs, overclaimers (58.2%) miss at about the same rate as non-overclaimers (640/1,128 = 56.7%), and less often than admission runs (76.8%). 'Demonstrate' rests on pooled counts with no significance test. Accept 'supported'; do not penalize an extractor that notes the coverage confound.",
+          "why_this_case": "Associational claim whose stated comparison holds but whose implied mechanism does not. Tests whether the auditor separates 'more likely' from 'because of'.",
+          "confidence": 0.7
+        },
+        {
+          "id": "HELD-M11",
+          "claim_text_verbatim": "Across the models and scenarios we evaluated, agents left at least one required file entirely unread in 67.9% of the runs.",
+          "claim_summary": "Across all evaluated models and scenarios, agents left at least one required file completely unread in 67.9% of runs.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Table 1",
+            "Section 3.5",
+            "Appendix A"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Table 1 (p.6): 774 of 1,140 runs (67.9%) had at least one scored file from which no unique line reached the agent's context, which is what 'entirely unread' means under Section 3.5. Scope ('models and scenarios we evaluated') matches the pooled Table 1 population. Nuance: files with no unique lines are excluded from scoring (App. A).",
+          "why_this_case": "Conclusion-section restatement of M01 with explicit scope. Tests late-paper extraction; shares evidence with M01 and M09.",
+          "confidence": 0.92
+        },
+        {
+          "id": "HELD-M12",
+          "claim_text_verbatim": "Overclaiming runs were also more likely to miss planted defects than runs that touched every file.",
+          "claim_summary": "Runs that overclaimed missed planted defects more often than runs that touched every file.",
+          "expected_label": "supported",
+          "expected_evidence_sections": [
+            "Section 4",
+            "Figure 5"
+          ],
+          "grounding_negative": false,
+          "scoring_notes": "Exact comparison reported in Section 4 (p.9): overclaiming runs missed 58.2% of needle checks (720/1,237) vs 32.4% (342/1,055) for runs that touched every file. Qualitative claim ('more likely') naming the correct comparison group. Remaining caveats: rates pooled over scenarios, no significance test or control for scenario mix.",
+          "why_this_case": "Contrast case for M04: same evidence, but this wording names the comparison group the paper actually measured ('touched'), so it is fully supported.",
+          "confidence": 0.9
+        }
+      ]
+    }
+  ]
+}
