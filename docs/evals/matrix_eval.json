@@ -86,15 +86,15 @@
         },
         {
           "id": "REFLEX-M05",
-          "claim_text_verbatim": "For the Reflexion agent, we implement the standard self-reflection step as a final pass. Intuitively, we test if the agent is iteratively learning more effectively... Figure 4c shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
-          "claim_summary": "Adding verbal self-reflection provides an 8% absolute accuracy improvement over using only episodic memory.",
+          "claim_text_verbatim": "For the Reflexion agent, we implement the standard self-reflection step as a final pass. Intuitively, we test if the agent is iteratively learning more effectively... 4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
+          "claim_summary": "Adding verbal self-reflection gives an 8% absolute improvement over using episodic memory alone.",
           "expected_label": "supported",
           "expected_evidence_sections": [
             "Section 4.2",
             "Figure 4c"
           ],
           "grounding_negative": false,
-          "scoring_notes": "Section 4.2 'Analysis' explicitly reports this 8% absolute boost derived from the ablation comparing CoT (GT) EPM vs CoT (GT) EPM + Reflexion, backed by Figure 4c.",
+          "scoring_notes": "Section 4.2 'Analysis' states the 8% absolute boost from the ablation of CoT (GT) EPM vs CoT (GT) EPM + Reflexion. The paper text reads '4 shows' (no 'Figure', no panel letter); the Fig 4 caption identifies panel (c) as the episodic memory ablation. Plot read ~0.66 vs ~0.74 is consistent. Scope: 100 HotPotQA questions, CoT (GT) setting, single run.",
           "why_this_case": "Verifies a specific quantitative ablation result.",
           "confidence": 0.95
         },
@@ -296,17 +296,17 @@
         "id": "COT-M07",
         "claim_text_verbatim": "chain-of-thought prompting improves performance across all three models (LaMDA, GPT-3, and PaLM) for all datasets except CSQA and StrategyQA for GPT-3",
         "claim_summary": "With the exception of CSQA and StrategyQA for GPT-3, chain-of-thought prompting yields performance improvements on every evaluated dataset across the LaMDA, GPT-3, and PaLM models.",
-        "expected_label": "supported",
+        "expected_label": "partially_supported",
         "expected_evidence_sections": [
             "Appendix A.2",
             "Table 1",
             "Table 4",
             "Table 5"
         ],
-        "grounding_negative": false,
-        "scoring_notes": "Table 4 confirms that GPT-3 175B scores decreased for CoT on CSQA (79.5 to 73.5) and StrategyQA (65.9 to 65.4), while improving on everything else.",
-        "why_this_case": "Checks model-agnostic generalization claims verified across multiple tables.",
-        "confidence": 0.95
+        "grounding_negative": true,
+        "scoring_notes": "The A.2 sentence cites Tables 1, 4 and 5. Table 4 confirms the named GPT-3 exceptions (CSQA 79.5 to 73.5, StrategyQA 65.9 to 65.4). Table 1 shows an unlisted drop: LaMDA 137B AQuA 25.5 to 20.6 (-4.9). The core finding holds across the three models; 'all datasets' does not.",
+        "why_this_case": "Universal 'all datasets' claim contradicted by one cell in a table the sentence itself cites.",
+        "confidence": 0.9
         },
         {
         "id": "COT-M08",

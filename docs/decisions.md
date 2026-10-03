@@ -1275,3 +1275,13 @@ checklist - measured, not merged":**
   golden-trap row: PASS but hollow (one firing, COT-M12).
 - That entry's line "Shipping as a judgment call" is superseded by the
   not-merged decision.
+
+## 2026-10-03 - Eval chain step 0: matrix_eval positive rows re-checked
+- 19 positive rows blind re-checked (CC, label-free, one session per paper); disagreements verified by hand in the PDF.
+- REFLEX-M05: claim_text_verbatim fixed ("Figure 4c shows" -> "4 shows", matching p7). Label unchanged.
+- COT-M07: relabelled supported -> partially_supported, grounding_negative true. Table 1 (cited by the sentence) shows LaMDA 137B AQuA 25.5 -> 20.6, contradicting "all datasets".
+- REACT-M10: Fig 2 checked by hand; both hybrids above CoT-SC at every n after n=1. Unchanged.
+- All other positive rows: blind check agreed with golden. No change.
+- Denominators now 16 refusal / 21 positive; not comparable to the old 15/22. Fixture run: refusal 6/16 (38%), strict 4/16, wrongly affirmed 4, not extracted 6, positive 12/21, false rejection 0/21, coverage 37/37.
+- matrix_eval golden rows frozen: edit only when the paper contradicts a row, never to move the score.
+- golden_eval.json (21 chat questions) is separate and not part of the eval chain.
