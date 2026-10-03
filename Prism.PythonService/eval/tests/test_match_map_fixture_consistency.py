@@ -3,6 +3,11 @@ extracted claims; the frozen matches in docs/evals/fixtures/*.json are what
 fixture-mode scoring actually reads. Nothing at runtime forces the two to
 agree, so this test does - against the real committed files, offline (no
 LLM calls, no DB).
+
+Runs once per (eval file, match map) pair: the golden matrix_eval.json /
+match_map.json, and the sealed held-out heldout_eval.json /
+heldout_match_map.json. The held-out case is skipped until its fixture has
+been dumped; once it exists, the hand-filled map must agree with it.
 """
 from pathlib import Path
 
@@ -13,12 +18,24 @@ from eval.match_map import fingerprint_claim_text, load_match_map
 from eval.matrix_loader import load_matrix
 
 EVALS_DIR = Path(__file__).parent.parent.parent.parent / "docs" / "evals"
-MATRIX = load_matrix(EVALS_DIR / "matrix_eval.json")
-GOLDEN_IDS = {row.id for paper in MATRIX.papers for row in paper.expected_rows}
+EVAL_SETS = [
+    ("matrix_eval.json", "match_map.json"),
+    ("heldout_eval.json", "heldout_match_map.json"),
+]
 
 
-def _disagreements(paper) -> list[str]:
-    match_map = load_match_map(EVALS_DIR / "match_map.json", GOLDEN_IDS)
+def _cases() -> list:
+    cases = []
+    for eval_file, map_file in EVAL_SETS:
+        matrix = load_matrix(EVALS_DIR / eval_file)
+        row_ids = {row.id for paper in matrix.papers for row in paper.expected_rows}
+        for paper in matrix.papers:
+            cases.append(pytest.param(paper, map_file, row_ids, matrix.held_out, id=paper.paper_id))
+    return cases
+
+
+def _disagreements(paper, map_file: str, row_ids: set[str]) -> list[str]:
+    match_map = load_match_map(EVALS_DIR / map_file, row_ids)
     fixture_path = EVALS_DIR / "fixtures" / f"{paper.paper_id}.json"
     claims = read_from_fixture(fixture_path)
     frozen = {m.expected_id: m.actual_index for m in read_matches_from_fixture(fixture_path)}
@@ -56,7 +73,9 @@ def _disagreements(paper) -> list[str]:
     return errors
 
 
-@pytest.mark.parametrize("paper", MATRIX.papers, ids=lambda p: p.paper_id)
-def test_fixture_frozen_matches_equal_match_map(paper):
-    errors = _disagreements(paper)
-    assert not errors, "match_map.json and fixture frozen matches disagree:\n  " + "\n  ".join(errors)
+@pytest.mark.parametrize("paper, map_file, row_ids, held_out", _cases())
+def test_fixture_frozen_matches_equal_match_map(paper, map_file, row_ids, held_out):
+    if held_out and not (EVALS_DIR / "fixtures" / f"{paper.paper_id}.json").exists():
+        pytest.skip(f"held-out fixture for {paper.paper_id} not dumped yet")
+    errors = _disagreements(paper, map_file, row_ids)
+    assert not errors, f"{map_file} and fixture frozen matches disagree:\n  " + "\n  ".join(errors)

@@ -32,6 +32,9 @@ class MatrixSpec:
     papers: list[PaperSpec]
     pass_threshold_refusal_rate: float
     pass_threshold_positive_floor: int
+    # metadata.held_out: a sealed held-out file is measured, never gated -
+    # the runner prints raw counts with no threshold verdict for it.
+    held_out: bool = False
 
 
 def load_matrix(path: str | Path) -> MatrixSpec:
@@ -44,13 +47,17 @@ def load_matrix(path: str | Path) -> MatrixSpec:
     if not isinstance(raw, dict) or "papers" not in raw:
         raise ValueError(f"Malformed matrix eval file {path}: missing 'papers' key")
 
+    held_out = bool(raw.get("metadata", {}).get("held_out", False))
     pass_threshold = raw.get("metadata", {}).get("pass_threshold")
     if pass_threshold is None:
-        print(
-            f"[matrix_loader] {path}: no metadata.pass_threshold found, using defaults "
-            f"refusal_rate={DEFAULT_PASS_THRESHOLD_REFUSAL_RATE} "
-            f"positive_hit_floor={DEFAULT_PASS_THRESHOLD_POSITIVE_FLOOR}"
-        )
+        # A held-out run never applies thresholds, so falling back to the
+        # defaults is not worth a notice there.
+        if not held_out:
+            print(
+                f"[matrix_loader] {path}: no metadata.pass_threshold found, using defaults "
+                f"refusal_rate={DEFAULT_PASS_THRESHOLD_REFUSAL_RATE} "
+                f"positive_hit_floor={DEFAULT_PASS_THRESHOLD_POSITIVE_FLOOR}"
+            )
         refusal_rate = DEFAULT_PASS_THRESHOLD_REFUSAL_RATE
         positive_floor = DEFAULT_PASS_THRESHOLD_POSITIVE_FLOOR
     else:
@@ -83,4 +90,5 @@ def load_matrix(path: str | Path) -> MatrixSpec:
         papers=papers,
         pass_threshold_refusal_rate=refusal_rate,
         pass_threshold_positive_floor=positive_floor,
+        held_out=held_out,
     )

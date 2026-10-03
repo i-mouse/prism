@@ -73,9 +73,10 @@ class MatrixReport:
 
 @dataclass
 class MatchMapGate:
-    """Whether the human-adjudicated match map (docs/evals/match_map.json)
-    backs up this run's headline number, computed against the golden ids
-    actually in scope for this run (all 37 by default, fewer under --paper).
+    """Whether the human-adjudicated match map (--match-map-path, default
+    docs/evals/match_map.json) backs up this run's headline number, computed
+    against the row ids of the loaded eval file actually in scope for this
+    run (all of them by default - 37 for matrix_eval.json - fewer under --paper).
 
     matcher_miss = total_rows - coverage_count: rows with no adjudication
     yet. This is a transitional bucket - it exists because match_map.json
@@ -310,6 +311,8 @@ def _print_report(
     log_relpath: Path,
     exit_code: int,
     verbose: bool = False,
+    held_out: bool = False,
+    match_map_name: str = "match_map.json",
 ) -> None:
     lines = ["Prism eval - matrix run", "======================="]
 
@@ -334,6 +337,43 @@ def _print_report(
 
     lines.append("")
 
+    lines.append("=" * 64)
+    lines.append("Prism Eval Results - HELD-OUT (raw counts, no verdict)" if held_out else "Prism Eval Results")
+    lines.append("=" * 64)
+
+    if gate.hash_mismatch:
+        lines.append("!" * 64)
+        lines.append(f"WARNING: {match_map_name} was adjudicated at a different prompt_hash.")
+        lines.append(f"  {match_map_name} prompt_hash: {gate.match_map_prompt_hash}")
+        lines.append(f"  this run's prompt_hash:     {gate.current_prompt_hash}")
+        lines.append("  A map adjudicated at one hash is invalid once the prompt changes -")
+        lines.append("  re-adjudicate before trusting any refusal-rate headline.")
+        lines.append("!" * 64)
+
+    if gate.load_error:
+        lines.append(f"WARNING: {match_map_name} could not be used - {gate.load_error}")
+
+    if held_out:
+        lines.extend(_held_out_result_lines(aggregate, gate))
+    else:
+        lines.extend(_gated_result_lines(aggregate, gate, threshold_refusal_rate))
+    lines.append("=" * 64)
+
+    if verbose:
+        lines.extend(_print_verbose_false_rejections(results))
+
+    lines.append("")
+    lines.append(f"Wrote {log_relpath}")
+    lines.append(f"Exit {exit_code}")
+
+    print("\n".join(lines))
+
+
+def _gated_result_lines(aggregate: MatrixReport, gate: MatchMapGate, threshold_refusal_rate: float) -> list[str]:
+    """Golden-set result block: rates, percentages, and the PASS/FAIL and
+    positive-floor verdicts against metadata.pass_threshold."""
+    lines: list[str] = []
+
     refusal_pct = round(aggregate.refusal_rate * 100)
     strict_pct = round(aggregate.strict_refusal_rate * 100)
     threshold_pct = round(threshold_refusal_rate * 100)
@@ -341,22 +381,6 @@ def _print_report(
     positive_pct = round(aggregate.positive_hits / aggregate.positive_total * 100) if aggregate.positive_total else 0
     false_rejection_pct = round(aggregate.false_rejection_rate * 100)
     floor_tag = "OK" if aggregate.refusal_rate_valid else "BELOW FLOOR - mark invalid"
-
-    lines.append("=" * 64)
-    lines.append("Prism Eval Results")
-    lines.append("=" * 64)
-
-    if gate.hash_mismatch:
-        lines.append("!" * 64)
-        lines.append("WARNING: match_map.json was adjudicated at a different prompt_hash.")
-        lines.append(f"  match_map.json prompt_hash: {gate.match_map_prompt_hash}")
-        lines.append(f"  this run's prompt_hash:     {gate.current_prompt_hash}")
-        lines.append("  A map adjudicated at one hash is invalid once the prompt changes -")
-        lines.append("  re-adjudicate before trusting any refusal-rate headline.")
-        lines.append("!" * 64)
-
-    if gate.load_error:
-        lines.append(f"WARNING: match_map.json could not be used - {gate.load_error}")
 
     if aggregate.skipped > 0:
         lines.append(f"{aggregate.skipped} claims SKIPPED (transient errors) — not scored")
@@ -396,16 +420,51 @@ def _print_report(
         f"False rejection rate: {aggregate.false_rejections}/{aggregate.positive_total} ({false_rejection_pct}%) "
         "— grounder incorrectly refused claims paper does support"
     )
-    lines.append("=" * 64)
+    return lines
 
-    if verbose:
-        lines.extend(_print_verbose_false_rejections(results))
 
-    lines.append("")
-    lines.append(f"Wrote {log_relpath}")
-    lines.append(f"Exit {exit_code}")
+def _held_out_result_lines(aggregate: MatrixReport, gate: MatchMapGate) -> list[str]:
+    """Held-out result block (metadata.held_out): the same buckets as the
+    golden block, as raw x/N counts only - no percentage, no threshold, no
+    positive-floor verdict. A sealed held-out set is measured, never gated.
+    The refusal-family count is still withheld under the same skipped/
+    coverage conditions that suppress the golden headline."""
+    lines: list[str] = []
 
-    print("\n".join(lines))
+    if aggregate.skipped > 0:
+        lines.append(f"{aggregate.skipped} claims SKIPPED (transient errors) — not scored")
+        lines.append(f"INCOMPLETE — {aggregate.skipped} spans not evaluated, refusal-family count withheld")
+    elif not gate.coverage_ok:
+        lines.append(
+            f"REFUSAL-FAMILY COUNT WITHHELD — match map coverage {gate.coverage_count}/{gate.total_rows}."
+        )
+    else:
+        lines.append(
+            f"Refusal-family:    {aggregate.correct_refusals}/{aggregate.total_negatives} "
+            "— grounder correctly refused claims paper doesn't support"
+        )
+    lines.append(
+        f"Strict-label:      {aggregate.strict_correct_refusals}/{aggregate.total_negatives} "
+        "— refused via exact expected_label match only, no omission/grounding-rejection credit"
+    )
+    lines.append(f"  by label:            {aggregate.refused_by_label}")
+    lines.append(f"  by grounding reject: {aggregate.refused_by_grounding}")
+    lines.append(f"  wrongly affirmed:    {aggregate.wrongly_affirmed}  (not credited)")
+    lines.append(f"  not extracted:       {aggregate.not_extracted}  (no claim emitted - not credited)")
+    lines.append(f"  skipped:             {aggregate.skipped}  (transient grounding error - excluded from denominator)")
+    lines.append(
+        f"  matcher_miss:        {gate.matcher_miss}  (no match-map adjudication yet - "
+        f"coverage {gate.coverage_count}/{gate.total_rows})"
+    )
+    lines.append(
+        f"Positive hits:     {aggregate.positive_hits}/{aggregate.positive_total} "
+        "— grounder correctly affirmed claims paper does support"
+    )
+    lines.append(
+        f"False rejections:  {aggregate.false_rejections}/{aggregate.positive_total} "
+        "— grounder incorrectly refused claims paper does support"
+    )
+    return lines
 
 
 def _write_log(
@@ -484,19 +543,32 @@ async def _run(args: argparse.Namespace) -> int:
     golden_ids = {row.id for paper in papers for row in paper.expected_rows}
     gate = _build_match_map_gate(golden_ids, args.match_map_path)
 
-    metric_pass = (
-        aggregate.scored_papers > 0
-        and aggregate.refusal_rate_valid
-        and aggregate.refusal_rate >= matrix_spec.pass_threshold_refusal_rate
-    )
-    exit_code = 0 if metric_pass and gate.coverage_ok else 1
+    if matrix_spec.held_out:
+        # No threshold verdict for a held-out file: exit 0 means only that the
+        # run is usable (something was scored and the map covers every row).
+        exit_code = 0 if aggregate.scored_papers > 0 and gate.coverage_ok else 1
+    else:
+        metric_pass = (
+            aggregate.scored_papers > 0
+            and aggregate.refusal_rate_valid
+            and aggregate.refusal_rate >= matrix_spec.pass_threshold_refusal_rate
+        )
+        exit_code = 0 if metric_pass and gate.coverage_ok else 1
 
     timestamp = datetime.now(timezone.utc)
     log_path = _write_log(args, results, aggregate, gate, timestamp)
     log_relpath = log_path.relative_to(Path(__file__).parent.parent)
 
     _print_report(
-        results, aggregate, gate, matrix_spec.pass_threshold_refusal_rate, log_relpath, exit_code, verbose=args.verbose
+        results,
+        aggregate,
+        gate,
+        matrix_spec.pass_threshold_refusal_rate,
+        log_relpath,
+        exit_code,
+        verbose=args.verbose,
+        held_out=matrix_spec.held_out,
+        match_map_name=Path(args.match_map_path).name,
     )
 
     return exit_code

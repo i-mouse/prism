@@ -57,6 +57,37 @@ def test_missing_pass_threshold_uses_defaults(tmp_path):
     assert spec.pass_threshold_positive_floor == 10
 
 
+def test_held_out_defaults_to_false_and_keeps_defaults_notice(tmp_path, capsys):
+    path = _write(tmp_path, json.dumps(_minimal_matrix()))
+
+    spec = load_matrix(path)
+
+    assert spec.held_out is False
+    assert "no metadata.pass_threshold found" in capsys.readouterr().out
+
+
+def test_held_out_read_from_metadata_and_skips_defaults_notice(tmp_path, capsys):
+    matrix = _minimal_matrix()
+    matrix["metadata"]["held_out"] = True
+    path = _write(tmp_path, json.dumps(matrix))
+
+    spec = load_matrix(path)
+
+    assert spec.held_out is True
+    assert capsys.readouterr().out == ""
+
+
+def test_loads_real_heldout_eval(capsys):
+    spec = load_matrix(REAL_MATRIX_PATH.parent / "heldout_eval.json")
+
+    assert spec.held_out is True
+    assert len(spec.papers) == 1
+    rows = spec.papers[0].expected_rows
+    assert len(rows) == 12
+    assert sum(1 for row in rows if row.grounding_negative) == 2
+    assert capsys.readouterr().out == ""
+
+
 def test_malformed_json_raises(tmp_path):
     path = _write(tmp_path, "{not valid json")
 
