@@ -1,6 +1,23 @@
 ## PRISM.Web Deployment
 
 
+## Held-out baseline (eval chain step 2) — 2026-10-03
+**Context:** Baseline measurement on the sealed held-out paper (arXiv 2609.20812v3) before any tuning.
+**Decision:** Measured only against the frozen match map.
+Prompt hash: `0bcf9d44e619`
+Coverage: 12/12
+Results (raw counts):
+- Refusal-family: 1/2
+- Strict: 1/2
+- Positive hits: 8/10
+- False rejections: 0/10
+- Skipped: 0
+
+One extracted claim (pos 1) covers six rows: M01-M05 + M11.
+**Alternatives:** N/A
+**Consequences:** Baseline recorded.
+
+
 ## Held-out eval paper sealed (eval chain step 1) — 2026-10-03
 **Context:** A held-out evaluation paper is required to avoid golden-paper leakage and training-data exposure. The paper chosen is arXiv 2609.20812v3, "Quantifying Overclaiming Propensity in Frontier LLM Agents".
 **Decision:** The paper is pinned at version 3 and sealed in `docs/evals/heldout_eval.json` (prompt hash `0bcf9d44e619`). Labelling was model-drafted (Antigravity draft + Claude Code Opus blind pass) and human-adjudicated (Nitin resolved 4 disagreements: M01, M04, M06, M09). The AG draft incorrectly set confidence 1.0 on 11/12 rows, demonstrating the lesson that a single-model draft must never be used as ground truth without a blind second pass.
