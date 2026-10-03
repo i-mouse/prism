@@ -1163,3 +1163,115 @@ them would be in-sample.
    several support quotes; quote the sentence that states a table's
    result; make the setting field gate the auditor's own verdict and not
    only the cap; vote across repeated audits.
+
+
+## Eval chain first; prompt leakage found; gate-port dropped - 2026-10-03
+
+**Context:** Docs-only entry. Statements are marked OBSERVED (read in a
+file this session), INFERRED (reasoning), or NOT VERIFIED (could not be
+confirmed by reading a file). Paths below are under Prism.PythonService/.
+
+**1. Dropped: table-row gate port and "|" normalization**
+- Decision: the item "port the table-row token-exact gate plus '|'
+  separator normalization" (Next, item 3 of the 2026-10-02 B5.1 entry) is
+  dropped.
+- Reason (INFERRED): it fixes one symbol seen on one eval row
+  (REFLEX-M06), not the general quote-mismatch problem.
+- NOT VERIFIED: that the "|" normalization never existed in committed
+  code. The 2026-10-02 entry only records it as a manual check ("session
+  notes"), which is consistent with that claim but does not prove it.
+- NOT VERIFIED: whether the auditor or the PDF text introduced the "|".
+
+**2. Read-only audit finding: golden-paper text inside prompts (agent
+audit, 2026-10-03)**
+- Risk (INFERRED): scores on the 3 golden papers (Reflexion, ReAct,
+  CoT) may be better than on unseen papers (test-set leakage). The size of
+  any effect is NOT VERIFIED; no measurement has been made.
+- OBSERVED, locations where golden-paper names or text appear (grep, then
+  read; file:line):
+  - prompts/extract_claims_fewshot.json:4, 8, 9 (Reflexion HumanEval 91.0%
+    passage, claim and summary); :59, 64, 65, 68, 69, 72, 73, 76, 77 (ReAct
+    abstract, ALFWorld/WebShop claim, robustness claim).
+  - prompts/extract_claims_system.md:11, 14, 64, 65 (HumanEval 91.0%
+    example, ReAct calibration example, Reflexion example claim).
+  - prompts/extract_metadata_fewshot.json:4, 7, 8, 9, 10, 13, 15
+    (Reflexion abstract and derived metadata: HumanEval, AlfWorld, HotPotQA,
+    ReAct and GPT-4 baselines).
+  - prompts/audit_claim_system.md:25 (Reflexion mechanism sentence), :58
+    (ReAct on HotpotQA 27.4 EM example), :62 (ReAct quote).
+  - prompts/structure_verdict_system.md:38, 39, 41, 43, 50 (ReAct claim,
+    Table 1 reasoning, quote).
+- OBSERVED, weaker matches (example wording, not clearly paper text):
+  - prompts/extract_metadata_system.md:15 ("HumanEval with 164 coding
+    problems, HotPotQA with 7,405 questions" as an example).
+  - paper_chat/agent.py:77, 93, 94, 96 (ReAct in chat examples), :509,
+    511 (HotpotQA in a formatting example).
+  - extraction/schemas.py:56 ("4.3 HumanEval Results" in a field
+    description). Heading only.
+- Whether the matches in agent.py and schemas.py affect extraction or
+  audit scores: INFERRED no (chat and a schema description); NOT VERIFIED.
+- The audit's claim of a Claude Haiku-to-Sonnet auditor swap is NOT
+  repeated. OBSERVED: the 2026-09-04 entry records the auditor swap as
+  gemini-3.1-flash-lite to gemini-3.6-flash.
+
+**3. Grounding and PDF reading**
+- OBSERVED: extraction/grounding.py applies no text normalization before
+  RapidFuzz. _passes_rapidfuzz (lines 250-251) and _ground_span (266,
+  277) pass span.source_text and paper_text directly to
+  fuzz.partial_ratio / partial_ratio_alignment. A search of the file for
+  normaliz, lower(, casefold and replace( found no text transformation.
+  Callers that build paper_text were not read.
+- OBSERVED: main.py:114 reads PDFs with plain page.get_text(), appended
+  per page.
+
+**4. Golden set verification status**
+- OBSERVED in earlier entries: the 14 original trap rows were
+  hand-checked on 2026-10-01; COT-M02 was corrected on 2026-10-02 (it
+  was a positive row labelled wrongly); REACT-M03, COT-M04 and REACT-M05
+  were checked against the paper.
+- INFERRED: 19 positive rows have no recorded hand-check: REFLEX-M01..M07,
+  COT-M01, M03, M05, M06, M07, REACT-M01, M02, M06, M07, M08, M09, M10.
+- Decision: a blind evidence re-check of those 19 rows, one paper at a
+  time, comes first (step 0). Rule: change a label only where the paper
+  contradicts it; never to improve the score; a score move is recorded
+  honestly and no threshold is lowered.
+
+**5. Eval snapshot (fixture run 2026-10-03, log
+matrix_20261003T071311.json)**
+- OBSERVED (user-run output): refusal-family 6/15 (40%) vs 0.35 gate;
+  strict-label 4/15 (27%); wrongly affirmed 4; not extracted 5; positive
+  hits 12/22 (55%), floor 10; false rejection 0/22; coverage 37/37;
+  exit 0. The margin over the gate is one row (5/15 would fail).
+
+**Decision: build a fair test first. Order:**
+0. (0) Blind re-check of the 19 unverified positive golden rows, then a
+   label-fix PR only where the paper contradicts a label
+1. (a) One held-out paper, 2026, hand-labelled by Nitin in a separate
+   file, never used to tune prompts.
+2. (b) Baseline run of the current pipeline on it BEFORE any prompt
+   change.
+3. (c) De-leak PR: replace golden-paper text in prompts and examples with
+   synthetic examples, marks written first, measure on golden plus
+   held-out. Golden scores may drop; that is honest.
+4. (d) caps-and-429 slice 1 (provider-429 circuit breaker, Retry-After,
+   global daily cap) before repeated live runs.
+5. (e) Variance-aware eval: repeat each configuration 3-5 times, report
+   the range.
+6. (f) Stop and review before any auditor design change.
+
+**Correction (append-only) to the 2026-10-02 entry "B5.1 auditor
+checklist - measured, not merged":**
+- The 2026-10-02 entry says the first-replay marks are NOT RECORDED.
+  That holds for main only.
+- OBSERVED (2026-10-03, git show of the archive tag): the tag
+  archive/b5.1-checklist-attempt contains docs/decisions.md with the
+  entry "B5.1: auditor checklist + deterministic verdict cap -
+  2026-10-01". Main has no such entry because the branch was never
+  merged. A search of main's docs/decisions.md for it finds nothing.
+- Recorded in that tag copy only (marks, first replay): (a) wrongly
+  affirmed < 5 in both runs: PASS (2, 2). (b) positive hits >= 11 in both
+  runs: FAIL (9, 9). (c) cap lowered no golden-positive row: PASS.
+  (d) unparsed <= 2 and no failed audits: PASS. (e) cap lowered >= 1
+  golden-trap row: PASS but hollow (one firing, COT-M12).
+- That entry's line "Shipping as a judgment call" is superseded by the
+  not-merged decision.
