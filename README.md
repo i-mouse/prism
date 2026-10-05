@@ -2,9 +2,9 @@
 
 > **Autonomous Empirical Claim-Auditing Engine for Research Papers**
 
-> **Status — live demo offline since 2026-09-28.** The hosted Azure environment has been decommissioned. Run Prism locally with the [Quick Start](#quick-start-local-dev) below. Recorded walkthrough: to be linked. Demo on request. Relaunch path: [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch).
+> **Status — live demo offline since 2026-09-28.** The hosted Azure environment has been decommissioned. Run Prism locally with the [Quick Start](#quick-start-local-dev) below. Walkthrough video: coming soon. Demo on request. Relaunch path: [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch).
 
-Prism extracts empirical claims from academic papers and rigorously audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism performs a peer-reviewer's core job: auditing a single paper's headline findings against its own data and text.
+Prism extracts empirical claims from academic papers and audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism performs a peer-reviewer's core job: auditing a single paper's headline findings against its own data and text.
 
 ## Live Demo — offline
 
@@ -22,18 +22,42 @@ Upload a paper. Prism extracts claims, audits each claim against the paper's own
 
 Prism's core engineering bet is correct refusal: vetoing any assessment not supported by the paper's own text.
 
-**Golden set (3 papers, fixture run 2026-10-03):** refusal-family 6/16 (38%), strict-label 4/16, positive hits 12/21, false rejections 0/21, match-map coverage 37/37.
+**Golden set (3 papers, fixture run 2026-10-03):** refusal-family 6/16 (38%), strict-label 4/16, positive hits 12/21, false rejections 0/21, match-map coverage 37/37. Passes the 0.35 gate by one row.
 
 **Held-out paper (arXiv 2609.20812v3, sealed, never tuned on, single run, raw counts only):** refusal-family 1/2, positive hits 8/10, false rejections 0/10, coverage 12/12.
 
+**Reproduce (fixture mode, no LLM/DB calls but requires environment setup):**
+```powershell
+cd Prism.PythonService
+$env:PRISM_DB_HOST="localhost"; $env:PRISM_DB_DATABASENAME="test"
+$env:PRISM_DB_USERNAME="test"; $env:PRISM_DB_PASSWORD="test"
+$env:ConnectionStrings__messaging="amqp://test:test@localhost:5672/"
+$env:ConnectionStrings__blobs="DefaultEndpointsProtocol=http;AccountName=test;AccountKey=test;BlobEndpoint=http://localhost:9000;"
+$env:AI_API_KEY="dummy"; $env:GROQ_API_KEY="dummy"
+$env:LLM_EXTRACTION_MODEL="gemini-3.6-flash"; $env:LLM_EXTRACTION_FALLBACK_MODEL="gemini-3.1-flash-lite"
+$env:LLM_CLAIM_AUDIT_MODEL="gemini-3.6-flash"; $env:LLM_CLAIM_AUDIT_FALLBACK_MODEL="gemini-3.1-flash-lite"
+$env:LLM_GROUNDING_MODEL="groq/openai/gpt-oss-20b"; $env:LLM_GROUNDING_FALLBACK_MODEL="gemini/gemini-3.1-flash-lite"
+$env:LLM_CHAT_MODEL="gemini-3.6-flash"; $env:LLM_ROUTER_MODEL="gemini-3.5-flash-lite"
+$env:LLM_SUMMARY_MODEL="gemini-3.5-flash-lite"; $env:LLM_EVAL_MATCHER_MODEL="gemini-3.6-flash"
+$env:LLM_EVAL_MATCHER_FALLBACK_MODEL="gemini-3.1-flash-lite"
+uv run python -m eval.matrix_runner --source fixture
+```
+
+**Known limitations:**
+- Golden-paper text appears in prompts/few-shots (leakage risk, not measured; de-leak planned)
+- Extractor is the weakest stage (6 golden claims never extracted)
+- Claim bundling: one compound held-out claim decides 6/12 rows; the 8 hits rest on 4 distinct claims
+- Groq primary grounding model fails on its 512-token cap and rate limits; the Gemini fallback carries all audits
+- Single runs, no variance measured yet
+- Held-out refusal sample is n=2
+
 **Notes:**
 1. The old 86% refusal rate came from a scorer that credited claims never extracted; it was replaced.
-2. On the held-out paper, one compound abstract claim decides 6 of 12 rows, and the 8 hits rest on 4 distinct claims.
-3. Stage-1 text normalisation (2026-10-05) fixed 20 table-row quotes that failed fuzzy matching on post-reset runs, flipping 2 golden false rejections to hits with 0 regressions; held-out unchanged; the frozen fixture numbers above are unaffected.
+2. Stage-1 text normalisation (2026-10-05) fixed 20 table-row quotes that failed fuzzy matching on post-reset runs, flipping 2 golden false rejections to hits with 0 regressions; held-out unchanged; the frozen fixture numbers above are unaffected.
 
 ## How it works
 
-The pipeline is orchestrated asynchronously via RabbitMQ and broken into specific stages to avoid context collapse. First, a Python worker extracts empirical and methodological positioning claims from the full text. Next, a claim auditor (Gemini 3.6 Flash) evaluates each claim individually against the full paper text to assign a label (supported, partially supported, or not supported) — tightened to require evidence from experimental results, data, or proofs, not just a verbatim quote from the Abstract or Introduction. Finally, a grounding checker validates the auditor's exact quote spans using semantic matching (RapidFuzz, after quote and paper text are normalised for ligatures, line breaks, quotes/dashes, and whitespace) and a secondary LLM judge (Groq/LiteLLM), adjusting the rubric based on the claim's stance toward the claim (supports, refutes, or neutral). The pipeline is strictly acyclic: the grounder validates the auditor, but never overrides its label.
+The pipeline is orchestrated asynchronously via RabbitMQ and broken into specific stages to avoid context collapse. First, a Python worker extracts empirical and methodological positioning claims from the full text. Next, a claim auditor (Gemini 3.6 Flash) evaluates each claim individually against the full paper text to assign a label (supported, partially supported, or not supported) — tightened to require evidence from experimental results, data, or proofs, not just a verbatim quote from the Abstract or Introduction. Finally, a grounding checker validates the auditor's exact quote spans using fuzzy string matching (RapidFuzz, after quote and paper text are normalised for ligatures, line breaks, quotes/dashes, and whitespace) and a secondary LLM judge (Groq/LiteLLM), adjusting the rubric based on the quote's stance toward the claim (supports, refutes, or neutral). The pipeline is strictly acyclic: the grounder validates the auditor, but never overrides its label.
 
 ## Architecture
 
@@ -46,9 +70,9 @@ The pipeline is orchestrated asynchronously via RabbitMQ and broken into specifi
 | **Orchestration** | .NET Aspire 13.4 |
 | **API Gateway** | ASP.NET Core (.NET 10), EF Core 10 |
 | **Worker & Agent** | Python 3.13 (`uv`), FastAPI, LangGraph |
-| **LLMs** | Gemini 3.6 Flash, LiteLLM (Groq / Gemini Flash Lite) |
-| **Vector & Search** | Qdrant 1.18 |
-| **Data & Messaging**| PostgreSQL 18, RabbitMQ 4.3, MinIO |
+| **LLMs** | Gemini 3.6 Flash, Gemini 3.5 Flash Lite, Gemini 3.1 Flash Lite, Groq (gpt-oss-20b) |
+| **Vector & Search** | Qdrant 1.18, fastembed (BAAI/bge-small-en-v1.5) |
+| **Data & Messaging**| PostgreSQL 18, RabbitMQ 4.3, Azure Blob Storage (Azurite locally) |
 | **Frontend** | React 19, TypeScript, Vite, Tailwind CSS |
 
 ## Quick Start (Local Dev)
@@ -75,15 +99,7 @@ Hit a local-dev snag? Check the [Developer Runbook](docs/RUNBOOK.md) first — i
 
 ## Deployment
 
-> Nothing is deployed right now — the environment was decommissioned on 2026-09-28. The procedure below is the record of how it was deployed and the basis for any relaunch. Before redeploying, work through [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch), which lists the cost and safety prerequisites that must land first.
-
-Backend services deployed via `aspire deploy` — apiservice, pythonAPI, pythonWorker, messaging, storage, Postgres. Managed identities and Key Vault provisioned automatically; secrets reach containers as `secretref:` values, never plaintext env vars.
-
-The React frontend uses `Prism.Web/deploy.ps1` — a hardened manual push that preflights nginx.conf, builds with `:latest` tag, and verifies nginx listens on port 7000 on the built image. This exists because `aspire deploy` builds its own reactUI container that overwrites the custom nginx.conf. Root fix (`AppHost.cs` `PublishAsDockerFile`) tracked for v1.0.2.
-
-Deploy secrets templated in `Prism.AppHost/.deploy.env.template`; `.deploy.env` gitignored. nginx listens on port 7000 to align with Azure Container Apps' probe.
-
-The Container App ran in single revision mode — traffic auto-swapped on healthy deploys. Always verify actual running state with `az containerapp revision list --query "[?properties.active]"` after any deploy; `properties.template` shows *desired* config, not what is actually running.
+Nothing is deployed right now — the environment was decommissioned on 2026-09-28. Backend services deploy via `aspire deploy`, while the React frontend requires a manual push via `Prism.Web/deploy.ps1`. Before redeploying, work through [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch), which lists the cost and safety prerequisites that must land first.
 
 ## Architecture & Decisions
 
