@@ -21,11 +21,11 @@
       "reason": "The passage supports the claim's direction but the state-of-the-art ranking needs the adjacent comparison table to confirm."
     },
     {
-      "reasoning": "The claim is labeled not_supported and asserts SpeechNet is robust to background noise across all tested conditions. The quote reports word error rate rising from 6% in clean audio to 31% under babble noise, a much larger degradation than the baseline's 14%, and the surrounding context confirms this comes from the paper's own robustness ablation. This is a direct, quantitative demonstration that SpeechNet degrades more than the baseline under noise - the opposite of robust - so the quote's own stance is a clear refutation of the claim. Because it directly refutes the claim rather than merely failing to support it, and the label is not_supported, this refutation is a Pass.",
+      "reasoning": "The claim is labeled not_supported and asserts SpeechNet is robust to background noise across all tested conditions. The quote reports word error rate rising from 7% in clean audio to 31% under babble noise, a much larger degradation than the baseline's 15%, and the surrounding context confirms this comes from the paper's own robustness ablation. This is a direct, quantitative demonstration that SpeechNet degrades more than the baseline under noise - the opposite of robust - so the quote's own stance is a clear refutation of the claim. Because it directly refutes the claim rather than merely failing to support it, and the label is not_supported, this refutation is a Pass.",
       "claim": "SpeechNet is robust to background noise across all tested conditions.",
       "claim_label": "not_supported",
-      "quote": "SpeechNet's word error rate rises from 6% in clean audio to 31% under babble noise at 0dB SNR, a substantially larger degradation than the baseline's 14%",
-      "context": "Robustness ablation: SpeechNet's word error rate rises from 6% in clean audio to 31% under babble noise at 0dB SNR, a substantially larger degradation than the baseline's 14%. Performance under reverberation shows a similar pattern.",
+      "quote": "SpeechNet's word error rate rises from 7% in clean audio to 31% under babble noise at 0dB SNR, a substantially larger degradation than the baseline's 15%",
+      "context": "Robustness ablation: SpeechNet's word error rate rises from 7% in clean audio to 31% under babble noise at 0dB SNR, a substantially larger degradation than the baseline's 15%. Performance under reverberation shows a similar pattern.",
       "stance": "refutes",
       "verdict": "Pass",
       "reason": "The reported degradation directly refutes the robustness claim, which is the correct outcome for a not_supported label."
@@ -51,11 +51,11 @@
       "reason": "The passage suggests but doesn't quantify a reliability gap for rare anomalies - an incomplete refutation without Table 5."
     },
     {
-      "reasoning": "The claim is labeled partially_supported and asserts FedPriv-Agg improves communication efficiency over federated averaging, though at some cost to convergence speed - a mixed, two-part claim. The quote states FedPriv-Agg cuts per-round communication by 60% versus FedAvg but needs roughly 1.4x more training rounds for the same validation accuracy, and the surrounding context confirms this is the paper's own efficiency-versus-convergence tradeoff analysis. This passage directly addresses both halves of the claim - the efficiency gain and the convergence cost - matching the mixed framing exactly, so the quote's stance supports the claim as stated. Because it is squarely relevant to the specific assertion, this is a Pass.",
+      "reasoning": "The claim is labeled partially_supported and asserts FedPriv-Agg improves communication efficiency over federated averaging, though at some cost to convergence speed - a mixed, two-part claim. The quote states FedPriv-Agg cuts per-round communication by 45% versus FedAvg but needs roughly 1.4x more training rounds for the same validation accuracy, and the surrounding context confirms this is the paper's own efficiency-versus-convergence tradeoff analysis. This passage directly addresses both halves of the claim - the efficiency gain and the convergence cost - matching the mixed framing exactly, so the quote's stance supports the claim as stated. Because it is squarely relevant to the specific assertion, this is a Pass.",
       "claim": "FedPriv-Agg improves communication efficiency over standard federated averaging, though at some cost to convergence speed.",
       "claim_label": "partially_supported",
-      "quote": "FedPriv-Agg cuts per-round communication by 60% compared to FedAvg, but requires roughly 1.4x more training rounds to reach the same validation accuracy",
-      "context": "Efficiency/convergence tradeoff: FedPriv-Agg cuts per-round communication by 60% compared to FedAvg, but requires roughly 1.4x more training rounds to reach the same validation accuracy. Total wall-clock time is comparable across both methods.",
+      "quote": "FedPriv-Agg cuts per-round communication by 45% compared to FedAvg, but requires roughly 1.4x more training rounds to reach the same validation accuracy",
+      "context": "Efficiency/convergence tradeoff: FedPriv-Agg cuts per-round communication by 45% compared to FedAvg, but requires roughly 1.4x more training rounds to reach the same validation accuracy. Total wall-clock time is comparable across both methods.",
       "stance": "supports",
       "verdict": "Pass",
       "reason": "The passage confirms both halves of the mixed claim - the communication savings and the convergence cost."

@@ -35,16 +35,16 @@ Return exactly one JSON object. No markdown fences, no preamble, no commentary a
 
 Example input (the user message content):
 
-CLAIM_TEXT_VERBATIM: We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines
-CLAIM_SUMMARY: ReAct demonstrates superior performance over state-of-the-art baselines
+CLAIM_TEXT_VERBATIM: Across every catchment we study, Rivulet delivers flood warnings that are earlier and more reliable than those of state-of-the-art forecasting systems
+CLAIM_SUMMARY: Rivulet outperforms state-of-the-art forecasting systems on flood warnings
 AUDIT:
-The claim asserts that ReAct beats state-of-the-art on the evaluated tasks. Scanning Table 1, the baselines listed are Standard, CoT, CoT-SC, and Act — all few-shot prompting methods. No supervised SOTA baseline is included. Section 3.3 shows Supervised SoTA at 67.5 EM versus ReAct at 27.4 EM — a large gap in the wrong direction.
+The claim asserts that Rivulet beats state-of-the-art forecasting systems. Scanning Table 2, the baselines listed are Persistence, Linear Regression, Gradient-Boosted Trees, and Rivulet-NoRoute — all lightweight statistical models. No operational forecasting system is run. Table 2 also prints a published Operational Ensemble score of 0.78 against Rivulet's 0.61 — a large gap in the wrong direction.
 VERDICT: not_supported
-QUOTE: We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines
+QUOTE: Across every catchment we study, Rivulet delivers flood warnings that are earlier and more reliable than those of state-of-the-art forecasting systems
 SECTION: Abstract
-QUOTE: Supervised SoTA 67.5
-SECTION: Table 1
+QUOTE: Operational Ensemble 0.78
+SECTION: Table 2
 
 Example output (raw JSON, no fences):
 
-{"claim_text_verbatim":"We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines","claim_summary":"ReAct demonstrates superior performance over state-of-the-art baselines","label":"not_supported","evidence_spans":[{"source_text":"We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines","source_section":"Abstract","section_header":null,"page_number":null},{"source_text":"Supervised SoTA 67.5","source_section":"Table 1","section_header":null,"page_number":null}]}
+{"claim_text_verbatim":"Across every catchment we study, Rivulet delivers flood warnings that are earlier and more reliable than those of state-of-the-art forecasting systems","claim_summary":"Rivulet outperforms state-of-the-art forecasting systems on flood warnings","label":"not_supported","evidence_spans":[{"source_text":"Across every catchment we study, Rivulet delivers flood warnings that are earlier and more reliable than those of state-of-the-art forecasting systems","source_section":"Abstract","section_header":null,"page_number":null},{"source_text":"Operational Ensemble 0.78","source_section":"Table 2","section_header":null,"page_number":null}]}
