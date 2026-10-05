@@ -54,6 +54,8 @@ class PrismSettings(BaseSettings):
     groq_api_key: str
     llm_grounding_model: str
     llm_grounding_fallback_model: str
+    # Stage-1 RapidFuzz text normalisation (extraction/grounding.py normalize_for_match).
+    grounding_normalize: bool = True
 
     # Extraction (Prompt 1 metadata + Prompt 2 extractor, extraction/engine.py)
     llm_extraction_fallback_model: str

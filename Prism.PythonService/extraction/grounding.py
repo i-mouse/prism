@@ -9,7 +9,10 @@ artifact, not something to drop.
 No DB writes, no worker integration - this module only grounds and logs.
 """
 import asyncio
+import functools
 import json
+import re
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
@@ -247,8 +250,127 @@ async def _audit_span_with_llm(
             return GroundingStatus.SKIPPED, None
 
 
+_HYPHEN_LINEBREAK_RE = re.compile(r"(\w)-\s*\n\s*(\w)")
+_QUOTE_DASH_TABLE = str.maketrans({
+    "\u2018": "'", "\u2019": "'", "\u201a": "'", "\u201b": "'",
+    "\u201c": '"', "\u201d": '"', "\u201e": '"', "\u201f": '"',
+    "\u2013": "-", "\u2014": "-",
+})
+
+
+def _join_hyphen_linebreak(m: re.Match) -> str:
+    # Only rejoin a word split across a line ("exam-\nple"); keep the hyphen
+    # when the next char isn't lowercase ("GPT-\n4", "Chain-\nOf").
+    if m.group(2).islower():
+        return m.group(1) + m.group(2)
+    return m.group(0)
+
+
+def normalize_for_match(text: str) -> str:
+    """Normalises text for the Stage-1 RapidFuzz comparison only.
+
+    Absorbs PDF-extraction artefacts (ligatures, soft hyphens, words broken
+    across lines, table cells split by newlines, typographic quotes/dashes)
+    without touching content: punctuation, digits and "|" are kept, so a
+    quote with changed numbers or LLM-added table pipes still mismatches.
+    Never persisted and never shown to the auditor. Idempotent.
+    """
+    text = unicodedata.normalize("NFKC", text)
+    text = text.replace("\u00ad", "")
+    text = _HYPHEN_LINEBREAK_RE.sub(_join_hyphen_linebreak, text)
+    text = text.translate(_QUOTE_DASH_TABLE)
+    return " ".join(text.split())
+
+
+@functools.lru_cache(maxsize=8)
+def normalize_with_map(text: str) -> tuple[str, tuple[int, ...]]:
+    """normalize_for_match plus idx_map, where idx_map[i] is the raw index
+    of normalised char i. Same steps in the same order; NFKC runs per
+    cluster (a char plus its trailing combining marks) so every expanded
+    char maps to its cluster's raw index ("\ufb01" -> "f", "i" both map
+    to the ligature). Removed chars (soft hyphen, the "-\\n" of a joined
+    word, collapsed whitespace) get no normalised char. Per-cluster NFKC
+    can differ from whole-string NFKC on exotic input, so callers must
+    check the text against normalize_for_match before trusting the map.
+    Cached because it is called once per span with the same paper text.
+    """
+    chars: list[str] = []
+    idx: list[int] = []
+    i, n = 0, len(text)
+    while i < n:
+        j = i + 1
+        while j < n and unicodedata.combining(text[j]):
+            j += 1
+        for ch in unicodedata.normalize("NFKC", text[i:j]):
+            if ch != "\u00ad":
+                chars.append(ch)
+                idx.append(i)
+        i = j
+
+    # Same non-overlapping scan as re.sub in normalize_for_match; a joined
+    # match keeps only its first and last char (the two word letters).
+    drop: set[int] = set()
+    for m in _HYPHEN_LINEBREAK_RE.finditer("".join(chars)):
+        if m.group(2).islower():
+            drop.update(range(m.start() + 1, m.end() - 1))
+
+    norm_chars: list[str] = []
+    norm_idx: list[int] = []
+    pending_space: int | None = None
+    for k, (ch, raw_i) in enumerate(zip(chars, idx)):
+        if k in drop:
+            continue
+        if ch.isspace():
+            if pending_space is None and norm_chars:
+                pending_space = raw_i
+            continue
+        if pending_space is not None:
+            norm_chars.append(" ")
+            norm_idx.append(pending_space)
+            pending_space = None
+        norm_chars.append(ch.translate(_QUOTE_DASH_TABLE))
+        norm_idx.append(raw_i)
+    return "".join(norm_chars), tuple(norm_idx)
+
+
+def _normalized_alignment(span_source_text: str, paper_text: str) -> tuple[int, int] | None:
+    """Aligns the normalised quote in the normalised paper and maps the hit
+    back to raw (start, end) offsets. None if the map can't be trusted or
+    the normalised score is below threshold."""
+    norm_paper, idx_map = normalize_with_map(paper_text)
+    if norm_paper != normalize_for_match(paper_text):
+        print("[ground_extraction] normalize_with_map disagrees with normalize_for_match; using raw alignment only")
+        return None
+    alignment = fuzz.partial_ratio_alignment(normalize_for_match(span_source_text), norm_paper)
+    if alignment.score < RAPIDFUZZ_THRESHOLD or alignment.dest_end <= alignment.dest_start:
+        return None
+    return idx_map[alignment.dest_start], idx_map[alignment.dest_end - 1] + 1
+
+
+def _audit_context(span_source_text: str, paper_text: str, normalize: bool) -> tuple[str, str]:
+    """Returns (context for the auditor, source) where source is "raw",
+    "normalized" or "quote_only". Raw alignment first, so a span that
+    matched raw gets exactly the window it always did; the normalised
+    alignment is only tried when raw falls below threshold. Paragraph
+    snapping always runs on the raw paper text."""
+    alignment = fuzz.partial_ratio_alignment(span_source_text, paper_text)
+    if alignment.score >= RAPIDFUZZ_THRESHOLD:
+        return _extract_span_context(paper_text, alignment.dest_start, alignment.dest_end), "raw"
+    if normalize:
+        raw_span = _normalized_alignment(span_source_text, paper_text)
+        if raw_span is not None:
+            return _extract_span_context(paper_text, *raw_span), "normalized"
+    return span_source_text, "quote_only"
+
+
+def _stage1_score(span_source_text: str, paper_text: str, normalize: bool) -> float:
+    if normalize:
+        return fuzz.partial_ratio(normalize_for_match(span_source_text), normalize_for_match(paper_text))
+    return fuzz.partial_ratio(span_source_text, paper_text)
+
+
 def _passes_rapidfuzz(span_source_text: str, paper_text: str) -> bool:
-    return fuzz.partial_ratio(span_source_text, paper_text) >= RAPIDFUZZ_THRESHOLD
+    return _stage1_score(span_source_text, paper_text, settings.grounding_normalize) >= RAPIDFUZZ_THRESHOLD
 
 
 async def _ground_span(
@@ -274,12 +396,8 @@ async def _ground_span(
         )
         return final_span, False
 
-    alignment = fuzz.partial_ratio_alignment(span.source_text, paper_text)
-    if alignment.score >= RAPIDFUZZ_THRESHOLD:
-        span_context = _extract_span_context(paper_text, alignment.dest_start, alignment.dest_end)
-    else:
-        span_context = span.source_text
-    print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars for span in {span.source_section!r}")
+    span_context, context_source = _audit_context(span.source_text, paper_text, settings.grounding_normalize)
+    print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars ({context_source}) for span in {span.source_section!r}")
 
     status, stance = await _audit_span_with_llm(
         claim_text=claim_text,

@@ -8,6 +8,11 @@ fixture that no longer matches the current extraction prompt OR the current
 matcher configuration, plus the frozen claims and the frozen matcher output
 (list[Match]) so CI never has to call Gemini to score.
 
+Each claim also carries its frozen evidence_spans (source_text,
+source_section, grounding_status, stance), so grounding changes can be
+replayed against the exact quotes of a fixture's run even after the DB that
+produced it is gone. Readers that only need claims ignore the key.
+
 Run manually by developers after prompt iteration produces a
 high-performing extraction state worth freezing for CI:
   uv run python -m eval.dump_fixture --paper all
@@ -71,7 +76,8 @@ LIMIT  1;
 """
 
 _CLAIMS_FOR_EXTRACTION_SQL = """
-SELECT pc.label, pc.claim_summary, pc.missing, pc.grounding_status, pc.claim_text_verbatim
+SELECT pc.label, pc.claim_summary, pc.missing, pc.grounding_status, pc.claim_text_verbatim,
+       pc.evidence_spans
 FROM   paper_claims pc
 WHERE  pc.document_extractor_id = %s
 ORDER  BY pc.created_at ASC;
@@ -115,7 +121,16 @@ async def _fetch_latest_extraction(filename: str) -> tuple[str, list[dict]] | No
     if not claim_rows:
         return None
 
-    claims = [
+    return str(extraction_id), claims_from_rows(claim_rows)
+
+
+FROZEN_SPAN_FIELDS = ("source_text", "source_section", "grounding_status", "stance")
+
+
+def claims_from_rows(claim_rows: list[tuple]) -> list[dict]:
+    """Maps _CLAIMS_FOR_EXTRACTION_SQL rows to fixture claim dicts, freezing
+    FROZEN_SPAN_FIELDS of each evidence span (missing fields become None)."""
+    return [
         {
             "index": i,
             "label": label,
@@ -123,10 +138,14 @@ async def _fetch_latest_extraction(filename: str) -> tuple[str, list[dict]] | No
             "missing": missing,
             "grounding_status": grounding_status,
             "claim_text_verbatim": claim_text_verbatim,
+            "evidence_spans": [
+                {field: span.get(field) for field in FROZEN_SPAN_FIELDS}
+                for span in (evidence_spans or [])
+            ],
         }
-        for i, (label, claim_summary, missing, grounding_status, claim_text_verbatim) in enumerate(claim_rows)
+        for i, (label, claim_summary, missing, grounding_status, claim_text_verbatim, evidence_spans)
+        in enumerate(claim_rows)
     ]
-    return str(extraction_id), claims
 
 
 def _paper_matches(paper: PaperSpec, name: str) -> bool:
