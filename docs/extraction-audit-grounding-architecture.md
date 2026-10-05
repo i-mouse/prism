@@ -62,6 +62,7 @@ Grounding is a post-hoc validation step. It **never overrides** the auditor's la
 
 ### Stage 1: Lexical Match (RapidFuzz)
 Each `EvidenceSpanLLM` quote is checked against the raw paper text using RapidFuzz (`fuzz.partial_ratio`). 
+- **Normalisation**: Controlled by `GROUNDING_NORMALIZE` flag (default on). Both quote and paper text undergo normalisation (ligatures, whitespace, quotes, dashes). Raw alignment is tried first; if below threshold, normalised alignment is used and mapped back to raw offsets (see `decisions.md` 2026-10-05).
 - **Threshold**: `RAPIDFUZZ_THRESHOLD = 88`
 - Spans failing this gate get `grounding_status=GroundingStatus.FAIL` and `stance=None`. They do not proceed to Stage 2.
 
@@ -115,7 +116,7 @@ The evaluation harness operates primarily in a secretless, offline mode for CI t
 **Thresholds:** `refusal_rate` must be >= `0.70`, and `positive_hits` must be >= `10`.
 
 ### Frozen-Fixture CI Pattern
-CI uses `--source fixture` to read claims and matches already frozen into JSON fixtures (`docs/evals/fixtures/*.json`) by `dump_fixture.py`. The eval harness is fully offline in CI.
+CI uses `--source fixture` to read claims and matches already frozen into JSON fixtures (`docs/evals/fixtures/*.json`) by `dump_fixture.py`. The eval harness is fully offline in CI. Fixtures now freeze `evidence_spans`.
 
 ## 6. Developer Workflow: Fixture Regeneration
 
