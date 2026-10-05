@@ -28,7 +28,7 @@ decommissioned — 2026-09-28"). That splits the work cleanly:
 | Build step | Needs cloud? | State |
 |---|---|---|
 | 1 Honest status | No | Done — merged, see §9 |
-| 2 Eval honesty | No | Needs your 14-row hand-check for the match map |
+| 2 Eval honesty | No | Done (commit bdbd9dc) |
 | 3 Caps and 429 | No | Ready |
 | 4 See the spend | No | Ready — verify against the local Aspire dashboard |
 | 5 Guards | No | Ready (golden page counts measured 2026-09-29) |
@@ -182,7 +182,7 @@ A failed run must stop reporting itself as a completed one.
 * **Done when:** read-only adjudication sheet (each grounding-negative gold row next to its 3 closest persisted claims); a human-decided, committed match map; the scorer reports "matcher miss" separately from "extractor omission"; the eval report records the prompt hash.
 * **Files likely touched:** `eval/scorer.py`, `eval/matrix_runner.py`
 * **Eval impact:** scorer only, no prompt change; policy change logged in decisions.md.
-* **Status:** [ ] not started (Blocked by 14-row adjudication)
+* **Status:** [x] Done (commit bdbd9dc)
 
 ### 3 - Caps and 429
 
@@ -326,7 +326,7 @@ Local rows: fill in during PR 6.
 | ID | Item | Status | Evidence / PR | Last verified |
 |---|---|---|---|---|
 | 1 | Honest status | Done. | merged PR (Python worker failure classification, C# status-write guard and root-cause endpoint fix, frontend failed-state UI), findings B3.3 through B3.7 closed | 2026-09-30 |
-| 2 | Eval honesty | Not started | — | 2026-09-28 |
+| 2 | Eval honesty | Done | commit bdbd9dc | 2026-10-01 |
 | 3 | Caps and 429 | Not started | — | 2026-09-28 |
 | 4 | See the spend | Not started | — | 2026-09-28 |
 | 5 | Guards | Not started | — | 2026-09-28 |
