@@ -226,3 +226,41 @@ def test_matcher_fingerprint_changes_when_prompt_file_changes(tmp_path, monkeypa
     fp2 = dump_fixture.get_matcher_fingerprint()
 
     assert fp1 != fp2
+
+
+def test_claims_from_rows_freezes_evidence_spans():
+    rows = [
+        (
+            "supported", "Claim zero.", False, "Pass", "Verbatim zero.",
+            [
+                {
+                    "source_text": "Quote A.", "source_section": "Section 4", "section_header": "Results",
+                    "page_number": 6, "grounding_status": "Pass", "stance": "supports",
+                },
+                {"source_text": "Quote B.", "source_section": "Table 2", "grounding_status": "Fail"},
+            ],
+        ),
+        ("not_supported", "Claim one.", True, "Fail", "Verbatim one.", None),
+    ]
+
+    claims = dump_fixture.claims_from_rows(rows)
+
+    assert claims[0]["evidence_spans"] == [
+        {"source_text": "Quote A.", "source_section": "Section 4", "grounding_status": "Pass", "stance": "supports"},
+        {"source_text": "Quote B.", "source_section": "Table 2", "grounding_status": "Fail", "stance": None},
+    ]
+    assert claims[1]["evidence_spans"] == []
+    assert claims[1]["index"] == 1 and claims[1]["missing"] is True
+
+
+def test_fixture_with_evidence_spans_still_reads_as_claims(tmp_path):
+    fixture = _locked_shape_fixture()
+    fixture["claims"][0]["evidence_spans"] = [
+        {"source_text": "Quote A.", "source_section": "Section 4", "grounding_status": "Pass", "stance": "supports"},
+    ]
+    path = _write(tmp_path, "fixture.json", json.dumps(fixture))
+
+    claims = read_from_fixture(path)
+
+    assert [c.index for c in claims] == [0, 1]
+    assert claims[0].label == "supported"
