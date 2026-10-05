@@ -79,6 +79,7 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 * **Why `verify_matcher_gold` is a separate step from `rematch_fixture`:** `rematch_fixture` refreshes a fixture's matches against *real* extracted claims, but that alone says nothing about whether the new matcher is actually *accurate* — that's what the 15-pair hand-labeled gold set in `docs/evals/matcher_gold.json` checks. `rematch_fixture` deliberately clears `matcher_gold_pass_rate`/`matcher_gold_verified_at` when it updates `matcher_fingerprint`, rather than leaving a pass_rate measured under the *old* matcher in place — so `check_fixture_freshness` will correctly demand a fresh `verify_matcher_gold` run before trusting the fixture again.
 * **Gold-set pass floor:** 0.9 (90%). If a real run comes in below that, do not commit the fixture update — the matcher itself needs fixing (model or prompt) first, not the freshness gate.
 * **None of this touches CI:** the eval harness is fully offline in CI (see `docs/decisions.md`, "Revert live-matcher CI back to frozen-fixture design") — all three regen commands above are run locally by a developer, and only their *output* (the committed fixture JSON) is what CI reads.
+* **Testing normalisation offline:** `eval/replay_stage1.py` replays Stage-1 matching on stored spans with `GROUNDING_NORMALIZE` off vs on, no LLM calls; needs Postgres up and `PRISM_DB_PORT` matching the Aspire port.
 
 ## 7. Match Map Adjudication (fuzzy pre-fill + human review)
 

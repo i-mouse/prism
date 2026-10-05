@@ -29,10 +29,11 @@ Prism's core engineering bet is correct refusal: vetoing any assessment not supp
 **Notes:**
 1. The old 86% refusal rate came from a scorer that credited claims never extracted; it was replaced.
 2. On the held-out paper, one compound abstract claim decides 6 of 12 rows, and the 8 hits rest on 4 distinct claims.
+3. Stage-1 text normalisation (2026-10-05) fixed 20 table-row quotes that failed fuzzy matching on post-reset runs, flipping 2 golden false rejections to hits with 0 regressions; held-out unchanged; the frozen fixture numbers above are unaffected.
 
 ## How it works
 
-The pipeline is orchestrated asynchronously via RabbitMQ and broken into specific stages to avoid context collapse. First, a Python worker extracts empirical and methodological positioning claims from the full text. Next, a claim auditor (Gemini 3.6 Flash) evaluates each claim individually against the full paper text to assign a label (supported, partially supported, or not supported) — tightened to require evidence from experimental results, data, or proofs, not just a verbatim quote from the Abstract or Introduction. Finally, a grounding checker validates the auditor's exact quote spans using semantic matching (RapidFuzz) and a secondary LLM judge (Groq/LiteLLM), adjusting the rubric based on the claim's stance toward the claim (supports, refutes, or neutral). The pipeline is strictly acyclic: the grounder validates the auditor, but never overrides its label.
+The pipeline is orchestrated asynchronously via RabbitMQ and broken into specific stages to avoid context collapse. First, a Python worker extracts empirical and methodological positioning claims from the full text. Next, a claim auditor (Gemini 3.6 Flash) evaluates each claim individually against the full paper text to assign a label (supported, partially supported, or not supported) — tightened to require evidence from experimental results, data, or proofs, not just a verbatim quote from the Abstract or Introduction. Finally, a grounding checker validates the auditor's exact quote spans using semantic matching (RapidFuzz, after quote and paper text are normalised for ligatures, line breaks, quotes/dashes, and whitespace) and a secondary LLM judge (Groq/LiteLLM), adjusting the rubric based on the claim's stance toward the claim (supports, refutes, or neutral). The pipeline is strictly acyclic: the grounder validates the auditor, but never overrides its label.
 
 ## Architecture
 
