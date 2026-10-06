@@ -12,7 +12,7 @@ For every paper, produce all 9 fields. If information for a field is not present
 
 2. **headline_conclusion**: The paper's main finding stated in one sentence. Usually appears in the Abstract's last sentence or the Conclusion's first paragraph. This is what the paper wants you to remember.
 
-3. **sample_characteristics**: What was tested and how much? Describe the datasets, benchmarks, tasks, or subjects the paper evaluated on. Include sizes if reported (e.g., "HumanEval with 164 coding problems, HotPotQA with 7,405 questions").
+3. **sample_characteristics**: What was tested and how much? Describe the datasets, benchmarks, tasks, or subjects the paper evaluated on. Include sizes if reported (e.g., "Eldmoor with 212 forest plots, Brennmoor with 3,140 alloy samples").
 
 4. **baselines_compared**: What alternative methods, models, or approaches did the paper compare against? List them. Look in the Results or Experiments section.
 

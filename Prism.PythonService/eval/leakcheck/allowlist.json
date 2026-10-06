@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "about": "File-scoped exceptions for eval/check_prompt_leak.py. Each entry quotes the runtime file's own text (normalised for names, literal for numbers). No wildcards, no whole-file entries. Add only generic text, with a reason.",
+  "entries": [
+    {
+      "kind": "name",
+      "file": "main.py",
+      "match": "react",
+      "reason": "Comment says 'React UI' - the frontend framework, not the ReAct paper.",
+      "added_by": "de-leak PR-A",
+      "date": "2026-10-05"
+    },
+    {
+      "kind": "number",
+      "file": "mocks/fixture_claims.json",
+      "match": "100%",
+      "reason": "Mock-mode placeholder text ('100% coverage'); generic round number.",
+      "added_by": "de-leak PR-A",
+      "date": "2026-10-05"
+    },
+    {
+      "kind": "number",
+      "file": "prompts/extract_claims_fewshot.json",
+      "match": "100",
+      "reason": "'train for 100 epochs' in the synthetic implementation-detail negative example (#11); generic round number.",
+      "added_by": "de-leak PR-A",
+      "date": "2026-10-05"
+    },
+    {
+      "kind": "number",
+      "file": "prompts/extract_claims_system.md",
+      "match": "100",
+      "reason": "'we train for 100 epochs' in the Do-NOT-extract rule; generic round number.",
+      "added_by": "de-leak PR-A",
+      "date": "2026-10-05"
+    }
+  ]
+}

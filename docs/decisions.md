@@ -1338,3 +1338,137 @@ checklist - measured, not merged":**
 - Held-out (2026-10-05, run once, frozen fixture run e1be6689 present in DB; claim texts and labels match the fixture; PDF hash, off-arm verdict reproduction and map equality (70 texts) all passed): 69 spans, 1 fail->pass (claim 23, unmapped, the `Overall` row of a before/after table, 84.9 -> 92.5, real context), 0 pass->fail, 0 claim-level Stage-1 flips, 0 flips on grounding-negative or not_supported rows.
 - Held-out Stage 2: 1 span audited -> Pass (stance supports); claim 23 Partial -> Pass. Unmapped, so no scored row moves. Raw counts unchanged vs baseline: refusal-family 1/2, positive hits 8/10, false rejections 0/10 (strict 1/2, wrongly affirmed 1, not extracted 0, skipped 0). Calls: 1 audit-level, 2 provider (Groq json_validate_failed, fallback answered). No rule changes after seeing held-out.
 - Gate: `matrix_runner --source fixture` exit 0 - refusal-family 6/16 (38%) PASS vs 35%, positive hits 12/21 vs floor 10, false rejections 0/21, coverage 37/37. Fixtures unchanged by this work.
+
+## De-leak: eval-paper text and answer-key wording removed from prompts - 2026-10-05
+
+**Context:** The 2026-10-03 audit found golden-paper text inside the prompts.
+A full discovery scan (scratch/deleak/report.md, untracked) covered the 3 golden
+papers + the sealed held-out paper and all 30 runtime files. It used word 8-grams,
+a 5-gram/containment paraphrase pass, names and numbers, and compared against the
+papers, every eval row and golden_eval.json. This entry is PR-A: code only, no
+live LLM run.
+
+**What leaked (golden):**
+- Verbatim paper text in few-shots and worked examples:
+  - Reflexion HumanEval claim: extract_claims_fewshot #1 and the system-prompt
+    example shape.
+  - ReAct abstract: extract_claims_fewshot #5.
+  - Reflexion abstract: the metadata few-shot (runs up to 40 tokens).
+  - REACT-M13 verbatim: the auditor and structurer worked examples.
+- Close paraphrases of eval rows in rubric text and pattern-derived few-shots
+  (#3 = REFLEX-M06 template, #6 = COT-M12, #9 = COT-M10/REACT-M12).
+- Answer-key wording copied from eval-row `scoring_notes`:
+  - audit_claim_system.md:26 told the auditor to look for "prompt engineering
+    mattered" - the caveat the COT-M10 rubric grades on.
+  - The auditor's worked example at :58 reproduced REACT-M13's notes (baselines,
+    Supervised SoTA 67.5, 27.4 EM) and taught `not_supported` where the golden
+    label is `partially_supported`.
+  - extract_claims_system.md:35 copied REFLEX-M11's notes ("more sample-efficient
+    than traditional RL").
+- Metadata few-shot fabrication: its output stated facts absent from its own
+  excerpt (164 problems, GPT-4/ReAct baselines, 80%). That teaches the model to
+  fill fields from memory.
+- schemas.py outside the hash: `EvidenceSpanLLM.section_header` said "e.g. '4.3
+  HumanEval Results'". That description reaches the structurer via
+  response_schema=ClaimLLM, but schemas.py was not in the prompt hash.
+- Chat (no effect on scoring): paper_chat/agent.py query-rewrite few-shot
+  (ReAct) and citation-format example (HotpotQA).
+
+**Held-out (counts only):**
+- 0 8-gram hits against the paper or its rows.
+- 0 hits against its scoring notes.
+- 1 held-out term in a code comment (extraction/grounding.py:263, no LLM effect).
+- 1 generic 5-gram in audit_fewshot.json:68 (3 content words, file predates the
+  seal).
+
+**Decision:**
+- Replaced every leaked example and rubric phrase with invented papers, methods,
+  datasets and numbers. Domains: hydrology, forestry, rail, materials,
+  agriculture, structural inspection, wind turbines. None is LLM/agent/AI
+  evaluation.
+- Kept each example's pattern, position, label mix, and length within ±20%.
+  Few-shot counts are unchanged: 11 / 1 / 7, plus 5 + 1 inline.
+- Answer-key lines (extract_claims_system.md:33-39, audit_claim_system.md:17, 26,
+  58-64) keep their audit principle but are reworded domain-free: 0 shared 4-grams
+  with any eval row's scoring_notes (golden or held-out).
+- Cue-word lists aligned: extract_claims_system.md:21 and audit_claim_system.md:26
+  now share the same confident-language cues ("with ease", "robust",
+  "consistently"). "simply by" / "readily" (COT-M10 claim and notes wording) are
+  in neither; "robust" / "consistently" are generic overclaim words, kept in both.
+- The auditor worked example now uses synthetic evidence. The claimed class is
+  never run as a baseline and the one quoted figure goes against the method, so
+  the label (`not_supported`) follows that evidence.
+- The metadata few-shot output now states only facts in its own excerpt.
+- grounding.py:263 is a comment rewrite with no logic change.
+- extraction/schemas.py added to the prompt hash (`EXTRA_HASHED_FILES`).
+
+**Hash:** `0bcf9d44e619` → `cb3272cce551` (8 prompt files + schemas.py). File
+sha256 before/after for touched files outside prompts/ is recorded in
+scratch/deleak.
+
+**CI leak check:**
+- `eval/check_prompt_leak.py` runs in eval.yml before the freshness check. It is
+  offline, secretless and does no network calls.
+- **Fails** on any 8-gram shared with the 4 papers or any eval row field
+  (claim_text_verbatim, claim_summary, scoring_notes, why_this_case; golden +
+  held-out) or golden_eval Q/A, on eval-paper names, and on eval numbers.
+- **Warns** on 5-grams.
+- Paper texts come from `eval/leakcheck/index.json`: truncated SHA-256 hashes
+  only, built locally by `scripts/build_leak_index.py` after a sha256 check of
+  each PDF. No paper text is committed.
+- Held-out hits print file:line + count only.
+- Allowlist `eval/leakcheck/allowlist.json` is file-scoped, with 4 entries:
+  - `React` (UI framework) in main.py;
+  - three generic round numbers (100 / 100%).
+- Tests in `eval/tests/test_prompt_leak.py` plant a golden sentence, a golden
+  name, a paper table number and a held-out row (checked to never be echoed).
+- The checker exits 1 on the pre-change tree: 27 8-gram runs, 1,112 hits.
+- Known limitation: the checker skips names under 3 characters (to avoid noise
+  such as "v1"), so it would not have caught the original grounding.py:263
+  held-out term - only the manual discovery scan did. Eval-paper tokens shorter
+  than 3 characters are not covered by CI.
+
+**Verification (this PR):**
+- M1: 0 8-gram leaks.
+- M2: 0 name/number leaks outside the 4 allowlist entries.
+- M3: counts, order and labels identical; all lengths within ±20%.
+- M4: leak check passes on the tree and fails on the planted leaks.
+- M5: hash above.
+- `matrix_runner --source fixture`: exit 0, aggregate and per-row reports
+  identical to the earlier run today (refusal-family 6/16, strict 4/16, positive
+  hits 12/21, false rejections 0/21, coverage 37/37).
+- Unit tests: 187 passed.
+- Observed while checking the hash: `dump_fixture` stamps `get_prompt_version()`
+  at dump time, not the prompt version of the extraction run it dumps. For the
+  current fixtures the two agree: the worker's writer logs for those runs record
+  0bcf9d44e619.
+
+**Consequences:**
+- `check_fixture_freshness` now fails (fixture hash 0bcf9d44e619 ≠ cb3272cce551),
+  and matrix_runner warns that match_map.json was adjudicated at the old hash.
+  Both are expected until PR-B re-dumps the fixtures. No fixture, match map,
+  threshold or gate value was changed here.
+- Any edit to schemas.py now changes the prompt hash.
+
+**Pre-registered measurement rules (written before any run):**
+- N=2 live runs per arm: current prompts (0bcf9d44e619) vs de-leaked
+  (cb3272cce551). Same models (env-pinned), same session.
+- Rerun rule: a run is rerun, not counted, if it has more than 1 SKIPPED row, any
+  claim dropped by an audit/structure failure, or an extractor call that used the
+  fallback model.
+- Held-out: one de-leaked run after code freeze, compared with the 2026-10-03
+  baseline. The held-out paper has now been used 5 times:
+  - 2026-10-03 baseline run;
+  - parse check of the PDF;
+  - 2026-10-05 Stage-1 replay;
+  - 2026-10-05 Stage-2 replay;
+  - 2026-10-05 leak-index build (reads the PDF to hash it; no model runs on it).
+
+  The PR-B run adds one more use.
+- Gate reset rule: if the de-leaked golden refusal-family is below 0.35, the gate
+  resets to the clean baseline (rounded down). Old and new values are both
+  recorded.
+- Gate fixtures are re-dumped from the first valid de-leaked run; the old
+  fixtures are archived.
+
+**Results:** PENDING (PR-B).

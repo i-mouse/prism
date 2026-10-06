@@ -1,110 +1,110 @@
 [
   {
     "example_type": "positive_extraction",
-    "input_excerpt": "Section 4.3 HumanEval Results. Reflexion achieves 91.0% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4, which achieves 80%. Table 1 reports pass@1 across benchmarks. On HumanEval, Reflexion reaches 91.0 compared to GPT-4's 80.1.",
+    "input_excerpt": "Section 4.2 Aquifer Forecast Results. Tidewell reaches 87.6% forecast accuracy on the Marlow Basin well-level suite, surpassing the previous best physics-based simulator, which reaches 76%. Table 2 reports accuracy across basins. On Marlow Basin, Tidewell scores 87.6 compared to the simulator's 75.8.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "Reflexion achieves 91.0% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4, which achieves 80%.",
-          "claim_summary": "Reflexion reaches 91% on HumanEval, beating GPT-4"
+          "claim_text_verbatim": "Tidewell reaches 87.6% forecast accuracy on the Marlow Basin well-level suite, surpassing the previous best physics-based simulator, which reaches 76%.",
+          "claim_summary": "Tidewell hits 88% on Marlow Basin, beating the simulator"
         }
       ]
     }
   },
   {
     "example_type": "ablation_table_negative_result",
-    "input_excerpt": "Section 5.4 Ablation: Removing the Self-Reflection Module. Table 4 shows that GridSolver drops from 88% to 61% accuracy when the self-reflection module is removed, and the failure analysis reveals the agent repeats the same invalid move rather than trying alternatives.",
-    "note": "This claim lives deep in the paper - an ablation subsection well past the Abstract, Introduction, and headline Results. It's exactly as extractable as a front-of-paper claim: it's a table-derived, numeric assertion about GridSolver's own behavior (what the self-reflection module contributes). Do not let the fact that you've already extracted a strong batch of claims from the Abstract/Introduction/Results feel like a reason to stop before reaching Ablations - this is precisely the kind of claim that gets crowded out if extraction stops early.",
+    "input_excerpt": "Section 5.4 Ablation: Removing the Leaf-Texture Branch. Table 4 shows that Verdance drops from 84% to 49% F1 when the leaf-texture branch is removed, and the error analysis reveals the classifier mistakes nutrient-deficiency spots for fungal lesions rather than telling the two apart.",
+    "note": "This claim lives deep in the paper - an ablation subsection well past the Abstract, Introduction, and headline Results. It's exactly as extractable as a front-of-paper claim: it's a table-derived, numeric assertion about Verdance's own behavior (what the leaf-texture branch contributes). Do not let the fact that you've already extracted a strong batch of claims from the Abstract/Introduction/Results feel like a reason to stop before reaching Ablations - this is precisely the kind of claim that gets crowded out if extraction stops early.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "Table 4 shows that GridSolver drops from 88% to 61% accuracy when the self-reflection module is removed, and the failure analysis reveals the agent repeats the same invalid move rather than trying alternatives.",
-          "claim_summary": "Removing self-reflection drops GridSolver's accuracy from 88% to 61%"
+          "claim_text_verbatim": "Table 4 shows that Verdance drops from 84% to 49% F1 when the leaf-texture branch is removed, and the error analysis reveals the classifier mistakes nutrient-deficiency spots for fungal lesions rather than telling the two apart.",
+          "claim_summary": "Removing leaf-texture branch drops Verdance's F1 from 84% to 49%"
         }
       ]
     }
   },
   {
     "example_type": "late_paper_diagnostic_table_claim",
-    "input_excerpt": "Section 6.2 Error Analysis. Table 7 shows an inferior 54% vs 71% (baseline) success rate on tasks requiring multi-step lookahead, which suggests the planner cannot reliably backtrack once committed to an early action.",
-    "note": "Another late-paper (Error Analysis, Section 6.2) table-derived claim, this one drawing an explicit inference from the comparison (\"which suggests the planner cannot reliably backtrack\"). Extract the full sentence, inference included - the inference is itself part of what the paper is asserting about its own method's limitation, not just the raw percentages. Claims like this are easy to miss because they read like a negative or diagnostic result rather than a headline win, but a self-diagnosed weakness is exactly as much a claim as a self-reported strength.",
+    "input_excerpt": "Section 6.2 Error Analysis. In Table 7, Railwright's schedules meet only 63% of delivery windows on single-track corridors, against 74% for the dispatcher baseline, indicating that the solver cannot recover once an early passing loop is assigned.",
+    "note": "Another late-paper (Error Analysis, Section 6.2) table-derived claim, this one drawing an explicit inference from the comparison (\"indicating that the solver cannot recover\"). Extract the full sentence, inference included - the inference is itself part of what the paper is asserting about its own method's limitation, not just the raw percentages. Claims like this are easy to miss because they read like a negative or diagnostic result rather than a headline win, but a self-diagnosed weakness is exactly as much a claim as a self-reported strength.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "Table 7 shows an inferior 54% vs 71% (baseline) success rate on tasks requiring multi-step lookahead, which suggests the planner cannot reliably backtrack once committed to an early action.",
-          "claim_summary": "Planner scores 54% vs 71% baseline on multi-step lookahead, suggesting a backtracking failure"
+          "claim_text_verbatim": "In Table 7, Railwright's schedules meet only 63% of delivery windows on single-track corridors, against 74% for the dispatcher baseline, indicating that the solver cannot recover once an early passing loop is assigned.",
+          "claim_summary": "Railwright meets 63% vs 74% of windows on single-track lines, suggesting early-assignment lock-in"
         }
       ]
     }
   },
   {
     "example_type": "abstract_broad_and_narrow_together",
-    "input_excerpt": "Abstract. We introduce PromptAgent, a general framework that outperforms state-of-the-art agent architectures across diverse reasoning benchmarks.\n\nSection 3 Results. PromptAgent achieves 82.1% on GSM8K compared to the best prior prompting method's 78.3%, a 3.8-point improvement.",
+    "input_excerpt": "Abstract. We introduce Vorlica, a general framework that outperforms state-of-the-art property predictors across diverse crystal families.\n\nSection 3 Results. Vorlica achieves 68.3% on the Brennmoor alloy screen versus the best prior descriptor method's 63.7%, a 4.6-point gain.",
     "note": "Both the broad Abstract claim AND the narrow Results claim must be extracted. They have different scopes and will be audited to different verdicts. Extracting only the narrow one hides the overreaching claim from audit.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "We introduce PromptAgent, a general framework that outperforms state-of-the-art agent architectures across diverse reasoning benchmarks.",
-          "claim_summary": "PromptAgent outperforms SOTA agent architectures across diverse reasoning benchmarks"
+          "claim_text_verbatim": "We introduce Vorlica, a general framework that outperforms state-of-the-art property predictors across diverse crystal families.",
+          "claim_summary": "Vorlica outperforms SOTA property predictors across diverse crystal families"
         },
         {
-          "claim_text_verbatim": "PromptAgent achieves 82.1% on GSM8K compared to the best prior prompting method's 78.3%, a 3.8-point improvement.",
-          "claim_summary": "PromptAgent reaches 82.1% on GSM8K, 3.8 points above best prior prompting method"
+          "claim_text_verbatim": "Vorlica achieves 68.3% on the Brennmoor alloy screen versus the best prior descriptor method's 63.7%, a 4.6-point gain.",
+          "claim_summary": "Vorlica reaches 68.3% on Brennmoor, 4.6 points above best prior descriptor method"
         }
       ]
     }
   },
   {
     "example_type": "abstract_sweep_with_multiple_broad_claims",
-    "input_excerpt": "Abstract. We present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks. On ALFWorld and WebShop, ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10%. ReAct is robust to prompt selection and demonstrates effectiveness over state-of-the-art baselines.",
+    "input_excerpt": "Abstract. We present Rivulet, a general approach to couple rainfall nowcasting and channel routing within one learned model for forecasting floods across diverse river networks. On the Ashgrove and Penlow catchments, Rivulet outperforms calibrated hydrological and purely statistical models by an absolute hit rate of 27% and 13%. Rivulet is stable under gauge dropout and beats state-of-the-art forecasters.",
     "note": "The Abstract contains FOUR distinct claims, only one of which has a number attached. All four must be extracted separately even though several overlap thematically. Each will be audited independently.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "We present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks.",
-          "claim_summary": "ReAct is a general paradigm for combining reasoning and acting across diverse tasks"
+          "claim_text_verbatim": "We present Rivulet, a general approach to couple rainfall nowcasting and channel routing within one learned model for forecasting floods across diverse river networks.",
+          "claim_summary": "Rivulet is a general approach coupling nowcasting and routing for flood forecasting"
         },
         {
-          "claim_text_verbatim": "On ALFWorld and WebShop, ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10%.",
-          "claim_summary": "ReAct beats IL/RL by 34% on ALFWorld and 10% on WebShop"
+          "claim_text_verbatim": "On the Ashgrove and Penlow catchments, Rivulet outperforms calibrated hydrological and purely statistical models by an absolute hit rate of 27% and 13%.",
+          "claim_summary": "Rivulet beats hydrological/statistical models by 27% on Ashgrove and 13% on Penlow"
         },
         {
-          "claim_text_verbatim": "ReAct is robust to prompt selection",
-          "claim_summary": "ReAct is robust to prompt selection"
+          "claim_text_verbatim": "Rivulet is stable under gauge dropout",
+          "claim_summary": "Rivulet is stable under gauge dropout"
         },
         {
-          "claim_text_verbatim": "demonstrates effectiveness over state-of-the-art baselines.",
-          "claim_summary": "ReAct is effective versus state-of-the-art baselines"
+          "claim_text_verbatim": "beats state-of-the-art forecasters.",
+          "claim_summary": "Rivulet beats state-of-the-art forecasters"
         }
       ]
     }
   },
   {
     "example_type": "generalization_without_test",
-    "input_excerpt": "Section 1 Introduction. Software engineers routinely debug unfamiliar programs by reading error traces, forming a hypothesis, and testing a fix. We present AutoFix, a general-purpose repair paradigm applicable to any programming task that a human developer could reason through from an error trace alone. In this paper, we evaluate AutoFix on Python function-level bugs drawn from the Defects4J and QuixBugs benchmarks.",
-    "note": "The middle sentence reads like Introduction scene-setting (\"we present a general-purpose paradigm\") and is easy to wave through as background about what the system IS rather than a claim about what it does. It asserts broad applicability (\"any programming task\") before the narrow, concrete evaluation scope (Python function-level bugs on two benchmarks) is even mentioned. Extract the broad claim on its own terms - do not wait to see whether the eventual Results section actually covers that breadth, and do not silently narrow the quote to match the evaluation scope. The first sentence stays unextracted (pure background about how humans debug, no assertion about AutoFix). The last sentence is evaluation scope, not a claim, so it is not extracted either - only the middle sentence asserts something about AutoFix itself.",
+    "input_excerpt": "Section 1 Introduction. Bridge inspectors assess concrete decks by walking the span, tapping for hollow sounds, and logging suspect regions by hand. We present EchoDeck, a general-purpose defect locator applicable to any reinforced-concrete structure that can be scanned with a handheld acoustic probe. In this paper, we evaluate EchoDeck on highway overpass decks drawn from the Carrow and Wendle county inspection archives.",
+    "note": "The middle sentence reads like Introduction scene-setting (\"we present a general-purpose defect locator\") and is easy to wave through as background about what the system IS rather than a claim about what it does. It asserts broad applicability (\"any reinforced-concrete structure\") before the narrow, concrete evaluation scope (highway overpass decks from two county archives) is even mentioned. Extract the broad claim on its own terms - do not wait to see whether the eventual Results section actually covers that breadth, and do not silently narrow the quote to match the evaluation scope. The first sentence stays unextracted (pure background about how inspectors work, no assertion about EchoDeck). The last sentence is evaluation scope, not a claim, so it is not extracted either - only the middle sentence asserts something about EchoDeck itself.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "We present AutoFix, a general-purpose repair paradigm applicable to any programming task that a human developer could reason through from an error trace alone.",
-          "claim_summary": "AutoFix is a general-purpose repair paradigm for any programming task solvable from an error trace"
+          "claim_text_verbatim": "We present EchoDeck, a general-purpose defect locator applicable to any reinforced-concrete structure that can be scanned with a handheld acoustic probe.",
+          "claim_summary": "EchoDeck is a general-purpose defect locator for any acoustically scannable reinforced-concrete structure"
         }
       ]
     }
   },
   {
     "example_type": "superiority_vs_class_not_tested",
-    "input_excerpt": "Section 1 Introduction. Fine-tuning a large pretrained model for each new domain requires substantial labeled data and repeated, costly training runs. We propose PromptWeave, which adapts to new domains purely through in-context demonstrations, avoiding the retraining overhead that supervised fine-tuning approaches incur. Section 4 Results. On the DomainSwitch benchmark, PromptWeave with 8 demonstrations reaches 74.2% accuracy, compared to 69.5% for the best zero-shot prompting baseline.",
-    "note": "The Introduction pairs a category's limitation (\"fine-tuning... requires... costly training runs\") with the paper's method positioned as the fix (\"avoiding the retraining overhead that supervised fine-tuning approaches incur\"). That pairing is an implied efficiency-superiority claim against the whole class of supervised fine-tuning methods - not against the zero-shot prompting baseline actually benchmarked in Section 4, and it carries no number of its own. Extract the Introduction pairing as its own claim even though Results never runs a fine-tuning baseline to back it up; that gap is exactly what audit needs to see. The Results sentence is a separate, narrower claim (against a specific tested baseline) and must be extracted too - the two are not interchangeable and will be audited differently.",
+    "input_excerpt": "Section 1 Introduction. Measuring soil nitrate with laboratory assays requires shipping physical samples and waiting days for each batch of results. We propose NitraSense, which estimates nitrate in place from a single buried probe, avoiding the sampling and turnaround delays that laboratory assay workflows impose. Section 4 Results. On the Fallow Ridge plots, NitraSense with 6 probes per hectare reaches 0.83 correlation, compared to 0.71 for the best satellite-index baseline.",
+    "note": "The Introduction pairs a category's limitation (\"laboratory assays requires shipping... and waiting days\") with the paper's method positioned as the fix (\"avoiding the sampling and turnaround delays that laboratory assay workflows impose\"). That pairing is an implied efficiency-superiority claim against the whole class of laboratory assay workflows - not against the satellite-index baseline actually benchmarked in Section 4, and it carries no number of its own. Extract the Introduction pairing as its own claim even though Results never runs a laboratory-assay timing comparison to back it up; that gap is exactly what audit needs to see. The Results sentence is a separate, narrower claim (against a specific tested baseline) and must be extracted too - the two are not interchangeable and will be audited differently.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "We propose PromptWeave, which adapts to new domains purely through in-context demonstrations, avoiding the retraining overhead that supervised fine-tuning approaches incur.",
-          "claim_summary": "PromptWeave avoids the retraining overhead that supervised fine-tuning approaches require"
+          "claim_text_verbatim": "We propose NitraSense, which estimates nitrate in place from a single buried probe, avoiding the sampling and turnaround delays that laboratory assay workflows impose.",
+          "claim_summary": "NitraSense avoids the sampling and turnaround delays of laboratory assay workflows"
         },
         {
-          "claim_text_verbatim": "On the DomainSwitch benchmark, PromptWeave with 8 demonstrations reaches 74.2% accuracy, compared to 69.5% for the best zero-shot prompting baseline.",
-          "claim_summary": "PromptWeave reaches 74.2% on DomainSwitch, beating the best zero-shot baseline's 69.5%"
+          "claim_text_verbatim": "On the Fallow Ridge plots, NitraSense with 6 probes per hectare reaches 0.83 correlation, compared to 0.71 for the best satellite-index baseline.",
+          "claim_summary": "NitraSense reaches 0.83 correlation on Fallow Ridge, beating the best satellite baseline's 0.71"
         }
       ]
     }
@@ -124,24 +124,24 @@
   },
   {
     "example_type": "unquantified_robustness_and_ease_of_use_claims",
-    "input_excerpt": "Section 2 Method. Reasoning traces can be readily elicited from a sufficiently large pretrained model simply by including a handful of worked examples in the prompt, with no additional training or architecture changes required. Section 5 Discussion. We further find that SketchSolver is robust to prompt selection: swapping which worked examples appear in the prompt does not meaningfully change downstream accuracy.",
-    "note": "Neither sentence has a percentage sign or a number, and both sit in paragraphs that otherwise read as plain method description or a discussion aside. Both are still positioning claims: the Method sentence asserts an effort/cost property (\"simply by\", \"no additional training\"), and the Discussion sentence asserts a robustness property (\"does not meaningfully change\"). A missing number is not a reason to skip either one - extract both and let audit check them against the actual variance reported in the paper's tables.",
+    "input_excerpt": "Section 2 Method. Blade fatigue estimates can be readily obtained from an existing turbine's vibration logger just by attaching a strap-on reference accelerometer for one afternoon, with no additional hardware or firmware changes required. Section 5 Discussion. We further find that GaleTrace is insensitive to mounting position: moving the reference accelerometer along the blade root does not meaningfully change the fatigue estimate.",
+    "note": "Neither sentence has a percentage sign or a number, and both sit in paragraphs that otherwise read as plain method description or a discussion aside. Both are still positioning claims: the Method sentence asserts an effort/cost property (\"just by\", \"no additional hardware\"), and the Discussion sentence asserts a robustness property (\"does not meaningfully change\"). A missing number is not a reason to skip either one - extract both and let audit check them against the actual variance reported in the paper's tables.",
     "output": {
       "claims": [
         {
-          "claim_text_verbatim": "Reasoning traces can be readily elicited from a sufficiently large pretrained model simply by including a handful of worked examples in the prompt, with no additional training or architecture changes required.",
-          "claim_summary": "Reasoning traces need only a few worked examples in the prompt, no extra training"
+          "claim_text_verbatim": "Blade fatigue estimates can be readily obtained from an existing turbine's vibration logger just by attaching a strap-on reference accelerometer for one afternoon, with no additional hardware or firmware changes required.",
+          "claim_summary": "Fatigue estimates need only a strap-on accelerometer for an afternoon, no extra hardware"
         },
         {
-          "claim_text_verbatim": "We further find that SketchSolver is robust to prompt selection: swapping which worked examples appear in the prompt does not meaningfully change downstream accuracy.",
-          "claim_summary": "SketchSolver's accuracy is robust to which prompt examples are used"
+          "claim_text_verbatim": "We further find that GaleTrace is insensitive to mounting position: moving the reference accelerometer along the blade root does not meaningfully change the fatigue estimate.",
+          "claim_summary": "GaleTrace's estimate is insensitive to where the accelerometer is mounted"
         }
       ]
     }
   },
   {
     "example_type": "do_not_extract_field_level_background",
-    "input_excerpt": "Section 1 Introduction. Language agents are an exciting frontier for AI research, and understanding how to make them reason more effectively is one of the most important challenges facing our field today.",
+    "input_excerpt": "Section 1 Introduction. Coastal flood forecasting is an urgent frontier for environmental science, and understanding how rivers and tides interact during storms is one of the most important challenges facing our field today.",
     "note": "This excerpt is pure motivation about the field in general - it asserts nothing about what this paper's own method does, achieves, or is. Contrast with the framework-defining and positioning examples above: those name the paper's own method (\"We propose X...\", \"X is robust to...\"). This sentence never does. Extract nothing.",
     "output": {
       "claims": []

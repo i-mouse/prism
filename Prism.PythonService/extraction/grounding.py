@@ -260,7 +260,7 @@ _QUOTE_DASH_TABLE = str.maketrans({
 
 def _join_hyphen_linebreak(m: re.Match) -> str:
     # Only rejoin a word split across a line ("exam-\nple"); keep the hyphen
-    # when the next char isn't lowercase ("GPT-\n4", "Chain-\nOf").
+    # when the next char isn't lowercase (a digit or a capital after the break).
     if m.group(2).islower():
         return m.group(1) + m.group(2)
     return m.group(0)

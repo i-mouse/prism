@@ -10,11 +10,11 @@ The reason this step is free text: when the label field is generated alongside r
 
 **Step 1 — Read the claim carefully and identify its scope.**
 What exactly is the claim asserting? Circle mentally:
-- Is it a comparison against a specific named method, or against a *class* of methods ("traditional RL", "state-of-the-art", "prior work")? — see Pattern B below.
-- Is it about a specific dataset, or a *broad domain* ("any language task", "all modalities", "arbitrary agents")? — see Pattern A below.
+- Is it a comparison against a specific named method, or against a *class* of methods ("traditional lab assays", "state-of-the-art", "prior work")? — see Pattern B below.
+- Is it about a specific dataset, or a *broad domain* ("any river network", "all modalities", "arbitrary structures")? — see Pattern A below.
 - Is it a measured metric, or an *unmeasured property* ("robust", "efficient", "generalizes", "interpretable")?
 
-An unqualified category noun is a broad-domain claim by default, even without a hedge word like "any," "general," or "arbitrary." "A framework to reinforce language agents" targets the whole category of language agents, not just the specific ones the paper happens to test — the absence of a narrowing qualifier ("our three agents," "the tested setups") is not narrowness, it's the paper leaving the scope as broad as the category name implies. Do not let the paper's own framing of what the method IS ("this is the architecture we propose") substitute for what was TESTED. A method can be precisely and correctly described, and that description can even be validated end-to-end, while the category it's described as applying to is still far broader than what was run. Re-derive the scope from the noun the claim uses, not from how many domains the paper's Results section happens to cover.
+An unqualified category noun is a broad-domain claim by default, even without a hedge word like "any," "general," or "arbitrary." "A framework to improve X systems" targets the whole category of X systems, not just the specific ones the paper happens to test — the absence of a narrowing qualifier ("our three systems," "the tested setups") is not narrowness, it's the paper leaving the scope as broad as the category name implies. Do not let the paper's own framing of what the method IS ("this is the architecture we propose") substitute for what was TESTED. A method can be precisely and correctly described, and that description can even be validated end-to-end, while the category it's described as applying to is still far broader than what was run. Re-derive the scope from the noun the claim uses, not from how many domains the paper's Results section happens to cover.
 
 **Step 2 — Search the paper for evidence matching that exact scope.**
 Not adjacent evidence. Not evidence for a narrower version. Evidence for the specific scope the claim asserts.
@@ -22,8 +22,8 @@ Not adjacent evidence. Not evidence for a narrower version. Evidence for the spe
 - If the scope is a broad domain: does the paper's experiments actually span that domain?
 - If the scope is an unmeasured property: does the paper actually measure that property?
 - The sentence that states the claim (often the Abstract or Introduction sentence you extracted it from) is not evidence for the claim, no matter how directly it's worded. You are searching for what PROVES the claim — a result, a measurement, a baseline comparison — not for another place the paper asserts it.
-- A passage that describes HOW the method works — its mechanism, architecture, or algorithm, even in careful technical detail from a Method section — is not evidence that the claim's BREADTH was tested. A method can be described in complete, precise detail and still only ever be run on a narrow slice of what it's claimed to cover. Explaining that Reflexion "converts feedback into a textual summary stored in memory" tells you the mechanism exists; it tells you nothing about whether that mechanism was validated across the broad category ("language agents," "any task") the claim asserts. For a broad-domain or comparative-class claim, evidence means an experiment run at that breadth — not a clear explanation of what the method does.
-- Before you can call a claim fully `supported`, check the paper's Limitations, Discussion, or Appendix sections for any caveat that narrows or contradicts it. Claims that use confident, unqualified language — "simply by," "readily," "robust," "consistently," "improves reasoning" — are exactly the ones authors sometimes quietly walk back later in the paper (an appendix admitting the reasoning paths weren't verified, a limitations paragraph admitting prompt engineering mattered). A strong-looking Results section is not the end of the search; a caveat found elsewhere in the paper pulls the verdict to `partially_supported` even when the headline numbers look clean.
+- A passage that describes HOW the method works — its mechanism, architecture, or algorithm, even in careful technical detail from a Method section — is not evidence that the claim's BREADTH was tested. A method can be described in complete, precise detail and still only ever be run on a narrow slice of what it's claimed to cover. Explaining that Rivulet "passes nowcast rainfall into a learned routing layer" tells you the mechanism exists; it tells you nothing about whether that mechanism was validated across the broad category ("river networks," "any catchment") the claim asserts. For a broad-domain or comparative-class claim, evidence means an experiment run at that breadth — not a clear explanation of what the method does.
+- Before you can call a claim fully `supported`, check the paper's Limitations, Discussion, or Appendix sections for any caveat that narrows or contradicts it. Claims that use confident, unqualified language — "with ease," "robust," "consistently," "improves results" — are exactly the ones authors sometimes quietly walk back later in the paper (an appendix admitting a step was never checked, a limitations paragraph admitting results needed manual setup). A strong-looking Results section is not the end of the search; a caveat found elsewhere in the paper pulls the verdict to `partially_supported` even when the headline numbers look clean.
 
 **Step 3 — Find the verbatim quote of the EVIDENCE, not the claim.**
 If the paper does support the claim, find the exact sentence (or short passage) in the paper's experimental results, data, or proofs that PROVES it — not the sentence that merely states it. This is a hard requirement: you may only conclude "supported" if you can produce a verbatim quote of evidence that directly backs the claim's exact scope. Quoting the Abstract or Introduction sentence where the authors simply assert the claim is NOT sufficient, even if it matches the claim word-for-word — that sentence is the claim, not proof of the claim. Not a paraphrase. Not a summary. Not the claim's own wording restated back at itself.
@@ -55,14 +55,14 @@ Every claim must have at least one QUOTE line, including partially_supported and
 
 Free prose. No JSON, no schema, no markdown code fences. A typical response looks like the following (starting on the next line):
 
-The claim asserts that ReAct beats state-of-the-art on HotpotQA. The scope here is "state-of-the-art", which normally implies supervised or specialized systems tuned for the task. Scanning Table 1, the baselines listed are Standard, CoT, CoT-SC, and Act — all few-shot prompting methods on PaLM-540B. No supervised SOTA baseline is included. Section 3.3 explicitly reports ReAct at 27.4 EM on HotpotQA, and the "Supervised SoTA" row shows 67.5 EM — a 40-point gap in the wrong direction. The abstract's "state-of-the-art" framing is not what the experiments demonstrate.
+The claim asserts that Rivulet beats state-of-the-art forecasting systems on every catchment studied. The scope here is "state-of-the-art", which normally implies operational systems tuned for each basin. Scanning Table 2, the baselines are Persistence, Linear Regression, Gradient-Boosted Trees, and Rivulet-NoRoute — all lightweight statistical models. No operational system is run on any catchment. Table 2 also prints a published Operational Ensemble score for Ashgrove, 0.78, against Rivulet's 0.61 — a gap in the wrong direction. No experiment shows Rivulet ahead of a state-of-the-art system.
 
 VERDICT: not_supported
 
-QUOTE: We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines
+QUOTE: Across every catchment we study, Rivulet delivers flood warnings that are earlier and more reliable than those of state-of-the-art forecasting systems
 SECTION: Abstract
-QUOTE: Supervised SoTA 67.5
-SECTION: Table 1
+QUOTE: Operational Ensemble 0.78
+SECTION: Table 2
 
 # Two rhetorical patterns worth extra scrutiny
 
@@ -117,15 +117,15 @@ SECTION: Section 4 (Experiments)
 
 The self-referential trap above does not mean every claim that sounds confident is `not_supported`. When the paper DOES run an experiment at the claimed scope, a caveat or subset gap is `partially_supported`, not `not_supported` — do not over-correct.
 
-The claim reads: "SketchQA improves multi-hop reasoning accuracy across question types."
+The claim reads: "WeldScan improves defect-detection recall across weld types."
 
 Reasoning that would produce a `partially_supported` verdict:
 
-This claim IS genuinely tested — unlike a scope gap, the paper directly measures multi-hop reasoning accuracy "across question types" in Table 3, covering five categories: bridge, intersection, comparison, yes/no, and numeric. This is real evidence, not a restatement of the claim: Table 3 reports actual accuracy numbers per category, and four of the five categories show gains of 3-11 points. But Appendix C.2 reports that on comparison-type questions specifically, SketchQA shows no improvement over the baseline and scores half a point lower under the held-out split. The claim's "across question types" framing overstates a result that holds for four of five categories, not all of them — the scope was tested, just not fully confirmed.
+This claim IS genuinely tested — unlike a scope gap, the paper directly measures defect-detection recall "across weld types" in Table 3, covering five categories: butt, fillet, lap, spot, and plug. This is real evidence, not a restatement of the claim: Table 3 reports actual recall numbers per category, and four of the five categories show gains of 3-11 points. But Appendix C.2 reports that on lap welds specifically, WeldScan shows no improvement over the baseline and scores 0.7 points lower under the held-out split. The claim's "across weld types" framing overstates a result that holds for four of five categories, not all of them — the scope was tested, just not fully confirmed.
 
 VERDICT: partially_supported
 
-QUOTE: On comparison-type questions, SketchQA shows no improvement over the baseline and scores 0.5 points lower under the held-out split.
+QUOTE: On lap welds, WeldScan shows no improvement over the baseline and scores 0.7 points lower under the held-out split.
 SECTION: Appendix C.2
 
 # Critical rules

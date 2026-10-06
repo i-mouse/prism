@@ -20,17 +20,26 @@ PROMPT_FILENAMES = (
     "audit_fewshot.json",
 )
 
+# Non-prompt files whose text still reaches the LLM. schemas.py's Field
+# descriptions are sent to the structurer as part of response_schema=ClaimLLM,
+# so editing them changes model input just like editing a prompt file.
+# Hashed after the prompt files, in this order.
+EXTRA_HASHED_FILES = (
+    Path(__file__).parent / "schemas.py",
+)
+
 
 def get_prompt_version() -> str:
     """Returns a 12-character SHA-256 hash of the current prompt files.
 
     Reads all prompt files across both extraction stages (metadata, and
-    the extractor/auditor/structurer trio for claims), hashes their
-    combined bytes in a fixed order, returns first 12 chars for readability.
+    the extractor/auditor/structurer trio for claims), then the files in
+    EXTRA_HASHED_FILES, hashes their combined bytes in a fixed order,
+    returns first 12 chars for readability.
     """
     combined = b""
-    for filename in PROMPT_FILENAMES:
-        path = PROMPTS_DIR / filename
+    paths = [PROMPTS_DIR / filename for filename in PROMPT_FILENAMES] + list(EXTRA_HASHED_FILES)
+    for path in paths:
         if not path.exists():
             raise FileNotFoundError(f"Prompt file not found at {path}")
         combined += path.read_bytes()

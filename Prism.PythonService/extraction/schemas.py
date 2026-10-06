@@ -53,7 +53,7 @@ class EvidenceSpanLLM(BaseModel):
     )
     section_header: Optional[str] = Field(
         None,
-        description="Fuller section title if available, e.g. '4.3 HumanEval Results'"
+        description="Fuller section title if available, e.g. '4.3 Main Results'"
     )
     page_number: Optional[int] = Field(
         None,

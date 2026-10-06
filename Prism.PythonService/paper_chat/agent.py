@@ -74,7 +74,7 @@ RETRIEVAL_ERROR_MESSAGE = (
 # paper_chat/tools.py), a chunk carries no meaningful topical signal at all.
 # Used only in check_empty to tell a genuinely out-of-scope question (e.g.
 # "who won the World Cup") apart from one that's in-scope but unsupported
-# (e.g. "does ReAct work on physical robots" - related to the paper's
+# (e.g. "does Rivulet work on glacial rivers" - related to the paper's
 # domain, just not demonstrated by it). Same caveat as
 # CHUNK_SIMILARITY_THRESHOLD: a starting point picked in PR C2
 # (fix/chat-retrieval-refusal) before real query data existed, not a
@@ -90,10 +90,10 @@ QUERY_REWRITE_INSTRUCTIONS = (
     "quotes, no explanation, no prefix.\n\n"
     "Example:\n"
     "History:\n"
-    "user: What is ReAct?\n"
-    "assistant: ReAct is a paradigm combining reasoning and acting in LLMs.\n"
+    "user: What is Sylvane?\n"
+    "assistant: Sylvane is a framework estimating forest biomass from drones.\n"
     "Latest message: How was it evaluated?\n"
-    "Standalone query: How was ReAct evaluated?"
+    "Standalone query: How was Sylvane evaluated?"
 )
 
 
@@ -506,9 +506,9 @@ async def generate_response(state: AgentState):
         "distinct claims are relevant to the same point, never let their markers "
         "sit adjacent with no separating text between them, even within the same "
         "paragraph - each claim gets its own clause or sentence before its "
-        "marker. Avoid a pattern like \"...on HotpotQA [claim:ID1] [claim:ID2].\" "
+        "marker. Avoid a pattern like \"...on Eldmoor [claim:ID1] [claim:ID2].\" "
         "with two markers back-to-back and nothing separating them; instead "
-        "write each claim's point as its own sentence, e.g. \"...on HotpotQA "
+        "write each claim's point as its own sentence, e.g. \"...on Eldmoor "
         "[claim:ID1]. It also does X [claim:ID2].\"\n\n"
         "A claim_id's marker may only be attached to a sentence describing THAT "
         "claim's own content - never reuse a claim_id as the citation for a "
