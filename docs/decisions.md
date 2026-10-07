@@ -1471,7 +1471,29 @@ scratch/deleak.
 - Gate fixtures are re-dumped from the first valid de-leaked run; the old
   fixtures are archived.
 
-**Results:** PENDING (PR-B live measurement in progress as of 2026-10-06).
+**Results (2026-10-07):**
+- Runs (all VALID: hash cb3272cce551, 0 fallback, 0 SKIPPED, 0 dropped): reflexion 0fd9ead9-ad0c-4370-8192-c1b078602104 (33 claims), react b66b3e0f-60ce-4879-acf3-e20d1c63c42c (33), cot 59bda754-f7e9-4b42-9544-72cc71057878 (24). N=1, de-leak arm only, deviation from pre-registered N=2.
+- Golden (fixture, new map): refusal-family 5/16 (0.3125), strict 5/16, wrongly affirmed 4, not extracted 7, positive hits 11/21 (floor 10), false rejection 1/21, coverage 37/37.
+  Old baseline: 6/16, strict 4/16, wrongly affirmed 4, not extracted 6, 12/21, 0/21, 37/37 (frozen fixtures from runs 929ca23a / 90080172 / edbfc5cf, lost in the 09-18 DB reset).
+- Reading: the whole refusal drop is one row (COT-M12 REFUSED -> NOT_EXTRACTED, an extraction miss). Wrongly affirmed stayed 4 but rows swapped. No detectable change from the de-leak. Extractor is the unstable stage. Noise not measured. COT-M08 and REACT-M03 scored differently on identical claim text between runs.
+- Held-out (arXiv 2609.20812v3), run 4804fc57-7b1b-4642-aa91-f9c274fec15e, VALID, 39 claims (old 30): 1/2, 7/10, 0/10, 12/12; baseline 1/2, 8/10, 0/10, 12/12. Only change: HELD-M08 marked NOT_EXTRACTED (paraphrase rule, same as COT-M10). 9 rows rest on 4 distinct claims. Held-out used 6 times.
+- Gate reset under the pre-registered rule: 0.35 -> 0.30 (5/16 = 0.3125 rounded down). Passes by one row. positive_hit_floor stays 10.
+- Map provenance: CC-suggested, Claude cross-checked, human-adjudicated (19 golden rows + HELD-M08 by Nitin). 15 of 19 re-adjudicated golden rows are NOT_EXTRACTED.
+- Matcher gold pass rate 93.3% carried over, not re-measured (matcher fingerprint 52401482adf2 unchanged).
+- Scorer check: the old DB runs could not reproduce the baseline (old runs gone); the same scorer on the frozen fixtures reproduced it exactly.
+- dump_fixture fix: claims ordered by position (all claims in a run share one created_at); new --extraction-run-id and --match-map options.
+- PR-B merged as #113, commit e0dd56a. CI green. AG read-only audit of main: all numbers reproduce offline.
+
+## Infra findings from PR-B, not fixed - 2026-10-07
+**Context:** Findings identified while running PR-B live measurements.
+**Decision:** Documented here, fixes deferred. Azurite anonymous volume loses blobs on restart; blobs keyed by filename not hash; no UI for rerun (API only, needs signed-in user; runs were triggered by publishing PrismUploaded to RabbitMQ); rerun path has no DB-before-publish bug and never sets InProgress; matrix_runner --source db picks latest run, orders by created_at, calls the LLM matcher; Aspire changes host ports each restart; 2 react.pdf file rows exist, not 4.
+**Consequences:** Known operational gaps while offline.
+
+## Direction: improve extractor before shipping - 2026-10-07
+**Context:** README/video/blog deferred; the extractor is the weakest stage (7 of 16 refusal rows never extracted; the auditor cannot refuse a claim it never sees).
+**Decision:** In order: (1) docs sync; (2) read-only pipeline audit (AG) listing redundant/duplicated stages, per-stage value and token cost; (3) caps-and-429; (4) variance baseline, 3-5 repeats on main; (5) grow the eval by hand: 2-3 new papers, a fresh sealed held-out paper, more grounding-negative rows; (6) fix one thing at a time (prompt_loader "note" bug first), harness before/after, keep a change only if the gain is larger than the noise range.
+**Alternatives:** N/A (Rules: no paper text, claim wording or row ids in prompts - CI leak check enforces; fixes target failure categories, not rows; judge on new papers and the new held-out, not golden 16; never lower a gate or edit labels to move a number; a change that helps golden but not held-out is treated as overfitting. Held-out paper 2609.20812v3 is near-burnt for measuring gains.)
+**Consequences:** B5.1 branch stays reference only.
 
 ## prompt_loader few-shot "note" field bug - 2026-10-06
 
