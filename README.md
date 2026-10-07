@@ -2,7 +2,7 @@
 
 > **Autonomous Empirical Claim-Auditing Engine for Research Papers**
 
-> **Status — live demo offline since 2026-09-28.** The hosted Azure environment has been decommissioned. Run Prism locally with the [Quick Start](#quick-start-local-dev) below. Walkthrough video: coming soon. Demo on request. Relaunch path: [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch).
+> **Status — live demo offline since 2026-09-28.** The hosted Azure environment has been decommissioned. The demo now runs locally (Aspire). Run Prism locally with the [Quick Start](#quick-start-local-dev) below. Walkthrough video: coming soon. Demo on request. Relaunch path: [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch).
 
 Prism extracts empirical claims from academic papers and audits whether each claim is supported by evidence in that same paper. Unlike literature discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism performs a peer-reviewer's core job: auditing a single paper's headline findings against its own data and text.
 
@@ -22,9 +22,9 @@ Upload a paper. Prism extracts claims, audits each claim against the paper's own
 
 Prism's core engineering bet is correct refusal: vetoing any assessment not supported by the paper's own text.
 
-**Golden set (3 papers, fixture run 2026-10-03):** refusal-family 6/16 (38%), strict-label 4/16, positive hits 12/21, false rejections 0/21, match-map coverage 37/37. Passes the 0.35 gate by one row.
+**Golden set (3 papers, 37 rows, 16 grounding-negative), de-leaked prompts `cb3272cce551`:** refusal-family 5/16 (31%), gate 0.30; strict 5/16; wrongly affirmed 4; not extracted 7; positive hits 11/21 (floor 10); false rejection 1/21; match-map coverage 37/37.
 
-**Held-out paper (arXiv 2609.20812v3, sealed, never tuned on, single run, raw counts only):** refusal-family 1/2, positive hits 8/10, false rejections 0/10, coverage 12/12.
+**Held-out paper (arXiv 2609.20812v3, 12 rows):** refusal-family 1/2, positive hits 7/10, false rejections 0/10, coverage 12/12.
 
 **Reproduce (fixture mode, no LLM/DB calls but requires environment setup):**
 ```powershell
@@ -44,16 +44,24 @@ uv run python -m eval.matrix_runner --source fixture
 ```
 
 **Known limitations:**
-- Golden-paper text appears in prompts/few-shots (leakage risk, not measured; de-leak planned)
-- Extractor is the weakest stage (6 golden claims never extracted)
-- Claim bundling: one compound held-out claim decides 6/12 rows; the 8 hits rest on 4 distinct claims
+- Prompts were de-leaked; the old baseline (golden 6/16, 12/21; held-out 1/2, 8/10) was measured with golden text in the prompts and is shown only as history.
+- Extractor is the weakest stage (7 golden claims never extracted)
+- Claim bundling: 9 held-out rows rest on 4 distinct claims (the 7 hits rest on those)
 - Groq primary grounding model fails on its 512-token cap and rate limits; the Gemini fallback carries all audits
 - Single runs, no variance measured yet
 - Held-out refusal sample is n=2
 
 **Notes:**
-1. The old 86% refusal rate came from a scorer that credited claims never extracted; it was replaced.
+1. The old 86% refusal rate came from a scorer that credited claims never extracted; it was replaced. The old 79% refusal rate is also dead.
 2. Stage-1 text normalisation (2026-10-05) fixed 20 table-row quotes that failed fuzzy matching on post-reset runs, flipping 2 golden false rejections to hits with 0 regressions; held-out unchanged; the frozen fixture numbers above are unaffected.
+
+## Limits and honest reading
+
+- Single runs, noise not measured; one row decides the gate.
+- No detectable change from removing the prompt leak.
+- The extractor is the weakest stage: it misses claims, and the auditor cannot refuse a claim it never sees.
+- Maps are human-adjudicated; the matcher accuracy rate (93.3%) was carried over, not re-measured.
+- Azure deployment is decommissioned; the demo is local (Aspire).
 
 ## How it works
 
@@ -99,7 +107,7 @@ Hit a local-dev snag? Check the [Developer Runbook](docs/RUNBOOK.md) first — i
 
 ## Deployment
 
-Nothing is deployed right now — the environment was decommissioned on 2026-09-28. Backend services deploy via `aspire deploy`, while the React frontend requires a manual push via `Prism.Web/deploy.ps1`. Before redeploying, work through [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch), which lists the cost and safety prerequisites that must land first.
+Nothing is deployed right now — the environment was decommissioned on 2026-09-28 and the demo now runs locally (Aspire). Backend services deploy via `aspire deploy`, while the React frontend requires a manual push via `Prism.Web/deploy.ps1`. Before redeploying, work through [Decommissioned state and relaunch](docs/RUNBOOK.md#decommissioned-state-and-relaunch), which lists the cost and safety prerequisites that must land first.
 
 ## Architecture & Decisions
 
