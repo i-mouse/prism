@@ -44,7 +44,9 @@ def test_loads_real_matrix_eval():
     assert len(spec.papers) == 3
     # Re-baselined 2026-09-30 from 0.70 to 0.35 after the omission-credit
     # scorer fix - see docs/decisions.md.
-    assert spec.pass_threshold_refusal_rate == 0.35
+    # Reset 2026-10-07 per pre-registered de-leak gate-reset rule
+    # (clean baseline 5/16 rounded down; old value 0.35)
+    assert spec.pass_threshold_refusal_rate == 0.30
     assert spec.pass_threshold_positive_floor == 10
 
 

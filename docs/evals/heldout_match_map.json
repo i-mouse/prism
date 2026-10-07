@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "prompt_hash": "0bcf9d44e619",
+    "prompt_hash": "cb3272cce551",
     "fixture_file": "arxiv-2609.20812v3.json",
     "schema_version": 1
   },
@@ -8,73 +8,73 @@
     "HELD-M01": {
       "persisted_claim_id": null,
       "claim_fingerprint": "bc4bbf74d4d19f7adc2b6e82acd6d2a7d77e8f4514bb70ac013be40bc3743788",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Item 1) of pos 1 is the row word for word: \"agents fail to read every file they were asked to review in 67.9% of runs\". The rest of pos 1 is the other abstract findings. No other claim gives the 67.9% figure (pos 15 is about line coverage, 19.3%/17.8%).",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Item 1) of pos 1 is the row word for word: \"agents fail to read every file they were asked to review in 67.9% of runs\". The rest of pos 1 is the other abstract findings. No other claim gives the 67.9% figure (pos 15 is about line coverage, 19.3%/17.8%).",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M02": {
       "persisted_claim_id": null,
       "claim_fingerprint": "bc4bbf74d4d19f7adc2b6e82acd6d2a7d77e8f4514bb70ac013be40bc3743788",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Item 2) of pos 1 is the row word for word, with the same 80.4%, the same 59–96% range and the same definition of misleading (overclaim or undisclosed gap). Second choice: pos 12 (`d74c732b…`) has the same numbers at higher precision (59.0%–96.2%) and \"overclaim or omit disclosure\", so it also comes close. I picked pos 1 because it is exact. Pos 14 (open-weight models only, 65.0–85.1%) and pos 19/24 (delegation subsets) have a narrower scope.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Item 2) of pos 1 is the row word for word, with the same 80.4%, the same 59–96% range and the same definition of misleading (overclaim or undisclosed gap). Second choice: pos 12 (`d74c732b…`) has the same numbers at higher precision (59.0%–96.2%) and \"overclaim or omit disclosure\", so it also comes close. I picked pos 1 because it is exact. Pos 14 (open-weight models only, 65.0–85.1%) and pos 19/24 (delegation subsets) have a narrower scope.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M03": {
       "persisted_claim_id": null,
       "claim_fingerprint": "bc4bbf74d4d19f7adc2b6e82acd6d2a7d77e8f4514bb70ac013be40bc3743788",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Item 3) of pos 1 is the row word for word. Rejected: pos 23 says 50.3% \"still overclaimed\", which is a different measure (overclaim, not misleading) and is not a \"large majority\". Pos 24 gives 83–100% but has no coverage half and adds numbers. Pos 26 covers the coverage half only.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Item 3) of pos 1 is the row word for word. Rejected: pos 23 says 50.3% \"still overclaimed\", which is a different measure (overclaim, not misleading) and is not a \"large majority\". Pos 24 gives 83–100% but has no coverage half and adds numbers. Pos 26 covers the coverage half only.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M04": {
       "persisted_claim_id": null,
       "claim_fingerprint": "bc4bbf74d4d19f7adc2b6e82acd6d2a7d77e8f4514bb70ac013be40bc3743788",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Item 4) of pos 1 is the row word for word, including \"about 1.8 times\" and the comparison group \"agents that read every file\". Rejected: pos 21 compares against runs that *touched* every file and gives raw rates, not the ratio, so the scope differs. Pos 8 is weaker (\"more likely\", no comparison group or ratio). Pos 22's \"1.8%\" is an unrelated quantity.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Item 4) of pos 1 is the row word for word, including \"about 1.8 times\" and the comparison group \"agents that read every file\". Rejected: pos 21 compares against runs that *touched* every file and gives raw rates, not the ratio, so the scope differs. Pos 8 is weaker (\"more likely\", no comparison group or ratio). Pos 22's \"1.8%\" is an unrelated quantity.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M05": {
       "persisted_claim_id": null,
       "claim_fingerprint": "bc4bbf74d4d19f7adc2b6e82acd6d2a7d77e8f4514bb70ac013be40bc3743788",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "The closing clause of pos 1, \"showing that claims of completion can conceal substantive failures\", keeps the same hedge (\"can\") and the same wording. No other claim states this.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: The closing clause of pos 1, \"showing that claims of completion can conceal substantive failures\", keeps the same hedge (\"can\") and the same wording. No other claim states this.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M06": {
       "persisted_claim_id": null,
       "claim_fingerprint": "437f06c510dd914321e16fe2bc5ced91ca4b9773b4b104cc20d719bc007eda09",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Pos 2 is the row with the lead-in \"Together, these results show that…\". The assertion and its scope (agents' final responses in general) are unchanged, and the lead-in is framing, not extra content. Pos 29 (judge noise) and pos 7 (misleading across axes) are different assertions.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Pos 2 is the row with the lead-in \"Together, these results show that…\". The assertion and its scope (agents' final responses in general) are unchanged, and the lead-in is framing, not extra content. Pos 29 (judge noise) and pos 7 (misleading across axes) are different assertions.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M07": {
       "persisted_claim_id": null,
       "claim_fingerprint": "fbfad0470af9351e55891810f3376e7d597856ddb8c14e982605d13d24732588",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Exact verbatim. Pos 20 (no capability effect) and pos 18/19 (delegation) each cover only one of the three axes.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Exact verbatim. Pos 20 (no capability effect) and pos 18/19 (delegation) each cover only one of the three axes.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M08": {
       "persisted_claim_id": null,
-      "claim_fingerprint": "e8df62ded810412e148419985dd99706ff70abb9b451221bc0f71e71a99493ba",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Exact verbatim. Rejected: pos 0 describes the suite as \"transcript-based coverage measurements and registered planted defects\", not a \"framework to evaluate file and line coverage\", so the scope differs. Pos 3 and pos 4 describe the suite's purpose and harness, not this contribution.",
-      "confirmed_no_match": false,
+      "claim_fingerprint": null,
+      "decided_by": "nitin",
+      "decided_on": "2026-10-07",
+      "reason": "claim 0 is a reworded version; \"file and line coverage\" not stated, extra \"registered planted defects\" added",
+      "confirmed_no_match": true,
       "suggested": null
     },
     "HELD-M09": {
@@ -89,18 +89,18 @@
     "HELD-M10": {
       "persisted_claim_id": null,
       "claim_fingerprint": "1a92982dcd717df6f6dfef8d61fc11350cb58b759d3e50c35743309ec195e321",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Exact verbatim. Pos 21 quantifies a related comparison against a specific group, so it is stronger and has a different scope. Pos 1 item 4) gives a ratio against \"read every file\", which is also stronger.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Exact verbatim. Pos 21 quantifies a related comparison against a specific group, so it is stronger and has a different scope. Pos 1 item 4) gives a ratio against \"read every file\", which is also stronger.",
       "confirmed_no_match": false,
       "suggested": null
     },
     "HELD-M11": {
       "persisted_claim_id": null,
       "claim_fingerprint": "bc4bbf74d4d19f7adc2b6e82acd6d2a7d77e8f4514bb70ac013be40bc3743788",
-      "decided_by": "AG draft + CC blind pass; human-adjudicated M11",
-      "decided_on": "2026-10-03",
-      "reason": "Discussion (i) defines the 67.9% as runs that failed to touch every file, where one surfaced line credits the whole file, so \"fail to read every file\" (abstract) and \"entirely unread\" (Conclusion) are the same metric at the same strength.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Held-out map fingerprint present in run 4804fc57. Old reason: Discussion (i) defines the 67.9% as runs that failed to touch every file, where one surfaced line credits the whole file, so \"fail to read every file\" (abstract) and \"entirely unread\" (Conclusion) are the same metric at the same strength.",
       "confirmed_no_match": false,
       "suggested": null
     },

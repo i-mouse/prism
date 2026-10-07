@@ -5,6 +5,7 @@ from pathlib import Path
 
 from eval import dump_fixture
 from eval.data_source import get_fixture_header, read_from_fixture
+from eval.match_map import MatchMap, fingerprint_claim_text
 from eval.matrix_loader import PaperSpec
 from eval.types import ActualClaim, ExpectedRow, Match
 
@@ -184,6 +185,68 @@ def test_dump_fixture_records_fallback_model_not_intended_primary(tmp_path, monk
     assert dumped is True
     written = json.loads((tmp_path / "arxiv-2303.11366v4.json").read_text(encoding="utf-8"))
     assert written["header"]["matcher_model"] == "gemini-3.1-flash-lite"
+
+
+def test_dump_fixture_match_map_freezes_matches_without_matcher(tmp_path, monkeypatch):
+    async def _fetch_with_text(filename: str):
+        return (
+            "11111111-1111-1111-1111-111111111111",
+            [
+                {"index": 0, "label": "supported", "claim_summary": "a", "claim_text_verbatim": "Claim  Zero."},
+                {"index": 1, "label": "supported", "claim_summary": "b", "claim_text_verbatim": "Claim one."},
+            ],
+        )
+
+    monkeypatch.setattr(dump_fixture, "_fetch_latest_extraction", _fetch_with_text)
+    monkeypatch.setattr(dump_fixture, "match", _raising_match)
+    match_map = MatchMap.model_validate({
+        "metadata": {"prompt_hash": "abcdef012345"},
+        "rows": {
+            "REFLEX-M01": {"claim_fingerprint": fingerprint_claim_text("claim zero.")},
+            "REFLEX-M02": {"confirmed_no_match": True},
+        },
+    })
+
+    dumped = asyncio.run(
+        dump_fixture._dump_paper(
+            _fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash", match_map=match_map
+        )
+    )
+
+    assert dumped is True
+    written = json.loads((tmp_path / "arxiv-2303.11366v4.json").read_text(encoding="utf-8"))
+    assert written["header"]["matcher_model"] == "match_map:abcdef012345"
+    assert written["matches"] == [
+        {"expected_id": "REFLEX-M01", "actual_index": 0},
+        {"expected_id": "REFLEX-M02", "actual_index": None},
+    ]
+
+
+def test_dump_fixture_pinned_run_fetches_that_run_not_latest(tmp_path, monkeypatch):
+    calls = []
+
+    async def _fetch_run(filename: str, extraction_run_id: str):
+        calls.append((filename, extraction_run_id))
+        return extraction_run_id, [{"index": 0, "label": "supported", "claim_summary": "Synthetic claim."}]
+
+    async def _latest_must_not_run(filename: str):
+        raise AssertionError("latest extraction fetched despite a pinned run id")
+
+    monkeypatch.setattr(dump_fixture, "_fetch_extraction_run", _fetch_run)
+    monkeypatch.setattr(dump_fixture, "_fetch_latest_extraction", _latest_must_not_run)
+    monkeypatch.setattr(dump_fixture, "match", _fake_match)
+
+    run_id = "22222222-2222-2222-2222-222222222222"
+    dumped = asyncio.run(
+        dump_fixture._dump_paper(
+            _fake_paper(), tmp_path, False, "abcdef012345", "gemini-2.5-flash", extraction_run_id=run_id
+        )
+    )
+
+    assert dumped is True
+    assert calls == [("reflexion.pdf", run_id)]
+    written = json.loads((tmp_path / "arxiv-2303.11366v4.json").read_text(encoding="utf-8"))
+    assert written["header"]["extraction_run_id"] == run_id
 
 
 def test_matcher_fingerprint_changes_with_model_env_vars(monkeypatch):
