@@ -1,298 +1,893 @@
 {
   "header": {
-    "prompt_hash": "0bcf9d44e619",
+    "prompt_hash": "cb3272cce551",
     "matcher_fingerprint": "52401482adf2",
     "model_name": "gemini-3.6-flash",
-    "matcher_model": "gemini-3.6-flash",
-    "generated_at": "2026-09-10T09:05:49.116980+00:00",
+    "matcher_model": "match_map:cb3272cce551",
+    "generated_at": "2026-10-07T10:02:46.597210+00:00",
     "paper_id": "arxiv-2210.03629v3",
     "filename": "react.pdf",
-    "extraction_run_id": "90080172-2e65-46b0-b786-b95fffb25722",
+    "extraction_run_id": "b66b3e0f-60ce-4879-acf3-e20d1c63c42c",
     "matcher_gold_pass_rate": 0.9333333333333333,
-    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00"
+    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00",
+    "matcher_gold_note": "matcher_gold_pass_rate and matcher_gold_verified_at carried over, not re-measured: copied on 2026-10-07 from the archived fixture header (archive/2026-10-07_pre-cb3272cce551) because matcher_fingerprint is unchanged. This fixture's matches come from the human match map, not the matcher."
   },
   "claims": [
     {
       "index": 0,
-      "label": "not_supported",
-      "claim_summary": "ReAct outperforms state-of-the-art baselines while improving interpretability and trustworthiness",
+      "label": "supported",
+      "claim_summary": "ReAct interleaves reasoning and acting for synergistic plan tracking and information retrieval.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines in addition to improved human interpretability and trustworthiness."
+      "claim_text_verbatim": "In this paper, we explore the use of LLMs to generate both reasoning traces and task-speci\ufb01c actions in an interleaved manner, allowing for greater synergy between the two: reasoning traces help the model induce, track, and update action plans as well as handle exceptions, while actions allow it to interface with and gather additional information from external sources such as knowledge bases or environments.",
+      "evidence_spans": [
+        {
+          "source_text": "Specifically, we use a combination of thoughts that decompose questions (\u201cI need to search x, find y, then find z\u201d), extract information from Wikipedia observations (\u201cx was started in 1844\u201d, \u201cThe paragraph does not tell x\u201d), perform commonsense (\u201cx is not y, so z must instead be...\u201d) or arithmetic reasoning (\u201c1844 < 1989\u201d), guide search reformulation (\u201cmaybe I can search/look up x instead\u201d), and synthesize the final answer (\u201c...so the answer is x\u201d).",
+          "source_section": "Section 3.2",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "To prompt ReAct, we randomly annotate three trajectories from the training set for each task type, where each trajectory includes sparse thoughts that (1) decompose the goal, (2) track subgoal completion, (3) determine the next subgoal, and (4) reason via commonsense where to find an object and what to do with it.",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On ALFWorld and WebShop, two or even one-shot ReAct prompting is able to outperform imitation or reinforcement learning methods trained with 103 \u223c105 task instances, with an absolute improvement of 34% and 10% in success rates respectively.",
+          "source_section": "Section 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 1,
-      "label": "not_supported",
-      "claim_summary": "Designing ReAct prompts is simple and intuitive for human annotators",
+      "label": "partially_supported",
+      "claim_summary": "ReAct outperforms state-of-the-art baselines while offering better interpretability and trustworthiness.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Designing ReAct prompts is straightforward as human annotators just type down their thoughts in language on top of their actions taken."
+      "claim_text_verbatim": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines in addition to improved human interpretability and trustworthiness.",
+      "evidence_spans": [
+        {
+          "source_text": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines in addition to improved human interpretability and trustworthiness.",
+          "source_section": "Abstract",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Supervised SoTAb 67.5 89.5",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "As all prompting methods are still significantly far from domain-specific state-of-the-art approaches (Table 1), we believe finetuning with more human-written data might be a better way to unleash the power of ReAct.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "Furthermore, on two interactive decision making benchmarks (ALFWorld and WebShop), ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10% respectively, while being prompted with only one or two in-context examples.",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 2,
       "label": "partially_supported",
-      "claim_summary": "ReAct reduces hallucination and error propagation on HotpotQA and Fever via Wikipedia interaction",
+      "claim_summary": "ReAct reduces hallucination and error propagation on QA and fact verification.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Concretely, on question answering (HotpotQA) and fact veri\ufb01cation (Fever), ReAct overcomes prevalent issues of hallucination and error propagation in chain-of-thought reasoning by interacting with a simple Wikipedia API, and generating human-like task-solving trajectories that are more interpretable than baselines without reasoning traces."
+      "claim_text_verbatim": "Concretely, on question answering (HotpotQA) and fact veri\ufb01cation (Fever), ReAct overcomes prevalent issues of hallucination and error propagation in chain-of-thought reasoning by interacting with a simple Wikipedia API, and generating human-like task-solving trajectories that are more interpretable than baselines without reasoning traces.",
+      "evidence_spans": [
+        {
+          "source_text": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "While interleaving reasoning, action and observation steps improves ReAct\u2019s groundedness and trustworthiness, such a structural constraint also reduces its flexibility in formulating reasoning steps, leading to more reasoning error rate than CoT.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reasoning error | Wrong reasoning trace (including failing to recover from repetitive steps) | 47% | 16%",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 3,
-      "label": "partially_supported",
-      "claim_summary": "Humans can dynamically control or correct ReAct agents via thought editing",
+      "label": "supported",
+      "claim_summary": "Few-shot ReAct beats imitation/RL baselines by 34% on ALFWorld and 10% on WebShop.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Moreover, humans can also control or correct the agent behavior on the go by thought editing, as shown in Figure 5 in Section 4."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Furthermore, on two interactive decision making benchmarks (ALFWorld and WebShop), ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10% respectively, while being prompted with only one or two in-context examples.",
+      "evidence_spans": [
+        {
+          "source_text": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, significantly outperforming the best Act (45%) and BUTLER (37%) trials.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct (best of 6) 92 58 96 86 78 41 71",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "BUTLER (best of 8) 46 39 74 100 22 24 37",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "IL+RL 62.4 28.7",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct 66.6 40.0",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 4,
-      "label": "partially_supported",
-      "claim_summary": "ReAct provides a general paradigm combining reasoning and acting for diverse tasks",
+      "label": "supported",
+      "claim_summary": "ReAct is a general paradigm combining LLM reasoning and acting across diverse tasks.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "In this work, we present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks (Figure 1)."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In this work, we present ReAct, a general paradigm to combine reasoning and acting with language models for solving diverse language reasoning and decision making tasks (Figure 1).",
+      "evidence_spans": [
+        {
+          "source_text": "The idea of ReAct is simple: we augment the agent\u2019s action space to \u02c6A = A \u222aL, where L is the space of language.",
+          "source_section": "Section 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We conduct empirical evaluations of ReAct and state-of-the-art baselines on four diverse benchmarks: question answering (HotPotQA, Yang et al., 2018), fact veri\ufb01cation (Fever, Thorne et al., 2018), text-based game (ALFWorld, Shridhar et al., 2020b), and webpage navigation (WebShop, Yao et al., 2022).",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct outperforms Act on both ALFWorld (Table 3) and Webshop (Table 4).",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 5,
-      "label": "partially_supported",
-      "claim_summary": "ReAct enhances interpretability, trustworthiness, and diagnosability by exposing decision reasoning",
+      "label": "supported",
+      "claim_summary": "ReAct enables dynamic plan adjustment and external knowledge integration via reasoning-acting synergy.",
       "missing": false,
       "grounding_status": "Partial",
-      "claim_text_verbatim": "Besides general applicability and performance boost, the combination of reasoning and acting also contributes to model interpretability, trustworthiness, and diagnosability across all domains, as humans can readily distinguish information from model\u2019s internal knowledge versus external environments, as well as inspect reasoning traces to understand the decision basis of model actions."
+      "claim_text_verbatim": "ReAct prompts LLMs to generate both verbal reasoning traces and actions pertaining to a task in an interleaved manner, which allows the model to perform dynamic reasoning to create, maintain, and adjust high-level plans for acting (reason to act), while also interact with the external environments (e.g. Wikipedia) to incorporate additional information into reasoning (act to reason).",
+      "evidence_spans": [
+        {
+          "source_text": "In contrast, the problem solving trajectory of ReActis more grounded, fact-driven, and trustworthy, thanks to the access of an external knowledge base.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "To prompt ReAct, we randomly annotate three trajectories from the training set for each task type, where each trajectory includes sparse thoughts that (1) decompose the goal, (2) track subgoal completion, (3) determine the next subgoal, and (4) reason via commonsense where to find an object and what to do with it.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Qualitatively, we saw that, without any thoughts at all, Act fails to correctly decompose goals into smaller subgoals, or loses track of the current state of the environment.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 6,
-      "label": "partially_supported",
-      "claim_summary": "ReAct introduces a prompt-based paradigm synergizing reasoning and acting for general tasks",
+      "label": "supported",
+      "claim_summary": "ReAct beats action-only models and matches CoT on HotpotQA and Fever.",
       "missing": false,
       "grounding_status": "Partial",
-      "claim_text_verbatim": "(1) we introduce ReAct, a novel prompt-based paradigm to synergize reasoning and acting in language models for general task solving;"
+      "claim_text_verbatim": "For HotPotQA and Fever, with access to a Wikipedia API that the model can interact with, ReAct outperforms vanilla action generation models while being competitive with chain-of-thought reasoning (CoT) (Wei et al., 2022).",
+      "evidence_spans": [
+        {
+          "source_text": "We note that ReAct is better than Act on both tasks, demonstrating the value of reasoning to guide acting",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 7,
       "label": "partially_supported",
-      "claim_summary": "ReAct generalizes well from few examples, outperforming isolated reasoning or action baselines",
+      "claim_summary": "Combining ReAct and CoT yields the highest overall task accuracy.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "ReAct shows strong generalization to new task instances while learning solely from one to six in-context examples, consistently outperforming baselines with only reasoning or acting across different domains."
+      "claim_text_verbatim": "The best approach overall is a combination of ReAct and CoT that allows for the use of both internal knowledge and externally obtained information during reasoning.",
+      "evidence_spans": [
+        {
+          "source_text": "The best approach overall is a combination of ReAct and CoT that allows for the use of both internal knowledge and externally obtained information during reasoning.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Also shown in Table 1, the best prompting method on HotpotQA and Fever are ReAct -> CoT-SC and CoT-SC -> ReAct respectively.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "However, when finetuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B finetuned ReAct outperforming all PaLM-62B prompting methods, and PaLM-62B finetuned ReAct outperforming all 540B prompting methods.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 8,
-      "label": "partially_supported",
-      "claim_summary": "ReAct yields an interpretable decision process allowing human inspection of facts and logic",
+      "label": "supported",
+      "claim_summary": "1-2 shot ReAct outperforms heavily trained RL/IL baselines on decision benchmarks.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "ReAct promises an interpretable sequential decision making and reasoning process where humans can easily inspect reasoning and factual correctness."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "On ALFWorld and WebShop, two or even one-shot ReAct prompting is able to outperform imitation or reinforcement learning methods trained with 103 \u223c105 task instances, with an absolute improvement of 34% and 10% in success rates respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "For baselines, we use BUTLER (Shridhar et al., 2020b), an imitation learning agent trained on 105 expert trajectories for each task type",
+          "source_section": "Section 4 (ALFWorld)",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, significantly outperforming the best Act (45%) and BUTLER (37%) trials.",
+          "source_section": "Section 4 (Results)",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We compare to an imitation learning (IL) method trained with 1,012 human annotated trajectories, and a imitation + reinforcement learning (IL + RL) method additionally trained with 10,587 training instructions.",
+          "source_section": "Section 4 (WebShop)",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate.",
+          "source_section": "Section 4 (Results)",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 9,
-      "label": "partially_supported",
-      "claim_summary": "Finetuning ReAct teaches generalizable information access rather than rote memorization",
+      "label": "supported",
+      "claim_summary": "Sparse reasoning in ReAct gives consistent advantages over action-only baselines.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "In contrast, \ufb01netuning Standard or CoT is signi\ufb01cantly worse than \ufb01netuning ReAct or Act for both PaLM-8/62B, as the former essentially teaches models to memorize (potentially halluincated) knowledge facts, and the latter teaches models how to (reason and) act to access information from Wikipedia, a more generalizable skill for knowledge reasoning."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We also demonstrate the importance of sparse, versatile reasoning in decision making by showing consistent advantages over controlled baselines with actions only.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct outperforms Act on both ALFWorld (Table 3) and Webshop (Table 4).",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Moreover, the advantage of ReAct over Act is consistent across six controlled trials, with relative performance gain ranging from 33% to 90% and averaging 62%.",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 10,
       "label": "partially_supported",
-      "claim_summary": "ReAct represents the first closed-loop synergy of reasoning and action using an LLM",
+      "claim_summary": "ReAct enhances interpretability, trustworthiness, and diagnosability across all evaluation domains.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "To our knowledge, ReAct is the \ufb01rst demonstration of combined reasoning and action using an LLM applied to an interactive environment within a closed-loop system."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Besides general applicability and performance boost, the combination of reasoning and acting also contributes to model interpretability, trustworthiness, and diagnosability across all domains, as humans can readily distinguish information from model\u2019s internal knowledge versus external environments, as well as inspect reasoning traces to understand the decision basis of model actions.",
+      "evidence_spans": [
+        {
+          "source_text": "To better understand the behavioral difference between ReAct and CoT on HotpotQA, we randomly sampled 50 trajectories with correct and incorrect answers (judged by EM) from ReAct and CoT respectively (thus 200 examples in total), and manually labeled their success and failure modes in Table 2.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In contrast, the problem solving trajectory of ReActis more grounded, fact-driven, and trustworthy, thanks to the access of an external knowledge base.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We also explore human-in-the-loop interaction with ReAct, to allow a human to inspect and edit ReAct\u2019s reasoning traces.",
+          "source_section": "Appendix A.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 11,
-      "label": "supported",
-      "claim_summary": "Best ReAct trial reaches 71% success on ALFWorld, beating Act and BUTLER",
+      "label": "not_supported",
+      "claim_summary": "ReAct prompt design is simple and relies on straightforward human thought annotations.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, signi\ufb01cantly outperforming the best Act (45%) and BUTLER (37%) trials."
+      "claim_text_verbatim": "Designing ReAct prompts is straightforward as human annotators just type down their thoughts in language on top of their actions taken.",
+      "evidence_spans": [
+        {
+          "source_text": "Designing ReAct prompts is straightforward as human annotators just type down their thoughts in language on top of their actions taken.",
+          "source_section": "Section 2",
+          "grounding_status": "Fail",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Due to the challenge of manually annotating reasoning traces and actions at scale, we consider a bootstraping approach similar to Zelikman et al. (2022)",
+          "source_section": "Section 3.2",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "For HotpotQA and Fever, we randomly select 6 and 3 cases from the training set and manually compose ReAct-format trajectories to use as few-shot exemplars in the prompts.",
+          "source_section": "Section 3.2",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 12,
       "label": "supported",
-      "claim_summary": "Sparse reasoning in ReAct provides consistent advantages over action-only baselines",
+      "claim_summary": "ReAct adapts flexibly to diverse tasks with distinct reasoning and action requirements.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "We also demonstrate the importance of sparse, versatile reasoning in decision making by showing consistent advantages over controlled baselines with actions only."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Due to the \ufb02exible thought space and thought-action occurrence format, ReAct works for diverse tasks with distinct action spaces and reasoning needs, including but not limited to QA, fact veri\ufb01cation, text game, and web navigation.",
+      "evidence_spans": [
+        {
+          "source_text": "For the tasks where reasoning is of primary importance (Figure 1(1)), we alternate the generation of thoughts and actions so that the task-solving trajectory consists of multiple thought-action-observation steps. In contrast, for decision making tasks that potentially involve a large number of actions (Figure 1(2)), thoughts only need to appear sparsely in the most relevant positions of a trajectory, so we let the language model decide the asynchronous occurrence of thoughts and actions for itself.",
+          "source_section": "Section 2",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "ReAct 27.4 60.9",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct (avg) 57",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "ReAct 66.6 40.0",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 13,
-      "label": "supported",
-      "claim_summary": "ReAct outperforms Act-only baselines across HotpotQA and Fever tasks",
+      "label": "partially_supported",
+      "claim_summary": "ReAct generalizes well from 1-6 examples, outperforming single-mode baselines across domains.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We note that ReAct is better than Act on both tasks, demonstrating the value of reasoning to guide acting, especially for synthesizing the \ufb01nal answer, as shown in Figure 1 (1c-d)."
+      "claim_text_verbatim": "ReAct shows strong generalization to new task instances while learning solely from one to six in-context examples, consistently outperforming baselines with only reasoning or acting across different domains.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct shows strong generalization to new task instances while learning solely from one to six in-context examples, consistently outperforming baselines with only reasoning or acting across different domains.",
+          "source_section": "Section 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 14,
       "label": "supported",
-      "claim_summary": "ReAct beats CoT on Fever while scoring slightly lower on HotpotQA",
+      "claim_summary": "ReAct provides inspectable sequential reasoning for checking logic and factual correctness.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4)."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "ReAct promises an interpretable sequential decision making and reasoning process where humans can easily inspect reasoning and factual correctness.",
+      "evidence_spans": [
+        {
+          "source_text": "To better understand the behavioral difference between ReAct and CoT on HotpotQA, we randomly sampled 50 trajectories with correct and incorrect answers (judged by EM) from ReAct and CoT respectively (thus 200 examples in total), and manually labeled their success and failure modes in Table 2.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We also explore human-in-the-loop interaction with ReAct, to allow a human to inspect and edit ReAct\u2019s reasoning traces.",
+          "source_section": "Appendix A.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 15,
       "label": "supported",
-      "claim_summary": "Interleaving reasoning and acting in LLMs creates synergy between planning and external interaction",
+      "claim_summary": "ReAct retrieves knowledge to support reasoning and uses reasoning to direct search.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "In this paper, we explore the use of LLMs to generate both reasoning traces and task-speci\ufb01c actions in an interleaved manner, allowing for greater synergy between the two: reasoning traces help the model induce, track, and update action plans as well as handle exceptions, while actions allow it to interface with and gather additional information from external sources such as knowledge bases or environments."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As shown in Figure 1(1d), by interacting with a Wikipedia API, ReAct is able to retrieve information to support reasoning, while also use reasoning to target what to retrieve next, demonstrating a synergy of reasoning and acting.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct prompts LLMs to generate both verbal reasoning traces and actions pertaining to a task in an interleaved manner, which allows the model to perform dynamic reasoning to create, maintain, and adjust high-level plans for acting (reason to act), while also interact with the external environments (e.g. Wikipedia) to incorporate additional information into reasoning (act to reason).",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We design a simple Wikipedia web API with three types of actions to support interactive information retrieval: (1) search[entity], which returns the first 5 sentences from the corresponding entity wiki page if it exists, or else suggests top-5 similar entities from the Wikipedia search engine, (2) lookup[string], which would return the next sentence in the page containing string, simulating Ctrl+F functionality on the browser. (3) finish[answer], which would finish the current task with answer.",
+          "source_section": "Section 3.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 16,
-      "label": "supported",
-      "claim_summary": "ReAct beats imitation and RL baselines by 34% on ALFWorld and 10% on WebShop",
+      "label": "partially_supported",
+      "claim_summary": "ReAct beats Act on HotpotQA and Fever, proving reasoning guides action effectively.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Furthermore, on two interactive decision making benchmarks (ALFWorld and WebShop), ReAct outperforms imitation and reinforcement learning methods by an absolute success rate of 34% and 10% respectively, while being prompted with only one or two in-context examples."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "We note that ReAct is better than Act on both tasks, demonstrating the value of reasoning to guide acting, especially for synthesizing the \ufb01nal answer, as shown in Figure 1 (1c-d).",
+      "evidence_spans": [
+        {
+          "source_text": "Table 1: PaLM-540B prompting results on HotpotQA and Fever. Act 25.7 58.9 ReAct 27.4 60.9",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "With PaLM-8/62B, prompting ReAct performs worst among four methods due to the dif\ufb01culty to learn both reasoning and acting from in-context examples.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 17,
       "label": "supported",
-      "claim_summary": "ReAct enables dynamic plan adjustment and external information integration through interleaved reasoning and acting",
+      "claim_summary": "Finetuning results show reasoning traces lead to more informed action selection.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "ReAct prompts LLMs to generate both verbal reasoning traces and actions pertaining to a task in an interleaved manner, which allows the model to perform dynamic reasoning to create, maintain, and adjust high-level plans for acting (reason to act), while also interact with the external environments (e.g. Wikipedia) to incorporate additional information into reasoning (act to reason)."
+      "claim_text_verbatim": "Fine-tuning results 3 also con\ufb01rm the bene\ufb01t of reasoning traces for more informed acting.",
+      "evidence_spans": [
+        {
+          "source_text": "However, when \ufb01netuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B \ufb01netuned ReAct outperforming all PaLM-62B prompting methods, and PaLM-62B \ufb01netuned ReAct outperforming all 540B prompting methods.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 18,
       "label": "supported",
-      "claim_summary": "ReAct beats action-only models and matches CoT performance on HotpotQA and Fever",
+      "claim_summary": "ReAct beats CoT on Fever but slightly trails CoT on HotpotQA.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "For HotPotQA and Fever, with access to a Wikipedia API that the model can interact with, ReAct outperforms vanilla action generation models while being competitive with chain-of-thought reasoning (CoT) (Wei et al., 2022)."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4).",
+      "evidence_spans": [
+        {
+          "source_text": "CoT (Wei et al., 2022) 29.4 56.3",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct 27.4 60.9",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 19,
       "label": "supported",
-      "claim_summary": "Combining ReAct and CoT achieves the highest overall task performance",
+      "claim_summary": "ReAct reduces false positive hallucinations to 6% compared to CoT's 14%.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "The best approach overall is a combination of ReAct and CoT that allows for the use of both internal knowledge and externally obtained information during reasoning."
+      "claim_text_verbatim": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%).",
+      "evidence_spans": [
+        {
+          "source_text": "To better understand the behavioral difference between ReAct and CoT on HotpotQA, we randomly sampled 50 trajectories with correct and incorrect answers (judged by EM) from ReAct and CoT respectively (thus 200 examples in total), and manually labeled their success and failure modes in Table 2.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "False positive | Hallucinated reasoning trace or facts | 6% | 14%",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hallucination | Hallucinated reasoning trace or facts | 0% | 56%",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 20,
       "label": "supported",
-      "claim_summary": "Few-shot ReAct outperforms RL and IL methods trained on thousands of instances",
+      "claim_summary": "ReAct produces more grounded and trustworthy trajectories via external knowledge access.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "On ALFWorld and WebShop, two or even one-shot ReAct prompting is able to outperform imitation or reinforcement learning methods trained with 103 \u223c105 task instances, with an absolute improvement of 34% and 10% in success rates respectively."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In contrast, the problem solving trajectory of ReActis more grounded, fact-driven, and trustworthy, thanks to the access of an external knowledge base.",
+      "evidence_spans": [
+        {
+          "source_text": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hallucinated reasoning trace or facts",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 21,
       "label": "supported",
-      "claim_summary": "ReAct generalizes flexibly across diverse tasks with different action spaces",
+      "claim_summary": "ReAct combined with CoT-SC reaches 21-sample CoT-SC performance with 3-5 samples.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Due to the \ufb02exible thought space and thought-action occurrence format, ReAct works for diverse tasks with distinct action spaces and reasoning needs, including but not limited to QA, fact veri\ufb01cation, text game, and web navigation."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "While two ReAct + CoT-SC methods are advantageous at one task each, they both signi\ufb01cantly and consistently outperform CoT-SC across different number of samples, reaching CoT-SC performance with 21 samples using merely 3-5 samples.",
+      "evidence_spans": [
+        {
+          "source_text": "We also build a self-consistency baseline (CoT-SC) (Wang et al., 2022a;b) by sampling 21 CoT trajectories with decoding temperature 0.7 during inference and adopting the majority answer",
+          "source_section": "Section 3.2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "CoT-SC (Wang et al., 2022a) 33.4 60.4",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "CoT-SC \u2192ReAct 34.2 64.6",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct\u2192CoT-SC 35.1 62.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 2: PaLM-540B prompting results with respect to number of CoT-SC samples used.",
+          "source_section": "Figure 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 22,
       "label": "supported",
-      "claim_summary": "ReAct trajectories are more grounded and trustworthy than CoT due to external retrieval",
+      "claim_summary": "Finetuned ReAct outperforms much larger scale prompted language models.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "In contrast, the problem solving trajectory of ReAct is more grounded, fact-driven, and trustworthy, thanks to the access of an external knowledge base."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "However, when \ufb01netuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B \ufb01netuned ReAct outperforming all PaLM-62B prompting methods, and PaLM-62B \ufb01netuned ReAct outperforming all 540B prompting methods.",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 3: Scaling results for prompting and \ufb01netuning on HotPotQA with ReAct (ours) and baselines.",
+          "source_section": "Figure 3",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Table 1: PaLM-540B prompting results on HotpotQA and Fever.",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 23,
       "label": "supported",
-      "claim_summary": "Combining ReAct with CoT-SC yields top prompting performance on HotpotQA and Fever",
+      "claim_summary": "Finetuning ReAct teaches generalizable knowledge-access skills better than finetuning CoT.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Also shown in Table 1, the best prompting method on HotpotQA and Fever are ReAct \u2192CoT-SC and CoT-SC \u2192ReAct respectively."
+      "claim_text_verbatim": "In contrast, \ufb01netuning Standard or CoT is signi\ufb01cantly worse than \ufb01netuning ReAct or Act for both PaLM-8/62B, as the former essentially teaches models to memorize (potentially halluincated) knowledge facts, and the latter teaches models how to (reason and) act to access information from Wikipedia, a more generalizable skill for knowledge reasoning.",
+      "evidence_spans": [
+        {
+          "source_text": "However, when \ufb01netuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B \ufb01netuned ReAct outperforming all PaLM-62B prompting methods, and PaLM-62B \ufb01netuned ReAct outperforming all 540B prompting methods.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We \ufb01nd ReAct and Act methods generally bene\ufb01t from more training steps (and more training data), while Standard and CoT methods degrade soon after \ufb01netuning.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 24,
       "label": "supported",
-      "claim_summary": "ReAct combined with CoT-SC reaches 21-sample CoT-SC accuracy using only 3-5 samples",
+      "claim_summary": "ReAct outperforms Act across ALFWorld and WebShop decision tasks.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "While two ReAct + CoT-SC methods are advantageous at one task each, they both signi\ufb01cantly and consistently outperform CoT-SC across different number of samples, reaching CoT-SC performance with 21 samples using merely 3-5 samples."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "ReAct outperforms Act on both ALFWorld (Table 3) and Webshop (Table 4).",
+      "evidence_spans": [
+        {
+          "source_text": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, significantly outperforming the best Act (45%) and BUTLER (37%) trials.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "With additional sparse reasoning, ReAct achieves significantly better performance, with an absolute 10% improvement over the previous best success rate.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 25,
       "label": "supported",
-      "claim_summary": "Finetuned ReAct outperforms standard prompting methods across model scale tiers",
+      "claim_summary": "ReAct hits 71% success on ALFWorld, outperforming Act (45%) and BUTLER (37%).",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "However, when \ufb01netuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B \ufb01netuned ReAct outperforming all PaLM-62B prompting methods, and PaLM-62B \ufb01netuned ReAct outperforming all 540B prompting methods."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, signi\ufb01cantly outperforming the best Act (45%) and BUTLER (37%) trials.",
+      "evidence_spans": [
+        {
+          "source_text": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, signi\ufb01cantly outperforming the best Act (45%) and BUTLER (37%) trials.",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct (best of 6) 92 58 96 86 78 41 71",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 26,
       "label": "supported",
-      "claim_summary": "ReAct surpasses Act-only prompting across ALFWorld and WebShop benchmarks",
+      "claim_summary": "The worst ReAct trial on ALFWorld still surpasses the best Act/BUTLER trials.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "ReAct outperforms Act on both ALFWorld (Table 3) and Webshop (Table 4)."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In fact, even the worse ReAct trial (48%) beats the best trial of both methods.",
+      "evidence_spans": [
+        {
+          "source_text": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, signi\ufb01cantly outperforming the best Act (45%) and BUTLER (37%) trials.",
+          "source_section": "Section 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Act (best of 6)",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "BUTLER (best of 8)",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 27,
       "label": "supported",
-      "claim_summary": "The worst ReAct trial on ALFWorld still outperforms the best Act and BUTLER trials",
+      "claim_summary": "ReAct consistently outperforms Act across controlled ALFWorld trials by 62% on average.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "In fact, even the worse ReAct trial (48%) beats the best trial of both methods."
+      "claim_text_verbatim": "Moreover, the advantage of ReAct over Act is consistent across six controlled trials, with relative performance gain ranging from 33% to 90% and averaging 62%.",
+      "evidence_spans": [
+        {
+          "source_text": "For robustness, we construct 6 prompts for each task type through each permutation of 2 annotated trajectories from the 3 we annotate. Act prompts are constructed using the same trajectories, but without thoughts \u2014 since task instances are randomly chosen from the training set, it favors neither ReAct nor Act and provides a fair and controlled comparison to test the importance of sparse thoughts.",
+          "source_section": "Section 4 (ALFWorld)",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "On ALFWorld, the best ReAct trial achieves an average success rate of 71%, signi\ufb01cantly outperforming the best Act (45%) and BUTLER (37%) trials. In fact, even the worse ReAct trial (48%) beats the best trial of both methods.",
+          "source_section": "Section 4 (Results)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Act (best of 6) 45 ReAct (avg) 57 ReAct (best of 6) 71",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
     },
     {
       "index": 28,
       "label": "supported",
-      "claim_summary": "ReAct consistently outperforms Act across trials with an average 62% relative gain",
+      "claim_summary": "Sparse reasoning gives ReAct a 10% absolute gain over prior state-of-the-art on WebShop.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Moreover, the advantage of ReAct over Act is consistent across six controlled trials, with relative performance gain ranging from 33% to 90% and averaging 62%."
+      "claim_text_verbatim": "With additional sparse reasoning, ReAct achieves signi\ufb01cantly better performance, with an absolute 10% improvement over the previous best success rate.",
+      "evidence_spans": [
+        {
+          "source_text": "With additional sparse reasoning, ReAct achieves signi\ufb01cantly better performance, with an absolute 10% improvement over the previous best success rate.",
+          "source_section": "Section 4 (Results)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Method | Score | SR\nAct | 62.3 | 30.1\nReAct | 66.6 | 40.0\nIL | 59.9 | 29.1\nIL+RL | 62.4 | 28.7",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
     },
     {
       "index": 29,
       "label": "supported",
-      "claim_summary": "ReAct improves WebShop success rate by 10% over prior state of the art",
+      "claim_summary": "ReAct outperforms Inner Monologue prompting on ALFWorld with 71% vs 53% success.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "With additional sparse reasoning, ReAct achieves signi\ufb01cantly better performance, with an absolute 10% improvement over the previous best success rate."
+      "claim_text_verbatim": "As can be seen in Table 3, ReAct substantially outperforms IM-style prompting (ReAct-IM) (71 vs. 53 overall success rate), with consistent advantages on \ufb01ve out of six tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct (best of 6) 92 58 96 86 78 41 71",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct-IM (best of 6) 62 68 87 57 39 33 53",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 30,
-      "label": "supported",
-      "claim_summary": "ReAct beats Inner Monologue prompting 71% to 53% on ALFWorld",
+      "label": "partially_supported",
+      "claim_summary": "Experiments demonstrate ReAct's superior performance and interpretable decision traces.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "As can be seen in Table 3, ReAct substantially outperforms IM-style prompting (ReAct-IM) (71 vs. 53 overall success rate), with consistent advantages on \ufb01ve out of six tasks."
+      "claim_text_verbatim": "Through a diverse set of experiments on multi-hop question-answering, fact checking, and interactive decision-making tasks, we show that ReAct leads to superior performance with interpretable decision traces.",
+      "evidence_spans": [
+        {
+          "source_text": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On ALFWorld and WebShop, two or even one-shot ReAct prompting is able to outperform imitation or reinforcement learning methods trained with 103 \u223c105 task instances, with an absolute improvement of 34% and 10% in success rates respectively.",
+          "source_section": "Section 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 31,
       "label": "supported",
-      "claim_summary": "GPT-3 ReAct implementation consistently outperforms PaLM-540B on HotpotQA and ALFWorld",
+      "claim_summary": "GPT-3 implementation of ReAct outperforms PaLM-540B on HotpotQA and ALFWorld.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "As shown in Table 5, GPT-3 (text-davinci-002, greedy decoding) consistently outperforms PaLM-540B on HotpotQA and ALFWorld, possibly because it is \ufb01netuned with human instruction following."
+      "claim_text_verbatim": "As shown in Table 5, GPT-3 (text-davinci-002, greedy decoding) consistently outperforms PaLM-540B on HotpotQA and ALFWorld, possibly because it is \ufb01netuned with human instruction following.",
+      "evidence_spans": [
+        {
+          "source_text": "HotpotQA (exact match) 29.4 30.8",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ALFWorld (success rate %) 70.9 78.4",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 32,
       "label": "supported",
-      "claim_summary": "Editing two thought traces allows human-in-the-loop correction to fix agent trajectory failures",
+      "claim_summary": "ReAct prompting is effective across various large language models and task domains.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Figure 5 shows that by simply removing a hallucinating sentence in Act 17 and adding some hints in Act 23, ReAct can be made to change its behavior drastically to align with these human thought edits and succeed in the task."
+      "claim_text_verbatim": "This indicates ReAct prompting is effective across different large language models on different tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "As shown in Table 5, GPT-3 (text-davinci-002, greedy decoding) consistently outperforms PaLM-540B on HotpotQA and ALFWorld, possibly because it is finetuned with human instruction following.",
+          "source_section": "Appendix A.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct prompting results using PaLM-540B vs. GPT-3 (text-davinci-002, greedy decoding).",
+          "source_section": "Table 5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     }
   ],
   "matches": [
     {
       "expected_id": "REACT-M01",
-      "actual_index": 29
+      "actual_index": 28
     },
     {
       "expected_id": "REACT-M02",
-      "actual_index": null
+      "actual_index": 19
     },
     {
       "expected_id": "REACT-M03",
-      "actual_index": 13
+      "actual_index": 16
     },
     {
       "expected_id": "REACT-M05",
-      "actual_index": 30
+      "actual_index": 29
     },
     {
       "expected_id": "REACT-M06",
@@ -304,7 +899,7 @@
     },
     {
       "expected_id": "REACT-M08",
-      "actual_index": 14
+      "actual_index": 18
     },
     {
       "expected_id": "REACT-M09",
@@ -312,7 +907,7 @@
     },
     {
       "expected_id": "REACT-M10",
-      "actual_index": 24
+      "actual_index": 21
     },
     {
       "expected_id": "REACT-M11",
@@ -324,11 +919,11 @@
     },
     {
       "expected_id": "REACT-M13",
-      "actual_index": 0
+      "actual_index": 1
     },
     {
       "expected_id": "REACT-M14",
-      "actual_index": null
+      "actual_index": 32
     }
   ]
 }

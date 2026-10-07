@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "prompt_hash": "0bcf9d44e619",
+    "prompt_hash": "cb3272cce551",
     "fixture_file": null,
     "schema_version": 1
   },
@@ -8,397 +8,335 @@
     "REFLEX-M01": {
       "persisted_claim_id": null,
       "claim_fingerprint": "1e304989276689370bf4e11d6f8854b53e52143d9195971fa817bd45ce4453e3",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "1e304989276689370bf4e11d6f8854b53e52143d9195971fa817bd45ce4453e3",
-        "score": 95.6,
-        "claim_text_snippet": "For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-o"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 3 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REFLEX-M02": {
       "persisted_claim_id": null,
       "claim_fingerprint": "dce67ae2b29f639ee65485db8c37d6e65301d84ca512f1cd190bee26181a5d60",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "dce67ae2b29f639ee65485db8c37d6e65301d84ca512f1cd190bee26181a5d60",
-        "score": 68.2,
-        "claim_text_snippet": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an a"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 9 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REFLEX-M03": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "no claim states MBPP vs HumanEval false-positive rate",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REFLEX-M04": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "evaluation-setup sentence not extracted",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REFLEX-M05": {
       "persisted_claim_id": null,
       "claim_fingerprint": "14219e7d20cf3afa1557dfbc5907a7d59bee337777f711541ab6320adc7f3da7",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 26 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
       "suggested": null
     },
     "REFLEX-M06": {
       "persisted_claim_id": null,
-      "claim_fingerprint": "dfdef9e8e52e83e0ab830eaadf424566b681ad979f4a382e3d626d1a631ef6a7",
+      "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "dfdef9e8e52e83e0ab830eaadf424566b681ad979f4a382e3d626d1a631ef6a7",
-        "score": 98.2,
-        "claim_text_snippet": "3 shows an inferior 52% vs 60% (baseline) accuracy, which suggests that the agent is unable to determine if the current "
-      }
+      "decided_on": "2026-10-07",
+      "reason": "52% vs 60% ablation sentence not extracted",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REFLEX-M07": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "omitted-explanation result not stated; #27 is related only",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REFLEX-M08": {
       "persisted_claim_id": null,
       "claim_fingerprint": "c1a547b22d14f124cd4cb6ac0c782da944f20f1f84df90c3b6e318d8d6051569",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
-      "suggested": {
-        "claim_fingerprint": "c1a547b22d14f124cd4cb6ac0c782da944f20f1f84df90c3b6e318d8d6051569",
-        "score": 100,
-        "claim_text_snippet": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers."
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 8 exactly. Old reason: Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REFLEX-M09": {
       "persisted_claim_id": null,
-      "claim_fingerprint": null,
+      "claim_fingerprint": "ad631e10feac6aee12541e9f59377b146631d9b2008502cb6b4cf2504f4c35f6",
       "decided_by": "nitin",
-      "decided_on": "2026-10-02",
-      "reason": "No extracted claim states the Section 4 sentence (unhedged 22/20/11). Claim 12 is the Introduction sentence, which hedges HumanEval ('by as much as 11%') and adds 'absolute ... in 12 iterative learning steps'. That is a different scope from this row, and claim 12 stays mapped to REFLEX-M02.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "Position 17: same Section 4 sentence, unhedged 22/20/11",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REFLEX-M11": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission - verified the paper's own text contains no claim matching this golden row's specific assertion.",
-      "suggested": {
-        "claim_fingerprint": "66ce9fd05db6699067745cb2b4a330dc6d836f749970d31080bffd00206db24a",
-        "score": 70.7,
-        "claim_text_snippet": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through lingui"
-      },
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "only half captured (compound-claim rule)",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REFLEX-M12": {
       "persisted_claim_id": null,
       "claim_fingerprint": "2398aa0575ecc31a2a7c41301ec73cf022146aa6a9cbb364f7f3990fc243a0b2",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 7 exactly. Old reason: Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
+      "confirmed_no_match": false,
       "suggested": null
     },
     "REFLEX-M13": {
       "persisted_claim_id": null,
       "claim_fingerprint": "66ce9fd05db6699067745cb2b4a330dc6d836f749970d31080bffd00206db24a",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
-      "suggested": {
-        "claim_fingerprint": "66ce9fd05db6699067745cb2b4a330dc6d836f749970d31080bffd00206db24a",
-        "score": 100,
-        "claim_text_snippet": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through lingui"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 0 exactly. Old reason: Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M01": {
       "persisted_claim_id": null,
       "claim_fingerprint": "21c769aae599c51bd71e5b13644157876475286f01365845c215af982073ab9a",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "21c769aae599c51bd71e5b13644157876475286f01365845c215af982073ab9a",
-        "score": 94,
-        "claim_text_snippet": "For instance, prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 2 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M02": {
       "persisted_claim_id": null,
       "claim_fingerprint": "1b149c88f8b8839076aaeca6e41a361b69824bb51fb09ff6e9a67b3fdcbabde7",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "1b149c88f8b8839076aaeca6e41a361b69824bb51fb09ff6e9a67b3fdcbabde7",
-        "score": 96.7,
-        "claim_text_snippet": "That is, chain-of-thought prompting does not positively impact performance for small models, and only yields performance"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 6 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M03": {
       "persisted_claim_id": null,
       "claim_fingerprint": "da098b8c89e3619115354d098087c7c4c90286c7ea4e0d638720057309974399",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "da098b8c89e3619115354d098087c7c4c90286c7ea4e0d638720057309974399",
-        "score": 91.3,
-        "claim_text_snippet": "Figure 5 shows that equation only prompting does not help much for GSM8K, which implies that the semantics of the questi"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 14 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M04": {
       "persisted_claim_id": null,
       "claim_fingerprint": "8612e80b6b4cefbb792aea6966268c533b4e808fa5c543011d93f5de84ceafde",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "8612e80b6b4cefbb792aea6966268c533b4e808fa5c543011d93f5de84ceafde",
-        "score": 70.3,
-        "claim_text_snippet": "Although there is variance among different chain of thought annotations, as would be expected when using exemplar-based "
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 16 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M05": {
       "persisted_claim_id": null,
-      "claim_fingerprint": null,
+      "claim_fingerprint": "296bdc5617d697c604fb54f51899789224586777b465c3c268516343557114b3",
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "Position 9: same SingleOp sentence",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M06": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "#13 covers two error types, row says all three",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "COT-M07": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "no claim states the CSQA/StrategyQA GPT-3 exception",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "COT-M08": {
       "persisted_claim_id": null,
       "claim_fingerprint": "ac160031e38226cf1aae8c4001dc275d9ce8d92627aab84f9296f8cb03cfdb1f",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
-      "suggested": {
-        "claim_fingerprint": "ac160031e38226cf1aae8c4001dc275d9ce8d92627aab84f9296f8cb03cfdb1f",
-        "score": 63.6,
-        "claim_text_snippet": "Hence, chain-of-thought prompting facilitates length generalization beyond seen chains of thought for language models of"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 22 exactly. Old reason: Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "COT-M09": {
       "persisted_claim_id": null,
-      "claim_fingerprint": "6f8cdad761cdf461ffb79502a71bd772c9dbd2ec0a25a655025af1adee3b357f",
+      "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
-      "suggested": {
-        "claim_fingerprint": "6f8cdad761cdf461ffb79502a71bd772c9dbd2ec0a25a655025af1adee3b357f",
-        "score": 91,
-        "claim_text_snippet": "These results demonstrate that chain-of-thought prompting can also improve performance on tasks requiring a range of com"
-      }
+      "decided_on": "2026-10-07",
+      "reason": "#1 is broader and drops the CSQA caveat",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "COT-M10": {
       "persisted_claim_id": null,
-      "claim_fingerprint": "a07240aa4e625dfe0a930467824ac976980fdadf788fef4943ef48721ddbae26",
+      "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
-      "suggested": {
-        "claim_fingerprint": "a07240aa4e625dfe0a930467824ac976980fdadf788fef4943ef48721ddbae26",
-        "score": 85.5,
-        "claim_text_snippet": "Finally, chain-of-thought reasoning can be readily elicited in sufﬁciently large off-the-shelf language models simply by"
-      }
+      "decided_on": "2026-10-07",
+      "reason": "#0 is a different sentence without the \"readily/simply by\" wording",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "COT-M11": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission - verified the paper's own text contains no claim matching this golden row's specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "no claim compares CoT cost to rationale finetuning",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "COT-M12": {
       "persisted_claim_id": null,
-      "claim_fingerprint": "0c59a34bb752a0c9a1c9d0352dfd4803aa76a4bdbccb0ce99622a3e0923627a0",
+      "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
+      "decided_on": "2026-10-07",
+      "reason": "\"any task humans can solve via language\" not extracted",
+      "confirmed_no_match": true,
       "suggested": null
     },
     "REACT-M01": {
       "persisted_claim_id": null,
       "claim_fingerprint": "41aff536a2bd0e817364766146bdfb1a00e18528fd6690575110add1f476c8c4",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "41aff536a2bd0e817364766146bdfb1a00e18528fd6690575110add1f476c8c4",
-        "score": 99,
-        "claim_text_snippet": "With additional sparse reasoning, ReAct achieves signiﬁcantly better performance, with an absolute 10% improvement over "
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 28 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M02": {
       "persisted_claim_id": null,
-      "claim_fingerprint": null,
+      "claim_fingerprint": "a44ef9f0e86d4e3cc8d0fe40245f0c95039acb1329d8befef2af78efe712a2aa",
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "Position 19: identical sentence",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M03": {
       "persisted_claim_id": null,
       "claim_fingerprint": "2ffa4cd34bcf01a45cc2e4476afbd580f368ca0b73be1ec32a0546c4a02a9562",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed real match: actual claim [13] in the fixture is the verbatim second half of this golden quote. Fixture pairing already correct; preview tool missed it due to partial-quote scoring.",
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 16 exactly. Old reason: Confirmed real match: actual claim [13] in the fixture is the verbatim second half of this golden quote. Fixture pairing already correct; preview tool missed it due to partial-quote scoring.",
+      "confirmed_no_match": false,
       "suggested": null
     },
     "REACT-M05": {
       "persisted_claim_id": null,
       "claim_fingerprint": "aafd144c4afef567f8c7e8a576ac3083aa8558f98f082e4ae81dce703637a7ec",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "aafd144c4afef567f8c7e8a576ac3083aa8558f98f082e4ae81dce703637a7ec",
-        "score": 90.1,
-        "claim_text_snippet": "As can be seen in Table 3, ReAct substantially outperforms IM-style prompting (ReAct-IM) (71 vs. 53 overall success rate"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 29 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M06": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Compound claim only half-captured (claim [25] covers the finetuning-improves half, but the 'performs worst among four methods' half was never extracted as its own claim). Same precedent as REFLEX-M11/REACT-M12: partial coverage of a compound claim is treated as not_extracted, not a match.",
-      "suggested": {
-        "claim_fingerprint": "62fdbf438487a752bccc4531d6caf5d8695fd0b46345e742f54c644792df0f36",
-        "score": 82.6,
-        "claim_text_snippet": "However, when ﬁnetuned with just 3,000 examples, ReAct becomes the best method among the four, with PaLM-8B ﬁnetuned ReA"
-      },
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "only the finetuning half captured (compound-claim rule)",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REACT-M07": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "no claim states one-shot Act matches IL/IL+RL",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REACT-M08": {
       "persisted_claim_id": null,
       "claim_fingerprint": "a79525d3ce5f7362cec2ef36932b24b1f2b01a6f15838796e9025d8b5433443f",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
-      "suggested": {
-        "claim_fingerprint": "a79525d3ce5f7362cec2ef36932b24b1f2b01a6f15838796e9025d8b5433443f",
-        "score": 91.6,
-        "claim_text_snippet": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29."
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 18 exactly. Old reason: Verbatim or near-verbatim text match confirmed against the extracted claim; same underlying assertion.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M09": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan of the fixture - no extracted claim states this specific assertion.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "no claim states Act fails at subgoals/state tracking",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REACT-M10": {
       "persisted_claim_id": null,
       "claim_fingerprint": "eebd7801123d10f43f018a6ccbdb45852bf2af424ae66642b345488ccba6d51e",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
-      "suggested": {
-        "claim_fingerprint": "eebd7801123d10f43f018a6ccbdb45852bf2af424ae66642b345488ccba6d51e",
-        "score": 99.4,
-        "claim_text_snippet": "While two ReAct + CoT-SC methods are advantageous at one task each, they both signiﬁcantly and consistently outperform C"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 21 exactly. Old reason: Real extracted claim confirmed via manual PDF review; fixture actual_index corrected to point at it.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M11": {
       "persisted_claim_id": null,
       "claim_fingerprint": "a02748c56b36a735b6fcad88e63d4aea841682ea84696c8df43a2d17a5b423f9",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
-      "suggested": {
-        "claim_fingerprint": "a02748c56b36a735b6fcad88e63d4aea841682ea84696c8df43a2d17a5b423f9",
-        "score": 68,
-        "claim_text_snippet": "Concretely, on question answering (HotpotQA) and fact veriﬁcation (Fever), ReAct overcomes prevalent issues of hallucina"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 2 exactly. Old reason: Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M12": {
       "persisted_claim_id": null,
       "claim_fingerprint": null,
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission - verified the paper's own text contains no claim matching this golden row's specific assertion.",
-      "suggested": {
-        "claim_fingerprint": "bdf5826050268bd1507504423248ff74e29d3780058efa1a23956c676b572eed",
-        "score": 70.6,
-        "claim_text_snippet": "ReAct shows strong generalization to new task instances while learning solely from one to six in-context examples, consi"
-      },
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "only the generalization half captured",
+      "confirmed_no_match": true,
+      "suggested": null
     },
     "REACT-M13": {
       "persisted_claim_id": null,
       "claim_fingerprint": "4c0fd1f7fdb57f77ece47d3e5776e5e812d7f9ecadd8c3347219d670975e102b",
-      "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
-      "suggested": {
-        "claim_fingerprint": "4c0fd1f7fdb57f77ece47d3e5776e5e812d7f9ecadd8c3347219d670975e102b",
-        "score": 82.1,
-        "claim_text_snippet": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effective"
-      }
+      "decided_by": "auto (exact fingerprint carry-over)",
+      "decided_on": "2026-10-07",
+      "reason": "Old map fingerprint equals new-run claim position 1 exactly. Old reason: Content verified against paper PDF during earlier audit pass; fixture pairing unchanged since then, confirmed correct.",
+      "confirmed_no_match": false,
+      "suggested": null
     },
     "REACT-M14": {
       "persisted_claim_id": null,
-      "claim_fingerprint": null,
+      "claim_fingerprint": "ab6c8bedb9f58e042c127efe210caa61201e4ead883effc277edca9552d165c6",
       "decided_by": "nitin",
-      "decided_on": "2026-10-01",
-      "reason": "Confirmed genuine omission after full-claim scan. Nearest candidate (claim 31) states the underlying PaLM vs GPT-3 comparison result, not the generalization conclusion the golden row asserts - different assertion. Fixture's stale pairing (previously claim 4, an unrelated intro sentence left over from the pre-replacement golden text) cleared to null.",
-      "suggested": null,
-      "confirmed_no_match": true
+      "decided_on": "2026-10-07",
+      "reason": "Position 32: identical sentence",
+      "confirmed_no_match": false,
+      "suggested": null
     }
   }
 }

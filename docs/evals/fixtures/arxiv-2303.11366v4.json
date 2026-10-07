@@ -1,242 +1,891 @@
 {
   "header": {
-    "prompt_hash": "0bcf9d44e619",
+    "prompt_hash": "cb3272cce551",
     "matcher_fingerprint": "52401482adf2",
     "model_name": "gemini-3.6-flash",
-    "matcher_model": "gemini-3.6-flash",
-    "generated_at": "2026-09-10T09:05:25.971223+00:00",
+    "matcher_model": "match_map:cb3272cce551",
+    "generated_at": "2026-10-07T10:02:45.371901+00:00",
     "paper_id": "arxiv-2303.11366v4",
     "filename": "reflexion.pdf",
-    "extraction_run_id": "929ca23a-e8b6-4c33-a238-dbc7a254a69c",
+    "extraction_run_id": "0fd9ead9-ad0c-4370-8192-c1b078602104",
     "matcher_gold_pass_rate": 0.9333333333333333,
-    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00"
+    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00",
+    "matcher_gold_note": "matcher_gold_pass_rate and matcher_gold_verified_at carried over, not re-measured: copied on 2026-10-07 from the archived fixture header (archive/2026-10-07_pre-cb3272cce551) because matcher_fingerprint is unchanged. This fixture's matches come from the human match map, not the matcher."
   },
   "claims": [
     {
       "index": 0,
-      "label": "not_supported",
-      "claim_summary": "Reflexion offers lightweight tuning, nuanced feedback, interpretable episodic memory, and actionable future hints.",
-      "missing": true,
-      "grounding_status": "Fail",
-      "claim_text_verbatim": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes."
+      "label": "supported",
+      "claim_summary": "Reflexion reinforces language agents via linguistic feedback rather than weight updates.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback.",
+      "evidence_spans": [
+        {
+          "source_text": "In this paper, we propose an alternative approach called Reflexion that uses verbal reinforcement to help agents learn from prior failings.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 1,
-      "label": "partially_supported",
-      "claim_summary": "Reflexion handles diverse feedback types and outperforms baselines across decision-making, coding, and reasoning.",
+      "label": "supported",
+      "claim_summary": "Reflexion agents reflect on feedback and store text in memory to improve decisions.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Reflexion is flexible enough to incorporate various types (scalar values or free-form language) and sources (external or internally simulated) of feedback signals, and obtains significant improvements over a baseline agent across diverse tasks (sequential decision-making, coding, language reasoning)."
+      "claim_text_verbatim": "Concretely, Reflexion agents verbally reflect on task feedback signals, then maintain their own reflective text in an episodic memory buffer to induce better decision-making in subsequent trials.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning. Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reflexion eliminates almost all of these cases by using self-reflection to distill long, failed trajectories into relevant experiences that can are used as \"self-hints\" in the future.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 2,
       "label": "partially_supported",
-      "claim_summary": "Reflexion agents systematically outperform baselines in decision-making, logical reasoning, and programming tasks.",
+      "claim_summary": "Reflexion flexibly handles diverse feedback signals and significantly improves baseline task performance.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers."
+      "claim_text_verbatim": "Reflexion is flexible enough to incorporate various types (scalar values or free-form language) and sources (external or internally simulated) of feedback signals, and obtains significant improvements over a baseline agent across diverse tasks (sequential decision-making, coding, language reasoning).",
+      "evidence_spans": [
+        {
+          "source_text": "We explore three ways for doing this \u2013 simple binary environment feedback, pre-defined heuristics for common failure cases, and self-evaluation such as binary classification using LLMs (decision-making) or self-written unit tests (programming).",
+          "source_section": "Introduction",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%.",
+          "source_section": "Introduction",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "MBPP (PY) 67.7 (CodeT [5] + Codex [6]) 80.1 (GPT-4) 77.1",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We conclude that Reflexion is unable to solve tasks that require a significant amount of diversity and exploration.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 3,
-      "label": "partially_supported",
-      "claim_summary": "Self-reflection in LLMs enables effective learning of complex tasks within very few trial attempts.",
+      "label": "supported",
+      "claim_summary": "Reflexion reaches 91% pass@1 on HumanEval, beating GPT-4's 80%.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We explore this emergent property of self-reflection in LLMs and empirically show that self-reflection is extremely useful to learn complex tasks over a handful of trials."
+      "claim_text_verbatim": "For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4 that achieves 80%.",
+      "evidence_spans": [
+        {
+          "source_text": "HumanEval (PY) | 65.8 (CodeT [5] + GPT-3.5) | 80.1 (GPT-4) | 91.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "HumanEval (PY) | 0.80 | 0.91",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
     },
     {
       "index": 4,
-      "label": "partially_supported",
-      "claim_summary": "The paper introduces LeetcodeHardGym, featuring 40 hard LeetCode problems across 19 programming languages.",
+      "label": "supported",
+      "claim_summary": "Reflexion uses verbal reinforcement to help agents learn from previous errors.",
       "missing": false,
       "grounding_status": "Partial",
-      "claim_text_verbatim": "We introduce LeetcodeHardGym, a code-generation RL gym environment consisting of 40 challenging Leetcode questions (\u2018hard-level\u2018) in 19 programming languages."
+      "claim_text_verbatim": "In this paper, we propose an alternative approach called Reflexion that uses verbal reinforcement to help agents learn from prior failings.",
+      "evidence_spans": [
+        {
+          "source_text": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers. More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%.",
+          "source_section": "Section 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning. Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 5,
-      "label": "partially_supported",
-      "claim_summary": "Combining short- and long-term memory gives Reflexion agents a key advantage over prior LLM methods.",
+      "label": "supported",
+      "claim_summary": "Reflexion converts environment feedback into textual summaries added as context for future episodes.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "These two memory components work together to provide context that is specific but also influenced by lessons learned over several trials, which is a key advantage of Reflexion agents over other LLM action choice works."
+      "claim_text_verbatim": "Reflexion converts binary or scalar feedback from the environment into verbal feedback in the form of a textual summary, which is then added as additional context for the LLM agent in the next episode.",
+      "evidence_spans": [
+        {
+          "source_text": "Given a sparse reward signal, such as a binary success status (success/fail), the current trajectory, and its persistent memory mem, the self-reflection model generates nuanced and specific feedback. This feedback, which is more informative than scalar rewards, is then stored in the agent\u2019s memory (mem).",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Therefore, between trials, we use exact match answer grading using the environment to give a binary success signal to the agent. After each trial, the self-reflection loop is employed to amplify the binary signal, similar to the decision-making setup 4.1 in AlfWorld with a memory size of 3 experiences.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 6,
-      "label": "partially_supported",
-      "claim_summary": "Reflexion consistently outperforms all tested baseline approaches across multiple iterative learning steps.",
+      "label": "supported",
+      "claim_summary": "Self-reflective feedback provides a semantic gradient signal to guide task improvement.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "Reflexion outperforms all baseline approaches by significant margins over several learning steps."
+      "claim_text_verbatim": "This self-reflective feedback acts as a \u2018semantic\u2019 gradient signal by providing the agent with a concrete direction to improve upon, helping it learn from prior mistakes to perform better on the task.",
+      "evidence_spans": [
+        {
+          "source_text": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage. This result supports the argument that refinement-only approaches are not as effective as self-reflection-guided refinement approaches.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Next, we test self-reflection contribution by omitting the natural language explanation step following failed unit test suite evaluations. Intuitively, this challenges the agent to combine the tasks of error identification and implementation improvement across all failed unit tests. Interestingly, the compromised agent does not improve performance over the baseline run.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 7,
-      "label": "partially_supported",
-      "claim_summary": "Empirical evaluation demonstrates Reflexion significantly outperforms popular decision-making methods using self-reflection.",
-      "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "We empirically show that Reflexion agents significantly outperform currently widely-used decision-making approaches by utilizing self-reflection."
+      "label": "not_supported",
+      "claim_summary": "Reflexion offers key advantages over traditional RL, including lightweight execution and interpretable memory.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes.",
+      "evidence_spans": [
+        {
+          "source_text": "Reflexion has several advantages compared to more traditional RL approaches like policy or value-based learning: 1) it is lightweight and doesn\u2019t require finetuning the LLM, 2) it allows for more nuanced forms of feedback (e.g. targeted changes in actions), compared to scalar or vector rewards that are challenging to perform accurate credit assignment with, 3) it allows for a more explicit and interpretable form of episodic memory over prior experiences, and 4) it provides more explicit hints for actions in future episodes.",
+          "source_section": "Section 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "In the baseline runs, if self-reflection is suggested, we skip the self-reflection process, reset the environment, and start a new trial.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 8,
-      "label": "supported",
-      "claim_summary": "Reflexion reinforces language agents using linguistic feedback rather than weight updates.",
+      "label": "partially_supported",
+      "claim_summary": "Reflexion improves agent performance across decision-making, reasoning, and programming tasks.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We propose Reflexion, a novel framework to reinforce language agents not by updating weights, but instead through linguistic feedback."
+      "claim_text_verbatim": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers.",
+      "evidence_spans": [
+        {
+          "source_text": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%.",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reflexion outperforms all baseline accuracies and sets new state-of-the-art standards on all benchmarks for Python and Rust except for MBPP Python 1.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion fails to significantly outperform ReAct.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 9,
       "label": "supported",
-      "claim_summary": "Reflexion achieves 91% pass@1 on HumanEval, beating GPT-4's 80% state-of-the-art score.",
+      "claim_summary": "Reflexion yields absolute gains of 22% on AlfWorld, 20% on HotPotQA, and 11% on HumanEval.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "For example, Reflexion achieves a 91% pass@1 accuracy on the HumanEval coding benchmark, surpassing the previous state-of-the-art GPT-4 that achieves 80%."
+      "claim_text_verbatim": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%.",
+      "evidence_spans": [
+        {
+          "source_text": "Most notably, Reflexion improves performance over strong baselines by 22% in AlfWorld, 20% in HotPotQA, and 11% on HumanEval.",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "80.1 (GPT-4) 91.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 10,
       "label": "supported",
-      "claim_summary": "Reflexion introduces verbal reinforcement to enable agents to learn effectively from past mistakes.",
+      "claim_summary": "Reflexion introduces a verbal reinforcement paradigm parameterizing policy as memory encoding with LLM parameters.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "In this paper, we propose an alternative approach called Reflexion that uses verbal reinforcement to help agents learn from prior failings."
+      "claim_text_verbatim": "We propose Reflexion, a new paradigm for \u2018verbal\u2018 reinforcement that parameterizes a policy as an agent\u2019s memory encoding paired with a choice of LLM parameters.",
+      "evidence_spans": [
+        {
+          "source_text": "Initialize policy \u03c0\u03b8(ai|si), \u03b8 = {Ma, mem}",
+          "source_section": "Algorithm 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Analogous to traditional policy-based RL setups, we sample an action or generation, at, from the current policy \u03c0\u03b8 at time t, receive an observation from the environment ot.",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 11,
       "label": "supported",
-      "claim_summary": "Self-reflective feedback serves as a semantic gradient directing agents toward improved task performance.",
+      "claim_summary": "Self-reflection in LLMs enables rapid learning of complex tasks within few trials.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "This self-reflective feedback acts as a \u2018semantic\u2019 gradient signal by providing the agent with a concrete direction to improve upon, helping it learn from prior mistakes to perform better on the task."
+      "claim_text_verbatim": "We explore this emergent property of self-reflection in LLMs and empirically show that self-reflection is extremely useful to learn complex tasks over a handful of trials.",
+      "evidence_spans": [
+        {
+          "source_text": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%.",
+          "source_section": "Introduction",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning. Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 12,
-      "label": "supported",
-      "claim_summary": "Reflexion improves performance by 22% on AlfWorld, 20% on HotPotQA, and 11% on HumanEval.",
+      "label": "partially_supported",
+      "claim_summary": "Introduces LeetcodeHardGym, containing 40 hard Leetcode questions across 19 languages.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%."
+      "claim_text_verbatim": "We introduce LeetcodeHardGym, a code-generation RL gym environment consisting of 40 challenging Leetcode questions (\u2018hard-level\u2018) in 19 programming languages.",
+      "evidence_spans": [
+        {
+          "source_text": "We introduce LeetcodeHardGym, a code-generation RL gym environment consisting of 40 challenging Leetcode questions (\u2018hard-level\u2018) in 19 programming languages.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Lastly, we introduce a new benchmark, LeetcodeHardGym, which is an interactive programming gym that contains 40 Leetcode hard-rated questions that have been released after October 8, 2022, which is the pre-training cutoff date of GPT-4 [18].",
+          "source_section": "Section 4.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Leetcode Hard (PY)",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 13,
       "label": "supported",
-      "claim_summary": "Reflexion establishes a verbal reinforcement paradigm parameterizing policy via agent memory and LLMs.",
+      "claim_summary": "Reflexion beats strong baselines across tasks and sets state-of-the-art code generation benchmarks.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We propose Reflexion, a new paradigm for \u2018verbal\u2018 reinforcement that parameterizes a policy as an agent\u2019s memory encoding paired with a choice of LLM parameters."
+      "claim_text_verbatim": "We show that Reflexion achieves improvements over strong baselines across several tasks, and achieves state-of-the-art results on various code generation benchmarks.",
+      "evidence_spans": [
+        {
+          "source_text": "Most notably, Reflexion improves performance over strong baselines by 22% in AlfWorld, 20% in HotPotQA, and 11% on HumanEval.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reflexion outperforms all baseline accuracies and sets new state-of-the-art standards on all benchmarks for Python and Rust except for MBPP Python 1.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 14,
       "label": "supported",
-      "claim_summary": "Reflexion surpasses strong baselines and sets new state-of-the-art results on code generation benchmarks.",
+      "claim_summary": "Enhancing concepts with self-reflection allows agents to identify errors and learn lessons over time.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We show that Reflexion achieves improvements over strong baselines across several tasks, and achieves state-of-the-art results on various code generation benchmarks."
+      "claim_text_verbatim": "In this paper, we show that several of these concepts can be enhanced with self-reflection to build a persisting memory of self-reflective experiences which allows an agent to identify its own errors and self-suggest lessons to learn from its mistakes over time.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning. Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage. This result supports the argument that refinement-only approaches are not as effective as self-reflection-guided refinement approaches.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Next, we test self-reflection contribution by omitting the natural language explanation step following failed unit test suite evaluations. Intuitively, this challenges the agent to combine the tasks of error identification and implementation improvement across all failed unit tests. Interestingly, the compromised agent does not improve performance over the baseline run.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 15,
-      "label": "supported",
-      "claim_summary": "Self-reflection creates a persistent memory allowing agents to identify errors and suggest self-corrections.",
+      "label": "partially_supported",
+      "claim_summary": "Iterative self-reflection and memory allow agents to rapidly improve decision-making across environments.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "In this paper, we show that several of these concepts can be enhanced with self-reflection to build a persisting memory of self-reflective experiences which allows an agent to identify its own errors and self-suggest lessons to learn from its mistakes over time."
+      "claim_text_verbatim": "This iterative process of trial, error, self-reflection, and persisting memory enables the agent to rapidly improve its decision-making ability in various environments by utilizing informative feedback signals.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning. Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "However, after only four trials, we terminate the runs as the agent does not show signs of improvement 6.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "We conclude that Reflexion is unable to solve tasks that require a significant amount of diversity and exploration.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 16,
-      "label": "supported",
-      "claim_summary": "ReAct with Reflexion completes 130 of 134 ALFWorld tasks, significantly outperforming standard ReAct.",
+      "label": "partially_supported",
+      "claim_summary": "Combining short- and long-term memory provides tailored context informed by lessons from prior trials.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning."
+      "claim_text_verbatim": "These two memory components work together to provide context that is specific but also influenced by lessons learned over several trials, which is a key advantage of Reflexion agents over other LLM action choice works.",
+      "evidence_spans": [
+        {
+          "source_text": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion fails to significantly outperform ReAct.",
+          "source_section": "Figure 6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 17,
       "label": "supported",
-      "claim_summary": "ReAct with Reflexion successfully learns to solve previously failed tasks over 12 consecutive trials.",
+      "claim_summary": "Reflexion beats strong baselines by 22% on AlfWorld, 20% on HotPotQA, and 11% on HumanEval.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Most notably, Reflexion improves performance over strong baselines by 22% in AlfWorld, 20% in HotPotQA, and 11% on HumanEval.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "80.1 (GPT-4)",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "91.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + text-davinci-003",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "0.30",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "0.55",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 18,
       "label": "supported",
-      "claim_summary": "Standard ReAct plateaus at a 22% hallucination rate without recovering over long-term trials.",
+      "claim_summary": "ReAct + Reflexion solves 130 of 134 ALFWorld tasks using a simple heuristic.",
       "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "On the other hand, 3 shows a ReAct-only agent converging at a hallucination rate of 22% with no signs of long-term recovery."
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+      "evidence_spans": [
+        {
+          "source_text": "Following Yao et al. [30], we run the agent in 134 AlfWorld environments across six different tasks, including finding hidden objects (e.g., finding a spatula in a drawer), moving objects (e.g., moving a knife to the cutting board), and manipulating objects with other objects (e.g., chilling a tomato in the fridge).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 3: (a) AlfWorld performance across 134 tasks showing cumulative proportions of solved tasks using self-evaluation techniques of (Heuristic) and (GPT) for binary classification.",
+          "source_section": "Figure 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 19,
       "label": "supported",
-      "claim_summary": "Reflexion improves Chain-of-Thought reasoning accuracy by 14% without access to ground truth answers.",
-      "missing": false,
-      "grounding_status": "Partial",
-      "claim_text_verbatim": "Still, the CoT (GT) agent is unable to correctly infer the correct answer for 39% of the questions, but Reflexion helps the agent to correct its mistakes without access to the ground truth answer to improve its accuracy by 14%."
+      "claim_summary": "ReAct + Reflexion solves extra tasks through learning across 12 consecutive trials.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "Further, ReAct + Reflexion learns to solve additional tasks by learning in 12 consecutive trials.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "In the ReAct-only approach, we see that performance increase halts between trials 6 and 7.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 20,
       "label": "supported",
-      "claim_summary": "Self-reflection provides an 8% absolute performance gain compared to using episodic memory alone.",
+      "claim_summary": "The baseline ReAct approach stops improving performance after trials 6 and 7.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage."
+      "claim_text_verbatim": "In the ReAct-only approach, we see that performance increase halts between trials 6 and 7.",
+      "evidence_spans": [
+        {
+          "source_text": "In the ReAct-only approach, we see that performance increase halts between trials 6 and 7.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On the other hand, 3 shows a ReAct-only agent converging at a hallucination rate of 22% with no signs of long-term recovery.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 21,
       "label": "supported",
-      "claim_summary": "Refinement guided by self-reflection proves more effective than unguided, refinement-only approach strategies.",
+      "claim_summary": "Reflexion eliminates trajectory failure cases by distilling failed runs into future self-hints.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "This result supports the argument that refinement-only approaches are not as effective as self-reflection-guided refinement approaches."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Reflexion eliminates almost all of these cases by using self-reflection to distill long, failed trajectories into relevant experiences that can are used as \"self-hints\" in the future.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1 (Results)",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On the other hand, 3 shows a ReAct-only agent converging at a hallucination rate of 22% with no signs of long-term recovery.",
+          "source_section": "Section 4.1 (Analysis)",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 22,
       "label": "supported",
-      "claim_summary": "Reflexion sets state-of-the-art accuracy across Python and Rust coding benchmarks except MBPP Python.",
+      "claim_summary": "ReAct-only plateaus at a 22% hallucination rate without recovering long-term.",
       "missing": false,
-      "grounding_status": "Pass",
-      "claim_text_verbatim": "Reflexion outperforms all baseline accuracies and sets new state-of-the-art standards on all benchmarks for Python and Rust except for MBPP Python 1."
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "On the other hand, 3 shows a ReAct-only agent converging at a hallucination rate of 22% with no signs of long-term recovery.",
+      "evidence_spans": [
+        {
+          "source_text": "Classification of AlfWorld trajectories by reason of failure.",
+          "source_section": "Figure 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "In the ReAct-only approach, we see that performance increase halts between trials 6 and 7.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 23,
-      "label": "supported",
-      "claim_summary": "Omitting internal test generation drops accuracy to 52%, below the 60% baseline performance.",
+      "label": "partially_supported",
+      "claim_summary": "Reflexion significantly outperforms all baseline methods over multiple learning steps.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "3 shows an inferior 52% vs 60% (baseline) accuracy, which suggests that the agent is unable to determine if the current implementation is correct without unit tests."
+      "claim_text_verbatim": "Reflexion outperforms all baseline approaches by significant margins over several learning steps.",
+      "evidence_spans": [
+        {
+          "source_text": "Reflexion outperforms all baseline approaches by significant margins over several learning steps.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Furthermore, ReAct-only, CoT-only, and CoT (GT)-only implementations fail to probabilistically improve on any tasks, meaning that no failed tasks from the first trial from any of the baseline approaches were able to be solved in subsequent trials using a temperature of 0.7",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion fails to significantly outperform ReAct.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
     },
     {
       "index": 24,
       "label": "supported",
-      "claim_summary": "Debugging methods lacking self-reflection prove ineffective when solving complex Rust programming tasks.",
+      "claim_summary": "Baseline approaches failed to solve any failed tasks in subsequent trials at temperature 0.7.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "These empirical results suggest that several recent works that propose blind trial and error debugging techniques without self-reflection are ineffective on harder tasks such as writing complex programs in Rust."
+      "claim_text_verbatim": "Furthermore, ReAct-only, CoT-only, and CoT (GT)-only implementations fail to probabilistically improve on any tasks, meaning that no failed tasks from the first trial from any of the baseline approaches were able to be solved in subsequent trials using a temperature of 0.7",
+      "evidence_spans": [
+        {
+          "source_text": "Furthermore, ReAct-only, CoT-only, and CoT (GT)-only implementations fail to probabilistically improve on any tasks, meaning that no failed tasks from the first trial from any of the baseline approaches were able to be solved in subsequent trials using a temperature of 0.7",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 4: Chain-of-Thought (CoT) and ReAct. Reflexion improves search, information retrieval, and reasoning capabilities on 100 HotPotQA questions. (a) Reflexion ReAct vs Reflexion CoT (b) Reflexion CoT (GT) for reasoning only",
+          "source_section": "Figure 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
     },
     {
       "index": 25,
       "label": "supported",
-      "claim_summary": "The capacity to formulate effective self-corrections emerges primarily in larger, stronger language models.",
+      "claim_summary": "Reflexion helps correct mistakes without ground truth access, boosting accuracy by 14%.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We found that the ability to specify self-corrections is an emergent quality of stronger, larger models."
+      "claim_text_verbatim": "Still, the CoT (GT) agent is unable to correctly infer the correct answer for 39% of the questions, but Reflexion helps the agent to correct its mistakes without access to the ground truth answer to improve its accuracy by 14%.",
+      "evidence_spans": [
+        {
+          "source_text": "between trials, we use exact match answer grading using the environment to give a binary success signal to the agent.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Still, the CoT (GT) agent is unable to correctly infer the correct answer for 39% of the questions, but Reflexion helps the agent to correct its mistakes without access to the ground truth answer to improve its accuracy by 14%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "CoT (GT) + gpt-3.5-turbo 0.57 0.71",
+          "source_section": "Table 5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     },
     {
       "index": 26,
       "label": "supported",
-      "claim_summary": "Reflexion struggles to succeed on tasks that demand highly diverse actions and extensive exploration.",
+      "claim_summary": "Self-reflection provides an 8% absolute accuracy boost over using episodic memory alone.",
       "missing": false,
       "grounding_status": "Pass",
-      "claim_text_verbatim": "We conclude that Reflexion is unable to solve tasks that require a significant amount of diversity and exploration."
+      "claim_text_verbatim": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
+      "evidence_spans": [
+        {
+          "source_text": "Next, we add an element of episodic memory (EPM) by including the most recent trajectory. For the Reflexion agent, we implement the standard self-reflection step as a final pass.",
+          "source_section": "Section 4.2 (Analysis)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 4: Chain-of-Thought (CoT) and ReAct. Reflexion improves search, information retrieval, and reasoning capabilities on 100 HotPotQA questions. (a) Reflexion ReAct vs Reflexion CoT (b) Reflexion CoT (GT) for reasoning only (c) Reflexion vs episodic memory ablation.",
+          "source_section": "Figure 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "Refinement guided by self-reflection is more effective than refinement-only approaches.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This result supports the argument that refinement-only approaches are not as effective as self-reflection-guided refinement approaches.",
+      "evidence_spans": [
+        {
+          "source_text": "4 shows that self-reflection improves learning by an 8% absolute boost over the episodic memory learning advantage.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Next, we add an element of episodic memory (EPM) by including the most recent trajectory. For the Reflexion agent, we implement the standard self-reflection step as a final pass.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "label": "supported",
+      "claim_summary": "Reflexion sets new state-of-the-art scores across Python and Rust benchmarks except MBPP Python.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reflexion outperforms all baseline accuracies and sets new state-of-the-art standards on all benchmarks for Python and Rust except for MBPP Python 1.",
+      "evidence_spans": [
+        {
+          "source_text": "HumanEval (PY) 65.8 (CodeT [5] + GPT-3.5) 80.1 (GPT-4) 91.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "HumanEval (RS) \u2013 60.0 (GPT-4) 68.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "MBPP (PY) 67.7 (CodeT [5] + Codex [6]) 80.1 (GPT-4) 77.1",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "MBPP (RS) \u2013 70.9 (GPT-4) 75.4",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Leetcode Hard (PY) \u2013 7.5 (GPT-4) 15.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "label": "supported",
+      "claim_summary": "Blind trial-and-error debugging without self-reflection is ineffective for complex programming tasks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "These empirical results suggest that several recent works that propose blind trial and error debugging techniques without self-reflection are ineffective on harder tasks such as writing complex programs in Rust.",
+      "evidence_spans": [
+        {
+          "source_text": "Next, we test self-reflection contribution by omitting the natural language explanation step following failed unit test suite evaluations.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Interestingly, the compromised agent does not improve performance over the baseline run.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Self-reflection omission 1.0 0.60",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "label": "supported",
+      "claim_summary": "Reflexion leverages verbal reinforcement to enable agents to learn from past mistakes.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "In this work, we present Reflexion, an approach that leverages verbal reinforcement to teach agents to learn from past mistakes.",
+      "evidence_spans": [
+        {
+          "source_text": "Across all three types of tasks, we observe Reflexion agents are better decision-makers, reasoners, and programmers. More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps, and on reasoning questions in HotPotQA [28] by 20%, and Python programming tasks on HumanEval [6] by as much as 11%.",
+          "source_section": "Section 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "ReAct + Reflexion significantly outperforms ReAct by completing 130 out of 134 tasks using the simple heuristic to detect hallucinations and inefficient planning.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "label": "partially_supported",
+      "claim_summary": "Reflexion agents significantly outperform widely-used decision-making approaches through self-reflection.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We empirically show that Reflexion agents significantly outperform currently widely-used decision-making approaches by utilizing self-reflection.",
+      "evidence_spans": [
+        {
+          "source_text": "More concretely, Reflexion agents improve on decision-making AlfWorld [24] tasks over strong baseline approaches by an absolute 22% in 12 iterative learning steps",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct + Reflexion fails to significantly outperform ReAct.",
+          "source_section": "Figure 6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "We conclude that Reflexion is unable to solve tasks that require a significant amount of diversity and exploration.",
+          "source_section": "Appendix B.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "label": "supported",
+      "claim_summary": "The capacity for self-correction emerges primarily in larger, stronger language models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We found that the ability to specify self-corrections is an emergent quality of stronger, larger models.",
+      "evidence_spans": [
+        {
+          "source_text": "We further investigated the applicability of trial-and-error problem-solving with models of various strengths.",
+          "source_section": "Appendix A",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Baseline 0.26",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Reflexion 0.26",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "CoT (GT) + gpt-4 0.68 0.80",
+          "source_section": "Table 5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
     }
   ],
   "matches": [
     {
       "expected_id": "REFLEX-M01",
-      "actual_index": 9
+      "actual_index": 3
     },
     {
       "expected_id": "REFLEX-M02",
-      "actual_index": 12
+      "actual_index": 9
     },
     {
       "expected_id": "REFLEX-M03",
@@ -248,11 +897,11 @@
     },
     {
       "expected_id": "REFLEX-M05",
-      "actual_index": 20
+      "actual_index": 26
     },
     {
       "expected_id": "REFLEX-M06",
-      "actual_index": 23
+      "actual_index": null
     },
     {
       "expected_id": "REFLEX-M07",
@@ -260,11 +909,11 @@
     },
     {
       "expected_id": "REFLEX-M08",
-      "actual_index": 2
+      "actual_index": 8
     },
     {
       "expected_id": "REFLEX-M09",
-      "actual_index": null
+      "actual_index": 17
     },
     {
       "expected_id": "REFLEX-M11",
@@ -272,11 +921,11 @@
     },
     {
       "expected_id": "REFLEX-M12",
-      "actual_index": 0
+      "actual_index": 7
     },
     {
       "expected_id": "REFLEX-M13",
-      "actual_index": 8
+      "actual_index": 0
     }
   ]
 }

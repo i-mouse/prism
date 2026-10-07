@@ -1471,4 +1471,16 @@ scratch/deleak.
 - Gate fixtures are re-dumped from the first valid de-leaked run; the old
   fixtures are archived.
 
-**Results:** PENDING (PR-B).
+**Results:** PENDING (PR-B live measurement in progress as of 2026-10-06).
+
+## prompt_loader few-shot "note" field bug - 2026-10-06
+
+**Context:** Found during de-leak static verification, `Prism.PythonService/extraction/prompt_loader.py:58` treats any few-shot example with a top-level `"note"` field as negative, showing the model `{"claims": []}` instead of the real answer.
+**Decision:** NOT fixed, deferred to step-8 review. 8 of 9 claim-bearing few-shots in `extract_claims_fewshot.json` have a `"note"` field, so only example #1 ever reaches the model intact. Confirmed pre-existing (same bug on pre-de-leak snapshot, unrelated to de-leak).
+**Consequences:** Likely explains much of the extractor's known weak recall (6 golden claims never extracted; held-out M09/M12 missed).
+
+## reflexion.pdf stuck rows (DB/RabbitMQ publish sequence) - 2026-10-06
+
+**Context:** Found during PR-B live measurement (de-leak): reflexion.pdf uploads got permanently stuck at `file_records.status=InProgress`. Root cause: `SubmitPaperEndPoint` commits the DB row BEFORE publishing `PrismUploaded` to RabbitMQ, as a separate uncommitted step, with no MassTransit outbox configured.
+**Decision:** NOT YET FIXED IN CODE. Data cleanup performed: deleted all reflexion.pdf rows across Postgres (`file_records`, `chat_files`, `prism_documents`) plus 14 orphaned stale Qdrant file_id groups (840 points total). `cot.pdf` and `react.pdf` row counts verified byte-identical before/after. `document_processed_queue` consumer checked and confirmed healthy (1 active consumer).
+**Consequences:** If publish throws, nothing catches it except the generic HTTP handler, nothing marks the row Failed, and nothing sweeps stuck rows. Re-uploading only attaches a new chat via `HandleExistingFileAsync` (never re-publishes), masking the problem across repeated retries instead of surfacing it. Traces back to at least 2026-10-03. Candidate fix for later: wrap DB write + publish in a transactional outbox, or at minimum catch publish failure and mark row Failed. Related to the existing "extraction auto-retry failure state" known gap.
