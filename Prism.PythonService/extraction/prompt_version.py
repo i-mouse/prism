@@ -23,9 +23,12 @@ PROMPT_FILENAMES = (
 # Non-prompt files whose text still reaches the LLM. schemas.py's Field
 # descriptions are sent to the structurer as part of response_schema=ClaimLLM,
 # so editing them changes model input just like editing a prompt file.
+# prompt_loader.py decides which few-shot fields are replayed to the model,
+# so editing it changes model input too.
 # Hashed after the prompt files, in this order.
 EXTRA_HASHED_FILES = (
     Path(__file__).parent / "schemas.py",
+    Path(__file__).parent / "prompt_loader.py",
 )
 
 
