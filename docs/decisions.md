@@ -1506,3 +1506,69 @@ scratch/deleak.
 **Context:** Found during PR-B live measurement (de-leak): reflexion.pdf uploads got permanently stuck at `file_records.status=InProgress`. Root cause: `SubmitPaperEndPoint` commits the DB row BEFORE publishing `PrismUploaded` to RabbitMQ, as a separate uncommitted step, with no MassTransit outbox configured.
 **Decision:** NOT YET FIXED IN CODE. Data cleanup performed: deleted all reflexion.pdf rows across Postgres (`file_records`, `chat_files`, `prism_documents`) plus 14 orphaned stale Qdrant file_id groups (840 points total). `cot.pdf` and `react.pdf` row counts verified byte-identical before/after. `document_processed_queue` consumer checked and confirmed healthy (1 active consumer).
 **Consequences:** If publish throws, nothing catches it except the generic HTTP handler, nothing marks the row Failed, and nothing sweeps stuck rows. Re-uploading only attaches a new chat via `HandleExistingFileAsync` (never re-publishes), masking the problem across repeated retries instead of surfacing it. Traces back to at least 2026-10-03. Candidate fix for later: wrap DB write + publish in a transactional outbox, or at minimum catch publish failure and mark row Failed. Related to the existing "extraction auto-retry failure state" known gap.
+
+## Audit routing: read-only audits in Claude Code plan mode - 2026-10-08
+
+**Context:** Read-only audits were run in Antigravity (AG). AG previously invented a model swap inside an audit.
+**Decision:** Read-only audits now run in Claude Code plan mode instead of AG. AG stays for whole-PDF reads and long document edits.
+**Alternatives:** Keep AG for all audits (rejected, see reasons below).
+**Consequences:** Plan mode enforces read-only at the tool level. The audit task is code reasoning, not long-document reading, so AG's strengths are not needed for it.
+
+## PR-1 result (negative): few-shot loader fix, no coverage gain - 2026-10-08
+
+**Context:** `prompt_loader.py` replayed `{"claims": []}` for any few-shot example with a top-level `"note"` key. The model saw 1 of the 15 example claims. See "prompt_loader few-shot "note" bug" (2026-10-06). PR-1 fixed it and measured 3 golden papers x 5 runs per arm (30 runs, all valid, extractor-only harness).
+**Decision:** Keep the fix as a correctness fix. No coverage gain is claimed.
+**Results:**
+- Pre-registered marks: M1 FAILED (min after 18 vs max before 21), M2 FAILED (grounding-negative FULL mean 8.80 vs 9.60). M3, M4, M5 passed. M6 (held-out) not run; the held-out run was skipped.
+- Golden FULL mean 20.4 -> 20.6. Grounding-negative FULL mean 9.6 -> 8.8.
+- Prompt hash `6bfa9ba9790c` (before arm `166b394de1de`).
+**Consequences:** Draft PR #115. The CI fixture-freshness check is red on the hash mismatch, which is expected. Merge only after Milestone A re-dumps the fixtures.
+
+## Section-by-section extraction: feasibility confirmed, then PARKED - 2026-10-08
+
+**Context:** Idea: extract section by section to reach late-paper claims. Feasibility was confirmed.
+**Decision:** PARKED. Design and build prompt are kept on file. Reopen only if new papers show late-section misses.
+**Alternatives:** Build it now (rejected, see below).
+**Consequences:** Reasons: of the 4 fully missed refusal rows, 3 (COT-M10, COT-M11, COT-M12) sit in sections 1-2, which the extractor already reads; at most 1 row would gain; cost is 3.1x extractor input and 48 calls per run at a 12k max piece size (source: pr2_feasibility_report.md).
+
+## Failure map of the frozen official run - 2026-10-08
+
+**Context:** Read-only audits of the frozen fixtures (score 5/16 refusal, 11/21 positive hits). Failure types: A = claim absent from extraction; B = only part of a compound claim captured; C = extracted claim is narrower, or excluded by the extractor prompt; D = auditor under-scopes or misses a caveat; E = grounding rejects an audit-supported claim.
+**Refusal rows (16):**
+- Refused (5): REFLEX-M08, REFLEX-M12, COT-M02, REACT-M11, REACT-M13. Only REFLEX-M12 was refused by grounding; the other four by label.
+- Wrongly affirmed (4): REFLEX-M09 (D), REFLEX-M13 (C), COT-M08 (D), REACT-M14 (D).
+- Not extracted (7): type A: COT-M07, COT-M10, COT-M11, COT-M12; type B: REFLEX-M11, COT-M09, REACT-M12.
+**Positive rows (21):**
+- Hit (11): REFLEX-M01, M02, M05; COT-M03, M04, M05; REACT-M01, M02, M05, M08, M10.
+- False rejection (1): COT-M01 (E; auditor supported, all quotes failed grounding).
+- Not extracted (8): type A: REFLEX-M03, M06, M07, REACT-M07, M09; type B: COT-M06, REACT-M06; type C: REFLEX-M04.
+- Wrong label (1): REACT-M03 (D; the auditor applied a real Section 3.3 caveat outside the claim's scope).
+**Consequences:** The 7 not-extracted refusal rows cap extraction-only gains at 12/16 (75%), an upper bound. The 4 type C/D refusal rows need auditor-side change.
+
+## Measurement facts from the audits - 2026-10-08
+
+**Context:** Read-only audits of the harness, positive rows and intro-text pattern.
+**Facts:**
+- The extractor harness and the official scorer agree on 36 of 37 rows. The one disagreement is COT-M08 (harness MISS, official extracted; a paraphrase from another passage that the harness cannot credit; MISS in 10 of 10 runs).
+- The harness measures extraction only. It is an upper bound on the refusal number, not a predictor of it (it cannot see label or grounding). Use it to catch extraction regressions, not to forecast the 0.30 gate.
+- 7 of the 11 positive hits are fragile. Flipping any 2 breaches the floor of 10.
+- Intro-text pattern: 7 of 66 auditor-supported claims cite the intro or abstract; 1 cites intro only (REFLEX claim 0, mapped to REFLEX-M13, wrongly affirmed). The pattern is not systematic.
+**Consequences:** Before any change batch, re-score all 21 positives before and after.
+
+## Golden label quality - 2026-10-08
+
+**Context:** Read-only audit of `matrix_eval.json` (37 rows).
+**Findings:** No duplicate keys. 7 ellipsis rows, all segments located. REFLEX-M13 has a claim/notes mismatch. REFLEX-M09, COT-M04, REACT-M10 and REACT-M12 are flagged unsure. REFLEX-M04 is excluded by the extractor prompt by design. IDs REFLEX-M10 and REACT-M04 are absent from the sequence.
+**Decision:** No label edits now. Any change must be a blind, documented re-check with old and new numbers reported side by side.
+**Consequences:** Labels and the 5/16 baseline stay as they are.
+
+## Plan and stop rule - 2026-10-08
+
+**Status: PROPOSED, pending Nitin's confirmation.**
+**Context:** The golden 16 refusal rows are near-exhausted as a measuring instrument.
+**Decision:**
+- The 60% target is judged on new hand-labelled papers (2-3 dev, 1 new sealed held-out; single-sentence rows; labelled before any run), not on the same 16 rows.
+- Order: (1) label the papers; (2) decide a variance-aware eval before any batch; (3) auditor design review (type D; REACT-M03 shows the auditor also under-scopes); (4) one change batch with pre-registered marks; (5) Milestone A once.
+- No paid run without `--estimate`, written marks and a rupee cap.
+- Stop rule: dev refusal under 45% after 4 experiments means ship with honest numbers and the negative-results writeup.
+**Consequences:** This reorders the earlier rule "no extractor changes before step 8" (Direction entry, 2026-10-07). That item is PROPOSED, pending Nitin's confirmation, and the earlier entry is unchanged.
