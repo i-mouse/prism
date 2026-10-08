@@ -1,4 +1,4 @@
-# PRISM STATUS - 2026-10-07 (single source for new chats)
+# PRISM STATUS - 2026-10-08 (single source for new chats)
 
 ## Repo state
 - PR-A (de-leak) merged, SHA 5091b60. Prompt hash 0bcf9d44e619 -> cb3272cce551.
@@ -13,6 +13,9 @@
 
 ## Eval
 ### Current numbers (frozen official run, prompt hash cb3272cc fixtures)
+- Goal: raise refusal from 5/16 (31%, gate 0.30, passes by one row) toward 60% as the stretch goal, measured on NEW hand-labelled papers, not by reaching 10/16 on the same golden 16 rows (10/16 is 62.5%). Nothing ships before that unless the stop rule fires; then ship with honest numbers.
+- Stop rule: dev refusal under 45% after 4 experiments means ship with honest numbers.
+- Ceiling estimates on the golden 16 (not measured): extraction alone about 10/16 (62.5%); realistic with clean fixes about 9/16 (56%). The earlier claim that the auditor is the main lever is withdrawn (see decisions.md).
 - Refusal 5/16 (31%), gate 0.30, passes by one row.
 - Positives 11/21, floor 10, margin 1; 7 of 11 hits are fragile (REFLEX-M01, REFLEX-M02, REFLEX-M05, COT-M04, COT-M05, REACT-M01, REACT-M10); flipping any 2 breaches the floor. False rejection 1. Coverage 37/37.
 - Held-out: refusal 1/2, positive 7/10. Held-out paper used 6 times; only 2 refusal rows.
@@ -58,7 +61,7 @@
 - Steps 0-3 DONE.
 - 5 PR-A DONE, PR-B measurement done, PR-B merged (#113, e0dd56a).
 - 4 Ship (README with golden + held-out numbers, walkthrough video, blog post) is BLOCKED by the 60% decision.
-- Steps 5-8 unchanged, except the proposed reorder in docs/decisions.md ("Plan and stop rule - 2026-10-08", PROPOSED, pending Nitin's confirmation).
+- Steps 5-8 unchanged, except the reorder in docs/decisions.md ("Plan and stop rule - 2026-10-08", CONFIRMED).
 - Step order (earlier version, still on file): (1) docs sync; (2) read-only pipeline audit (AG) listing redundant/duplicated stages, per-stage value and token cost; (3) caps-and-429; (4) variance baseline, 3-5 repeats on main; (5) grow the eval by hand: 2-3 new papers, a fresh sealed held-out paper, more grounding-negative rows; (6) fix one thing at a time (prompt_loader few-shot bug: fixed in draft #115, see In-flight work), harness before/after, keep a change only if the gain is larger than the noise range.
 
 ## In-flight work
@@ -66,11 +69,13 @@
 - PR-2 (section-by-section extraction) is parked. Design and build prompt kept on file.
 
 ## Next actions (in order)
-1. Label new papers.
-2. Decide a variance-aware eval.
-3. Auditor design review.
-4. One change batch.
+1. Label 2-3 new dev papers and 1 new sealed held-out (single-sentence rows, blind, before any run).
+2. Write marks and a rupee cap.
+3. Run the unchanged pipeline once on the new papers to see which stage fails more.
+4. Fix that stage (extractor first if forced), one change batch = one experiment.
 5. Milestone A, once.
+
+Note: The auditor design review and the extractor design review are done (decisions.md 2026-10-08).
 
 ## Evidence locations
 - Prism.PythonService/scratch/audits/
@@ -83,9 +88,11 @@
 - REFLEX-M09 label question (flagged unsure).
 - COT-M01 false rejection may already be fixed by Stage-1 normalisation (UNVERIFIED: frozen fixtures predate it; held-out flips do not apply). Do not count it as fixed or as a target until re-measured.
 - Stage-2 model route logging was added in PR-1 (draft #115, unmerged); it is not present in the existing golden logs or fixtures.
+- COT-M08 pairing is doubtful (automatic carry-over, not hand adjudicated); needs a blind human re-adjudication. If confirmed, wrongly affirmed 4 -> 3 and not extracted 7 -> 8, refusal stays 5/16.
+- No rupee cap set for the first paid baseline.
 
 ## Rules
-- Never tune prompts to move the number. No extractor/auditor changes before step 8. (under review: reorder PROPOSED in decisions.md 2026-10-08, pending owner confirmation)
+- Never tune prompts to move the number. No extractor/auditor changes until the new dev papers are labelled and the unchanged baseline run is done (reorder CONFIRMED in decisions.md 2026-10-08).
 - Held-out text never goes in chat or committed notes; counts only.
 - PRISM_STATUS.md is tracked in git (since 2026-10-08).
 - Never merge past red CI. Never lower a threshold to pass.
