@@ -48,9 +48,9 @@
 - matrix_runner --source db picks the latest run, orders by created_at, and always calls the LLM matcher. Not usable for pinned scoring.
 - Aspire picks new host ports each restart; .env PRISM_DB_PORT only affects standalone scripts.
 - 2 react.pdf file rows exist (not 4); non-canonical 53e2a6c0 left alone.
-- Known limitation (prompt_loader bug): `Prism.PythonService/extraction/prompt_loader.py:58` treats any few-shot example with a top-level "note" field as negative. Deferred to step 8 review.
+- prompt_loader few-shot bug is fixed in PR-1 draft #115 (hash 6bfa9ba9790c). Pre-registered marks M1 and M2 failed, so no coverage gain is claimed. Not merged until Milestone A re-dumps fixtures.
 - Known limitation (reflexion stuck-row bug): Uploads got permanently stuck at `file_records.status=InProgress` because `SubmitPaperEndPoint` commits the DB row BEFORE publishing.
-- No text normalization before RapidFuzz; PDFs read with plain `page.get_text()`. Parse check: OK-WITH-ISSUES.
+- Stage-1 text normalisation merged 2026-10-05 (flag GROUNDING_NORMALIZE, default on).
 - Rubric clarified: partially_supported for a wording gap only if it makes the claim STRONGER than the evidence.
 - Groq primary auditor fails at 512-token cap (json_validate_failed) + rate limits; fallback carries all audits.
 
@@ -59,7 +59,7 @@
 - 5 PR-A DONE, PR-B measurement done, PR-B merged (#113, e0dd56a).
 - 4 Ship (README with golden + held-out numbers, walkthrough video, blog post) is BLOCKED by the 60% decision.
 - Steps 5-8 unchanged, except the proposed reorder in docs/decisions.md ("Plan and stop rule - 2026-10-08", PROPOSED, pending Nitin's confirmation).
-- Step order (earlier version, still on file): (1) docs sync; (2) read-only pipeline audit (AG) listing redundant/duplicated stages, per-stage value and token cost; (3) caps-and-429; (4) variance baseline, 3-5 repeats on main; (5) grow the eval by hand: 2-3 new papers, a fresh sealed held-out paper, more grounding-negative rows; (6) fix one thing at a time (prompt_loader "note" bug first), harness before/after, keep a change only if the gain is larger than the noise range.
+- Step order (earlier version, still on file): (1) docs sync; (2) read-only pipeline audit (AG) listing redundant/duplicated stages, per-stage value and token cost; (3) caps-and-429; (4) variance baseline, 3-5 repeats on main; (5) grow the eval by hand: 2-3 new papers, a fresh sealed held-out paper, more grounding-negative rows; (6) fix one thing at a time (prompt_loader few-shot bug: fixed in draft #115, see In-flight work), harness before/after, keep a change only if the gain is larger than the noise range.
 
 ## In-flight work
 - PR-1 draft #115 (few-shot loader fix, prompt hash 6bfa9ba9790c). CI fixture-freshness is red on the hash mismatch; expected. Merge only after Milestone A re-dumps the fixtures.
@@ -81,15 +81,21 @@
 ## Known open items
 - REFLEX-M13 label question (claim/notes mismatch).
 - REFLEX-M09 label question (flagged unsure).
-- COT-M01 (false rejection) may already be fixed by Stage-1 normalisation. Unverified.
-- Stage-2 route (answering model) is not logged.
+- COT-M01 false rejection may already be fixed by Stage-1 normalisation (UNVERIFIED: frozen fixtures predate it; held-out flips do not apply). Do not count it as fixed or as a target until re-measured.
+- Stage-2 model route logging was added in PR-1 (draft #115, unmerged); it is not present in the existing golden logs or fixtures.
 
 ## Rules
-- Never tune prompts to move the number. No extractor/auditor changes before step 8.
+- Never tune prompts to move the number. No extractor/auditor changes before step 8. (under review: reorder PROPOSED in decisions.md 2026-10-08, pending owner confirmation)
 - Held-out text never goes in chat or committed notes; counts only.
-- PRISM_STATUS.md stays uncommitted.
+- PRISM_STATUS.md is tracked in git (since 2026-10-08).
 - Never merge past red CI. Never lower a threshold to pass.
 - CC never runs git; use `uv run python` from Prism.PythonService.
 - AG has made wrong claims (invented a Claude model swap): verify its INFERRED rows. AG audits are read-only; auto-execution off.
 - Planning/review in claude.ai; in-repo coding in CC; long reads in AG.
 - Casual, easy English, short. No analogies. Simple list style.
+
+## Infra facts
+- document_extractors.Fields is jsonb in Postgres but plain string in C#.
+- SignalR broadcast is scoped to chat-{chatId} groups; DocumentProcessed event is lost on reconnects; /files endpoint is the fallback.
+- LangGraph checkpointer race on startup throws DuplicateObject/UniqueViolation (cosmetic).
+- Domain seeded via EF Core HasData with fixed Guid 11111111-1111-1111-1111-111111111111.
