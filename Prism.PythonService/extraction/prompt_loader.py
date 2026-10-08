@@ -47,29 +47,15 @@ def load_fewshot_examples(prompt_kind: str) -> list[dict]:
     return json.loads(fewshot_path.read_text(encoding="utf-8"))
 
 
-def _is_negative_example(example: dict) -> bool:
-    """Returns True if a claims example is the negative (do-not-extract) case.
-
-    Detected by example_type, a top-level "note" field, or a "note" field
-    nested inside "output" in place of a real claim payload.
-    """
-    if example.get("example_type") == "negative_do_not_extract":
-        return True
-    if "note" in example:
-        return True
-    output = example.get("output")
-    if isinstance(output, dict) and "note" in output and "claim_text_verbatim" not in output:
-        return True
-    return False
-
-
 def build_gemini_messages_for_extractor(paper_text: str) -> list[dict]:
     """Assembles the full Gemini message list for the extractor call (Call #2).
 
     Order: system prompt, then for each few-shot example a user message
-    (input_excerpt) followed by a model message (its output as a JSON
-    string - an empty claims array for the negative example), then a
-    final user message containing the paper text to extract from.
+    (input_excerpt) followed by a model message (that example's own output
+    from the file, as a JSON string - do-not-extract examples already hold
+    an empty claims array), then a final user message containing the paper
+    text to extract from. An example's top-level "note" and "example_type"
+    are documentation for the prompt file's readers and are never sent.
     """
     messages: list[dict] = [
         {"role": "system", "content": load_system_prompt("claims")},
@@ -77,11 +63,7 @@ def build_gemini_messages_for_extractor(paper_text: str) -> list[dict]:
 
     for example in load_fewshot_examples("claims"):
         messages.append({"role": "user", "content": example["input_excerpt"]})
-        if _is_negative_example(example):
-            model_content = json.dumps({"claims": []})
-        else:
-            model_content = json.dumps(example["output"])
-        messages.append({"role": "model", "content": model_content})
+        messages.append({"role": "model", "content": json.dumps(example["output"])})
 
     messages.append({"role": "user", "content": paper_text})
     return messages

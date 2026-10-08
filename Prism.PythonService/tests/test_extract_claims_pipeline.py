@@ -41,7 +41,7 @@ def test_extract_claims_runs_extractor_audit_structure_pipeline(monkeypatch):
     max_concurrent = 0
     calls = {"json": 0, "freetext": 0, "structured": 0}
 
-    async def fake_call_gemini_json(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model):
+    async def fake_call_gemini_json(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model, call_info=None):
         calls["json"] += 1
         assert log_subdir == "extraction"
         return EXTRACTOR_RESULT
