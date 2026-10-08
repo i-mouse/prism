@@ -13,6 +13,9 @@
 
 ## Eval
 ### Current numbers (frozen official run, prompt hash cb3272cc fixtures)
+- Goal: raise refusal from 5/16 (31%, gate 0.30, passes by one row) toward 60% as the stretch goal, measured on NEW hand-labelled papers, not by reaching 10/16 on the same golden 16 rows (10/16 is 62.5%). Nothing ships before that unless the stop rule fires; then ship with honest numbers.
+- Stop rule (proposed): dev refusal under 45% after 4 experiments means ship with honest numbers.
+- Ceilings on the golden 16 (estimates from the 2026-10-08 audits): extraction alone up to 12/16 (75%); realistic with clean fixes about 9/16 (56%). The auditor is the main lever because only about 55% of extracted refusal rows are refused.
 - Refusal 5/16 (31%), gate 0.30, passes by one row.
 - Positives 11/21, floor 10, margin 1; 7 of 11 hits are fragile (REFLEX-M01, REFLEX-M02, REFLEX-M05, COT-M04, COT-M05, REACT-M01, REACT-M10); flipping any 2 breaches the floor. False rejection 1. Coverage 37/37.
 - Held-out: refusal 1/2, positive 7/10. Held-out paper used 6 times; only 2 refusal rows.
@@ -69,7 +72,7 @@
 1. Label new papers.
 2. Decide a variance-aware eval.
 3. Auditor design review.
-4. One change batch.
+4. One change batch = one experiment. Up to 4 experiments are allowed under the stop rule; Milestone A runs once, after the last accepted change.
 5. Milestone A, once.
 
 ## Evidence locations

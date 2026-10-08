@@ -1572,3 +1572,14 @@ scratch/deleak.
 - No paid run without `--estimate`, written marks and a rupee cap.
 - Stop rule: dev refusal under 45% after 4 experiments means ship with honest numbers and the negative-results writeup.
 **Consequences:** This reorders the earlier rule "no extractor changes before step 8" (Direction entry, 2026-10-07). That item is PROPOSED, pending Nitin's confirmation, and the earlier entry is unchanged.
+
+## Clarifications to the 2026-10-08 plan - 2026-10-08
+CONFIRMED wording fixes:
+- The goal is a stretch goal of 60% measured on NEW hand-labelled papers. 10/16 on the golden 16 is 62.5% and is not the target.
+- Nothing ships before the goal unless the stop rule fires; then ship with honest numbers.
+- One change batch = one experiment; up to 4 experiments are allowed under the stop rule; Milestone A runs once, after the last accepted change.
+- Ceilings on the golden 16 are estimates: extraction alone up to 12/16 (75%); realistic with clean fixes about 9/16 (56%); the auditor is the main lever.
+
+PROPOSED, pending owner confirmation:
+- (i) measure the dev baseline with repeats on new papers before writing any target; (ii) a change is accepted only if its gain beats baseline run-to-run noise, positives stay at or above baseline minus noise, and false rejections do not rise; (iii) the stop rule fires on whichever comes first: 4 experiments with no gain beyond noise, the total rupee ceiling, or 60% confirmed once on the sealed held-out; (iv) the 45% line is read relative to the new dev baseline once it exists;
+- note that 95% intervals on small sets are wide (5/16 is about 14% to 56%), which is why (i) and (ii) are proposed.
