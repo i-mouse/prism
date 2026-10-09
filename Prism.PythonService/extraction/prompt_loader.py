@@ -118,6 +118,68 @@ def build_gemini_messages_for_audit(
     ]
 
 
+def _read_scoped_prompt(filename: str) -> str:
+    return _read_prompt_file(f"scoped/{filename}")
+
+
+def build_messages_for_inventory(paper_text: str) -> list[dict]:
+    """Scoped mode, step 1: per-paper inventory call (structured, PaperInventory)."""
+    return [
+        {"role": "system", "content": _read_scoped_prompt("inventory_system.md")},
+        {"role": "user", "content": f"PAPER TEXT:\n{paper_text}"},
+    ]
+
+
+def format_inventory_lines(items) -> str:
+    """One line per inventory item: 'I3 | name | kind | group-or-none'."""
+    return "\n".join(f"{i.id} | {i.name} | {i.kind} | {i.group or 'none'}" for i in items)
+
+
+def build_messages_for_scope(claim_text_verbatim: str, claim_summary: str, inventory_items) -> list[dict]:
+    """Scoped mode, step 2: per-claim scope call (structured, ClaimScope).
+
+    Takes NO paper text by design - only the claim and the inventory names.
+    """
+    user_content = (
+        "INVENTORY:\n"
+        f"{format_inventory_lines(inventory_items)}\n\n"
+        "CLAIM:\n"
+        f"CLAIM_TEXT_VERBATIM: {claim_text_verbatim}\n"
+        f"CLAIM_SUMMARY: {claim_summary}"
+    )
+    return [
+        {"role": "system", "content": _read_scoped_prompt("scope_system.md")},
+        {"role": "user", "content": user_content},
+    ]
+
+
+def format_scope_lines(scope_items) -> str:
+    """One line per scope item: 'S2 | label | kind | basis'."""
+    return "\n".join(f"{s.scope_id} | {s.label} | {s.kind} | {s.basis}" for s in scope_items)
+
+
+def build_messages_for_scoped_audit(
+    paper_text: str,
+    claim_text_verbatim: str,
+    claim_summary: str,
+    scope_items,
+) -> list[dict]:
+    """Scoped mode, step 3: free-text audit (no response_schema) over the paper,
+    the claim, and the fixed scope list."""
+    user_content = (
+        f"PAPER TEXT:\n{paper_text}\n\n"
+        "CLAIM TO AUDIT:\n"
+        f"CLAIM_TEXT_VERBATIM: {claim_text_verbatim}\n"
+        f"CLAIM_SUMMARY: {claim_summary}\n\n"
+        "FIXED SCOPE LIST:\n"
+        f"{format_scope_lines(scope_items)}"
+    )
+    return [
+        {"role": "system", "content": _read_scoped_prompt("audit_scoped_system.md")},
+        {"role": "user", "content": user_content},
+    ]
+
+
 def _format_span_audit_user_message(claim_text: str, claim_label: str, quote: str, context: str) -> str:
     """Formats the claim/label/quote/context envelope shared by the real
     span-audit call and its few-shot examples, so the model sees an

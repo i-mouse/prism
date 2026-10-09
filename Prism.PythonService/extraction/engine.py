@@ -17,7 +17,11 @@ extract_claims (Prompt 2) is a sequential three-call pipeline:
     claims pipeline that uses response_schema.
 """
 import asyncio
+import contextvars
+import hashlib
 import json
+import re
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
@@ -28,14 +32,19 @@ from opentelemetry import trace
 from pydantic import BaseModel
 
 from config import settings
+from extraction import scoped_audit
 from extraction.prompt_loader import (
     build_gemini_messages_for_audit,
     build_gemini_messages_for_extractor,
     build_gemini_messages_for_metadata,
     build_gemini_messages_for_structure,
+    build_messages_for_inventory,
+    build_messages_for_scope,
+    build_messages_for_scoped_audit,
 )
 from extraction.prompt_version import get_prompt_version
-from extraction.schemas import ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
+from extraction.schemas import ClaimLabel, ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
+from extraction.scoped_schemas import ClaimScope, PaperInventory, ScopeItem
 
 tracer = trace.get_tracer(__name__)
 
@@ -135,6 +144,31 @@ def _build_client() -> genai.Client:
     return genai.Client(api_key=settings.ai_api_key)
 
 
+# Optional per-task token sink. Unset (None) in the legacy pipeline, so nothing
+# changes there; the scoped path and the Experiment 1 replay set it to collect
+# per-call usage_metadata.
+_USAGE_SINK: contextvars.ContextVar[Optional[list]] = contextvars.ContextVar("usage_sink", default=None)
+
+
+def _record_usage(response, config: types.GenerateContentConfig, requested_model: str, used_model: str) -> None:
+    sink = _USAGE_SINK.get()
+    if sink is None:
+        return
+    um = getattr(response, "usage_metadata", None)
+    schema = getattr(config, "response_schema", None)
+    sink.append(
+        {
+            "call": getattr(schema, "__name__", None) or "freetext",
+            "requested_model": requested_model,
+            "used_model": used_model,
+            "fell_back": used_model != requested_model,
+            "input_tokens": getattr(um, "prompt_token_count", None),
+            "output_tokens": getattr(um, "candidates_token_count", None),
+            "thinking_tokens": getattr(um, "thoughts_token_count", None),
+        }
+    )
+
+
 async def _generate_with_fallback(
     client: genai.Client,
     contents: list[types.Content],
@@ -151,6 +185,7 @@ async def _generate_with_fallback(
     """
     try:
         response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
+        _record_usage(response, config, model_name, model_name)
         return response, model_name
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
@@ -158,6 +193,7 @@ async def _generate_with_fallback(
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
             response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
+            _record_usage(response, config, model_name, fallback_model)
             return response, fallback_model
         except Exception as fallback_exc:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} fallback model={fallback_model} failed: {fallback_exc!r}")
@@ -334,6 +370,201 @@ async def _call_gemini_freetext(
     return raw_text
 
 
+# ---------------------------------------------------------------- scoped mode
+_VERDICT_LINE_RE = re.compile(r"^\W*VERDICT:\s*\W*(not_supported|partially_supported|supported)\b", re.IGNORECASE | re.MULTILINE)
+
+
+def parse_verdict_line(audit_text: str) -> Optional[str]:
+    """Last VERDICT: line of a free-text audit, or None if unreadable."""
+    found = _VERDICT_LINE_RE.findall(audit_text or "")
+    return found[-1].lower() if found else None
+
+
+def _claim_key(claim_text: str) -> str:
+    return hashlib.sha256(" ".join(claim_text.split()).lower().encode("utf-8")).hexdigest()[:16]
+
+
+async def get_inventory(paper_text: str, chat_id: str, correlation_id: str | None) -> tuple[PaperInventory, str]:
+    """Scoped step 1: per-paper inventory (structured), cached by paper content
+    hash + scoped prompt version under LOGS_DIR/inventory/. Returns
+    (inventory, inventory_hash)."""
+    cached = scoped_audit.load_cached_inventory(LOGS_DIR, paper_text)
+    if cached is not None:
+        return cached, scoped_audit.inventory_hash(cached)
+    inventory = await _call_gemini_structured(
+        messages=build_messages_for_inventory(paper_text),
+        response_schema=PaperInventory,
+        chat_id=chat_id,
+        correlation_id=correlation_id,
+        log_subdir="inventory_raw",
+        model_name=settings.llm_claim_audit_model,
+        fallback_model=settings.llm_claim_audit_fallback_model,
+    )
+    scoped_audit.save_inventory(LOGS_DIR, paper_text, inventory, settings.llm_claim_audit_model)
+    return inventory, scoped_audit.inventory_hash(inventory)
+
+
+class ScopeStepError(Exception):
+    """The scope step failed or returned no items; the claim falls back to the legacy audit."""
+
+
+@dataclass
+class ScopedAuditResult:
+    audit_text: str
+    scope_items: list[ScopeItem]
+    scope_truncated: bool
+    parsed: scoped_audit.ParsedChecks
+    usage: list[dict] = field(default_factory=list)
+
+
+async def run_scoped_audit(
+    paper_text: str,
+    claim_text_verbatim: str,
+    claim_summary: str,
+    inventory: PaperInventory,
+    chat_id: str,
+    correlation_id: str | None,
+) -> ScopedAuditResult:
+    """Scoped steps 2 and 3 for one claim.
+
+    Step 2 (scope) is a structured call that sees the claim and the inventory
+    only - never the paper. Step 3 is the free-text audit (no response_schema)
+    over the paper, the claim and the fixed scope list. Raises ScopeStepError if
+    the scope step fails or is empty (caller falls back to legacy); audit-call
+    failures propagate as in legacy mode.
+    """
+    token = _USAGE_SINK.set([])
+    try:
+        try:
+            scope: ClaimScope = await _call_gemini_structured(
+                messages=build_messages_for_scope(claim_text_verbatim, claim_summary, inventory.items),
+                response_schema=ClaimScope,
+                chat_id=chat_id,
+                correlation_id=correlation_id,
+                log_subdir="scope",
+                model_name=settings.llm_claim_audit_model,
+                fallback_model=settings.llm_claim_audit_fallback_model,
+            )
+            items, truncated = scoped_audit.truncate_scope(list(scope.items))
+            if not items:
+                raise ValueError("scope step returned no items")
+        except Exception as exc:
+            raise ScopeStepError(repr(exc)) from exc
+        # Ids are re-issued in order so the fixed list is always S1..Sn, unique.
+        items = [i.model_copy(update={"scope_id": f"S{n}"}) for n, i in enumerate(items, start=1)]
+        audit_text = await _call_gemini_freetext(
+            messages=build_messages_for_scoped_audit(paper_text, claim_text_verbatim, claim_summary, items),
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            log_subdir="audit_scoped_raw",
+            model_name=settings.llm_claim_audit_model,
+            fallback_model=settings.llm_claim_audit_fallback_model,
+        )
+        parsed = scoped_audit.parse_checks(audit_text, [i.scope_id for i in items])
+        return ScopedAuditResult(audit_text, items, truncated, parsed, list(_USAGE_SINK.get() or []))
+    finally:
+        _USAGE_SINK.reset(token)
+
+
+def finish_scoped_audit(
+    res: ScopedAuditResult,
+    model_verdict: Optional[str],
+    paper_text: str,
+    claim_text_verbatim: str,
+    inventory_hash: str,
+    chat_id: str,
+    correlation_id: str | None,
+    claim_number: int,
+    extra_flags: Optional[list[str]] = None,
+) -> scoped_audit.Aggregation:
+    """Aggregates (lower-only) and writes the audit-request log. The log holds
+    hashes, the claim text, the scope list, raw CHECK lines, flags and token
+    counts - never the paper text."""
+    agg = scoped_audit.aggregate(model_verdict, [i.scope_id for i in res.scope_items], res.parsed, paper_text)
+    flags = list(agg.flags) + list(extra_flags or [])
+    if res.scope_truncated:
+        flags.append("scope_truncated")
+        print(f"[scoped] chat_id={chat_id} claim={claim_number} scope truncated to {len(res.scope_items)} items")
+    if agg.aggregation_skipped:
+        print(f"[scoped] chat_id={chat_id} claim={claim_number} aggregation_skipped flags={flags}")
+    scoped_audit.write_scoped_audit_log(
+        LOGS_DIR,
+        chat_id,
+        correlation_id,
+        {
+            "chat_id": chat_id,
+            "correlation_id": correlation_id,
+            "claim_number": claim_number,
+            "claim_key": _claim_key(claim_text_verbatim),
+            "claim_text": claim_text_verbatim,
+            "prompt_version": get_prompt_version(),
+            "scoped_prompt_version": scoped_audit.get_scoped_prompt_version(),
+            "inventory_hash": inventory_hash,
+            "model": settings.llm_claim_audit_model,
+            "scope": [i.model_dump() for i in res.scope_items],
+            "scope_truncated": res.scope_truncated,
+            "check_lines": res.parsed.raw_lines,
+            "parse_flags": flags,
+            "model_verdict": agg.model_verdict,
+            "final_verdict": agg.final,
+            "lowered": agg.lowered,
+            "trigger_id": agg.trigger_id,
+            "trigger_quote": agg.trigger_quote,
+            "dropped_ungrounded": agg.dropped_ungrounded,
+            "aggregation_skipped": agg.aggregation_skipped,
+            "calls": res.usage,
+        },
+    )
+    return agg
+
+
+async def _audit_and_structure_claim_scoped(
+    paper_text: str,
+    claim: dict,
+    inventory: PaperInventory,
+    inventory_hash: str,
+    chat_id: str,
+    correlation_id: str | None,
+    claim_number: int,
+) -> ClaimLLM:
+    """Scoped pipeline path: scope -> scoped audit -> structurer (unchanged) ->
+    lower-only aggregation. Called inside the claim semaphore."""
+    claim_text_verbatim = claim["claim_text_verbatim"]
+    claim_summary = claim["claim_summary"]
+    with tracer.start_as_current_span("auditor") as span:
+        span.set_attribute("correlation_id", correlation_id or "")
+        span.set_attribute("chat_id", chat_id)
+        span.set_attribute("claim_number", claim_number)
+        res = await run_scoped_audit(paper_text, claim_text_verbatim, claim_summary, inventory, chat_id, correlation_id)
+
+    with tracer.start_as_current_span("structurer") as span:
+        span.set_attribute("correlation_id", correlation_id or "")
+        span.set_attribute("chat_id", chat_id)
+        span.set_attribute("claim_number", claim_number)
+        structured = await _call_gemini_structured(
+            messages=build_gemini_messages_for_structure(claim_text_verbatim, claim_summary, res.audit_text),
+            response_schema=ClaimLLM,
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            log_subdir="structure",
+            model_name=settings.llm_claim_audit_model,
+            fallback_model=settings.llm_claim_audit_fallback_model,
+        )
+
+    extra = []
+    if parse_verdict_line(res.audit_text) != structured.label.value:
+        extra.append("verdict_mismatch_structurer")
+    agg = finish_scoped_audit(
+        res, structured.label.value, paper_text, claim_text_verbatim, inventory_hash,
+        chat_id, correlation_id, claim_number, extra_flags=extra,
+    )
+    if not agg.lowered:
+        return structured
+    # Code lowered the verdict. The label changes; evidence_spans are NOT touched.
+    # The triggering quote and check id are in the scoped audit log only.
+    return structured.model_copy(update={"label": ClaimLabel.PARTIALLY_SUPPORTED})
+
+
 async def _audit_and_structure_claim(
     semaphore: asyncio.Semaphore,
     paper_text: str,
@@ -343,6 +574,8 @@ async def _audit_and_structure_claim(
     claim_number: int,
     total_claims: int,
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
+    inventory: Optional[PaperInventory] = None,
+    inventory_hash: Optional[str] = None,
 ) -> ClaimLLM:
     """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
 
@@ -355,6 +588,15 @@ async def _audit_and_structure_claim(
     claim_summary = claim["claim_summary"]
 
     async with semaphore:
+        if inventory is not None:  # AUDIT_MODE=scoped
+            try:
+                return await _audit_and_structure_claim_scoped(
+                    paper_text, claim, inventory, inventory_hash or "", chat_id, correlation_id, claim_number
+                )
+            except ScopeStepError as exc:
+                # Scope step failed or returned nothing: audit this claim the legacy way.
+                print(f"[scoped] chat_id={chat_id} claim={claim_number} scoped path failed ({exc!r}); falling back to legacy audit")
+
         with tracer.start_as_current_span("auditor") as span:
             span.set_attribute("correlation_id", correlation_id or "")
             span.set_attribute("chat_id", chat_id)
@@ -444,12 +686,21 @@ async def extract_claims(
         finally:
             await _report_claim_done()
 
+    inventory: Optional[PaperInventory] = None
+    inventory_hash: Optional[str] = None
+    if settings.audit_mode == "scoped":
+        try:
+            inventory, inventory_hash = await get_inventory(paper_text, chat_id, correlation_id)
+        except Exception as exc:
+            print(f"[scoped] chat_id={chat_id} correlation_id={correlation_id} inventory failed ({exc!r}); auditing legacy")
+
     semaphore = asyncio.Semaphore(AUDIT_STRUCTURE_CONCURRENCY)
     results = await asyncio.gather(
         *(
             _audit_wrapper(
                 semaphore, paper_text, claim, chat_id, correlation_id,
                 claim_number=i + 1, total_claims=total_claims, on_detail=None,
+                inventory=inventory, inventory_hash=inventory_hash,
             )
             for i, claim in enumerate(claims)
         ),

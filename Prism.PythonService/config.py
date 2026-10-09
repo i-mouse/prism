@@ -11,6 +11,8 @@ prism_db_host); the two Aspire-style connection strings use an explicit
 validation_alias because their names ("ConnectionStrings__messaging") don't
 map onto a Python identifier.
 """
+from typing import Literal
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -56,6 +58,11 @@ class PrismSettings(BaseSettings):
     llm_grounding_fallback_model: str
     # Stage-1 RapidFuzz text normalisation (extraction/grounding.py normalize_for_match).
     grounding_normalize: bool = True
+
+    # Claim auditor mode (extraction/engine.py). "legacy" = the original free-text
+    # auditor + structurer, byte-identical. "scoped" = inventory + scope + audit
+    # with code aggregation (extraction/scoped_audit.py). Experiment 1.
+    audit_mode: Literal["legacy", "scoped"] = "legacy"
 
     # Extraction (Prompt 1 metadata + Prompt 2 extractor, extraction/engine.py)
     llm_extraction_fallback_model: str
