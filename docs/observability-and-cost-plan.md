@@ -34,7 +34,7 @@ decommissioned — 2026-09-28"). That splits the work cleanly:
 | 5 Guards | No | Ready (golden page counts measured 2026-09-29) |
 | 6 Demo mode | No | Blocked (PR 6 must not start until log hygiene issues are closed in PR 4) |
 | 7 Local alerts | No | Ready |
-| 8 MCP | No (local only) | Gated — see `docs/audit/mcp_readiness.md` |
+| 8 MCP | No (local only) | Gated — see `(archived audit, see git history)` |
 
 None of the eight steps needs a subscription; the cloud alerts block in Section 5 is deferred. Being offline blocks very little of this.
 
@@ -245,7 +245,7 @@ A failed run must stop reporting itself as a completed one.
 
 * **Done when:** not before the REST API readiness blocker, the extractor
   `by_omission` gap, and the proof pack are all closed. See
-  `docs/audit/mcp_readiness.md` (standing recommendation: do not build now) and
+  `(archived audit, see git history)` (standing recommendation: do not build now) and
   `docs/mcp-integration-plan.md` (scope and tenancy, design intent only).
 * **Eval impact:** none - read-only tools over already-audited data.
 * **Status:** [ ] gated
@@ -332,4 +332,4 @@ Local rows: fill in during PR 6.
 | 5 | Guards | Not started | — | 2026-09-28 |
 | 6 | Demo mode | Not started | — | 2026-09-28 |
 | 7 | Local alerts | Not started | — | 2026-09-28 |
-| 8 | MCP | Gated — see `docs/audit/mcp_readiness.md` | — | 2026-09-28 |
+| 8 | MCP | Gated — see `(archived audit, see git history)` | — | 2026-09-28 |

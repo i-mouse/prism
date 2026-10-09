@@ -35,7 +35,7 @@
   }
 }
 
-/* Restyle signature gradient (PRISM_DESIGN_SYSTEM.md §1). Used on the
+/* Restyle signature gradient (docs/design/PRISM_DESIGN_SYSTEM.md §1). Used on the
    audit summary number and hero-style headline moments. */
 .gradient-brand {
   background: linear-gradient(

@@ -6,7 +6,7 @@ query to it; query_paper_chunks scopes the Qdrant search to points whose
 payload.file_id matches. A query that legitimately finds nothing returns an
 empty list, which the agent's check_empty node turns into a refusal rather
 than a silent wrong answer (see PR C2, fix/chat-retrieval-refusal, and
-docs/audit/ui_chat_audit_2026-09-08.md for why the previous
+(archived audit, see git history) for why the previous
 fallback-to-everything behavior made refusal unreachable). A genuine
 retrieval failure (DB/Qdrant unreachable, query error) is a different case
 and must not collapse into that same empty list - it raises RetrievalError
@@ -292,7 +292,7 @@ async def get_total_claim_count(active_file_id: str) -> int:
     """Non-tool helper used directly by the agent graph (like
     query_paper_chunks_scored) to fetch the paper's true total claim count
     on every turn, regardless of which retrieval route the router picked -
-    see docs/audit/chat_claim_count_still_wrong_2026-09-10.md. Never raises;
+    see (archived audit, see git history). Never raises;
     0 if there's no extraction yet for this paper or the lookup fails."""
     try:
         document_extractor_id = await _resolve_document_extractor_id(active_file_id)

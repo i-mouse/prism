@@ -116,7 +116,7 @@ Prism's architecture and design choices are documented in detail:
 * **[Developer Runbook](docs/RUNBOOK.md)** — Local dev gotchas, deployment failure modes, eval fixture regeneration.
 * **[Deployment & Environment Architecture](docs/deployment-and-environment-architecture.md)** — Deployment topology, environment configuration, deploy workflow, running live evals, and known issues.
 * **[Extraction, Audit & Grounding Architecture](docs/extraction-audit-grounding-architecture.md)** — The extractor → auditor → structurer pipeline, grounding checker, eval harness, and known limitations.
-* **[Architecture Review (2026-09-05)](docs/audit/pipeline_architecture_review_2026-09-05.md)**
+* **[Architecture Review (2026-09-05)](docs/pipeline_architecture_review_2026-09-05.md)**
 
 ## License
 

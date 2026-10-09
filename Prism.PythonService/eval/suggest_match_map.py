@@ -13,7 +13,7 @@ decided_on, or reason - the fields matrix_runner.py's coverage gate actually
 reads. A suggestion is not an adjudication, no matter the score: a human
 still has to copy suggested.claim_fingerprint into claim_fingerprint (or
 confirm a genuine omission) and fill in decided_by/decided_on/reason by
-hand. See docs/decisions.md and RUNBOOK.md for the two-step review flow.
+hand. See docs/decisions.md and docs/RUNBOOK.md for the two-step review flow.
 
 Usage:
   uv run python -m eval.suggest_match_map

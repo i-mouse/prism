@@ -2,7 +2,7 @@
 
 This document is a senior-level integration plan for adding Model Context Protocol (MCP) capabilities to PRISM. It defines the "why", "where", and "what" of the implementation before any code is written, aligned to the current ecosystem state as of September 2026.
 
-> **This is design intent, not an approval to build.** The standing decision on whether to build is `docs/audit/mcp_readiness.md`, and its recommendation is unchanged: **do not build MCP now.** The blocker is REST API readiness, not MCP itself — the upload endpoint demands a SignalR connection ID, returns no `file_id` for tracking, and there is no polling endpoint for extraction progress, so an MCP server cannot cleanly wrap the current API. This plan records the scope and tenancy answers so they stop being re-litigated; it does not move the gate. **This document and `docs/audit/mcp_readiness.md` have not been reconciled line by line — reconcile pending.**
+> **This is design intent, not an approval to build.** The standing decision on whether to build is `(archived audit, see git history)`, and its recommendation is unchanged: **do not build MCP now.** The blocker is REST API readiness, not MCP itself — the upload endpoint demands a SignalR connection ID, returns no `file_id` for tracking, and there is no polling endpoint for extraction progress, so an MCP server cannot cleanly wrap the current API. This plan records the scope and tenancy answers so they stop being re-litigated; it does not move the gate. **This document and `(archived audit, see git history)` have not been reconciled line by line — reconcile pending.**
 
 ## 1. Why MCP, why now (Interview + Product Framing)
 
@@ -75,7 +75,7 @@ PRISM's web app enforces per-user paper ownership. If MCP tools do not enforce t
 MCP work is explicitly gated behind "core works locally" per PRISM's own project rules. Building MCP now is a deliberate, acknowledged parallel learning track for interview prep — not a silent reordering of the core roadmap.
 
 Still open ahead of MCP implementation:
-*   **REST API readiness:** The blocker named in `docs/audit/mcp_readiness.md` — upload requires a SignalR connection ID, returns no `file_id`, and there is no extraction-progress polling endpoint. Worth doing on its own merits, independently of MCP.
+*   **REST API readiness:** The blocker named in `(archived audit, see git history)` — upload requires a SignalR connection ID, returns no `file_id`, and there is no extraction-progress polling endpoint. Worth doing on its own merits, independently of MCP.
 *   **Extractor/auditor iteration:** The `by_omission` gap (6/14 grounding-negative cases refused only because the extractor never surfaced the claim) and 2/14 tier-wrong labels remain the higher-priority items for the actual hiring artifact.
 *   **Proof pack:** (README + blog post + screenshots + walkthrough video) Must be confirmed finished.
 *   **Hosting:** No environment exists to host against. See §3.

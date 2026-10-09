@@ -8,7 +8,7 @@
   - Old fixtures archived in docs/evals/archive/2026-10-07_pre-cb3272cce551/.
   - Gate 0.35 -> 0.30, test_matrix_loader assertion updated.
 - B5.1 branch stays reference only, never merged.
-- Cleanup pending: README numbers stale (fixed in docs-sync branch); 2 old tracked logs (logs/eval/matrix_20260827T100808.json, logs/extraction/20260807T074032319542_smoke-test_manual-run-1.json) to untrack and gitignore; 9 old local branches to delete, keep fix/b5.1-auditor-checklist; docs/prism_final_audit_2026-09-07.md has old RFP naming (legacy cleanup list).
+- Cleanup pending: README numbers stale (fixed in docs-sync branch); 2 old tracked logs (logs/eval/matrix_20260827T100808.json, logs/extraction/20260807T074032319542_smoke-test_manual-run-1.json) to untrack and gitignore; 9 old local branches to delete, keep fix/b5.1-auditor-checklist; (archived audit, see git history) has old RFP naming (legacy cleanup list).
 - Azure subscription cancelled 2026-09-28, live URL is down. Demo = recorded walkthrough + README; local Aspire stack, Dev Tunnels later.
 
 ## Eval
@@ -78,10 +78,7 @@
 Note: The auditor design review and the extractor design review are done (decisions.md 2026-10-08).
 
 ## Evidence locations
-- Prism.PythonService/scratch/audits/
-- Prism.PythonService/scratch/pipeline_audit/
-- Prism.PythonService/scratch/pr1_evidence/
-- H:\Work projects\prism-evidence\
+Raw evidence: private local folder, not in repo.
 
 ## Known open items
 - REFLEX-M13 label question (claim/notes mismatch).

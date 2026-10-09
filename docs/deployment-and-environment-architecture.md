@@ -3,7 +3,7 @@
 > **Status — offline since 2026-09-28.** All seven Container Apps were stopped and cancellation of the Azure subscription was initiated on the same date. Nothing described below is currently running; this document is now the record of the last deployed state and the basis for a relaunch. See `docs/decisions.md`, "Live environment decommissioned — 2026-09-28", and the cost-safe relaunch checklist in [docs/RUNBOOK.md](RUNBOOK.md#decommissioned-state-and-relaunch).
 
 > **Single source of truth** for how Prism is deployed, configured, and operated.
-> All facts derived from source inspection (2026-09-23), with corrections from the portal on 2026-09-28 marked inline. Items marked **NOT VERIFIED** could not be confirmed without running live commands (`az`, `docker`, etc.) — treat them as assumptions until verified. (Note: `docs/deployment_notes.md` still exists in the repo but is superseded by this document as the single source of truth).
+> All facts derived from source inspection (2026-09-23), with corrections from the portal on 2026-09-28 marked inline. Items marked **NOT VERIFIED** could not be confirmed without running live commands (`az`, `docker`, etc.) — treat them as assumptions until verified.
 
 ---
 
@@ -451,7 +451,7 @@ RabbitMQ swap to Azure Service Bus was attempted and reverted (4 bugs in Aspire 
 ## Change Summary
 
 ### What was inspected
-- `README.md`, `docs/decisions.md` (relevant sections), `docs/RUNBOOK.md`, `docs/deployment_notes.md`
+- `README.md`, `docs/decisions.md` (relevant sections), `docs/RUNBOOK.md`
 - `Prism.AppHost/AppHost.cs`, `Prism.AppHost/.deploy.env.template`, `Prism.AppHost/.deploy.env`
 - `Prism.Web/deploy.ps1`, `Prism.Web/Dockerfile`, `Prism.Web/nginx.conf`, `Prism.Web/.env.production`, `Prism.Web/vite.config.ts`
 - `Prism.ApiService/Dockerfile`, `Prism.ApiService/Program.cs` (CORS section)
