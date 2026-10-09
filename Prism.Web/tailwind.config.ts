@@ -12,7 +12,7 @@ export default {
           DEFAULT: "#1A1917",
           muted: "oklch(0.55 0 0)",
           subtle: "oklch(0.72 0 0)",
-          // Restyle tokens (PRISM_DESIGN_SYSTEM.md §1) — additive alongside
+          // Restyle tokens (docs/design/PRISM_DESIGN_SYSTEM.md §1) — additive alongside
           // muted/subtle above until call sites migrate. Re-hued off the old
           // 285 (blue-violet) axis onto a warm axis to match the paper theme
           // and the "no blue anywhere" rule — chroma is low enough that this
@@ -25,7 +25,7 @@ export default {
           DEFAULT: "#FAF9F5",
           alt: "#F5F3EC",
           sunken: "#ECE9DD",
-          // Restyle tokens (PRISM_DESIGN_SYSTEM.md §1) — additive alongside
+          // Restyle tokens (docs/design/PRISM_DESIGN_SYSTEM.md §1) — additive alongside
           // alt/sunken above until call sites migrate.
           subtle: "#F1EFE6",
           muted: "#ECE9DD",
@@ -35,7 +35,7 @@ export default {
           DEFAULT: "#E7E4DA",
           strong: "#D6D2C4",
         },
-        // Restyle hairline tokens (PRISM_DESIGN_SYSTEM.md §1) — border
+        // Restyle hairline tokens (docs/design/PRISM_DESIGN_SYSTEM.md §1) — border
         // aliases used by the restyled surfaces.
         hairline: {
           DEFAULT: "#E7E4DA",
@@ -58,7 +58,7 @@ export default {
           fg: "#FFFFFF",
           foreground: "#1A1917",
         },
-        // Restyle brand tokens (PRISM_DESIGN_SYSTEM.md §1).
+        // Restyle brand tokens (docs/design/PRISM_DESIGN_SYSTEM.md §1).
         brand: {
           DEFAULT: "oklch(0.705 0.213 47.604)",
           hover: "oklch(0.646 0.222 41.116)",
@@ -91,7 +91,7 @@ export default {
           bg: "oklch(0.97 0.02 25)",
           border: "oklch(0.58 0.14 25)",
         },
-        // Restyle verdict tokens (PRISM_DESIGN_SYSTEM.md §1) — nested
+        // Restyle verdict tokens (docs/design/PRISM_DESIGN_SYSTEM.md §1) — nested
         // bg/text/icon/border sets for the consolidated VerdictPill (PR 3).
         verdict: {
           supported: {
@@ -148,7 +148,7 @@ export default {
         ring: "var(--ring)",
       },
       fontFamily: {
-        // Restyle font (PRISM_DESIGN_SYSTEM.md §1). No component currently
+        // Restyle font (docs/design/PRISM_DESIGN_SYSTEM.md §1). No component currently
         // applies the `font-sans` utility (body copy is set directly in
         // index.css), so this swap has no visual effect until PR 4+ adopts it.
         sans: ['"Geist Variable"', "system-ui", "sans-serif"],

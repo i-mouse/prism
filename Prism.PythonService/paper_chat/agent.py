@@ -257,7 +257,7 @@ async def execute_tools(state: AgentState):
     # execution always calls both retrieval tools: a route of "claims" whose
     # single tool call comes up empty must not silently skip chunks (or vice
     # versa) and fall through to a false refusal - see
-    # docs/slice3a_diagnosis_2026_08_25.md Root Cause #2. Deliberate, do not
+    # (archived audit, see git history) Root Cause #2. Deliberate, do not
     # remove (see PR C2 description).
     if route != "both":
         print(f" [TOOLS] route_decision={route!r} restricted a tool; calling both anyway")
@@ -280,7 +280,7 @@ async def execute_tools(state: AgentState):
     # total_claim_count is fetched alongside every route (not just claim_lookup
     # ="all") so the LLM always has the paper's true claim total as ground
     # truth, even when retrieval only returned a subset - see
-    # docs/audit/chat_claim_count_still_wrong_2026-09-10.md.
+    # (archived audit, see git history).
     try:
         claims, (chunks, chunk_scores), total_claim_count = await asyncio.gather(
             query_paper_claims.ainvoke(claims_tool_input),
@@ -425,7 +425,7 @@ def _build_context_block(
     # so the LLM always has the paper's true total claim count as ground truth -
     # a "query"/"position"/"label_filter" route only ever retrieves a subset,
     # and without this the model falls back on stale counts from earlier in the
-    # conversation history. See docs/audit/chat_claim_count_still_wrong_2026-09-10.md.
+    # conversation history. See (archived audit, see git history).
     parts = [f"Paper Metadata:\n- Total extracted claims: {total_claim_count}"]
 
     if retrieved_claims:

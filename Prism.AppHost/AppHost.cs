@@ -138,7 +138,7 @@ var qdrantDB = builder.AddQdrant ("qdrant",apiKey:qdrantKey).WithDataVolume();
 // WithReference(rabbitMQ) injects the same ConnectionStrings__messaging env var
 // config.py and Program.cs already expect.
 //
-// LLM_* vars named by pipeline stage (docs/audit/model_vars_2026-09-07.md):
+// LLM_* vars named by pipeline stage ((archived audit, see git history)):
 // extraction (Prompt 1 metadata + Prompt 2 extractor), claim-audit (Prompt 3
 // auditor + Prompt 4 structurer - previously silently reused the extraction
 // pair), span-grounding (Groq primary, Gemini LiteLLM fallback), chat, router
@@ -166,7 +166,7 @@ var pythonAPI = builder.AddDockerfile("prism-ai-pythonAPI", "../Prism.PythonServ
     .WithReference(blobs)
     .WaitFor(postgres)
     .WaitFor(blobs)
-    // Replica pin (docs/deployment_notes.md) - matches apiservice; no shared state here
+    // Replica pin (docs/deployment-and-environment-architecture.md) - matches apiservice; no shared state here
     // today, but keeping all three app containers at a fixed 1 replica avoids surprises.
     // CPU/memory: default 0.5/1Gi OOM-killed this service under real load during the
     // 2026-09-01 deploy (docs/decisions.md, "First Azure deploy", item 10) - sized to
@@ -266,7 +266,7 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                      .WithEnvironment("DEPLOYMENT_REGION","US-East")
                      .WithEnvironment("PRISM_MOCK_EXTRACTION", mockExtraction)
                      // Migrations must not run on Container App startup in prod - concurrent
-                     // replica starts would race for the migration lock (docs/deployment_notes.md,
+                     // replica starts would race for the migration lock (docs/deployment-and-environment-architecture.md,
                      // "Migration strategy"). Run once manually post-deploy instead. Locally
                      // (F5) this stays "true" so the dev DB is always up to date.
                      .WithEnvironment("RUN_MIGRATIONS_ON_STARTUP", builder.ExecutionContext.IsPublishMode ? "false" : "true")
@@ -282,7 +282,7 @@ var apiservice =     builder.AddProject<Projects.Prism_ApiService>("apiservice")
                     // Frontend calls this directly from the browser (VITE_API_BASE_URL is baked
                     // into the static bundle at build time) - needs public ingress.
                     .WithExternalHttpEndpoints()
-                    // No SignalR backplane (docs/deployment_notes.md, "Replica pin") - in-memory
+                    // No SignalR backplane (docs/deployment-and-environment-architecture.md, "Replica pin") - in-memory
                     // group routing only works with exactly one apiservice replica.
                     .PublishAsAzureContainerApp((infra, app) =>
                     {
@@ -303,7 +303,7 @@ if (apiserviceIdentity is not null)
  // PublishAsDockerFile() switches the publish target to the existing
  // Prism.Web/Dockerfile (nginx + `npm run build`) without touching local F5 behavior.
  // VITE_API_BASE_URL is a Vite build-time value baked into the static bundle by
- // `npm run build` (docs/deployment_notes.md) - WithEnvironment only reaches the F5
+ // `npm run build` (docs/deployment-and-environment-architecture.md) - WithEnvironment only reaches the F5
  // dev server process, so the container build needs the same value as a build arg too.
 
 //  builder.AddNpmApp("prism-ai-reactUI","../Prism.Web")
