@@ -1620,3 +1620,11 @@ PROPOSED, pending owner confirmation:
 - Known inconsistencies with rubric rule R3 (cell-by-cell for "all/consistently"): REACT-M10 and COT-M04 are labelled supported but may have a cell-level exception. Sources unverified. Not relabelled. A relabel needs its own change with before/after numbers.
 - Contestable under R1, not relabelled: COT-M12.
 - Open under R4: REFLEX-M01 / REFLEX-M09 baseline-number conflict, unverified.
+
+## Dev set size rule amended - 2026-10-10
+Reason: 12 papers labelled under docs/LABEL_RUBRIC.md gave 32 refusal-family rows (5 not_supported, 27 partially_supported); about 30 are independent because some rows share evidence (P8-R1/R2, P12-R1/R2). Collection stopped here. Yield was about 2.7 rows per paper, below the planning estimate.
+Old rule: an experiment counts only once the dev set has at least 40 refusal rows.
+New rule: an experiment counts only once the dev set has at least 30 independent refusal rows (met). Every result must report the not_supported count alongside the refusal rate and note that the not_supported class is thin (5 rows).
+Why this is not number-chasing: amended before any Prism output was seen on the dev set; no baseline has been run. 32 vs 40 rows changes the 95% margin at 45% from about +/-15 to +/-17 points, so the threshold was not doing statistical work.
+Unchanged: stop rule (dev refusal under 45% after 4 experiments = ship with honest numbers, judged on the mean of 3 runs); spend rule (no paid run without --estimate, written marks and a rupee cap); labels follow docs/LABEL_RUBRIC.md and change only where the paper contradicts them.
+Dev drafts: docs/dev_labels/paper1 to paper12 *_DRAFT.md.
