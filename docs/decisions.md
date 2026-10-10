@@ -1614,3 +1614,9 @@ PROPOSED, pending owner confirmation:
 - The entry "Plan and stop rule - 2026-10-08" is CONFIRMED, including its stop rule (dev refusal under 45% after 4 experiments means ship with honest numbers). Clarification item (iii) is a proposed refinement of that rule and stays PROPOSED until the dev baseline exists; until then the original stop rule is in force.
 - The statement "the auditor is the main lever" in "Clarifications to the 2026-10-08 plan" is withdrawn; see "Next-step decision".
 - OPEN: no rupee cap is set yet for the first paid baseline run. It must be written, with the marks, before that run.
+
+## Label rubric frozen - 2026-10-10
+- docs/LABEL_RUBRIC.md written; governs new dev rows only. Golden labels stay frozen as the regression gate.
+- Known inconsistencies with rubric rule R3 (cell-by-cell for "all/consistently"): REACT-M10 and COT-M04 are labelled supported but may have a cell-level exception. Sources unverified. Not relabelled. A relabel needs its own change with before/after numbers.
+- Contestable under R1, not relabelled: COT-M12.
+- Open under R4: REFLEX-M01 / REFLEX-M09 baseline-number conflict, unverified.
