@@ -145,6 +145,36 @@ def _is_retryable(exc: Exception) -> bool:
     )
 
 
+def _litellm_call_fields(response: object) -> dict:
+    """Answering model, fallback route, token usage and finish reason from a
+    LiteLLM ModelResponse. Null-safe: any missing piece comes back as None,
+    never raises. route is "primary"/"fallback" from LiteLLM's
+    x-litellm-attempted-fallbacks marker (0 = the primary answered), or None
+    when the marker is absent."""
+    usage = getattr(response, "usage", None)
+    prompt_details = getattr(usage, "prompt_tokens_details", None)
+    completion_details = getattr(usage, "completion_tokens_details", None)
+    hidden_params = getattr(response, "_hidden_params", None)
+    headers = hidden_params.get("additional_headers") if isinstance(hidden_params, dict) else None
+    attempted_fallbacks = headers.get("x-litellm-attempted-fallbacks") if isinstance(headers, dict) else None
+    if not isinstance(attempted_fallbacks, int):
+        attempted_fallbacks = None
+    route = None if attempted_fallbacks is None else ("fallback" if attempted_fallbacks > 0 else "primary")
+    choices = getattr(response, "choices", None) or []
+    finish_reason = getattr(choices[0], "finish_reason", None) if choices else None
+    return {
+        "answered_by": getattr(response, "model", None),
+        "attempted_fallbacks": attempted_fallbacks,
+        "route": route,
+        "prompt_tokens": getattr(usage, "prompt_tokens", None),
+        "cached_tokens": getattr(prompt_details, "cached_tokens", None),
+        "completion_tokens": getattr(usage, "completion_tokens", None),
+        "reasoning_tokens": getattr(completion_details, "reasoning_tokens", None),
+        "total_tokens": getattr(usage, "total_tokens", None),
+        "finish_reason": finish_reason if isinstance(finish_reason, str) else None,
+    }
+
+
 async def _call_litellm_audit(
     messages: list[dict],
     audit_model: str,
@@ -152,15 +182,22 @@ async def _call_litellm_audit(
     gemini_api_key: str,
     span_source_section: str,
     correlation_id: str | None = None,
+    call_info: dict | None = None,
 ) -> SpanAuditVerdict:
     """Calls the span-audit model with retry/backoff, raising the last error
     if all attempts fail. Each attempt carries LiteLLM's built-in `fallbacks`
     so a Groq failure fails over to Gemini Flash Lite before the attempt is
     counted as failed.
+
+    call_info, if given, is filled with the attempt count and, once a model
+    answers, _litellm_call_fields of that response. It never changes the
+    return value or what is raised.
     """
     last_exception: Exception | None = None
 
     for attempt in range(1, AUDIT_MAX_ATTEMPTS + 1):
+        if call_info is not None:
+            call_info["attempts"] = attempt
         try:
             response = await litellm.acompletion(
                 model=audit_model,
@@ -170,6 +207,8 @@ async def _call_litellm_audit(
                 response_format=SpanAuditVerdict,
                 fallbacks=[{"model": fallback_model, "api_key": gemini_api_key}],
             )
+            if call_info is not None:
+                call_info.update(_litellm_call_fields(response))
             content = response.choices[0].message.content
             return SpanAuditVerdict.model_validate_json(content)
         except Exception as exc:
@@ -199,6 +238,7 @@ async def _audit_span_with_llm(
     fallback_model: str,
     gemini_api_key: str,
     correlation_id: str | None = None,
+    call_info: dict | None = None,
 ) -> tuple[GroundingStatus, Optional[SpanStance]]:
     """Asks the audit model whether the evidence quote justifies the
     auditor's claim_label (supported/partially_supported/not_supported),
@@ -224,6 +264,9 @@ async def _audit_span_with_llm(
     extraction - but it also must not fabricate a stance value, and a
     transient service error must not be indistinguishable from a genuine
     "paper does not support this" verdict.
+
+    call_info, if given, is passed to _call_litellm_audit and also gets
+    error_type when the audit fails. It never changes the return value.
     """
     messages = _to_litellm_messages(
         build_gemini_messages_for_span_audit(
@@ -243,9 +286,12 @@ async def _audit_span_with_llm(
                 gemini_api_key=gemini_api_key,
                 span_source_section=span_source_section,
                 correlation_id=correlation_id,
+                call_info=call_info,
             )
             return GroundingStatus(verdict.verdict), verdict.stance
         except Exception as exc:
+            if call_info is not None:
+                call_info["error_type"] = type(exc).__name__
             print(f"[ground_extraction] correlation_id={correlation_id} LLM audit failed for span in {span_source_section!r}: {exc!r}")
             return GroundingStatus.SKIPPED, None
 
@@ -383,8 +429,15 @@ async def _ground_span(
     fallback_model: str,
     gemini_api_key: str,
     correlation_id: str | None = None,
+    call_info: dict | None = None,
 ) -> tuple[EvidenceSpanFinal, bool]:
-    """Grounds one span. Returns (finalized span, passed_rapidfuzz)."""
+    """Grounds one span. Returns (finalized span, passed_rapidfuzz).
+
+    call_info, if given, records whether Stage 2 ran (stage2_called) and the
+    Stage-2 call details from _audit_span_with_llm. It never changes the
+    return value."""
+    if call_info is not None:
+        call_info["stage2_called"] = False
     if not _passes_rapidfuzz(span.source_text, paper_text):
         final_span = EvidenceSpanFinal(
             source_text=span.source_text,
@@ -398,6 +451,8 @@ async def _ground_span(
 
     span_context, context_source = _audit_context(span.source_text, paper_text, settings.grounding_normalize)
     print(f"[ground_extraction] correlation_id={correlation_id} audit context: {len(span_context)} chars ({context_source}) for span in {span.source_section!r}")
+    if call_info is not None:
+        call_info["stage2_called"] = True
 
     status, stance = await _audit_span_with_llm(
         claim_text=claim_text,
@@ -410,6 +465,7 @@ async def _ground_span(
         fallback_model=fallback_model,
         gemini_api_key=gemini_api_key,
         correlation_id=correlation_id,
+        call_info=call_info,
     )
     final_span = EvidenceSpanFinal(
         source_text=span.source_text,
@@ -420,6 +476,27 @@ async def _ground_span(
         stance=stance,
     )
     return final_span, True
+
+
+_STAGE2_TOKEN_FIELDS = ("prompt_tokens", "cached_tokens", "completion_tokens", "reasoning_tokens", "total_tokens")
+
+
+def _stage2_totals(span_calls: list[dict]) -> dict:
+    """Per-run Stage-2 totals from the per-span call records: spans answered
+    by each route, spans whose audit errored, and summed token usage over
+    answered spans (None-valued fields count as 0)."""
+    called = [c for c in span_calls if c.get("stage2_called")]
+    answered = [c for c in called if "answered_by" in c]
+    totals = {
+        "stage2_spans_called": len(called),
+        "stage2_spans_answered_primary": sum(1 for c in answered if c.get("route") == "primary"),
+        "stage2_spans_answered_fallback": sum(1 for c in answered if c.get("route") == "fallback"),
+        "stage2_spans_answered_unknown_route": sum(1 for c in answered if c.get("route") is None),
+        "stage2_spans_errored": sum(1 for c in called if "error_type" in c),
+    }
+    for field in _STAGE2_TOKEN_FIELDS:
+        totals[f"stage2_{field}_total"] = sum(c.get(field) or 0 for c in answered)
+    return totals
 
 
 def _write_grounding_log(
@@ -436,6 +513,7 @@ def _write_grounding_log(
     spans_partial_audit: int,
     spans_failed_audit: int,
     spans_skipped_audit: int,
+    span_calls: list[dict] | None = None,
 ) -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     now = datetime.now(timezone.utc)
@@ -458,6 +536,8 @@ def _write_grounding_log(
         "spans_partial_audit": spans_partial_audit,
         "spans_failed_audit": spans_failed_audit,
         "spans_skipped_audit": spans_skipped_audit,
+        **_stage2_totals(span_calls or []),
+        "span_calls": span_calls or [],
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
 
@@ -576,7 +656,9 @@ async def ground_extraction(
                 except Exception:
                     pass  # progress emission never breaks grounding
 
-    async def _ground_span_tracked(claim_idx: int, claim_text: str, claim_label: ClaimLabel, span: EvidenceSpanLLM):
+    async def _ground_span_tracked(
+        claim_idx: int, claim_text: str, claim_label: ClaimLabel, span: EvidenceSpanLLM, call_info: dict
+    ):
         result = await _ground_span(
             claim_text=claim_text,
             claim_label=claim_label,
@@ -587,6 +669,7 @@ async def ground_extraction(
             fallback_model=fallback_model,
             gemini_api_key=gemini_api_key,
             correlation_id=correlation_id,
+            call_info=call_info,
         )
         await _report_claim_done(claim_idx)
         return result
@@ -599,11 +682,14 @@ async def ground_extraction(
 
     span_tasks = []
     span_claim_indices: list[int] = []
+    span_calls: list[dict] = []
     for claim_idx, claim in enumerate(extraction.claims):
-        for span in claim.evidence_spans:
+        for span_idx, span in enumerate(claim.evidence_spans):
             span_claim_indices.append(claim_idx)
+            call_info = {"claim_index": claim_idx, "span_index": span_idx}
+            span_calls.append(call_info)
             span_tasks.append(
-                _ground_span_tracked(claim_idx, claim.claim_text_verbatim, claim.label, span)
+                _ground_span_tracked(claim_idx, claim.claim_text_verbatim, claim.label, span, call_info)
             )
 
     span_results = await asyncio.gather(*span_tasks) if span_tasks else []
@@ -698,6 +784,7 @@ async def ground_extraction(
         spans_partial_audit=spans_partial_audit,
         spans_failed_audit=spans_failed_audit,
         spans_skipped_audit=spans_skipped_audit,
+        span_calls=span_calls,
     )
 
     return final_claims

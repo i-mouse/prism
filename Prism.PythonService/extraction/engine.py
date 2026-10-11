@@ -103,6 +103,29 @@ async def _call_gemini(
     raise last_exception
 
 
+def _enum_value(value: object) -> object:
+    """Plain value of an SDK enum (FinishReason.STOP -> "STOP"); passes None/str through."""
+    return getattr(value, "value", value)
+
+
+def _usage_fields(response: object) -> dict:
+    """Token usage, finish reason and answering model version from a
+    google-genai response. Null-safe: any missing piece (no response, no
+    usage_metadata, no candidates) comes back as None, never raises."""
+    usage = getattr(response, "usage_metadata", None)
+    candidates = getattr(response, "candidates", None) or []
+    finish_reason = getattr(candidates[0], "finish_reason", None) if candidates else None
+    return {
+        "prompt_token_count": getattr(usage, "prompt_token_count", None),
+        "cached_content_token_count": getattr(usage, "cached_content_token_count", None),
+        "candidates_token_count": getattr(usage, "candidates_token_count", None),
+        "thoughts_token_count": getattr(usage, "thoughts_token_count", None),
+        "total_token_count": getattr(usage, "total_token_count", None),
+        "finish_reason": _enum_value(finish_reason),
+        "model_version": getattr(response, "model_version", None),
+    }
+
+
 def _write_structured_log(
     log_subdir: str,
     chat_id: str,
@@ -111,6 +134,7 @@ def _write_structured_log(
     request_message_count: int,
     response_item_count: int,
     response_raw: str,
+    response: object = None,
 ) -> None:
     log_dir = LOGS_DIR / log_subdir
     log_dir.mkdir(parents=True, exist_ok=True)
@@ -127,8 +151,33 @@ def _write_structured_log(
         "request_message_count": request_message_count,
         "response_item_count": response_item_count,
         "response_raw": response_raw,
+        **_usage_fields(response),
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
+
+
+def _write_drop_log(chat_id: str, correlation_id: str | None, total_claims: int, drops: list[dict]) -> None:
+    """Records claims dropped by the audit/structure stage next to the
+    extraction logs. Never raises - a logging failure must not change what
+    extract_claims returns."""
+    try:
+        log_dir = LOGS_DIR / "extraction"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        now = datetime.now(timezone.utc)
+        filename_ts = now.strftime("%Y%m%dT%H%M%S%f")
+        log_path = log_dir / f"{filename_ts}_{chat_id}_{correlation_id or 'none'}_drops.json"
+        log_entry = {
+            "timestamp": now.isoformat(),
+            "chat_id": chat_id,
+            "correlation_id": correlation_id,
+            "prompt_version": get_prompt_version(),
+            "total_claims": total_claims,
+            "dropped_count": len(drops),
+            "dropped": drops,
+        }
+        log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
+    except Exception as exc:
+        print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} failed to write drop log: {exc!r}")
 
 
 def _build_client() -> genai.Client:
@@ -143,14 +192,20 @@ async def _generate_with_fallback(
     model_name: str,
     fallback_model: str,
     correlation_id: str | None = None,
+    call_info: dict | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
     """Calls Gemini on model_name with retry/backoff, falling back to
     fallback_model for one final attempt if the primary model's retries are
     exhausted. Returns (response, model_name_actually_used). Raises on
     terminal failure (non-retryable error, or fallback attempt also fails).
+
+    call_info, if given, is filled with fallback_used/used_model as soon as
+    a model answers; it never changes the return value or what is raised.
     """
     try:
         response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
+        if call_info is not None:
+            call_info.update(fallback_used=False, used_model=model_name)
         return response, model_name
     except Exception as primary_exc:
         if not _is_retryable(primary_exc):
@@ -158,6 +213,8 @@ async def _generate_with_fallback(
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
             response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
+            if call_info is not None:
+                call_info.update(fallback_used=True, used_model=fallback_model)
             return response, fallback_model
         except Exception as fallback_exc:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} fallback model={fallback_model} failed: {fallback_exc!r}")
@@ -213,6 +270,7 @@ async def _call_gemini_structured(
                 request_message_count=len(messages),
                 response_item_count=0,
                 response_raw=raw_text,
+                response=response,
             )
             raise ValueError(
                 f"Gemini response for chat_id={chat_id} was neither parsed by the SDK nor valid JSON: {parse_exc}"
@@ -232,6 +290,7 @@ async def _call_gemini_structured(
         request_message_count=len(messages),
         response_item_count=item_count,
         response_raw=raw_text,
+        response=response,
     )
 
     return parsed
@@ -244,11 +303,17 @@ async def _call_gemini_json(
     log_subdir: str,
     model_name: str,
     fallback_model: str,
+    call_info: dict | None = None,
 ) -> dict:
     """Calls Gemini in JSON mode without a response_schema, parsing response.text
     as JSON. Same retry/backoff/fallback-model behavior as _call_gemini_structured,
     used for the extractor call where no schema should bias field ordering.
     Logs the request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+
+    call_info, if given, is filled with fallback_used/used_model, the usage
+    fields from _usage_fields, and json_parse_ok - before a parse failure is
+    raised, so a caller still sees the usage of a malformed response. It
+    never changes the return value or what is raised.
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -260,13 +325,17 @@ async def _call_gemini_json(
     )
 
     response, used_model = await _generate_with_fallback(
-        client, contents, config, chat_id, model_name, fallback_model, correlation_id
+        client, contents, config, chat_id, model_name, fallback_model, correlation_id, call_info
     )
     raw_text = response.text
+    if call_info is not None:
+        call_info.update(_usage_fields(response))
 
     try:
         parsed = json.loads(raw_text)
     except json.JSONDecodeError as parse_exc:
+        if call_info is not None:
+            call_info["json_parse_ok"] = False
         print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} malformed JSON response, raw={raw_text!r}")
         _write_structured_log(
             log_subdir=log_subdir,
@@ -276,9 +345,12 @@ async def _call_gemini_json(
             request_message_count=len(messages),
             response_item_count=0,
             response_raw=raw_text,
+            response=response,
         )
         raise ValueError(f"Gemini response for chat_id={chat_id} was not valid JSON: {parse_exc}") from parse_exc
 
+    if call_info is not None:
+        call_info["json_parse_ok"] = True
     item_count = len(parsed.get("claims", [])) if isinstance(parsed, dict) else 0
     _write_structured_log(
         log_subdir=log_subdir,
@@ -288,6 +360,7 @@ async def _call_gemini_json(
         request_message_count=len(messages),
         response_item_count=item_count,
         response_raw=raw_text,
+        response=response,
     )
 
     return parsed
@@ -329,6 +402,7 @@ async def _call_gemini_freetext(
         request_message_count=len(messages),
         response_item_count=1,
         response_raw=raw_text,
+        response=response,
     )
 
     return raw_text
@@ -385,6 +459,37 @@ async def _audit_and_structure_claim(
     return structured
 
 
+async def run_extractor(
+    paper_text: str,
+    chat_id: str,
+    correlation_id: str | None = None,
+    call_info: dict | None = None,
+) -> tuple[dict, dict]:
+    """Runs Call #2 (extractor) alone over the full paper.
+
+    Returns (raw extractor output dict, call_info). call_info carries the
+    wrapper's fallback_used/used_model, token usage, finish reason, model
+    version and json_parse_ok. Pass your own dict as call_info to keep what
+    was recorded even when the call raises. Raises exactly what the
+    extractor call raises.
+    """
+    if call_info is None:
+        call_info = {}
+    with tracer.start_as_current_span("extractor") as span:
+        span.set_attribute("correlation_id", correlation_id or "")
+        span.set_attribute("chat_id", chat_id)
+        extracted = await _call_gemini_json(
+            messages=build_gemini_messages_for_extractor(paper_text),
+            chat_id=chat_id,
+            correlation_id=correlation_id,
+            log_subdir="extraction",
+            model_name=settings.llm_extraction_model,
+            fallback_model=settings.llm_extraction_fallback_model,
+            call_info=call_info,
+        )
+    return extracted, call_info
+
+
 async def extract_claims(
     paper_text: str,
     chat_id: str,
@@ -401,17 +506,7 @@ async def extract_claims(
     structure call fails is logged and dropped rather than failing the
     whole extraction - downstream grounding handles missing claims correctly.
     """
-    with tracer.start_as_current_span("extractor") as span:
-        span.set_attribute("correlation_id", correlation_id or "")
-        span.set_attribute("chat_id", chat_id)
-        extracted = await _call_gemini_json(
-            messages=build_gemini_messages_for_extractor(paper_text),
-            chat_id=chat_id,
-            correlation_id=correlation_id,
-            log_subdir="extraction",
-            model_name=settings.llm_extraction_model,
-            fallback_model=settings.llm_extraction_fallback_model,
-        )
+    extracted, _ = await run_extractor(paper_text, chat_id, correlation_id)
     claims = extracted.get("claims", [])
 
     if on_detail is not None:
@@ -457,14 +552,19 @@ async def extract_claims(
     )
 
     structured_claims: list[ClaimLLM] = []
-    for claim, result in zip(claims, results):
+    drops: list[dict] = []
+    for claim_index, (claim, result) in enumerate(zip(claims, results)):
         if isinstance(result, Exception):
             print(
                 f"[extraction] chat_id={chat_id} correlation_id={correlation_id} audit/structure pipeline failed for "
                 f"claim={claim.get('claim_text_verbatim', '')!r}: {result!r}"
             )
+            drops.append({"claim_index": claim_index, "exception_type": type(result).__name__, "message": str(result)})
             continue
         structured_claims.append(result)
+
+    if drops:
+        _write_drop_log(chat_id, correlation_id, total_claims, drops)
 
     return ClaimsExtractionResponse(claims=structured_claims)
 
