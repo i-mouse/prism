@@ -1668,3 +1668,33 @@ Logged before any Prism output on the dev set.
 - Every claim is one complete PDF sentence, checked by Prism.PythonService/eval/verify_eval_verbatim.py with 0 FAIL. Remaining START_WARN rows were reviewed by hand (captions, headings, list markers).
 - Dropped before any Prism output: 8 supported rows that were not a single PDF sentence (P2-S1, P3-S3, P5-S8, P6-S6, P6-S7, P7-S7, P9-S5, P11-S5), and P2-R2 (its full sentence is a stated open question, not a claim; its premise is already covered by P2-R1).
 - Any later change to a dev row needs a new dated entry here.
+
+## Cost caps, run procedure and marks for the dev baseline - 2026-10-11
+
+Cost basis:
+- Cost audit (CC, read-only): ~43 LLM calls per paper per pipeline run (range 33-63). Auditor sends full paper text once per claim (~75% of input tokens). Thinking config not set anywhere = 3.6 Flash default (medium). No token logging; no --estimate.
+- Prices: gemini-3.6-flash $0.75 in / $3.75 out per 1M (output includes thinking) through 2026-12-31; doubles from 2027-01-01. Planning rate 100 INR/USD.
+- Estimate: INR 240-550 per 12-paper run (token maths vs past spend).
+
+Caps:
+- Per-run cap: INR 800 per 12-paper pipeline run. Crossing it = stop; run void.
+- Baseline cap (3 runs): INR 2,250.
+- AI Studio project monthly spend cap: INR 2,200 at start (INR 1,250 already spent this month on 2026-10-11). Raise to INR 3,500 before it blocks the baseline; log the change in this file.
+- Push cap: set in a new entry after baseline run 1, from its real cost: 28 runs x real per-run cost x 1.2 + experiment-1 thinking uplift. Must be logged before experiment 1.
+
+Run procedure (one run = fresh full pipeline):
+- Pre-flight: upload signed in with Google (not Guest); rerun needs an owner account.
+- Upload the 12 PDFs from docs/research_papers/ with unchanged file names (harness matches by file name).
+- Config frozen for all 3 runs: no .env, prompt or model change between runs. Record model ids, AUDIT_MODE, GROUNDING_NORMALIZE and prompt hash at run 1.
+- First paper is a test: confirm full pipeline stages ran (not a cached result) and note spend before/after.
+- A failed or cached paper is rerun alone; the 12 papers are uploaded once only.
+- Run 1 = UI upload. Runs 2-3 = POST /api/papers/{paperId}/rerun.
+- Per paper: trigger -> wait for status Completed -> dump fixture to docs/evals/fixtures/dev/runN/ -> adjudicate match map (new fingerprints only after run 1) -> next run. Never trigger the next run before the dump (harness reads latest run only). One click per rerun (no guard exists).
+- Official numbers come from --source fixture with the adjudicated match map. --source db (live LLM matcher) is never the official number.
+- --repeat is not used for variance (it re-scores, it does not re-run).
+
+Marks:
+- M1 validity: a run counts only if match-map coverage is 100%, no paper failed, no call exhausted retries, and model ids, thinking config and prompt hash are recorded.
+- M2 baseline: report mean, min, max over 3 runs for refusal-family (31), positives, false rejections on S rows, and not_supported count (4).
+- M3 experiment accept, all required: mean refusal gain >= max(3 rows, 2 x baseline min-max spread); every run >= baseline mean; false rejections <= 10% and not more than 1 row worse than baseline mean; positives not more than 2 rows down. The spread number is fixed in a new entry right after baseline, before experiment 1.
+- M4 stop: hard exit at 8 counted experiments or the push cap.
