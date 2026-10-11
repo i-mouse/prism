@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(/docs/evals/heldout_eval.json)",
+      "Read(/docs/evals/heldout_match_map.json)",
+      "Read(/docs/evals/fixtures/arxiv-2609.20812v3.json)",
+      "Read(/docs/evals/archive/**/heldout_match_map.json)",
+      "Read(/docs/evals/archive/**/fixtures/arxiv-2609.20812v3.json)",
+      "Read(/Prism.PythonService/scratch/heldout/**)",
+      "Read(/Prism.PythonService/downloads/2609.20812v3.pdf)",
+      "Read(//h/Work projects/prism-sealed/**)",
+      "Read(**/sealed/**)"
+    ]
+  }
+}

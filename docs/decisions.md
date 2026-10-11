@@ -1614,3 +1614,57 @@ PROPOSED, pending owner confirmation:
 - The entry "Plan and stop rule - 2026-10-08" is CONFIRMED, including its stop rule (dev refusal under 45% after 4 experiments means ship with honest numbers). Clarification item (iii) is a proposed refinement of that rule and stays PROPOSED until the dev baseline exists; until then the original stop rule is in force.
 - The statement "the auditor is the main lever" in "Clarifications to the 2026-10-08 plan" is withdrawn; see "Next-step decision".
 - OPEN: no rupee cap is set yet for the first paid baseline run. It must be written, with the marks, before that run.
+
+## Label rubric frozen - 2026-10-10
+- docs/LABEL_RUBRIC.md written; governs new dev rows only. Golden labels stay frozen as the regression gate.
+- Known inconsistencies with rubric rule R3 (cell-by-cell for "all/consistently"): REACT-M10 and COT-M04 are labelled supported but may have a cell-level exception. Sources unverified. Not relabelled. A relabel needs its own change with before/after numbers.
+- Contestable under R1, not relabelled: COT-M12.
+- Open under R4: REFLEX-M01 / REFLEX-M09 baseline-number conflict, unverified.
+
+## Dev set size rule amended - 2026-10-10
+Reason: 12 papers labelled under docs/LABEL_RUBRIC.md gave 32 refusal-family rows (5 not_supported, 27 partially_supported); about 30 are independent because some rows share evidence (P8-R1/R2, P12-R1/R2). Collection stopped here. Yield was about 2.7 rows per paper, below the planning estimate.
+Old rule: an experiment counts only once the dev set has at least 40 refusal rows.
+New rule: an experiment counts only once the dev set has at least 30 independent refusal rows (met). Every result must report the not_supported count alongside the refusal rate and note that the not_supported class is thin (5 rows).
+Why this is not number-chasing: amended before any Prism output was seen on the dev set; no baseline has been run. 32 vs 40 rows changes the 95% margin at 45% from about +/-15 to +/-17 points, so the threshold was not doing statistical work.
+Unchanged: stop rule (dev refusal under 45% after 4 experiments = ship with honest numbers, judged on the mean of 3 runs); spend rule (no paid run without --estimate, written marks and a rupee cap); labels follow docs/LABEL_RUBRIC.md and change only where the paper contradicts them.
+Dev drafts: docs/dev_labels/paper1 to paper12 *_DRAFT.md.
+
+## Release targets, order of work and stop rule amended - 2026-10-10
+
+Logged before any Prism output on the dev set (docs/evals/dev_eval.json has not been run). Replaces the stop rule in the 2026-10-10 plan ("dev refusal under 45% after 4 experiments means ship with honest numbers").
+
+Targets:
+- Release floor: dev refusal rate >= 70%, judged on the mean of 3 runs. This version is not released below the floor.
+- Stretch target: 80% dev refusal.
+- False rejections on supported rows: hard cap 10% (mean of 3 runs); aim 0%.
+- Release number: the sealed-set result from one final run, reported with refusal-row and supported-row counts. Dev numbers are never quoted as the release number. The sealed set is not re-run or re-labelled after that run.
+
+Order of work (current plan first, then core changes):
+1. Freeze docs/evals/dev_eval.json (exact PDF sentences, committed before any Prism run).
+2. Ingest the 12 dev papers, dump fixtures, adjudicate the dev match map.
+3. Baseline the unchanged pipeline 3 times.
+4. Dev failure map: count misses by type (not extracted / wrongly affirmed / grounding).
+5. Experiment 1: thinking_level=high on the auditor.
+6. Experiment 2: newer Flash with thinking pinned.
+7. Core changes (extractor or auditor) chosen from the latest dev failure map (from the runs of the best accepted configuration). One change batch = one experiment.
+The golden failure map (2026-10-08) already shows extraction is the largest leak: 7 of 11 golden refusal misses were never extracted, so auditor-only changes cap golden at 9/16 (56%). Reaching the floor is expected to need extractor-side work.
+
+Exit:
+- Hard exit after 8 counted experiments, or when total spend from this entry reaches the push cap, whichever comes first. The push cap is set after the cost check and logged here before experiment 1.
+- At the exit: one sealed final run. Then log one of two decisions here: keep the floor and stop this version, or set a new floor and release with honest numbers. No further experiments on this version after the exit.
+
+Guards (unchanged):
+- Golden harness runs before and after every change as the regression gate (golden positives at or above 10/21, golden refusal gate unchanged); any grounding-negative FAIL blocks the change; golden labels frozen; no label change after seeing Prism output unless the paper contradicts it; no prompt tuning to move the number.
+- Every experiment needs --estimate (or a written call/quota estimate), written marks and a rupee cap before it runs.
+- Review point after every 4 experiments: continue, change approach, or revisit the floor. Any change to the floor is logged here before the next run.
+- The dev set wears down with each run. Before the release number is claimed, 3-4 new papers are labelled under docs/LABEL_RUBRIC.md and kept sealed (never opened by an agent, never run) until one final run.
+- Every result reports the not_supported count; that class is thin (4 rows).
+
+Why: Prism's job is to catch overstated claims and only those. Refusal rate (catching refusal-family rows) is always reported with false-rejection rate (wrong flags on supported rows), so neither can be gamed alone.
+
+## Dev set frozen - 2026-10-11
+Logged before any Prism output on the dev set.
+- docs/evals/dev_eval.json: 119 rows (4 not_supported / 27 partially_supported / 88 supported); 31 refusal-family rows, about 30 independent (P8-R1/R2 and P12-R1/R2 share evidence). Meets the >= 30 size rule with no margin.
+- Every claim is one complete PDF sentence, checked by Prism.PythonService/eval/verify_eval_verbatim.py with 0 FAIL. Remaining START_WARN rows were reviewed by hand (captions, headings, list markers).
+- Dropped before any Prism output: 8 supported rows that were not a single PDF sentence (P2-S1, P3-S3, P5-S8, P6-S6, P6-S7, P7-S7, P9-S5, P11-S5), and P2-R2 (its full sentence is a stated open question, not a claim; its premise is already covered by P2-R1).
+- Any later change to a dev row needs a new dated entry here.

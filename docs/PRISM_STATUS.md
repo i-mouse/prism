@@ -1,4 +1,4 @@
-# PRISM STATUS - 2026-10-08 (single source for new chats)
+# PRISM STATUS - 2026-10-11 (single source for new chats)
 
 ## Repo state
 - PR-A (de-leak) merged, SHA 5091b60. Prompt hash 0bcf9d44e619 -> cb3272cce551.
@@ -13,8 +13,10 @@
 
 ## Eval
 ### Current numbers (frozen official run, prompt hash cb3272cc fixtures)
-- Goal: raise refusal from 5/16 (31%, gate 0.30, passes by one row) toward 60% as the stretch goal, measured on NEW hand-labelled papers, not by reaching 10/16 on the same golden 16 rows (10/16 is 62.5%). Nothing ships before that unless the stop rule fires; then ship with honest numbers.
-- Stop rule: dev refusal under 45% after 4 experiments means ship with honest numbers.
+- Golden refusal is 5/16 (31%, gate 0.30, passes by one row); there is no dev baseline yet. Goal: dev refusal at or above the release floor of 70% (stretch 80%), measured on NEW hand-labelled papers (docs/evals/dev_eval.json), not by reaching 10/16 on the same golden 16 rows (10/16 is 62.5%). False rejections on supported rows: hard cap 10% (mean of 3 runs); aim 0%.
+- Release number: the sealed-set result from one final run, reported with refusal-row and supported-row counts. Dev numbers are never quoted as the release number. The sealed set is not re-run or re-labelled after that run.
+- Exit rule: hard exit after 8 counted experiments, or when total spend from the decisions.md 2026-10-10 entry reaches the push cap, whichever comes first. The push cap is set after the cost check and logged before experiment 1. At the exit: one sealed final run, then log one of two decisions: keep the floor and stop this version, or set a new floor and release with honest numbers.
+- Dev-set size rule: at least 30 independent refusal-family rows (amended from 40 before any Prism output was generated; docs/decisions.md, "Dev set size rule amended - 2026-10-10").
 - Ceiling estimates on the golden 16 (not measured): extraction alone about 10/16 (62.5%); realistic with clean fixes about 9/16 (56%). The earlier claim that the auditor is the main lever is withdrawn (see decisions.md).
 - Refusal 5/16 (31%), gate 0.30, passes by one row.
 - Positives 11/21, floor 10, margin 1; 7 of 11 hits are fragile (REFLEX-M01, REFLEX-M02, REFLEX-M05, COT-M04, COT-M05, REACT-M01, REACT-M10); flipping any 2 breaches the floor. False rejection 1. Coverage 37/37.
@@ -60,7 +62,7 @@
 ## THE EVAL CHAIN
 - Steps 0-3 DONE.
 - 5 PR-A DONE, PR-B measurement done, PR-B merged (#113, e0dd56a).
-- 4 Ship (README with golden + held-out numbers, walkthrough video, blog post) is BLOCKED by the 60% decision.
+- 4 Ship (README with golden + held-out numbers, walkthrough video, blog post) is BLOCKED by the 70% release floor (decisions.md 2026-10-10).
 - Steps 5-8 unchanged, except the reorder in docs/decisions.md ("Plan and stop rule - 2026-10-08", CONFIRMED).
 - Step order (earlier version, still on file): (1) docs sync; (2) read-only pipeline audit (AG) listing redundant/duplicated stages, per-stage value and token cost; (3) caps-and-429; (4) variance baseline, 3-5 repeats on main; (5) grow the eval by hand: 2-3 new papers, a fresh sealed held-out paper, more grounding-negative rows; (6) fix one thing at a time (prompt_loader few-shot bug: fixed in draft #115, see In-flight work), harness before/after, keep a change only if the gain is larger than the noise range.
 
@@ -69,11 +71,10 @@
 - PR-2 (section-by-section extraction) is parked. Design and build prompt kept on file.
 
 ## Next actions (in order)
-1. Label 2-3 new dev papers and 1 new sealed held-out (single-sentence rows, blind, before any run).
-2. Write marks and a rupee cap.
-3. Run the unchanged pipeline once on the new papers to see which stage fails more.
-4. Fix that stage (extractor first if forced), one change batch = one experiment.
-5. Milestone A, once.
+1. Commit verify_eval_verbatim.py, dev_eval.json (frozen 2026-10-11, 119 rows), decisions.md and this file.
+2. CC cost check -> marks, per-run rupee cap, push rupee cap.
+3. Ingest the 12 dev papers via the UI; dump fixtures; build dev_match_map.json paper by paper.
+4. Baseline x3 -> dev failure map -> exp 1 -> exp 2 -> core changes from the latest failure map. Review every 4 experiments; hard exit at 8.
 
 Note: The auditor design review and the extractor design review are done (decisions.md 2026-10-08).
 
