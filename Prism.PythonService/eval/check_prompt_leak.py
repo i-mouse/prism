@@ -2,25 +2,37 @@
 prompts/code.
 
 Offline and secretless: no LLM calls, no DB, no network, no settings import.
-Paper texts are never read here - only the committed hash index
-(eval/leakcheck/index.json, built locally by scripts/build_leak_index.py from
-the four PDFs after a sha256 check). Eval rows are read from the committed
-docs/evals/*.json at run time.
+Golden and held-out paper texts are never read here - only the committed hash
+index (eval/leakcheck/index.json, built locally by scripts/build_leak_index.py
+from the four PDFs after a sha256 check). The 12 dev-set papers are not
+sealed, so their PDF text is hashed the same way but computed at run time
+(dev_paper_sources) straight from docs/research_papers/, with no separate
+index file. Eval rows are read from the committed docs/evals/*.json at run
+time.
 
 Checks over every runtime file (RUNTIME_GLOBS):
-  FAIL  8-gram   any word 8-gram shared with a paper (index) or with any eval
-                 row field (claim_text_verbatim, claim_summary, scoring_notes,
-                 why_this_case; golden + held-out) or golden_eval.json Q/A
-  FAIL  name     an eval-paper name (index) or a name found in an eval row
-  FAIL  number   a number from an eval row (decimals, percentages, ints >= 3
-                 digits); in prompt files also a paper-text decimal with >= 2
-                 integer digits. Section ids ("Section 4.2") are exempt.
+  FAIL  8-gram   any word 8-gram shared with a paper (golden/held-out index or
+                 dev PDF text) or with any eval row field (claim_text_verbatim,
+                 claim_summary, scoring_notes, why_this_case; golden, held-out
+                 + dev) or golden_eval.json Q/A
+  FAIL  name     a paper name (golden/held-out index only) or a name found in
+                 a golden/held-out eval row
+  FAIL  number   a number from a golden/held-out eval row (decimals,
+                 percentages, ints >= 3 digits); in prompt files also a
+                 golden/held-out paper-text decimal with >= 2 integer digits.
+                 Section ids ("Section 4.2") are exempt.
   WARN  5-gram   any word 5-gram shared with an eval row field (printed for the
                  PR author to disposition; does not fail)
 
+Dev (docs/evals/dev_eval.json + its 12 PDFs) is checked on the text 8-gram/
+5-gram channels only - no name or decimal channel. At 12-paper scale a single
+name (e.g. "OpenTelemetry") or a short decimal (e.g. "0.78") collides with
+runtime code by chance far more often than a real leak would produce; golden
+and held-out stay at 3-4 papers each and keep all three channels.
+
 Held-out sources are never echoed: their hits print file:line + count only,
 and any golden-source match text that also occurs in a held-out source is
-redacted too.
+redacted too. Dev sources are not sealed and are echoed like golden.
 
 Allowlist: eval/leakcheck/allowlist.json, file-scoped entries only.
 
@@ -36,6 +48,8 @@ import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import fitz
+
 NORMALIZER_VERSION = 1
 NGRAM_N = 8
 WARN_N = 5
@@ -50,6 +64,8 @@ ALLOWLIST_PATH = LEAKCHECK_DIR / "allowlist.json"
 GOLDEN_ROWS_PATH = REPO_DIR / "docs" / "evals" / "matrix_eval.json"
 HELDOUT_ROWS_PATH = REPO_DIR / "docs" / "evals" / "heldout_eval.json"
 GOLDEN_QA_PATH = REPO_DIR / "docs" / "evals" / "golden_eval.json"
+DEV_ROWS_PATH = REPO_DIR / "docs" / "evals" / "dev_eval.json"
+DEV_PDF_DIR = REPO_DIR / "docs" / "research_papers"
 ROW_FIELDS = ("claim_text_verbatim", "claim_summary", "scoring_notes", "why_this_case")
 
 # Everything the service loads at run time. eval/, tests/, scratch/, scripts/
@@ -201,30 +217,71 @@ def paper_sources(index: dict) -> list[Source]:
     return out
 
 
-def _row_source(sid: str, claim_text: str, notes_text: str, heldout: bool) -> Source:
+def _pdf_text(path: Path) -> str:
+    """Same extraction as scripts/build_leak_index.py: pymupdf page.get_text(), concatenated."""
+    out = ""
+    with fitz.open(path) as doc:
+        for page in doc:
+            out += page.get_text()
+    return out
+
+
+def dev_paper_sources(dev_path: Path = DEV_ROWS_PATH, pdf_dir: Path = DEV_PDF_DIR) -> list[Source]:
+    """Hashed word-8-gram source per dev paper, mirroring build_leak_index.py's text
+    mechanism for the held-out paper - but computed at run time straight from
+    docs/research_papers/ instead of a precomputed index, since the dev PDFs are not
+    sealed and need no sha256 pin-and-abort step.
+
+    Text 8-grams only - no name or decimal channel. At 12-paper scale a single
+    name (e.g. "OpenTelemetry") or a short decimal (e.g. "0.78") collides with
+    runtime code by chance far more often than a real leak would produce; golden
+    and held-out stay at 3-4 papers each and keep all three channels."""
+    data = json.loads(dev_path.read_text(encoding="utf-8"))
+    out = []
+    for paper in data["papers"]:
+        text = _pdf_text(pdf_dir / paper["filename"])
+        toks = normalize_tokens(text)
+        out.append(Source(
+            sid=f"paper:dev-{paper['paper_id']}", heldout=False,
+            ngrams8={hash_key(g) for g in ngrams(toks, NGRAM_N)},
+        ))
+    return out
+
+
+def _row_source(sid: str, claim_text: str, notes_text: str, heldout: bool, with_name_number: bool = True) -> Source:
     """claim_text = the claim fields; notes_text = scoring notes / rationale.
     All-caps tokens count as names only in the claim fields - notes use
-    all-caps for emphasis ("FAIL", "NEVER"), not for names."""
+    all-caps for emphasis ("FAIL", "NEVER"), not for names.
+
+    with_name_number=False (dev rows only): text 8-gram/5-gram channels only, no
+    name or decimal channel - see dev_paper_sources for why."""
     text = f"{claim_text} \n {notes_text}"
     toks = normalize_tokens(text)
-    names = {hash_key(normalize_tokens(n)) for n in name_candidates(claim_text, allow_caps=True)}
-    names |= {hash_key(normalize_tokens(n)) for n in name_candidates(notes_text, allow_caps=False)}
+    if with_name_number:
+        names = {hash_key(normalize_tokens(n)) for n in name_candidates(claim_text, allow_caps=True)}
+        names |= {hash_key(normalize_tokens(n)) for n in name_candidates(notes_text, allow_caps=False)}
+        numbers = row_numbers(text)
+    else:
+        names = set()
+        numbers = set()
     return Source(sid=sid, heldout=heldout, hashed=False,
                   ngrams8=set(ngrams(toks, NGRAM_N)), ngrams5=set(ngrams(toks, WARN_N)),
-                  names=names, numbers=row_numbers(text))
+                  names=names, numbers=numbers)
 
 
 def row_sources(golden_path: Path = GOLDEN_ROWS_PATH, heldout_path: Path = HELDOUT_ROWS_PATH,
-                qa_path: Path = GOLDEN_QA_PATH) -> list[Source]:
+                qa_path: Path = GOLDEN_QA_PATH, dev_path: Path = DEV_ROWS_PATH) -> list[Source]:
     out = []
-    for path, heldout in ((golden_path, False), (heldout_path, True)):
+    for path, heldout, prefix, with_name_number in ((golden_path, False, "row", True),
+                                                      (heldout_path, True, "heldout-row", True),
+                                                      (dev_path, False, "dev-row", False)):
         data = json.loads(path.read_text(encoding="utf-8"))
         for i, paper in enumerate(data["papers"]):
             for j, row in enumerate(paper["expected_matrix"]):
                 claim = " \n ".join(str(row.get(f, "")) for f in ROW_FIELDS[:2])
                 notes = " \n ".join(str(row.get(f, "")) for f in ROW_FIELDS[2:])
-                sid = f"heldout-row:{i}.{j}" if heldout else f"row:{row['id']}"
-                out.append(_row_source(sid, claim, notes, heldout))
+                sid = f"{prefix}:{i}.{j}" if heldout else f"{prefix}:{row['id']}"
+                out.append(_row_source(sid, claim, notes, heldout, with_name_number))
     qa = json.loads(qa_path.read_text(encoding="utf-8"))
     for q in qa["questions"]:
         out.append(_row_source(f"golden_eval:{q['id']}", q["question"], str(q.get("expected_answer", "")), False))
@@ -370,7 +427,7 @@ def run_check(files: list[Path] | None = None, root: Path = SERVICE_DIR, index_p
               allowlist: list[dict] | None = None, sources: list[Source] | None = None) -> tuple[list[Hit], list[Hit]]:
     """Returns (failures, warnings) after the allowlist is applied."""
     if sources is None:
-        sources = paper_sources(load_index(index_path)) + row_sources()
+        sources = paper_sources(load_index(index_path)) + dev_paper_sources() + row_sources()
     if files is None:
         files = runtime_files(root)
     allowlist = load_allowlist() if allowlist is None else allowlist

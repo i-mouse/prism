@@ -27,7 +27,7 @@ def _plant(tmp_path, text, name="prompts/planted.md"):
 
 @pytest.fixture(scope="module")
 def sources():
-    return cpl.paper_sources(cpl.load_index()) + cpl.row_sources()
+    return cpl.paper_sources(cpl.load_index()) + cpl.dev_paper_sources() + cpl.row_sources()
 
 
 def test_runtime_tree_is_clean(sources):
@@ -50,6 +50,25 @@ def test_planted_golden_sentence_fails(tmp_path, sources):
     ngram_hits = [h for h in failures if h.kind == "ngram8"]
     assert {h.source for h in ngram_hits} >= {"paper:react", "row:REACT-M13"}
     assert all(h.file == "prompts/planted.md" and h.line == 4 for h in ngram_hits)
+
+
+def test_planted_dev_sentence_fails(tmp_path, sources):
+    row = next(r for r in _rows(cpl.DEV_ROWS_PATH) if r["id"] == "P1-S2")
+    path = _plant(tmp_path, row["claim_text_verbatim"])
+    failures, _ = cpl.run_check(files=[path], root=tmp_path, sources=sources, allowlist=[])
+    ngram_hits = [h for h in failures if h.kind == "ngram8"]
+    assert {h.source for h in ngram_hits} >= {"paper:dev-arxiv-2610.11519v1", "dev-row:P1-S2"}
+    assert all(h.file == "prompts/planted.md" and h.line == 4 for h in ngram_hits)
+
+
+def test_planted_dev_name_and_number_do_not_fail(tmp_path, sources):
+    # "opentelemetry" is a dev-paper name (P7) and 0.78 is a dev-row decimal
+    # (P5-S4); dev drops the name/decimal channels, so a short, out-of-context
+    # collision like this must not fail - only a shared text 8-gram would.
+    path = _plant(tmp_path, "The service uses opentelemetry and reports 0.78 as a ratio.")
+    failures, _ = cpl.run_check(files=[path], root=tmp_path, sources=sources, allowlist=[])
+    dev_hits = [h for h in failures if h.source.startswith("dev") or h.source.startswith("paper:dev")]
+    assert dev_hits == []
 
 
 def test_planted_golden_name_fails(tmp_path, sources):
