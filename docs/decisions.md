@@ -1711,3 +1711,28 @@ Decisions:
 - The remaining 8 papers are uploaded only after a failure map on the 4 done papers (extraction miss vs audit miss).
 - Draft fixtures for the 4 papers use the eval matcher (1 call per paper, small); official fixtures are re-dumped later with the adjudicated --match-map (no LLM call).
 - Per-run cap: INR 1,500. AI Studio cap raised to INR 2,800 before the 8 uploads. Push cap and experiment design: new entry after run 1.
+
+## Dev run 1 - fixture dump and pre-registered adjudication rules - 2026-10-12
+
+Fixture dump (run 1, 8 remaining dev papers)
+- 8 draft fixtures written by eval/dump_fixture.py into docs/evals/fixtures/dev/run1/
+  with --matrix-path docs/evals/dev_eval.json passed explicitly. Match counts equal dev row counts.
+- 10 matcher calls (2 extra on 2610.11291v1, see below). Real cost INR 11.38 (about INR 1.1 per call).
+- Config identical across all 12 papers: prompt_version cb3272cce551, model gemini-3.6-flash.
+- --dry-run in dump_fixture.py still makes the matcher API call; it only skips the disk write.
+- Not persisted anywhere: thinking setting, span-grounding model actually used (fallback not
+  tracked), per-call token/cost. Ticket after the config freeze ends.
+- Prism labels on all 12 papers (effective_status): 362 claims, 325 S, 24 PS, 13 NS.
+  7 of the 13 NS are grounding demotions (raw label S, effective_status NS); 0 on the first 4 papers.
+
+Adjudication rules (written before the 20-row pack was opened)
+- Verdict classes: HIT, extraction miss, audit miss, grounding miss (claim matched, auditor label
+  right, effective_status changed by grounding).
+- Partial sibling = extraction miss: if Prism extracted only the safe half of a claim and not the
+  overreaching half, the row is an extraction miss.
+- Floor: 70% of 31 refusal-family rows = 22 rows.
+- If hits + audit misses + grounding misses < 22, the floor needs extractor work.
+- Fix order: experiments 1 and 2 run first as planned. The first core change targets the largest
+  miss class in the full 12-paper failure map; on a tie, extractor first.
+- Noise rule: single-run baseline, so a change of 2 refusal rows or fewer is not counted as a win.
+- Official numbers come only from the hand-adjudicated match map, never the live matcher.

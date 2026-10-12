@@ -1,0 +1,914 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:56.041576+00:00",
+    "paper_id": "arxiv-2610.12124v1",
+    "filename": "2610.12124v1.pdf",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "Hippocam is a hierarchical memory and continual learning architecture for LLM agents.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "To address this, we propose Hippocam, a hierarchical memory and continual learning architecture.",
+      "evidence_spans": [
+        {
+          "source_text": "Consolidation preserves the original messages and their indices as ordered children of the messages that replace them, forming a message tree whose first layer is the current context.",
+          "source_section": "Section 2.5",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "Hippocam unifies context management, memory, knowledge, and skill learning via use and disuse.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Through this memory dynamic of use and disuse, Hippocam connects working context, long-term memory, knowledge accumulation, and skill learning within a single continuously evolving experiential process.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures. Memory, knowledge development, and learning arise from the same use-and-disuse cycle over its interaction history, demonstrating the broad applicability of a unified mechanism rather than separate capability-specific mechanisms.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result. Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods. On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "Hippocam allows agents to continuously evolve capabilities without updating model weights.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "This enables agents to learn and evolve capabilities through their own experiences without parameter updates.",
+      "evidence_spans": [
+        {
+          "source_text": "All use DeepSeek-V4.1-Flash (1M-token context window) as the task backbone.",
+          "source_section": "Section 4 (Experimental setup)",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "On DDXPlus, Hippocam continues to improve after early fluctuations and maintains its lead, while Letta and A-Mem also improve. On ToolBench, Hippocam makes modest further gains amid fluctuations and moves ahead of Letta, whereas A-Mem shows little sustained improvement in the extended evaluation. These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "Hippocam matches or beats top baselines on 7 out of 8 evaluated benchmark metrics.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Whereas competing methods show more uneven performance across these demands, Hippocam leads or matches the best compared method on seven of the eight measures in Fig. 1.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam leads or matches the best compared method on seven of the eight measures in Fig. 1.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "Hippocam manages memory directly within context rather than using a separate memory bank.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam does not build a memory bank separate from its interaction history, but remembers and learns by deliberately maintaining its context.",
+      "evidence_spans": [
+        {
+          "source_text": "These processes turn the agent\u2019s own interaction history into evolving knowledge and capabilities, without maintaining a separate memory bank or skill library.",
+          "source_section": "Section 2.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In Hippocam, context and messages themselves constitute memory, without a separate memory bank or scoring and decay rules.",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Memory, knowledge development, and learning arise from the same use-and-disuse cycle over its interaction history, demonstrating the broad applicability of a unified mechanism rather than separate capability-specific mechanisms.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "Consolidation keeps working context concise and high-signal for long-horizon reasoning.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Both forms of consolidation keep the agent\u2019s recent context focused and high-signal, enabling accurate and coherent reasoning over long horizons.",
+      "evidence_spans": [
+        {
+          "source_text": "On GoodAI, filler retention rises from 14% to 63%, while scores fall by 23.1 pp under interleaving versus 7.3 pp in isolation (Table 4).",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4). ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label": "partially_supported",
+      "claim_summary": "Unused details recede naturally without explicit importance scores or decay rules.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Experience that remains unused continues to recede in detail through recursive consolidation, without separately assigned importance scores or time-based forgetting rules.",
+      "evidence_spans": [
+        {
+          "source_text": "These thresholds control when context is consolidated, rather than assigning importance or decay scores to individual memories.",
+          "source_section": "Appendix A",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Meanwhile, an ordinary remotecontrol episode is first retained with its destination, then reduced to an item in a list of completed tasks, after which its episode-specific details no longer occur in the narrative.",
+          "source_section": "Appendix A.7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Most items without detected use remain unchanged (95.8%), so these adjacent-consolidation statistics do not establish general fading of unused knowledge.",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "Use and disuse dynamics unify memory recall with continuous learning and capability expansion.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result. Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods. On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Supplementation occurs in 28.4% of matched-call transitions and 11.7% of differing-call transitions, compared with 0.9% of transitions without detected use.",
+          "source_section": "Section A.6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "Hippocam reaches 97.8% success on ALFWorld, tying the top baseline.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result.",
+      "evidence_spans": [
+        {
+          "source_text": "Plain 78.4 66.9 69.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ACE 97.8 91.9 75.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 97.8 81.9 81.7",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 81.9% mean progress on ScienceWorld, outperforming most baselines.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam 97.8 81.9 81.7",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "HiAgent 85.1 56.7 69.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "mem0 87.3 58.6 69.3",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReasoningBank 85.1 66.9 68.3",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Letta 85.1 71.2 81.3",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Hippocam hits 81.7% mean accuracy on StreamBench, outperforming all competitors.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 1: Task performance (%) on ALFWorld, ScienceWorld, and StreamBench.",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Letta 85.1 71.2 81.3",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 97.8 81.9 81.7",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "Hippocam maintains leading accuracy on DDXPlus as experience accumulates over time.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On DDXPlus, Hippocam continues to improve after early fluctuations and maintains its lead, while Letta and A-Mem also improve.",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 4 extends each StreamBench stream\u2019s three leading methods at task 150 to task 300, tracking cumulative accuracy over all tasks answered so far.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 6: StreamBench accuracy at two evaluation horizons. Mean gives equal weight to the two streams and is reported only when both reach the stated horizon.",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On DDXPlus, Hippocam continues to improve after early fluctuations and maintains its lead, while Letta and A-Mem also improve.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "Hippocam advances past Letta on ToolBench with extended interaction tasks.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "On ToolBench, Hippocam makes modest further gains amid fluctuations and moves ahead of Letta, whereas A-Mem shows little sustained improvement in the extended evaluation.",
+      "evidence_spans": [
+        {
+          "source_text": "A-Mem 84.0 74.0 79.0 91.3 74.3 82.8",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Letta 86.0 76.7 81.3 91.7 77.3 84.5",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 87.3 76.0 81.7 93.0 78.7 85.8",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Hippocam improves accuracy while cutting per-task cost by 10% in later task streams.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In both streams, Hippocam also achieves higher accuracy with about 10% lower average cost per task in the later 150-task interval (\u00a7 A.9).",
+      "evidence_spans": [
+        {
+          "source_text": "Across both streams, Hippocam\u2019s later interval has higher accuracy and about 10% lower mean cost per task (Table 12).",
+          "source_section": "Appendix A.9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "DDXPlus First 150 87.3 207.8 8.0 0.0095 0.0109\nNext 150 98.7 252.3 8.3 0.0085 0.0087\nToolBench First 150 76.0 232.5 30.4 0.0132 0.0173\nNext 150 81.3 259.5 26.8 0.0118 0.0145",
+          "source_section": "Table 12",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Hippocam reaches 78.9% frozen transfer progress on ScienceWorld, beating ACE by 16.2 points.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+      "evidence_spans": [
+        {
+          "source_text": "Plain 48.8",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "ACE 62.7",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 78.9",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 61.8% accuracy on FEVER under frozen cross-domain evaluation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 2: Cross-domain knowledge generalization and integration. ScienceWorld mean progress and FEVER accuracy (%).",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Hippocam and ACE are the only methods showing consistent positive gains across both cross-domain transitions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Only Hippocam and ACE achieve positive gains on both domain transitions, while the remaining methods show mixed, unchanged, or reduced performance.",
+      "evidence_spans": [
+        {
+          "source_text": "ACE improves ScienceWorld progress by 14.0 pp and FEVER accuracy by 2.0 pp. Hippocam achieves larger gains of 19.2 and 6.0 pp, respectively",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 2: Cross-domain knowledge generalization and integration. ScienceWorld mean progress and FEVER accuracy (%). \u2206stream reports After minus Fresh in percentage points (pp).",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "Hippocam shows substantial positive domain transfer gains on ScienceWorld (+19.2 pp) and FEVER (+6.0 pp).",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam achieves larger gains of 19.2 and 6.0 pp, respectively, with a narrower FEVER gap under the scoring sensitivity analysis (\u00a7 A.2).",
+      "evidence_spans": [
+        {
+          "source_text": "55.9 \u2192 75.1 +19.2",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "53.9 \u2192 59.9 +6.0",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Under an alternative answer extraction, Hippocam\u2019s sequential improvement decreases from six to two percentage points.",
+          "source_section": "Appendix A.2",
+          "grounding_status": "Fail",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "label": "partially_supported",
+      "claim_summary": "Hippocam resists task interference, scoring 85.1% in isolation and 88.7% when tasks are interleaved.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In contrast, Hippocam maintains high performance in both conditions without degradation under interleaving, scoring 85.1% in isolation and 88.7% under interleaving (Fig. 5, left).",
+      "evidence_spans": [
+        {
+          "source_text": "In contrast, Hippocam maintains high performance in both conditions without degradation under interleaving, scoring 85.1% in isolation and 88.7% under interleaving (Fig. 5, left).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "GoodAI isolated Score \u2191 85.1",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "interleaved Score \u2191 88.7",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We interpret the comparison as performance under the two benchmark protocols, without attributing the higher interleaved score to task interleaving itself.",
+          "source_section": "Appendix A.3",
+          "grounding_status": "Partial",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "Hippocam hits 77.6% overall accuracy on LoCoMo, beating A-Mem by 10.1 percentage points.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3).",
+      "evidence_spans": [
+        {
+          "source_text": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "A-Mem 67.5",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 77.6",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "Hippocam leads on all answerable LoCoMo categories, reaching 86.6% on temporal questions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "It leads or ties across all four answerable question categories, with temporal accuracy reaching 86.6% compared with A-Mem\u2019s 67.6%.",
+      "evidence_spans": [
+        {
+          "source_text": "It leads or ties across all four answerable question categories, with temporal accuracy reaching 86.6% compared with A-Mem\u2019s 67.6%.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 3: What the retained conversation supports. Binary judge accuracy (%) on LoCoMo.",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 77.6 81.5 40.8 86.6 77.1 87.2",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 87.2% accuracy on adversarial unanswerable questions in LoCoMo.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Hippocam combines stronger conversational reasoning with 87.2% accuracy on unanswerable questions.",
+      "evidence_spans": [
+        {
+          "source_text": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3). It leads or ties across all four answerable question categories, with temporal accuracy reaching 86.6% compared with A-Mem\u2019s 67.6%.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Hippocam 77.6 81.5 40.8 86.6 77.1 87.2",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Adversarial questions reward identifying unsupported premises, while the remaining categories require substantive answers.",
+          "source_section": "Section A.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Hippocam averages 71.7% accuracy on MemoryAgentBench conflict resolution versus Letta's 44.3%.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across the three input lengths, Hippocam achieves 71.7% mean accuracy, compared with 44.3% for Letta (Fig. 5, right).",
+      "evidence_spans": [
+        {
+          "source_text": "Across the three input lengths, Hippocam achieves 71.7% mean accuracy, compared with 44.3% for Letta (Fig. 5, right).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 8: MemoryAgentBench conflict resolution and long-range understanding (LRU). Accuracy (%); Overall averages the three multi-hop input lengths.",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 97.0 77.0 41.0 71.7",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Letta 77.0 37.0 19.0 44.3",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "label": "supported",
+      "claim_summary": "Hippocam outperforms baselines at long contexts, reaching 77% at 32k and 41% at 64k inputs.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "It matches HiAgent at 97.0% on 6k inputs and retains 77.0% and 41.0% accuracy at 32k and 64k, where no baseline exceeds 37.0% and 19.0%, respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "Method 6k 32k 64k Overall\nHiAgent 97.0 0.0 11.0 36.0\nHippocam 97.0 77.0 41.0 71.7\nLetta 77.0 37.0 19.0 44.3",
+          "source_section": "Table 8",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "label": "supported",
+      "claim_summary": "Hippocam offers broader domain capability while leading or tying on 7 of 8 benchmark metrics.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On ScienceWorld, several methods benefit from source-domain experience, but the gains vary substantially. Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp. On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Hippocam maintains high performance in both conditions without degradation under interleaving, scoring 85.1% in isolation and 88.7% under interleaving (Fig. 5, left).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Across the three input lengths, Hippocam achieves 71.7% mean accuracy, compared with 44.3% for Letta (Fig. 5, right).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "label": "supported",
+      "claim_summary": "Removing intent conditioning increases filler retention and significantly lowers GoodAI task scores.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On GoodAI, filler retention rises from 14% to 63%, while scores fall by 23.1 pp under interleaving versus 7.3 pp in isolation (Table 4).",
+      "evidence_spans": [
+        {
+          "source_text": "We inspect whether filler question\u2013answer pairs remain in the memories that consolidate them; retention increases from 14% to 63% without intent conditioning.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The interleaved score decreases from 88.7% to 65.6%, compared with 85.1% to 77.8% in isolation.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "label": "partially_supported",
+      "claim_summary": "Prefix consolidation maintains task efficiency while drastically shrinking working context size.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Prefix consolidation thus supports more effective subsequent work with a smaller active context.",
+      "evidence_spans": [
+        {
+          "source_text": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4). ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "ALFWorld Success \u2191 97.8 100.0",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "Disabling progressive recall drops MemoryAgentBench 64k accuracy from 41.0% to 27.0%.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+      "evidence_spans": [
+        {
+          "source_text": "Setting: Recall | Metric: MAB-64k Acc. \u2191 | Hippocam: 41.0 | w/o: 27.0",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The complete system and the variant answer from copies of the same post-ingestion MemoryAgentBench 64k snapshot. The variant removes the recall tool and its accompanying instructions; ingestion and stored memory are unchanged.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "label": "supported",
+      "claim_summary": "Progressive recall of raw evidence enhances reasoning performance over summarized context alone.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Access to underlying evidence therefore improves reasoning beyond what the consolidated context alone supports.",
+      "evidence_spans": [
+        {
+          "source_text": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "label": "supported",
+      "claim_summary": "Hippocam dynamically adjusts retrieval depth, pulling only necessary evidence from history.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "These cases show that Hippocam adapts retrieval depth to the task, recovering sufficient evidence without expanding the entire history.",
+      "evidence_spans": [
+        {
+          "source_text": "These cases show that Hippocam adapts retrieval depth to the task, recovering sufficient evidence without expanding the entire history.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In the MemoryAgentBench cases (Fig. 8), one question requires two levels of recall to recover a chain of facts, while another is resolved after one level without opening deeper references.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "For q042, one recall round exposes all records needed under the benchmark\u2019s later-entry rule, so a deeper reference exposed by the fold remains closed. For q014, the first round finds one authorship record but leaves the competing authorship and language records behind a nested reference; a second round opens that reference.",
+          "source_section": "Section A.8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "label": "supported",
+      "claim_summary": "In extended tasks, Hippocam increases accuracy while lowering per-task inference costs by ~10%.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across both streams, Hippocam\u2019s later interval has higher accuracy and about 10% lower mean cost per task (Table 12).",
+      "evidence_spans": [
+        {
+          "source_text": "Table 12: Later work improves without a higher mean cost per task. Hippocam\u2019s consecutive StreamBench intervals.",
+          "source_section": "Table 12",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Across both streams, Hippocam\u2019s later interval has higher accuracy and about 10% lower mean cost per task (Table 12).",
+          "source_section": "Appendix A.9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves lower cost per correct answer ($0.0173) than A-Mem ($0.0271) on ToolBench.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Its cost per correct answer is consequently lower under the stated prices (0.0173 versus 0.0271 USD).",
+      "evidence_spans": [
+        {
+          "source_text": "On ToolBench\u2019s first 150 tasks, Hippocam reads 232.5k input tokens per task, compared with A-Mem\u2019s 65.0k, but only 30.4k versus 52.7k are uncached. Its cost per correct answer is consequently lower under the stated prices (0.0173 versus 0.0271 USD).",
+          "source_section": "Section A.9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ToolBench First 150 76.0 232.5 30.4 0.0132 0.0173",
+          "source_section": "Table 12",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P8-R1",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "P8-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P8-S3",
+      "actual_index": 10
+    },
+    {
+      "expected_id": "P8-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P8-S5",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P8-S6",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P8-S7",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P8-S8",
+      "actual_index": 27
+    }
+  ]
+}

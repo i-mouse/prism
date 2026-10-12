@@ -1,0 +1,588 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:24.408709+00:00",
+    "paper_id": "arxiv-2610.12176v1",
+    "filename": "2610.12176v1.pdf",
+    "extraction_run_id": "008ce553-38d3-4d82-b46d-be74b17facb4"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "MASS alternates evolutionary workflow optimization with supervised fine-tuning on self-generated trajectories.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories.",
+      "evidence_spans": [
+        {
+          "source_text": "MASS alternates between multi-agent workflow optimization (Algorithms 2) and model fine-tuning that internalizes the workflows (Algorithms 3).",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At generation g, the current model L(g) serves as the task-solving agent, workflow optimizer, and evaluator. Algorithm 2 first produces task-specific retained workflows using fixed model weights. Algorithm 3 then generates and self-selects trajectories under these workflows and fine-tunes the same model to obtain L(g+1).",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "partially_supported",
+      "claim_summary": "Evolutionary search discovers effective roles and information routing for given tasks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Through an evolutionary search constrained by structural guardrails, the model optimizes these computational-graph-like orchestrations, discovering the most effective distinct roles and information routing for a given task.",
+      "evidence_spans": [
+        {
+          "source_text": "This resembles an evolution process with an elite size one (Risi et al., 2026).",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Thus, w\u2217\nt denotes the best self-judged workflow under sequential in-loop pairwise evaluation, rather than a certified global optimum.",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "Qwen3.6-27B with MASS achieves 1.2-1.6x higher token efficiency on public benchmarks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6\u00d7 higher performance per output tokens on four open-ended public benchmarks.",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Arrows go from L(0) to L(2), labelled with the ratio of their score per output token: on the four research benchmarks (top row, bottom left), L(2) gains 1.2\u20131.6\u00d7.",
+          "source_section": "Figure 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label": "partially_supported",
+      "claim_summary": "MASS enables continuous recursive bootstrapping as the model becomes a better optimizer and evaluator.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model\u2019s capabilities.",
+      "evidence_spans": [
+        {
+          "source_text": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6\u00d7 higher performance per output tokens on four open-ended public benchmarks.",
+          "source_section": "Abstract",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The recursive loop here is empirical. Unlike proof-based self-rewriting in G\u00f6del machines (Schmidhuber, 2007), it provides no guarantee that every future cycle improves.",
+          "source_section": "Appendix J",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "partially_supported",
+      "claim_summary": "Multi-agent traces outperform single-agent training despite using 1.4x fewer tokens.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "evidence_spans": [
+        {
+          "source_text": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "M + has broader training-task coverage and a different sampler, so it is not a matched-data control.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "These differences in sampling, data, and checkpoint selection limit what can be attributed to teacher composition alone.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "MASS increases test task win rate to 69.9% and benchmark token efficiency by 1.2-1.6x.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, ScienceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0). On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "Post-training on task-solving trajectories simultaneously improves solving, workflow optimization, and evaluation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "evidence_spans": [
+        {
+          "source_text": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "Evaluator accuracy rises from 73% to 93% while workflow discovery speeds up.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 3a compares L(g)(xt \u2295w(g,i) t ) with L(0)(xt) across workflow iterations i \u2208[10] and MASS generations g \u2208{0, 1, 2}, showing that post-trained models discover successful workflows earlier.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 3c measures agreement between the self-evaluator L(g) and the external reference judgments. The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "L(0) 0.73 L(1) 0.91 L(2) 0.93",
+          "source_section": "Figure 3c",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "Workflows evolve more task-specific information handoffs and routing during optimization.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We further find that optimized workflows develop more task-specific information handoffs and routing, consistent with our information-flow hypothesis (Section 4.3).",
+      "evidence_spans": [
+        {
+          "source_text": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In all four encoder/estimator configurations, roles and instructions decrease while contracts and hops increase between i = 3 and i = 11 (arrows).",
+          "source_section": "Table 12",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "label": "partially_supported",
+      "claim_summary": "First-cycle multi-agent student hits 68.3% win rate, beating single-agent training with 1.4x tokens.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "evidence_spans": [
+        {
+          "source_text": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "M + has broader training-task coverage and a different sampler, so it is not a matched-data control.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "These differences in sampling, data, and checkpoint selection limit what can be attributed to teacher composition alone.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Workflow optimization is identified as the primary bottleneck in homogeneous RSI loops.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "evidence_spans": [
+        {
+          "source_text": "Replacing only the evaluator with GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "Post-training internalizes information-handoff coordination behaviors into model weights.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Finally, trajectory analysis provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).",
+      "evidence_spans": [
+        {
+          "source_text": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "These behaviors emerge without providing the optimized workflow at inference time.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Among 114 audited teacher trajectories, 98 contain code handoffs and 57 contain subagent revisions; 79 and 37 of these trajectories, respectively, were sampled for SFT (Appendix G.2).",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "label": "partially_supported",
+      "claim_summary": "MASS improves performance across ScienceAgentBench, MLR-Bench, AstaBench, and DSBench.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "evidence_spans": [
+        {
+          "source_text": "MLR-Bench 1.58\u00b10.38 1.80\u00b10.30 2.40\u00b10.28",
+          "source_section": "Figure 3b",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The aggregate score improvement therefore accompanies higher completion. None of the 180 MLR-Bench executions calls the delegation tool, so this result does not establish delegation as the mechanism of public-benchmark transfer.",
+          "source_section": "Appendix C.5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "The evidence for improvement therefore depends on the aggregation unit, and does not establish a consistent gain across research tasks.",
+          "source_section": "Appendix C.5",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Win rate against base model rises from 53.9% in cycle 1 to 69.9% in cycle 2.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "evidence_spans": [
+        {
+          "source_text": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Test tasks pooled 30 97 83 0 53.9%",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Cycle 2 model achieves a 60.8% win rate over the cycle 1 model.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "evidence_spans": [
+        {
+          "source_text": "Test 53.9% 69.9% 60.8%",
+          "source_section": "Figure 3b",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Workflows optimized by L(1) beat those from L(0) in 64% of comparisons.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The mean win share is 0.64 when both workflow sets are executed by (L(0)).",
+          "source_section": "Appendix C.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "label": "partially_supported",
+      "claim_summary": "Optimization increases task-specific routing information while reducing cross-component redundancy.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "evidence_spans": [
+        {
+          "source_text": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+          "source_section": "Figure 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "From i = 3 to i = 11, unconditional d\nTC(Z) decreases in all four configurations and task-centered d\nTC(Z | T) in three; the permutation-adjusted MPNet estimate increases.",
+          "source_section": "Table 13",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "label": "partially_supported",
+      "claim_summary": "Joint learning of coordination and subagent execution provides superior RSI supervision.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Jointly learning coordination from orchestrator trajectories and bounded execution from subagent trajectories may provide more effective RSI supervision than learning both from a single agent\u2019s long-horizon trajectories.",
+      "evidence_spans": [
+        {
+          "source_text": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "These differences in sampling, data, and checkpoint selection limit what can be attributed to teacher composition alone.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "Multi-agent models outperform single-agent token efficiency references by 8.3 and 6.3 points.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Both M and M + exceed this piecewise-linear reference at their respective token budgets by 8.3 and 6.3 percentage points.",
+      "evidence_spans": [
+        {
+          "source_text": "Both M and M + exceed this piecewise-linear reference at their respective token budgets by 8.3 and 6.3 percentage points.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The single-agent reference interpolates the observed results for S (1.82M tokens, 44.0%), S+ (9.11M, 59.0%), and S++ (42M, 64.0%).",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The 8.3- and 6.3-point gaps for M and M + are differences from this reference, not measurements from single-agent models trained at those exact budgets.",
+          "source_section": "Appendix D.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "label": "partially_supported",
+      "claim_summary": "M+ reaches 68.3% win rate using 31.4% fewer tokens than S++.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+      "evidence_spans": [
+        {
+          "source_text": "M + 119 17.22 28.82 68.3 73.3 48.3",
+          "source_section": "Table 8",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "S++ 290 \u2014 42.00 64.0 \u2014 \u2014",
+          "source_section": "Table 8",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "M + has broader training-task coverage and a different sampler, so it is not a matched-data control.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "Delegation and code handoff occurrences increase dramatically across generations without prompting.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "(a) Coordination under bare task prompts. D: delegation; H: code handoff. Model L(0) D: 1/110 H: 1/110; L(1) D: 48/110 H: 42/110; L(2) D: 87/110 H: 83/110",
+          "source_section": "Table 2a",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P10-R1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P10-R2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P10-R3",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P10-S1",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "P10-S2",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "P10-S3",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P10-S4",
+      "actual_index": 20
+    },
+    {
+      "expected_id": "P10-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P10-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P10-S7",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P10-S8",
+      "actual_index": null
+    }
+  ]
+}

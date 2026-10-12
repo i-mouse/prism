@@ -1,0 +1,684 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:09.041433+00:00",
+    "paper_id": "arxiv-2610.12375v1",
+    "filename": "2610.12375v1.pdf",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "OnTrack monitors agent trajectories in real-time, taking about a millisecond per step.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "evidence_spans": [
+        {
+          "source_text": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80)",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "per-event runtime spans 0.2\u20131.6 ms.",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "OnTrack outperforms content similarity approaches by +0.057 AUROC at step 8.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "evidence_spans": [
+        {
+          "source_text": "8 | .631 | .628 | .574 | .613 | .576 | +.057 [.033, .080]",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out protocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10)",
+          "source_section": "Section 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label": "partially_supported",
+      "claim_summary": "An abort policy saves ~18% compute with 83% precision on failing runs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "evidence_spans": [
+        {
+          "source_text": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "One protocol disclosure: the full threshold sweep is reported, and 0.60 is an illustrative threshold selected for exposition after the sweep \u2014 not a recommended deployment setting, since it was not chosen on held-out data.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "OnTrack uses optimal transport to flag trajectory issues in about one millisecond per step.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "evidence_spans": [
+        {
+          "source_text": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "per-event runtime spans 0.2\u20131.6 ms.",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "OnTrack operates flexibly without requiring reference trajectories to run.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "evidence_spans": [
+        {
+          "source_text": "OnTrack separates signals by their prerequisites into three decoupled layers: L1 vital signs (reference-free intrinsic diagnostics: loop detection, information gain, stall) run always; L2 transport alignment (the streaming UFGW machinery, Secs. 4.1\u20134.5) requires references;",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "L1-only (no refs)",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "OnTrack retains loop, stall, and prerequisite violation detection even with minimal inputs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "evidence_spans": [
+        {
+          "source_text": "We are explicit about attribution: loops (C) and retry exemptions (F) are handled by the reference-free L1 heuristics, and the irreversible-action gate (H) by L3 schema checks \u2014 neither exercises optimal transport.",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "H irreversible w/o prereqs BLOCK BLOCK 0 L3",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "L1-only (no refs) 30/30 18/30 19/30 30/30 31/40",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "OnTrack seamlessly degrades across data access regimes without requiring manual reconfiguration.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "evidence_spans": [
+        {
+          "source_text": "OnTrack separates signals by their prerequisites into three decoupled layers: L1 vital signs (reference-free intrinsic diagnostics: loop detection, information gain, stall) run always; L2 transport alignment (the streaming UFGW machinery, Secs. 4.1\u20134.5) requires references; L3 pre-execution policy gate (tool-contract prerequisite checks plus a one-row proposal alignment, Sec. 4.5) requires schemas",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "With no reference at all, L2 is off and OnTrack degrades, explicitly, to L1 + L3.",
+          "source_section": "Section 4.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "OnTrack's frontier masking prevents punishing agents for completing steps early.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "evidence_spans": [
+        {
+          "source_text": "The active set and its lookahead are At = { j : every reference-parent of j is satisfied }, Lt = children(At) \\ At, with roots vacuously active, and the masked marginal is \u03bd(t) j = \u03bdj (j \u2208At \u222a{satisfied}), \u03b2look \u03bdj (j \u2208Lt), \u03b5\u03bd \u03bdj otherwise",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Proposition 2 (Relabeling invariance of the masked objective). Fix a covered sub-DAG, a mask \u03bd(t), and structural weights that are order-independent (age weights matched across comparisons or disabled). Then the masked objective, and its exact minimizer set from a permutation-equivariant initialization, are invariant to graph-preserving relabelings of the prefix: the satisfied set, active set A, and masked marginal \u03bd(t) are functions of the covered sub-DAG alone, and members of an executable antichain carry full mass simultaneously, so no order among them is preferred.",
+          "source_section": "Section 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Scenario B finalizes to the in-order score exactly (0.913 = 0.913), the empirical face of Prop. 2.",
+          "source_section": "Section 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "Amortized warm-started iterations keep per-step execution time down to about one millisecond.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "evidence_spans": [
+        {
+          "source_text": "Two-tier escalation. The fast path above runs on every event. If and only if it raises a would-be intervention verdict, the evaluator escalates to a converged solve (\u226410 outer CG, \u226450 inner Sinkhorn, cold tolerance) on the current prefix before the verdict is confirmed.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "OnTrack's final solve aligns with batch evaluation when online dependency extraction matches.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "evidence_spans": [
+        {
+          "source_text": "Let the stream terminate at t = n, let the online dependency graph equal the graph a batch evaluator would extract from the completed log, and let OnTrack perform one cold-started converged solve with the frontier mask removed and marginals renormalized to the batch convention. Then the finalization computation \u2014 the same deterministic implemented procedure (clipped GW linearization and surrogate diagnostic, Sec. 4.3; we say procedure rather than objective because a clipped gradient need not be the gradient of any objective), constraint set, parameters (\u03b8, \u03bb, \u03b5), references, node costs, initialization, and stopping schedule, with age weights disabled (batch convention) \u2014 is identical to a batch evaluator running the same released implementation on the completed trajectory, and the deterministic solver returns the same score.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Proof sketch. With the mask removed and marginals renormalized, every input to the solver coincides with the batch invocation, and a deterministic solver run from the same canonical initialization produces the same iterates.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "OnTrack only blocks irreversible actions, leaving reversible actions open for exploration.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Reversible actions are never blocked, preserving cheap exploration.",
+      "evidence_spans": [
+        {
+          "source_text": "1: if proposed action qt irreversible and L3 gate fails (schema + proposal alignment against the t\u22121 frontier) return BLOCK",
+          "source_section": "Algorithm 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "L3 pre-execution policy gate (tool-contract prerequisite checks plus a one-row proposal alignment, Sec. 4.5) requires schemas and is the only synchronous component \u2014 it evaluates the proposed action before the tool executes, exclusively for irreversible calls",
+          "source_section": "Section 4.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reversible actions are never blocked, preserving cheap exploration.",
+          "source_section": "Section 4.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "The fast path executes in 0.85 ms median per step for typical lengths.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "evidence_spans": [
+        {
+          "source_text": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At K=3 references, m=40, t \u226440, the fast path measures p50 0.85 ms / p95 1.6 ms per event (Apple M5 Max core).",
+          "source_section": "Section 6.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "Validly reordered trajectories receive scores identical to in-order executions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Scenario B finalizes to the in-order score exactly (0.913 = 0.913), the empirical face of Prop. 2.",
+      "evidence_spans": [
+        {
+          "source_text": "Scenario B finalizes to the in-order score exactly (0.913 = 0.913), the empirical face of Prop. 2.",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Scenario B of Table 2, where a reordered run tracks and finalizes to the identical score, is its validation.",
+          "source_section": "Section 5 (Remark 2)",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "label": "partially_supported",
+      "claim_summary": "Node leakage distinguishes hallucinated steps from valid execution steps.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113\u22650.66 while valid steps stay \u22640.24, comfortably bracketing \u03b8leak = 0.6.",
+      "evidence_spans": [
+        {
+          "source_text": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113\u22650.66 while valid steps stay \u22640.24, comfortably bracketing \u03b8leak = 0.6.",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+          "source_section": "Section 6.4",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "we do not claim general in-the-wild detection of hallucinations or causal inversions, whose real-trace signal sits near the floor on homogeneous corpora.",
+          "source_section": "Section 8",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Randomized testing shows high fault recall with zero false interventions on benign runs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "evidence_spans": [
+        {
+          "source_text": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Fast-path diagnostic closely tracks finalization output with minimal discrepancy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The end-of-stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+      "evidence_spans": [
+        {
+          "source_text": "The end-of-stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Finally, a definition: the empirical \u22640.013 figure (Sec. 6.1) is the end-of-stream discrepancy \u2014 the running fast-path diagnostic over the stream against the eventual finalization output.",
+          "source_section": "Section 5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "OnTrack demonstrates a statistically significant ranking advantage over cosine similarity for steps <=10.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "First, the \u2206CI excludes zero at k \u226410, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.",
+      "evidence_spans": [
+        {
+          "source_text": "5 .612 .595 .552 .622 .574 +.060 [.037, .083]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "8 .631 .628 .574 .613 .576 +.057 [.033, .080]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "10 .622 .614 .589 .598 .552 +.033 [.007, .057]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "15 .635 .626 .633 .580 .551 +.002 [\u2212.022, .027]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "At step 8, OnTrack delivers higher true positive rates across low false positive rates.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "At k=8, OnTrack achieves TPR 6.6% / 23.2% / 33.3% at FPR 1% / 5% / 10%, compared to cosine 1.5% / 9.6% / 20.7% and n steps 1.0% / 5.6% / 13.6%.",
+      "evidence_spans": [
+        {
+          "source_text": "At k=8, OnTrack achieves TPR 6.6% / 23.2% / 33.3% at FPR 1% / 5% / 10%, compared to cosine 1.5% / 9.6% / 20.7% and n steps 1.0% / 5.6% / 13.6%.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "A 0.60 flag density threshold saves 17.9% compute on unresolved trajectories.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+      "evidence_spans": [
+        {
+          "source_text": "0.60 23.3% 20.7% 17.9% 83%",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 6: Abort threshold sweep on severe flag density (n=150 per class, balanced).",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "Deploying the abort policy yields approximately 83% precision for interrupted runs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+      "evidence_spans": [
+        {
+          "source_text": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "0.60 23.3% 20.7% 17.9% 83%",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "OnTrack matches step count and dominates cosine similarity in cost-limit exit detection.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+      "evidence_spans": [
+        {
+          "source_text": "OnTrack score 0.979",
+          "source_section": "Table 7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "OnTrack flags 0.977",
+          "source_section": "Table 7",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "n steps 0.978",
+          "source_section": "Table 7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Cosine 0.557",
+          "source_section": "Table 7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+          "source_section": "Section 6.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "OnTrack achieves high TPR for cost-limit exits at low false positive rates.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+      "evidence_spans": [
+        {
+          "source_text": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+          "source_section": "Section 6.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Severe-flag density triggers catch 90% of cost-limit failures with ~41% steps remaining.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+      "evidence_spans": [
+        {
+          "source_text": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+          "source_section": "Section 6.4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+          "source_section": "Section 6.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "label": "supported",
+      "claim_summary": "Flag-based detection performs strongest on structural loops and stalls in real traces.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+      "evidence_spans": [
+        {
+          "source_text": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+          "source_section": "Section 6.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "label": "supported",
+      "claim_summary": "OnTrack and baselines show comparable, modest trajectory-level outcome separation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On a balanced sample (50 resolved, 50 unresolved), no method reliably separates outcomes (Table 8): OnTrack reaches 0.581, cosine 0.643, with widely overlapping bootstrap CIs.",
+      "evidence_spans": [
+        {
+          "source_text": "Bootstrap 95% CI: OnTrack score [0.466, 0.689], cosine [0.531, 0.759] \u2014 overlapping.",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Point estimates are unstable at this sample size \u2014 an independent draw of the evaluation sample yields OnTrack 0.666 vs. cosine 0.657, reversing the ordering \u2014 so the only conclusion the data support is that neither process alignment nor content similarity predicts patch correctness from the trajectory alone.",
+          "source_section": "Section 6.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "label": "supported",
+      "claim_summary": "Trajectory outcome prediction collapses near chance when step length is controlled.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+      "evidence_spans": [
+        {
+          "source_text": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+          "source_section": "Section 6.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192 more accumulated transport cost).",
+          "source_section": "Section 6.6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "label": "supported",
+      "claim_summary": "OnTrack achieves 0.979 AUROC on cost-limit failures in real-time mid-trace monitoring.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+          "source_section": "Section 6.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+          "source_section": "Section 6.4",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P9-R1",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P9-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P9-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P9-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P9-S4",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "P9-S6",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P9-S7",
+      "actual_index": 11
+    },
+    {
+      "expected_id": "P9-S8",
+      "actual_index": null
+    }
+  ]
+}

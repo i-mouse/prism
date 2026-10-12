@@ -1,0 +1,450 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:38.397508+00:00",
+    "paper_id": "arxiv-2610.12168v1",
+    "filename": "2610.12168v1.pdf",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "not_supported",
+      "claim_summary": "Introduces a self-improvement loop extracting solution ideas in hindsight from supplied solutions.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "We introduce a self-improvement loop for reasoning models based on the following observation: Even when the difficulty of a problem exceeds the model\u2019s current solving abilities, an additionally supplied solution might enable the model to extract useful solution ideas in hindsight.",
+      "evidence_spans": [
+        {
+          "source_text": "empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "This version of the manuscript reports no empirical evaluation.",
+          "source_section": "Section 6",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "not_supported",
+      "claim_summary": "Jointly trains a model to predict, reverse-engineer, and solve using solution ideas.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We operationalize this by jointly training the same model to exhibit the following three capabilities: predicting solution ideas from problems alone, reverse-engineering ideas from problems and known solutions, and solving problems using provided ideas.",
+      "evidence_spans": [
+        {
+          "source_text": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "This version of the manuscript reports no empirical evaluation.",
+          "source_section": "Section 6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "Alternates between reverse-engineering solution ideas and jointly training on all three tasks.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "The loop alternates between reverse engineering such ideas from problems with supplied solutions and using these ideas as additional supervision for joint training of all three capabilities.",
+      "evidence_spans": [
+        {
+          "source_text": "Specifically, in iteration t = 1, . . . , T, we obtain a batch B \u2190 SampleBatch(t) and initialize an empty dataset Dt. For each entry (x, y) of B, we invoke ConstructTriple(x, y; \u03b8) and append the returned triple to Dt, unless the procedure returns fail. ... Subsequently, we update the parameters via \u03b8 \u2190 Train(D; \u03b8).",
+          "source_section": "Section 4.4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "We train the shared language model underlying the three components using mini-batch optimization of the objective L(\u03b8; D) = \u03b2S LS(\u03b8; D) + \u03b2F / (n + 1) \u2211 LF,j(\u03b8; D) + \u03b2H / (n + 1) \u2211 LH,j(\u03b8; D)",
+          "source_section": "Section 5.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "Provides formal method specifications and a Lean theorem prover instantiation without empirical evaluation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+      "evidence_spans": [
+        {
+          "source_text": "Building on the key ideas introduced in Section 1, we now give a formal description of our method.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "To instantiate our method in the special case of interactive theorem proving (see Section 3.1), we provide concrete realizations of the abstract concepts introduced in Section 4.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "This version of the manuscript reports no empirical evaluation.",
+          "source_section": "Use of AI tools",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "not_supported",
+      "claim_summary": "Operationalizes hindsight learning by jointly training a single model across three tasks.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We operationalize this observation by jointly training a model on three tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "We operationalize this observation by jointly training a model on three tasks.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "This version of the manuscript reports no empirical evaluation.",
+          "source_section": "Section 6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "Employs a shared backbone network with role-specific prompt templates across all components.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "All three components share a backbone network; for example, when their inputs and outputs can be represented as text, we may use a shared language model with role-specific prompt templates.",
+      "evidence_spans": [
+        {
+          "source_text": "All three components are implemented using a single underlying language model with shared parameters, and we distinguish between components using role-specific prompt templates.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "All trainable parameters are shared; prompts distinguish components.",
+          "source_section": "Appendix A.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "Structures solution ideas as hierarchical levels ranging from high-level strategies to detailed plans.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We express solution ideas at several levels of detail, forming a hierarchy from overarching strategies to detailed plans.",
+      "evidence_spans": [
+        {
+          "source_text": "With X and Y as in Section 3, we fix a depth n \u2208 Z\u22650, and introduce hierarchy sets Z0, . . . , Zn. An element z = (z0, . . . , zn) \u2208 Z := Z0 \u00d7 \u00b7 \u00b7 \u00b7 \u00d7 Zn will be called a hierarchy. In practice, a hierarchy z \u2208 Z for a problem x \u2208 X is intended to represent a semantically meaningful idea, plan, or approach for constructing a solution y \u2208 Y for x at different levels of granularity: From a detailed solution sketch z0 to a coarse description of the overarching idea zn.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The concrete prompt templates in Appendix A.3 use two levels (n = 1): a detailed plan z0 and a coarse proof idea z1; neither is required to consist of executable Lean commands.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "not_supported",
+      "claim_summary": "Hindsight-extracted solution ideas are designed as forward-usable guidance avoiding hindsight bias.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The ideas reverse-engineered by the hindsight component are intended to provide guidance that could plausibly be followed from the problem alone, rather than merely describe the supplied solution or reflect hindsight bias.",
+      "evidence_spans": [
+        {
+          "source_text": "The ideas reverse-engineered by the hindsight component are intended to provide guidance that could plausibly be followed from the problem alone, rather than merely describe the supplied solution or reflect hindsight bias.",
+          "source_section": "Section 1",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Avoid hindsight bias: write a forward-usable idea that could plausibly have been followed from the original state, not an idea that can only be obtained from knowledge of the complete proof.",
+          "source_section": "Appendix A.3",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "Offers an optional refinement for verifiable domains generating multiple hindsight candidate hierarchies.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We provide an optional refinement of our method which accomplishes this in the case of verifiable problem domains, i.e., when proposed solution candidates can be procedurally verified: For each problem and reference solution, we generate several candidate hierarchies in hindsight.",
+      "evidence_spans": [
+        {
+          "source_text": "We therefore sample several hindsight-derived hierarchies and select among them using an estimate of their usefulness, together with a penalty encouraging the intended levels of granularity.",
+          "source_section": "Section 4.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Sample \u02dcz(i) \u223cH\u03b8(\u00b7 | x, y)",
+          "source_section": "Algorithm 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Formally specifies the method for general problem settings and verifiable domain refinements.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We provide a formal specification of our method for a general problem setting, together with the optional refinement for verifiable problem domains.",
+      "evidence_spans": [
+        {
+          "source_text": "Building on the key ideas introduced in Section 1, we now give a formal description of our method. We first describe the shared architecture and training loop, parameterized by a procedure for constructing hindsight training triples. We then specify two such procedures: one applicable to the general problem setting introduced in Section 3, and one tailored to the verifiable problem domains introduced in Section 3.1.",
+          "source_section": "Section 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ConstructTriple in the general problem setting: direct augmentation with hindsight hierarchies",
+          "source_section": "Section 4.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ConstructTriple in verifiable problem domains: verifier-guided selection of hindsight hierarchies",
+          "source_section": "Section 4.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Instantiates the framework for Lean interactive theorem proving using natural language proof ideas.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We also give a concrete instantiation for interactive theorem proving in the Lean theorem prover [2], where natural language proof ideas guide tactic generation during proof search.",
+      "evidence_spans": [
+        {
+          "source_text": "To instantiate our method in the special case of interactive theorem proving (see Section 3.1), we provide concrete realizations of the abstract concepts introduced in Section 4. We use Lean and the verifier-guided choice for ConstructTriple from Section 4.6, as summarized in Algorithm 2.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "When expanding a proof state s, we query the language model with text representations of the initial proof state s0, the hierarchy z, and the current proof state s, requesting a next tactic.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Lean 4.10.0 [2]; LeanDojo 2.1.3 [6]",
+          "source_section": "Appendix A.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "Explicitly trains retrospective hierarchical rationale generation as a core model capability.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "evidence_spans": [
+        {
+          "source_text": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+          "source_section": "Section 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Consequently, the training objective of the procedure is chosen so that S\u03b8(\u00b7 | x, z), F\u03b8(\u00b7 | x), and H\u03b8(\u00b7 | x, y) are encouraged to predict y, z, and z respectively.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "n + 1 prompt-response pairs for the hindsight component: for predicting z0 from (x, y) and, for j = 1, . . . , n, predicting zj from (x, zj\u22121),",
+          "source_section": "Section 5.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "Distinguishes the method from prior work by repeatedly retraining the same backbone retrospectively.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This differs from the forward generation of thoughts and tactics in Lean-STaR\u2019s expert iterations, and from DeepInsight\u2019s retrospective rationale generation using a teacher model: our loop repeatedly performs retrospective hierarchy generation with the same backbone that learns to predict and use the resulting hierarchies.",
+      "evidence_spans": [
+        {
+          "source_text": "The system, parametrized by a collection of parameters \u03b8, consists of three components. While these components may have component-specific parameters, they share a backbone network which accounts for the majority of parameters",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The centerpiece of our method is an alternating training loop. In each iteration, the current hindsight component reconstructs ideas for a batch of problems with supplied solutions. We then jointly train all three components using the resulting data together with previously collected examples.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "This differs from the forward generation of thoughts and tactics in Lean-STaR\u2019s expert iterations, and from DeepInsight\u2019s retrospective rationale generation using a teacher model: our loop repeatedly performs retrospective hierarchy generation with the same backbone that learns to predict and use the resulting hierarchies.",
+          "source_section": "Section 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Evaluates reverse-engineered hierarchies in verifiable domains using reference-blind solving attempts.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Finally, in verifiable problem domains, we additionally assess the reverse-engineered hierarchies through separate solving attempts, in which the model receives the problem and hierarchy while the reference solution is withheld.",
+      "evidence_spans": [
+        {
+          "source_text": "A natural implementation of this joint procedure samples several solution candidates from S\u03b8(\u00b7 | x, z) and checks them using Verify.",
+          "source_section": "Section 4.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Given (x, y, z) \u2208 X \u00d7 Y \u00d7 Z with Verify(x, y) = 1, we assess the usefulness of the hierarchy z for finding a solution for x by executing N \u2208 Z\u22651 runs of the solver component S\u03b8(\u00b7 | x, z) under a prescribed proof search budget.",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "label": "not_supported",
+      "claim_summary": "Shared backbone architecture ensures individual training signals jointly update all three components.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "As the three components share a backbone network, each of the individual training signals affects all three components.",
+      "evidence_spans": [
+        {
+          "source_text": "As the three components share a backbone network, each of the individual training signals affects all three components.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Algorithm 2 guarantees that all retained training triples contain valid solver-discovered solutions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+      "evidence_spans": [
+        {
+          "source_text": "With these choices, a hierarchy for which no solver run succeeds has Utility zero and hence a non-positive Score in the context of Algorithm 2. While the fallback y for DiscoveredSolution makes the joint procedure well-defined in this case, Algorithm 2 will not return the corresponding triple, since the hierarchy\u2019s Score lies below the positive acceptance threshold \u03b4.",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P12-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-R2",
+      "actual_index": 0
+    },
+    {
+      "expected_id": "P12-S1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P12-S2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S4",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P12-S5",
+      "actual_index": 5
+    },
+    {
+      "expected_id": "P12-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S7",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S8",
+      "actual_index": null
+    }
+  ]
+}
