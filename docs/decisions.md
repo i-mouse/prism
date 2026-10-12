@@ -1801,3 +1801,29 @@ spend: [fill in].
 - Stage B at full size (362 claims, about INR 1,900-2,500 at real token cost)
   is unaffordable. If Stage A passes, Stage B is limited to the run-1 claims that
   match dev S rows, with scope and estimate logged in a new entry first.
+
+## Experiment 1 result - Stage A FAIL, rejected - 2026-10-12
+**Result against the amended marks (written before any high output):**
+fixed rows 1 of 10 (P1-R1); lost hits 0 of 8. PASS needed fixed >= 3.
+**Verdict: FAIL. Experiment 1 rejected. AUDITOR_THINKING_LEVEL stays unset.
+Stage B not run.** The switch and replay tooling stay in the code (default off).
+**Raw hits/31 (identical in raw and effective mode):** run1 8, medium 7 and 5,
+high 10, 10, 10. P5-R1 and P8-R2 were PS in all 3 high repeats but also PS in
+one medium sample, so by the mark they are noise, not fixes.
+**Observation, not a result (never pre-registered):** high was stable across
+3 repeats (0 variance) where medium was not (8/7/5), and lost no hits. Any test
+of this needs its own pre-registered experiment with a stability metric.
+**Product finding:** at the default (medium) setting, the auditor gives
+different verdicts on the same claim from run to run; single-run dev numbers
+carry roughly +/-3 rows of noise on these 18 claims.
+**Grounding:** Groq's rolling daily cap pushed 92 of 99 (medium) and 159 of 160
+(high) span audits to the gemini-3.1-flash-lite fallback; no hit/miss changed
+between raw and effective mode.
+**Spend:** medium x2 INR 155.11, high x3 INR 256.84, total INR 411.95 (computed
+at list price). Push budget left about INR 738; sealed reserve INR 300 untouched.
+Counted experiments: 1 of 8.
+**Next:** per the pre-registered FAIL rule, the remaining budget goes to
+extractor work (13 extraction misses; auditor-only ceiling 18/31 is below the
+22/31 floor). A full 12-paper re-run (about INR 1,050+) does not fit the
+remaining budget, so the extractor experiment must be scoped (extraction-only
+replay plus audit of new claims only), designed and pre-registered in a new entry.

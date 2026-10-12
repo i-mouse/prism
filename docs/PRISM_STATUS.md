@@ -23,6 +23,13 @@
 - Held-out: refusal 1/2, positive 7/10. Held-out paper used 6 times; only 2 refusal rows.
 - STALE or DEAD figures: 6/16 (38%, gate 0.35), 79% and 86%. Do not quote them.
 
+### Dev run 1 status (2026-10-12)
+- Dev run 1: refusal 8/31 (26%); 10 audit misses, 13 extraction misses; auditor-only ceiling 18/31 < floor 22/31; false rejections 4/88.
+- Exp 1 (auditor thinking=high): Stage A FAIL, rejected; 1 of 8 experiments used.
+- Finding: the medium auditor is non-deterministic (about +/-3 rows).
+- Budget: push about INR 738 left; sealed reserve INR 300.
+- Next: scoped extractor experiment (to be pre-registered).
+
 ### Extractor-only harness (PR-1, 5 runs per arm)
 - Golden FULL mean: 20.4 before, 20.6 after PR-1.
 - Grounding-negative FULL mean: 9.6 before, 8.8 after.

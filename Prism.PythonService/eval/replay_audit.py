@@ -118,36 +118,72 @@ def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[R
     return targets
 
 
-def _estimate_tokens_for_chars(n_chars: int) -> int:
-    return n_chars // 4  # rough chars-per-token proxy, labeled approximate throughout
-
-
-# Documented assumptions for --estimate only (no stored per-call token counts
-# exist to calibrate against - see docs/decisions.md run 1 total cost note).
-# Structurer input excludes paper text (prompt_loader.build_gemini_messages_for_structure).
-_AUDIT_PROMPT_OVERHEAD_CHARS = 1500
-_STRUCTURE_INPUT_CHARS = 1200
-_MEDIUM_VISIBLE_OUTPUT_TOKENS = 350
-_MEDIUM_THOUGHT_TOKENS = 600
 _HIGH_THOUGHT_MULTIPLIER_RANGE = (2.0, 4.0)
-_STRUCTURE_OUTPUT_TOKENS = 250
+
+# Fallback measured averages if the medium-arm summaries below aren't present
+# (e.g. a fresh checkout). Measured from Experiment 1 Stage A control
+# (exp1_medium_1 + exp1_medium_2, 18 claims x 2 repeats = 36 claim-replays),
+# docs/decisions.md 2026-10-12 "amendment after control arm" - chars/4 plus
+# flat overhead constants undercounted this academic-PDF content by ~1.8x
+# (see that entry), so this --estimate now uses real measured tokens instead.
+_FALLBACK_MEASURED_STATS = {
+    "audit_prompt": 37389, "audit_output": 345, "audit_thought_medium": 2279,
+    "struct_prompt": 1386, "struct_output": 259, "struct_thought": 852,
+}
+_MEASURED_SUMMARY_DIRS = (
+    OUTPUT_ROOT / "exp1_medium_1" / "_summary.json",
+    OUTPUT_ROOT / "exp1_medium_2" / "_summary.json",
+)
 
 
-def _estimate_one_claim_cost_usd(paper_text_len: int, level: str) -> tuple[float, float]:
-    """Returns (low, high) USD estimate for one audit+structure replay of one claim."""
-    audit_input_tokens = _estimate_tokens_for_chars(paper_text_len + _AUDIT_PROMPT_OVERHEAD_CHARS)
-    structure_input_tokens = _estimate_tokens_for_chars(_STRUCTURE_INPUT_CHARS)
+def _load_measured_token_stats() -> dict[str, float]:
+    """Averages real per-call token counts from the Stage A medium-arm
+    summaries (paired even/odd records = audit/structure calls, per
+    _replay_claim's fixed call order). Falls back to _FALLBACK_MEASURED_STATS,
+    documented above, if those summary files aren't on disk."""
+    audit_prompt = audit_output = audit_thought = 0
+    struct_prompt = struct_output = struct_thought = 0
+    n = 0
 
+    for summary_path in _MEASURED_SUMMARY_DIRS:
+        if not summary_path.exists():
+            continue
+        records = json.loads(summary_path.read_text(encoding="utf-8"))["records"]
+        for i in range(0, len(records) - 1, 2):
+            audit, struct = records[i], records[i + 1]
+            audit_prompt += audit["prompt_tokens"]; audit_output += audit["output_tokens"]; audit_thought += audit["thought_tokens"]
+            struct_prompt += struct["prompt_tokens"]; struct_output += struct["output_tokens"]; struct_thought += struct["thought_tokens"]
+            n += 1
+
+    if n == 0:
+        print("[replay_audit] --estimate: no Stage A medium-arm summaries found on disk, using documented fallback measured averages")
+        return dict(_FALLBACK_MEASURED_STATS)
+
+    return {
+        "audit_prompt": audit_prompt / n, "audit_output": audit_output / n, "audit_thought_medium": audit_thought / n,
+        "struct_prompt": struct_prompt / n, "struct_output": struct_output / n, "struct_thought": struct_thought / n,
+    }
+
+
+def _estimate_one_claim_cost_usd(stats: dict[str, float], level: str) -> tuple[float, float]:
+    """Returns (low, high) USD estimate for one audit+structure replay of one
+    claim, using measured token averages. Only the audit call's thought
+    tokens vary with thinking_level (scaled by _HIGH_THOUGHT_MULTIPLIER_RANGE
+    for "high"); the structurer call never receives a thinking_config, so its
+    thought tokens (the API's own default) are held at the measured medium
+    average regardless of level - that assumption is unverified for "high"
+    and could itself be an underestimate."""
     if level == "high":
-        thought_low = _MEDIUM_THOUGHT_TOKENS * _HIGH_THOUGHT_MULTIPLIER_RANGE[0]
-        thought_high = _MEDIUM_THOUGHT_TOKENS * _HIGH_THOUGHT_MULTIPLIER_RANGE[1]
+        thought_low = stats["audit_thought_medium"] * _HIGH_THOUGHT_MULTIPLIER_RANGE[0]
+        thought_high = stats["audit_thought_medium"] * _HIGH_THOUGHT_MULTIPLIER_RANGE[1]
     else:
-        thought_low = thought_high = _MEDIUM_THOUGHT_TOKENS
+        thought_low = thought_high = stats["audit_thought_medium"]
 
-    def _cost(thought_tokens: float) -> float:
-        input_cost = (audit_input_tokens + structure_input_tokens) / 1e6 * USD_PER_1M_INPUT
+    def _cost(audit_thought_tokens: float) -> float:
+        input_cost = (stats["audit_prompt"] + stats["struct_prompt"]) / 1e6 * USD_PER_1M_INPUT
         output_cost = (
-            (_MEDIUM_VISIBLE_OUTPUT_TOKENS + thought_tokens + _STRUCTURE_OUTPUT_TOKENS) / 1e6 * USD_PER_1M_OUTPUT
+            (stats["audit_output"] + audit_thought_tokens + stats["struct_output"] + stats["struct_thought"])
+            / 1e6 * USD_PER_1M_OUTPUT
         )
         return input_cost + output_cost
 
@@ -321,29 +357,17 @@ async def _run_once(
 
 
 def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> None:
-    from main import extract_pdf_text_sync
-
-    text_cache: dict[str, int] = {}
-    for t in targets:
-        if t.paper_id not in text_cache:
-            run1_fixture = json.loads((FIXTURE_DIR / f"{t.paper_id}.json").read_text(encoding="utf-8"))
-            file_name = run1_fixture["header"]["filename"]
-            pdf_path = PDF_DIR / file_name
-            if pdf_path.exists():
-                text, _ = extract_pdf_text_sync(str(pdf_path))
-                text_cache[t.paper_id] = len(text)
-            else:
-                text_cache[t.paper_id] = 50_000  # fallback only if the PDF isn't available locally
-
-    total_low = total_high = 0.0
-    for t in targets:
-        low, high = _estimate_one_claim_cost_usd(text_cache[t.paper_id], level)
-        total_low += low * repeats
-        total_high += high * repeats
+    stats = _load_measured_token_stats()
+    low, high = _estimate_one_claim_cost_usd(stats, level)
+    total_low = low * len(targets) * repeats
+    total_high = high * len(targets) * repeats
 
     calls = len(targets) * repeats * 2  # audit + structure per claim-replay
     print(f"[replay_audit] --estimate: {len(targets)} claims x {repeats} repeats = {len(targets) * repeats} claim-replays "
           f"({calls} Gemini calls, grounding calls not included - approximate, see module docstring/cost caveats)")
+    print(f"[replay_audit] measured token averages used: audit prompt={stats['audit_prompt']:.0f} "
+          f"output={stats['audit_output']:.0f} thought(medium)={stats['audit_thought_medium']:.0f}  "
+          f"structure prompt={stats['struct_prompt']:.0f} output={stats['struct_output']:.0f} thought={stats['struct_thought']:.0f}")
     print(f"[replay_audit] estimated cost: USD {total_low:.3f}-{total_high:.3f} "
           f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
 
