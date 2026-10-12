@@ -11,8 +11,10 @@ prism_db_host); the two Aspire-style connection strings use an explicit
 validation_alias because their names ("ConnectionStrings__messaging") don't
 map onto a Python identifier.
 """
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+AUDITOR_THINKING_LEVELS = {"low", "medium", "high"}
 
 
 class PrismSettings(BaseSettings):
@@ -64,6 +66,22 @@ class PrismSettings(BaseSettings):
     # separate from the extraction pair above so the two workloads don't share a knob.
     llm_claim_audit_model: str
     llm_claim_audit_fallback_model: str
+
+    # Experiment 1 - auditor thinking level override for the live service. Unset
+    # means no thinking_config is sent (today's behavior, API default medium on
+    # 3.6-flash). Auditor call only - every other Gemini call is untouched. The
+    # eval replay script (eval/replay_audit.py) does not read this setting; it
+    # passes thinking_level explicitly per call instead.
+    auditor_thinking_level: str | None = None
+
+    @field_validator("auditor_thinking_level")
+    @classmethod
+    def _validate_auditor_thinking_level(cls, value: str | None) -> str | None:
+        if value is not None and value not in AUDITOR_THINKING_LEVELS:
+            raise ValueError(
+                f"auditor_thinking_level must be one of {sorted(AUDITOR_THINKING_LEVELS)} or unset, got {value!r}"
+            )
+        return value
 
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000

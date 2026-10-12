@@ -300,6 +300,7 @@ async def _call_gemini_freetext(
     log_subdir: str,
     model_name: str,
     fallback_model: str,
+    thinking_level: str | None = None,
 ) -> str:
     """Calls Gemini for plain free-text output - no JSON mode, no schema.
 
@@ -307,6 +308,12 @@ async def _call_gemini_freetext(
     label isn't committed to structure before the evidence is weighed.
     Same retry/backoff/fallback-model behavior as _call_gemini_structured.
     Logs the request/response to logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+
+    thinking_level is None by default, which sends no thinking_config at all -
+    byte-identical to this call's pre-Experiment-1 behavior (API default,
+    medium on 3.6-flash). Passed explicitly by the caller (settings-driven in
+    the live service, CLI-driven in eval/replay_audit.py) - never read from
+    global settings in this function.
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -314,6 +321,11 @@ async def _call_gemini_freetext(
 
     config = types.GenerateContentConfig(
         system_instruction=system_prompt,
+        thinking_config=(
+            types.ThinkingConfig(thinking_level=types.ThinkingLevel(thinking_level.upper()))
+            if thinking_level is not None
+            else None
+        ),
     )
 
     response, used_model = await _generate_with_fallback(
@@ -343,6 +355,7 @@ async def _audit_and_structure_claim(
     claim_number: int,
     total_claims: int,
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
+    thinking_level: str | None = None,
 ) -> ClaimLLM:
     """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
 
@@ -350,6 +363,9 @@ async def _audit_and_structure_claim(
     is the claim's fixed position in the extracted list (1-indexed), not a
     live completion count - claims run concurrently, so on_detail messages
     may not appear in strict claim_number order.
+
+    thinking_level reaches only the audit call (Call #3) below, never the
+    structure call (Call #4) - Experiment 1 varies the auditor alone.
     """
     claim_text_verbatim = claim["claim_text_verbatim"]
     claim_summary = claim["claim_summary"]
@@ -366,6 +382,7 @@ async def _audit_and_structure_claim(
                 log_subdir="audit",
                 model_name=settings.llm_claim_audit_model,
                 fallback_model=settings.llm_claim_audit_fallback_model,
+                thinking_level=thinking_level,
             )
 
         with tracer.start_as_current_span("structurer") as span:
@@ -450,6 +467,7 @@ async def extract_claims(
             _audit_wrapper(
                 semaphore, paper_text, claim, chat_id, correlation_id,
                 claim_number=i + 1, total_claims=total_claims, on_detail=None,
+                thinking_level=settings.auditor_thinking_level,
             )
             for i, claim in enumerate(claims)
         ),

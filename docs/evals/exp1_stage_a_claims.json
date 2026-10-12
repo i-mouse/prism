@@ -1,0 +1,92 @@
+[
+  {
+    "row_id": "P1-R1",
+    "paper_id": "arxiv-2610.11519v1",
+    "claim_index": 32
+  },
+  {
+    "row_id": "P1-R3",
+    "paper_id": "arxiv-2610.11519v1",
+    "claim_index": 7
+  },
+  {
+    "row_id": "P10-R1",
+    "paper_id": "arxiv-2610.12176v1",
+    "claim_index": 3
+  },
+  {
+    "row_id": "P10-R2",
+    "paper_id": "arxiv-2610.12176v1",
+    "claim_index": 4
+  },
+  {
+    "row_id": "P10-R3",
+    "paper_id": "arxiv-2610.12176v1",
+    "claim_index": 16
+  },
+  {
+    "row_id": "P11-R2",
+    "paper_id": "arxiv-2610.12114v1",
+    "claim_index": 7
+  },
+  {
+    "row_id": "P12-R2",
+    "paper_id": "arxiv-2610.12168v1",
+    "claim_index": 0
+  },
+  {
+    "row_id": "P2-R5",
+    "paper_id": "arxiv-2610.11132v1",
+    "claim_index": 24
+  },
+  {
+    "row_id": "P3-R2",
+    "paper_id": "arxiv-2610.11135v1",
+    "claim_index": 3
+  },
+  {
+    "row_id": "P4-R1",
+    "paper_id": "arxiv-2610.10871v1",
+    "claim_index": 2
+  },
+  {
+    "row_id": "P4-R2",
+    "paper_id": "arxiv-2610.10871v1",
+    "claim_index": 30
+  },
+  {
+    "row_id": "P5-R1",
+    "paper_id": "arxiv-2610.11291v1",
+    "claim_index": 33
+  },
+  {
+    "row_id": "P5-R2",
+    "paper_id": "arxiv-2610.11291v1",
+    "claim_index": 1
+  },
+  {
+    "row_id": "P6-R1",
+    "paper_id": "arxiv-2610.11312v1",
+    "claim_index": 4
+  },
+  {
+    "row_id": "P6-R2",
+    "paper_id": "arxiv-2610.11312v1",
+    "claim_index": 3
+  },
+  {
+    "row_id": "P7-R1",
+    "paper_id": "arxiv-2610.10590v1",
+    "claim_index": 5
+  },
+  {
+    "row_id": "P8-R1",
+    "paper_id": "arxiv-2610.12124v1",
+    "claim_index": 6
+  },
+  {
+    "row_id": "P8-R2",
+    "paper_id": "arxiv-2610.12124v1",
+    "claim_index": 7
+  }
+]

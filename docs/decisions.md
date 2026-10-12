@@ -1736,3 +1736,39 @@ Adjudication rules (written before the 20-row pack was opened)
   miss class in the full 12-paper failure map; on a tie, extractor first.
 - Noise rule: single-run baseline, so a change of 2 refusal rows or fewer is not counted as a win.
 - Official numbers come only from the hand-adjudicated match map, never the live matcher.
+
+## Experiment 1 pre-registration (auditor thinking_level=high) - 2026-10-12
+**Change:** auditor call only gets thinking_level=high (config
+AUDITOR_THINKING_LEVEL, default unset = API default medium). Extractor,
+structurer, grounding models and prompts unchanged; prompt hash cb3272cce551.
+**Method:** audit-only replay on run 1 claims (eval/replay_audit.py): re-runs
+audit + structure + grounding, extraction held fixed. Reason: a full re-ingest
+resamples the extractor and breaks the adjudicated match map, so it would test
+two changes at once. Scored with eval/score_replay.py against
+docs/evals/dev_match_map.json (reproduces run 1 at 8/31).
+**Budget (supersedes the 2026-10-11 push-cap formula, which assumed 3 runs per
+experiment; the 3-run baseline was dropped):**
+- Push cap: INR 1,150 for all experiment spend from this entry on.
+- Sealed run + Milestone A reserve: INR 300, never drawn by the push.
+- Per-run cap: INR 1,500 (unchanged).
+- AI Studio cap: raise by INR 1,000 only before a run that exceeds the remaining
+  monthly headroom (about INR 490 now).
+- Gemini Flex tier: out of scope (google-genai 1.64.0 has no service_tier).
+  Separate ticket.
+- Open: the release floor and false-rejection cap still say "mean of 3 runs";
+  restate before Milestone A.
+**Stage A:** the 18 refusal-row claims (docs/evals/exp1_stage_a_claims.json:
+10 run-1 audit misses + 8 run-1 hits), high x3 and medium x2.
+Estimate INR 229-253.
+**Stage A marks (written before any Stage A output exists):**
+- A run-1 audit-miss row counts as fixed only if it is PS/NS in >= 2 of 3 high
+  repeats AND in 0 of 2 medium repeats.
+- PASS = fixed rows >= 3 of 10 AND run-1 hits lost (S in >= 2 of 3 high
+  repeats) <= 1 of 8.
+- Report the not_supported count and per-row labels across all repeats.
+- Stop the run if actual spend exceeds 1.3x the estimate.
+**Then:** PASS -> Stage B (false-rejection check) with scope and cost decided
+in a new entry before it runs; no configuration is accepted on Stage A alone.
+FAIL -> experiment 1 rejected, AUDITOR_THINKING_LEVEL stays unset, remaining
+budget goes to extractor work. Stage A + Stage B together count as one
+experiment.
