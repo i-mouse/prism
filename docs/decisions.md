@@ -1772,3 +1772,32 @@ in a new entry before it runs; no configuration is accepted on Stage A alone.
 FAIL -> experiment 1 rejected, AUDITOR_THINKING_LEVEL stays unset, remaining
 budget goes to extractor work. Stage A + Stage B together count as one
 experiment.
+
+## Experiment 1 Stage A - amendment after control arm, before any high output - 2026-10-12
+**Written after the medium x2 control finished and BEFORE any high-thinking
+output exists (the high run was stopped before its first call: 0 calls, INR 0).**
+**Control result:** the unchanged auditor (medium) is not stable on the same
+claims: refusal hits 8 (run 1) / 7 / 5 across three medium samples; P2-R5,
+P6-R1, P8-R1, P12-R2, P1-R3, P5-R1, P8-R2 flip between repeats. Single-run dev
+numbers carry roughly +/-3 rows of auditor noise on these 18 claims.
+**Cost rule triggered:** medium arm cost INR 155.11 (computed from tokens at
+list price) vs estimate 86.52 (1.79x, over the 1.3x stop line). Cause: estimate
+assumed 600 audit thought tokens (real 2,279) and zero structurer thinking (real
+852, the API default). --estimate is fixed to use measured tokens. Real AI Studio
+spend: [fill in].
+**Amendments:**
+- Stage A is scored on the RAW auditor label (the only thing experiment 1
+  changes). Reason: grounding fell back from Groq to gemini-3.1-flash-lite on
+  92 of 99 span audits (rolling Groq daily cap), so arms would have different
+  graders. effective_status is still reported alongside; only 1 of 36 control
+  results depended on grounding.
+- Medium samples = run 1 + medium_1 + medium_2 (3 samples).
+- Fixed row (unchanged in spirit): a run-1 audit-miss row that is S in 3 of 3
+  medium samples AND PS/NS in >= 2 of 3 high repeats.
+- Lost hit (amended; the old rule fails on noise alone, medium_2 "lost" 4 of 8):
+  a row that is PS/NS in >= 2 of 3 medium samples AND S in >= 2 of 3 high repeats.
+- PASS = fixed rows >= 3 AND lost hits <= 1.
+- High x3 revised estimate INR 279-371; stop if actual exceeds INR 480.
+- Stage B at full size (362 claims, about INR 1,900-2,500 at real token cost)
+  is unaffordable. If Stage A passes, Stage B is limited to the run-1 claims that
+  match dev S rows, with scope and estimate logged in a new entry first.
