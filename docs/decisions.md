@@ -1698,3 +1698,16 @@ Marks:
 - M2 baseline: report mean, min, max over 3 runs for refusal-family (31), positives, false rejections on S rows, and not_supported count (4).
 - M3 experiment accept, all required: mean refusal gain >= max(3 rows, 2 x baseline min-max spread); every run >= baseline mean; false rejections <= 10% and not more than 1 row worse than baseline mean; positives not more than 2 rows down. The spread number is fixed in a new entry right after baseline, before experiment 1.
 - M4 stop: hard exit at 8 counted experiments or the push cap.
+
+## Baseline run 1 paused at 4 of 12; diagnose before spend - 2026-10-11
+
+Measured:
+- AI Studio spend INR 1,250.00 -> 1,655.55 for 4 papers = about INR 101 per paper (about INR 1,220 per 12-paper run). Earlier estimate assumed about 10 claims per paper; real extraction is about 35 (37, 34, 26, 42).
+- Prism labels on those 4 papers: 139 claims, 135 S, 4 PS, 0 NS.
+
+Decisions:
+- The 3-run baseline is dropped for now. The baseline is 1 run on all 12 papers, used for diagnosis and as the "before" number.
+- 3 runs are kept for the release number and only for experiment candidates within reach of the floor.
+- The remaining 8 papers are uploaded only after a failure map on the 4 done papers (extraction miss vs audit miss).
+- Draft fixtures for the 4 papers use the eval matcher (1 call per paper, small); official fixtures are re-dumped later with the adjudicated --match-map (no LLM call).
+- Per-run cap: INR 1,500. AI Studio cap raised to INR 2,800 before the 8 uploads. Push cap and experiment design: new entry after run 1.

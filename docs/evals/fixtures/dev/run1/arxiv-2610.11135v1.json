@@ -1,0 +1,1110 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:29.079577+00:00",
+    "paper_id": "arxiv-2610.11135v1",
+    "filename": "2610.11135v1.pdf",
+    "extraction_run_id": "fa82bf24-0a94-4c5f-8ae2-2b29843751b8"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "Zero-data Jev achieves 0.706 AUC, beating 8-learner deep KT and Thinking-KT cheaply.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On seven datasets, Jev without any data from the target platform reaches a mean AUC of .706, above the best of 28 deep KT models trained on 8 learners (.689) and above System-Two Thinking-KT on all seven datasets (.650) at about 1/100 of its API cost.",
+      "evidence_spans": [
+        {
+          "source_text": "Jev0-shot .738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best deep KT\u2020 .700 .653 .689 .793 .711 .652 .624 .689",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Thinking-KT .700\u00b1.014 .641\u00b1.014 .663\u00b1.014 .666\u00b1.019 .663\u00b1.018 .642\u00b1.016 .576\u00b1.013 .650\u00b1.006",
+          "source_section": "Table 18",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Jev0-shot \u2717 0 / 0 \u2013 200 ms 105 $44",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Thinking-KT \u2717 0 / 0 \u2013 41.7 s 0.12 $4,360",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "JevKT raises AUC to 0.722, staying ahead of deep KT up to 64 learners.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Adding examples and a similar-learner statistic from the logged learners (JevKT) raises this to .722; JevKT stays significantly ahead of deep KT up to 16 learners and ahead on average up to 64, and supervised KT catches up between 64 and 128 learners.",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The lead is Holm-significant on 7/7 datasets at N=8 and 6/7 at N=16, 3/7 at N=32 and 2/7 at N=64 (Table 15).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "Performance gains are specific to Jev rather than input formatting or data contamination.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Among the readers we tested, the gain is specific to Jev, since three other LLMs queried with the byte-identical typed request through the official System-One adapter fall below it on all seven datasets, and reader swaps and contamination checks find no evidence that the input format or memorised data explain the gain.",
+      "evidence_spans": [
+        {
+          "source_text": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+          "source_section": "Section 5.5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "Jev holds an advantage on new learners, while deep KT leads on unseen items.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 3a scores the same N=8 predictions by the position of the target in a new learner\u2019s sequence. JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Here every training learner is available, so this setting isolates new items rather than few learners. JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "Without training logs, Jev0-shot surpasses 8-learner deep KT and Thinking-KT across seven datasets.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "evidence_spans": [
+        {
+          "source_text": "Without any data from the target platform, Jev0-shot reaches .706 mean AUC (first block of Table 1). This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets). It also beats System-Two Thinking-KT (.650) on all seven datasets",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Jev0-shot .738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best deep KT\u2020 .700 .653 .689 .793 .711 .652 .624 .689",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "JevKT leads deep KT significantly up to 16 learners and on average to 64.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "evidence_spans": [
+        {
+          "source_text": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The crossover therefore lies between 64 and 128 learners on average and varies by dataset (Figure 7, Appendix D).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "The accuracy advantage stems from Jev itself, outperforming other LLMs on identical inputs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical input, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamination checks find no sign of memorised data.",
+      "evidence_spans": [
+        {
+          "source_text": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+          "source_section": "Section 5.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+          "source_section": "Section 5.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "Reasoning provides no significant AUC benefit for the Qwen3.5-9B model in Thinking-KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 3 compares Thinking-KT with and without reasoning on the same Qwen3.5-9B. A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Significant 0/7 0/7",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "Unmodified System-One Jev beats 8-learner deep KT and prompted System-Two LLM-KT with zero logs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With no learner logs, an off-the-shelf System-One LLM (Jev) outperforms deep KT trained on 8 learners on average and prompted System-Two LLM-KT on all seven datasets (RQ1).",
+      "evidence_spans": [
+        {
+          "source_text": "With no data from the target platform, Jev0-shot reaches .706 mean AUC (first block of Table 1). This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On seven datasets, Jev without any data from the target platform reaches a mean AUC of .706, above the best of 28 deep KT models trained on 8 learners (.689) and above System-Two Thinking-KT on all seven datasets (.650)",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "The training-free JevKT recipe maintains its lead until supervised KT obtains sufficient learner data.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "A cold-start evaluation on identical targets (7 datasets; few training learners, new learners, new items) shows how long the lead lasts as learners are logged (RQ2, RQ3); a training-free input recipe (JevKT), whose gain comes mostly from one similar-learner statistic, keeps it until supervised KT takes over.",
+      "evidence_spans": [
+        {
+          "source_text": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730. The statistic therefore carries almost all of the gain",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Ablation and contamination checks confirm gains originate from the Jev model, not formatting.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Controlled analyses (reader swap, other LLMs behind the same interface, contamination checks) find that the gain comes from the model rather than from the typed format or memorised data.",
+      "evidence_spans": [
+        {
+          "source_text": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+          "source_section": "Section 5.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "The data pipeline passes leak audits, confirming target outcome information is never exposed.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "All examples and statistics come from U and the target\u2019s past; a leak audit (including a test that the input is unchanged when rt is flipped) passes in every setting.",
+      "evidence_spans": [
+        {
+          "source_text": "mu from X<t only; w = how often u practised each KC",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Leakage. A leak audit passes in every setting, including a test that the input does not change when the target outcome is flipped.",
+          "source_section": "Section 5.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "KC-matched examples improve predictions up to 64 shots, whereas random examples do not help.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "KC-matched shots help and saturate at k\u224864, random shots do not, and the similar-learner statistic adds on top; the ranking on the development split transfers to test.",
+      "evidence_spans": [
+        {
+          "source_text": "Second, shots help only when they are KC-matched; random shots are neutral or slightly harmful at every k.",
+          "source_section": "Appendix C",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 7: Input-design exploration for Jev. Mean \u2206AUC over 7 datasets relative to the state only (AUC dev .703 / test .710).",
+          "source_section": "Table 7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Jev0-shot outperforms both LOKT and the top 8-learner deep KT baseline.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+      "evidence_spans": [
+        {
+          "source_text": ".738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": ".715 .662 .699 .688 .656 .671 .608 .671",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": ".700 .653 .689 .793 .711 .652 .624 .689",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Jev0-shot surpasses Thinking-KT across all datasets in one pass at 1% the cost.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "It also beats System-Two Thinking-KT (.650) on all seven datasets with one call instead of ten, at about 1/100 of its API cost (Section 5.4).",
+      "evidence_spans": [
+        {
+          "source_text": "one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Jev0-shot costs $44.",
+          "source_section": "Section 5.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "$4,360",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "JevKT outperforms deep KT across all datasets at N=8, 16, and 32.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "8 +.033",
+          "source_section": "Table 15",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "8 JevKT .735 .707 .720 .821 .734 .701 .638 .722",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "LOKT shows minimal improvement as training size N grows and lags behind Jev.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "LOKT, whose only use of the logged learners is answer-option weights, barely moves with N (.672 at N=8 and .672 with all learners, against .671 at N=0) and stays below both.",
+      "evidence_spans": [
+        {
+          "source_text": "LOKT, whose only use of the logged learners is answer-option weights, barely moves with N (.672 at N=8 and .672 with all learners, against .671 at N=0) and stays below both.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best LLM-based KT\u2021 .715 .662 .699 .688 .656 .671 .608 .671",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Best LLM-based KT\u2021 .707 .663 .699\u25e6 .701 .656\u25e6 .671\u25e6 .608\u25e6 .672",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "JevKT beats deep KT across sequence positions for new learners in 33/35 evaluation cells.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "evidence_spans": [
+        {
+          "source_text": "Positions 2\u20135 JevKT .771\u00b1.008 .729\u00b1.041 .666\u00b1.006 .768\u00b1.042 .714\u00b1.013 .657\u00b1.007 .689\u00b1.032 .714",
+          "source_section": "Table 9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best deep KT\u2020 .745\u00b1.019 .672\u00b1.029 .659\u00b1.010 .753\u00b1.052 .683\u00b1.015 .642\u00b1.009 .682\u00b1.022 .691",
+          "source_section": "Table 9",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "On unseen items, Jev beats LOKT but lags behind fully-trained deep KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT .728\u00b1.029 .725\u00b1.014 .707\u00b1.021 .687\u00b1.047 .775\u00b1.015 .731\u00b1.039 .639\u00b1.012 .713",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best deep KT\u2020 .746\u00b1.019 .739\u00b1.015 .725\u00b1.003 .697\u00b1.014 .806\u00b1.002 .728\u00b1.026 .665\u00b1.016 .729",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "System-One advantage stems specifically from sparse learner data, not unobserved items alone.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Unseen items alone therefore do not reverse the full-data result, and the advantage of the System-One model comes from having few learners, not from unseen items.",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "Applying an un-tuned typed head on Qwen reduces accuracy compared to direct probability readout.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "A typed one-pass head without training (B0) is worse than reading the label probability directly (A), .630 vs. .688 AUC, and .701 vs. .752 with the similar-learner statistic.",
+      "evidence_spans": [
+        {
+          "source_text": "A Qwen3.5-9B, plain label readout .688 .752",
+          "source_section": "Table 11",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "B0 Qwen3.5-9B, typed one-pass head (no training) .630 .701",
+          "source_section": "Table 11",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "Distilling Jev into Qwen3.5-9B fails to beat plain direct label reading on Qwen.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Distilling Jev into these weights (C, JEV-9B) does not beat A (.679 and .741), and the same holds at N=8 (A .700, B0 .659, C .699).",
+      "evidence_spans": [
+        {
+          "source_text": "A Qwen3.5-9B, plain label readout .688 .752 .700",
+          "source_section": "Table 11",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "C JEV-9B (Jev-distilled Qwen3.5-9B) .679 .741 .699",
+          "source_section": "Table 11",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Swapping the reader to Jev increases AUC across all 35 test evaluation cells.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "evidence_spans": [
+        {
+          "source_text": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002 to .021); the longer JevKT state helps Jev (.776) but not Qwen3.5-9B (.727).",
+          "source_section": "Section 5.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Feeding the identical serialised state to Jev instead of Qwen3.5-9B raises AUC in all 35 cells.",
+          "source_section": "Appendix E",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "label": "supported",
+      "claim_summary": "Jev achieves higher accuracy than Qwen on short states and benefits more from long context.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002 to .021); the longer JevKT state helps Jev (.776) but not Qwen3.5-9B (.727).",
+      "evidence_spans": [
+        {
+          "source_text": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002 to .021); the longer JevKT state helps Jev (.776) but not Qwen3.5-9B (.727).",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "A Qwen3.5-9B, plain label readout .688 .752 .700",
+          "source_section": "Table 11",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Qwen3.5-9B reads the same 64-shot + kNN state .689 .727 .699",
+          "source_section": "Table 11",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Commercial JevKT (Jev + 64-shot + kNN) .710 .776 .727",
+          "source_section": "Table 11",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "label": "supported",
+      "claim_summary": "Empirical gains result from Jev's model weights rather than the typed question framing.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+      "evidence_spans": [
+        {
+          "source_text": "A typed one-pass head without training (B0) is worse than reading the label probability directly (A), .630 vs. .688 AUC, and .701 vs. .752 with the similar-learner statistic.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "label": "supported",
+      "claim_summary": "Other commercial LLMs using System-One adapters score significantly below Jev0-shot at N=0.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+      "evidence_spans": [
+        {
+          "source_text": "Jev0-shot .738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 12",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Adapter + GPT-4o-mini .716 .669 .691 .699 .674 .685 .627 .680",
+          "source_section": "Table 12",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Adapter + Gemini-2.5-Flash-Lite .711 .664 .669 .710 .645 .669 .620 .670",
+          "source_section": "Table 12",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Adapter + DeepSeek-V4-Flash .671 .610 .601 .619 .612 .666 .604 .626",
+          "source_section": "Table 12",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Every adapter LLM is below Jev on every dataset at N=0 (\u2206AUC from \u2212.016 to \u2212.124, all one-sided paired bootstrap p<.01).",
+          "source_section": "Appendix F",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "label": "supported",
+      "claim_summary": "JevKT input formatting provides modest improvements to other models, preserving Jev's performance gap.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the input.",
+      "evidence_spans": [
+        {
+          "source_text": "On the same 1,000 targets, going from N=0 to the JevKT input at N=8 raises AUC by +.016 for Jev and +.010 for DeepSeek-V4-Flash (paired learner-cluster bootstrap: significant on 2/7 and 1/7 datasets, mostly DBE-KT22 and Algebra05; the difference between the two gains is significant on 0/7).",
+          "source_section": "Appendix F",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Adapter + DeepSeek-V4-Flash .626 .634",
+          "source_section": "Table 12",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "Only Jev variants approach or beat 8-learner deep KT, while small open-source alternatives fail.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Only Jev and the Jev-distilled JEV-9B (.687 at N=0, .699 at N=8) come close to or exceed the best deep KT model trained on 8 learners (.689), while Laya, an open-source model that reproduces Jev\u2019s typed interface with a small encoder, stays near chance (.536).",
+      "evidence_spans": [
+        {
+          "source_text": "Jev .706 .717",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JEV-9B (Jev-distilled) .687 .699",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Laya (open-source Jev) .536 .553",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best DLKT\u2020 \u2013 .689",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "label": "supported",
+      "claim_summary": "Combining Jev's prior with similar-learner statistics yields 0.722 AUC, outperforming deep KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+      "evidence_spans": [
+        {
+          "source_text": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "label": "supported",
+      "claim_summary": "Similar-learner statistics account for most of JevKT's performance boost at N=16.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "evidence_spans": [
+        {
+          "source_text": "Input ablation under cold start (N=16 training learners, mean over 5 seeds, same early-window targets as P1).",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Jev0-shot (no evidence, no shots) .738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ similar-learner kNN .738 .733 .730 .816 .733 .702 .649 .729",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ 64 KC-matched shots .739 .724 .720 .813 .727 .703 .643 .724",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ 64 shots + kNN (JevKT) .737 .734 .720 .834 .738 .704 .646 .730",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "label": "supported",
+      "claim_summary": "The similar-learner statistic provides primary performance gains, while KC shots add minor benefits.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The statistic therefore carries almost all of the gain, and the shots add to it clearly only on DBE-KT22; we keep both because they never hurt and match the configuration selected on full data.",
+      "evidence_spans": [
+        {
+          "source_text": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ similar-learner kNN .738 .733 .730 .816 .733 .702 .649 .729",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ 64 shots + kNN (JevKT) .737 .734 .720 .834 .738 .704 .646 .730",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "label": "supported",
+      "claim_summary": "JevKT outperforms deep KT most on extreme-accuracy learners and unobserved items at N=8.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At N=8 JevKT leads both on items that the logged learners answered (+.036) and on items none of them answered (+.028), and the lead is largest for learners whose accuracy so far is very low or very high (+.050 and +.063), where eight learners give a supervised model little to learn from.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 14: Where does JevKT gain over the best deep KT model at N=8? \u2206AUC (JevKT \u2212best DLKT, mean over 5 seeds) on subsets of the cold-start targets",
+          "source_section": "Table 14",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Item answered by the N learners +.024 +.056 +.032 +.027 +.028 +.066 +.017 +.036",
+          "source_section": "Table 14",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Learner accuracy so far < .5 +.047 +.096 +.036 \u2013 +.036 +.067 +.017 +.050",
+          "source_section": "Table 14",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "label": "supported",
+      "claim_summary": "Reasoning tokens fail to raise Qwen's AUC, whereas single-pass Jev significantly outperforms Thinking-KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+      "evidence_spans": [
+        {
+          "source_text": "Table 3 compares Thinking-KT with and without reasoning on the same Qwen3.5-9B. A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 3: Reasoning does not help Qwen3.5-9B on KT; a single System-One pass does better. \u2206AUC (Holm-corrected paired bootstrap; \u2217p<.05).",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "label": "supported",
+      "claim_summary": "Jev0-shot shows superior probability calibration (0.084 ECE) compared to System-Two voting methods.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "They pile up at 0 and 1, and the mean ECE of Thinking-KT is .253 (LOKT .209), against .084 for the single Jev0-shot pass.",
+      "evidence_spans": [
+        {
+          "source_text": "They pile up at 0 and 1, and the mean ECE of Thinking-KT is .253 (LOKT .209), against .084 for the single Jev0-shot pass.",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 13: Calibration on the cold-start targets: expected calibration error (ECE, 15 equal-mass bins) per dataset, and mean ECE and Brier score over the 7 datasets (lower is better).",
+          "source_section": "Table 13",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "label": "supported",
+      "claim_summary": "JevKT achieves strong probability calibration at N=8 without post-hoc scaling techniques.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With N=8 learners, JevKT is as well calibrated as the best deep KT model (ECE .070 vs. .076; Brier .182 vs. .192), without any post-hoc scaling such as temperature scaling (Guo et al., 2017).",
+      "evidence_spans": [
+        {
+          "source_text": "Best DLKT\u2020 (N=8) .060 .071 .064 .083 .060 .111 .086 .076 .192",
+          "source_section": "Table 13",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JevKT (N=8) .079 .061 .067 .078 .076 .077 .054 .070 .182",
+          "source_section": "Table 13",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "No method is recalibrated.",
+          "source_section": "Table 13",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "label": "supported",
+      "claim_summary": "Jev exhibits slight underconfidence, with true learner accuracy marginally exceeding predicted probabilities.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Jev\u2019s remaining error is a mild underconfidence, as observed accuracy is slightly above the predicted probability across the range.",
+      "evidence_spans": [
+        {
+          "source_text": "while the single-pass readout of Jev follows the diagonal with a slight underconfidence.",
+          "source_section": "Figure 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "With N=8 learners, JevKT is as well calibrated as the best deep KT model (ECE .070 vs. .076; Brier .182 vs. .192), without any post-hoc scaling such as temperature scaling (Guo et al., 2017).",
+          "source_section": "Section 5.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "label": "supported",
+      "claim_summary": "Longer reasoning chains in Thinking-KT correlate with higher error rates and lower AUC.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Within each dataset, the third of targets with the longest reasoning has lower AUC than the shortest third (.668 vs. .719 at budget 2048; .675 vs. .726 at 1024), and reasoning length correlates with the absolute error (Spearman +.29), also among targets on which all ten votes agree.",
+      "evidence_spans": [
+        {
+          "source_text": "Within each dataset, the third of targets with the longest reasoning has lower AUC than the shortest third (.668 vs. .719 at budget 2048; .675 vs. .726 at 1024), and reasoning length correlates with the absolute error (Spearman +.29), also among targets on which all ten votes agree.",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "label": "supported",
+      "claim_summary": "JevKT delivers single predictions in 325ms at 20% the API cost of Thinking-KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+      "evidence_spans": [
+        {
+          "source_text": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+          "source_section": "Section 5.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JevKT \u2717 0 / 0 \u2013 325 ms 72.23 $886",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "label": "supported",
+      "claim_summary": "Probes indicate Jev does not memorize target dataset characteristics from raw item IDs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+      "evidence_spans": [
+        {
+          "source_text": "(i) ID-only probes: asked to predict item difficulty or the skill of an item from its ID alone, Jev and three open LLMs are no better with the real ID than with a format-matched fake ID on any dataset after Holm correction. (ii) Row continuation of the original public files shows no dataset-specific recall.",
+          "source_section": "Appendix L",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ID probes: flags from the ID-only difficulty and skill probes and from row continuation (Holm-corrected, four LLMs).",
+          "source_section": "Table 17",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "label": "partially_supported",
+      "claim_summary": "Anonymizing and relabeling item IDs produces no statistically significant drops in Jev's accuracy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Relabelling IDs and removing names changes Jev0-shot AUC by at most .012, never significantly (Holm), and no dataset is flagged.",
+      "evidence_spans": [
+        {
+          "source_text": "De-identification: relabelling IDs, then removing names and text, changes Jev0-shot AUC by at most .012 before text removal and never significantly at the ID step. No dataset is flagged (Table 17).",
+          "source_section": "Appendix L",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "XES3G5M none 0.717 0.712 0.704 0.706 \u22120.010 0.920",
+          "source_section": "Table 17",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "label": "supported",
+      "claim_summary": "JevKT matches or exceeds deep KT on synthetic datasets created post-release.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On six synthetic datasets generated after the model release, JevKT is still at or above the best deep KT model at N=8.",
+      "evidence_spans": [
+        {
+          "source_text": "With N=8 training learners JevKT is at or above the best deep KT model on all six (+.001 to +.033 AUC), the same pattern as on the public datasets.",
+          "source_section": "Appendix L",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We tried to predict the crossover N\u22c6 from dataset properties with six text-free synthetic datasets from a BKT+IRT simulator (1,600 learners each; 48 to 3,072 items, two sequence lengths and two numbers of KCs; N \u2208{8, 32, 128, 512, all}, 2 seeds), comparing JevKT with the best of four pyKT models.",
+          "source_section": "Appendix D",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "label": "supported",
+      "claim_summary": "Tuning hyper-parameters for deep KT models does not close the performance gap with JevKT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With hyper-parameters tuned on the validation learners of each cell (four strong pyKT models, eight configurations each), deep KT stays below JevKT by +.070, +.042, +.030 and +.010 at N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7, 5/7 and 4/7 datasets), so default hyper-parameters do not explain the gap.",
+      "evidence_spans": [
+        {
+          "source_text": "With hyper-parameters tuned on the validation learners of each cell (four strong pyKT models, eight configurations each), deep KT stays below JevKT by +.070, +.042, +.030 and +.010 at N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7, 5/7 and 4/7 datasets), so default hyper-parameters do not explain the gap.",
+          "source_section": "Section 5.5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Tuned deep KT\u00b6 \u2013 .652 [.643, .660] .688 [.679, .698] .709 [.699, .718] .737 [.728, .747] \u2013 \u2013 \u2013",
+          "source_section": "Table 16",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P3-R1",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P3-R2",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P3-S1",
+      "actual_index": 13
+    },
+    {
+      "expected_id": "P3-S2",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P3-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P3-S5",
+      "actual_index": 37
+    },
+    {
+      "expected_id": "P3-S6",
+      "actual_index": 29
+    },
+    {
+      "expected_id": "P3-S7",
+      "actual_index": 18
+    }
+  ]
+}
