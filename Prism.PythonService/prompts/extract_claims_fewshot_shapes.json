@@ -1,0 +1,107 @@
+[
+  {
+    "example_type": "hedged_in_principle_claim_recognized",
+    "input_excerpt": "In principle, this scheduling bias should transfer to any task queue with bursty arrival patterns, though we have only validated it on synthetic bursts. We suspect the gain in Section 4 is driven by the backlog estimator deprioritizing stale jobs before they block the queue, though we did not instrument the estimator directly to confirm this. Related schedulers have reported similar queueing behavior under heavy load.",
+    "rationale": "Hedging language ('in principle', 'we suspect', 'though we did not confirm') must not be read as disqualifying - these are still claims about this paper's own method and result, offered with appropriate uncertainty. Extract the hedged assertion itself; do not wait for an unhedged restatement that may never appear.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "In principle, this scheduling bias should transfer to any task queue with bursty arrival patterns, though we have only validated it on synthetic bursts.",
+          "claim_summary": "Hedged generalization: scheduling bias should transfer to any bursty task queue, untested beyond synthetic bursts."
+        },
+        {
+          "claim_text_verbatim": "We suspect the gain in Section 4 is driven by the backlog estimator deprioritizing stale jobs before they block the queue, though we did not instrument the estimator directly to confirm this.",
+          "claim_summary": "Hedged mechanism claim: gain attributed to the backlog estimator deprioritizing stale jobs, unconfirmed by instrumentation."
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "hedged_background_not_extracted",
+    "input_excerpt": "In principle, bursty arrival patterns are known to degrade naive FIFO schedulers, a problem documented extensively in prior queueing-theory work. Some practitioners suspect that backlog-aware heuristics help in production systems, though this is folklore rather than a measured result in the literature. Our own scheduler builds on this intuition.",
+    "rationale": "Hedging alone is not the signal - the hedge must attach to an assertion about this paper's own method, mechanism or result. When the hedged sentence is actually describing prior work or field-level folklore, it stays background, even though it uses the same surface phrasing as a true hedged claim.",
+    "output": {
+      "claims": []
+    }
+  },
+  {
+    "example_type": "table_caption_and_derived_quantity",
+    "input_excerpt": "Table 3: Harrowgate halves median latency relative to round-robin at every connection count. At 512 concurrent connections, Harrowgate sustains a median latency of 41ms, versus 118ms for the round-robin baseline, the widest gap recorded in Table 3.",
+    "rationale": "A table caption is extractable only when it itself states a result or comparison (here, 'halves median latency... at every connection count') - never when it merely names the axes or contents being plotted (e.g. a caption that only said 'Latency by connection count' would not be a claim). Extract the in-text sentence quoting the table's numbers in addition to the caption when both appear.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "Table 3: Harrowgate halves median latency relative to round-robin at every connection count.",
+          "claim_summary": "Table caption asserts a result: Harrowgate halves median latency versus round-robin at every connection count tested."
+        },
+        {
+          "claim_text_verbatim": "At 512 concurrent connections, Harrowgate sustains a median latency of 41ms, versus 118ms for the round-robin baseline, the widest gap recorded in Table 3.",
+          "claim_summary": "Harrowgate sustains 41ms median latency at 512 connections vs. 118ms for round-robin baseline - the largest gap in Table 3."
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "table_caption_not_extracted_pure_label",
+    "input_excerpt": "Table 4: Hyperparameters used in all Harrowgate experiments. Batch size, learning rate and warmup steps are listed for completeness and were not tuned per dataset.",
+    "rationale": "Not every short table title is a claim. A caption naming a hyperparameters/setup table stays an implementation detail, exactly like a config sentence in prose. The 'short caption' shape only becomes extractable when the caption itself asserts a scope or comparison that affects how a result should be read.",
+    "output": {
+      "claims": []
+    }
+  },
+  {
+    "example_type": "overreach_and_safer_sibling_both_extracted",
+    "input_excerpt": "Vantagepoint outperforms every baseline we tested across all five benchmark suites. On the Cindergate suite specifically, Vantagepoint improves mean accuracy by 6.2 points over the strongest baseline.",
+    "rationale": "When a broad, overreaching claim sits right next to a narrower, better-supported sibling about one dataset, setting or subset, extract BOTH - do not keep only the safe narrow claim and silently drop the overreaching one. The overreaching claim is exactly what the auditor needs in order to check it against the paper's own tables.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "Vantagepoint outperforms every baseline we tested across all five benchmark suites.",
+          "claim_summary": "Broad superiority claim: Vantagepoint outperforms every tested baseline across all five benchmark suites."
+        },
+        {
+          "claim_text_verbatim": "On the Cindergate suite specifically, Vantagepoint improves mean accuracy by 6.2 points over the strongest baseline.",
+          "claim_summary": "Narrower claim: Vantagepoint improves mean accuracy by 6.2 points over the strongest baseline, on Cindergate."
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "narrow_claim_with_disclaimer",
+    "input_excerpt": "On the Cindergate suite, Vantagepoint improves mean accuracy by 6.2 points over the strongest baseline. We did not evaluate Vantagepoint on the other four benchmark suites used elsewhere in this paper.",
+    "rationale": "This is a genuine narrow claim with an explicit disclaimer confirming the paper never asserts suite-general superiority. The near-miss risk runs the opposite direction from the positive example above: do not manufacture or infer a broader, overreaching claim just because the shape superficially resembles the overreach-plus-sibling pattern. Extract only what is stated; the disclaimer is a limitation claim, not license to upgrade the narrow claim.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "On the Cindergate suite, Vantagepoint improves mean accuracy by 6.2 points over the strongest baseline.",
+          "claim_summary": "Vantagepoint improves mean accuracy by 6.2 points over the strongest baseline, on the Cindergate suite only."
+        },
+        {
+          "claim_text_verbatim": "We did not evaluate Vantagepoint on the other four benchmark suites used elsewhere in this paper.",
+          "claim_summary": "Limitation: Vantagepoint was not evaluated on four of the five benchmark suites used elsewhere in the paper."
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "bare_observation_statement_extracted",
+    "input_excerpt": "We observed that throughput degraded sharply once the connection pool exceeded 2,000 entries, well before the documented pool limit of 8,000. No further tuning was attempted once this threshold was identified.",
+    "rationale": "A bare 'we observed X' sentence, with no comparison table or named baseline, is still a claim about this paper's own empirical result - it must not be skipped for lacking richer framing. Extract the observation itself; a short follow-up about what was or wasn't done next is process narration, not a separate claim.",
+    "output": {
+      "claims": [
+        {
+          "claim_text_verbatim": "We observed that throughput degraded sharply once the connection pool exceeded 2,000 entries, well before the documented pool limit of 8,000.",
+          "claim_summary": "Observation: throughput degraded sharply once the connection pool exceeded 2,000 entries, well below the documented 8,000 limit."
+        }
+      ]
+    }
+  },
+  {
+    "example_type": "observation_about_setup_not_extracted",
+    "input_excerpt": "We observed the cluster for six hours before starting the benchmark run, to let background load stabilize. We observed that CPU temperatures remained within the manufacturer's rated range throughout testing.",
+    "rationale": "The phrase 'we observed' is not itself the signal - it also appears in procedural narration (watching a cluster stabilize, confirming hardware stayed in spec) that asserts nothing about the paper's method or results. Extract only when the observed fact is itself result-bearing, not whenever the verb 'observe' appears.",
+    "output": {
+      "claims": []
+    }
+  }
+]

@@ -1,0 +1,87 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:18.980579+00:00",
+    "paper_id": "arxiv-2610.12114v1",
+    "filename": "2610.12114v1.pdf",
+    "extraction_run_id": "0dbaad7a-9e6f-4f23-a314-6c8c1a889c15",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-12T16:20:57Z"
+    },
+    "claims_scope": [
+      7
+    ]
+  },
+  "claims": [
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "UTT outperforms prompt engineering and parameter-updating KD across evaluated settings.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "evidence_spans": [
+        {
+          "source_text": "UTT performs best across all six combinations, with consistent gains across tasks and target models.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1, respectively.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P11-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-R2",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P11-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P11-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P11-S3",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P11-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S7",
+      "actual_index": 28
+    },
+    {
+      "expected_id": "P11-S8",
+      "actual_index": null
+    }
+  ]
+}

@@ -1649,6 +1649,8 @@ Order of work (current plan first, then core changes):
 7. Core changes (extractor or auditor) chosen from the latest dev failure map (from the runs of the best accepted configuration). One change batch = one experiment.
 The golden failure map (2026-10-08) already shows extraction is the largest leak: 7 of 11 golden refusal misses were never extracted, so auditor-only changes cap golden at 9/16 (56%). Reaching the floor is expected to need extractor-side work.
 
+**Amended 2026-10-13:** item 6 ("Experiment 2: newer Flash with thinking pinned") is superseded. Per the 2026-10-12 Experiment 1 rejection's own next-step note ("the extractor experiment must be scoped... designed and pre-registered in a new entry"), a scoped extractor few-shot experiment (see "Experiment 2 (redesigned) pre-registration - few-shot repair (claim-shape pairs)" below) is run as Experiment 2 instead. The newer-Flash-with-thinking idea is not cancelled, just reordered behind this scoped, cheaper, already-diagnosed work; it remains a candidate for a later experiment slot if budget allows.
+
 Exit:
 - Hard exit after 8 counted experiments, or when total spend from this entry reaches the push cap, whichever comes first. The push cap is set after the cost check and logged here before experiment 1.
 - At the exit: one sealed final run. Then log one of two decisions here: keep the floor and stop this version, or set a new floor and release with honest numbers. No further experiments on this version after the exit.
@@ -1827,3 +1829,151 @@ extractor work (13 extraction misses; auditor-only ceiling 18/31 is below the
 22/31 floor). A full 12-paper re-run (about INR 1,050+) does not fit the
 remaining budget, so the extractor experiment must be scoped (extraction-only
 replay plus audit of new claims only), designed and pre-registered in a new entry.
+
+## Experiment 2 (redesigned) pre-registration - few-shot repair (claim-shape pairs) - 2026-10-13
+**Main objective (read first):** the goal is not to push a number but to find
+the real cause of the extractor's 13 dev extraction misses - is the gap a
+TEACHING problem (examples and prompt) or a TASK-DESIGN problem (one call
+that lists claims, vs checking every sentence)? The marks below are the
+referee; the diagnosis after Stage A states which cause the evidence
+supports, whatever the result.
+
+**Cause hypothesis (written before any run, per Phase 0):**
+- Points to TEACHING problem: treatment (shapes on) recovers >= 5/13 target
+  rows, total claim count stays <= 1.5x control, and the rows recovered are
+  specifically the E1/E2/E3/E5 rows the 8 new examples target - the model
+  could already do this, it just hadn't seen the right demonstrations.
+- Points to TASK-DESIGN problem: treatment recovers few or none of the
+  targeted rows despite seeing matching examples almost verbatim in its own
+  context, OR claim count blows past 1.5x without hitting the target rows
+  (over-extracts generally rather than learning the specific shapes) -
+  either pattern suggests a single list-all-claims call cannot reliably apply
+  shape-specific rules no matter how they're taught, and that a per-sentence
+  or multi-pass check is needed instead.
+- E3 attribution check: control (loader fix on, shapes off) already exposes
+  base example #4, `abstract_broad_and_narrow_together` (broad Abstract claim
+  + narrow Results claim, both must be extracted) - this example carries a
+  `note`, so under today's loader bug (flag off) it was itself blanked to
+  empty claims in run 1; control un-blanks it for the first time, and it
+  teaches almost the same lesson as the E3 shape (keep a broad claim
+  alongside its narrower sibling instead of dropping one). So if **control
+  alone** already recovers most of the 4 E3 rows, the E3 cause was the loader
+  bug - already fixed by the base fix - not a missing example, and the new E3
+  examples would be confirming the fix rather than causing new recovery.
+  Stage A scoring (eval/score_exp2.py) reports E3 row recovery for control
+  and every treatment run separately, not folded into the combined count, so
+  this can be told apart from genuine shapes-driven recovery.
+
+**Change:** two independent config flags, both default off.
+- EXTRACTOR_FEWSHOT_FIX (already built, duplicates PR-1 #115's loader fix,
+  which had a prior negative coverage result on golden - kept here as
+  correctness fix and BASE for both arms, not the thing under test). Off:
+  extraction/prompt_loader.py::_is_negative_example treats any claims
+  few-shot example with a top-level "note" field as negative (today's bug -
+  see 2026-10-05/06 entries). On: that check is replaced by a check on the
+  real output (empty claims list).
+- EXTRACTOR_FEWSHOT_SHAPES (new, the thing under test this experiment). Off:
+  extractor renders only the base 11 claims examples. On: appends 8 new
+  examples (prompts/extract_claims_fewshot_shapes.json - one positive +
+  one near-miss negative for each of E1 hedged/in-principle, E2 table
+  captions/table-derived quantities, E3 overreach-vs-safer-sibling, E5 bare
+  "we observed" statements) after the base 11, and appends a system-prompt
+  addendum (prompts/extract_claims_system_shapes.md, 120 words, one rule per
+  shape) to the extractor system prompt. Every new example uses a
+  `rationale` key, never `note`, so none of them can be mis-treated as
+  negative by _is_negative_example's note-based branch. All example text
+  (method/dataset/benchmark names, numbers, sentences) is invented; a
+  RapidFuzz token_set_ratio sentence-level check against all 12 dev PDFs +
+  the 3 golden PDFs (held-out/sealed sources never read) found no sentence
+  scoring >= 70 (max observed: 65.2), and the repo's own hash-based
+  eval/check_prompt_leak.py also passed clean (0 leaks, 0 warnings) on both
+  new prompt files.
+- E4 (method/setup statements not treated as claims, 1 miss: P11-R1) is out
+  of scope by design - it overlaps the existing "do not extract
+  implementation details" rule in extract_claims_system.md; a new example
+  here risks contradicting that rule rather than complementing it.
+- Three gap-no-evidence claim types are deferred, no examples drafted: plain
+  unhedged cause/mechanism assertions (the only mechanism-shaped misses found
+  are specifically hedged, already covered by the E1 examples), novelty
+  ("first to..."), and negative-result framing ("method X did not help") -
+  none of the 13 confirmed dev-miss rows isolates any of these three as its
+  own failure, so there is no evidence to design against yet.
+- Scope: extractor rendering only
+  (extraction/prompt_loader.py::build_gemini_messages_for_extractor).
+  Confirmed no shared code path with the auditor or structurer message
+  builders (tests/test_extractor_fewshot_shapes.py covers both flags in every
+  state). get_prompt_version() takes both flag states into its hash,
+  independently recomputed (not asserted blind) in
+  tests/test_extractor_fewshot_shapes.py:
+  - both flags off: cb3272cce551 (unchanged, frozen baseline, not used by
+    either arm here).
+  - fix on, shapes off (**control**): 0e07bb0f2680 (same hash the original,
+    now-superseded Experiment 2 draft registered for its "flag on" arm).
+  - fix on, shapes on (**treatment**): da3a1ab6b587 (new).
+  Auditor/structurer prompt files, AUDITOR_THINKING_LEVEL, AUDIT_MODE, and
+  GROUNDING_NORMALIZE are untouched.
+**Numbering (amends the 2026-10-10 order of work, see that entry's
+2026-10-13 amendment above):** this redesigned experiment still runs as
+Experiment 2, in place of the previously planned "newer Flash with thinking
+pinned" (deferred, not dropped - remains a candidate for a later slot if
+budget allows), per the 2026-10-12 Experiment 1 rejection's own next-step
+note. It replaces this entry's own earlier same-day draft (the plain loader
+fix alone, with no claim-shape examples), which is superseded by this
+version before any Stage A call was made under it.
+**Scope:** 10 papers with a run-1 extraction miss (P1, P2, P3, P4, P5, P7,
+P8, P9, P11, P12). 13 target rows (extraction misses) + 18 matched rows
+(regression check), both resolved via eval.score_replay.resolve_adjudicated_rows
+against docs/evals/dev_match_map.json.
+**Runs:** control x1 (fix on, shapes off), treatment x2 (fix on, shapes on).
+Model pinned to run 1 (gemini-3.6-flash); extractor thinking unset (no
+thinking_config sent, matching today's behavior) in every run. Pilot: 1 paper
+(the smallest of the 10, P7/arxiv-2610.10590v1), control variant, --max-inr
+30, inside Stage A's cap.
+**No LLM matcher:** matching for the review pack is fuzzy shortlist
+(RapidFuzz token_sort_ratio on GROUNDING_NORMALIZE-normalised text,
+eval/build_exp2_review_pack.py) plus human adjudication - never an
+LLM-as-judge call.
+**Marks (written before any Stage A output exists; all four must pass to
+accept):**
+- A1: at least 5/13 target rows recovered in BOTH treatment runs independently.
+- A2: min(treatment recovered) - control recovered >= 3.
+- A3: each treatment run keeps at least 17/18 matched rows (no regression -
+  a matched row losing its match would mean the change broke something
+  already working).
+- A4: treatment's total claim count is at most 1.5x control's, in every
+  treatment run (guards against the new examples also loosening extraction
+  generally, not just recovering the 4 targeted shapes' lesson).
+- Accept only if all four pass. Stage B (auditor replay on recovered +
+  changed claims) is reported, not gating - it measures projected refusal
+  hits, but Stage A alone decides whether the flag ships.
+**Informational, not gating (reported alongside the marks):**
+- control vs run 1 recovery - isolates the loader fix's own effect, since
+  control is no longer "both flags off" the way the superseded draft's
+  control was.
+- E3 row recovery for control and every treatment run separately (see the
+  E3 attribution check above) - eval/score_exp2.py prints a per-shape
+  (E1/E2/E3/E4/E5) recovered-row breakdown per run.
+- miss_cause counts per run for target rows NOT recovered (shape_not_taught |
+  saw_example_still_skipped | split_or_merged_differently | other), a new
+  per-row field in the adjudication template
+  (eval/build_exp2_review_pack.py) and scorer (eval/score_exp2.py).
+- Stage B projected refusal hits.
+**Adjudication rules (same as run 1, 2026-10-12):** "same claim, other
+sentence" counts as a recovery/match; a "safe half only" sibling claim (a
+narrower claim that misses the broader assertion a golden row needs) does
+not count.
+**Known gap:** new claims that would match a dev S (not_supported) row
+outside the 13+18 scope are not audited here, so the full false-rejection
+check against dev S rows waits for Milestone A. This experiment can improve
+refusal recall without yet proving it does not also raise false rejections
+on supported rows outside its scope.
+**Caps:** Stage A INR 250 (pilot spend counts inside this). Stage B INR 100.
+Total INR 350.
+**Paid-step approval gates (non-negotiable, no step is pre-approved by an
+earlier "go"):** show the free countTokens estimate -> "go pilot" -> run
+pilot, show pilot-scaled full-Stage-A estimate -> "go Stage A" -> run full
+Stage A -> adjudicate -> score -> (if PASS) show Stage B --estimate -> "go
+Stage B" -> run Stage B.
+**Counted experiment:** 2 of 8. After this experiment the push ends and the
+exit decision above (the 2026-10-10 order-of-work entry's "Exit:" rule) is
+taken, whatever the result.

@@ -36,6 +36,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from eval.pricing import INR_PER_USD, USD_PER_1M_INPUT, USD_PER_1M_OUTPUT
 from extraction import engine, grounding
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse
@@ -48,12 +49,6 @@ LOGS_DIR = SERVICE_ROOT / "logs" / "eval"
 PDF_DIR = REPO_ROOT / "docs" / "research_papers"
 
 EXPECTED_PROMPT_HASH = "cb3272cce551"
-
-# gemini-3.6-flash pricing, docs/decisions.md:1676 (2026-10-12): $0.75/1M input,
-# $3.75/1M output (thinking counted as output). 100 INR/USD per your instruction.
-USD_PER_1M_INPUT = 0.75
-USD_PER_1M_OUTPUT = 3.75
-INR_PER_USD = 100
 
 _RUN_SQL = """
 SELECT fr.content_hash, fr.file_name

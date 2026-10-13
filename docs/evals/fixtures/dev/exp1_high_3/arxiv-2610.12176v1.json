@@ -1,0 +1,167 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:24.408709+00:00",
+    "paper_id": "arxiv-2610.12176v1",
+    "filename": "2610.12176v1.pdf",
+    "extraction_run_id": "008ce553-38d3-4d82-b46d-be74b17facb4",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-10-12T16:42:03Z"
+    },
+    "claims_scope": [
+      3,
+      4,
+      16
+    ]
+  },
+  "claims": [
+    {
+      "index": 3,
+      "label": "partially_supported",
+      "claim_summary": "MASS enables continuous recursive bootstrapping as the model becomes a better optimizer and evaluator.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model\u2019s capabilities.",
+      "evidence_spans": [
+        {
+          "source_text": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In percentages, the results are 37.5 \u00b1 2.2, 35.3 \u00b1 2.1, and 35.2 \u00b1 1.7 for L(0), L(1), and L(2), respectively.",
+          "source_section": "Appendix C.5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "The recursive loop here is empirical. Unlike proof-based self-rewriting in G\u00f6del machines (Schmidhuber, 2007), it provides no guarantee that every future cycle improves.",
+          "source_section": "Appendix J",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "partially_supported",
+      "claim_summary": "Multi-agent traces outperform single-agent training despite using 1.4x fewer tokens.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "evidence_spans": [
+        {
+          "source_text": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "M + has broader training-task coverage and a different sampler, so it is not a matched-data control.",
+          "source_section": "Table 8",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "These differences in sampling, data, and checkpoint selection limit what can be attributed to teacher composition alone.",
+          "source_section": "Appendix D.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "label": "partially_supported",
+      "claim_summary": "Optimization increases task-specific routing information while reducing cross-component redundancy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "evidence_spans": [
+        {
+          "source_text": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "By i = 11, d TC(Z) falls in all four configurations; d TC(Z \u2223 T) falls in three and rises for permutation-adjusted MPNet.",
+          "source_section": "Figure 5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The task-centered estimate falls in three; permutation-adjusted MPNet is the exception.",
+          "source_section": "Appendix F.3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P10-R1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P10-R2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P10-R3",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P10-S1",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "P10-S2",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "P10-S3",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P10-S4",
+      "actual_index": 20
+    },
+    {
+      "expected_id": "P10-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P10-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P10-S7",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P10-S8",
+      "actual_index": null
+    }
+  ]
+}

@@ -83,6 +83,27 @@ class PrismSettings(BaseSettings):
             )
         return value
 
+    # Experiment 2 - extractor few-shot "note" field fix. Off (default) keeps today's
+    # behavior: any claims few-shot example with a top-level "note" field renders as a
+    # negative ("no claims") example even when it has real claims. On, a "note" field
+    # alone no longer suppresses claims - only example_type == "negative_do_not_extract"
+    # or a genuinely empty output does. Extractor rendering only; see
+    # extraction/prompt_loader.py::_is_negative_example and
+    # extraction/prompt_version.py::get_prompt_version.
+    extractor_fewshot_fix: bool = False
+
+    # Experiment 2 (redesigned) - extractor few-shot claim-shape examples. Off
+    # (default) renders only the base 11 claims examples. On, appends 8 more
+    # examples (prompts/extract_claims_fewshot_shapes.json, teaching the E1/E2/
+    # E3/E5 claim shapes the base 11 do not cover) after the base 11, and
+    # appends a system-prompt addendum (prompts/extract_claims_system_shapes.md).
+    # Extractor rendering only; see extraction/prompt_loader.py::
+    # build_gemini_messages_for_extractor and extraction/prompt_version.py::
+    # get_prompt_version. Independent of extractor_fewshot_fix - both default
+    # off; both flags on together is Experiment 2 (redesigned)'s treatment arm,
+    # extractor_fewshot_fix alone (this flag off) is its control arm.
+    extractor_fewshot_shapes: bool = False
+
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000
 

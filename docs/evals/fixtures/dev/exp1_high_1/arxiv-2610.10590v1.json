@@ -1,0 +1,83 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:15:28.164113+00:00",
+    "paper_id": "arxiv-2610.10590v1",
+    "filename": "2610.10590v1.pdf",
+    "extraction_run_id": "7cd024de-ee74-4f7d-858c-d4cfdb5df894",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-12T16:15:38Z"
+    },
+    "claims_scope": [
+      5
+    ]
+  },
+  "claims": [
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "Reversible context management provides resource savings on noisy tasks but depends on workload",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "evidence_spans": [
+        {
+          "source_text": "Cumulative input decreases by 50%, and input plus completion tokens decrease by 50%. The estimated cost is approximately 67\u201371% lower, even after reported cache usage is included.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+          "source_section": "Section 5.4",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P7-R1",
+      "actual_index": 5
+    },
+    {
+      "expected_id": "P7-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P7-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P7-S2",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "P7-S3",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P7-S4",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P7-S5",
+      "actual_index": 20
+    },
+    {
+      "expected_id": "P7-S6",
+      "actual_index": 27
+    },
+    {
+      "expected_id": "P7-S8",
+      "actual_index": 34
+    }
+  ]
+}

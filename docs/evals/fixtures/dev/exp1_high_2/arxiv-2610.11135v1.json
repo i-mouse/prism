@@ -1,0 +1,79 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:29.079577+00:00",
+    "paper_id": "arxiv-2610.11135v1",
+    "filename": "2610.11135v1.pdf",
+    "extraction_run_id": "fa82bf24-0a94-4c5f-8ae2-2b29843751b8",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-10-12T16:25:56Z"
+    },
+    "claims_scope": [
+      3
+    ]
+  },
+  "claims": [
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "Jev holds an advantage on new learners, while deep KT leads on unseen items.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P3-R1",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P3-R2",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P3-S1",
+      "actual_index": 13
+    },
+    {
+      "expected_id": "P3-S2",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P3-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P3-S5",
+      "actual_index": 37
+    },
+    {
+      "expected_id": "P3-S6",
+      "actual_index": 29
+    },
+    {
+      "expected_id": "P3-S7",
+      "actual_index": 18
+    }
+  ]
+}
