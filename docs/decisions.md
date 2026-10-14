@@ -1982,3 +1982,17 @@ taken, whatever the result.
 -> 380 INR, after the pilot measured thinking tokens (~65% of generated
 tokens; scaled Stage A estimate ~233 INR). Marks A1-A4 unchanged. Made before
 any Stage A result.
+
+**Amended 2026-10-14 (second, after the Stage A runs, before adjudication):**
+A3's "18 matched rows" scope gap found while building the Stage A review
+pack: of the 18 dev-wide matched rows, 5 (P6-R1, P6-R2, P10-R1, P10-R2,
+P10-R3) belong to P6 and P10, which have no extraction miss and so were
+never part of the 10-paper replay scope - no fixture for either paper exists
+in control_r1/treatment_r1/treatment_r2. A3 is redefined to score only the
+13 matched rows whose paper was actually replayed: **"at least 12/13 matched
+rows kept in every treatment run"** (12/13 preserves the original mark's "at
+most 1 regression" budget, not a proportional rescaling of 17/18). The other
+5 rows are out of scope by definition, not scored, not counted toward this
+mark. A1, A2, A4 unchanged. eval/score_exp2.py's A3_FLOOR and matched-row
+classification (REPLAYED_PAPER_SUBSTRINGS) updated to match. Made before any
+adjudication.

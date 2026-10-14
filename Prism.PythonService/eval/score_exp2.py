@@ -12,7 +12,10 @@ by reusing eval.score_replay.resolve_adjudicated_rows. Zero LLM calls.
 Marks (from the Experiment 2 pre-registration entry):
   A1  At least 5/13 target rows recovered in BOTH treatment runs independently.
   A2  min(treatment recovered) - control recovered >= 3.
-  A3  Each treatment run keeps at least 17/18 matched rows (no regression).
+  A3  Each treatment run keeps at least 12/13 matched rows (no regression).
+      Redefined 2026-10-14: scored only over matched rows whose paper was
+      part of the 10-paper replay scope (13 of the 18 dev-wide matched rows -
+      see docs/decisions.md and REPLAYED_PAPER_SUBSTRINGS below).
   A4  Treatment's total claim count is at most 1.5x control's, in every
       treatment run (checked against the replay fixtures under --replay-root,
       not the adjudication file).
@@ -61,16 +64,37 @@ DEFAULT_MATCH_MAP_PATH = REPO_ROOT / "docs" / "evals" / "dev_match_map.json"
 DEFAULT_RUN1_FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures" / "dev" / "run1"
 DEFAULT_REPLAY_ROOT = REPO_ROOT / "docs" / "evals" / "fixtures" / "dev" / "exp2"
 
+# The 10 papers actually replayed in Stage A (control_r1/treatment_r1/
+# treatment_r2 only have fixtures for these). P6 and P10 have no extraction
+# miss, so they were never part of the replay scope.
+REPLAYED_PAPER_SUBSTRINGS = (
+    "2610.11519", "2610.11132", "2610.11135", "2610.10871", "2610.11291",
+    "2610.10590", "2610.12124", "2610.12375", "2610.12114", "2610.12168",
+)
+
 A1_FLOOR = 5
 A2_MIN_GAIN = 3
-A3_FLOOR = 17
+# Redefined 2026-10-14 (see docs/decisions.md): of the 18 dev-wide matched
+# rows, 5 (P6-R1, P6-R2, P10-R1/2/3) belong to papers with no extraction
+# miss, so they were never replayed and have no fixture in any Stage A run -
+# they are out of scope for this regression check by definition, not scored.
+# A3 is scored over the remaining 13 matched rows only; the floor (12/13)
+# preserves the original mark's "at most 1 regression" budget rather than
+# scaling 17/18 proportionally.
+A3_FLOOR = 12
 A4_MAX_RATIO = 1.5
+
+
+def _in_replay_scope(paper_id: str) -> bool:
+    return any(substring in paper_id for substring in REPLAYED_PAPER_SUBSTRINGS)
 
 
 def _classify_rows(dev_eval_path: Path, match_map_path: Path, run1_fixture_dir: Path) -> tuple[set[str], set[str]]:
     rows = resolve_adjudicated_rows(dev_eval_path, match_map_path, run1_fixture_dir)
     target_ids = {row.row_id for row in rows if row.claim_index is None}
-    matched_ids = {row.row_id for row in rows if row.claim_index is not None}
+    matched_ids = {
+        row.row_id for row in rows if row.claim_index is not None and _in_replay_scope(row.paper_id)
+    }
     return target_ids, matched_ids
 
 

@@ -1,0 +1,509 @@
+[
+  {
+    "row_id": "P1-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P1-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P1-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P1-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P1-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P1-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P1-R3",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P1-R3",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P1-R3",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P2-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R3",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R3",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R3",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R4",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R4",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R4",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P2-R5",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P2-R5",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P2-R5",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P3-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P3-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P3-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P3-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P3-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P3-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P4-R3",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P4-R3",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P4-R3",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P5-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P5-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P5-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P5-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P5-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P5-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P5-R3",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P5-R3",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P5-R3",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P7-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P7-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P7-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P7-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P7-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P7-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P8-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P8-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P8-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P8-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P8-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P8-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P8-R3",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P8-R3",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P8-R3",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P9-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P9-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P9-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P11-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P11-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P11-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P11-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P11-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P11-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P11-R3",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P11-R3",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P11-R3",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P12-R1",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P12-R1",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P12-R1",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": "",
+    "miss_cause": null
+  },
+  {
+    "row_id": "P12-R2",
+    "run": "control_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P12-R2",
+    "run": "treatment_r1",
+    "matched_claim_index": null,
+    "note": ""
+  },
+  {
+    "row_id": "P12-R2",
+    "run": "treatment_r2",
+    "matched_claim_index": null,
+    "note": ""
+  }
+]

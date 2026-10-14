@@ -1,0 +1,183 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12124v1",
+    "variant": "treatment",
+    "fewshot_fix": true,
+    "fewshot_shapes": true,
+    "prompt_hash": "da3a1ab6b587",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-14T08:07:47Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "To address this, we propose Hippocam, a hierarchical memory and continual learning architecture.",
+      "claim_summary": "Proposes Hippocam, a hierarchical memory and continual learning architecture."
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "Through this memory dynamic of use and disuse, Hippocam connects working context, long-term memory, knowledge accumulation, and skill learning within a single continuously evolving experiential process.",
+      "claim_summary": "Hippocam connects context, memory, and skill learning in one process."
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "This enables agents to learn and evolve capabilities through their own experiences without parameter updates.",
+      "claim_summary": "Enables agents to evolve capabilities from experience without updating model parameters."
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "Evaluations show that Hippocam achieves strong performance across memory, knowledge use, and learning.",
+      "claim_summary": "Hippocam achieves strong performance in memory, knowledge use, and learning."
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "Whereas competing methods show more uneven performance across these demands, Hippocam leads or matches the best compared method on seven of the eight measures in Fig. 1.",
+      "claim_summary": "Hippocam leads or ties the best baseline on 7 of 8 benchmark measures."
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "Ablations and case analyses further show how consolidation and progressive recall support ongoing work and how knowledge develops through use and disuse.",
+      "claim_summary": "Ablations show consolidation and progressive recall support ongoing work and learning."
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "These results demonstrate how our use-and-disuse cycle supports memory and learning through interaction history.",
+      "claim_summary": "Results show the use-and-disuse cycle supports memory and learning via history."
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "Inspired by this interplay, we introduce Hippocam, an LLM agent that continually learns from its own work through a unified process of organizing and consolidating its interaction history.",
+      "claim_summary": "Introduces Hippocam, an LLM agent continually learning by consolidating history."
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "Hippocam does not build a memory bank separate from its interaction history, but remembers and learns by deliberately maintaining its context.",
+      "claim_summary": "Hippocam learns by context maintenance rather than a separate memory bank."
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "Both forms of consolidation keep the agent\u2019s recent context focused and high-signal, enabling accurate and coherent reasoning over long horizons.",
+      "claim_summary": "Consolidation keeps recent context focused, enabling coherent long-horizon reasoning."
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "Experience that remains unused continues to recede in detail through recursive consolidation, without separately assigned importance scores or time-based forgetting rules.",
+      "claim_summary": "Unused experience recedes in detail without explicit importance scores or decay rules."
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+      "claim_summary": "Use and disuse unifies recall with deepening knowledge and expanding agent capabilities."
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "Hippocam thereby makes the agent\u2019s lifetime of work the engine of continual learning, taking a step toward a unified architecture for memory, knowledge, and learning.",
+      "claim_summary": "Hippocam turns lifetime work into an engine for continual learning."
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result.",
+      "claim_summary": "Hippocam hits 97.8% success on ALFWorld, tying ACE for best performance."
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods.",
+      "claim_summary": "Hippocam achieves 81.9% ScienceWorld progress, outperforming four of six baselines."
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+      "claim_summary": "Hippocam leads StreamBench with 81.7% mean accuracy, beating Letta's 81.3%."
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "In both streams, Hippocam also achieves higher accuracy with about 10% lower average cost per task in the later 150-task interval (\u00a7 A.9).",
+      "claim_summary": "Hippocam improves accuracy in later tasks with ~10% lower cost per task."
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+      "claim_summary": "In cross-domain ScienceWorld, Hippocam reaches 78.9% progress, 16.2 pp above ACE."
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+      "claim_summary": "Hippocam reaches 61.8% on FEVER in frozen cross-domain evaluation."
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "Only Hippocam and ACE achieve positive gains on both domain transitions, while the remaining methods show mixed, unchanged, or reduced performance.",
+      "claim_summary": "Only Hippocam and ACE achieve positive gains across both domain transition benchmarks."
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "Hippocam achieves larger gains of 19.2 and 6.0 pp, respectively, with a narrower FEVER gap under the scoring sensitivity analysis (\u00a7 A.2).",
+      "claim_summary": "Hippocam achieves gains of 19.2 pp and 6.0 pp across domain transitions."
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "In contrast, Hippocam maintains high performance in both conditions without degradation under interleaving, scoring 85.1% in isolation and 88.7% under interleaving (Fig. 5, left).",
+      "claim_summary": "Hippocam avoids degradation when interleaved, scoring 85.1% isolated and 88.7% interleaved."
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3).",
+      "claim_summary": "Hippocam reaches 77.6% accuracy on LoCoMo, beating A-Mem by 10.1 pp."
+    },
+    {
+      "index": 23,
+      "claim_text_verbatim": "It leads or ties across all four answerable question categories, with temporal accuracy reaching 86.6% compared with A-Mem\u2019s 67.6%.",
+      "claim_summary": "Hippocam leads answerable categories on LoCoMo, hitting 86.6% on temporal questions."
+    },
+    {
+      "index": 24,
+      "claim_text_verbatim": "Hippocam combines stronger conversational reasoning with 87.2% accuracy on unanswerable questions.",
+      "claim_summary": "Hippocam yields 87.2% accuracy on adversarial unanswerable questions in LoCoMo."
+    },
+    {
+      "index": 25,
+      "claim_text_verbatim": "Across the three input lengths, Hippocam achieves 71.7% mean accuracy, compared with 44.3% for Letta (Fig. 5, right).",
+      "claim_summary": "Hippocam achieves 71.7% mean accuracy on MemoryAgentBench vs Letta's 44.3%."
+    },
+    {
+      "index": 26,
+      "claim_text_verbatim": "It matches HiAgent at 97.0% on 6k inputs and retains 77.0% and 41.0% accuracy at 32k and 64k, where no baseline exceeds 37.0% and 19.0%, respectively.",
+      "claim_summary": "Hippocam hits 97% at 6k, 77% at 32k, and 41% at 64k inputs on MemoryAgentBench."
+    },
+    {
+      "index": 27,
+      "claim_text_verbatim": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures.",
+      "claim_summary": "Hippocam leads or ties on seven of eight benchmark measures overall."
+    },
+    {
+      "index": 28,
+      "claim_text_verbatim": "On GoodAI, filler retention rises from 14% to 63%, while scores fall by 23.1 pp under interleaving versus 7.3 pp in isolation (Table 4).",
+      "claim_summary": "Removing intent conditioning increases filler retention and drops interleaved performance by 23.1 pp."
+    },
+    {
+      "index": 29,
+      "claim_text_verbatim": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4).",
+      "claim_summary": "Removing prefix consolidation drops ToolBench accuracy from 78.7% to 65.7%."
+    },
+    {
+      "index": 30,
+      "claim_text_verbatim": "ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+      "claim_summary": "Without prefix consolidation, context size increases to 50.7k tokens and actions increase."
+    },
+    {
+      "index": 31,
+      "claim_text_verbatim": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+      "claim_summary": "Disabling progressive recall reduces MemoryAgentBench 64k accuracy from 41% to 27%."
+    },
+    {
+      "index": 32,
+      "claim_text_verbatim": "Both configurations achieve near-perfect task success, while the playbook variant uses slightly more actions on average (9.00 versus 8.12).",
+      "claim_summary": "Hippocam requires fewer mean actions (8.12 vs 9.00) than a playbook-generation variant."
+    }
+  ]
+}

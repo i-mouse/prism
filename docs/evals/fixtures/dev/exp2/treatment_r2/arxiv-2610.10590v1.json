@@ -1,0 +1,158 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.10590v1",
+    "variant": "treatment",
+    "fewshot_fix": true,
+    "fewshot_shapes": true,
+    "prompt_hash": "da3a1ab6b587",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7cd024de-ee74-4f7d-858c-d4cfdb5df894",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-10-14T08:09:19Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider-reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28\u2013$1.44 versus approximately $4.38.",
+      "claim_summary": "OpenTelemetry case reduced prompt tokens to 232k vs 912k, lowered cost and cumulative input"
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "Both arms passed the two-case primary behavioral oracle; neither fully satisfied the follow-up evaluation.",
+      "claim_summary": "Both method and baseline passed primary evaluation, but neither passed full follow-up evaluation"
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "The method made more requests and took 17% longer.",
+      "claim_summary": "The proposed method increased request count and took 17% longer in OpenTelemetry"
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "claim_summary": "Planroom showed no savings and an earlier continuation saw reduced quality with context curation"
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "claim_summary": "Central case reduced active context and repeated input while preserving primary task success"
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "Post-exposure curation gives the agent a further choice over continued retention without requiring changes to the source tool.",
+      "claim_summary": "Post-exposure curation enables selective context retention without modifying underlying tools"
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "User, system, and assistant messages are not selectable through the context tools.",
+      "claim_summary": "Context management tools protect user, system, and assistant messages from modification"
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "claim_summary": "Proposed method achieved 85% prompt token reduction at primary task submission"
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "claim_summary": "Proposed method achieved 75% prompt token reduction after task follow-up"
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "The method peak is 381,299 versus 912,492 tokens.",
+      "claim_summary": "Peak prompt size was 381k tokens for the method compared to 912k for baseline"
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "Cumulative input decreases by 50%, and input plus completion tokens decrease by 50%.",
+      "claim_summary": "Cumulative input and overall token usage both decreased by 50%"
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "The estimated cost is approximately 67\u201371% lower, even after reported cache usage is included.",
+      "claim_summary": "Estimated API cost dropped by 67-71% accounting for prompt caching"
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "claim_summary": "Method generated over twice as many completion tokens and ran 17% slower"
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "Both primary candidates pass the two-case behavioral oracle.",
+      "claim_summary": "Both method and retained baseline passed the primary two-case behavioral oracle"
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "The method exits with status 0 after SIGTERM in 8.43 seconds and after SIGINT in 8.85 seconds.",
+      "claim_summary": "Method cleanly handled SIGTERM and SIGINT signals under 9 seconds"
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "Retained fails both probes and is killed with status 137.",
+      "claim_summary": "Retained baseline failed SIGTERM and SIGINT probes and was force-killed"
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "Conversely, retained passes the occupied-port startup-failure probe with status 1; the method\u2019s second process does not finish within 30 seconds.",
+      "claim_summary": "Retained baseline passed occupied-port startup check while method timed out"
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "The frozen mixed grader reports 3/6 for method and 2/6 for retained.",
+      "claim_summary": "Mixed grader scored method at 3/6 and retained baseline at 2/6 on follow-up"
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "In total, 26 results containing 2,247,229 text characters are represented by 9,709 note characters.",
+      "claim_summary": "2.2M text characters in 26 results were compressed into 9.7k note characters"
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "All 26 archived text payloads and image lists match their recorded tool returns exactly.",
+      "claim_summary": "Archived text payloads and image lists matched original tool outputs with exact fidelity"
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "claim_summary": "Method provided no context or cost savings in the Planroom task"
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "Both arms support the twelve journeys at the available assessment resolution, with the gaps described above.",
+      "claim_summary": "Both arms supported all twelve browser journeys in the Planroom task"
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "Archival of 34 results removes only 69,685 net history characters; this does not offset the differing generated trajectories and method overhead.",
+      "claim_summary": "Archiving 34 results in Planroom did not offset trajectory overhead"
+    },
+    {
+      "index": 23,
+      "claim_text_verbatim": "The method completes in 24.29 rather than 31.78 minutes; this single pair does not isolate the cause of the timing difference.",
+      "claim_summary": "Method finished Planroom faster (24.3 vs 31.8 min), though cause is unisolated"
+    },
+    {
+      "index": 24,
+      "claim_text_verbatim": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "claim_summary": "Sphinx evaluation yielded two 24/24 scores for method and one for retained baseline"
+    },
+    {
+      "index": 25,
+      "claim_text_verbatim": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "claim_summary": "Sphinx method sessions consistently achieved smaller final prompts than retained baseline sessions"
+    },
+    {
+      "index": 26,
+      "claim_text_verbatim": "An earlier browser-based workflow-design continuation used 63% fewer total tokens with the method but received a manual score of 4/12 versus 6/12 for retained.",
+      "claim_summary": "Earlier workflow continuation saved 63% tokens but scored lower on manual quality assessment"
+    },
+    {
+      "index": 27,
+      "claim_text_verbatim": "In the central noisy debugging case, reversible curation accompanies a 75% smaller final measured prompt, 50% less cumulative input, and substantially lower estimated API cost, while both arms pass the same two primary behavioral cases.",
+      "claim_summary": "Reversible curation reduced final prompt by 75% and input by 50% while preserving accuracy"
+    }
+  ]
+}

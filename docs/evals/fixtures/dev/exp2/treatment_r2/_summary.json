@@ -1,0 +1,109 @@
+{
+  "calls": 10,
+  "total_prompt_tokens": 376931,
+  "total_output_tokens": 24337,
+  "total_thought_tokens": 57474,
+  "cost_inr": 58.95,
+  "records": [
+    {
+      "paper_id": "arxiv-2610.10590v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 14511,
+      "output_tokens": 1972,
+      "thought_tokens": 3565,
+      "total_tokens": 20048,
+      "latency_s": 22.905312399998365
+    },
+    {
+      "paper_id": "arxiv-2610.10871v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 26939,
+      "output_tokens": 2699,
+      "thought_tokens": 6737,
+      "total_tokens": 36375,
+      "latency_s": 38.88770829999703
+    },
+    {
+      "paper_id": "arxiv-2610.11132v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 42463,
+      "output_tokens": 2350,
+      "thought_tokens": 3842,
+      "total_tokens": 48655,
+      "latency_s": 26.84808539999358
+    },
+    {
+      "paper_id": "arxiv-2610.11135v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 96236,
+      "output_tokens": 3681,
+      "thought_tokens": 10072,
+      "total_tokens": 109989,
+      "latency_s": 54.303105000006326
+    },
+    {
+      "paper_id": "arxiv-2610.11291v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 33021,
+      "output_tokens": 2626,
+      "thought_tokens": 5887,
+      "total_tokens": 41534,
+      "latency_s": 35.00396859999455
+    },
+    {
+      "paper_id": "arxiv-2610.11519v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 52365,
+      "output_tokens": 2309,
+      "thought_tokens": 3894,
+      "total_tokens": 58568,
+      "latency_s": 26.306745499998215
+    },
+    {
+      "paper_id": "arxiv-2610.12114v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 27594,
+      "output_tokens": 2442,
+      "thought_tokens": 4468,
+      "total_tokens": 34504,
+      "latency_s": 29.615258099998755
+    },
+    {
+      "paper_id": "arxiv-2610.12124v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 32252,
+      "output_tokens": 2012,
+      "thought_tokens": 5014,
+      "total_tokens": 39278,
+      "latency_s": 30.039209499998833
+    },
+    {
+      "paper_id": "arxiv-2610.12168v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 25096,
+      "output_tokens": 1764,
+      "thought_tokens": 5756,
+      "total_tokens": 32616,
+      "latency_s": 33.171088100003544
+    },
+    {
+      "paper_id": "arxiv-2610.12375v1",
+      "variant": "treatment",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 26454,
+      "output_tokens": 2482,
+      "thought_tokens": 8239,
+      "total_tokens": 37175,
+      "latency_s": 43.417327499999374
+    }
+  ]
+}
