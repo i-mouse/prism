@@ -2067,3 +2067,11 @@ experiment: 2 of 8. The push ends after this experiment per the 2026-10-10
 Exit rule; the exit decision is next. Candidate lead for a future experiment
 (not started, needs its own dated entry): per-sentence or multi-pass
 extraction instead of one list-all-claims call.
+
+## Push extension past Experiment 2 - 2026-10-14
+Amends the Experiment 2 entry's "After this experiment the push ends". Logged before any Experiment 3 design or spend.
+- Reason: the Experiment 2 diagnosis leans toward a task-design problem (one list-all-claims call). The main objective is improving the extractor, and one untested lead remains: per-sentence or multi-pass extraction.
+- Scope: exactly ONE more counted experiment (Experiment 3). After it, the exit decision is taken, whatever the result. Any further extension needs a new dated entry.
+- Budget: Experiment 3 spends from the remaining push budget (about INR 560 = 738 - 177.93). Sealed reserve INR 300 untouched. Exact cap and marks go in the Experiment 3 pre-registration, before any paid call.
+- Design constraint (from the Experiment 2 observation): at least 2 control runs, because control alone lost 6/13 matched rows.
+- Unchanged: 8-experiment hard exit, 70% floor, 10% false-rejection cap, golden regression gate, no prompt tuning to move the number, human-only adjudication.
