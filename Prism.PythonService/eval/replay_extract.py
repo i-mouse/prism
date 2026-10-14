@@ -217,15 +217,22 @@ async def _print_count_tokens_estimate(paper_ids: list[str], variants: list[str]
             messages = build_gemini_messages_for_extractor(
                 paper_text, fewshot_fix=config["fewshot_fix"], fewshot_shapes=config["fewshot_shapes"]
             )
+            # The Gemini Developer API's countTokens does not accept a system
+            # instruction in its config (google-genai raises "system_instruction
+            # parameter is not supported in Gemini API" - Vertex-only feature of
+            # the SDK's CountTokensConfig). Fold the system prompt in as a plain
+            # content entry instead; countTokens sums all content tokens
+            # regardless of role, so this is still an accurate token count, just
+            # not routed through the config field the real generateContent call
+            # (extraction.engine._call_gemini_json) actually uses.
             system_prompt = next(m["content"] for m in messages if m["role"] == "system")
-            contents = [
+            contents = [types.Content(role="user", parts=[types.Part.from_text(text=system_prompt)])] + [
                 types.Content(role=m["role"], parts=[types.Part.from_text(text=m["content"])])
                 for m in messages if m["role"] != "system"
             ]
             response = await client.aio.models.count_tokens(
                 model=settings.llm_extraction_model,
                 contents=contents,
-                config=types.CountTokensConfig(system_instruction=system_prompt),
             )
             input_tokens = response.total_tokens
             total_input_tokens += input_tokens
