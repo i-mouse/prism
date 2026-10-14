@@ -1996,3 +1996,74 @@ most 1 regression" budget, not a proportional rescaling of 17/18). The other
 mark. A1, A2, A4 unchanged. eval/score_exp2.py's A3_FLOOR and matched-row
 classification (REPLAYED_PAPER_SUBSTRINGS) updated to match. Made before any
 adjudication.
+
+## Experiment 2 - Stage A result - 2026-10-14
+**Marks:**
+- A1: FAIL. At least 5/13 target rows required in both treatment runs; treatment_r1
+  recovered 1/13, treatment_r2 recovered 1/13.
+- A2: FAIL. min(treatment recovered) - control recovered >= 3 required; actual
+  1 - 3 = -2.
+- A3: FAIL. At least 12/13 matched rows required in every treatment run (redefined
+  2026-10-14 scope, see above); treatment_r1 kept 11/13, treatment_r2 kept 9/13.
+- A4: PASS. Treatment claims <= 1.5x control's (463.5) required; control=309,
+  treatment_r1=285, treatment_r2=287 - treatment claim counts were lower than
+  control's, not higher.
+**Verdict: FAIL. Experiment 2 (redesigned) rejected.** All four marks were
+pre-registered as required together; A4 alone passing does not change this.
+Stage B not run (gated on a PASS). Spend: INR 177.93 (pilot 2.77 + control-batch
+56.58 + treatment_r1 59.63 + treatment_r2 58.95), against the amended 280 cap.
+
+**Diagnosis (required, teaching problem vs task-design problem):**
+Per the pre-registered cause hypothesis, the evidence leans toward a
+TASK-DESIGN problem but does not prove it. Treatment saw the 8 new claim-shape
+examples and the addendum, invented examples of the same shapes it needed to
+recover, and still missed almost all of them: E2 (table captions/derived
+quantities) 0/3 in both treatment runs, E3 (overreach-vs-sibling) 0/4 in both
+treatment runs, E5 (bare "we observed") 0/1 in both treatment runs. Of the 4 E1
+(hedged/in-principle) rows, treatment recovered only 1 (P12-R1) in both runs -
+fewer than control's 2 (P12-R1 and P1-R2; treatment lost P1-R2 despite control
+having recovered it). This is the specific failure pattern the pre-registered
+hypothesis named as pointing to task design: a single list-all-claims call
+failing to reliably apply shape-specific rules on a per-sentence basis with
+this teaching approach (8 examples + addendum). The alternative explanation
+(treatment over-extracts broadly rather than learning the specific shapes) is
+ruled out by A4: treatment's claim counts were lower than control's, not
+higher, so there is no sign of indiscriminate over-grabbing masking the
+targeted shapes elsewhere. However, run-to-run variance is large - control
+itself lost 6/13 matched rows with no change at all (see observation below) -
+and there was only one control run, so the 3-vs-1 target-row difference
+between control and treatment may be within that same noise rather than a
+real effect of the new examples.
+
+The human-adjudicated miss_cause field describes the setup rather than serving
+as independent evidence: treatment's unrecovered rows were tagged
+"saw_example_still_skipped" specifically because treatment is the arm that had
+the examples (11 of 12 unrecovered target rows in each treatment run), while
+control's were tagged "shape_not_taught" because control never had them (7 of
+10). This records which arm was which; it does not independently confirm the
+task-design reading above.
+
+The E3 attribution check (pre-registered) showed control alone recovered 1/4
+E3 rows, consistent with the un-blanked base example
+(abstract_broad_and_narrow_together), but a single row in a single run cannot
+be separated from variance. Treatment recovered 0/4 E3 rows in both runs - the
+new E3-shaped examples demonstrated no additional effect on E3 beyond whatever
+the loader fix alone provided.
+
+**Observation (not pre-registered):** control's matched-row retention was 7/13
+(lost 6/13: P1-R1, P4-R2, P5-R1, P7-R1, P8-R1, P8-R2) - a loss rate not gated by
+any mark, since A3 only checks treatment, but relevant context for A3's FAIL.
+Every matched row lost by either treatment run was also lost by control
+(treatment_r1 lost P1-R1, P5-R1 - both control losses; treatment_r2 lost P1-R1,
+P5-R1, P7-R1, P8-R2 - all four also control losses). No treatment run lost a
+matched row that control did not also lose. This suggests A3's FAIL reflects
+run-to-run extraction variance already present in the loader-fix-only arm, not
+a regression specifically caused by adding the 8 shape examples - though A3 was
+pre-registered against treatment only, and formally still FAILs as scored.
+
+**Decision:** both flags (EXTRACTOR_FEWSHOT_FIX, EXTRACTOR_FEWSHOT_SHAPES) stay
+default off. PR-1 (#115, the same loader fix) stays a draft, unmerged. Counted
+experiment: 2 of 8. The push ends after this experiment per the 2026-10-10
+Exit rule; the exit decision is next. Candidate lead for a future experiment
+(not started, needs its own dated entry): per-sentence or multi-pass
+extraction instead of one list-all-claims call.

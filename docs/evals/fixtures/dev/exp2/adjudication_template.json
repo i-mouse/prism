@@ -3,507 +3,507 @@
     "row_id": "P1-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "exact absent; #22 covers 1 of 4 ablations only"
   },
   {
     "row_id": "P1-R1",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "exact absent; #20 covers 1 of 4 ablations only"
   },
   {
     "row_id": "P1-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": ""
+    "note": "exact absent; #17 covers 1 of 4 ablations only"
   },
   {
     "row_id": "P1-R2",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": "",
+    "matched_claim_index": 35,
+    "note": "exact",
     "miss_cause": null
   },
   {
     "row_id": "P1-R2",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#7 bound/fading half only; exploration claim missing (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P1-R2",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#7 bound/fading half only; exploration claim missing (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P1-R3",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 10,
+    "note": "exact"
   },
   {
     "row_id": "P1-R3",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 7,
+    "note": "same claim, other sentence (run-1 precedent)"
   },
   {
     "row_id": "P1-R3",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 7,
+    "note": "same claim, other sentence (run-1 precedent)"
   },
   {
     "row_id": "P2-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no RLFT in-principle claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P2-R1",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no RLFT in-principle claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P2-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no RLFT in-principle claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P2-R3",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#23 narrower math/coding overhead sentence, not Table 10 claim (run-1 precedent)",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P2-R3",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no overhead claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P2-R3",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#24 narrower math/coding overhead sentence, not Table 10 claim (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P2-R4",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no RL/IFEval forgetting claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P2-R4",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no RL/IFEval forgetting claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P2-R4",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no RL/IFEval forgetting claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P2-R5",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 22,
+    "note": "exact"
   },
   {
     "row_id": "P2-R5",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 22,
+    "note": "exact"
   },
   {
     "row_id": "P2-R5",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 23,
+    "note": "exact"
   },
   {
     "row_id": "P3-R1",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": "",
+    "matched_claim_index": 47,
+    "note": "exact",
     "miss_cause": null
   },
   {
     "row_id": "P3-R1",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#10/#6 safe half only; 'helps other LLMs as much as Jev' missing",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P3-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#24/#10 safe half only; 'helps other LLMs as much as Jev' missing",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P3-R2",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 3,
+    "note": "exact"
   },
   {
     "row_id": "P3-R2",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 3,
+    "note": "exact"
   },
   {
     "row_id": "P3-R2",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 3,
+    "note": "exact"
   },
   {
     "row_id": "P4-R1",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 24,
+    "note": "exact"
   },
   {
     "row_id": "P4-R1",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 1,
+    "note": "same claim, other sentence (run-1 precedent #2 sentence)"
   },
   {
     "row_id": "P4-R1",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 30,
+    "note": "exact"
   },
   {
     "row_id": "P4-R2",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "exact absent; #18/#21 different claims"
   },
   {
     "row_id": "P4-R2",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 21,
+    "note": "exact"
   },
   {
     "row_id": "P4-R2",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 29,
+    "note": "exact"
   },
   {
     "row_id": "P4-R3",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#4/#1 kernels-budgets half only; 'orthogonal to other acceleration' missing",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P4-R3",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#0 kernels-budgets half only; 'orthogonal' missing",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P4-R3",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#12/#4 kernels-budgets half only; 'orthogonal' missing",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P5-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "no transfer claim anywhere (keyword check)"
   },
   {
     "row_id": "P5-R1",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "no transfer claim anywhere (keyword check)"
   },
   {
     "row_id": "P5-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": ""
+    "note": "no transfer claim anywhere (keyword check)"
   },
   {
     "row_id": "P5-R2",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 1,
+    "note": "run-1 precedent"
   },
   {
     "row_id": "P5-R2",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 1,
+    "note": "run-1 precedent"
   },
   {
     "row_id": "P5-R2",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 1,
+    "note": "run-1 precedent"
   },
   {
     "row_id": "P5-R3",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#16 narrower Fig 5 result (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P5-R3",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#21 narrower Fig 5 result (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P5-R3",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#18 narrower Fig 5 result (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P7-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "#5 is narrower central-case claim; workload dependence missing"
   },
   {
     "row_id": "P7-R1",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 5,
+    "note": "exact"
   },
   {
     "row_id": "P7-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": ""
+    "note": "#4/#27 narrower central-case claims"
   },
   {
     "row_id": "P7-R2",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no in-principle contract claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P7-R2",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no in-principle contract claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P7-R2",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no in-principle contract claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P8-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "#4/#3 different claims"
   },
   {
     "row_id": "P8-R1",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 10,
+    "note": "same claim, other sentence"
   },
   {
     "row_id": "P8-R1",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 5,
+    "note": "same claim, other sentence"
   },
   {
     "row_id": "P8-R2",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": ""
+    "note": "#1 lacks use-and-disuse cycle (judgment call)"
   },
   {
     "row_id": "P8-R2",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 6,
+    "note": "exact"
   },
   {
     "row_id": "P8-R2",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": ""
+    "note": "#6 is a design statement, not 'results demonstrate' (judgment call)"
   },
   {
     "row_id": "P8-R3",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#7 'exceeds four of six' safe sibling (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P8-R3",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#14 safe sibling; #6 is P8-R2's claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P8-R3",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#8 safe sibling (run-1 precedent)",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P9-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#25 is SWE-agent No-GW ablation, different quantity",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P9-R1",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#25 is false-alarm point, not LinUOT vs OnTrack",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P9-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "#15 is 'Second' false-alarm point, not LinUOT vs OnTrack",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P11-R1",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "E4 out of scope; no train/test overlap claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P11-R1",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "E4 out of scope; no train/test overlap claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P11-R1",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "E4 out of scope; no train/test overlap claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P11-R2",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 8,
+    "note": "exact"
   },
   {
     "row_id": "P11-R2",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 5,
+    "note": "exact"
   },
   {
     "row_id": "P11-R2",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 2,
+    "note": "same claim, other sentence"
   },
   {
     "row_id": "P11-R3",
     "run": "control_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no 'we observed losses stabilized' claim",
+    "miss_cause": "shape_not_taught"
   },
   {
     "row_id": "P11-R3",
     "run": "treatment_r1",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no 'we observed losses stabilized' claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P11-R3",
     "run": "treatment_r2",
     "matched_claim_index": null,
-    "note": "",
-    "miss_cause": null
+    "note": "no 'we observed losses stabilized' claim",
+    "miss_cause": "saw_example_still_skipped"
   },
   {
     "row_id": "P12-R1",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": "",
+    "matched_claim_index": 35,
+    "note": "same claim, other sentence ('central hypothesis' asymmetry)",
     "miss_cause": null
   },
   {
     "row_id": "P12-R1",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": "",
+    "matched_claim_index": 20,
+    "note": "same claim, other sentence ('central hypothesis' asymmetry)",
     "miss_cause": null
   },
   {
     "row_id": "P12-R1",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": "",
+    "matched_claim_index": 22,
+    "note": "same claim, other sentence ('central hypothesis' asymmetry)",
     "miss_cause": null
   },
   {
     "row_id": "P12-R2",
     "run": "control_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 4,
+    "note": "exact"
   },
   {
     "row_id": "P12-R2",
     "run": "treatment_r1",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 0,
+    "note": "same claim, other sentence (run-1 precedent)"
   },
   {
     "row_id": "P12-R2",
     "run": "treatment_r2",
-    "matched_claim_index": null,
-    "note": ""
+    "matched_claim_index": 0,
+    "note": "same claim, other sentence (run-1 precedent)"
   }
 ]
