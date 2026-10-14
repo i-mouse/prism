@@ -1977,3 +1977,8 @@ Stage B" -> run Stage B.
 **Counted experiment:** 2 of 8. After this experiment the push ends and the
 exit decision above (the 2026-10-10 order-of-work entry's "Exit:" rule) is
 taken, whatever the result.
+
+**Amended 2026-10-14:** Stage A cap raised 250 -> 280 INR and total cap 350
+-> 380 INR, after the pilot measured thinking tokens (~65% of generated
+tokens; scaled Stage A estimate ~233 INR). Marks A1-A4 unchanged. Made before
+any Stage A result.
