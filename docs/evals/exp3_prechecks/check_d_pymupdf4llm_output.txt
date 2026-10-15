@@ -1,0 +1,65 @@
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\Dr7nPiRh13t7kYe1\Lib\site-packages\pysbd\segmenter.py:66: SyntaxWarning: invalid escape sequence '\s'
+  for match in re.finditer('{0}\s*'.format(re.escape(sent)), self.original_text):
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\Dr7nPiRh13t7kYe1\Lib\site-packages\pysbd\lang\arabic.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\Dr7nPiRh13t7kYe1\Lib\site-packages\pysbd\lang\persian.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+pymupdf4llm version: 1.28.2
+
+=== Check D candidate 2: PyMuPDF4LLM (header=False, footer=False) ===
+Total dev rows: 119; refusal-family rows: 31
+Strip rule: remove leading '-'/'+ ' or '<digits>.'/'<digits>)' + space at line start, then remove bare # * _ | ` chars - applied to both segments and claim text.
+
+[regex] overall: WHOLE=60 SPLIT=0 MERGED=17 NOT_FOUND=42  WHOLE%=50.4  bar(>=95%)=FAIL
+[regex] refusal-family (31 rows): WHOLE=19 SPLIT=0 MERGED=8 NOT_FOUND=4
+[pysbd_pdf_clean] overall: WHOLE=70 SPLIT=2 MERGED=5 NOT_FOUND=42  WHOLE%=58.8  bar(>=95%)=FAIL
+[pysbd_pdf_clean] refusal-family (31 rows): WHOLE=24 SPLIT=0 MERGED=3 NOT_FOUND=4
+
+--- [regex] non-WHOLE refusal-family rows (12) ---
+  P2-R3 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'Table 10: SFT-as-context incurs modest overhead compared with SFT.'
+  P2-R4 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'We first sum the attention assigned to each region: The total attention directed to the prompt is then The share of the attention weight for each prompt region, for each layer, head, and response token j is then: Table 5: RL-trained models do not show forgetting of instruction-following capability c'
+  P3-R2 (2610.11135v1.pdf) -> MERGED
+    segment[0]: "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead. 1 Introduction Knowledge tracing (KT) predicts whether a learner will answer the next item correctly from the learner's interaction history, but new courses an"
+  P5-R2 (2610.11291v1.pdf) -> NOT_FOUND
+  P6-R1 (2610.11312v1.pdf) -> MERGED
+    segment[0]: 'These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation. 1 INTRODUCTION Large-scale construction of medical vision-language model (VLM) benchmarks is increasingly feasible as richly annotated imaging data'
+  P7-R1 (2610.10590v1.pdf) -> MERGED
+    segment[0]: 'These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management. 1 Introduction A debugging agent may inspect an entire distributed trace to identify one failed service call.'
+  P8-R2 (2610.12124v1.pdf) -> MERGED
+    segment[0]: 'These results demonstrate how our use-and-disuse cycle supports memory and learning through interaction history. 2 HIPPOCAM 2.1 OVERVIEW Hippocam is an LLM agent that continually learns from its own work by organizing and consolidating its interaction history.'
+  P9-R1 (2610.12375v1.pdf) -> NOT_FOUND
+  P10-R2 (2610.12176v1.pdf) -> NOT_FOUND
+  P10-R3 (2610.12176v1.pdf) -> MERGED
+    segment[0]: 'Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components. long-horizon trajectories. 4.4 HYPOTHESIS 2: MULTI-AGENT TRAJECTORIES PROVIDE DENSER SUPERVISION Our second hypothesis'
+  P11-R1 (2610.12114v1.pdf) -> NOT_FOUND
+  P12-R1 (2610.12168v1.pdf) -> MERGED
+    segment[0]: 'We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work. 1 Introduction Our method is inspired by the following asymmetry in problem solving: It is, in general, harder to solve a pr'
+
+--- [pysbd_pdf_clean] non-WHOLE refusal-family rows (7) ---
+  P2-R3 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'Table 10: SFT-as-context incurs modest overhead compared with SFT.'
+  P4-R1 (2610.10871v1.pdf) -> MERGED
+    segment[0]: 'MASA does not change the sparse kernels, candidate sparse units, or budget rules of existing methods, making it orthogonal to low-level attention kernels and other LLM acceleration techniques as discussed in Appendix A. Across multiple sparse baselines, benchmarks, and LLM backbones, MASA gives cons'
+  P4-R3 (2610.10871v1.pdf) -> MERGED
+    segment[0]: 'MASA does not change the sparse kernels, candidate sparse units, or budget rules of existing methods, making it orthogonal to low-level attention kernels and other LLM acceleration techniques as discussed in Appendix A. Across multiple sparse baselines, benchmarks, and LLM backbones, MASA gives cons'
+  P5-R2 (2610.11291v1.pdf) -> NOT_FOUND
+  P9-R1 (2610.12375v1.pdf) -> NOT_FOUND
+  P10-R2 (2610.12176v1.pdf) -> NOT_FOUND
+  P11-R1 (2610.12114v1.pdf) -> NOT_FOUND
+
+--- per-paper segment counts ---
+  2610.10590v1.pdf: {'regex': 356, 'pysbd_pdf_clean': 443}
+  2610.10871v1.pdf: {'regex': 477, 'pysbd_pdf_clean': 783}
+  2610.11132v1.pdf: {'regex': 798, 'pysbd_pdf_clean': 1352}
+  2610.11135v1.pdf: {'regex': 592, 'pysbd_pdf_clean': 1830}
+  2610.11291v1.pdf: {'regex': 368, 'pysbd_pdf_clean': 692}
+  2610.11312v1.pdf: {'regex': 672, 'pysbd_pdf_clean': 965}
+  2610.11519v1.pdf: {'regex': 738, 'pysbd_pdf_clean': 1539}
+  2610.12114v1.pdf: {'regex': 578, 'pysbd_pdf_clean': 961}
+  2610.12124v1.pdf: {'regex': 900, 'pysbd_pdf_clean': 1262}
+  2610.12168v1.pdf: {'regex': 754, 'pysbd_pdf_clean': 711}
+  2610.12176v1.pdf: {'regex': 966, 'pysbd_pdf_clean': 1660}
+  2610.12375v1.pdf: {'regex': 436, 'pysbd_pdf_clean': 701}

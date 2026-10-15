@@ -1,0 +1,70 @@
+requests version: 2.32.5
+2610.10590v1.pdf: runtime=12.1s abstract=9 body=257 caption=10 note=1 total=277
+2610.10871v1.pdf: runtime=6.2s abstract=9 body=313 caption=37 note=18 total=377
+2610.11132v1.pdf: runtime=7.3s abstract=9 body=561 caption=43 note=25 total=638
+2610.11135v1.pdf: runtime=4.4s abstract=9 body=778 caption=105 note=27 total=919
+2610.11291v1.pdf: runtime=2.7s abstract=14 body=371 caption=47 note=29 total=461
+2610.11312v1.pdf: runtime=7.3s abstract=9 body=433 caption=51 note=17 total=510
+2610.11519v1.pdf: runtime=8.9s abstract=10 body=602 caption=103 note=8 total=723
+2610.12114v1.pdf: runtime=7.7s abstract=0 body=429 caption=38 note=20 total=487
+2610.12124v1.pdf: runtime=5.6s abstract=10 body=592 caption=57 note=20 total=679
+2610.12168v1.pdf: runtime=4.3s abstract=4 body=394 caption=14 note=9 total=421
+2610.12176v1.pdf: runtime=7.5s abstract=10 body=945 caption=43 note=21 total=1019
+2610.12375v1.pdf: runtime=5.3s abstract=11 body=534 caption=8 note=5 total=558
+
+=== Check D candidate 1: GROBID sentences ===
+Total dev rows: 119; refusal-family rows: 31
+overall: WHOLE=64 SPLIT=8 MERGED=9 NOT_FOUND=38  WHOLE%=53.8  bar(>=95%)=FAIL
+refusal-family (31 rows): WHOLE=20 SPLIT=1 MERGED=3 NOT_FOUND=7
+
+--- non-WHOLE refusal-family rows (11) ---
+  P2-R3 (2610.11132v1.pdf) -> MERGED
+    segment[0] (source=body): 'Table 10: SFT-as-context incurs modest overhead compared with SFT.'
+  P2-R4 (2610.11132v1.pdf) -> MERGED
+    segment[0] (source=caption): 'RL-trained models do not show forgetting of instruction-following capability compared to their parent, as measured by IFEval.All RL models in this table share DeepSeek-R1-Distill-Qwen of the corresponding size (1.5B or 7B) as their parent model.The metric is promptlevel strict accuracy (PSA) of IFEv'
+  P3-R1 (2610.11135v1.pdf) -> NOT_FOUND
+  P4-R1 (2610.10871v1.pdf) -> NOT_FOUND
+  P4-R2 (2610.10871v1.pdf) -> MERGED
+    segment[0] (source=caption): 'Table 4 supports two conclusions.First, raw MASA already improves the original sparse baseline in several settings, which supports the matrix-product scoring objective itself.Second, norm control can further improve the score in settings where value-norm outliers affect sparse-unit ranking.Norm clip'
+  P4-R3 (2610.10871v1.pdf) -> NOT_FOUND
+  P5-R1 (2610.11291v1.pdf) -> NOT_FOUND
+  P6-R2 (2610.11312v1.pdf) -> NOT_FOUND
+  P7-R2 (2610.10590v1.pdf) -> NOT_FOUND
+  P8-R2 (2610.12124v1.pdf) -> NOT_FOUND
+  P9-R1 (2610.12375v1.pdf) -> SPLIT
+    segment[0] (source=body): 'rule at or below chance) and omitted from the table for space.'
+    segment[1] (source=body): 'Four observations.'
+    segment[2] (source=body): 'First, the ∆ CI excludes zero at k ≤ 10, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635):'
+    segment[3] (source=body): 'the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.'
+    segment[4] (source=body): 'Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622'
+    segment[5] (source=body): 'at k=5); OnTrack leads every content-and structure-aware method there but not the length prior -its clearest regime is k=8-10, after the length prior fades and before content accumulates.'
+    segment[6] (source=body): 'Third, LinUOT tracks OnTrack within 0.003-0.010'
+    segment[7] (source=body): "AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full system, confirming the mask's null ranking effect here as well."
+
+--- per-paper source counts ---
+  2610.10590v1.pdf: {'abstract': 9, 'body': 257, 'caption': 10, 'note': 1}
+  2610.10871v1.pdf: {'abstract': 9, 'body': 313, 'caption': 37, 'note': 18}
+  2610.11132v1.pdf: {'abstract': 9, 'body': 561, 'caption': 43, 'note': 25}
+  2610.11135v1.pdf: {'abstract': 9, 'body': 778, 'caption': 105, 'note': 27}
+  2610.11291v1.pdf: {'abstract': 14, 'body': 371, 'caption': 47, 'note': 29}
+  2610.11312v1.pdf: {'abstract': 9, 'body': 433, 'caption': 51, 'note': 17}
+  2610.11519v1.pdf: {'abstract': 10, 'body': 602, 'caption': 103, 'note': 8}
+  2610.12114v1.pdf: {'abstract': 0, 'body': 429, 'caption': 38, 'note': 20}
+  2610.12124v1.pdf: {'abstract': 10, 'body': 592, 'caption': 57, 'note': 20}
+  2610.12168v1.pdf: {'abstract': 4, 'body': 394, 'caption': 14, 'note': 9}
+  2610.12176v1.pdf: {'abstract': 10, 'body': 945, 'caption': 43, 'note': 21}
+  2610.12375v1.pdf: {'abstract': 11, 'body': 534, 'caption': 8, 'note': 5}
+
+--- per-paper runtime (seconds) ---
+  2610.10590v1.pdf: 12.1
+  2610.10871v1.pdf: 6.2
+  2610.11132v1.pdf: 7.3
+  2610.11135v1.pdf: 4.4
+  2610.11291v1.pdf: 2.7
+  2610.11312v1.pdf: 7.3
+  2610.11519v1.pdf: 8.9
+  2610.12114v1.pdf: 7.7
+  2610.12124v1.pdf: 5.6
+  2610.12168v1.pdf: 4.3
+  2610.12176v1.pdf: 7.5
+  2610.12375v1.pdf: 5.3

@@ -113,6 +113,7 @@ Nothing is deployed right now — the environment was decommissioned on 2026-09-
 
 Prism's architecture and design choices are documented in detail:
 * **[Decisions Log](docs/decisions.md)** — Append-only record of architecture, schema, and prompt design decisions.
+* **[Fact Inventory (2026-10-14)](docs/research/fact_inventory_2026-10-14.md)** — Read-only evidence base cross-checking this file, PRISM_STATUS.md, FINDINGS.md and decisions.md.
 * **[Developer Runbook](docs/RUNBOOK.md)** — Local dev gotchas, deployment failure modes, eval fixture regeneration.
 * **[Deployment & Environment Architecture](docs/deployment-and-environment-architecture.md)** — Deployment topology, environment configuration, deploy workflow, running live evals, and known issues.
 * **[Extraction, Audit & Grounding Architecture](docs/extraction-audit-grounding-architecture.md)** — The extractor → auditor → structurer pipeline, grounding checker, eval harness, and known limitations.

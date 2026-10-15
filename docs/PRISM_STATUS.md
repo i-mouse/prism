@@ -1,4 +1,4 @@
-# PRISM STATUS - 2026-10-11 (single source for new chats)
+# PRISM STATUS - 2026-10-15 (single source for new chats)
 
 ## Repo state
 - PR-A (de-leak) merged, SHA 5091b60. Prompt hash 0bcf9d44e619 -> cb3272cce551.
@@ -8,7 +8,7 @@
   - Old fixtures archived in docs/evals/archive/2026-10-07_pre-cb3272cce551/.
   - Gate 0.35 -> 0.30, test_matrix_loader assertion updated.
 - B5.1 branch stays reference only, never merged.
-- Cleanup pending: README numbers stale (fixed in docs-sync branch); 2 old tracked logs (logs/eval/matrix_20260827T100808.json, logs/extraction/20260807T074032319542_smoke-test_manual-run-1.json) to untrack and gitignore; 9 old local branches to delete, keep fix/b5.1-auditor-checklist; (archived audit, see git history) has old RFP naming (legacy cleanup list).
+- Cleanup pending: README numbers checked 2026-10-15: match current golden and held-out values. 2 old tracked logs (logs/eval/matrix_20260827T100808.json, logs/extraction/20260807T074032319542_smoke-test_manual-run-1.json) to untrack and gitignore; 9 old local branches to delete, keep fix/b5.1-auditor-checklist; (archived audit, see git history) has old RFP naming (legacy cleanup list).
 - Azure subscription cancelled 2026-09-28, live URL is down. Demo = recorded walkthrough + README; local Aspire stack, Dev Tunnels later.
 
 ## Eval
@@ -25,10 +25,13 @@
 
 ### Dev run 1 status (2026-10-12)
 - Dev run 1: refusal 8/31 (26%); 10 audit misses, 13 extraction misses; auditor-only ceiling 18/31 < floor 22/31; false rejections 4/88.
-- Exp 1 (auditor thinking=high): Stage A FAIL, rejected; 1 of 8 experiments used.
+- Exp 1 (auditor thinking=high): Stage A FAIL, rejected.
+- Exp 2 (extractor few-shot claim-shape repair): Stage A FAIL on all required marks (A1/A2/A3 FAIL, A4 PASS), rejected; INR 177.93 spent.
+- Counted experiments: 2 of 8.
 - Finding: the medium auditor is non-deterministic (about +/-3 rows).
-- Budget: push about INR 738 left; sealed reserve INR 300.
-- Next: scoped extractor experiment (to be pre-registered).
+- Push extension logged 2026-10-14: exactly one more counted experiment (Experiment 3). Budget: ~INR 560 left (738 - 177.93); sealed reserve INR 300 untouched; sealed set not yet created.
+- Exp 3 pre-checks done 2026-10-14 (Checks A-E, see docs/evals/exp3_prechecks/ and docs/decisions.md): decided fixed windows (6000/1500 chars) on today's PyMuPDF text; sentence splitting, GROBID and PyMuPDF4LLM rejected as readers.
+- Next: Exp 3 not yet pre-registered.
 
 ### Extractor-only harness (PR-1, 5 runs per arm)
 - Golden FULL mean: 20.4 before, 20.6 after PR-1.
@@ -74,19 +77,21 @@
 - Step order (earlier version, still on file): (1) docs sync; (2) read-only pipeline audit (AG) listing redundant/duplicated stages, per-stage value and token cost; (3) caps-and-429; (4) variance baseline, 3-5 repeats on main; (5) grow the eval by hand: 2-3 new papers, a fresh sealed held-out paper, more grounding-negative rows; (6) fix one thing at a time (prompt_loader few-shot bug: fixed in draft #115, see In-flight work), harness before/after, keep a change only if the gain is larger than the noise range.
 
 ## In-flight work
-- PR-1 draft #115 (few-shot loader fix, prompt hash 6bfa9ba9790c). CI fixture-freshness is red on the hash mismatch; expected. Merge only after Milestone A re-dumps the fixtures.
+- PR-1 draft #115 (few-shot loader fix, prompt hash 6bfa9ba9790c). CI fixture-freshness is red on the hash mismatch; expected. Merge only after Milestone A re-dumps the fixtures. Still draft, unmerged as of 2026-10-14 (Exp 2 decision entry).
 - PR-2 (section-by-section extraction) is parked. Design and build prompt kept on file.
+- Exp 3: pre-checks done, not yet pre-registered. See docs/research/fact_inventory_2026-10-14.md and docs/evals/exp3_prechecks/.
 
 ## Next actions (in order)
-1. Commit verify_eval_verbatim.py, dev_eval.json (frozen 2026-10-11, 119 rows), decisions.md and this file.
-2. CC cost check -> marks, per-run rupee cap, push rupee cap.
-3. Ingest the 12 dev papers via the UI; dump fixtures; build dev_match_map.json paper by paper.
-4. Baseline x3 -> dev failure map -> exp 1 -> exp 2 -> core changes from the latest failure map. Review every 4 experiments; hard exit at 8.
+1-4. (Done as of 2026-10-14: dev papers ingested, dev_match_map.json built, baseline run 1, Exp 1 and Exp 2 both run and FAILED.)
+5. Pre-register Experiment 3 (fixed windows 6000/1500 chars on raw PyMuPDF text, per the 2026-10-14 pre-checks decision) — not yet registered.
+6. After Experiment 3: take the exit decision per the 2026-10-10 push-extension/exit rule (docs/decisions.md), whatever the result.
 
 Note: The auditor design review and the extractor design review are done (decisions.md 2026-10-08).
 
 ## Evidence locations
 Raw evidence: private local folder, not in repo.
+Fact inventory (read-only cross-check of this file, decisions.md, README.md, FINDINGS.md): docs/research/fact_inventory_2026-10-14.md.
+Experiment 3 pre-checks evidence (Checks A-E): docs/evals/exp3_prechecks/.
 
 ## Known open items
 - REFLEX-M13 label question (claim/notes mismatch).

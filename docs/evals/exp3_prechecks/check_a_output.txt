@@ -1,0 +1,267 @@
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\segmenter.py:66: SyntaxWarning: invalid escape sequence '\s'
+  for match in re.finditer('{0}\s*'.format(re.escape(sent)), self.original_text):
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\lang\arabic.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\lang\persian.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+=== Check A: splitter survival ===
+Total dev rows: 119; refusal-family rows: 31
+
+[pysbd_pdf_clean] overall: WHOLE=61 SPLIT=25 MERGED=5 NOT_FOUND=28  WHOLE%=51.3  bar(>=95%)=FAIL
+[pysbd_pdf_clean] refusal-family (31 rows): WHOLE=18 SPLIT=2 MERGED=3 NOT_FOUND=8
+[pysbd_text_noclean] overall: WHOLE=6 SPLIT=82 MERGED=3 NOT_FOUND=28  WHOLE%=5.0  bar(>=95%)=FAIL
+[pysbd_text_noclean] refusal-family (31 rows): WHOLE=2 SPLIT=20 MERGED=1 NOT_FOUND=8
+[regex] overall: WHOLE=90 SPLIT=0 MERGED=22 NOT_FOUND=7  WHOLE%=75.6  bar(>=95%)=FAIL
+[regex] refusal-family (31 rows): WHOLE=19 SPLIT=0 MERGED=11 NOT_FOUND=1
+
+--- [pysbd_pdf_clean] non-WHOLE refusal-family rows (13) ---
+  P1-R2 (2610.11519v1.pdf) -> SPLIT
+    segment[0]: 'Process supervision uses finer labels (Lightman et al., 2024), VinePPO extra sampling (Kazemnejad et al., 2025), and implicit'
+    segment[1]: 'PRMs and PRIME the log ratio of an outcome-trained model to a reference (Yuan et al., 2025; Cui et al., 2025).'
+    segment[2]: "VPD refines a feedback-conditioned teacher with outcome supervision and distills it on student rollouts (Li et al., 2026b); Co-RA instead trains a teacher LoRA with the base estimator's clipped update on the same scored student batch."
+    segment[3]: '6'
+    segment[4]: 'CONCLUSION'
+    segment[5]: "Residual Advantage judges the teacher-student probability difference against the student's own alternatives and centers it within each response, so the verifier sets a response's mean label and the teacher allocates credit among its steps."
+    segment[6]: 'The guidance term decreases both as the student approaches the teacher and as the student becomes confident in its own choice, an elegant property that helps'
+    segment[7]: 'RA preserve exploration in RL.'
+  P2-R1 (2610.11132v1.pdf) -> SPLIT
+    segment[0]: '6'
+    segment[1]: 'RELATED WORK'
+    segment[2]: 'Forgetting and Mitigation.'
+    segment[3]: 'Prior work mitigates forgetting during fine-tuning through regular- ization toward pretrained behavior or parameters, as in Learning without Forgetting (Li & Hoiem,'
+    segment[4]: '2017) and RecAdam (Chen et al., 2020), replay-based methods such as LAMOL (Sun et al., 2020), constraints on parameter updates (Lopez-Paz & Ranzato, 2017; Lin et al., 2026), or the choice of adaptation algorithm (Biderman et al., 2024; Chen et al., 2026).'
+    segment[5]: 'Recent work finds that on-policy reinforcement learning preserves parent capabilities better than SFT (Chen et al., 2026); we there- fore focus on SFT-induced forgetting, where forgetting is typically more severe.'
+    segment[6]: 'In principle, the same inference-time approach could be applied to a model fine-tuned with reinforcement learning'
+    segment[7]: '(RLFT) by providing its response as context to the parent model.'
+  P2-R3 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'Table 10: SFT-as-context incurs modest overhead compared with SFT.'
+  P2-R4 (2610.11132v1.pdf) -> NOT_FOUND
+  P4-R1 (2610.10871v1.pdf) -> MERGED
+    segment[0]: 'MASA does not change the sparse kernels, candidate sparse units, or budget rules of existing methods, making it orthogonal to low-level attention kernels and other LLM acceleration techniques as discussed in Appendix A. Across multiple sparse baselines, benchmarks, and LLM backbones, MASA gives cons'
+  P4-R3 (2610.10871v1.pdf) -> MERGED
+    segment[0]: 'MASA does not change the sparse kernels, candidate sparse units, or budget rules of existing methods, making it orthogonal to low-level attention kernels and other LLM acceleration techniques as discussed in Appendix A. Across multiple sparse baselines, benchmarks, and LLM backbones, MASA gives cons'
+  P5-R2 (2610.11291v1.pdf) -> NOT_FOUND
+  P5-R3 (2610.11291v1.pdf) -> NOT_FOUND
+  P6-R1 (2610.11312v1.pdf) -> NOT_FOUND
+  P8-R1 (2610.12124v1.pdf) -> NOT_FOUND
+  P9-R1 (2610.12375v1.pdf) -> NOT_FOUND
+  P10-R2 (2610.12176v1.pdf) -> NOT_FOUND
+  P10-R3 (2610.12176v1.pdf) -> NOT_FOUND
+
+--- [pysbd_text_noclean] non-WHOLE refusal-family rows (29) ---
+  P1-R1 (2610.11519v1.pdf) -> SPLIT
+    segment[0]: 'RA preserve exploration in RL.'
+    segment[1]: 'Across two students, two estimators, and three benchmarks, RA'
+    segment[2]: 'improves every matched three-seed mean, both combinations surpass teacher-only OPD, and Co-RA'
+    segment[3]: 'improves accuracy further while its adapted teacher becomes a worse solver than the frozen one.'
+    segment[4]: 'Up to Pass@512 the margin of RA over the untrained student grows while that of verifier-only'
+    segment[5]: 'training narrows.'
+    segment[6]: 'Removing either baseline, replacing the residual by the log ratio, or adding direct'
+    segment[7]: "supervision of the teacher's top token lowers performance."
+  P1-R2 (2610.11519v1.pdf) -> SPLIT
+    segment[0]: '6'
+    segment[1]: 'CONCLUSION'
+    segment[2]: "Residual Advantage judges the teacher-student probability difference against the student's own"
+    segment[3]: "alternatives and centers it within each response, so the verifier sets a response's mean label and the"
+    segment[4]: 'teacher allocates credit among its steps.'
+    segment[5]: 'The guidance term decreases both as the student approaches'
+    segment[6]: 'the teacher and as the student becomes confident in its own choice, an elegant property that helps'
+    segment[7]: 'RA preserve exploration in RL.'
+  P1-R3 (2610.11519v1.pdf) -> SPLIT
+    segment[0]: '\x111/2'
+    segment[1]: '.'
+    segment[2]: '(8)'
+    segment[3]: 'The first bound limits each guidance term.'
+    segment[4]: 'The second bounds the guidance amplitude by the'
+    segment[5]: 'student-teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the'
+    segment[6]: 'two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute'
+    segment[7]: 'guidance declining over a training run.'
+  P2-R1 (2610.11132v1.pdf) -> SPLIT
+    segment[0]: 'constraints on parameter updates (Lopez-Paz & Ranzato, 2017; Lin et al., 2026), or the choice of'
+    segment[1]: 'adaptation algorithm (Biderman et al., 2024; Chen et al., 2026).'
+    segment[2]: 'Recent work finds that on-policy'
+    segment[3]: 'reinforcement learning preserves parent capabilities better than SFT (Chen et al., 2026); we there-'
+    segment[4]: 'fore focus on SFT-induced forgetting, where forgetting is typically more severe.'
+    segment[5]: 'In principle, the'
+    segment[6]: 'same inference-time approach could be applied to a model fine-tuned with reinforcement learning'
+    segment[7]: '(RLFT) by providing its response as context to the parent model.'
+  P2-R3 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'Table 10: SFT-as-context incurs modest overhead compared with SFT.'
+  P2-R4 (2610.11132v1.pdf) -> NOT_FOUND
+  P3-R1 (2610.11135v1.pdf) -> SPLIT
+    segment[0]: 'beats deep KT trained on 8 learners on average and'
+    segment[1]: 'prompted System-Two LLM-KT on every dataset,'
+    segment[2]: 'at a fraction of its cost; with evidence from the'
+    segment[3]: 'logged learners, JevKT stays ahead until super-'
+    segment[4]: 'vised KT catches up between 64 and 128 learners.'
+    segment[5]: 'Among the readers we tested, the gain comes from'
+    segment[6]: 'the model rather than the typed format; the input'
+    segment[7]: 'recipe helps other LLMs as much as it helps Jev.'
+  P3-R2 (2610.11135v1.pdf) -> SPLIT
+    segment[0]: 'low it on all seven datasets, and reader swaps'
+    segment[1]: 'and contamination checks find no evidence that'
+    segment[2]: 'the input format or memorised data explain the'
+    segment[3]: 'gain.'
+    segment[4]: 'For new learners the advantage holds'
+    segment[5]: 'from their first interactions, whereas on unseen'
+    segment[6]: 'items with all learners logged, deep KT remains'
+    segment[7]: 'ahead.'
+  P4-R1 (2610.10871v1.pdf) -> SPLIT
+    segment[0]: 'change the sparse kernels, candidate sparse units,'
+    segment[1]: 'or budget rules of existing methods, making it'
+    segment[2]: 'orthogonal to low-level attention kernels and'
+    segment[3]: 'other LLM acceleration techniques as discussed'
+    segment[4]: 'in Appendix A. Across multiple sparse baselines,'
+    segment[5]: 'benchmarks, and LLM backbones, MASA gives'
+    segment[6]: 'consistent gains under matched settings with'
+    segment[7]: 'negligible latency overhead.'
+  P4-R2 (2610.10871v1.pdf) -> SPLIT
+    segment[0]: 'implementations.'
+    segment[1]: 'Together with the main results in Sec. 4.2, the probe ablation in Table 4 supports two conclusions.'
+    segment[2]: 'First, raw MASA already improves the original sparse baseline in several settings, which supports the'
+    segment[3]: 'matrix-product scoring objective itself.'
+    segment[4]: 'Second, norm control can further improve the score in settings'
+    segment[5]: 'where value-norm outliers affect sparse-unit ranking.'
+    segment[6]: 'Norm clipping is helpful for SeerAttention'
+    segment[7]: 'and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.'
+  P4-R3 (2610.10871v1.pdf) -> SPLIT
+    segment[0]: 'units by their closed-form reduction in matrix-'
+    segment[1]: 'product approximation error.'
+    segment[2]: 'MASA does not'
+    segment[3]: 'change the sparse kernels, candidate sparse units,'
+    segment[4]: 'or budget rules of existing methods, making it'
+    segment[5]: 'orthogonal to low-level attention kernels and'
+    segment[6]: 'other LLM acceleration techniques as discussed'
+    segment[7]: 'in Appendix A. Across multiple sparse baselines,'
+  P5-R2 (2610.11291v1.pdf) -> NOT_FOUND
+  P5-R3 (2610.11291v1.pdf) -> NOT_FOUND
+  P6-R1 (2610.11312v1.pdf) -> NOT_FOUND
+  P6-R2 (2610.11312v1.pdf) -> SPLIT
+    segment[0]: 'chAgent separates planning, which derives and verifies the specification, from'
+    segment[1]: 'instantiation, which constructs and audits items under the locked specification.'
+    segment[2]: 'MedBenchAgent achieves a Task-Space F1 of 90.9%, outperforming direct task'
+    segment[3]: 'induction (79.2-80.0%) and prior-guided induction (85.1%); 994 of 1,000 sampled'
+    segment[4]: 'items from correctly identified tasks pass human audit.'
+    segment[5]: 'We further demonstrate'
+    segment[6]: 'portability to a specialized medical domain and evaluate twelve VLMs, revealing'
+    segment[7]: 'task- and setting-specific variation obscured by aggregate scores.'
+  P7-R1 (2610.10590v1.pdf) -> SPLIT
+    segment[0]: 'evaluation.'
+    segment[1]: 'The method made more requests and took 17% longer.'
+    segment[2]: 'A contrasting application-'
+    segment[3]: 'development pair produced no context or cost saving, and an earlier continuation exhibited'
+    segment[4]: 'lower manually assessed quality despite reduced context.'
+    segment[5]: 'These observations demonstrate'
+    segment[6]: 'substantial resource savings in noisy tool-use trajectories and identify workload dependence'
+    segment[7]: 'as a central consideration for reversible context management.'
+  P7-R2 (2610.10590v1.pdf) -> SPLIT
+    segment[0]: 'extra prompts, notes, and tool calls can outweigh the reduction.'
+    segment[1]: 'Planroom provides a concrete'
+    segment[2]: 'boundary case.'
+    segment[3]: 'Working with verbose external tools.'
+    segment[4]: 'The retention operation acts on recorded observa-'
+    segment[5]: 'tions, so an upstream tool need not expose its own compaction controls.'
+    segment[6]: 'In principle, the same'
+    segment[7]: 'contract can cover documentation, diagnostic logs, browser text, and images.'
+  P8-R1 (2610.12124v1.pdf) -> NOT_FOUND
+  P8-R2 (2610.12124v1.pdf) -> SPLIT
+    segment[0]: 'Evaluations show that Hippocam achieves strong performance across memory, knowledge use,'
+    segment[1]: 'and learning.'
+    segment[2]: 'Whereas competing methods show more uneven performance across these demands,'
+    segment[3]: 'Hippocam leads or matches the best compared method on seven of the eight measures in Fig. 1.'
+    segment[4]: 'Ablations and case analyses further show how consolidation and progressive recall support ongoing'
+    segment[5]: 'work and how knowledge develops through use and disuse.'
+    segment[6]: 'These results demonstrate how our'
+    segment[7]: 'use-and-disuse cycle supports memory and learning through interaction history.'
+  P8-R3 (2610.12124v1.pdf) -> SPLIT
+    segment[0]: 'cumulative accuracy over all tasks answered so far.'
+    segment[1]: 'On DDXPlus, Hippocam continues to improve'
+    segment[2]: 'after early fluctuations and maintains its lead, while Letta and A-Mem also improve.'
+    segment[3]: 'On ToolBench,'
+    segment[4]: 'Hippocam makes modest further gains amid fluctuations and moves ahead of Letta, whereas A-'
+    segment[5]: 'Mem shows little sustained improvement in the extended evaluation.'
+    segment[6]: 'These gains demonstrate more'
+    segment[7]: 'effective learning from accumulated experience than the compared methods.'
+  P9-R1 (2610.12375v1.pdf) -> NOT_FOUND
+  P10-R1 (2610.12176v1.pdf) -> SPLIT
+    segment[0]: 'optimizes these computational-graph-like orchestrations, discovering the most ef-'
+    segment[1]: 'fective distinct roles and information routing for a given task.'
+    segment[2]: 'Over two MASS cy-'
+    segment[3]: 'cles with Qwen3.6-27B, the model achieves 1.2-1.6× higher performance per out-'
+    segment[4]: 'put tokens on four open-ended public benchmarks.'
+    segment[5]: 'Because the improved model'
+    segment[6]: 'subsequently acts as a better optimizer and evaluator, this alternating framework'
+    segment[7]: "enables a continuous, recursive bootstrapping of the model's capabilities."
+  P10-R2 (2610.12176v1.pdf) -> NOT_FOUND
+  P10-R3 (2610.12176v1.pdf) -> NOT_FOUND
+  P11-R1 (2610.12114v1.pdf) -> SPLIT
+    segment[0]: 'vation and potential improvement beyond the Teacher.'
+    segment[1]: 'Ddist is further split into a distillation training'
+    segment[2]: 'set Dtr'
+    segment[3]: 'dist and test set Dte'
+    segment[4]: 'dist.'
+    segment[5]: 'Only the training set is used for Primer synthesis, while all other subsets'
+    segment[6]: 'are reserved for final evaluation; namely, the training and testing sets do not overlap, following the'
+    segment[7]: 'standard machine learning setting.'
+  P11-R2 (2610.12114v1.pdf) -> SPLIT
+    segment[0]: 'eration, the synthesized Primers consistently improve their source Students and remain effective'
+    segment[1]: 'when transferred to other Students without resynthesis, demonstrating both effectiveness and cross-'
+    segment[2]: 'model reusability.'
+    segment[3]: 'Relative to the unprimed Student baselines, UTT improves KernelBench accuracy'
+    segment[4]: 'from 9.4% to 48.6%, Fast1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to'
+    segment[5]: '51.7%.'
+    segment[6]: 'Across the evaluated settings, UTT also outperforms representative prompt engineering and'
+    segment[7]: 'parameter-updating knowledge distillation methods.'
+  P11-R3 (2610.12114v1.pdf) -> SPLIT
+    segment[0]: 'using a learning rate of 2 × 10−4, LoRA dropout of 0.05, zero weight decay, and gradient-norm'
+    segment[1]: 'clipping at 1.0.'
+    segment[2]: 'LUFFY uses a grouped policy-gradient objective over on-policy Student trajectories,'
+    segment[3]: 'with a learning rate of 1 × 10−6 and dropout disabled.'
+    segment[4]: 'The KD baselines perform 200 parameter'
+    segment[5]: 'updates on Omni-MATH-2 and 100 on KernelBench, with the final checkpoint used for evaluation.'
+    segment[6]: 'We observed that the training losses of the KD baselines had largely stabilized by the end of their'
+    segment[7]: 'respective update budgets.'
+  P12-R1 (2610.12168v1.pdf) -> SPLIT
+    segment[0]: 'problems with supplied solutions and using these ideas as additional supervision for joint training of'
+    segment[1]: 'all three capabilities.'
+    segment[2]: 'We give a formal specification of our method and a concrete instantiation for'
+    segment[3]: 'interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.'
+    segment[4]: '1'
+    segment[5]: 'Introduction'
+    segment[6]: 'Our method is inspired by the following asymmetry in problem solving: It is, in general, harder to solve a problem from'
+    segment[7]: 'scratch than to reverse engineer the idea underlying a known solution.'
+  P12-R2 (2610.12168v1.pdf) -> SPLIT
+    segment[0]: 'interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.'
+    segment[1]: '1'
+    segment[2]: 'Introduction'
+    segment[3]: 'Our method is inspired by the following asymmetry in problem solving: It is, in general, harder to solve a problem from'
+    segment[4]: 'scratch than to reverse engineer the idea underlying a known solution.'
+    segment[5]: 'For a reasoning model, this presents a learning'
+    segment[6]: 'opportunity: even when a problem exceeds its current solving abilities, a supplied solution may enable it to extract a'
+    segment[7]: 'useful idea for solving that problem in hindsight.'
+
+--- [regex] non-WHOLE refusal-family rows (12) ---
+  P1-R1 (2610.11519v1.pdf) -> MERGED
+    segment[0]: "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher's top token lowers performance. 9 Preprint AI USE STATEMENT Generative AI tools were used throughout this work."
+  P2-R1 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'In principle, the same inference-time approach could be applied to a model fine-tuned with reinforcement learning (RLFT) by providing its response as context to the parent model. 9 Preprint Inference-Time Model Combination.'
+  P2-R3 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'Fine-tuning on query-response pairs from a single domain θSFT aims to improve the corresponding domain-specific capability. 32 Preprint Table 10: SFT-as-context incurs modest overhead compared with SFT.'
+  P2-R4 (2610.11132v1.pdf) -> MERGED
+    segment[0]: 'The share of the attention weight for each prompt region, for each layer, head, and response token j is then: se,l,h,j(R) = me,l,h,j(R) de,l,h,j . 27 Preprint Table 5: RL-trained models do not show forgetting of instruction-following capability compared to their parent, as measured by IFEval.'
+  P3-R2 (2610.11135v1.pdf) -> MERGED
+    segment[0]: "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead. 1 Introduction Knowledge tracing (KT) predicts whether a learner will answer the next item correctly from the learner's interaction history, but new courses an"
+  P5-R2 (2610.11291v1.pdf) -> NOT_FOUND
+  P6-R1 (2610.11312v1.pdf) -> MERGED
+    segment[0]: 'These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation. 1 INTRODUCTION Large-scale construction of medical vision-language model (VLM) benchmarks is increasingly feasible as richly annotated imaging data'
+  P7-R1 (2610.10590v1.pdf) -> MERGED
+    segment[0]: 'These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management. 1 Introduction A debugging agent may inspect an entire distributed trace to identify one failed service call.'
+  P8-R2 (2610.12124v1.pdf) -> MERGED
+    segment[0]: 'These results demonstrate how our use-and-disuse cycle supports memory and learning through interaction history. 2 HIPPOCAM 2.1 OVERVIEW Hippocam is an LLM agent that continually learns from its own work by organizing and consolidating its interaction history.'
+  P10-R3 (2610.12176v1.pdf) -> MERGED
+    segment[0]: 'Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components. long-horizon trajectories. 4.4 HYPOTHESIS 2: MULTI-AGENT TRAJECTORIES PROVIDE DENSER SUPERVISION Our second hypothesis'
+  P11-R1 (2610.12114v1.pdf) -> MERGED
+    segment[0]: 'Only the training set is used for Primer synthesis, while all other subsets are reserved for final evaluation; namely, the training and testing sets do not overlap, following the standard machine learning setting. 3.2.2 CLOSED-LOOP PRIMER SYNTHESIS VIA MULTI-ROLE INTERACTION UTT processes the distil'
+  P12-R1 (2610.12168v1.pdf) -> MERGED
+    segment[0]: 'We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work. 1 Introduction Our method is inspired by the following asymmetry in problem solving: It is, in general, harder to solve a pr'
+
