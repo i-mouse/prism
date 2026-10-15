@@ -260,6 +260,19 @@ def build_gemini_messages_for_structure(
     ]
 
 
+def build_gemini_messages_for_pass2(window_text: str) -> list[dict]:
+    """Assembles the Gemini message list for an Experiment 3 pass-2 call
+    (one call per window - see extraction/windowing.py).
+
+    No few-shot examples, no paper text beyond the window itself - see
+    docs/decisions.md's "Experiment 3 B1 review" entry.
+    """
+    return [
+        {"role": "system", "content": _read_prompt_file("extract_claims_pass2_system.md")},
+        {"role": "user", "content": window_text},
+    ]
+
+
 def build_gemini_messages_for_metadata(paper_text: str) -> list[dict]:
     """Assembles the full Gemini message list for a metadata extraction call.
 

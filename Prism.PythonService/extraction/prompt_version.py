@@ -39,8 +39,22 @@ SHAPES_PROMPT_FILENAMES = (
     "extract_claims_system_shapes.md",
 )
 
+# Experiment 3 - pass-2 windowed extractor prompt. Hashed only when
+# extractor_second_pass is on - this file doesn't exist in the pipeline's
+# rendering at all when the flag is off, so its bytes must not affect the
+# flag-off hash. Deliberately does not touch schemas.py: the pass-2 wrapper
+# model (extraction/pass2.py::SentenceListLLM) lives outside schemas.py so
+# this experiment never risks moving the flag-off hash.
+SECOND_PASS_PROMPT_FILENAMES = (
+    "extract_claims_pass2_system.md",
+)
 
-def get_prompt_version(fewshot_fix: bool | None = None, fewshot_shapes: bool | None = None) -> str:
+
+def get_prompt_version(
+    fewshot_fix: bool | None = None,
+    fewshot_shapes: bool | None = None,
+    extractor_second_pass: bool | None = None,
+) -> str:
     """Returns a 12-character SHA-256 hash of the current prompt files.
 
     Reads all prompt files across both extraction stages (metadata, and
@@ -62,11 +76,21 @@ def get_prompt_version(fewshot_fix: bool | None = None, fewshot_shapes: bool | N
     bytes are not read, no marker appended). On reads SHAPES_PROMPT_FILENAMES'
     bytes (after the fewshot_fix marker, if any) and appends its own literal
     marker.
+
+    extractor_second_pass: Experiment 3's pass-2 windowed extractor. None
+    (default) reads settings.extractor_second_pass; pass True/False
+    explicitly to force a variant. Off leaves the hash exactly as it is
+    today (SECOND_PASS_PROMPT_FILENAMES' bytes are not read, no marker
+    appended). On reads SECOND_PASS_PROMPT_FILENAMES' bytes (after the
+    fewshot_fix/fewshot_shapes markers, if any) and appends its own literal
+    marker. schemas.py is never touched by this flag.
     """
     if fewshot_fix is None:
         fewshot_fix = settings.extractor_fewshot_fix
     if fewshot_shapes is None:
         fewshot_shapes = settings.extractor_fewshot_shapes
+    if extractor_second_pass is None:
+        extractor_second_pass = settings.extractor_second_pass
 
     combined = b""
     paths = [PROMPTS_DIR / filename for filename in PROMPT_FILENAMES] + list(EXTRA_HASHED_FILES)
@@ -85,5 +109,13 @@ def get_prompt_version(fewshot_fix: bool | None = None, fewshot_shapes: bool | N
                 raise FileNotFoundError(f"Prompt file not found at {path}")
             combined += path.read_bytes()
         combined += b"\x00extractor_fewshot_shapes=1"
+
+    if extractor_second_pass:
+        for filename in SECOND_PASS_PROMPT_FILENAMES:
+            path = PROMPTS_DIR / filename
+            if not path.exists():
+                raise FileNotFoundError(f"Prompt file not found at {path}")
+            combined += path.read_bytes()
+        combined += b"\x00extractor_second_pass=1"
 
     return hashlib.sha256(combined).hexdigest()[:12]

@@ -1,0 +1,8 @@
+{
+  "_comment": "Pass/fail thresholds for eval/score_exp3.py's C1-C5 marks. Left empty (null) in Task B2 - these are set in the Experiment 3 pre-registration (Task B3). A null threshold means score_exp3.py reports the raw computed value with pass=null (undetermined), never a fabricated PASS/FAIL.",
+  "c1_min_recovered": null,
+  "c2_min_matched_retained": null,
+  "c3_max_claim_ratio": null,
+  "c4_max_cost_inr_per_paper": null,
+  "c5_min_by_shape": null
+}

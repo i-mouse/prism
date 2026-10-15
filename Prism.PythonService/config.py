@@ -104,6 +104,15 @@ class PrismSettings(BaseSettings):
     # extractor_fewshot_fix alone (this flag off) is its control arm.
     extractor_fewshot_shapes: bool = False
 
+    # Experiment 3 - pass-2 windowed "copy-only" extractor calls, merged into
+    # the pass-1 claim list before the (unchanged) audit/structure calls. Off
+    # (default) is byte-identical to today: extract_claims runs pass 1 only,
+    # and get_prompt_version()'s output is unaffected. See
+    # extraction/windowing.py, extraction/pass2.py, extraction/merge.py,
+    # extraction/engine.py::extract_claims, and extraction/prompt_version.py::
+    # get_prompt_version.
+    extractor_second_pass: bool = False
+
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000
 

@@ -103,6 +103,35 @@ async def _call_gemini(
     raise last_exception
 
 
+def _extract_usage_and_finish_reason(
+    response: types.GenerateContentResponse,
+) -> tuple[dict | None, str | None]:
+    """Reads token-usage and finish-reason metadata off a Gemini response, for
+    logging only - this data is never fed back into a function's return value
+    or any pipeline decision (side-channel only). Every attribute access is
+    guarded since usage_metadata/candidates can be absent or shaped
+    unexpectedly depending on SDK version or a malformed response.
+    """
+    usage_obj = getattr(response, "usage_metadata", None)
+    usage = None
+    if usage_obj is not None:
+        usage = {
+            "prompt_tokens": getattr(usage_obj, "prompt_token_count", None),
+            "output_tokens": getattr(usage_obj, "candidates_token_count", None),
+            "thought_tokens": getattr(usage_obj, "thoughts_token_count", None),
+            "total_tokens": getattr(usage_obj, "total_token_count", None),
+        }
+
+    finish_reason = None
+    candidates = getattr(response, "candidates", None)
+    if candidates:
+        raw_finish_reason = getattr(candidates[0], "finish_reason", None)
+        if raw_finish_reason is not None:
+            finish_reason = getattr(raw_finish_reason, "value", None) or str(raw_finish_reason)
+
+    return usage, finish_reason
+
+
 def _write_structured_log(
     log_subdir: str,
     chat_id: str,
@@ -111,6 +140,8 @@ def _write_structured_log(
     request_message_count: int,
     response_item_count: int,
     response_raw: str,
+    usage: dict | None = None,
+    finish_reason: str | None = None,
 ) -> None:
     log_dir = LOGS_DIR / log_subdir
     log_dir.mkdir(parents=True, exist_ok=True)
@@ -127,6 +158,8 @@ def _write_structured_log(
         "request_message_count": request_message_count,
         "response_item_count": response_item_count,
         "response_raw": response_raw,
+        "usage": usage,
+        "finish_reason": finish_reason,
     }
     log_path.write_text(json.dumps(log_entry, indent=2), encoding="utf-8")
 
@@ -198,6 +231,7 @@ async def _call_gemini_structured(
         client, contents, config, chat_id, model_name, fallback_model, correlation_id
     )
     raw_text = response.text
+    usage, finish_reason = _extract_usage_and_finish_reason(response)
 
     parsed = response.parsed
     if parsed is None:
@@ -213,6 +247,8 @@ async def _call_gemini_structured(
                 request_message_count=len(messages),
                 response_item_count=0,
                 response_raw=raw_text,
+                usage=usage,
+                finish_reason=finish_reason,
             )
             raise ValueError(
                 f"Gemini response for chat_id={chat_id} was neither parsed by the SDK nor valid JSON: {parse_exc}"
@@ -232,6 +268,8 @@ async def _call_gemini_structured(
         request_message_count=len(messages),
         response_item_count=item_count,
         response_raw=raw_text,
+        usage=usage,
+        finish_reason=finish_reason,
     )
 
     return parsed
@@ -263,6 +301,7 @@ async def _call_gemini_json(
         client, contents, config, chat_id, model_name, fallback_model, correlation_id
     )
     raw_text = response.text
+    usage, finish_reason = _extract_usage_and_finish_reason(response)
 
     try:
         parsed = json.loads(raw_text)
@@ -276,6 +315,8 @@ async def _call_gemini_json(
             request_message_count=len(messages),
             response_item_count=0,
             response_raw=raw_text,
+            usage=usage,
+            finish_reason=finish_reason,
         )
         raise ValueError(f"Gemini response for chat_id={chat_id} was not valid JSON: {parse_exc}") from parse_exc
 
@@ -288,6 +329,8 @@ async def _call_gemini_json(
         request_message_count=len(messages),
         response_item_count=item_count,
         response_raw=raw_text,
+        usage=usage,
+        finish_reason=finish_reason,
     )
 
     return parsed
@@ -430,6 +473,25 @@ async def extract_claims(
             fallback_model=settings.llm_extraction_fallback_model,
         )
     claims = extracted.get("claims", [])
+
+    if settings.extractor_second_pass:
+        from extraction.merge import merge_pass2_claims
+        from extraction.pass2 import run_pass2
+
+        with tracer.start_as_current_span("pass2") as span:
+            span.set_attribute("correlation_id", correlation_id or "")
+            span.set_attribute("chat_id", chat_id)
+            pass2_sentences, failed_window_count = await run_pass2(paper_text, chat_id, correlation_id)
+        merge_result = merge_pass2_claims(claims, pass2_sentences, paper_text)
+        claims = merge_result["merged_claims"]
+        print(
+            f"[extraction] chat_id={chat_id} correlation_id={correlation_id} pass2: "
+            f"{len(pass2_sentences)} raw sentences, {failed_window_count} failed_window_count, "
+            f"{merge_result['dropped_ungrounded']} dropped_ungrounded, "
+            f"{len(merge_result['dropped_duplicate'])} dropped_duplicate, "
+            f"{len(merge_result['kept_but_contained'])} kept_but_contained, "
+            f"{len(merge_result['kept_new'])} kept_new"
+        )
 
     if on_detail is not None:
         try:
