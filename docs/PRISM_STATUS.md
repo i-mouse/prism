@@ -33,7 +33,9 @@
 - Exp 3 pre-checks done 2026-10-14 (Checks A-E, see docs/evals/exp3_prechecks/ and docs/decisions.md): decided fixed windows (6000/1500 chars) on today's PyMuPDF text; sentence splitting, GROBID and PyMuPDF4LLM rejected as readers.
 - Exp 3 built 2026-10-15 (B1 review, B2, B2-FIX all done; commit 8debe66): pass-2 windowed extraction behind EXTRACTOR_SECOND_PASS, default off. Pre-registered 2026-10-15 (docs/decisions.md, "Experiment 3 pre-registration - 2026-10-15"): marks C1-C8 in docs/evals/exp3_thresholds.json, targets sha256 69c60127cdf1..., pilot cap INR 40, pilot paper arxiv-2610.11135v1.
 - Window-count correction: the original --estimate math assumed ~21 windows/paper; the actual longest dev paper (arxiv-2610.11135v1, 152,601 chars) is 34 windows. Phase 4 re-estimates the two treatment runs from real pilot cost, not the original 75.9-136.5 estimate.
-- Next: B3 in progress - estimate (Phase 2) -> pilot (Phase 3) -> two treatment runs (Phase 5), then B4 (score, adjudicate, result entry).
+- Exp 3 in progress: pilot 1 run 2026-10-15, INR 40.12 spent (arxiv-2610.11135v1, pre-registration marks unaffected, no target rows looked at). Amendment 1 logged (docs/decisions.md, "Experiment 3 amendment 1 - 2026-10-15"): pass2_thinking_level=LOW + frozen pass 1 (--pass1-from-fixture) + crash/NDJSON fixes, planned, not yet implemented. Pilot 2 next, cap INR 30, two pre-registered stop rules (recall >=90/128 sentences, cost <=INR 0.60/window).
+- Push budget: ~INR 520 left (560 - 40.12 pilot-1 spend).
+- Next: B3 in progress - Phase B code changes (pending Nitin's "go B") -> pilot 2 -> re-estimate -> two treatment runs (Phase 5), then B4 (score, adjudicate, result entry).
 
 ### Extractor-only harness (PR-1, 5 runs per arm)
 - Golden FULL mean: 20.4 before, 20.6 after PR-1.

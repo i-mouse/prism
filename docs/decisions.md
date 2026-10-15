@@ -2379,3 +2379,90 @@ not re-deriving it.
 from Phase 4) are chosen against the 560 push-budget figure, not the 844.81
 backstop. The sealed-run cap collision is logged here so it isn't rediscovered
 cold when that run is scheduled.
+
+## Experiment 3 amendment 1 - 2026-10-15
+Amends the pre-registration above (not edited; the pre-registration's own
+marks/C1-C8 definitions stand except where this entry changes them). Written
+before any further paid call.
+
+**Window-order check, done before writing this entry:** `eval/replay_exp3.py:11`
+(module docstring): *"with its own sequential, one-window-at-a-time loop
+instead of run_pass2's concurrent gather, since this script must check
+--max-inr between every window call"*; `eval/replay_exp3.py:229`: a plain
+`for window in windows:` loop, not `asyncio.gather`. Combined with the 26
+pass-2 log files' timestamps being strictly increasing
+(`20261015T115230756886` through `20261015T115653740779`, no two out of
+order), **this confirms the 26 recorded pass-2 calls are windows 1-26 of 34,
+in index order** - the loop processes `windows` (from `make_windows`, itself
+order-preserving) one at a time, sequentially, so call order == list order ==
+window index order.
+
+**Pilot 1 facts** (all from `logs/extraction/20261015T115219789401_...json`
+and the 26 `logs/pass2/20261015*...json` files, recovered after the crash -
+see the "B3 Phase 0 discovery" and the discovery-report amendments above):
+- INR 40.12 counted by this session's own `cost_inr` formula. Nitin reports
+  Google's own billing shows ~INR 38.51 for the same calls - the meter this
+  script uses reads about 4% high against Google's actual bill (not
+  independently verified by me; Nitin's own billing-dashboard figure).
+- 1 pass-1 call, INR 12.02 (prompt=94,123, output=3,648, thought=9,568) +
+  26 pass-2 calls, INR 28.10 (prompt=90,629, output=6,688, thought=50,123).
+  12.02 + 28.10 = 40.12, exact.
+- All 27 calls: `finish_reason: "STOP"` - no truncation, no non-normal stop.
+- Thinking tokens are ~67% of pass-2's own cost at the API default (medium):
+  thought cost ≈ INR 18.80 of pass-2's INR 28.10 (50,123×3.75/1e6×100 =
+  18.80; 18.80/28.10 = 0.669).
+- 13 of the 26 windows returned zero sentences (and still paid 246-3,747
+  thought tokens each); 128 sentences total across windows 1-26.
+- The crash bug (documented above, "Crash bug" section of the prior
+  discovery report) lost the run's own `_summary.json`; all figures here
+  were recovered from `logs/extraction/` and `logs/pass2/` directly, not
+  from any Exp 3 output directory (none was ever written for this run).
+- No target rows were looked at, per the standing rule for pilot runs.
+
+**Why amend:** two treatment runs at the API's uncontrolled default
+("medium") thinking would cost roughly INR 380 (12 papers × 261 total
+windows, extrapolated from this pilot's own per-window average, ×2 runs -
+see the discovery report's item 5 arithmetic for the per-window breakdown).
+That does not fit the remaining push budget: ~INR 520 left (560 - 40.12,
+per "B3 budget reconciliation" above, now reduced by this pilot's spend).
+
+**Changes:**
+1. Pass-2 `thinking_level` = `LOW` (not `MINIMAL` - unverified for
+   `gemini-3.6-flash` per the discovery report's item 2; `LOW` is in the
+   codebase's own known-accepted set, `config.py:17`'s `AUDITOR_THINKING_LEVELS`).
+   Applied to the primary model only; a fallback call (if one ever fires)
+   sends no `thinking_config` at all - today's behavior, unchanged - and is
+   reported when it happens.
+2. Frozen pass 1: the replay loads dev run-1's own pass-1 claims instead of
+   making a fresh pass-1 call (`--pass1-from-fixture`, planned in Phase B).
+   Config parity for this is already proven, not assumed: `docs/decisions.md:1723`
+   records run-1's config as prompt hash `cb3272cce551` + model
+   `gemini-3.6-flash` - identical to today's flag-off path (same entry
+   quoted in the discovery report's item 1b).
+3. Crash fix (`mkdir` moved to the top of `_run_once`) and per-call NDJSON
+   records, both planned in Phase B, so a second pilot or treatment run
+   can't lose its own data the way pilot 1 did.
+
+**Product parity:** if pass 2 ever ships to the live service,
+`pass2_thinking_level = LOW` ships with it - this is not an eval-only
+shortcut diverging from what would actually run in production.
+
+**Effect on marks:** thresholds in `exp3_thresholds.json` are unchanged by
+this amendment. `r` inside `c4_projected_full_cost_max_inr`'s formula is now
+`merged claims / frozen pass-1 claims` (the frozen fixture claims stand in
+for "that run's own `*_pass1.json`", since there is no fresh pass-1 call to
+read it from). `c2_min_matched_retained` is now trivially satisfied by
+construction - frozen pass 1 is byte-identical to the historical run-1
+match set every time, so nothing about pass-1 variance can move it - but it
+remains report-only, not promoted to a gate, consistent with its original
+reasoning (merge still cannot drop a pass-1 claim; that hasn't changed).
+`c6_min_own_pass1_miss_adds` remains a gate, unchanged.
+
+**Pilot 2:** same paper, `arxiv-2610.11135v1`, `--max-inr 30`. Two
+pre-registered stop rules, both checked before any treatment run is started:
+(a) **recall proxy:** sentences returned across windows 1-26 >= 90 (70% of
+pilot 1's 128); below that, Experiment 3 ends here - `LOW` thinking does not
+fit the budget at an acceptable recall cost. (b) **cost:** mean pass-2 INR
+per window <= 0.60; above that, Experiment 3 ends here regardless of (a).
+Both rules are checked against pilot 2's own measured numbers, not assumed
+from pilot 1.
