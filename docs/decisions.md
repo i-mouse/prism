@@ -2093,3 +2093,37 @@ Four gaps found while compiling `docs/research/fact_inventory_2026-10-14.md`; re
 2. **2026-10-09 stop-rule decision**, quoted at `docs/FINDINGS.md:53`: "Decision 9 Oct: stop core changes; clean up; ship with honest numbers." This has no corresponding entry in this log. It was superseded by this log's own 2026-10-10 "Release targets" entry (release floor = 70% dev refusal, stretch 80%, false-rejection hard cap 10%, hard exit after 8 counted experiments or push-cap exhaustion) — work continued past 2026-10-09 (Dev run 1, Experiment 1, Experiment 2, Experiment 3 pre-checks) under that later entry's rules, not under the stop-core-changes decision.
 3. **`pr2_feasibility_report.md`**, cited as a source at this log's line 1532 (PR-2 section-by-section extraction entry), does not exist in the repo. Confirmed via `Glob **/pr2_feasibility_report.md` -> 0 results.
 4. **`docs/research/fact_inventory_2026-10-14.md`** was created 2026-10-14 as a read-only evidence base, citing this log, `docs/PRISM_STATUS.md`, `README.md`, `docs/discovery/D1_report.md`, `scratch/exp3/report.md`, `docs/evals/dev_adjudication_run1.md`, `docs/FINDINGS.md`, and code files. No git commands were run to produce it.
+
+## Experiment 3 B1 review - 2026-10-15
+B1 (read-only, INR 0) checked the Experiment 3 design. Findings and decisions:
+- The extractor prompt has no importance filter; it already says "do not filter".
+  The hypothesis is now about model behaviour: one whole-paper call that writes
+  about 30 structured claims drops quiet claims; short per-window calls that only
+  copy claim sentences recover them.
+- Pass-2 claims have no claim_summary; engine.py reads it directly and the schema
+  requires it. Decision: for pass-2 claims, claim_summary = the copied sentence.
+  No extra LLM call.
+- Dedup: partial_ratio would drop a short claim that sits inside a longer pass-1
+  sentence, which is the E3 shape this experiment targets. Decision: drop a pass-2
+  sentence only when fuzz.ratio >= 88 (after normalize_for_match) against a pass-1
+  claim's source span or claim text. Log every drop and every "contained but kept"
+  case for hand review.
+- Cost: the INR 3.9 per claim audit figure was never measured; use only the
+  measured INR 87 per paper. Pass 2 adds about 22 calls per paper. The paid-run
+  estimate decides scope; any cut is logged here before spending.
+- Ceiling: even perfect extraction gives 21/31 (68%), below the 22/31 floor,
+  because 10 audit misses are out of scope. Experiment 3 tests the mechanism, not
+  release readiness.
+- Sealed reserve INR 300 covers 3 new papers at INR 87, not 4.
+- Safety: B1 reported no deny rules because it checked only
+  .claude/settings.local.json. Deny rules for held-out and sealed paths already
+  existed in .claude/settings.json since 2026-10-11 (commit 3f9d70f). On
+  2026-10-15, Read(/docs/LABEL_RUBRIC.md) was added. A Read deny also blocks Edit
+  and Write on that path. It does not block scripts that open files themselves or
+  recursive grep, so shell and script calls stay on "Allow once" and must never
+  touch these paths.
+- Product note: the Brief's Overstated Claims and Questions to Scrutinize sections
+  moved into paper chat on 2026-08-22; the handoff and B1 prompt used the old list.
+- Open research item (after the exit decision, not part of the push): how the
+  extractor decides what counts as a claim. Claim count should follow the paper's
+  real claims, not its length or a fixed number.

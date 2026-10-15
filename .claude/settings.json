@@ -9,7 +9,8 @@
       "Read(/Prism.PythonService/scratch/heldout/**)",
       "Read(/Prism.PythonService/downloads/2609.20812v3.pdf)",
       "Read(//h/Work projects/prism-sealed/**)",
-      "Read(**/sealed/**)"
+      "Read(**/sealed/**)",
+      "Read(/docs/LABEL_RUBRIC.md)"
     ]
   }
 }
