@@ -2466,3 +2466,59 @@ fit the budget at an acceptable recall cost. (b) **cost:** mean pass-2 INR
 per window <= 0.60; above that, Experiment 3 ends here regardless of (a).
 Both rules are checked against pilot 2's own measured numbers, not assumed
 from pilot 1.
+
+**AG review notes addendum - 2026-10-15:**
+- Frozen pass-1 claims (via `--pass1-from-fixture`) are post-pipeline: they
+  survived audit/structure, and the structurer may have rewritten
+  `claim_text_verbatim` from what the raw extractor call originally
+  produced. Effect: `r` in `c4_projected_full_cost_max_inr`'s formula
+  (merged claims / frozen pass-1 claims) is slightly conservative (reads
+  higher than a true pre-audit pass-1 count would), because the denominator
+  is a smaller, already-filtered set, not the raw extractor's own output.
+  This is consistent with the target definition, not a mismatch to fix: the
+  run-1 match map (and therefore every target/matched row classification in
+  this experiment) is itself built against these same post-pipeline claims,
+  not against any raw pre-audit extractor output.
+- Known, pre-existing, not fixed by this amendment: the auditor's fallback
+  call receives a `thinking_config` when `settings.auditor_thinking_level`
+  is set (Experiment 1's code path, `extraction/engine.py::_call_gemini_freetext`
+  passes the same `config` to both the primary and fallback attempt inside
+  `_generate_with_fallback` - no `fallback_config` split exists there, unlike
+  the split just added to `_call_gemini_structured` for pass 2). Inert by
+  default (`auditor_thinking_level` defaults `None`, so no `thinking_config`
+  is sent to either model). Left alone per AG review instruction - out of
+  Experiment 3's scope, and `_call_gemini_freetext` was not touched by this
+  amendment.
+- Fixes applied (code, this session): (1) `_call_gemini_structured`'s
+  logged `response_item_count` now checks `claims`, then `sentences`, then
+  `metadata` - pass-2 logs previously always logged 0 regardless of how many
+  sentences a window actually returned. (2) `replay_exp3._Instrumentation._wrapped`'s
+  NDJSON append is wrapped in try/except: a disk-write failure prints a
+  WARNING and keeps the in-memory record (still written by `_print_summary`
+  at the end of the run) rather than losing or crashing on a paid response.
+  (3) `--pass2-thinking-level` now restricts to `config.PASS2_THINKING_LEVELS`
+  via `choices=`, rather than accepting an arbitrary string. `_call_gemini_freetext`
+  (the auditor path) was not touched, per instruction.
+
+**Measurement check for pilot 2's stop rule (a):** with fix (1) above
+applied, each pass-2 window's own `logs/pass2/{timestamp}_replay-exp3-pass2_none.json`
+file's `response_item_count` field is now the real per-window sentence
+count directly (previously always 0, so `response_raw` had to be parsed by
+hand, as pilot 1's discovery report did). This works unchanged under
+`--pass1-from-fixture`: that flag only replaces the pass-1 leg (skips
+`_extract_pass1`/`_call_gemini_json` entirely), and has no effect on the
+pass-2 window calls or their logging path (`_call_gemini_structured` ->
+`_write_structured_log` with `log_subdir="pass2"`), which is identical
+either way. The one residual fragility: `logs/pass2/` is a single shared
+directory across every run ever made (no run_id or paper_id in the
+filename, `chat_id` is always the literal string `"replay-exp3-pass2"`,
+`correlation_id` always `None`) - isolating "pilot 2's windows 1-26"
+requires selecting files by timestamp range and trusting the same
+sequential-in-order guarantee used for pilot 1 (`eval/replay_exp3.py:229`'s
+plain `for window in windows:` loop), not a dedicated per-run file. A
+reliable source exists; it is not fully self-contained per run. Smallest
+fix, not applied: add a `sentence_count` field to `CallRecord` (populated
+from `len(result.sentences)` where pass-2 window calls already build
+`result`) so each run's own `_calls.ndjson` carries windows 1-26's sentence
+counts directly, with no dependency on the shared `logs/pass2/` directory
+or timestamp-range selection at all.

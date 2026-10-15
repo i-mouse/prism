@@ -34,6 +34,16 @@ def test_flag_off_reproduces_todays_exact_prompt_hash():
     assert get_prompt_version() == "cb3272cce551"  # settings.extractor_second_pass defaults False
 
 
+def test_pass2_thinking_level_setting_does_not_affect_prompt_hash(monkeypatch):
+    """Experiment 3 amendment 1: pass2_thinking_level is a config.py setting,
+    not a prompt file - get_prompt_version() only hashes prompt file bytes
+    (plus the extractor_second_pass/fewshot marker bytes), so this setting's
+    value, on its own, must never move the hash, flag-off or flag-on."""
+    for value in (None, "minimal", "low", "medium", "high"):
+        monkeypatch.setattr(settings, "pass2_thinking_level", value)
+        assert get_prompt_version(extractor_second_pass=False) == "cb3272cce551"
+
+
 def test_flag_on_changes_the_hash():
     off_hash = get_prompt_version(extractor_second_pass=False)
     on_hash = get_prompt_version(extractor_second_pass=True)
@@ -82,7 +92,7 @@ def test_flag_on_extract_claims_calls_pass2_and_merges(monkeypatch):
     async def fake_call_gemini_json(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model):
         return EXTRACTOR_RESULT
 
-    async def fake_run_pass2(paper_text, chat_id, correlation_id=None):
+    async def fake_run_pass2(paper_text, chat_id, correlation_id=None, thinking_level=None):
         return ["A brand new pass-2 sentence never seen in pass 1."], 0
 
     structured_calls = []

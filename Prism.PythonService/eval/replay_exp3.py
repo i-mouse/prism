@@ -50,6 +50,8 @@ Usage:
   uv run python -m eval.replay_exp3 --estimate --run-id dryrun1 --papers P1,P2
   uv run python -m eval.replay_exp3 --dry-run --run-id dryrun1 --papers P7
   uv run python -m eval.replay_exp3 --run-id pass2_r1 --papers P7 --max-inr 30   # pilot
+  uv run python -m eval.replay_exp3 --run-id pilot2 --papers 2610.11135 --max-inr 30 \\
+      --pass2-thinking-level low --pass1-from-fixture   # Experiment 3 amendment 1
 """
 import argparse
 import asyncio
@@ -116,22 +118,31 @@ class _Instrumentation:
     extended to also capture finish_reason via
     extraction.engine._extract_usage_and_finish_reason."""
 
-    def __init__(self):
+    def __init__(self, out_dir: Path):
         self.records: list[CallRecord] = []
         self._original = None
         self._current_paper_id: str | None = None
         self._current_call_kind: str | None = None
+        # Experiment 3 amendment 1: out_dir must already exist by the time
+        # this is constructed (see _run_once's mkdir-at-top ordering) -
+        # every call's record is appended here as it happens, so an abort or
+        # crash mid-run (like the pilot 1 crash, docs/decisions.md) never
+        # loses what was already spent.
+        self._ndjson_path = out_dir / "_calls.ndjson"
 
     def set_context(self, paper_id: str, call_kind: str) -> None:
         self._current_paper_id = paper_id
         self._current_call_kind = call_kind
 
-    async def _wrapped(self, client, contents, config, chat_id, model_name, fallback_model, correlation_id=None):
+    async def _wrapped(self, client, contents, config, chat_id, model_name, fallback_model, correlation_id=None, fallback_config=None):
         start = time.monotonic()
-        response, used_model = await self._original(client, contents, config, chat_id, model_name, fallback_model, correlation_id)
+        extra_kwargs = {"fallback_config": fallback_config} if fallback_config is not None else {}
+        response, used_model = await self._original(
+            client, contents, config, chat_id, model_name, fallback_model, correlation_id, **extra_kwargs,
+        )
         latency = time.monotonic() - start
         usage, finish_reason = engine._extract_usage_and_finish_reason(response)
-        self.records.append(CallRecord(
+        record = CallRecord(
             paper_id=self._current_paper_id, call_kind=self._current_call_kind, model_used=used_model,
             prompt_tokens=(usage or {}).get("prompt_tokens") or 0,
             output_tokens=(usage or {}).get("output_tokens") or 0,
@@ -139,7 +150,17 @@ class _Instrumentation:
             total_tokens=(usage or {}).get("total_tokens") or 0,
             finish_reason=finish_reason,
             latency_s=latency,
-        ))
+        )
+        self.records.append(record)
+        try:
+            with self._ndjson_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(record.__dict__) + "\n")
+        except OSError as exc:
+            # A paid response must never be lost over a disk-write problem -
+            # the in-memory record (self.records, above) already has it, and
+            # _print_summary still writes it at the end of the run. This is
+            # a visibility gap for a crash mid-run, not a lost call.
+            print(f"[replay_exp3] WARNING: failed to append to {self._ndjson_path}: {exc!r}")
         return response, used_model
 
     def __enter__(self) -> "_Instrumentation":
@@ -168,6 +189,21 @@ async def _extract_pass1(paper_text: str) -> dict:
     )
 
 
+def _pass1_claims_from_fixture(run1_fixture: dict) -> list[dict]:
+    """Experiment 3 amendment 1: reshapes dev run-1's own post-pipeline
+    claims down to the plain {claim_text_verbatim, claim_summary} shape
+    _extract_pass1's output is reduced to above - the shape merge.py and the
+    rest of this script expect. Makes no LLM call. Config parity with
+    today's flag-off path is a precondition, not checked here - see
+    docs/decisions.md's "Experiment 3 amendment 1 - 2026-10-15" (run-1
+    fixtures: prompt_hash cb3272cce551, model gemini-3.6-flash, matching
+    today's flag-off path exactly)."""
+    return [
+        {"claim_text_verbatim": c["claim_text_verbatim"], "claim_summary": c["claim_summary"]}
+        for c in run1_fixture["claims"]
+    ]
+
+
 def _print_rough_estimate(paper_ids: list[str]) -> None:
     total_low = total_high = 0.0
     for paper_id in paper_ids:
@@ -193,11 +229,19 @@ def _print_rough_estimate(paper_ids: list[str]) -> None:
     print(f"[replay_exp3] estimated cost: INR {total_low:.1f}-{total_high:.1f} (pass 1 + pass 2 combined, no thinking-token estimate)")
 
 
-async def _run_once(paper_ids: list[str], run_id: str, dry_run: bool, max_inr: float | None) -> tuple[Path, list[CallRecord]]:
+async def _run_once(
+    paper_ids: list[str], run_id: str, dry_run: bool, max_inr: float | None,
+    pass2_thinking_level: str | None = None, pass1_from_fixture: bool = False,
+) -> tuple[Path, list[CallRecord]]:
     from config import settings
 
     out_dir = OUTPUT_ROOT / run_id
-    instrumentation = _Instrumentation()
+    # Experiment 3 amendment 1 (crash fix): out_dir must exist before
+    # anything else, not only once a paper succeeds - the pilot 1 crash
+    # (docs/decisions.md) happened because out_dir was never created when
+    # every paper in the run was skipped, so _print_summary's write failed.
+    out_dir.mkdir(parents=True, exist_ok=True)
+    instrumentation = _Instrumentation(out_dir)
 
     with instrumentation:
         for paper_id in paper_ids:
@@ -215,12 +259,15 @@ async def _run_once(paper_ids: list[str], run_id: str, dry_run: bool, max_inr: f
             if paper_text is None:
                 continue
 
-            instrumentation.set_context(paper_id, "pass1")
-            extracted = await _extract_pass1(paper_text)
-            pass1_claims = [
-                {"claim_text_verbatim": c.get("claim_text_verbatim", ""), "claim_summary": c.get("claim_summary", "")}
-                for c in extracted.get("claims", [])
-            ]
+            if pass1_from_fixture:
+                pass1_claims = _pass1_claims_from_fixture(run1_fixture)
+            else:
+                instrumentation.set_context(paper_id, "pass1")
+                extracted = await _extract_pass1(paper_text)
+                pass1_claims = [
+                    {"claim_text_verbatim": c.get("claim_text_verbatim", ""), "claim_summary": c.get("claim_summary", "")}
+                    for c in extracted.get("claims", [])
+                ]
 
             pass2_sentences: list[str] = []
             windows = make_windows(paper_text)
@@ -245,6 +292,7 @@ async def _run_once(paper_ids: list[str], run_id: str, dry_run: bool, max_inr: f
                         log_subdir="pass2",
                         model_name=settings.llm_extraction_model,
                         fallback_model=settings.llm_extraction_fallback_model,
+                        thinking_level=pass2_thinking_level,
                     )
                 except Exception as exc:
                     print(f"[replay_exp3] window failed for {paper_id}: {type(exc).__name__}: {exc}")
@@ -258,7 +306,6 @@ async def _run_once(paper_ids: list[str], run_id: str, dry_run: bool, max_inr: f
 
             merge_result = merge_pass2_claims(pass1_claims, pass2_sentences, paper_text)
 
-            out_dir.mkdir(parents=True, exist_ok=True)
             header = {
                 "paper_id": paper_id,
                 "run_id": run_id,
@@ -345,7 +392,10 @@ async def _main(args: argparse.Namespace) -> int:
         print("[replay_exp3] ABORT: refuses to make paid calls without --max-inr")
         return 1
 
-    out_dir, records = await _run_once(paper_ids, args.run_id, args.dry_run, args.max_inr)
+    out_dir, records = await _run_once(
+        paper_ids, args.run_id, args.dry_run, args.max_inr,
+        pass2_thinking_level=args.pass2_thinking_level, pass1_from_fixture=args.pass1_from_fixture,
+    )
     if not args.dry_run:
         _print_summary(out_dir, records)
     return 0
@@ -358,6 +408,17 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--estimate", action="store_true", help="character-count proxy, zero network calls")
     parser.add_argument("--dry-run", action="store_true", help="print what would be replayed, zero LLM calls")
     parser.add_argument("--max-inr", type=float, default=None, help="REQUIRED for a real run: hard stop on real measured spend")
+    from config import PASS2_THINKING_LEVELS
+
+    parser.add_argument(
+        "--pass2-thinking-level", default=None, choices=sorted(PASS2_THINKING_LEVELS),
+        help="Experiment 3 amendment 1: thinking_level for pass-2 window calls, primary model only "
+             "(minimal unverified for gemini-3.6-flash). Unset = no thinking_config, today's default.",
+    )
+    parser.add_argument(
+        "--pass1-from-fixture", action="store_true",
+        help="Experiment 3 amendment 1: load dev run-1's own pass-1 claims instead of making a fresh pass-1 call.",
+    )
     return parser
 
 

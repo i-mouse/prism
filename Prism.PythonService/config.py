@@ -15,6 +15,13 @@ from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 AUDITOR_THINKING_LEVELS = {"low", "medium", "high"}
+# Separate from AUDITOR_THINKING_LEVELS: the installed google-genai SDK's
+# ThinkingLevel enum also has MINIMAL (see docs/decisions.md, "Experiment 3
+# amendment 1 - 2026-10-15"), which AUDITOR_THINKING_LEVELS does not accept.
+# Kept as its own set since MINIMAL's support by gemini-3.6-flash is
+# unverified - accepting it here is a config-validation choice, not a claim
+# that the API honors it.
+PASS2_THINKING_LEVELS = {"minimal", "low", "medium", "high"}
 
 
 class PrismSettings(BaseSettings):
@@ -112,6 +119,24 @@ class PrismSettings(BaseSettings):
     # extraction/engine.py::extract_claims, and extraction/prompt_version.py::
     # get_prompt_version.
     extractor_second_pass: bool = False
+
+    # Experiment 3 amendment 1 - pass-2 thinking_level override, applied to
+    # the primary model only (the fallback call, if one ever fires, sends no
+    # thinking_config - see extraction/engine.py::_call_gemini_structured).
+    # Unset (default) means no thinking_config is sent for pass-2 calls -
+    # byte-identical to today (API default, medium on 3.6-flash). Mirrors
+    # auditor_thinking_level's convention; see docs/decisions.md, "Experiment
+    # 3 amendment 1 - 2026-10-15".
+    pass2_thinking_level: str | None = None
+
+    @field_validator("pass2_thinking_level")
+    @classmethod
+    def _validate_pass2_thinking_level(cls, value: str | None) -> str | None:
+        if value is not None and value not in PASS2_THINKING_LEVELS:
+            raise ValueError(
+                f"pass2_thinking_level must be one of {sorted(PASS2_THINKING_LEVELS)} or unset, got {value!r}"
+            )
+        return value
 
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000

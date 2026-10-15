@@ -13,7 +13,7 @@ def test_one_failing_window_is_logged_counted_and_others_still_return(monkeypatc
     windows = ["WINDOW_MARKER_0 text", "WINDOW_MARKER_1 text", "WINDOW_MARKER_2 text"]
     monkeypatch.setattr(pass2, "make_windows", lambda paper_text: windows)
 
-    async def fake_call_gemini_structured(messages, response_schema, chat_id, correlation_id, log_subdir, model_name, fallback_model):
+    async def fake_call_gemini_structured(messages, response_schema, chat_id, correlation_id, log_subdir, model_name, fallback_model, thinking_level=None):
         user_msg = next(m["content"] for m in messages if m["role"] == "user")
         if "WINDOW_MARKER_1" in user_msg:
             raise RuntimeError("simulated window failure")
@@ -42,7 +42,7 @@ def test_concurrency_never_exceeds_audit_structure_concurrency(monkeypatch):
     max_in_flight = 0
     lock = asyncio.Lock()
 
-    async def fake_call_gemini_structured(messages, response_schema, chat_id, correlation_id, log_subdir, model_name, fallback_model):
+    async def fake_call_gemini_structured(messages, response_schema, chat_id, correlation_id, log_subdir, model_name, fallback_model, thinking_level=None):
         nonlocal in_flight, max_in_flight
         async with lock:
             in_flight += 1

@@ -31,7 +31,9 @@ class SentenceListLLM(BaseModel):
     sentences: list[str]
 
 
-async def _call_pass2_window(window_text: str, chat_id: str, correlation_id: str | None) -> list[str]:
+async def _call_pass2_window(
+    window_text: str, chat_id: str, correlation_id: str | None, thinking_level: str | None = None
+) -> list[str]:
     # Local import: extraction.engine imports this module at call time
     # (inside extract_claims), not at module load time, so importing engine
     # here at call time avoids a circular import at module load.
@@ -45,23 +47,33 @@ async def _call_pass2_window(window_text: str, chat_id: str, correlation_id: str
         log_subdir="pass2",
         model_name=settings.llm_extraction_model,
         fallback_model=settings.llm_extraction_fallback_model,
+        thinking_level=thinking_level,
     )
     return result.sentences
 
 
 async def _call_pass2_window_bounded(
-    semaphore: asyncio.Semaphore, window_text: str, chat_id: str, correlation_id: str | None
+    semaphore: asyncio.Semaphore, window_text: str, chat_id: str, correlation_id: str | None,
+    thinking_level: str | None = None,
 ) -> list[str]:
     async with semaphore:
-        return await _call_pass2_window(window_text, chat_id, correlation_id)
+        return await _call_pass2_window(window_text, chat_id, correlation_id, thinking_level=thinking_level)
 
 
-async def run_pass2(paper_text: str, chat_id: str, correlation_id: str | None = None) -> tuple[list[str], int]:
+async def run_pass2(
+    paper_text: str, chat_id: str, correlation_id: str | None = None, thinking_level: str | None = None,
+) -> tuple[list[str], int]:
     """Runs one pass-2 call per window over paper_text, concurrently (bounded
     by the same concurrency cap extraction/engine.py uses for audit/structure
     calls), and returns every raw sentence from every window - unfiltered and
     not yet deduplicated against pass-1 claims or against each other. See
     extraction/merge.py::merge_pass2_claims for the grounding/dedup step.
+
+    thinking_level is None by default - no thinking_config sent, byte-identical
+    to this function's behavior before this parameter existed. Passed through
+    to every window call's engine._call_gemini_structured (primary model
+    only; see that function's docstring for the fallback-gets-no-override
+    guarantee). Experiment 3 amendment 1, docs/decisions.md.
 
     Returns (sentences, failed_window_count): a window whose call raises
     (after extraction/engine.py's own retry/fallback is exhausted) is logged
@@ -80,7 +92,10 @@ async def run_pass2(paper_text: str, chat_id: str, correlation_id: str | None = 
 
     semaphore = asyncio.Semaphore(AUDIT_STRUCTURE_CONCURRENCY)
     results = await asyncio.gather(
-        *(_call_pass2_window_bounded(semaphore, window, chat_id, correlation_id) for window in windows),
+        *(
+            _call_pass2_window_bounded(semaphore, window, chat_id, correlation_id, thinking_level=thinking_level)
+            for window in windows
+        ),
         return_exceptions=True,
     )
     sentences: list[str] = []

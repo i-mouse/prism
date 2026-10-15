@@ -176,12 +176,21 @@ async def _generate_with_fallback(
     model_name: str,
     fallback_model: str,
     correlation_id: str | None = None,
+    fallback_config: types.GenerateContentConfig | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
     """Calls Gemini on model_name with retry/backoff, falling back to
     fallback_model for one final attempt if the primary model's retries are
     exhausted. Returns (response, model_name_actually_used). Raises on
     terminal failure (non-retryable error, or fallback attempt also fails).
+
+    fallback_config, when given, is used for the fallback attempt instead of
+    config - callers that build a primary config with a thinking_config pass
+    a separate fallback_config without one, so a thinking_level override
+    never reaches the fallback model (Experiment 3 amendment 1: thinking
+    overrides are a primary-model-only knob). Defaults to reusing config,
+    unchanged from before this parameter existed.
     """
+    fallback_config = fallback_config if fallback_config is not None else config
     try:
         response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
         return response, model_name
@@ -190,7 +199,7 @@ async def _generate_with_fallback(
             raise
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
-            response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=config)
+            response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=fallback_config)
             return response, fallback_model
         except Exception as fallback_exc:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} fallback model={fallback_model} failed: {fallback_exc!r}")
@@ -208,6 +217,7 @@ async def _call_gemini_structured(
     log_subdir: str,
     model_name: str,
     fallback_model: str,
+    thinking_level: str | None = None,
 ) -> BaseModel:
     """Calls Gemini with a schema-enforced structured output config.
 
@@ -216,6 +226,13 @@ async def _call_gemini_structured(
     attempt before raising the last error. Falls back to json.loads/model_validate
     when response.parsed is None. Logs the request/response to
     logs/{log_subdir}/{timestamp}_{chat_id}_{correlation_id}.json.
+
+    thinking_level is None by default, which sends no thinking_config at all -
+    byte-identical to this call's behavior before this parameter existed
+    (API default, medium on 3.6-flash). When set, it is applied to the
+    PRIMARY model only: the fallback attempt (inside _generate_with_fallback)
+    gets its own config without a thinking_config, via fallback_config below -
+    see docs/decisions.md, "Experiment 3 amendment 1 - 2026-10-15".
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -225,10 +242,32 @@ async def _call_gemini_structured(
         system_instruction=system_prompt,
         response_mime_type="application/json",
         response_schema=response_schema,
+        thinking_config=(
+            types.ThinkingConfig(thinking_level=types.ThinkingLevel(thinking_level.upper()))
+            if thinking_level is not None
+            else None
+        ),
+    )
+    fallback_config = (
+        types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            response_mime_type="application/json",
+            response_schema=response_schema,
+        )
+        if thinking_level is not None
+        else None
     )
 
+    # fallback_config is only passed through when thinking_level is set - every
+    # existing caller (thinking_level=None, the overwhelming default) calls
+    # _generate_with_fallback with the exact same positional args as before
+    # this parameter existed, so any code that monkey-patches
+    # _generate_with_fallback with the old signature (eval/replay_audit.py,
+    # eval/replay_extract.py - neither ever sets thinking_level on a
+    # _call_gemini_structured call) keeps working unchanged.
+    extra_kwargs = {"fallback_config": fallback_config} if thinking_level is not None else {}
     response, used_model = await _generate_with_fallback(
-        client, contents, config, chat_id, model_name, fallback_model, correlation_id
+        client, contents, config, chat_id, model_name, fallback_model, correlation_id, **extra_kwargs,
     )
     raw_text = response.text
     usage, finish_reason = _extract_usage_and_finish_reason(response)
@@ -256,6 +295,8 @@ async def _call_gemini_structured(
 
     if hasattr(parsed, "claims"):
         item_count = len(parsed.claims)
+    elif hasattr(parsed, "sentences"):  # pass-2's SentenceListLLM
+        item_count = len(parsed.sentences)
     elif hasattr(parsed, "metadata"):
         item_count = 1
     else:
@@ -481,7 +522,9 @@ async def extract_claims(
         with tracer.start_as_current_span("pass2") as span:
             span.set_attribute("correlation_id", correlation_id or "")
             span.set_attribute("chat_id", chat_id)
-            pass2_sentences, failed_window_count = await run_pass2(paper_text, chat_id, correlation_id)
+            pass2_sentences, failed_window_count = await run_pass2(
+                paper_text, chat_id, correlation_id, thinking_level=settings.pass2_thinking_level
+            )
         merge_result = merge_pass2_claims(claims, pass2_sentences, paper_text)
         claims = merge_result["merged_claims"]
         print(
