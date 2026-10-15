@@ -2522,3 +2522,6 @@ from `len(result.sentences)` where pass-2 window calls already build
 `result`) so each run's own `_calls.ndjson` carries windows 1-26's sentence
 counts directly, with no dependency on the shared `logs/pass2/` directory
 or timestamp-range selection at all.
+
+## Experiment 3 amendment 2 - 2026-10-15 (before pilot 2 data). Rule (b) definition:
+mean pass-2 INR per window = total INR of all recorded pass-2 calls (primary and fallback; retries are folded into each call record and cannot be separated) / number of completed windows. Failed windows (INR 0) are excluded from the denominator and reported separately. Chosen as the stricter of the two options before any pilot-2 result exists. Rule (a) unchanged: a failed window in 1-26 counts as 0 sentences.
