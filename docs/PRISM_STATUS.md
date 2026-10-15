@@ -31,7 +31,9 @@
 - Finding: the medium auditor is non-deterministic (about +/-3 rows).
 - Push extension logged 2026-10-14: exactly one more counted experiment (Experiment 3). Budget: ~INR 560 left (738 - 177.93); sealed reserve INR 300 untouched; sealed set not yet created.
 - Exp 3 pre-checks done 2026-10-14 (Checks A-E, see docs/evals/exp3_prechecks/ and docs/decisions.md): decided fixed windows (6000/1500 chars) on today's PyMuPDF text; sentence splitting, GROBID and PyMuPDF4LLM rejected as readers.
-- Next: Exp 3 not yet pre-registered.
+- Exp 3 built 2026-10-15 (B1 review, B2, B2-FIX all done; commit 8debe66): pass-2 windowed extraction behind EXTRACTOR_SECOND_PASS, default off. Pre-registered 2026-10-15 (docs/decisions.md, "Experiment 3 pre-registration - 2026-10-15"): marks C1-C8 in docs/evals/exp3_thresholds.json, targets sha256 69c60127cdf1..., pilot cap INR 40, pilot paper arxiv-2610.11135v1.
+- Window-count correction: the original --estimate math assumed ~21 windows/paper; the actual longest dev paper (arxiv-2610.11135v1, 152,601 chars) is 34 windows. Phase 4 re-estimates the two treatment runs from real pilot cost, not the original 75.9-136.5 estimate.
+- Next: B3 in progress - estimate (Phase 2) -> pilot (Phase 3) -> two treatment runs (Phase 5), then B4 (score, adjudicate, result entry).
 
 ### Extractor-only harness (PR-1, 5 runs per arm)
 - Golden FULL mean: 20.4 before, 20.6 after PR-1.
@@ -79,12 +81,13 @@
 ## In-flight work
 - PR-1 draft #115 (few-shot loader fix, prompt hash 6bfa9ba9790c). CI fixture-freshness is red on the hash mismatch; expected. Merge only after Milestone A re-dumps the fixtures. Still draft, unmerged as of 2026-10-14 (Exp 2 decision entry).
 - PR-2 (section-by-section extraction) is parked. Design and build prompt kept on file.
-- Exp 3: pre-checks done, not yet pre-registered. See docs/research/fact_inventory_2026-10-14.md and docs/evals/exp3_prechecks/.
+- Exp 3: built and pre-registered 2026-10-15 (flag default off). See docs/research/fact_inventory_2026-10-14.md, docs/evals/exp3_prechecks/, and docs/decisions.md "Experiment 3 build/pre-registration - 2026-10-15".
 
 ## Next actions (in order)
 1-4. (Done as of 2026-10-14: dev papers ingested, dev_match_map.json built, baseline run 1, Exp 1 and Exp 2 both run and FAILED.)
-5. Pre-register Experiment 3 (fixed windows 6000/1500 chars on raw PyMuPDF text, per the 2026-10-14 pre-checks decision) — not yet registered.
-6. After Experiment 3: take the exit decision per the 2026-10-10 push-extension/exit rule (docs/decisions.md), whatever the result.
+5. (Done as of 2026-10-15: Experiment 3 built and pre-registered.)
+6. Run Exp 3 estimate (Phase 2, no network calls) -> pilot on arxiv-2610.11135v1 at --max-inr 40 (Phase 3) -> re-estimate and set per-run cap (Phase 4) -> two treatment runs (Phase 5).
+7. After Experiment 3: take the exit decision per the 2026-10-10 push-extension/exit rule (docs/decisions.md), whatever the result.
 
 Note: The auditor design review and the extractor design review are done (decisions.md 2026-10-08).
 

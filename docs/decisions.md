@@ -2127,3 +2127,255 @@ B1 (read-only, INR 0) checked the Experiment 3 design. Findings and decisions:
 - Open research item (after the exit decision, not part of the push): how the
   extractor decides what counts as a claim. Claim count should follow the paper's
   real claims, not its length or a fixed number.
+
+## Experiment 3 build - 2026-10-15
+What was built: pass-2 windowed "copy-only" extraction behind
+`EXTRACTOR_SECOND_PASS` (`config.settings.extractor_second_pass`, default
+`False`). Off is byte-identical to today: `extract_claims` runs pass 1 only
+and `get_prompt_version()`'s output is unaffected. Pass 1 itself is unchanged
+and was never removed.
+
+Files: `extraction/windowing.py` (new; fixed 6000-char windows, 1500-char
+overlap, pure function, ports the Exp 3 pre-checks geometry), `extraction/pass2.py`
+(new; one `_call_gemini_structured` call per window, `SentenceListLLM` schema -
+kept out of `extraction/schemas.py` deliberately, since that file's bytes are
+part of the prompt hash and the flag must stay a no-op when off), `extraction/merge.py`
+(new; grounds every pass-2 sentence at Stage-1 `fuzz.partial_ratio>=RAPIDFUZZ_THRESHOLD`
+against the raw paper text or drops it as `dropped_ungrounded`; dedups at
+`fuzz.ratio>=88` - not `partial_ratio` - against pass-1 `claim_text_verbatim`
+or an already-kept pass-2 sentence, specifically so a short claim nested inside
+a longer pass-1 sentence is NOT dropped as a duplicate, since that's the E3
+shape this experiment targets; a sentence with a high partial_ratio match but
+ratio below 88 is kept and logged as `kept_but_contained` for hand review),
+`prompts/extract_claims_pass2_system.md` (new; generic instructions - find and
+copy verbatim any sentence making a claim about the paper's own method/results,
+explicitly calling out hedged claims, table-only numbers, narrower claims next
+to broader ones, and bare "we observed" statements; no worked examples),
+`eval/replay_exp3.py` (new; CLI replay harness, see Phase 0 report above for
+its exact flags/enforcement), `eval/score_exp3.py` (new; scores C1-C5 against
+`exp3_thresholds.json`), `docs/evals/exp3_targets.json` (new; 13 confirmed
+run-1 extraction-miss target rows, straight copy of `score_exp2.py`'s
+`ROW_ID_TO_SHAPE`), `docs/evals/exp3_thresholds.json` (new; all-null skeleton
+at build time), `extraction/engine.py` (added `_extract_usage_and_finish_reason`
+- reads `usage_metadata`/`finish_reason` off a Gemini response for logging
+only, side-channel, never fed back into any return value or pipeline decision;
+wired into `_write_structured_log` and both `_call_gemini_structured`/
+`_call_gemini_json`; `extract_claims` gained the `if settings.extractor_second_pass:`
+block that calls `run_pass2` + `merge_pass2_claims` and replaces `claims` with
+the merged list), `extraction/prompt_loader.py` (added
+`build_gemini_messages_for_pass2`), `extraction/prompt_version.py`
+(`get_prompt_version` gained an `extractor_second_pass: bool | None = None`
+param, defaulting to reading the live setting; off reads nothing extra and
+hashes identically to before; on reads `SECOND_PASS_PROMPT_FILENAMES`'
+bytes plus an `extractor_second_pass=1` marker).
+
+B1-review decisions (quoted from "Experiment 3 B1 review - 2026-10-15" above)
+were all implemented as built: pass-2 claims get `claim_summary` = the copied
+sentence (no extra LLM call); dedup uses `fuzz.ratio>=88`, not `partial_ratio`;
+every drop and every "contained but kept" case is logged
+(`dropped_ungrounded` count, `dropped_duplicate`/`kept_but_contained`/`kept_new`
+lists, all written to each paper's `_buckets.json`).
+
+B2-FIX items (independent review, before this entry) also implemented:
+pass-2 window calls run under the same `AUDIT_STRUCTURE_CONCURRENCY` semaphore
+`extraction/engine.py` already uses for audit/structure calls (`extraction/pass2.py`
+imports it directly rather than defining a second cap); a failed window is
+logged and skipped, counted in `failed_window_count`, not fatal to the paper;
+`replay_exp3.py` refuses to write any output for a paper stopped mid-paper by
+`--max-inr` (its partial pass-1/pass-2 results would misrepresent a paper that
+never finished); a paper is marked `"incomplete": true` in its own header
+whenever `failed_window_count > 0`; `_summary.json` reports a `fallback_calls`
+count plus per-call `model_used`.
+
+Checks performed before this entry: full test suite run 2026-10-15 during B3
+discovery (`uv run pytest -q`, read-only, zero LLM/API calls) - 252 passed, 1
+deselected. Separately, the B2-FIX review itself reported "131 tests passing"
+at the time, scope as reported then - the two numbers are not reconciled here,
+just both recorded: B2-FIX check reported 131 tests passing (scope as reported
+at the time); full suite run on 2026-10-15 during B3: 252 passed. `--estimate`
+for 12 papers x 1 run: INR 75.9-136.5, ~21 windows/paper assumed (a flat
+average later found too low for the longest paper - see Phase 0 discovery,
+longest dev paper is 34 windows), zero network calls confirmed by the
+`--estimate` code path (no call site reachable before the early return).
+Leak check and prompt-hash values as stated in the Exp 3 build commit message
+(not independently re-run this session; command execution this session is
+restricted to reads plus one `sha256sum`, per the 2026-10-15 B3 Phase-0
+deviation correction below) - flag-off prompt hash unchanged at
+`cb3272cce551`, flag-on prompt hash `d03695c495ff` (from the build commit;
+not recomputed here).
+
+Known/expected: `eval/score_exp3.py` raises `FileNotFoundError` on
+`docs/evals/fixtures/dev/exp3/pass1_only` until real run data exists there
+(confirmed by reading `_total_claims`/`_papers_replayed`, both raise on a
+missing run directory).
+
+Framing: dev run 1 = 8/31; floor 22/31; per the B1 review, even perfect
+extraction gives 21/31 (68%), below the floor, because 10 audit misses are out
+of scope - Experiment 3 tests the mechanism, not release readiness.
+
+## B3 Phase 0 discovery: script-run deviations and correction - 2026-10-15
+**Context:** During B3's Phase 0 (read-only discovery, explicitly "no script
+runs" per the task brief), two script runs happened that should not have:
+(1) one local, zero-network, zero-file-write Python script measuring PyMuPDF
+text length and pass-2 window count per dev paper (disclosed immediately,
+accepted once by Nitin); (2) `uv run pytest -q` to verify a "131 tests passing"
+claim from the original task brief, run without disclosing it first this time.
+Nitin's correction: no further script runs until Phase 2, with one named
+exception (a `sha256sum` for the pre-registration below).
+**Decision:** Both measured numbers are kept, not discarded - see the longest-paper
+table in the Phase 0 report and the 252-passed figure in the build entry above,
+both labelled as to how they were obtained. No repo files were written by
+either script run; nothing to revert. Going forward through Phase 2: reads
+only, plus the one disclosed `sha256sum` exception.
+**Consequences:** `.claude/settings.local.json` has a broad `Bash(uv run *)`
+allow rule (plus several narrower `uv run pytest *` / specific `eval.*` module
+rules) that let both script runs through without a permission prompt - quoted
+to Nitin, not edited. This is a standing fact about the sandbox, not something
+fixed by this entry.
+
+## Experiment 3 pre-registration - 2026-10-15
+Written before any paid call for Experiment 3.
+
+**Scoring set frozen:** `docs/evals/exp3_targets.json` (13 target rows), sha256
+`69c60127cdf1d7130311b11b615e1e4490cf85ca637418d1c73ca6a3c18917b3` (computed
+2026-10-15 via `sha256sum`, read-only). Flag-on prompt hash: `d03695c495ff`
+(as given in the task brief; not independently recomputed this session - see
+the build entry above). Flag-off prompt hash unchanged at `cb3272cce551`.
+
+**Read-only checks, done before setting these marks:**
+- `_pass(None, value)` (`Prism.PythonService/eval/score_exp3.py:145-146`):
+  `return None if threshold is None else actual_ge >= threshold` - a null
+  threshold always returns `None` (reported as "UNDETERMINED", never a
+  fabricated FAIL, never a crash). Confirmed safe to leave marks `null`.
+- Neither this file nor `PRISM_STATUS.md` requires a separate paid
+  `pass1_only` run anywhere (searched both for `pass1_only`: the only hit is
+  this file's own "Experiment 3 build" entry above, describing
+  `score_exp3.py`'s existing code expectation, not a requirement to run one).
+  Consistent with the B4 rule below: no `pass1_only` paid run in Experiment 3.
+- Exit rule, quoted verbatim from "Release targets, order of work and stop
+  rule amended - 2026-10-10" (not 2026-10-11 - that is the correct date on
+  file): *"Hard exit after 8 counted experiments, or when total spend from
+  this entry reaches the push cap, whichever comes first... At the exit: one
+  sealed final run. Then log one of two decisions here: keep the floor and
+  stop this version, or set a new floor and release with honest numbers. No
+  further experiments on this version after the exit."*
+
+**Marks are revised from the first pre-registration draft above a correction
+pass** (`c2_min_matched_retained=13` was wrong - see below). All keys live in
+`docs/evals/exp3_thresholds.json`.
+
+GATES (all must pass, in every treatment run where stated, for Stage A to
+accept):
+
+| key | plain-words meaning | value | measured by |
+|---|---|---|---|
+| `c1_min_recovered` | target rows (of 13) matched in merged output | >= 5, in BOTH treatment runs | `score_exp3.py`'s `c1_recovered` (scorer-computed) |
+| `c6_min_own_pass1_miss_adds` (new key, not read by `score_exp3.py`) | target rows whose locked match (post blind-adjudication) is a pass-2 claim | >= 3, in EACH run | hand count in B4, after blind adjudication |
+| `c4_projected_full_cost_max_inr` (new key, not read by `score_exp3.py`) | projected full-pipeline cost per paper, deliberately conservative (assumes all of INR 87 scales with claim count, not just the extraction share) | <= 130. Formula: `projected = 87 * r + p2`, where `r` = mean over both runs of (claims in that run's `*_merged.json` / claims in that run's own `*_pass1.json`), `p2` = mean pass-2-only INR/paper from `*_summary.json` records labelled pass2 | hand-computed in B4 |
+| `c7_min_pass2_grounding_rate` (new key, not read by `score_exp3.py`) | share of pass-2 sentences that ground at `partial_ratio>=88` | >= 0.95 | hand-computed in B4 from each paper's `*_buckets.json`: `(sentences emitted - dropped_ungrounded) / sentences emitted` |
+| `c8_min_pass2_precision` (new key, not read by `score_exp3.py`) | of a random sample of `kept_new` pass-2 claims, the share that are actually claims (not method/setup text that slipped past grounding/dedup) | >= 0.70, per run. Sample: 30 `kept_new` claims per run (all of them if fewer than 30), fixed seed 20261015, sampling method written in B4 before labelling | hand-labelled claim/not-claim by Nitin in B4, against the label rubric's claim definition |
+
+REPORT ONLY (no gate - `null` in `exp3_thresholds.json`, per the confirmed-safe
+`_pass(None, ...)` behavior above):
+
+| key | reason it's report-only |
+|---|---|
+| `c2_min_matched_retained` | `extraction/merge.py:145-147` copies every pass-1 claim into `merged_claims` unconditionally - merge cannot drop a matched row, so the only real failure source is ordinary pass-1 run-to-run variance (same phenomenon as Experiment 2's A3 observation). Separately: the value `13` in the first draft was wrong - it was copied from Experiment 2's `_in_replay_scope`-filtered 13-of-18 subset; `score_exp3.py`'s own `_classify_rows` (`eval/score_exp3.py:61-65`) has no such scope filter, so the unscoped dev-wide matched set is 18, not 13. Reported for visibility, not gated. |
+| `c3_max_claim_ratio` | reported as the same-run ratio `r` per run (claims in `*_merged.json` / claims in that run's own `*_pass1.json`) - this is the same `r` that feeds into `c4_projected_full_cost_max_inr` above, so it is kept visible on its own rather than only buried inside C4's formula. |
+| `c4_max_cost_inr_per_paper` | this is `score_exp3.py`'s own key/computation (real measured replay cost from `_summary.json`, `eval/score_exp3.py:161-170`) - a different, simpler number than the `c4_projected_full_cost_max_inr` formula above. Both are kept, under different keys, so neither is silently overwritten by the other. |
+| `c5_min_by_shape` | informational breakdown by claim shape (E1-E5), as originally. |
+
+Also reported in B4, no JSON key (these are diagnostics, not thresholds):
+target rows lost to false dedup (a `dropped_duplicate` pass-2 sentence that
+actually matched a target row); `not_supported_count`; fallback-model calls;
+incomplete papers.
+
+**Adjudication rules (B4):**
+- Blind: the review pack strips the `"pass"` field and shuffles claim order
+  per paper before a human sees it. Matches are locked before attribution
+  (pass1 vs pass2) is revealed.
+- Tie: if both a pass-1 and a pass-2 claim match a row, credit pass 1.
+- No `pass1_only` paid run in Experiment 3 (confirmed not required by either
+  doc, per the read-only check above).
+
+**Interpretation:**
+- Experiment 3 cannot reach the release floor on its own: best case 21/31
+  (per the B1 review, even perfect extraction) vs. the 22/31 floor. It tests
+  the mechanism only, not release readiness.
+- The dev result is optimistic, not a clean held-out test: the pass-2 prompt
+  lines were designed from these exact dev failures, and some targets may
+  simply be pass-1 noise rather than a real recall gap pass 2 fixes. n=13, so
+  the result is directional, not conclusive. Any public claim needs the
+  sealed set.
+
+**Pre-registered outcomes:**
+- All gates (C1, C6, C4-projected, C7, C8) pass, in every run where stated:
+  pass 2 becomes a candidate; the flag stays off until the sealed run; the
+  push ends; the exit decision is taken per the quoted exit rule above.
+- Any gate fails: pass 2 is rejected; the flag stays off (code kept behind
+  the flag, not reverted); the push ends; the exit decision is taken per the
+  quoted exit rule above.
+- No re-runs, prompt edits, or threshold changes to rescue a failed gate.
+- Experiment 3 is the last counted experiment either way - per "Push
+  extension past Experiment 2 - 2026-10-14" above: *"Scope: exactly ONE more
+  counted experiment (Experiment 3). After it, the exit decision is taken,
+  whatever the result. Any further extension needs a new dated entry."* The
+  push ends after Experiment 3 regardless of which outcome above happens.
+
+**Sealed final run setting:** if all gates pass, the sealed run uses
+`EXTRACTOR_SECOND_PASS` on; if any gate fails, off. At up to INR 130/paper
+(the `c4_projected_full_cost_max_inr` cap), the INR 300 sealed reserve covers
+2 papers, not 3. Decide the reserve or paper count before the sealed set is
+built.
+
+**Scorer/B4 mismatch, noted plainly:** `score_exp3.py` as written needs a
+`pass1_only` folder and computes `c2`/`c3`/`c4` differently from the
+definitions above; B4 uses the definitions in this entry, not the scorer's
+raw output for those three keys. Any change to `score_exp3.py` itself is a
+B4 decision, made before scoring, not assumed here.
+
+**Rules** (unchanged from the task brief): incomplete papers (failed windows)
+are rerun, not scored; reruns count toward `--max-inr` and the push cap.
+Fallback-model calls and `not_supported_count` are reported for every run.
+Marks are not changed after any paid call.
+
+**Budget** (see the companion "B3 budget reconciliation" entry below for the
+full figures and the cap-collision finding):
+- Pilot cap: INR 40 (not the task brief's original 20) - `--max-inr` is
+  checked before each call against spend so far, not the upcoming call's
+  projected cost, so one call can overshoot; the pilot paper's pass-1 call
+  sends the full paper text in one shot.
+- Pilot paper: `arxiv-2610.11135v1` (152,601 chars, 34 windows - the longest
+  of the 12 dev papers; see the Phase 0 report's window-count table).
+- Per-run cap for the two treatment runs: set in Phase 4, from pilot-measured
+  real cost, not set here.
+
+## B3 budget reconciliation - 2026-10-15
+**Context:** Phase 0 flagged a mismatch between the task brief's budget
+figures and what's on record here. Nitin resolved it; recording the resolution,
+not re-deriving it.
+**Decision:**
+- Binding limit for Experiment 3 spend is the **push budget**: ~INR 560 left
+  (738 - 177.93, per "Push extension past Experiment 2 - 2026-10-14" above).
+- Sealed reserve INR 300 is separate and untouched by Experiment 3 spend.
+- The Gemini AI Studio project cap is a backstop only, not the Experiment 3
+  limit: INR 844.81 left (2,755.19 / 3,600 spent, checked 2026-10-15 16:08
+  IST - this exact figure is not written anywhere else in this file or in
+  `PRISM_STATUS.md`; it is recorded here for the first time, sourced from the
+  task brief, not independently re-verified this session).
+- Cap collision: 560 (push) + 300 (sealed reserve) = 860, which is greater
+  than the 844.81 left under the project cap this month. The project cap
+  cannot cover both the full remaining push budget and the full sealed
+  reserve in the same billing month. The sealed final run must happen either
+  after the project cap resets (1 Nov, PST) or after the cap is raised -
+  whichever Nitin decides when that run is actually scheduled. Not decided
+  here; Experiment 3 itself (pilot + 2 treatment runs, capped well under 560)
+  does not come close to the 844.81 backstop, so this collision does not
+  block Experiment 3 - it blocks the LATER sealed run if nothing changes
+  before then.
+- The project-cap dashboard lags about 10 minutes behind real spend; `--max-inr`
+  on each script invocation is the real, immediate limit, not the dashboard.
+**Consequences:** Experiment 3's own `--max-inr` values (pilot 40, per-run cap
+from Phase 4) are chosen against the 560 push-budget figure, not the 844.81
+backstop. The sealed-run cap collision is logged here so it isn't rediscovered
+cold when that run is scheduled.
