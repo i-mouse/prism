@@ -2528,3 +2528,10 @@ mean pass-2 INR per window = total INR of all recorded pass-2 calls (primary and
 
 ## Experiment 3 pilot 2 result and Phase 4 cap - 2026-10-15:
 Pilot 2 (arxiv-2610.11135v1, frozen pass 1, pass-2 thinking LOW, 22:17–22:19 IST): 34/34 windows completed, 0 failed, 0 fallback, all STOP, INR 12.52 (meter). Windows 1-26: 124 sentences (pilot 1: 128), INR 9.44 (pilot 1: 28.10), thought tokens 578 (pilot 1: 50,123). Stop rule (a) 124 >= 90 PASS. Stop rule (b) 12.52 / 34 = 0.37 <= 0.60 PASS. Phase 4 cap: per-run --max-inr 130 for pass2_r1 and pass2_r2 (estimate 0.37 x 261 windows = INR 97 per run, plus ~30% headroom); treatment total ceiling INR 260. Push budget after pilot 2: ~INR 507. Early warning (note only, no rule change): on the pilot paper merged / pass-1 = 100 / 42 = 2.38; if the 12-paper mean r is similar, c4 (87 x r + p2 <= 130) fails, since r must be about <= 1.4. Gates unchanged; treatment runs proceed as pre-registered; no rescue if c4 fails.
+
+## Experiment 3 amendment 3 - 2026-10-15 (before pass2_r1 data). Incomplete-paper rule for pass2_r1 and pass2_r2. The replay script has no resume. Two cases:
+
+Budget abort (--max-inr hit mid-paper): that paper writes no output. Rerun that paper alone with --papers <full arxiv id with version> (full id, because --papers matches substrings), the same flags, and a run-id suffixed _rerun, once, only if the run’s total stays within the INR 260 treatment ceiling.
+Failed windows (a window errors after retries and fallback): the paper’s output is written and flagged incomplete. It is not rerun. Failed windows count as 0 sentences, and the paper is reported as incomplete in B4.
+
+No other reruns. Decided before any pass2_r1 result exists.
