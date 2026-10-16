@@ -2596,3 +2596,10 @@ Written before any label exists (packs/sheet/keys from the B4 method entry above
 | `c8_key.json` | `ab9631d091845096a2a0750bc3717ad259c70f4a99b2128c56ae7c3f06b54071` |
 
 All identical before and after. `uv run pytest -q tests/test_exp3_b4.py`: 36 passed (was 26; 10 new tests for the two fixes plus the two pinned non-bugs and distinct-per-run-input coverage for c3/c4/c7). Full suite `uv run pytest -q`: 298 passed, 1 deselected. No gate or threshold in `exp3_thresholds.json` changed; nothing in `cmd_build_c1`/`cmd_build_c8` (pack/sheet/key generation) was touched.
+
+## Experiment 3 B4 result - 2026-10-16
+- Deterministic gates: c4 FAIL (projected INR 237.59 pooled / 243.75 mean vs 130 cap); c7 PASS (0.987 / 0.989); c2 18/18 both runs (report). Fallback 0, incomplete papers 0.
+- c1, c6, c8: NOT MEASURED. Human labelling was not done (deviation from the pre-registration, recorded here). Packs remain committed in docs/evals/exp3_b4/ and can be labelled later.
+- Verdict: REJECTED on c4, per the pre-registered outcomes. EXTRACTOR_SECOND_PASS stays default off; code kept behind the flag. The push ends. Exit decision is next.
+- Junk/bloat measurement is deferred to the claim-count R&D item, measured on the pass-1 (shipping) path with its own pre-registered design.
+- Push spend INR 185.79 (meter). B4 spend INR 0.
