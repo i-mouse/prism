@@ -1,0 +1,48 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12168v1",
+    "run_id": "pass2_r1",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "generated_at": "2026-10-15T17:29:24Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 0,
+  "dropped_duplicate": [
+    {
+      "sentence": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "best_match": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "best_match": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple's hierarchy.",
+      "best_match": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+      "best_match": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [],
+  "kept_new": [
+    {
+      "sentence": "The anti-hindsight-bias instruction encourages guidance usable from the initial state.",
+      "best_match": "We operationalize this observation by jointly training a model on three tasks.",
+      "ratio_score": 45.12195121951219,
+      "partial_ratio_score": 44.87179487179487
+    }
+  ]
+}

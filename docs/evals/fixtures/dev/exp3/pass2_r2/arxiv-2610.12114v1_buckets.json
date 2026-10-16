@@ -1,0 +1,625 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12114v1",
+    "run_id": "pass2_r2",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "0dbaad7a-9e6f-4f23-a314-6c8c1a889c15",
+    "generated_at": "2026-10-16T07:38:02Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 1,
+  "dropped_duplicate": [
+    {
+      "sentence": "Notably, the resulting Primer can improve the performance of the source Student and other Students that are not involved in creating the Primer.",
+      "best_match": "Notably, the resulting Primer can improve the performance of the source Student and other Students that are not involved in creating the Primer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For the target Student Qwen3.6-27B, Primers synthesized from the Teacher-Student pairs (shown at the bottom of the figure) consistently improve accuracy.",
+      "best_match": "For the target Student Qwen3.6-27B, Primers synthesized from the Teacher-Student pairs (shown at the bottom of the figure) consistently improve accuracy.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Even when Qwen3.6-27B does not participate in the Primer synthesis, the absolute accuracy gains reach 41.8% and 31.5% (see the rightmost column) on KernelBench and Omni-MATH-2, respectively.",
+      "best_match": "Even when Qwen3.6-27B does not participate in the Primer synthesis, the absolute accuracy gains reach 41.8% and 31.5% (see the rightmost column) on KernelBench and Omni-MATH-2, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Empirically, on the challenging math (Omni-MATH-2) and code generation (KernelBench) tasks, extensive results confirm the effectiveness of the method: UTT remarkably raises the Student\u2019s accuracy from 9.4% to 48.6% and Fast1 accuracy from 9% to 35% on KernelBench, while increasing mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "best_match": "Empirically, on the challenging math (Omni-MATH-2) and code generation (KernelBench) tasks, extensive results confirm the effectiveness of the method: UTT remarkably raises the Student\u2019s accuracy from 9.4% to 48.6% and Fast1 accuracy from 9% to 35% on KernelBench, while increasing mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "UTT also performs better than representative prompt engineering and parameter-based KD methods.",
+      "best_match": "UTT also performs better than representative prompt engineering and parameter-based KD methods.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Of note, UTT is shown to be generalizable across different Teachers and Students: a Primer synthesized for one Teacher-Student pair can generalize to other Students that do not participate in the synthesis.",
+      "best_match": "Of note, UTT is shown to be generalizable across different Teachers and Students: a Primer synthesized for one Teacher-Student pair can generalize to other Students that do not participate in the synthesis.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Empirically, across various Teacher-Student configurations in mathematical reasoning and code generation, the synthesized Primers consistently improve their source Students and remain effective when transferred to other Students without resynthesis, demonstrating both effectiveness and cross-model reusability.",
+      "best_match": "Empirically, across various Teacher-Student configurations in mathematical reasoning and code generation, the synthesized Primers consistently improve their source Students and remain effective when transferred to other Students without resynthesis, demonstrating both effectiveness and cross-model reusability.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Relative to the unprimed Student baselines, UTT improves KernelBench accuracy from 9.4% to 48.6%, Fast1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "best_match": "Relative to the unprimed Student baselines, UTT improves KernelBench accuracy from 9.4% to 48.6%, Fast1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "best_match": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across math and code tasks, UTT demonstrates effectiveness and transferability, with Primers transferable across models without resynthesis.",
+      "best_match": "Across math and code tasks, UTT demonstrates effectiveness and transferability, with Primers transferable across models without resynthesis.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The Primer yields substantial gains of 39.2, 26, and 24.1 percentage points over the Student baseline on KernelBench accuracy, Fast1, and Math accuracy, respectively, improving the corresponding scores from 9.4% to 48.6%, 9% to 35%, and 27.6% to 51.7%.",
+      "best_match": "The Primer yields substantial gains of 39.2, 26, and 24.1 percentage points over the Student baseline on KernelBench accuracy, Fast1, and Math accuracy, respectively, improving the corresponding scores from 9.4% to 48.6%, 9% to 35%, and 27.6% to 51.7%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Keeping Pro as the Teacher, we further synthesize a new Primer for Qwen, which achieves 50.0%, 32%, and 62.4% on the same metrics.",
+      "best_match": "Keeping Pro as the Teacher, we further synthesize a new Primer for Qwen, which achieves 50.0%, 32%, and 62.4% on the same metrics.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast1, and Math accuracy, respectively.",
+      "best_match": "The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast1, and Math accuracy, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 percentage points on the same metrics.",
+      "best_match": "The Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 percentage points on the same metrics.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "best_match": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+      "best_match": "It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Finally, applying this Primer unchanged to Qwen yields 51.0% KernelBench accuracy, 22% Fast1, and 65.8% Math accuracy.",
+      "best_match": "Finally, applying this Primer unchanged to Qwen yields 51.0% KernelBench accuracy, 22% Fast1, and 65.8% Math accuracy.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the distillation training set, Pro\u2192Flash accuracy on KernelBench increases from 6.7% to 65.2%, indicating that the synthesized Primer effectively improves Student performance on knowledge-gap samples.",
+      "best_match": "On the distillation training set, Pro\u2192Flash accuracy on KernelBench increases from 6.7% to 65.2%, indicating that the synthesized Primer effectively improves Student performance on knowledge-gap samples.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the distillation test set, Pro\u2192Qwen accuracy on the math task increases from 9.7% to 64.8%.",
+      "best_match": "On the distillation test set, Pro\u2192Qwen accuracy on the math task increases from 9.7% to 64.8%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "best_match": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the retention subset, the three KernelBench configurations show no decline in accuracy; instead, they improve from 34.0% to 74.0%, 27.0% to 81.0%, and 37.1% to 78.6%, respectively.",
+      "best_match": "On the retention subset, the three KernelBench configurations show no decline in accuracy; instead, they improve from 34.0% to 74.0%, 27.0% to 81.0%, and 37.1% to 78.6%, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "best_match": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the distillation training set, Pro\u2192Flash accuracy on KernelBench increases from 6.7% to 65.2%, indicating that the synthesized Primer effectively improves Student performance on knowledge-gap samples.",
+      "best_match": "On the distillation training set, Pro\u2192Flash accuracy on KernelBench increases from 6.7% to 65.2%, indicating that the synthesized Primer effectively improves Student performance on knowledge-gap samples.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the distillation test set, Pro\u2192Qwen accuracy on the math task increases from 9.7% to 64.8%.",
+      "best_match": "On the distillation test set, Pro\u2192Qwen accuracy on the math task increases from 9.7% to 64.8%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "best_match": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the retention subset, the three KernelBench configurations show no decline in accuracy; in- stead, they improve from 34.0% to 74.0%, 27.0% to 81.0%, and 37.1% to 78.6%, respectively.",
+      "best_match": "On the retention subset, the three KernelBench configurations show no decline in accuracy; instead, they improve from 34.0% to 74.0%, 27.0% to 81.0%, and 37.1% to 78.6%, respectively.",
+      "ratio_score": 99.45652173913044,
+      "partial_ratio_score": 98.90710382513662
+    },
+    {
+      "sentence": "On Omni-MATH-2, Pro\u2192Flash improves accuracy from 58.0% to 69.0%, while Pro\u2192Qwen and Opus\u2192Flash decrease accuracy by 9.2 and 14.2 percentage points, respectively, yet still retain most of their baseline performance.",
+      "best_match": "On Omni-MATH-2, Pro\u2192Flash improves accuracy from 58.0% to 69.0%, while Pro\u2192Qwen and Opus\u2192Flash decrease accuracy by 9.2 and 14.2 percentage points, respectively, yet still retain most of their baseline performance.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "best_match": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This shows that the Primer can help the Student solve some problems that neither the Teacher nor the Student solved during baseline evaluation, extending the observed capability frontier.",
+      "best_match": "This shows that the Primer can help the Student solve some problems that neither the Teacher nor the Student solved during baseline evaluation, extending the observed capability frontier.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1, respectively.",
+      "best_match": "With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the challenging math and code generation tasks (Omni-MATH-2 and KernelBench), UTT substantially improves the Student\u2019s performance across various Teacher-Student settings.",
+      "best_match": "On the challenging math and code generation tasks (Omni-MATH-2 and KernelBench), UTT substantially improves the Student\u2019s performance across various Teacher-Student settings.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "UTT also outperforms representative prompt engineering and KD methods.",
+      "best_match": "UTT also outperforms representative prompt engineering and parameter-updating KD methods.",
+      "ratio_score": 88.0503144654088,
+      "partial_ratio_score": 91.47286821705426
+    },
+    {
+      "sentence": "Compared with knowledge im- plicitly encoded in model parameters, the Primer is interpretable and not tied to particular model weights, enabling direct transfer to other models.",
+      "best_match": "Compared with knowledge implicitly encoded in model parameters, the Primer is interpretable and not tied to particular model weights, enabling direct transfer to other models.",
+      "ratio_score": 99.43181818181817,
+      "partial_ratio_score": 98.85714285714286
+    },
+    {
+      "sentence": "On the challenging math and code generation tasks (Omni-MATH-2 and KernelBench), UTT substantially improves the Student\u2019s performance across various Teacher-Student settings.",
+      "best_match": "On the challenging math and code generation tasks (Omni-MATH-2 and KernelBench), UTT substantially improves the Student\u2019s performance across various Teacher-Student settings.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "UTT also outperforms representative prompt engineering and KD methods.",
+      "best_match": "UTT also outperforms representative prompt engineering and parameter-updating KD methods.",
+      "ratio_score": 88.0503144654088,
+      "partial_ratio_score": 91.47286821705426
+    },
+    {
+      "sentence": "Compared with knowledge im- plicitly encoded in model parameters, the Primer is interpretable and not tied to particular model weights, enabling direct transfer to other models.",
+      "best_match": "Compared with knowledge implicitly encoded in model parameters, the Primer is interpretable and not tied to particular model weights, enabling direct transfer to other models.",
+      "ratio_score": 99.43181818181817,
+      "partial_ratio_score": 98.85714285714286
+    },
+    {
+      "sentence": "This demonstrates that natural language can serve as a deployable knowledge carrier across models, providing a new parameter-update-free perspec- tive on knowledge distillation for large language models.",
+      "best_match": "This demonstrates that natural language can serve as a deployable knowledge carrier across models, providing a new parameter-update-free perspec- tive on knowledge distillation for large language models.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 5 shows that the Primer yields positive gains for every source and transfer Student.",
+      "best_match": "Table 5 shows that the Primer yields positive gains for every source and transfer Student.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Under Qwen3.8-Max\u2192Qwen3.6-27B, the source Student improves from 41.5% to 76.0%, while transferring the same Primer to DeepSeek-V4.1-Flash improves its accuracy from 54.0% to 59.0%.",
+      "best_match": "Under Qwen3.8-Max\u2192Qwen3.6-27B, the source Student improves from 41.5% to 76.0%, while transferring the same Primer to DeepSeek-V4.1-Flash improves its accuracy from 54.0% to 59.0%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "When DeepSeek-V4.1-Flash serves as the source Student, its accuracy increases from 54.0% to 56.0%, whereas transferring the resulting Primer to Qwen3.6-27B substantially improves accuracy from 41.5% to 72.0%.",
+      "best_match": "When DeepSeek-V4.1-Flash serves as the source Student, its accuracy increases from 54.0% to 56.0%, whereas transferring the resulting Primer to Qwen3.6-27B substantially improves accuracy from 41.5% to 72.0%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "After replacing the Teacher with Claude Opus 5, Qwen3.6-27B improves from 41.5% to 80.5%, while applying the same Primer to DeepSeek-V4.1-Flash raises its accuracy from 54.0% to 57.5%.",
+      "best_match": "After replacing the Teacher with Claude Opus 5, Qwen3.6-27B improves from 41.5% to 80.5%, while applying the same Primer to DeepSeek-V4.1-Flash raises its accuracy from 54.0% to 57.5%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Overall, Primers synthesized by different Teachers substantially improve Qwen3.6-27B, and all cross-Student transfers retain positive gains.",
+      "best_match": "Overall, Primers synthesized by different Teachers substantially improve Qwen3.6-27B, and all cross-Student transfers retain positive gains.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Notably, although the Primer is synthesized with a 32k maximum output-token budget, it continues to improve the Student at larger budgets, indicating that its knowledge and solution strategies are not tied to the specific output-token budget used during synthesis.",
+      "best_match": "Notably, although the Primer is synthesized with a 32k maximum output-token budget, it continues to improve the Student at larger budgets, indicating that its knowledge and solution strategies are not tied to the specific output-token budget used during synthesis.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This suggests that explicit knowledge guidance derived from Teacher-Student interaction can narrow this gap more effectively than prompt optimization that primarily relies on iterative search guided by evaluation signals.",
+      "best_match": "This suggests that explicit knowledge guidance derived from Teacher-Student interaction can narrow this gap more effectively than prompt optimization that primarily relies on iterative search guided by evaluation signals.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The full method improves over the Student without a Primer across all four knowledge-gap subsets.",
+      "best_match": "The full method improves over the Student without a Primer across all four knowledge-gap subsets.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Accuracy increases from 33.7%, 33.3%, 60.0%, and 0.0% to 65.3%, 56.0%, 72.5%, and 5.0% on the distillation-training, distillation-test, retention, and frontier subsets, respectively.",
+      "best_match": "Accuracy increases from 33.7%, 33.3%, 60.0%, and 0.0% to 65.3%, 56.0%, 72.5%, and 5.0% on the distillation-training, distillation-test, retention, and frontier subsets, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Compared with random selection, knowledge-gap selection improves distillation-training and distillation-test accuracy by 9.7 and 6.0 percentage points, respectively, maintains the same retention accuracy, and yields one additional correct response on the frontier subset.",
+      "best_match": "Compared with random selection, knowledge-gap selection improves distillation-training and distillation-test accuracy by 9.7 and 6.0 percentage points, respectively, maintains the same retention accuracy, and yields one additional correct response on the frontier subset.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results suggest that selecting synthesis problems according to the Teacher\u2013Student knowledge gap provides more targeted teaching signals and a more consistent overall improvement.",
+      "best_match": "These results suggest that selecting synthesis problems according to the Teacher\u2013Student knowledge gap provides more targeted teaching signals and a more consistent overall improvement.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Removing the Prompter yields the highest distillation-training accuracy of 72.4%, but reduces distillation-test and retention accuracy from 56.0% and 72.5% to 48.8% and 70.0%, respectively, while frontier accuracy remains at 5.0%.",
+      "best_match": "Removing the Prompter yields the highest distillation-training accuracy of 72.4%, but reduces distillation-test and retention accuracy from 56.0% and 72.5% to 48.8% and 70.0%, respectively, while frontier accuracy remains at 5.0%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This trade-off suggests that direct Teacher demonstrations fit the synthesis problems more strongly, whereas the Prompter helps transfer the acquired knowl- edge to problems not used for synthesis.",
+      "best_match": "This trade-off suggests that direct Teacher demonstrations fit the synthesis problems more strongly, whereas the Prompter helps transfer the acquired knowledge to problems not used for synthesis.",
+      "ratio_score": 99.48979591836735,
+      "partial_ratio_score": 98.97435897435898
+    }
+  ],
+  "kept_but_contained": [
+    {
+      "sentence": "UTT also outperforms representative prompt engineering and parameter-updating KD methods.",
+      "best_match": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "ratio_score": 85.86956521739131,
+      "partial_ratio_score": 89.8876404494382
+    },
+    {
+      "sentence": "These results indicate",
+      "best_match": "These results indicate that explicit textual knowledge can yield stronger and more consistent gains across tasks.",
+      "ratio_score": 32.592592592592595,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results indicate that UTT extends to multimodal reasoning tasks requiring joint understanding of images and text, and that its textual knowledge can be reused across models.",
+      "best_match": "These results indicate",
+      "ratio_score": 53.42465753424658,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_new": [
+    {
+      "sentence": "These results suggest that text can serve as a universal medium for knowledge transfer among different LLMs for complex tasks.",
+      "best_match": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "ratio_score": 49.09747292418773,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "UTT retains the objective of knowledge distillation while explicitly representing the Teacher\u2019s knowledge advantage over the Student as a natural-language Primer, which enhances the Student through context while keeping its parameters fixed.",
+      "best_match": "We formulate LLM distillation as representing the Teacher-Student knowledge gap in natural language rather than encoding it in a specific Student\u2019s parameters, making the distilled knowledge interpretable and reusable across models.",
+      "ratio_score": 52.43128964059196,
+      "partial_ratio_score": 55.233853006681514
+    },
+    {
+      "sentence": "Experiments further validate that this language-based knowledge representation Primer not only enhances the source Student but also transfers to improve other Student models.",
+      "best_match": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "ratio_score": 51.5527950310559,
+      "partial_ratio_score": 52.94117647058824
+    },
+    {
+      "sentence": "These results validate the effectiveness of UTT and demonstrate its applicability to Students from different model families.",
+      "best_match": "These results suggest that text can serve as a universal medium for knowledge transfer among different LLMs for complex tasks.",
+      "ratio_score": 51.2,
+      "partial_ratio_score": 51.23966942148761
+    },
+    {
+      "sentence": "This result further demonstrates the transferability and broad applicability of UTT across diverse Teacher-Student configurations.",
+      "best_match": "These results validate the effectiveness of UTT and demonstrate its applicability to Students from different model families.",
+      "ratio_score": 51.96850393700787,
+      "partial_ratio_score": 53.275109170305676
+    },
+    {
+      "sentence": "Together, these results support effective synthesis across the evaluated model configurations without resynthesis or parameter updates.",
+      "best_match": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "ratio_score": 51.590106007067135,
+      "partial_ratio_score": 50.40650406504066
+    },
+    {
+      "sentence": "Although the main experiments focus on LLMs, we also preliminarily confirm transfer to multimodal LLMs in Appendix B.1.",
+      "best_match": "These results suggest that text can serve as a universal medium for knowledge transfer among different LLMs for complex tasks.",
+      "ratio_score": 44.08163265306122,
+      "partial_ratio_score": 45.95744680851064
+    },
+    {
+      "sentence": "On Omni-MATH-2, Pro\u2192Flash improves accuracy from 58.0% to 69.0%, while Pro\u2192Qwen and Opus\u2192Flash decrease accuracy by 9.2 and 14.2 percentage points, respectively, yet still retain most of their baseline performance.",
+      "best_match": "It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+      "ratio_score": 44.01114206128134,
+      "partial_ratio_score": 52.87356321839081
+    },
+    {
+      "sentence": "On the frontier subset, the primed Student achieves nonzero accuracy in five of the six configura- tions.",
+      "best_match": "On the distillation test set, Pro\u2192Qwen accuracy on the math task increases from 9.7% to 64.8%.",
+      "ratio_score": 47.23618090452262,
+      "partial_ratio_score": 46.59090909090909
+    },
+    {
+      "sentence": "The three KernelBench configurations achieve 11.7% to 18.6% accuracy, while Pro\u2192Flash and Pro\u2192Qwen achieve 5.3% and 30.0% on Omni-MATH-2, respectively.",
+      "best_match": "On the retention subset, the three KernelBench configurations show no decline in accuracy; instead, they improve from 34.0% to 74.0%, 27.0% to 81.0%, and 37.1% to 78.6%, respectively.",
+      "ratio_score": 53.89221556886228,
+      "partial_ratio_score": 55.62913907284768
+    },
+    {
+      "sentence": "Together, these fine-grained results further support the effectiveness of UTT in four respects: syn- thesis effectiveness, generalization to unseen problems, preservation of existing capabilities, and extension of capability frontiers.",
+      "best_match": "Together, these results support effective synthesis across the evaluated model configurations without resynthesis or parameter updates.",
+      "ratio_score": 51.35135135135135,
+      "partial_ratio_score": 56.470588235294116
+    },
+    {
+      "sentence": "These results indicate that explicit textual knowledge can yield stronger and more consistent gains across tasks.",
+      "best_match": "These results suggest that text can serve as a universal medium for knowledge transfer among different LLMs for complex tasks.",
+      "ratio_score": 55.23012552301255,
+      "partial_ratio_score": 52.44444444444445
+    },
+    {
+      "sentence": "This demonstrates that natural language can serve as a deployable knowledge carrier across models, providing a new parameter-update-free perspec- tive on knowledge distillation for large language models.",
+      "best_match": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "ratio_score": 50.72886297376093,
+      "partial_ratio_score": 53.57142857142857
+    },
+    {
+      "sentence": "This paper introduces Universal Textual Teaching (UTT), a parameter-update-free knowledge distil- lation method for large language models.",
+      "best_match": "This demonstrates that natural language can serve as a deployable knowledge carrier across models, providing a new parameter-update-free perspec- tive on knowledge distillation for large language models.",
+      "ratio_score": 60.997067448680355,
+      "partial_ratio_score": 68.19923371647509
+    },
+    {
+      "sentence": "We observed that the training losses of the KD baselines had largely stabilized by the end of their respective update budgets.",
+      "best_match": "These results validate the effectiveness of UTT and demonstrate its applicability to Students from different model families.",
+      "ratio_score": 44.8,
+      "partial_ratio_score": 44.89795918367348
+    },
+    {
+      "sentence": "Table 5 shows that the Primer yields positive gains for every source and transfer Student.",
+      "best_match": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "ratio_score": 47.05882352941176,
+      "partial_ratio_score": 53.333333333333336
+    },
+    {
+      "sentence": "Under Qwen3.8-Max\u2192Qwen3.6-27B, the source Student improves from 41.5% to 76.0%, while transferring the same Primer to DeepSeek-V4.1-Flash improves its accuracy from 54.0% to 59.0%.",
+      "best_match": "Relative to the unprimed Student baselines, UTT improves KernelBench accuracy from 9.4% to 48.6%, Fast1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "ratio_score": 48.87640449438202,
+      "partial_ratio_score": 51.533742331288344
+    },
+    {
+      "sentence": "When DeepSeek-V4.1-Flash serves as the source Student, its accuracy increases from 54.0% to 56.0%, whereas transferring the resulting Primer to Qwen3.6-27B substantially improves accuracy from 41.5% to 72.0%.",
+      "best_match": "Under Qwen3.8-Max\u2192Qwen3.6-27B, the source Student improves from 41.5% to 76.0%, while transferring the same Primer to DeepSeek-V4.1-Flash improves its accuracy from 54.0% to 59.0%.",
+      "ratio_score": 62.88659793814433,
+      "partial_ratio_score": 65.73816155988858
+    },
+    {
+      "sentence": "After replacing the Teacher with Claude Opus 5, Qwen3.6-27B improves from 41.5% to 80.5%, while applying the same Primer to DeepSeek-V4.1-Flash raises its accuracy from 54.0% to 57.5%.",
+      "best_match": "Under Qwen3.8-Max\u2192Qwen3.6-27B, the source Student improves from 41.5% to 76.0%, while transferring the same Primer to DeepSeek-V4.1-Flash improves its accuracy from 54.0% to 59.0%.",
+      "ratio_score": 72.52747252747253,
+      "partial_ratio_score": 78.86435331230284
+    },
+    {
+      "sentence": "Overall, Primers synthesized by different Teachers substantially improve Qwen3.6-27B, and all cross-Student transfers retain positive gains.",
+      "best_match": "Of note, UTT is shown to be generalizable across different Teachers and Students: a Primer synthesized for one Teacher-Student pair can generalize to other Students that do not participate in the synthesis.",
+      "ratio_score": 46.820809248554916,
+      "partial_ratio_score": 53.03030303030303
+    },
+    {
+      "sentence": "The different gain magnitudes on Qwen3.6-27B and DeepSeek-V4.1-Flash indicate that transfer effectiveness varies with the target Student.",
+      "best_match": "Overall, Primers synthesized by different Teachers substantially improve Qwen3.6-27B, and all cross-Student transfers retain positive gains.",
+      "ratio_score": 47.65342960288809,
+      "partial_ratio_score": 52.032520325203244
+    },
+    {
+      "sentence": "UTT consistently outperforms the unprimed Student across all evaluated budgets, with a more pronounced advantage under smaller budgets.",
+      "best_match": "Together, these results support effective synthesis across the evaluated model configurations without resynthesis or parameter updates.",
+      "ratio_score": 48.88888888888889,
+      "partial_ratio_score": 50.59288537549407
+    },
+    {
+      "sentence": "As both curves approach saturation, UTT retains its advantage, suggesting that the Primer is particularly beneficial when the inference budget is constrained and provides a higher effective performance ceiling within the evaluated range.",
+      "best_match": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "ratio_score": 46.4,
+      "partial_ratio_score": 52.17391304347826
+    },
+    {
+      "sentence": "Notably, although the Primer is synthesized with a 32k maximum output-token budget, it continues to improve the Student at larger budgets, indicating that its knowledge and solution strategies are not tied to the specific output-token budget used during synthesis.",
+      "best_match": "Notably, the resulting Primer can improve the performance of the source Student and other Students that are not involved in creating the Primer.",
+      "ratio_score": 45.58823529411765,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "At the largest tested budget, APO approaches and even slightly underperforms the baseline, whereas UTT, although not reaching Teacher performance, remains between the baseline and the Teacher.",
+      "best_match": "As both curves approach saturation, UTT retains its advantage, suggesting that the Primer is particularly beneficial when the inference budget is constrained and provides a higher effective performance ceiling within the evaluated range.",
+      "ratio_score": 46.15384615384615,
+      "partial_ratio_score": 48.05194805194806
+    },
+    {
+      "sentence": "This suggests that explicit knowledge guidance derived from Teacher-Student interaction can narrow this gap more effectively than prompt optimization that primarily relies on iterative search guided by evaluation signals.",
+      "best_match": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "ratio_score": 45.52845528455285,
+      "partial_ratio_score": 50.38167938931297
+    },
+    {
+      "sentence": "UTT completes Primer synthesis in 1.6 hours through 281 API model calls, approximately 0.68 million input tokens, and 5.57 million output tokens.",
+      "best_match": "Together, these results support effective synthesis across the evaluated model configurations without resynthesis or parameter updates.",
+      "ratio_score": 42.85714285714286,
+      "partial_ratio_score": 42.352941176470594
+    },
+    {
+      "sentence": "Together with Table 3, these results show that UTT outperforms all KD baselines without parameter updates.",
+      "best_match": "Together, these results support effective synthesis across the evaluated model configurations without resynthesis or parameter updates.",
+      "ratio_score": 58.091286307053934,
+      "partial_ratio_score": 52.42718446601942
+    },
+    {
+      "sentence": "The full method improves over the Student without a Primer across all four knowledge-gap subsets.",
+      "best_match": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "ratio_score": 52.76595744680851,
+      "partial_ratio_score": 53.608247422680414
+    },
+    {
+      "sentence": "Accuracy increases from 33.7%, 33.3%, 60.0%, and 0.0% to 65.3%, 56.0%, 72.5%, and 5.0% on the distillation-training, distillation-test, retention, and frontier subsets, respectively.",
+      "best_match": "It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+      "ratio_score": 42.201834862385326,
+      "partial_ratio_score": 42.75862068965517
+    },
+    {
+      "sentence": "Compared with random selection, knowledge-gap selection improves distillation-training and distillation-test accuracy by 9.7 and 6.0 percentage points, respectively, maintains the same retention accuracy, and yields one additional correct response on the frontier subset.",
+      "best_match": "On Omni-MATH-2, Pro\u2192Flash improves accuracy from 58.0% to 69.0%, while Pro\u2192Qwen and Opus\u2192Flash decrease accuracy by 9.2 and 14.2 percentage points, respectively, yet still retain most of their baseline performance.",
+      "ratio_score": 48.24742268041236,
+      "partial_ratio_score": 52.36907730673317
+    },
+    {
+      "sentence": "These results suggest that selecting synthesis problems according to the Teacher\u2013Student knowledge gap provides more targeted teaching signals and a more consistent overall improvement.",
+      "best_match": "These results indicate that explicit textual knowledge can yield stronger and more consistent gains across tasks.",
+      "ratio_score": 53.02013422818792,
+      "partial_ratio_score": 50.442477876106196
+    },
+    {
+      "sentence": "Removing the Prompter yields the highest distillation-training accuracy of 72.4%, but reduces distillation-test and retention accuracy from 56.0% and 72.5% to 48.8% and 70.0%, respectively, while frontier accuracy remains at 5.0%.",
+      "best_match": "Compared with random selection, knowledge-gap selection improves distillation-training and distillation-test accuracy by 9.7 and 6.0 percentage points, respectively, maintains the same retention accuracy, and yields one additional correct response on the frontier subset.",
+      "ratio_score": 49.9001996007984,
+      "partial_ratio_score": 54.21412300683372
+    },
+    {
+      "sentence": "This trade-off suggests that direct Teacher demonstrations fit the synthesis problems more strongly, whereas the Prompter helps transfer the acquired knowledge to problems not used for synthesis.",
+      "best_match": "Across math and code tasks, UTT demonstrates effectiveness and transferability, with Primers transferable across models without resynthesis.",
+      "ratio_score": 52.537313432835816,
+      "partial_ratio_score": 50.71428571428571
+    },
+    {
+      "sentence": "Without validation gating, distillation-training, distillation-test, and frontier accuracy decrease from 65.3%, 56.0%, and 5.0% to 59.2%, 39.3%, and 3.8%, respectively, while retention accuracy in- creases from 72.5% to 80.0%.",
+      "best_match": "Removing the Prompter yields the highest distillation-training accuracy of 72.4%, but reduces distillation-test and retention accuracy from 56.0% and 72.5% to 48.8% and 70.0%, respectively, while frontier accuracy remains at 5.0%.",
+      "ratio_score": 65.35087719298245,
+      "partial_ratio_score": 66.97892271662764
+    },
+    {
+      "sentence": "Thus, removing the gate does not yield a consistent improvement, but instead trades lower accuracy on the other three subsets for higher retention accuracy.",
+      "best_match": "On the frontier subset, the primed Student achieves nonzero accuracy in five of the six configura- tions.",
+      "ratio_score": 49.808429118773944,
+      "partial_ratio_score": 53.333333333333336
+    },
+    {
+      "sentence": "Among the three batch sizes, the default batch size of 16 performs best on the distillation-training and distillation-test subsets and ties batch size 32 on the retention and frontier subsets.",
+      "best_match": "Compared with random selection, knowledge-gap selection improves distillation-training and distillation-test accuracy by 9.7 and 6.0 percentage points, respectively, maintains the same retention accuracy, and yields one additional correct response on the frontier subset.",
+      "ratio_score": 53.131749460043196,
+      "partial_ratio_score": 54.16666666666667
+    },
+    {
+      "sentence": "The smaller batch size of 8 performs worse across all four subsets.",
+      "best_match": "The full method improves over the Student without a Primer across all four knowledge-gap subsets.",
+      "ratio_score": 57.31707317073172,
+      "partial_ratio_score": 57.14285714285714
+    },
+    {
+      "sentence": "Although batch size 32 maintains the retention and frontier results, its distillation-training and distillation-test accuracy decreases to 59.2% and 45.2%, respectively.",
+      "best_match": "Among the three batch sizes, the default batch size of 16 performs best on the distillation-training and distillation-test subsets and ties batch size 32 on the retention and frontier subsets.",
+      "ratio_score": 57.06371191135734,
+      "partial_ratio_score": 61.23778501628665
+    },
+    {
+      "sentence": "These results suggest that an intermediate batch size provides a better balance between the amount of teaching evidence consolidated in each update and the frequency of Primer refinement.",
+      "best_match": "These results suggest that selecting synthesis problems according to the Teacher\u2013Student knowledge gap provides more targeted teaching signals and a more consistent overall improvement.",
+      "ratio_score": 53.76344086021505,
+      "partial_ratio_score": 54.437869822485204
+    },
+    {
+      "sentence": "The Primer improves both accuracy and Fast1 in all four settings.",
+      "best_match": "The smaller batch size of 8 performs worse across all four subsets.",
+      "ratio_score": 53.03030303030303,
+      "partial_ratio_score": 53.448275862068975
+    },
+    {
+      "sentence": "Although the gain magnitude varies across configurations, the same Primer remains effective without resynthesis under the evaluated changes to quantization and thinking mode.",
+      "best_match": "Together, these results support effective synthesis across the evaluated model configurations without resynthesis or parameter updates.",
+      "ratio_score": 48.54368932038835,
+      "partial_ratio_score": 54.6875
+    },
+    {
+      "sentence": "This example preserves the compact form produced by the Synthesizer and illustrates how problem-solving experience from different problems is consolidated into a textual Primer.",
+      "best_match": "These results suggest that an intermediate batch size provides a better balance between the amount of teaching evidence consolidated in each update and the frequency of Primer refinement.",
+      "ratio_score": 47.25274725274725,
+      "partial_ratio_score": 48.29545454545454
+    },
+    {
+      "sentence": "This example illustrates how a Primer organizes code-generation requirements, implementation patterns, and engineering troubleshooting experience for CUDA operators into textual guidance that can be directly used by the Student.",
+      "best_match": "This example preserves the compact form produced by the Synthesizer and illustrates how problem-solving experience from different problems is consolidated into a textual Primer.",
+      "ratio_score": 47.90123456790123,
+      "partial_ratio_score": 50.28248587570621
+    },
+    {
+      "sentence": "This example illustrates how a Primer combines computational patterns, implementation details, and engineering experience to guide code generation and validation.",
+      "best_match": "This example illustrates how a Primer organizes code-generation requirements, implementation patterns, and engineering troubleshooting experience for CUDA operators into textual guidance that can be directly used by the Student.",
+      "ratio_score": 63.589743589743584,
+      "partial_ratio_score": 69.1358024691358
+    },
+    {
+      "sentence": "Nearly every observed failure was identical: no final output \u2014 budget burned re-reading the figure, cataloguing every labeled value, or debating which vertex owns a number.",
+      "best_match": "Notably, the resulting Primer can improve the performance of the source Student and other Students that are not involved in creating the Primer.",
+      "ratio_score": 44.30379746835443,
+      "partial_ratio_score": 44.81327800829875
+    },
+    {
+      "sentence": "We are aware that UTT increases inference-time token usage because the Primer is prepended to every task input, which could be considered a limitation of the method.",
+      "best_match": "Compared with knowledge implicitly encoded in model parameters, the Primer is interpretable and not tied to particular model weights, enabling direct transfer to other models.",
+      "ratio_score": 49.411764705882355,
+      "partial_ratio_score": 49.09090909090909
+    },
+    {
+      "sentence": "The primary goal of this work, however, is to provide a proof of concept that knowledge distillation of LLMs can occur in text form, with no weight updates required.",
+      "best_match": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "ratio_score": 46.83544303797469,
+      "partial_ratio_score": 51.821862348178136
+    }
+  ]
+}

@@ -1,0 +1,429 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12124v1",
+    "run_id": "pass2_r2",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715",
+    "generated_at": "2026-10-16T07:39:13Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "To address this, we propose Hippocam, a hierarchical memory and continual learning architecture.",
+      "claim_summary": "Hippocam is a hierarchical memory and continual learning architecture for LLM agents.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Through this memory dynamic of use and disuse, Hippocam connects working context, long-term memory, knowledge accumulation, and skill learning within a single continuously evolving experiential process.",
+      "claim_summary": "Hippocam unifies context management, memory, knowledge, and skill learning via use and disuse.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "This enables agents to learn and evolve capabilities through their own experiences without parameter updates.",
+      "claim_summary": "Hippocam allows agents to continuously evolve capabilities without updating model weights.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Whereas competing methods show more uneven performance across these demands, Hippocam leads or matches the best compared method on seven of the eight measures in Fig. 1.",
+      "claim_summary": "Hippocam matches or beats top baselines on 7 out of 8 evaluated benchmark metrics.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam does not build a memory bank separate from its interaction history, but remembers and learns by deliberately maintaining its context.",
+      "claim_summary": "Hippocam manages memory directly within context rather than using a separate memory bank.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both forms of consolidation keep the agent\u2019s recent context focused and high-signal, enabling accurate and coherent reasoning over long horizons.",
+      "claim_summary": "Consolidation keeps working context concise and high-signal for long-horizon reasoning.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Experience that remains unused continues to recede in detail through recursive consolidation, without separately assigned importance scores or time-based forgetting rules.",
+      "claim_summary": "Unused details recede naturally without explicit importance scores or decay rules.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+      "claim_summary": "Use and disuse dynamics unify memory recall with continuous learning and capability expansion.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result.",
+      "claim_summary": "Hippocam reaches 97.8% success on ALFWorld, tying the top baseline.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods.",
+      "claim_summary": "Hippocam achieves 81.9% mean progress on ScienceWorld, outperforming most baselines.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+      "claim_summary": "Hippocam hits 81.7% mean accuracy on StreamBench, outperforming all competitors.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On DDXPlus, Hippocam continues to improve after early fluctuations and maintains its lead, while Letta and A-Mem also improve.",
+      "claim_summary": "Hippocam maintains leading accuracy on DDXPlus as experience accumulates over time.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On ToolBench, Hippocam makes modest further gains amid fluctuations and moves ahead of Letta, whereas A-Mem shows little sustained improvement in the extended evaluation.",
+      "claim_summary": "Hippocam advances past Letta on ToolBench with extended interaction tasks.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In both streams, Hippocam also achieves higher accuracy with about 10% lower average cost per task in the later 150-task interval (\u00a7 A.9).",
+      "claim_summary": "Hippocam improves accuracy while cutting per-task cost by 10% in later task streams.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+      "claim_summary": "Hippocam reaches 78.9% frozen transfer progress on ScienceWorld, beating ACE by 16.2 points.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+      "claim_summary": "Hippocam achieves 61.8% accuracy on FEVER under frozen cross-domain evaluation.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Only Hippocam and ACE achieve positive gains on both domain transitions, while the remaining methods show mixed, unchanged, or reduced performance.",
+      "claim_summary": "Hippocam and ACE are the only methods showing consistent positive gains across both cross-domain transitions.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam achieves larger gains of 19.2 and 6.0 pp, respectively, with a narrower FEVER gap under the scoring sensitivity analysis (\u00a7 A.2).",
+      "claim_summary": "Hippocam shows substantial positive domain transfer gains on ScienceWorld (+19.2 pp) and FEVER (+6.0 pp).",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In contrast, Hippocam maintains high performance in both conditions without degradation under interleaving, scoring 85.1% in isolation and 88.7% under interleaving (Fig. 5, left).",
+      "claim_summary": "Hippocam resists task interference, scoring 85.1% in isolation and 88.7% when tasks are interleaved.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On LoCoMo, Hippocam achieves 77.6% overall accuracy, exceeding the strongest baseline, A-Mem, by 10.1 pp (Table 3).",
+      "claim_summary": "Hippocam hits 77.6% overall accuracy on LoCoMo, beating A-Mem by 10.1 percentage points.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "It leads or ties across all four answerable question categories, with temporal accuracy reaching 86.6% compared with A-Mem\u2019s 67.6%.",
+      "claim_summary": "Hippocam leads on all answerable LoCoMo categories, reaching 86.6% on temporal questions.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam combines stronger conversational reasoning with 87.2% accuracy on unanswerable questions.",
+      "claim_summary": "Hippocam achieves 87.2% accuracy on adversarial unanswerable questions in LoCoMo.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Across the three input lengths, Hippocam achieves 71.7% mean accuracy, compared with 44.3% for Letta (Fig. 5, right).",
+      "claim_summary": "Hippocam averages 71.7% accuracy on MemoryAgentBench conflict resolution versus Letta's 44.3%.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "It matches HiAgent at 97.0% on 6k inputs and retains 77.0% and 41.0% accuracy at 32k and 64k, where no baseline exceeds 37.0% and 19.0%, respectively.",
+      "claim_summary": "Hippocam outperforms baselines at long contexts, reaching 77% at 32k and 41% at 64k inputs.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures.",
+      "claim_summary": "Hippocam offers broader domain capability while leading or tying on 7 of 8 benchmark metrics.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On GoodAI, filler retention rises from 14% to 63%, while scores fall by 23.1 pp under interleaving versus 7.3 pp in isolation (Table 4).",
+      "claim_summary": "Removing intent conditioning increases filler retention and significantly lowers GoodAI task scores.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Prefix consolidation thus supports more effective subsequent work with a smaller active context.",
+      "claim_summary": "Prefix consolidation maintains task efficiency while drastically shrinking working context size.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+      "claim_summary": "Disabling progressive recall drops MemoryAgentBench 64k accuracy from 41.0% to 27.0%.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Access to underlying evidence therefore improves reasoning beyond what the consolidated context alone supports.",
+      "claim_summary": "Progressive recall of raw evidence enhances reasoning performance over summarized context alone.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "These cases show that Hippocam adapts retrieval depth to the task, recovering sufficient evidence without expanding the entire history.",
+      "claim_summary": "Hippocam dynamically adjusts retrieval depth, pulling only necessary evidence from history.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Across both streams, Hippocam\u2019s later interval has higher accuracy and about 10% lower mean cost per task (Table 12).",
+      "claim_summary": "In extended tasks, Hippocam increases accuracy while lowering per-task inference costs by ~10%.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Its cost per correct answer is consequently lower under the stated prices (0.0173 versus 0.0271 USD).",
+      "claim_summary": "Hippocam achieves lower cost per correct answer ($0.0173) than A-Mem ($0.0271) on ToolBench.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Hippocam thereby makes the agent\u2019s lifetime of work the engine of continual learning, taking a step toward a unified architecture for memory, knowledge, and learning.",
+      "claim_summary": "Hippocam thereby makes the agent\u2019s lifetime of work the engine of continual learning, taking a step toward a unified architecture for memory, knowledge, and learning.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Evaluations show that Hippocam achieves strong performance across memory, knowledge use, and learning.",
+      "claim_summary": "Evaluations show that Hippocam achieves strong performance across memory, knowledge use, and learning.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Ablations and case analyses further show how consolidation and progressive recall support ongoing work and how knowledge develops through use and disuse.",
+      "claim_summary": "Ablations and case analyses further show how consolidation and progressive recall support ongoing work and how knowledge develops through use and disuse.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These results demonstrate how our use-and-disuse cycle supports memory and learning through interaction history.",
+      "claim_summary": "These results demonstrate how our use-and-disuse cycle supports memory and learning through interaction history.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This selective consolidation reduces distraction, supports coherent reasoning, and keeps the context focused and efficient, while preserving the information needed to build on established results without repeating prior work.",
+      "claim_summary": "This selective consolidation reduces distraction, supports coherent reasoning, and keeps the context focused and efficient, while preserving the information needed to build on established results without repeating prior work.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Expressing knowledge directly about its subjects unbinds it from the original narrative, supporting reasoning and decisions beyond specific circumstances.",
+      "claim_summary": "Expressing knowledge directly about its subjects unbinds it from the original narrative, supporting reasoning and decisions beyond specific circumstances.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These processes turn the agent\u2019s own interaction history into evolving knowledge and capabilities, without maintaining a separate memory bank or skill library.",
+      "claim_summary": "These processes turn the agent\u2019s own interaction history into evolving knowledge and capabilities, without maintaining a separate memory bank or skill library.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In Hippocam, context and messages themselves constitute memory, without a separate memory bank or scoring and decay rules.",
+      "claim_summary": "In Hippocam, context and messages themselves constitute memory, without a separate memory bank or scoring and decay rules.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Unlike MemTree, our tree emerges from the organization and consolidation of ongoing work.",
+      "claim_summary": "Unlike MemTree, our tree emerges from the organization and consolidation of ongoing work.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Hippocam unifies memory and learning through the dynamics of use and disuse, developing knowledge through work and feedback rather than consolidation alone.",
+      "claim_summary": "Hippocam unifies memory and learning through the dynamics of use and disuse, developing knowledge through work and feedback rather than consolidation alone.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+      "claim_summary": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "ACE improves ScienceWorld progress by 14.0 pp and FEVER accuracy by 2.0 pp.",
+      "claim_summary": "ACE improves ScienceWorld progress by 14.0 pp and FEVER accuracy by 2.0 pp.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These comparisons highlight Hippocam\u2019s stronger ability to use prior knowledge to support continued learning in a new domain.",
+      "claim_summary": "These comparisons highlight Hippocam\u2019s stronger ability to use prior knowledge to support continued learning in a new domain.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This contrast highlights Hippocam\u2019s stronger resilience to interference from interleaved tasks.",
+      "claim_summary": "This contrast highlights Hippocam\u2019s stronger resilience to interference from interleaved tasks.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Although longer histories remain challenging, Hippocam more effectively preserves and applies updated information.",
+      "claim_summary": "Although longer histories remain challenging, Hippocam more effectively preserves and applies updated information.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Memory, knowledge development, and learning arise from the same use-and-disuse cycle over its interaction history, demonstrating the broad applicability of a unified mechanism rather than separate capability-specific mechanisms.",
+      "claim_summary": "Memory, knowledge development, and learning arise from the same use-and-disuse cycle over its interaction history, demonstrating the broad applicability of a unified mechanism rather than separate capability-specific mechanisms.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "A complementary case shows that intent conditioning preserves individual menu options needed for ordering rather than only category ranges (\u00a7 A.5).",
+      "claim_summary": "A complementary case shows that intent conditioning preserves individual menu options needed for ordering rather than only category ranges (\u00a7 A.5).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These observations support intent-aware selection of both relevant content and the detail needed for ongoing work.",
+      "claim_summary": "These observations support intent-aware selection of both relevant content and the detail needed for ongoing work.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4).",
+      "claim_summary": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+      "claim_summary": "ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Inducing a playbook therefore offers no clear advantage here over directly using retained facts and grounded lessons (Table 9).",
+      "claim_summary": "Inducing a playbook therefore offers no clear advantage here over directly using retained facts and grounded lessons (Table 9).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Both configurations achieve near- perfect task success, while the playbook variant uses slightly more actions on average (9.00 versus 8.12).",
+      "claim_summary": "Both configurations achieve near- perfect task success, while the playbook variant uses slightly more actions on average (9.00 versus 8.12).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Our analysis of knowledge changes across consecutive consoli- dations finds that items linked to intervening work are more often supplemented or updated (\u00a7 A.6).",
+      "claim_summary": "Our analysis of knowledge changes across consecutive consoli- dations finds that items linked to intervening work are more often supplemented or updated (\u00a7 A.6).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These observations show how use and disuse sustain a continuous cycle of learning through work.",
+      "claim_summary": "These observations show how use and disuse sustain a continuous cycle of learning through work.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Experiments and analyses demonstrate its broad applicability and illuminate how retained knowledge evolves through use and disuse.",
+      "claim_summary": "Experiments and analyses demonstrate its broad applicability and illuminate how retained knowledge evolves through use and disuse.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Under an alternative answer extraction, Hippocam\u2019s sequential improvement decreases from six to two percentage points.",
+      "claim_summary": "Under an alternative answer extraction, Hippocam\u2019s sequential improvement decreases from six to two percentage points.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The interleaved score decreases from 88.7% to 65.6%, compared with 85.1% to 77.8% in isolation.",
+      "claim_summary": "The interleaved score decreases from 88.7% to 65.6%, compared with 85.1% to 77.8% in isolation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Excluding the Jokes category, whose grader can credit a list containing the requested joke, preserves the interleaved advantage (91.1% versus 72.8%).",
+      "claim_summary": "Excluding the Jokes category, whose grader can credit a list containing the requested joke, preserves the interleaved advantage (91.1% versus 72.8%).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Intent-guided consolidation retained the individual dishes, while the variant without intent guidance retained one menu memory chiefly as category names and number ranges.",
+      "claim_summary": "Intent-guided consolidation retained the individual dishes, while the variant without intent guidance retained one menu memory chiefly as category names and number ranges.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Supplementation occurs in 28.4% of matched-call transitions and 11.7% of differing-call transitions, compared with 0.9% of transitions without detected use.",
+      "claim_summary": "Supplementation occurs in 28.4% of matched-call transitions and 11.7% of differing-call transitions, compared with 0.9% of transitions without detected use.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Concrete-value updates are more frequent when the reference specifies a different call (3.4%) than when the call matches (0.3%) or no use is detected (0.1%).",
+      "claim_summary": "Concrete-value updates are more frequent when the reference specifies a different call (3.4%) than when the call matches (0.3%) or no use is detected (0.1%).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These associations connect subsequent knowledge changes to intervening work and feedback, without establishing that use alone causes the changes.",
+      "claim_summary": "These associations connect subsequent knowledge changes to intervening work and feedback, without establishing that use alone causes the changes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Most items without detected use remain unchanged (95.8%), so these adjacent-consolidation statistics do not establish general fading of unused knowledge.",
+      "claim_summary": "Most items without detected use remain unchanged (95.8%), so these adjacent-consolidation statistics do not establish general fading of unused knowledge.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In ALFWorld, referenced items remain unchanged less often than items without detected textual reuse (41.6% versus 63.2%).",
+      "claim_summary": "In ALFWorld, referenced items remain unchanged less often than items without detected textual reuse (41.6% versus 63.2%).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The corresponding ScienceWorld difference is small (57.7% versus 59.1%).",
+      "claim_summary": "The corresponding ScienceWorld difference is small (57.7% versus 59.1%).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The association is therefore clearer in ALFWorld than in ScienceWorld under this textual proxy.",
+      "claim_summary": "The association is therefore clearer in ALFWorld than in ScienceWorld under this textual proxy.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Within this run, reusable knowledge persists as the details of individual episodes recede.",
+      "claim_summary": "Within this run, reusable knowledge persists as the details of individual episodes recede.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Thus the procedure unfolds detail until the current question is supported, while leaving unrelated children unopened.",
+      "claim_summary": "Thus the procedure unfolds detail until the current question is supported, while leaving unrelated children unopened.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Across methods, Fig. 9 shows a trade-off: several lower-scoring methods are cheaper, while Hippocam combines higher accuracy with lower cost than A-Mem and mem0 on ToolBench.",
+      "claim_summary": "Across methods, Fig. 9 shows a trade-off: several lower-scoring methods are cheaper, while Hippocam combines higher accuracy with lower cost than A-Mem and mem0 on ToolBench.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On DDXPlus, those two methods remain cheaper; the cost advantage is therefore specific to the workload.",
+      "claim_summary": "On DDXPlus, those two methods remain cheaper; the cost advantage is therefore specific to the workload.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On ToolBench\u2019s first 150 tasks, Hippocam reads 232.5k input tokens per task, compared with A-Mem\u2019s 65.0k, but only 30.4k versus 52.7k are uncached.",
+      "claim_summary": "On ToolBench\u2019s first 150 tasks, Hippocam reads 232.5k input tokens per task, compared with A-Mem\u2019s 65.0k, but only 30.4k versus 52.7k are uncached.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "After the next 150 tasks, the cumulative results preserve the main contrast: Hippocam\u2019s ToolBench cost per correct answer is 0.0159 USD versus A-Mem\u2019s 0.0260, while DDXPlus remains slightly more expensive at 0.0097 versus 0.0091 USD (Table 13).",
+      "claim_summary": "After the next 150 tasks, the cumulative results preserve the main contrast: Hippocam\u2019s ToolBench cost per correct answer is 0.0159 USD versus A-Mem\u2019s 0.0260, while DDXPlus remains slightly more expensive at 0.0097 versus 0.0091 USD (Table 13).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Across both intervals, its own calls account for 34.0% of Hippocam\u2019s ToolBench cost, and the first subsequent main-agent and Janus calls account for another 10.8%.",
+      "claim_summary": "Across both intervals, its own calls account for 34.0% of Hippocam\u2019s ToolBench cost, and the first subsequent main-agent and Janus calls account for another 10.8%.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The corresponding shares on DDXPlus are 26.8% and 4.2%.",
+      "claim_summary": "The corresponding shares on DDXPlus are 26.8% and 4.2%.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Intent-consolidation calls themselves account for only 0.8% and 1.3%, respectively.",
+      "claim_summary": "Intent-consolidation calls themselves account for only 0.8% and 1.3%, respectively.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Thus cache reuse between updates coexists with a substantial cost of periodically reorganizing experience.",
+      "claim_summary": "Thus cache reuse between updates coexists with a substantial cost of periodically reorganizing experience.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Holding recorded token usage fixed and varying only the cached-input price, Hippocam\u2019s lower ToolBench cost per correct answer than A-Mem holds while a cache hit costs less than approximately 15% of a miss; the reporting schedule uses 2%.",
+      "claim_summary": "Holding recorded token usage fixed and varying only the cached-input price, Hippocam\u2019s lower ToolBench cost per correct answer than A-Mem holds while a cache hit costs less than approximately 15% of a miss; the reporting schedule uses 2%.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The observed savings therefore depend on substantial cache discounts and do not establish a general cost advantage across providers or tasks.",
+      "claim_summary": "The observed savings therefore depend on substantial cache discounts and do not establish a general cost advantage across providers or tasks.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The retention rules keep established state changes, the agent\u2019s explicit conclusions, and informative failures, while excluding material that establishes no fact for the intent chain.",
+      "claim_summary": "The retention rules keep established state changes, the agent\u2019s explicit conclusions, and informative failures, while excluding material that establishes no fact for the intent chain.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "They prohibit interpreting unprocessed evidence on the agent\u2019s behalf.",
+      "claim_summary": "They prohibit interpreting unprocessed evidence on the agent\u2019s behalf.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Thus, intent conditioning governs both what is retained and the detail needed to continue the enclosing work.",
+      "claim_summary": "Thus, intent conditioning governs both what is retained and the detail needed to continue the enclosing work.",
+      "pass": "pass2"
+    }
+  ]
+}

@@ -1,0 +1,595 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11312v1",
+    "run_id": "pass2_r2",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "8ded6019-9807-4e1e-a42e-de3873a4d163",
+    "generated_at": "2026-10-16T07:35:49Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 1,
+  "dropped_duplicate": [
+    {
+      "sentence": "MedBenchAgent achieves a Task-Space F1 of 90.9%, outperforming direct task induction (79.2\u201380.0%) and prior-guided induction (85.1%); 994 of 1,000 sampled items from correctly identified tasks pass human audit.",
+      "best_match": "MedBenchAgent achieves a Task-Space F1 of 90.9%, outperforming direct task induction (79.2\u201380.0%) and prior-guided induction (85.1%); 994 of 1,000 sampled items from correctly identified tasks pass human audit.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We further demonstrate portability to a specialized medical domain and evaluate twelve VLMs, revealing task- and setting-specific variation obscured by aggregate scores.",
+      "best_match": "We further demonstrate portability to a specialized medical domain and evaluate twelve VLMs, revealing task- and setting-specific variation obscured by aggregate scores.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "best_match": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In construction analysis, MedBenchAgent achieves a Task-Space F1 of 90.9%, compared with 79.2\u201380.0% for direct task induction and 85.1% when the same task prior is provided to the direct model.",
+      "best_match": "In construction analysis, MedBenchAgent achieves a Task-Space F1 of 90.9%, compared with 79.2\u201380.0% for direct task induction and 85.1% when the same task prior is provided to the direct model.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For correctly identified tasks, 994 of 1,000 sampled items pass human au",
+      "best_match": "For correctly identified tasks, 994 of 1,000 sampled items pass human audit.",
+      "ratio_score": 97.2972972972973,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In construction analysis, MedBenchAgent achieves a Task-Space F1 of 90.9%, compared with 79.2\u201380.0% for direct task induction and 85.1% when the same task prior is provided to the direct model.",
+      "best_match": "In construction analysis, MedBenchAgent achieves a Task-Space F1 of 90.9%, compared with 79.2\u201380.0% for direct task induction and 85.1% when the same task prior is provided to the direct model.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For correctly identified tasks, 994 of 1,000 sampled items pass human audit.",
+      "best_match": "For correctly identified tasks, 994 of 1,000 sampled items pass human audit.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Model evaluation reveals substantial variation across tasks, imaging settings, and evaluation metrics that aggregate scores can obscure, reinforcing fine-grained benchmark specification as an important component of medical VLM evaluation.",
+      "best_match": "Model evaluation reveals substantial variation across tasks, imaging settings, and evaluation metrics that aggregate scores can obscure, reinforcing fine-grained benchmark specification as an important component of medical VLM evaluation.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As shown in Table 1, BIR-mediated construction achieves 90.9% Task-Space F1, compared with 79.2\u201380.0% for direct induction.",
+      "best_match": "As shown in Table 1, BIR-mediated construction achieves 90.9% Task-Space F1, compared with 79.2\u201380.0% for direct induction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Providing T0 improves direct DeepSeek-V4-Flash induction to 85.1% F1, while MedBenchAgent further increases precision from 76.9% to 87.0% at the same 95.2% recall, reducing false positives from six to three.",
+      "best_match": "Providing T0 improves direct DeepSeek-V4-Flash induction to 85.1% F1, while MedBenchAgent further increases precision from 76.9% to 87.0% at the same 95.2% recall, reducing false positives from six to three.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "All methods achieve 100% EMA on matched tasks.",
+      "best_match": "All methods achieve 100% EMA on matched tasks.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "best_match": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "best_match": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "best_match": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As shown in Table 3, medical VLMs outperform general-purpose VLMs by 6.23 points in Overall Acc. but trail by 2.48 points on AC, indicating that the aggregate advantage is not uniform across tasks.",
+      "best_match": "As shown in Table 3, medical VLMs outperform general-purpose VLMs by 6.23 points in Overall Acc. but trail by 2.48 points on AC, indicating that the aggregate advantage is not uniform across tasks.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "To quantify such changes, we compare all 66 model pairs and find that 12\u201324 pairs (18.2\u201336.4%) reverse ordering between Overall Acc. and individual-task Acc.; within tasks, 4\u201315 pairs (6.1\u201322.7%) reverse between Acc. and F1.",
+      "best_match": "To quantify such changes, we compare all 66 model pairs and find that 12\u201324 pairs (18.2\u201336.4%) reverse ordering between Overall Acc. and individual-task Acc.; within tasks, 4\u201315 pairs (6.1\u201322.7%) reverse between Acc. and F1.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across four medical VLMs, Acc. decreases by 5.86\u201317.97 percentage points (pp) and F1 by 6.33\u201322.61 pp (Table 5).",
+      "best_match": "Across four medical VLMs, Acc. decreases by 5.86\u201317.97 percentage points (pp) and F1 by 6.33\u201322.61 pp (Table 5).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across four medical VLMs, Acc. decreases by 5.86\u201317.97 percentage points (pp) and F1 by 6.33\u201322.61 pp (Table 5).",
+      "best_match": "Across four medical VLMs, Acc. decreases by 5.86\u201317.97 percentage points (pp) and F1 by 6.33\u201322.61 pp (Table 5).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The consistent degradation indicates that benchmark performance remains sensitive to visual evidence from the corresponding image, despite references being derived directly from source annotations rather than model-based visual judgments.",
+      "best_match": "The consistent degradation indicates that benchmark performance remains sensitive to visual evidence from the corresponding image, despite references being derived directly from source annotations rather than model-based visual judgments.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Our analyses identify open-ended task-space specification as the primary source of construction uncertainty, while annotation-evidence mapping and item instantiation become substantially more reliable once benchmark semantics are fixed.",
+      "best_match": "Our analyses identify open-ended task-space specification as the primary source of construction uncertainty, while annotation-evidence mapping and item instantiation become substantially more reliable once benchmark semantics are fixed.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Together with the cross-domain instantiation under a specialized medical setting, these results show that constrained, multi-agent benchmark construction can support both scalable medical VLM evaluation and systematic study of the benchmark-construction process itself.",
+      "best_match": "Together with the cross-domain instantiation under a specialized medical setting, these results show that constrained, multi-agent benchmark construction can support both scalable medical VLM evaluation and systematic study of the benchmark-construction process itself.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Importantly, the fixed annotation-derived reference answers remained supported by the authorized evidence in all six cases.",
+      "best_match": "Importantly, the fixed annotation-derived reference answers remained\nsupported by the authorized evidence in all six cases.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across the complete audit, there were four task\u2013query-alignment failures and six evaluation-integrity failures, with no reference-groundedness or unambiguity failures.",
+      "best_match": "Across the complete audit, there were four\ntask\u2013query-alignment failures and six evaluation-integrity failures, with no reference-groundedness\nor unambiguity failures.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "All sampled items passed checks of reference\u2013evidence consistency, task\u2013query consistency, and evaluation-format integrity against the normalized annotations and locked task contracts.",
+      "best_match": "All sampled items passed checks of reference\u2013evidence consistency, task\u2013query consistency, and evaluation-format integrity against the normalized annotations and locked task contracts.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Together with the task-space review and item audit, these results demonstrate application of MedBenchAgent to the ISIC annotation schema.",
+      "best_match": "Together with the task-space review and item audit, these results demonstrate application of MedBenchAgent to the ISIC annotation schema.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 10 shows that the cross-domain benchmark preserves substantial variation across task families and model checkpoints.",
+      "best_match": "Table 10 shows that the cross-domain benchmark preserves substantial variation across task families and model checkpoints.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "No single checkpoint exhibits uniformly strong performance across diagnosis, dermoscopic attributes, and lesion localization, and the relative behavior of general-purpose and medical VLMs varies across these task types.",
+      "best_match": "No single checkpoint exhibits uniformly strong performance across diagnosis, dermoscopic attributes, and lesion localization, and the relative behavior of general-purpose and medical VLMs varies across these task types.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In particular, categorical performance does not reliably predict spatial-localization performance.",
+      "best_match": "In particular, categorical performance does not reliably predict spatial-localization performance.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results are consistent with the breast-imaging evaluation in showing that aggregate model quality cannot be inferred from one task family alone, while providing evidence that the same construction workflow can be instantiated under a different annotation schema and clinical vocabulary.",
+      "best_match": "These results are consistent with the breast-imaging evaluation in showing that aggregate model quality cannot be inferred from one task family alone, while providing evidence that the same construction workflow can be instantiated under a different annotation schema and clinical vocabulary.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "best_match": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "FA improves by 27.09 points, while AA, FT, AC, DX, and PS decrease by 9.37, 1.22, 0.53, 4.85, and 7.50 points, respectively.",
+      "best_match": "FA improves by 27.09 points, while AA, FT, AC, DX, and PS decrease by 9.37, 1.22, 0.53, 4.85, and 7.50 points, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Under the reported equal weighting of task families, the FA improvement contributes approximately 4.52 points to Overall Accuracy, while the other five tasks jointly contribute approximately \u22123.91 points.",
+      "best_match": "Under the reported equal weighting of task families, the FA improvement contributes approximately 4.52 points to Overall Accuracy, while the other five tasks jointly contribute approximately \u22123.91 points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The small net change thus results from opposing task-level changes rather than uniformly similar performance.",
+      "best_match": "The small net change thus results from opposing task-level changes rather than uniformly similar performance.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On BrEaST, halo Accuracy increases from 11.4 to 63.4 and skin-thickening Accuracy from 2.7 to 76.6, whereas posterior-feature Accuracy decreases from 37.3 to 22.2 (Table 12).",
+      "best_match": "On BrEaST, halo Accuracy increases from 11.4 to 63.4 and skin-thickening Accuracy from 2.7 to 76.6, whereas posterior-feature Accuracy decreases from 37.3 to 22.2 (Table 12).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [
+    {
+      "sentence": "The numbers of reversed pairs are 13 (AA), 11 (FT), 5 (FA), 15 (AC), 15 (DX), and 4 (PS), corresponding to 6.1\u201322.7%.",
+      "best_match": "The numbers of reversed pairs are 19 (AA), 22 (FT), 18 (FA), 24 (AC), 12 (DX), and 22 (PS), corresponding to 18.2\u201336.4% of all model pairs.",
+      "ratio_score": 81.25,
+      "partial_ratio_score": 88.20960698689957
+    }
+  ],
+  "kept_new": [
+    {
+      "sentence": "Together, these results suggest that open-ended decisions about what should be evaluated are substantially more challenging than evidence mapping and item construction once benchmark semantics are constrained.",
+      "best_match": "Our analyses identify open-ended task-space specification as the primary source of construction uncertainty, while annotation-evidence mapping and item instantiation become substantially more reliable once benchmark semantics are fixed.",
+      "ratio_score": 54.8314606741573,
+      "partial_ratio_score": 54.54545454545454
+    },
+    {
+      "sentence": "This separation allows linguistic variation in the query while preserving annotation-grounded reference answers and the item-level entailment requirement of Desideratum D1.",
+      "best_match": "In this way, MedBenchAgent extends automation from predefined medical scopes or question structures to benchmark specification itself, while preserving the annotation and medical constraints required for reliable construction.",
+      "ratio_score": 47.73869346733668,
+      "partial_ratio_score": 52.92096219931272
+    },
+    {
+      "sentence": "These results show that the BIR-mediated design primarily improves the selection of valid prediction targets, while supporting-field identification is reliable once the task is correctly identified.",
+      "best_match": "Together, these results suggest that open-ended decisions about what should be evaluated are substantially more challenging than evidence mapping and item construction once benchmark semantics are constrained.",
+      "ratio_score": 48.64864864864865,
+      "partial_ratio_score": 49.494949494949495
+    },
+    {
+      "sentence": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "best_match": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "ratio_score": 48.813559322033896,
+      "partial_ratio_score": 49.45454545454545
+    },
+    {
+      "sentence": "MedBenchAgent promotes consistent item construction by locking item-construction requirements in the confirmed specification before instantiation.",
+      "best_match": "MedBenchAgent separates planning, which derives and verifies the specification, from instantiation, which constructs and audits items under the locked specification.",
+      "ratio_score": 52.7331189710611,
+      "partial_ratio_score": 59.01639344262295
+    },
+    {
+      "sentence": "Six failures include four VinDr-Mammo finding-type questions that ask for BI-RADS assessment categories and two BrEaST diagnosis questions with unsupported additions.",
+      "best_match": "In this way, MedBenchAgent extends automation from predefined medical scopes or question structures to benchmark specification itself, while preserving the annotation and medical constraints required for reliable construction.",
+      "ratio_score": 40.306122448979586,
+      "partial_ratio_score": 41.53354632587859
+    },
+    {
+      "sentence": "These cases localize remaining errors to template semantics and evidence control during generation, distinguishing item-expression errors from the task-specification errors identified in the task-space analysis.",
+      "best_match": "Together, constrained compilation and the BIR provide an explicit mechanism for carrying semantic and evidential constraints from benchmark specification into downstream construction.",
+      "ratio_score": 47.20812182741116,
+      "partial_ratio_score": 48.06629834254144
+    },
+    {
+      "sentence": "For example, Lingshu-7B has higher Overall Acc. than Qwen2.5-VL-32B (47.00% vs. 44.65%), while Qwen2.5-VL-32B performs better on all six spatial measures in Table 4.",
+      "best_match": "To quantify such changes, we compare all 66 model pairs and find that 12\u201324 pairs (18.2\u201336.4%) reverse ordering between Overall Acc. and individual-task Acc.; within tasks, 4\u201315 pairs (6.1\u201322.7%) reverse between Acc. and F1.",
+      "ratio_score": 34.96143958868895,
+      "partial_ratio_score": 39.16083916083915
+    },
+    {
+      "sentence": "Thus, rankings vary substantially across evaluation forms.",
+      "best_match": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "ratio_score": 37.79527559055118,
+      "partial_ratio_score": 40.0
+    },
+    {
+      "sentence": "These results support Desideratum D3: preserving annotation-supported tasks across capability dimensions and assigning task-appropriate metrics materially changes the evidence provided by the benchmark, motivating decomposition of aggregate results by prediction target to reveal capability differences obscured by Overall summaries.",
+      "best_match": "These results show that the BIR-mediated design primarily improves the selection of valid prediction targets, while supporting-field identification is reliable once the task is correctly identified.",
+      "ratio_score": 43.314500941619585,
+      "partial_ratio_score": 45.57640750670241
+    },
+    {
+      "sentence": "The consistent degradation indicates that benchmark performance remains sensitive to visual evidence from the corresponding image, despite references being derived directly from source annotations rather than model-based visual judgments.",
+      "best_match": "We cast benchmark construction as constrained compilation, in which the benchmark specification is progressively established from an intended evaluation scope, heterogeneous source annotations, and medical knowledge, with each confirmed decision narrowing the space of subsequent construction.",
+      "ratio_score": 46.70433145009416,
+      "partial_ratio_score": 50.331125827814574
+    },
+    {
+      "sentence": "Representative VLMs show different relative strengths across prediction targets rather than a uniform performance pattern.",
+      "best_match": "MedBenchAgent promotes consistent item construction by locking item-construction requirements in the confirmed specification before instantiation.",
+      "ratio_score": 44.776119402985074,
+      "partial_ratio_score": 44.44444444444444
+    },
+    {
+      "sentence": "This indicates that the same workflow can instantiate a domain-appropriate task structure under a distinct annotation schema",
+      "best_match": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "ratio_score": 44.20289855072463,
+      "partial_ratio_score": 44.93392070484582
+    },
+    {
+      "sentence": "These results provide cross-domain evidence for the portability of MedBenchAgent across annotation semantics and task definitions.",
+      "best_match": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "ratio_score": 47.5177304964539,
+      "partial_ratio_score": 48.756218905472636
+    },
+    {
+      "sentence": "Evaluation of the resulting benchmark further reveals task-, metric-, and imaging-dependent variation across VLMs that aggregate scores can obscure.",
+      "best_match": "We further demonstrate portability to a specialized medical domain and evaluate twelve VLMs, revealing task- and setting-specific variation obscured by aggregate scores.",
+      "ratio_score": 48.580441640378545,
+      "partial_ratio_score": 55.51020408163265
+    },
+    {
+      "sentence": "Table 6 transcribes every task that TaskPlanningAgent marked retain in the initial task plans/v1.json output, before researcher confirmation.",
+      "best_match": "All seven proposed tasks and their supporting-field mappings were retained without task-space revision.",
+      "ratio_score": 44.26229508196722,
+      "partial_ratio_score": 48.0392156862745
+    },
+    {
+      "sentence": "It shows the model\u2019s original task decomposition and its exact mapping from each proposed task to authorized annotation evidence.",
+      "best_match": "This indicates that the same workflow can instantiate a domain-appropriate task structure under a distinct annotation schema",
+      "ratio_score": 49.011857707509876,
+      "partial_ratio_score": 49.795918367346935
+    },
+    {
+      "sentence": "This comparison therefore evaluates catalog-initialized BIR compilation against direct task induction",
+      "best_match": "These results provide cross-domain evidence for the portability of MedBenchAgent across annotation semantics and task definitions.",
+      "ratio_score": 46.753246753246756,
+      "partial_ratio_score": 48.51485148514851
+    },
+    {
+      "sentence": "Under the atomic matching protocol below, the table contains 21 reference prediction targets in total.",
+      "best_match": "MedBenchAgent promotes consistent item construction by locking item-construction requirements in the confirmed specification before instantiation.",
+      "ratio_score": 45.16129032258065,
+      "partial_ratio_score": 46.808510638297875
+    },
+    {
+      "sentence": "Their matched tasks have supporting-field mappings consistent with the reference, as reflected by the EMA results in Table 1.",
+      "best_match": "All seven proposed tasks and their supporting-field mappings were retained without task-space revision.",
+      "ratio_score": 53.50877192982456,
+      "partial_ratio_score": 60.22727272727273
+    },
+    {
+      "sentence": "MedBenchAgent\u2019s residual errors are concentrated in semantic boundary cases, including a redundant BUS-BRA finding-type proposal, a visual-grounding proposal that did not define a capability distinct from generic detection, a shortcut-prone VinDr view-identification task, and the omitted finding-level assessment target.",
+      "best_match": "Model evaluation reveals substantial variation across tasks, imaging settings, and evaluation metrics that aggregate scores can obscure, reinforcing fine-grained benchmark specification as an important component of medical VLM evaluation.",
+      "ratio_score": 43.64937388193202,
+      "partial_ratio_score": 45.51724137931035
+    },
+    {
+      "sentence": "In contrast, the direct baselines more frequently introduce nonvisual metadata, acquisition or marker shortcuts, invalid spatial evidence, or omit otherwise supported visual prediction targets.",
+      "best_match": "These results show that the BIR-mediated design primarily improves the selection of valid prediction targets, while supporting-field identification is reliable once the task is correctly identified.",
+      "ratio_score": 44.50127877237852,
+      "partial_ratio_score": 46.11260053619303
+    },
+    {
+      "sentence": "This distinction helps explain why Evidence-Mapping Agreement is perfect for matched tasks even when task-space precision differs: once the intended prediction target is identified, annotation-field selection is comparatively stable, whereas deciding which targets should constitute the benchmark remains more difficult.",
+      "best_match": "Our analyses identify open-ended task-space specification as the primary source of construction uncertainty, while annotation-evidence mapping and item instantiation become substantially more reliable once benchmark semantics are fixed.",
+      "ratio_score": 46.402877697841724,
+      "partial_ratio_score": 50.847457627118644
+    },
+    {
+      "sentence": "An item was considered valid only when all four criteria passed:\nValidItemi = 1{Gi \u2227Ai \u2227Ui \u2227Ii},",
+      "best_match": "Under the atomic matching protocol below, the table contains 21 reference prediction targets in total.",
+      "ratio_score": 38.38383838383839,
+      "partial_ratio_score": 39.583333333333336
+    },
+    {
+      "sentence": "Six of the 1,000 sampled items failed at least one audit criterion.",
+      "best_match": "For correctly identified tasks, 994 of 1,000 sampled items pass human audit.",
+      "ratio_score": 51.74825174825175,
+      "partial_ratio_score": 64.81481481481481
+    },
+    {
+      "sentence": "Four VinDr-\nMammo finding-type items exhibited the same template-level task\u2013query mismatch: the generated\nquestion asked for a BI-RADS assessment category while the locked answer space contained finding\ncategories.",
+      "best_match": "Six failures include four VinDr-Mammo finding-type questions that ask for BI-RADS assessment categories and two BrEaST diagnosis questions with unsupported additions.",
+      "ratio_score": 51.578947368421055,
+      "partial_ratio_score": 53.333333333333336
+    },
+    {
+      "sentence": "Two BrEaST diagnosis items introduced unsupported contextual details and therefore\nfailed evaluation integrity.",
+      "best_match": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "ratio_score": 44.09448818897638,
+      "partial_ratio_score": 46.29629629629629
+    },
+    {
+      "sentence": "Importantly, the fixed annotation-derived reference answers remained\nsupported by the authorized evidence in all six cases.",
+      "best_match": "This separation allows linguistic variation in the query while preserving annotation-grounded reference answers and the item-level entailment requirement of Desideratum D1.",
+      "ratio_score": 48.813559322033896,
+      "partial_ratio_score": 54.77178423236515
+    },
+    {
+      "sentence": "Across the complete audit, there were four\ntask\u2013query-alignment failures and six evaluation-integrity failures, with no reference-groundedness\nor unambiguity failures.",
+      "best_match": "All sampled items passed checks of reference\u2013evidence consistency, task\u2013query consistency, and evaluation-format integrity against the normalized annotations and locked task contracts.",
+      "ratio_score": 49.002849002849004,
+      "partial_ratio_score": 49.158249158249156
+    },
+    {
+      "sentence": "Together with the task-space review and item audit, these results demonstrate application of MedBenchAgent to the ISIC annotation schema.",
+      "best_match": "This indicates that the same workflow can instantiate a domain-appropriate task structure under a distinct annotation schema",
+      "ratio_score": 50.57471264367817,
+      "partial_ratio_score": 51.52838427947598
+    },
+    {
+      "sentence": "Table 10 shows that the cross-domain benchmark preserves substantial variation across task families and model checkpoints.",
+      "best_match": "Evaluation of the resulting benchmark further reveals task-, metric-, and imaging-dependent variation across VLMs that aggregate scores can obscure.",
+      "ratio_score": 51.11111111111111,
+      "partial_ratio_score": 51.63934426229508
+    },
+    {
+      "sentence": "No single checkpoint exhibits uniformly strong performance across diagnosis, dermoscopic attributes, and lesion localization, and the relative behavior of general-purpose and medical VLMs varies across these task types.",
+      "best_match": "As shown in Table 3, medical VLMs outperform general-purpose VLMs by 6.23 points in Overall Acc. but trail by 2.48 points on AC, indicating that the aggregate advantage is not uniform across tasks.",
+      "ratio_score": 44.71153846153846,
+      "partial_ratio_score": 45.36082474226804
+    },
+    {
+      "sentence": "In particular, categorical performance does not reliably predict spatial-localization performance.",
+      "best_match": "Representative VLMs show different relative strengths across prediction targets rather than a uniform performance pattern.",
+      "ratio_score": 43.63636363636364,
+      "partial_ratio_score": 45.74468085106383
+    },
+    {
+      "sentence": "These results are consistent with the breast-imaging evaluation in showing that aggregate model quality cannot be inferred from one task family alone, while providing evidence that the same construction workflow can be instantiated under a different annotation schema and clinical vocabulary.",
+      "best_match": "Model evaluation reveals substantial variation across tasks, imaging settings, and evaluation metrics that aggregate scores can obscure, reinforcing fine-grained benchmark specification as an important component of medical VLM evaluation.",
+      "ratio_score": 47.924528301886795,
+      "partial_ratio_score": 48.70466321243523
+    },
+    {
+      "sentence": "The numbers of reversed pairs are 19 (AA), 22 (FT), 18 (FA), 24 (AC), 12 (DX), and 22 (PS), corresponding to 18.2\u201336.4% of all model pairs.",
+      "best_match": "Across these measures, 28\u201334 of 66 model pairs (42.4\u201351.5%) reverse ordering relative to Overall Acc.",
+      "ratio_score": 35.83333333333333,
+      "partial_ratio_score": 37.142857142857146
+    },
+    {
+      "sentence": "The numbers of reversed model pairs are 33 and 32 for VinDr-Mammo detection, 34 and 32 for VinDr-Mammo visual grounding, and 29 and 28 for BUS-BRA detection, for mIoU and Acc@IoU0.5, respectively.",
+      "best_match": "The numbers of reversed pairs are 19 (AA), 22 (FT), 18 (FA), 24 (AC), 12 (DX), and 22 (PS), corresponding to 18.2\u201336.4% of all model pairs.",
+      "ratio_score": 44.776119402985074,
+      "partial_ratio_score": 49.795918367346935
+    },
+    {
+      "sentence": "Thus, 28\u201334 of the 66 model pairs (42.4\u201351.5%) reverse their ordering across the spatial measures.",
+      "best_match": "Across these measures, 28\u201334 of 66 model pairs (42.4\u201351.5%) reverse ordering relative to Overall Acc.",
+      "ratio_score": 68.34170854271358,
+      "partial_ratio_score": 73.74301675977654
+    },
+    {
+      "sentence": "Strong task-family performance can coexist with substantial variation among its constituent prediction targets.",
+      "best_match": "Table 10 shows that the cross-domain benchmark preserves substantial variation across task families and model checkpoints.",
+      "ratio_score": 48.927038626609445,
+      "partial_ratio_score": 51.92307692307692
+    },
+    {
+      "sentence": "BreastGPT-8B achieves the highest aggregate finding-attribute scores, yet its BrEaST Macro-F1 ranges from 78.0 on margin and 63.7 on halo to 33.2 on posterior features and 35.0 on calcifications (Table 12).",
+      "best_match": "These results are consistent with the breast-imaging evaluation in showing that aggregate model quality cannot be inferred from one task family alone, while providing evidence that the same construction workflow can be instantiated under a different annotation schema and clinical vocabulary.",
+      "ratio_score": 41.76706827309237,
+      "partial_ratio_score": 43.689320388349515
+    },
+    {
+      "sentence": "The choice of metric also changes comparisons within an individual attribute.",
+      "best_match": "This comparison therefore evaluates catalog-initialized BIR compilation against direct task induction",
+      "ratio_score": 46.06741573033708,
+      "partial_ratio_score": 45.04504504504504
+    },
+    {
+      "sentence": "On posterior features, QoQ-Med-7B achieves higher Accuracy than BreastGPT-8B (57.9 versus 54.8), whereas BreastGPT-8B achieves higher Macro-F1 (33.2 versus 25.8).",
+      "best_match": "For example, Lingshu-7B has higher Overall Acc. than Qwen2.5-VL-32B (47.00% vs. 44.65%), while Qwen2.5-VL-32B performs better on all six spatial measures in Table 4.",
+      "ratio_score": 42.81345565749235,
+      "partial_ratio_score": 44.147157190635454
+    },
+    {
+      "sentence": "The same ordering reversal occurs on halo: QoQ-Med-7B leads in Accuracy (72.0 versus 70.3), but BreastGPT-8B leads in Macro-F1 (63.7 versus 41.8).",
+      "best_match": "On posterior features, QoQ-Med-7B achieves higher Accuracy than BreastGPT-8B (57.9 versus 54.8), whereas BreastGPT-8B achieves higher Macro-F1 (33.2 versus 25.8).",
+      "ratio_score": 61.68831168831168,
+      "partial_ratio_score": 60.273972602739725
+    },
+    {
+      "sentence": "These reversals extend the metric-dependent rankings observed in the main results to atomic prediction targets.",
+      "best_match": "Under the atomic matching protocol below, the table contains 21 reference prediction targets in total.",
+      "ratio_score": 47.887323943661976,
+      "partial_ratio_score": 54.666666666666664
+    },
+    {
+      "sentence": "Reporting both preserves distinctions that either metric alone would omit.",
+      "best_match": "Representative VLMs show different relative strengths across prediction targets rather than a uniform performance pattern.",
+      "ratio_score": 44.89795918367348,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "Similar aggregate scores can conceal large changes in the underlying task profile.",
+      "best_match": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "ratio_score": 43.55555555555556,
+      "partial_ratio_score": 46.34146341463414
+    },
+    {
+      "sentence": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "best_match": "Under the atomic matching protocol below, the table contains 21 reference prediction targets in total.",
+      "ratio_score": 39.301310043668124,
+      "partial_ratio_score": 44.44444444444444
+    },
+    {
+      "sentence": "FA improves by 27.09 points, while AA, FT, AC, DX, and PS decrease by 9.37, 1.22, 0.53, 4.85, and 7.50 points, respectively.",
+      "best_match": "The numbers of reversed pairs are 19 (AA), 22 (FT), 18 (FA), 24 (AC), 12 (DX), and 22 (PS), corresponding to 18.2\u201336.4% of all model pairs.",
+      "ratio_score": 43.34600760456274,
+      "partial_ratio_score": 43.548387096774185
+    },
+    {
+      "sentence": "Under the reported equal weighting of task families, the FA improvement contributes approximately 4.52 points to Overall Accuracy, while the other five tasks jointly contribute approximately \u22123.91 points.",
+      "best_match": "As shown in Table 3, medical VLMs outperform general-purpose VLMs by 6.23 points in Overall Acc. but trail by 2.48 points on AC, indicating that the aggregate advantage is not uniform across tasks.",
+      "ratio_score": 42.394014962593516,
+      "partial_ratio_score": 44.686648501362406
+    },
+    {
+      "sentence": "The small net change thus results from opposing task-level changes rather than uniformly similar performance.",
+      "best_match": "Representative VLMs show different relative strengths across prediction targets rather than a uniform performance pattern.",
+      "ratio_score": 52.81385281385281,
+      "partial_ratio_score": 59.25925925925925
+    },
+    {
+      "sentence": "The FA improvement is itself concentrated in particular attributes.",
+      "best_match": "The choice of metric also changes comparisons within an individual attribute.",
+      "ratio_score": 50.0,
+      "partial_ratio_score": 53.09734513274336
+    },
+    {
+      "sentence": "On BrEaST, halo Accuracy increases from 11.4 to 63.4 and skin-thickening Accuracy from 2.7 to 76.6, whereas posterior-feature Accuracy decreases from 37.3 to 22.2 (Table 12).",
+      "best_match": "BreastGPT-8B achieves the highest aggregate finding-attribute scores, yet its BrEaST Macro-F1 ranges from 78.0 on margin and 63.7 on halo to 33.2 on posterior features and 35.0 on calcifications (Table 12).",
+      "ratio_score": 43.684210526315795,
+      "partial_ratio_score": 52.14521452145215
+    },
+    {
+      "sentence": "With seven equally weighted attributes, the halo and skin-thickening increases together contribute approximately 18.0 points to the roughly 27.1-point FA improvement, based on the rounded attribute scores.",
+      "best_match": "Under the reported equal weighting of task families, the FA improvement contributes approximately 4.52 points to Overall Accuracy, while the other five tasks jointly contribute approximately \u22123.91 points.",
+      "ratio_score": 52.322738386308075,
+      "partial_ratio_score": 52.579852579852584
+    },
+    {
+      "sentence": "Decomposing the comparison at both levels therefore reveals a pattern that the Overall score obscures: a substantial gain within one task family is driven largely by a subset of its prediction targets and offset by declines elsewhere.",
+      "best_match": "Strong task-family performance can coexist with substantial variation among its constituent prediction targets.",
+      "ratio_score": 44.637681159420296,
+      "partial_ratio_score": 52.25225225225225
+    },
+    {
+      "sentence": "Within Lingshu, the 32B checkpoint improves Overall Accuracy from 47.00 to 50.73 and FA Macro-F1 from 38.66 to 43.01 relative to the 7B checkpoint, while DX Macro-F1 decreases from 29.29 to 24.54.",
+      "best_match": "On BrEaST, halo Accuracy increases from 11.4 to 63.4 and skin-thickening Accuracy from 2.7 to 76.6, whereas posterior-feature Accuracy decreases from 37.3 to 22.2 (Table 12).",
+      "ratio_score": 46.48648648648649,
+      "partial_ratio_score": 50.920245398773
+    },
+    {
+      "sentence": "In contrast, Qwen3-VL-32B improves over Qwen3-VL-8B-I on aggregate multiple-choice performance and all three reported breast-imaging spatial settings (Tables 3 and 4).",
+      "best_match": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "ratio_score": 47.61904761904761,
+      "partial_ratio_score": 46.45669291338582
+    },
+    {
+      "sentence": "These checkpoint comparisons show that aggregate improvements can have different task-level compositions.",
+      "best_match": "This comparison therefore evaluates catalog-initialized BIR compilation against direct task induction",
+      "ratio_score": 48.54368932038835,
+      "partial_ratio_score": 49.740932642487046
+    },
+    {
+      "sentence": "On ISIC, Hulu-Med-7B achieves the highest diagnosis Accuracy and Macro-F1 among the evaluated checkpoints (56.3 and 34.4), but obtains 0.7 mIoU and 0.2 Acc@IoU0.5 on detection.",
+      "best_match": "BreastGPT-8B achieves the highest aggregate finding-attribute scores, yet its BrEaST Macro-F1 ranges from 78.0 on margin and 63.7 on halo to 33.2 on posterior features and 35.0 on calcifications (Table 12).",
+      "ratio_score": 45.026178010471206,
+      "partial_ratio_score": 46.846846846846844
+    },
+    {
+      "sentence": "Qwen3-VL-8B-I achieves lower diagnosis scores (53.2 and 22.8), yet substantially higher detection scores (80.3 and 91.4; Table 10).",
+      "best_match": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "ratio_score": 44.96124031007752,
+      "partial_ratio_score": 44.09448818897638
+    },
+    {
+      "sentence": "These results describe complementary task profiles within the same dataset family.",
+      "best_match": "These reversals extend the metric-dependent rankings observed in the main results to atomic prediction targets.",
+      "ratio_score": 47.668393782383426,
+      "partial_ratio_score": 50.64935064935065
+    },
+    {
+      "sentence": "BreastGPT-8B leads Qwen3-VL-32B on BUS-BRA detection, with Acc@IoU0.5 of 82.80 versus 62.08, whereas Qwen3-VL-32B leads on VinDr-Mammo detection, with 12.86 versus 0.90 (Table 4).",
+      "best_match": "For example, Lingshu-7B has higher Overall Acc. than Qwen2.5-VL-32B (47.00% vs. 44.65%), while Qwen2.5-VL-32B performs better on all six spatial measures in Table 4.",
+      "ratio_score": 43.604651162790695,
+      "partial_ratio_score": 45.6953642384106
+    },
+    {
+      "sentence": "This ranking reversal shows that a model\u2019s advantage within one localization setting need not persist in another.",
+      "best_match": "These reversals extend the metric-dependent rankings observed in the main results to atomic prediction targets.",
+      "ratio_score": 46.42857142857143,
+      "partial_ratio_score": 47.120418848167546
+    }
+  ]
+}

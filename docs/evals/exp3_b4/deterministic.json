@@ -1,0 +1,170 @@
+{
+  "provenance": {
+    "H:\\Work projects\\Prism\\docs\\evals\\exp3_targets.json": "69c60127cdf1d7130311b11b615e1e4490cf85ca637418d1c73ca6a3c18917b3",
+    "H:\\Work projects\\Prism\\docs\\evals\\dev_eval.json": "193ad289e47fe1ba19a6a23e64d165bbd981eda4702021560868bbe203b37b54",
+    "H:\\Work projects\\Prism\\docs\\evals\\dev_match_map.json": "359cfb5a4e3a84876b2d77fccc5e08c858f1d82b9ad425b20ea903b10f6c2481",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\_summary.json": "cf9f39619eba72201f0b635e38f2a8fe4300eb10fcd88054f172f2fdf8761dfd",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10590v1_merged.json": "de5d1b9f2f853d83b9f009afaea132bc0629fc275788bdb158e94646c5283ae8",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10590v1_pass1.json": "36ae642ec050c6a8f668761ab7c4e8c16545f95dc1249099da8df25934994a3f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10590v1_pass2.json": "6dfce6560ea4aa67091f3c2514f5f3a6a0f1798dd53d69dc2c3b8eb0a02c8cfa",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10590v1_buckets.json": "550b1fa170b85dbd82c380c619421394f49a5ce2f081447883fa251f50fe9033",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10871v1_merged.json": "2747931b6dc2e83e06acda87573246b0d4a72d2050a1cb55131f484439f6bdb1",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10871v1_pass1.json": "2808c00c72762e6545a16c0e6dd2e5c23152fd826b8db5fe721991524c14eadf",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10871v1_pass2.json": "96a69e3a75ea021f045c9bb20f25d93b35eae36ce9619f47f9ce901ce8673d2d",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10871v1_buckets.json": "5185fbecd73d86790d66a3d4814c41ff40c43ad1abe0dd7bd6e6ea2adacb2d01",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11132v1_merged.json": "a09d9707629ebe17bbd9cf71c0456ac5f430d6646dede8470b989c06951baaa4",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11132v1_pass1.json": "5878b44dd18bdc8d4588f8e8b09405c6e7fb92f9e3f4ab7b639ea3fed03737ab",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11132v1_pass2.json": "f06d50da5fc08d63c888b44b04273675423d06fdc62ec614eab2565adef40e8b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11132v1_buckets.json": "c103478699aad57bec8aa50258521a95e4438dfdeeb5409b4273f00d790ffffd",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11135v1_merged.json": "9349bd7f576bf442bca72effa73e98091861d8ce1f84910795c91a6183f829a0",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11135v1_pass1.json": "901e3137570f77637b3973a8595ee9ab25f7864ca980b013403c1bcaeaed83f1",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11135v1_pass2.json": "86330bc6bd4cf4d3f78af593fda9d2424c944c6259741b1cb5ce1949200c1ab3",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11135v1_buckets.json": "61679d4b10a8814d3afd6b9e2649b84a7c2d45ddaeed57f7db045184ea860b24",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11291v1_merged.json": "ea5bb92f494a2f514f30503ceac9a253369251343a22dca32cb2169847145754",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11291v1_pass1.json": "4ecf99befef7d29d9de887c19fa1ebb73750651da97d7f383223291754272ebe",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11291v1_pass2.json": "3859e4112b68a0b6097afc1e1331629d0df566f9da025d19f81fe9a898d7ead6",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11291v1_buckets.json": "7ff83981ceb848945228bd5c2f7ab100c8c2d2acf764d42dc5d6b19d85af2656",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11312v1_merged.json": "d70366a412d1a112c06862d3af2d7f9a07bd92e613e84747d098271ee492f32f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11312v1_pass1.json": "6b478bb651c43ab2c74fc83d37c0d6d320b4c5d2a96d6d7285948351f523e52f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11312v1_pass2.json": "d7d521bec5f3efa9aa47ed5d2eb5d8c39d20f8586781fc8033ca1a169adbf402",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11312v1_buckets.json": "08ba051f4e1b913ed4438869eaa222a4acb1dccd98435bb3f44087cdcffe3181",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11519v1_merged.json": "e06a879a8adb4c2f8f86bbb28ccb85ec8b53d57573c08c4609842cc232e01cbe",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11519v1_pass1.json": "a2e44a7ab780c8f81e79798ad58d4537cc2e1de325bab662b4d630139ed7166b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11519v1_pass2.json": "d47742f3f12009dcd4963db79045f5c19cbb440ecb44e89cef31762ad66b86d9",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11519v1_buckets.json": "969fdf423484e584e558eae410ea79aa8ebb1fc1541d05ad8298482cb5657b6e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12114v1_merged.json": "745c33155b2ef89c156abf56c35e1810c759c9ee429e807487a4040ffefdd3a2",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12114v1_pass1.json": "cf4391abf996611db0abde2f3cf34f02c62fcc3117322349b5c88e8ee254d06b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12114v1_pass2.json": "0acc057f3d7a144645250252754ce6d0166b3170e7698cd7ae2b44c11a645e98",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12114v1_buckets.json": "7fc59f65dfcef5f5056ea33c692b81b00ad41dc14a7e436b64544660f3be012c",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12124v1_merged.json": "545cf755190224debc2631f088131e3a47fa6013efe38431d86a34e7b08ba06b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12124v1_pass1.json": "250e1fe3a7cffdf537176bf461682ccb83367ba81a2b6f60d14fa979030a46c5",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12124v1_pass2.json": "0737d2681cd9783e1ac47226fd6a769e21af69f69a0ac98d2a4f1a6869f10253",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12124v1_buckets.json": "f1875b94295e526128968b8ba4bf9903c740e56e21ea2ad11e24fc661319b621",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12168v1_merged.json": "f9daa60eb98bc2bbc7415808a97aace503b7c036fe2117ee295a62b2440cac56",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12168v1_pass1.json": "f38b8d21d12887c6261cefc8616b6d5069bd848e0a03c815f714ee113039676a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12168v1_pass2.json": "5eb03a3a5cad0c55f193836e5190c8bfc9dc6f2fd96e0b2d5e0734e85a03f6cd",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12168v1_buckets.json": "108c6a947b259466427ee83e67723626aec7b002ab40870a3b3cf7466a41fdca",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12176v1_merged.json": "56147dfb1759214bb7a96f76487353a8b2bd22688199a40ba9979bae55c53e88",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12176v1_pass1.json": "031f482046a126def772e520bdff06d17d2b21e37cdc47c7a4d08e95a69346c4",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12176v1_pass2.json": "c21aa3b7054982c48730d01f8a1ca200fe002bfa9ef8962f5a51bf76b6fe74c5",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12176v1_buckets.json": "de779719649b90339382ad71d7567f806bab1544873b70f3c4351cb823d58426",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12375v1_merged.json": "0cacb78e113ecf6de0859b40db172958f7977882c8a35b807853f3590c41e94b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12375v1_pass1.json": "c9c5b6ecf712f15594cc5055f8dd4ad8ea7235fe778ff24822312325510a7676",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12375v1_pass2.json": "2a8843d7af02921c6cea0a9d66bf0a339a8a14b7965d30db60ae233f3d52ee05",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12375v1_buckets.json": "9a8201e08024ba4583926d4674f9ce366af0ea417aaa651a6c83ecbb5df6538e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\_summary.json": "52ca34ee3852348644237700a41a8069e9468ecea5a0da1924bd13fda719d7c0",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10590v1_merged.json": "6097dea5f98e19be554fdca3e90bbef14264619a5d88bfb655dcbb35a8a36707",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10590v1_pass1.json": "fcf2a4a0b65a34bbaa98f9fb7602a7e5419c65c5fada482005741ebb611411db",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10590v1_pass2.json": "947cce9a0bbb9bae7dd00f71acd325d0b63c5556b2fb5eaec9fb9c588984df7e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10590v1_buckets.json": "1c90481b84deb3761e3d6faef7f15ce3f5f1c70cecb5d412f3a3616785fdca6f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10871v1_merged.json": "d93d3bedbbe5be9b2ebe3d3a91caab27ddb4081f93f7963c27d0b8c009597fd3",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10871v1_pass1.json": "4516850788933dcf6dd432d046e3f0d6008494752742a6b9189352b106c98e8e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10871v1_pass2.json": "75f6d2079ff07f53b00c520b952e8cb1a31b655c96d93892d22e688b2024ecad",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10871v1_buckets.json": "c04a20ce4d2b958681d780489ebe6b659c465c74b5488e139f3f1c667573ffbb",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11132v1_merged.json": "44780ea6b4580c2a9317ca729fa029db3bc89f1d02571f657bd48af58ea10be6",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11132v1_pass1.json": "90ddce373a7e3a7b137e8bf03b96845f3eb6378dbcd2b33f15edc903725d5c5d",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11132v1_pass2.json": "ed243722202ce99e53ad381287bc83ad735e7d497a76d22d1b044b63ed494bec",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11132v1_buckets.json": "e51da37ff6e29a511a04cbf1d0b242f6c873ba44bf8de5245b145b5e08b243cc",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11135v1_merged.json": "cf76950b84029fda2a73440f30376e72dc251b06a0904aa2c1cc21e50a977af4",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11135v1_pass1.json": "0388732029d2c4f6245a07791bec62be55801eef78e2a3eae9960f293ca55c8a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11135v1_pass2.json": "6deebad291247b30d28ce8e966eb43166fc2997a9ae8d9e5ef435590c818006c",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11135v1_buckets.json": "062829598da9425e8c7d9523ebeae911f1e36e4289f64a1df1f3ec44217b4773",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11291v1_merged.json": "e5ec3e4b4b06e7f1068f3e22bde91fff2eb43d8abb7e0113b3b4607e9d8141b7",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11291v1_pass1.json": "6a5c3712960b92d1bdcfc9e1774abbb66fd407d5337453957fb805e1553efde2",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11291v1_pass2.json": "0aa3bff0a0a36547dda9eeb6f6b649bf74f597d00465570db65ee8f745e6ac40",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11291v1_buckets.json": "01a977118c0109a3f21a50169b40e4b43beca2e608bd9e92d1a05fecb0f0932a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11312v1_merged.json": "7c64969319b8c7a653d766abf56011c96290b6df33bbd5961fee1ccf32c2b118",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11312v1_pass1.json": "df493819d79652ac6ca71f8d3340b227ce182440bf0f3009e2a1bb748d8b11d1",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11312v1_pass2.json": "fb5fec1ce6af2eca8677db0d394f6748ed2bf5bfa9bcf2b0d3b1aa0aaa0662c3",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11312v1_buckets.json": "edfa954a5a8f7123544817109f8c919c0a5ae622fa9340b2d14ef7d260696791",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11519v1_merged.json": "945890a86043dbc438a0513dd33a10c8510acff063336cd03eb4553b5e270bb8",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11519v1_pass1.json": "16b7397ebaa8c68628c82a3ff5ec340edc3ff1bd89fbe67de17fdcbe73250d34",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11519v1_pass2.json": "8bd60dbac6108a41bec94c169813ffc5a92131e81e33af0b4c1eb7ecc424b779",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11519v1_buckets.json": "051f036136fcd0a8d8a2beec5ef1c205a93edb2aaa11a4daa52a84ba4015d6ba",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12114v1_merged.json": "7c57ccf2d21db8b0fe0905fe88a6ea6a2c65bbbefb436ac8e6d7e6d61dafbffd",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12114v1_pass1.json": "04c4a656aa0e7570339f649b18e187f03485b805fb3dc308017bb334c8f29a75",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12114v1_pass2.json": "0a9d5819c77ec52197f53b0a33e1208928d9dc9ee75f4902aad136de88f8209a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12114v1_buckets.json": "b7c2803736370a449c95196ef4e8d6b0115b8dd15b2dc0e1701fde4d58b63b46",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12124v1_merged.json": "fada0ad59c4205bbc97c2372260ca2e9c467a8284a13a96a26e9a70c9df325ea",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12124v1_pass1.json": "5cbb073931218f0b96e66dd5f43fd5552c9d5fe188430734e4e7ad8b743ffd7e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12124v1_pass2.json": "381e2d953c2142c76d5bfbba0447d127259d2e4e8fcc467c5f476db2d9259275",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12124v1_buckets.json": "d83053e649d995e0069e1145692f34ab89864ae02e8291940148f776dca7b4e0",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12168v1_merged.json": "1cbe6e0d88e578780c88e8a4223356dc4fe3063f81384c033071fded1b3a8264",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12168v1_pass1.json": "fc5115271af678917f9a7854756a7166e4d86a6c50ff4f6e7e482fa1a1977e0a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12168v1_pass2.json": "66aab252f64b8ee27ec8d778c8130d598b96b56652aa9a7ad284273d1c6f4b0a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12168v1_buckets.json": "068fbf901eb94185e8971d3754f0d45a69092461febf5b1c05572a30c599c7c1",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12176v1_merged.json": "8ace8ec82f79a17d400144a291790ac5254e29de2f989ec234faf63cb80ca7fb",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12176v1_pass1.json": "adff7cf665a1a84e64da5b1972e05a44df2c1baae920bf6d7dc6a6bddf8f2db5",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12176v1_pass2.json": "dae26ef2c60f41749b312ad0f3cb3d0348bf878d914308835052255c51cc87ee",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12176v1_buckets.json": "89ac0ac0ef8e6aeac476b00393d9d79ab44e1d45dc8810607e7582034c3b9f78",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12375v1_merged.json": "e6788d9b4f3bbb61ca76b009d011daf807cdf2428c97cb1a3d52fb3890adf17c",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12375v1_pass1.json": "57c1ccbb90f08260d70bcf6e35ca4fe4a30a62f5e9941d050884db5798de5e51",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12375v1_pass2.json": "c7f06cda24a2799b36b8a49d3381175131898a9aa8e7f3ea24806febeb861a03",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12375v1_buckets.json": "919eb7dd69bda4f21952dd85418742517f35398e34cb4f99beba223444918c76"
+  },
+  "c2_report_only": {
+    "pass2_r1": {
+      "retained": 18,
+      "scope": 18,
+      "ratio": 1.0
+    },
+    "pass2_r2": {
+      "retained": 18,
+      "scope": 18,
+      "ratio": 1.0
+    }
+  },
+  "c3_c4": {
+    "c3_per_run": {
+      "pass2_r1": {
+        "r_mean": 2.727679719723916,
+        "r_pooled": 2.657458563535912,
+        "p2": 5.5625
+      },
+      "pass2_r2": {
+        "r_mean": 2.74819291056542,
+        "r_pooled": 2.6767955801104972,
+        "p2": 5.533333333333334
+      }
+    },
+    "c4_mean_reading": {
+      "r": 2.737936315144668,
+      "p2": 5.5479166666666675,
+      "projected_inr": 243.7483760842528,
+      "pass": false
+    },
+    "c4_pooled_reading": {
+      "r": 2.6671270718232045,
+      "p2": 5.5479166666666675,
+      "projected_inr": 237.58797191528546,
+      "pass": false
+    }
+  },
+  "c7": {
+    "pass2_r1": {
+      "sentences": 1114,
+      "dropped_ungrounded": 14,
+      "rate": 0.9874326750448833,
+      "pass": true
+    },
+    "pass2_r2": {
+      "sentences": 1111,
+      "dropped_ungrounded": 12,
+      "rate": 0.9891989198919892,
+      "pass": true
+    }
+  },
+  "diagnostics": {
+    "pass2_r1": {
+      "fallback_calls": 0,
+      "incomplete_papers": [],
+      "not_supported_count": "N/A - pass-2 claims not audited"
+    },
+    "pass2_r2": {
+      "fallback_calls": 0,
+      "incomplete_papers": [],
+      "not_supported_count": "N/A - pass-2 claims not audited"
+    }
+  },
+  "arxiv_2610_12168v1_target_row_count": 1
+}

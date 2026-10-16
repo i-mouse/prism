@@ -1,0 +1,722 @@
+{
+  "provenance": {
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10590v1_buckets.json": "550b1fa170b85dbd82c380c619421394f49a5ce2f081447883fa251f50fe9033",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10871v1_buckets.json": "5185fbecd73d86790d66a3d4814c41ff40c43ad1abe0dd7bd6e6ea2adacb2d01",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11132v1_buckets.json": "c103478699aad57bec8aa50258521a95e4438dfdeeb5409b4273f00d790ffffd",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11135v1_buckets.json": "61679d4b10a8814d3afd6b9e2649b84a7c2d45ddaeed57f7db045184ea860b24",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11291v1_buckets.json": "7ff83981ceb848945228bd5c2f7ab100c8c2d2acf764d42dc5d6b19d85af2656",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11312v1_buckets.json": "08ba051f4e1b913ed4438869eaa222a4acb1dccd98435bb3f44087cdcffe3181",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11519v1_buckets.json": "969fdf423484e584e558eae410ea79aa8ebb1fc1541d05ad8298482cb5657b6e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12114v1_buckets.json": "7fc59f65dfcef5f5056ea33c692b81b00ad41dc14a7e436b64544660f3be012c",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12124v1_buckets.json": "f1875b94295e526128968b8ba4bf9903c740e56e21ea2ad11e24fc661319b621",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12168v1_buckets.json": "108c6a947b259466427ee83e67723626aec7b002ab40870a3b3cf7466a41fdca",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12176v1_buckets.json": "de779719649b90339382ad71d7567f806bab1544873b70f3c4351cb823d58426",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12375v1_buckets.json": "9a8201e08024ba4583926d4674f9ce366af0ea417aaa651a6c83ecbb5df6538e",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10590v1_buckets.json": "1c90481b84deb3761e3d6faef7f15ce3f5f1c70cecb5d412f3a3616785fdca6f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.10871v1_buckets.json": "c04a20ce4d2b958681d780489ebe6b659c465c74b5488e139f3f1c667573ffbb",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11132v1_buckets.json": "e51da37ff6e29a511a04cbf1d0b242f6c873ba44bf8de5245b145b5e08b243cc",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11135v1_buckets.json": "062829598da9425e8c7d9523ebeae911f1e36e4289f64a1df1f3ec44217b4773",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11291v1_buckets.json": "01a977118c0109a3f21a50169b40e4b43beca2e608bd9e92d1a05fecb0f0932a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11312v1_buckets.json": "edfa954a5a8f7123544817109f8c919c0a5ae622fa9340b2d14ef7d260696791",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.11519v1_buckets.json": "051f036136fcd0a8d8a2beec5ef1c205a93edb2aaa11a4daa52a84ba4015d6ba",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12114v1_buckets.json": "b7c2803736370a449c95196ef4e8d6b0115b8dd15b2dc0e1701fde4d58b63b46",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12124v1_buckets.json": "d83053e649d995e0069e1145692f34ab89864ae02e8291940148f776dca7b4e0",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12168v1_buckets.json": "068fbf901eb94185e8971d3754f0d45a69092461febf5b1c05572a30c599c7c1",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12176v1_buckets.json": "89ac0ac0ef8e6aeac476b00393d9d79ab44e1d45dc8810607e7582034c3b9f78",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r2\\arxiv-2610.12375v1_buckets.json": "919eb7dd69bda4f21952dd85418742517f35398e34cb4f99beba223444918c76",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10590v1_pass1.json": "36ae642ec050c6a8f668761ab7c4e8c16545f95dc1249099da8df25934994a3f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.10871v1_pass1.json": "2808c00c72762e6545a16c0e6dd2e5c23152fd826b8db5fe721991524c14eadf",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11132v1_pass1.json": "5878b44dd18bdc8d4588f8e8b09405c6e7fb92f9e3f4ab7b639ea3fed03737ab",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11135v1_pass1.json": "901e3137570f77637b3973a8595ee9ab25f7864ca980b013403c1bcaeaed83f1",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11291v1_pass1.json": "4ecf99befef7d29d9de887c19fa1ebb73750651da97d7f383223291754272ebe",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11312v1_pass1.json": "6b478bb651c43ab2c74fc83d37c0d6d320b4c5d2a96d6d7285948351f523e52f",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.11519v1_pass1.json": "a2e44a7ab780c8f81e79798ad58d4537cc2e1de325bab662b4d630139ed7166b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12114v1_pass1.json": "cf4391abf996611db0abde2f3cf34f02c62fcc3117322349b5c88e8ee254d06b",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12124v1_pass1.json": "250e1fe3a7cffdf537176bf461682ccb83367ba81a2b6f60d14fa979030a46c5",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12168v1_pass1.json": "f38b8d21d12887c6261cefc8616b6d5069bd848e0a03c815f714ee113039676a",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12176v1_pass1.json": "031f482046a126def772e520bdff06d17d2b21e37cdc47c7a4d08e95a69346c4",
+    "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp3\\pass2_r1\\arxiv-2610.12375v1_pass1.json": "c9c5b6ecf712f15594cc5055f8dd4ad8ea7235fe778ff24822312325510a7676"
+  },
+  "items": {
+    "K001": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 18,
+      "repeat_of": null
+    },
+    "K002": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 30,
+      "repeat_of": null
+    },
+    "K003": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 25,
+      "repeat_of": null
+    },
+    "K004": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 28,
+      "repeat_of": null
+    },
+    "K005": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 16,
+      "repeat_of": null
+    },
+    "K006": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 39,
+      "repeat_of": null
+    },
+    "K007": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 20,
+      "repeat_of": null
+    },
+    "K008": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 21,
+      "repeat_of": null
+    },
+    "K009": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 8,
+      "repeat_of": null
+    },
+    "K010": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 2,
+      "repeat_of": null
+    },
+    "K011": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 4,
+      "repeat_of": null
+    },
+    "K012": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 10,
+      "repeat_of": null
+    },
+    "K013": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 19,
+      "repeat_of": null
+    },
+    "K014": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 27,
+      "repeat_of": null
+    },
+    "K015": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 6,
+      "repeat_of": null
+    },
+    "K016": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 0,
+      "repeat_of": null
+    },
+    "K017": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 11,
+      "repeat_of": null
+    },
+    "K018": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 4,
+      "repeat_of": null
+    },
+    "K019": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 45,
+      "repeat_of": null
+    },
+    "K020": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 18,
+      "repeat_of": null
+    },
+    "K021": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 21,
+      "repeat_of": null
+    },
+    "K022": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 10,
+      "repeat_of": null
+    },
+    "K023": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 31,
+      "repeat_of": null
+    },
+    "K024": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 46,
+      "repeat_of": null
+    },
+    "K025": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 34,
+      "repeat_of": null
+    },
+    "K026": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 25,
+      "repeat_of": null
+    },
+    "K027": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 19,
+      "repeat_of": null
+    },
+    "K028": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 1,
+      "repeat_of": null
+    },
+    "K029": {
+      "group": "pass2_both",
+      "run_memberships": [
+        "pass2_r1",
+        "pass2_r2"
+      ],
+      "position": 6,
+      "repeat_of": null
+    },
+    "K030": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 30,
+      "repeat_of": null
+    },
+    "K031": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 46,
+      "repeat_of": null
+    },
+    "K032": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 3,
+      "repeat_of": null
+    },
+    "K033": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 31,
+      "repeat_of": null
+    },
+    "K034": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 14,
+      "repeat_of": null
+    },
+    "K035": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 65,
+      "repeat_of": null
+    },
+    "K036": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 0,
+      "repeat_of": null
+    },
+    "K037": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 5,
+      "repeat_of": null
+    },
+    "K038": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 1,
+      "repeat_of": null
+    },
+    "K039": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 5,
+      "repeat_of": null
+    },
+    "K040": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 29,
+      "repeat_of": null
+    },
+    "K041": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 10,
+      "repeat_of": null
+    },
+    "K042": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 13,
+      "repeat_of": null
+    },
+    "K043": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 16,
+      "repeat_of": null
+    },
+    "K044": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 25,
+      "repeat_of": null
+    },
+    "K045": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 21,
+      "repeat_of": null
+    },
+    "K046": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 7,
+      "repeat_of": null
+    },
+    "K047": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 13,
+      "repeat_of": null
+    },
+    "K048": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 67,
+      "repeat_of": null
+    },
+    "K049": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 7,
+      "repeat_of": null
+    },
+    "K050": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 18,
+      "repeat_of": null
+    },
+    "K051": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 7,
+      "repeat_of": null
+    },
+    "K052": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 1,
+      "repeat_of": null
+    },
+    "K053": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 5,
+      "repeat_of": null
+    },
+    "K054": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 7,
+      "repeat_of": null
+    },
+    "K055": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 12,
+      "repeat_of": null
+    },
+    "K056": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 35,
+      "repeat_of": null
+    },
+    "K057": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 12,
+      "repeat_of": null
+    },
+    "K058": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 6,
+      "repeat_of": null
+    },
+    "K059": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 10,
+      "repeat_of": null
+    },
+    "K060": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 10,
+      "repeat_of": null
+    },
+    "K061": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 15,
+      "repeat_of": null
+    },
+    "K062": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 22,
+      "repeat_of": null
+    },
+    "K063": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 37,
+      "repeat_of": null
+    },
+    "K064": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 31,
+      "repeat_of": null
+    },
+    "K065": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 8,
+      "repeat_of": null
+    },
+    "K066": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 63,
+      "repeat_of": null
+    },
+    "K067": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 11,
+      "repeat_of": null
+    },
+    "K068": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 10,
+      "repeat_of": null
+    },
+    "K069": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 21,
+      "repeat_of": null
+    },
+    "K070": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 18,
+      "repeat_of": null
+    },
+    "K071": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 14,
+      "repeat_of": null
+    },
+    "K072": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 20,
+      "repeat_of": null
+    },
+    "K073": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 8,
+      "repeat_of": null
+    },
+    "K074": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 24,
+      "repeat_of": null
+    },
+    "K075": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 7,
+      "repeat_of": null
+    },
+    "K076": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 40,
+      "repeat_of": null
+    },
+    "K077": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 27,
+      "repeat_of": null
+    },
+    "K078": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 5,
+      "repeat_of": null
+    },
+    "K079": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 18,
+      "repeat_of": null
+    },
+    "K080": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 13,
+      "repeat_of": null
+    },
+    "K081": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 15,
+      "repeat_of": null
+    },
+    "K082": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 48,
+      "repeat_of": null
+    },
+    "K083": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 21,
+      "repeat_of": null
+    },
+    "K084": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 25,
+      "repeat_of": null
+    },
+    "K085": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 4,
+      "repeat_of": null
+    },
+    "K086": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 5,
+      "repeat_of": null
+    },
+    "K087": {
+      "group": "pass2_both",
+      "run_memberships": [
+        "pass2_r1",
+        "pass2_r2"
+      ],
+      "position": 2,
+      "repeat_of": null
+    },
+    "K088": {
+      "group": "pass2_r1",
+      "run_memberships": [
+        "pass2_r1"
+      ],
+      "position": 3,
+      "repeat_of": null
+    },
+    "K089": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 28,
+      "repeat_of": "K004"
+    },
+    "K090": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 0,
+      "repeat_of": "K016"
+    },
+    "K091": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 46,
+      "repeat_of": "K024"
+    },
+    "K092": {
+      "group": "pass2_r2",
+      "run_memberships": [
+        "pass2_r2"
+      ],
+      "position": 0,
+      "repeat_of": "K036"
+    },
+    "K093": {
+      "group": "pass1_control",
+      "run_memberships": [],
+      "position": 12,
+      "repeat_of": "K057"
+    }
+  }
+}

@@ -1,0 +1,733 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11135v1",
+    "run_id": "pilot2",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "fa82bf24-0a94-4c5f-8ae2-2b29843751b8",
+    "generated_at": "2026-10-15T16:49:23Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 5,
+  "dropped_duplicate": [
+    {
+      "sentence": "On seven datasets, Jev without any data from the target platform reaches a mean AUC of .706, above the best of 28 deep KT models trained on 8 learners (.689) and above System-Two Thinking-KT on all seven datasets (.650) at about 1/100 of its API cost.",
+      "best_match": "On seven datasets, Jev without any data from the target platform reaches a mean AUC of .706, above the best of 28 deep KT models trained on 8 learners (.689) and above System-Two Thinking-KT on all seven datasets (.650) at about 1/100 of its API cost.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Adding examples and a similar-learner statistic from the logged learners (JevKT) raises this to .722; JevKT stays significantly ahead of deep KT up to 16 learners and ahead on average up to 64, and supervised KT catches up between 64 and 128 learners.",
+      "best_match": "Adding examples and a similar-learner statistic from the logged learners (JevKT) raises this to .722; JevKT stays significantly ahead of deep KT up to 16 learners and ahead on average up to 64, and supervised KT catches up between 64 and 128 learners.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Among the readers we tested, the gain is specific to Jev, since three other LLMs queried with the byte-identical typed request through the official System-One adapter fall below it on all seven datasets, and reader swaps and contamination checks find no evidence that the input format or memorised data explain the gain.",
+      "best_match": "Among the readers we tested, the gain is specific to Jev, since three other LLMs queried with the byte-identical typed request through the official System-One adapter fall below it on all seven datasets, and reader swaps and contamination checks find no evidence that the input format or memorised data explain the gain.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "best_match": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "best_match": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "best_match": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical input, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamination checks find no sign of memorised data.",
+      "best_match": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical input, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamination checks find no sign of memorised data.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "best_match": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; super-vised KT catches up between 64 and 128 learners.",
+      "best_match": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "ratio_score": 92.70588235294117,
+      "partial_ratio_score": 99.74683544303798
+    },
+    {
+      "sentence": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical in-put, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamina-tion checks find no sign of memorised data.",
+      "best_match": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical input, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamination checks find no sign of memorised data.",
+      "ratio_score": 99.5850622406639,
+      "partial_ratio_score": 99.16666666666667
+    },
+    {
+      "sentence": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "best_match": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With no learner logs, an off-the-shelf System-One LLM (Jev) outperforms deep KT trained on 8 learners on average and prompted System-Two LLM-KT on all seven datasets (RQ1).",
+      "best_match": "With no learner logs, an off-the-shelf System-One LLM (Jev) outperforms deep KT trained on 8 learners on average and prompted System-Two LLM-KT on all seven datasets (RQ1).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "A cold-start evaluation on iden-tical targets (7 datasets; few training learners, new learners, new items) shows how long the lead lasts as learners are logged (RQ2, RQ3); a training-free input recipe (JevKT), whose gain comes mostly from one similar-learner statistic, keeps it until supervised KT takes over.",
+      "best_match": "A cold-start evaluation on identical targets (7 datasets; few training learners, new learners, new items) shows how long the lead lasts as learners are logged (RQ2, RQ3); a training-free input recipe (JevKT), whose gain comes mostly from one similar-learner statistic, keeps it until supervised KT takes over.",
+      "ratio_score": 99.83844911147011,
+      "partial_ratio_score": 99.67637540453075
+    },
+    {
+      "sentence": "Controlled analyses (reader swap, other LLMs behind the same interface, contamination checks) find that the gain comes from the model rather than from the typed format or memorised data.1",
+      "best_match": "Controlled analyses (reader swap, other LLMs behind the same interface, contamination checks) find that the gain comes from the model rather than from the typed format or memorised data.",
+      "ratio_score": 99.73190348525469,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "KC-matched shots help and saturate at k\u224864, random shots do not, and the similar-learner statistic adds on top; the ranking on the development split transfers to test.",
+      "best_match": "KC-matched shots help and saturate at k\u224864, random shots do not, and the similar-learner statistic adds on top; the ranking on the development split transfers to test.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+      "best_match": "This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "It also beats System-Two Thinking-KT (.650) on all seven datasets with one call instead of ten, at about 1/100 of its API cost (Section 5.4).",
+      "best_match": "It also beats System-Two Thinking-KT (.650) on all seven datasets with one call instead of ten, at about 1/100 of its API cost (Section 5.4).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+      "best_match": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "LOKT, whose only use of the logged learners is answer-option weights, barely moves with N (.672 at N=8 and .672 with all learners, against .671 at N=0) and stays below both.",
+      "best_match": "LOKT, whose only use of the logged learners is answer-option weights, barely moves with N (.672 at N=8 and .672 with all learners, against .671 at N=0) and stays below both.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "best_match": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+      "best_match": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Unseen items alone therefore do not reverse the full-data result, and the advantage of the System-One model comes from having few learners, not from unseen items.",
+      "best_match": "Unseen items alone therefore do not reverse the full-data result, and the advantage of the System-One model comes from having few learners, not from unseen items.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "best_match": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Unseen items alone therefore do not re- verse the full-data result, and the advantage of the System-One model comes from having few learn- ers, not from unseen items.",
+      "best_match": "Unseen items alone therefore do not reverse the full-data result, and the advantage of the System-One model comes from having few learners, not from unseen items.",
+      "ratio_score": 98.78048780487805,
+      "partial_ratio_score": 97.53086419753086
+    },
+    {
+      "sentence": "A typed one-pass head without training (B0) is worse than reading the label probability directly (A), .630 vs. .688 AUC, and .701 vs. .752 with the similar-learner statistic.",
+      "best_match": "A typed one-pass head without training (B0) is worse than reading the label probability directly (A), .630 vs. .688 AUC, and .701 vs. .752 with the similar-learner statistic.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Distilling Jev into these weights (C, JEV-9B) does not beat A (.679 and .741), and the same holds at N=8 (A .700, B0 .659, C .699).",
+      "best_match": "Distilling Jev into these weights (C, JEV-9B) does not beat A (.679 and .741), and the same holds at N=8 (A .700, B0 .659, C .699).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets &#215; 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "best_match": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "ratio_score": 98.13333333333333,
+      "partial_ratio_score": 96.75675675675676
+    },
+    {
+      "sentence": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002 to .021); the longer JevKT state helps Jev (.776) but not Qwen3.5-9B (.727).",
+      "best_match": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002 to .021); the longer JevKT state helps Jev (.776) but not Qwen3.5-9B (.727).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+      "best_match": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+      "best_match": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the in- put.",
+      "best_match": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the input.",
+      "ratio_score": 99.62825278810409,
+      "partial_ratio_score": 99.25373134328358
+    },
+    {
+      "sentence": "Only Jev and the Jev-distilled JEV-9B (.687 at N=0, .699 at N=8) come close to or exceed the best deep KT model trained on 8 learners (.689), while Laya, an open-source model that reproduces Jev\u2019s typed interface with a small encoder, stays near chance (.536).",
+      "best_match": "Only Jev and the Jev-distilled JEV-9B (.687 at N=0, .699 at N=8) come close to or exceed the best deep KT model trained on 8 learners (.689), while Laya, an open-source model that reproduces Jev\u2019s typed interface with a small encoder, stays near chance (.536).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+      "best_match": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC- matched shots alone to .724, and both together to .730.",
+      "best_match": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "ratio_score": 99.64664310954063,
+      "partial_ratio_score": 99.29078014184397
+    },
+    {
+      "sentence": "The statistic therefore carries almost all of the gain, and the shots add to it clearly only on DBE-KT22; we keep both because they never hurt and match the configuration selected on full data.",
+      "best_match": "The statistic therefore carries almost all of the gain, and the shots add to it clearly only on DBE-KT22; we keep both because they never hurt and match the configuration selected on full data.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "best_match": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The statistic therefore carries almost all of the gain, and the shots add to it clearly only on DBE-KT22; we keep both because they never hurt and match the configuration selected on full data.",
+      "best_match": "The statistic therefore carries almost all of the gain, and the shots add to it clearly only on DBE-KT22; we keep both because they never hurt and match the configuration selected on full data.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "best_match": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+      "best_match": "A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "They pile up at 0 and 1, and the mean ECE of Thinking-KT is .253 (LOKT .209), against .084 for the single Jev0-shot pass.",
+      "best_match": "They pile up at 0 and 1, and the mean ECE of Thinking-KT is .253 (LOKT .209), against .084 for the single Jev0-shot pass.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With N=8 learners, JevKT is as well calibrated as the best deep KT model (ECE .070 vs. .076; Brier .182 vs. .192), without any post-hoc scaling such as temperature scaling (Guo et al., 2017).",
+      "best_match": "With N=8 learners, JevKT is as well calibrated as the best deep KT model (ECE .070 vs. .076; Brier .182 vs. .192), without any post-hoc scaling such as temperature scaling (Guo et al., 2017).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Jev\u2019s remaining error is a mild underconfidence, as observed accuracy is slightly above the predicted probability across the range.",
+      "best_match": "Jev\u2019s remaining error is a mild underconfidence, as observed accuracy is slightly above the predicted probability across the range.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Within each dataset, the third of targets with the longest reasoning has lower AUC than the shortest third (.668 vs. .719 at budget 2048; .675 vs. .726 at 1024), and reasoning length correlates with the absolute error (Spearman +.29), also among targets on which all ten votes agree.",
+      "best_match": "Within each dataset, the third of targets with the longest reasoning has lower AUC than the shortest third (.668 vs. .719 at budget 2048; .675 vs. .726 at 1024), and reasoning length correlates with the absolute error (Spearman +.29), also among targets on which all ten votes agree.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+      "best_match": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the pub- lic files shows no recall.",
+      "best_match": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+      "ratio_score": 99.5433789954338,
+      "partial_ratio_score": 99.08256880733946
+    },
+    {
+      "sentence": "Relabelling IDs and re- moving names changes Jev0-shot AUC by at most .012, never significantly (Holm), and no dataset is flagged.",
+      "best_match": "Relabelling IDs and removing names changes Jev0-shot AUC by at most .012, never significantly (Holm), and no dataset is flagged.",
+      "ratio_score": 99.2248062015504,
+      "partial_ratio_score": 98.4375
+    },
+    {
+      "sentence": "On six synthetic datasets generated af- ter the model release, JevKT is still at or above the best deep KT model at N=8.",
+      "best_match": "On six synthetic datasets generated after the model release, JevKT is still at or above the best deep KT model at N=8.",
+      "ratio_score": 99.15966386554622,
+      "partial_ratio_score": 98.30508474576271
+    },
+    {
+      "sentence": "With hyper-parameters tuned on the validation learners of each cell (four strong pyKT models, eight configurations each), deep KT stays below JevKT by +.070, +.042, +.030 and +.010 at N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7, 5/7 and 4/7 datasets), so default hyper-parameters do not explain the gap.",
+      "best_match": "With hyper-parameters tuned on the validation learners of each cell (four strong pyKT models, eight configurations each), deep KT stays below JevKT by +.070, +.042, +.030 and +.010 at N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7, 5/7 and 4/7 datasets), so default hyper-parameters do not explain the gap.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Every form of evidence improves on Jev0-shot (.706), and the similar-learner statistic alone (.729) is almost as good as the full JevKT input (.730).",
+      "best_match": "Every form of evidence improves on Jev0-shot (.706), and the similar-learner statistic alone (.729) is almost as good as the full JevKT input (.730).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "KC-matched shots help less than the statistic (.720 with 16 shots, .724 with 64), and combining the two is sub-additive: the gain over the statistic alone is clear only on DBE-KT22.",
+      "best_match": "KC-matched shots help less than the statistic (.720 with 16 shots, .724 with 64), and combining the two is sub-additive: the gain over the statistic alone is clear only on DBE-KT22.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The ranking of the inputs is the same as with full data.",
+      "best_match": "The ranking of the inputs is the same as with full data.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "JevKT leads on av- erage up to N=64 (on 7/7 datasets at N=8 and 4/7 at N=64); the lead shrinks with N and disap- pears between N=64 and 128 on average, at differ- ent N for different datasets.",
+      "best_match": "JevKT leads on average up to N=64 (on 7/7 datasets at N=8 and 4/7 at N=64); the lead shrinks with N and disappears between N=64 and 128 on average, at different N for different datasets.",
+      "ratio_score": 98.41269841269842,
+      "partial_ratio_score": 96.7741935483871
+    },
+    {
+      "sentence": "At N=0, Jev0-shot is the strongest training-free method on every dataset.",
+      "best_match": "At N=0, Jev0-shot is the strongest training-free method on every dataset.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "BKT and PFA stay well below JevKT and the best deep KT model at every N.",
+      "best_match": "BKT and PFA stay well below JevKT and the best deep KT model at every N.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Third, Laya is an open-source reproduction of Jev\u2019s typed interface built on a ModernBERT encoder; it stays near chance, consistent with its own model card.",
+      "best_match": "Third, Laya is an open-source reproduction of Jev\u2019s typed interface built on a ModernBERT encoder; it stays near chance, consistent with its own model card.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With the state alone (N=0) the predicted probabilities correlate at Pearson .995\u2013.999 (mean absolute difference .008), AUC changes by \u2212.001 on average, and none of 21 dataset\u2013metric pairs differs significantly; with the JevKT input at N=8 the correlation is .991\u2013.998 and 1/21 pairs differs (an F1 change of .004).",
+      "best_match": "With the state alone (N=0) the predicted probabilities correlate at Pearson .995\u2013.999 (mean absolute difference .008), AUC changes by \u2212.001 on average, and none of 21 dataset\u2013metric pairs differs significantly; with the JevKT input at N=8 the correlation is .991\u2013 .998 and 1/21 pairs differs (an F1 change of .004).",
+      "ratio_score": 99.84101748807632,
+      "partial_ratio_score": 99.68152866242038
+    },
+    {
+      "sentence": "As a rough proxy for a different Jev-family model, replacing Jev with its distilled student JEV-9B on the same inputs lowers AUC by .007\u2013.074, which bounds how much our numbers could move under a weaker version.",
+      "best_match": "As a rough proxy for a different Jev-family model, replacing Jev with its distilled student JEV-9B on the same inputs lowers AUC by .007\u2013.074, which bounds how much our numbers could move under a weaker version.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "JevKT is significantly better than the best deep KT model on 7/7 datasets at N=8, and the number of significant datasets falls as N grows, to 1/7 at N=256.",
+      "best_match": "Under cold start (Table 15), JevKT is significantly better than the best deep KT model on 7/7 datasets at N=8, and the number of significant datasets falls as N grows, to 1/7 at N=256.",
+      "ratio_score": 91.44542772861357,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At N=0, Jev0-shot is significantly better than LOKT and Thinking-KT on all seven datasets.",
+      "best_match": "At N=0, Jev0-shot is significantly better than LOKT and Thinking-KT on all seven datasets.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "(i) ID-only probes: asked to predict item difficulty or the skill of an item from its ID alone, Jev and three open LLMs are no better with the real ID than with a format-matched fake ID on any dataset after Holm correction.",
+      "best_match": "(i) ID-only probes: asked to predict item difficulty or the skill of an item from its ID alone, Jev and three open LLMs are no better with the real ID than with a format-matched fake ID on any dataset after Holm correction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "(ii) Row continuation of the original public files shows no dataset-specific recall.",
+      "best_match": "(ii) Row continuation of the original public files shows no dataset-specific recall.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [
+    {
+      "sentence": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002",
+      "best_match": "On the A state itself Jev reaches .761 against .752 for A, higher on all seven datasets (by .002 to .021); the longer JevKT state helps Jev (.776) but not Qwen3.5-9B (.727).",
+      "ratio_score": 71.37546468401487,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "ACC follows the AUC results; F1 differs little at small N and is sensitive to the .5 threshold on datasets with a low base rate (ASSIST17).",
+      "best_match": "ACC follows the AUC results; F1 differs little at small N and is sensitive to the .5 threshold",
+      "ratio_score": 80.68669527896995,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_new": [
+    {
+      "sentence": "Deep KT models (DLKT; Piech et al., 2015; Ghosh et al., 2020; Liu et al., 2023b) learn item and skill representations from many learner sequences, and with little data they can lose to simpler models (Gervet et al., 2020).",
+      "best_match": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "ratio_score": 42.75862068965517,
+      "partial_ratio_score": 43.64508393285371
+    },
+    {
+      "sentence": "Without any data from the target platform, Jev0-shot reaches .706 mean AUC (first block of Table 1).",
+      "best_match": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "ratio_score": 46.0377358490566,
+      "partial_ratio_score": 62.0253164556962
+    },
+    {
+      "sentence": "The lead is Holm-significant on 7/7 datasets at N=8 and 6/7 at N=16, 3/7 at N=32 and 2/7 at N=64 (Table 15).",
+      "best_match": "LOKT, whose only use of the logged learners is answer-option weights, barely moves with N (.672 at N=8 and .672 with all learners, against .671 at N=0) and stays below both.",
+      "ratio_score": 42.70462633451957,
+      "partial_ratio_score": 45.370370370370374
+    },
+    {
+      "sentence": "Because the best deep KT model is chosen on test in every cell, these margins are conservative.",
+      "best_match": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+      "ratio_score": 45.59585492227979,
+      "partial_ratio_score": 47.20496894409938
+    },
+    {
+      "sentence": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "best_match": "The lead is Holm-significant on 7/7 datasets at N=8 and 6/7 at N=16, 3/7 at N=32 and 2/7 at N=64 (Table 15).",
+      "ratio_score": 38.8235294117647,
+      "partial_ratio_score": 49.152542372881356
+    },
+    {
+      "sentence": "These vote frequencies are also poorly calibrated (Figure 5, Table 13).",
+      "best_match": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "ratio_score": 46.616541353383454,
+      "partial_ratio_score": 44.44444444444444
+    },
+    {
+      "sentence": "Long reasoning marks hard cases rather than fixing them.",
+      "best_match": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "ratio_score": 42.3728813559322,
+      "partial_ratio_score": 45.714285714285715
+    },
+    {
+      "sentence": "Priced at the same GPU rental rate, DLKT is far cheaper, since train- ing on all learners costs at most $0.08 and a million predictions well under $1.",
+      "best_match": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "ratio_score": 44.13793103448276,
+      "partial_ratio_score": 46.15384615384615
+    },
+    {
+      "sentence": "A leak audit passes in every setting, including a test that the input does not change when the target out- come is flipped.",
+      "best_match": "All examples and statistics come from U and the target\u2019s past; a leak audit (including a test that the input is unchanged when rt is flipped) passes in every setting.",
+      "ratio_score": 57.439446366782,
+      "partial_ratio_score": 64.88888888888889
+    },
+    {
+      "sentence": "Classical KT models (BKT, PFA) fitted on the same learners are below both (Ap- pendix D).",
+      "best_match": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "ratio_score": 47.682119205298015,
+      "partial_ratio_score": 51.72413793103448
+    },
+    {
+      "sentence": "Yes, an off-the-shelf System-One LLM already per- forms KT when few or no learners are logged.",
+      "best_match": "With no learner logs, an off-the-shelf System-One LLM (Jev) outperforms deep KT trained on 8 learners on average and prompted System-Two LLM-KT on all seven datasets (RQ1).",
+      "ratio_score": 54.88721804511278,
+      "partial_ratio_score": 72.34042553191489
+    },
+    {
+      "sentence": "Without any data from the target platform, Jev beats deep KT trained on 8 learners on average and prompted System-Two LLM-KT on every dataset, at a fraction of its cost; with evidence from the logged learners, JevKT stays ahead until super- vised KT catches up between 64 and 128 learners.",
+      "best_match": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "ratio_score": 53.48837209302326,
+      "partial_ratio_score": 66.08695652173913
+    },
+    {
+      "sentence": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+      "best_match": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical input, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamination checks find no sign of memorised data.",
+      "ratio_score": 57.8811369509044,
+      "partial_ratio_score": 71.27272727272727
+    },
+    {
+      "sentence": "Re-querying the pinned version after two days reproduces its predictions closely (Appendix G), but only one Jev version is available, so we cannot measure drift across versions.",
+      "best_match": "Because the best deep KT model is chosen on test in every cell, these margins are conservative.",
+      "ratio_score": 43.38235294117647,
+      "partial_ratio_score": 43.93063583815029
+    },
+    {
+      "sentence": "Three findings guided the design.",
+      "best_match": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "ratio_score": 42.10526315789473,
+      "partial_ratio_score": 53.125
+    },
+    {
+      "sentence": "First, the similar-learner statistic is the largest single gain, larger than item and KC population statistics.",
+      "best_match": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "ratio_score": 50.0,
+      "partial_ratio_score": 52.68817204301075
+    },
+    {
+      "sentence": "Second, shots help only when they are KC-matched; random shots are neutral or slightly harmful at every k.",
+      "best_match": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+      "ratio_score": 43.47826086956522,
+      "partial_ratio_score": 47.34299516908212
+    },
+    {
+      "sentence": "Third, repeats, paraphrases, formats, longer histories and option weights do not change AUC, so JevKT keeps the simplest state.",
+      "best_match": "A leak audit passes in every setting, including a test that the input does not change when the target out- come is flipped.",
+      "ratio_score": 45.599999999999994,
+      "partial_ratio_score": 46.808510638297875
+    },
+    {
+      "sentence": "The development-split ranking transfers to test (Figure 2).",
+      "best_match": "These vote frequencies are also poorly calibrated (Figure 5, Table 13).",
+      "ratio_score": 47.692307692307686,
+      "partial_ratio_score": 49.572649572649574
+    },
+    {
+      "sentence": "Every form of evidence improves on Jev0-shot (.706), and the similar-learner statistic alone (.729) is almost as good as the full JevKT input (.730).",
+      "best_match": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+      "ratio_score": 53.642384105960275,
+      "partial_ratio_score": 56.70498084291188
+    },
+    {
+      "sentence": "KC-matched shots help less than the statistic (.720 with 16 shots, .724 with 64), and combining the two is sub-additive: the gain over the statistic alone is clear only on DBE-KT22.",
+      "best_match": "KC-matched shots help and saturate at k\u224864, random shots do not, and the similar-learner statistic adds on top; the ranking on the development split transfers to test.",
+      "ratio_score": 51.14942528735632,
+      "partial_ratio_score": 52.46913580246913
+    },
+    {
+      "sentence": "The ranking of the inputs is the same as with full data.",
+      "best_match": "The development-split ranking transfers to test (Figure 2).",
+      "ratio_score": 45.21739130434783,
+      "partial_ratio_score": 48.93617021276596
+    },
+    {
+      "sentence": "JevKT leads on average up to N=64 (on 7/7 datasets at N=8 and 4/7 at N=64); the lead shrinks with N and disappears between N=64 and 128 on average, at different N for different datasets.",
+      "best_match": "The lead is Holm-significant on 7/7 datasets at N=8 and 6/7 at N=16, 3/7 at N=32 and 2/7 at N=64 (Table 15).",
+      "ratio_score": 48.97959183673469,
+      "partial_ratio_score": 58.490566037735846
+    },
+    {
+      "sentence": "At N=0, Jev0-shot is the strongest training-free method on every dataset.",
+      "best_match": "This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+      "ratio_score": 46.753246753246756,
+      "partial_ratio_score": 58.730158730158735
+    },
+    {
+      "sentence": "BKT and PFA stay well below JevKT and the best deep KT model at every N.",
+      "best_match": "On six synthetic datasets generated after the model release, JevKT is still at or above the best deep KT model at N=8.",
+      "ratio_score": 52.63157894736843,
+      "partial_ratio_score": 65.07936507936508
+    },
+    {
+      "sentence": "ACC follows the AUC results; F1 differs little at small N and is sensitive to the .5 threshold",
+      "best_match": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+      "ratio_score": 45.833333333333336,
+      "partial_ratio_score": 46.808510638297875
+    },
+    {
+      "sentence": "At N=8 our numbers are within about .03 AUC of those reported on the paper\u2019s own splits.",
+      "best_match": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+      "ratio_score": 42.323651452282164,
+      "partial_ratio_score": 45.67901234567901
+    },
+    {
+      "sentence": "CLST is below JevKT in 12/12 cells with N\u22658 and be- low the best of the eleven core deep KT models in 11/12, so fine-tuning an LLM on a few learners does not reach what the off-the-shelf System-One model achieves without training.",
+      "best_match": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "ratio_score": 42.89544235924932,
+      "partial_ratio_score": 48.7603305785124
+    },
+    {
+      "sentence": "JevKT is above the best DLKT in 33/35 dataset\u2013window cells, including the first positions (2\u20135), where the new learner has given almost no evidence; Jev0-shot,",
+      "best_match": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "ratio_score": 54.3010752688172,
+      "partial_ratio_score": 57.23270440251572
+    },
+    {
+      "sentence": "Tables 34\u201341 (Appendix M) give the mean over datasets per position for every model at each N: with N=64 JevKT is still above every deep KT model at positions 2\u201349, and with all learners it is behind the strongest deep KT models at every position, as in P1.",
+      "best_match": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "ratio_score": 45.62899786780383,
+      "partial_ratio_score": 52.6027397260274
+    },
+    {
+      "sentence": "JevKT is ahead of the best deep KT model only on Junyi; averaged over datasets the gap (.713 vs. .729) is close to the full-data gap of P1, so unseen items do not by themselves favour the System-One model.",
+      "best_match": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "ratio_score": 50.717703349282296,
+      "partial_ratio_score": 52.26666666666666
+    },
+    {
+      "sentence": "Jev0-shot is already within .03 of the best deep KT model without any training data, and both Jev variants are far above LOKT and Thinking-KT (.657).",
+      "best_match": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "ratio_score": 52.86624203821656,
+      "partial_ratio_score": 57.439446366782
+    },
+    {
+      "sentence": "Holding the Qwen3.5-9B weights fixed, a typed one-pass head (B0) lowers AUC relative to the plain readout (A), and a Jev-distilled student (C) does not exceed A, with full data or at N=8.",
+      "best_match": "For the weights and readers we tested, the typed format does not produce the gain; the model does.",
+      "ratio_score": 43.50877192982456,
+      "partial_ratio_score": 47.95918367346938
+    },
+    {
+      "sentence": "Feeding the identical serialised state to Jev instead of Qwen3.5-9B raises AUC in all 35 cells.",
+      "best_match": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "ratio_score": 57.857142857142854,
+      "partial_ratio_score": 81.05263157894737
+    },
+    {
+      "sentence": "The benefit therefore comes from the System-One model, not from the typed format.",
+      "best_match": "Unseen items alone therefore do not reverse the full-data result, and the advantage of the System-One model comes from having few learners, not from unseen items.",
+      "ratio_score": 51.028806584362144,
+      "partial_ratio_score": 56.790123456790134
+    },
+    {
+      "sentence": "First, the byte-identical state and typed questions are sent to three other LLMs (GPT-4o-mini, Gemini-2.5-Flash-Lite and DeepSeek-V4-Flash) through TypeSafe\u2019s official System-One adapter, which builds its own system prompt and strict JSON schema and reads P(correct) from the verbalised answer; reasoning is disabled, and the adapter code is not modified.",
+      "best_match": "Among the readers we tested, the gain is specific to Jev, since three other LLMs queried with the byte-identical typed request through the official System-One adapter fall below it on all seven datasets, and reader swaps and contamination checks find no evidence that the input format or memorised data explain the gain.",
+      "ratio_score": 49.18518518518519,
+      "partial_ratio_score": 50.31250000000001
+    },
+    {
+      "sentence": "Third, Laya is an open-source reproduction of Jev\u2019s typed interface built on a ModernBERT encoder; it stays near chance, consistent with its own model card.",
+      "best_match": "The statistic therefore carries almost all of the gain, and the shots add to it clearly only on DBE-KT22; we keep both because they never hurt and match the configuration selected on full data.",
+      "ratio_score": 43.553008595988544,
+      "partial_ratio_score": 43.70860927152318
+    },
+    {
+      "sentence": "Every adapter LLM is below Jev on every dataset",
+      "best_match": "At N=0, Jev0-shot is the strongest training-free method on every dataset.",
+      "ratio_score": 44.99999999999999,
+      "partial_ratio_score": 59.45945945945945
+    },
+    {
+      "sentence": "On the same 1,000 targets, going from N=0 to the JevKT input at N=8 raises AUC by +.016 for Jev and +.010 for DeepSeek-V4-Flash (paired learner-cluster bootstrap: significant on 2/7 and 1/7 datasets, mostly DBE-KT22 and Algebra05; the difference between the two gains is significant on 0/7).",
+      "best_match": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the input.",
+      "ratio_score": 51.162790697674424,
+      "partial_ratio_score": 51.031894934333955
+    },
+    {
+      "sentence": "The recipe therefore helps both models a little, and which model reads the input decides whether deep KT is beaten.",
+      "best_match": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+      "ratio_score": 51.908396946564885,
+      "partial_ratio_score": 53.91304347826087
+    },
+    {
+      "sentence": "With the state alone (N=0) the predicted probabilities correlate at Pearson .995\u2013.999 (mean absolute difference .008), AUC changes by \u2212.001 on average, and none of 21 dataset\u2013metric pairs differs significantly; with the JevKT input at N=8 the correlation is .991\u2013 .998 and 1/21 pairs differs (an F1 change of .004).",
+      "best_match": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the input.",
+      "ratio_score": 44.93996569468267,
+      "partial_ratio_score": 46.74329501915708
+    },
+    {
+      "sentence": "As a rough proxy for a different Jev-family model, replacing Jev with its distilled student JEV-9B on the same inputs lowers AUC by .007\u2013.074, which bounds how much our numbers could move under a weaker version.",
+      "best_match": "Tables 34\u201341 (Appendix M) give the mean over datasets per position for every model at each N: with N=64 JevKT is still above every deep KT model at positions 2\u201349, and with all learners it is behind the strongest deep KT models at every position, as in P1.",
+      "ratio_score": 41.97002141327623,
+      "partial_ratio_score": 44.81927710843373
+    },
+    {
+      "sentence": "The vote-frequency readouts of LOKT and Thinking-KT are the worst calibrated on every dataset; Jev0-shot is calibrated far better without any training data, and with eight learners JevKT and the best deep KT model are comparable.",
+      "best_match": "Tables 34\u201341 (Appendix M) give the mean over datasets per position for every model at each N: with N=64 JevKT is still above every deep KT model at positions 2\u201349, and with all learners it is behind the strongest deep KT models at every position, as in P1.",
+      "ratio_score": 47.835051546391746,
+      "partial_ratio_score": 49.122807017543856
+    },
+    {
+      "sentence": "JevKT leads in every slice with enough targets.",
+      "best_match": "A leak audit passes in every setting, including a test that the input does not change when the target out- come is flipped.",
+      "ratio_score": 44.705882352941174,
+      "partial_ratio_score": 53.191489361702125
+    },
+    {
+      "sentence": "Items that no logged learner answered are where an ID-based deep KT model has no item-specific signal; JevKT keeps most of its lead there.",
+      "best_match": "Because the best deep KT model is chosen on test in every cell, these margins are conservative.",
+      "ratio_score": 46.351931330472105,
+      "partial_ratio_score": 52.910052910052904
+    },
+    {
+      "sentence": "The lead is largest for learners with very low or very high accuracy so far.",
+      "best_match": "JevKT leads in every slice with enough targets.",
+      "ratio_score": 47.15447154471545,
+      "partial_ratio_score": 51.06382978723405
+    },
+    {
+      "sentence": "JevKT\u2019s 64 shots make its prompt long, so it costs more than Jev0-shot but still about one fifth of Thinking-KT, and it answers in one call instead of ten.",
+      "best_match": "KC-matched shots help and saturate at k\u224864, random shots do not, and the similar-learner statistic adds on top; the ranking on the development split transfers to test.",
+      "ratio_score": 45.3416149068323,
+      "partial_ratio_score": 46.36678200692042
+    },
+    {
+      "sentence": "With full data: thinking does not improve Thinking-KT over no-think at budget 1024 or 2048 (0/7 datasets); one Jev call beats Thinking-KT at either budget (7/7); JevKT beats Jev0-shot (7/7).",
+      "best_match": "A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+      "ratio_score": 44.859813084112155,
+      "partial_ratio_score": 47.802197802197796
+    },
+    {
+      "sentence": "JevKT is significantly better than the counting kNN statistic alone on only 1/7 datasets with full data, i.e., with all learners available the statistic carries most of the signal; the LLM\u2019s contribution appears when learners are few (Figure 3).",
+      "best_match": "KC-matched shots help less than the statistic (.720 with 16 shots, .724 with 64), and combining the two is sub-additive: the gain over the statistic alone is clear only on DBE-KT22.",
+      "ratio_score": 43.1924882629108,
+      "partial_ratio_score": 45.714285714285715
+    },
+    {
+      "sentence": "Under cold start (Table 15), JevKT is significantly better than the best deep KT model on 7/7 datasets at N=8, and the number of significant datasets falls as N grows, to 1/7 at N=256.",
+      "best_match": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "ratio_score": 50.121654501216554,
+      "partial_ratio_score": 52.95774647887323
+    },
+    {
+      "sentence": "At N=0, Jev0-shot is significantly better than LOKT and Thinking-KT on all seven datasets.",
+      "best_match": "At N=0, Jev0-shot is the strongest training-free method on every dataset.",
+      "ratio_score": 61.34969325153374,
+      "partial_ratio_score": 57.6271186440678
+    },
+    {
+      "sentence": "(i) ID-only probes: asked to predict item difficulty or the skill of an item from its ID alone, Jev and three open LLMs are no better with the real ID than with a format-matched fake ID on any dataset after Holm correction.",
+      "best_match": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+      "ratio_score": 72.56235827664399,
+      "partial_ratio_score": 76.19047619047619
+    },
+    {
+      "sentence": "(ii) Row continuation of the original public files shows no dataset-specific recall.",
+      "best_match": "The ranking of the inputs is the same as with full data.",
+      "ratio_score": 42.85714285714286,
+      "partial_ratio_score": 51.78571428571428
+    },
+    {
+      "sentence": "De-identification: relabelling IDs, then removing names and text, changes Jev0-shot AUC by at most .012 before text removal and never significantly at the ID step.",
+      "best_match": "Relabelling IDs and removing names changes Jev0-shot AUC by at most .012, never significantly (Holm), and no dataset is flagged.",
+      "ratio_score": 67.35395189003437,
+      "partial_ratio_score": 70.3125
+    },
+    {
+      "sentence": "No dataset is flagged (Table 17).",
+      "best_match": "The gain is not confined to easy cases (Table 14, Appendix I).",
+      "ratio_score": 44.21052631578948,
+      "partial_ratio_score": 51.515151515151516
+    },
+    {
+      "sentence": "With N=8 training learners JevKT is at or above the best deep KT model on all six (+.001 to +.033 AUC), the same pattern as on the public datasets.",
+      "best_match": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "ratio_score": 54.487179487179496,
+      "partial_ratio_score": 51.95729537366548
+    }
+  ]
+}
