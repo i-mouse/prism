@@ -2535,3 +2535,7 @@ Budget abort (--max-inr hit mid-paper): that paper writes no output. Rerun that 
 Failed windows (a window errors after retries and fallback): the paper’s output is written and flagged incomplete. It is not rerun. Failed windows count as 0 sentences, and the paper is reported as incomplete in B4.
 
 No other reruns. Decided before any pass2_r1 result exists.
+
+## Experiment 3 pass2_r1 result - 2026-10-15:
+ Run 22:40–23:01 IST, exit 0. 12/12 papers complete, 261/261 windows, 0 failed, 0 fallback, all finish_reason STOP. INR 66.75 (meter). Tokens in 604,751 / out 47,804 / thought 9,234. Sentences 1,114; pass-1 claims 362; merged claims 962; buckets: dropped_ungrounded 14, dropped_duplicate 500, kept_but_contained 16, kept_new 584.
+  Outlier (report-only, for B4): arxiv-2610.12168v1 returned 5 sentences over 18 windows. c4 preview (not the B4 computation): mean per-paper merged / pass-1 = 2.73 (pooled 962 / 362 = 2.66); p2 = 66.75 / 12 = 5.56; 87 x 2.73 + 5.56 = about INR 243 > 130. Because merged >= pass-1 always (r >= 1), no pass2_r2 result can bring c4 under 130 under any reading of the gate. pass2_r2 still runs as pre-registered (protocol completeness; first repeat-run variance data for c1/c6/c7). No gate or rule change. Push budget after pass2_r1: about INR 440.
