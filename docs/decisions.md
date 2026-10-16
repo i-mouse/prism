@@ -2568,3 +2568,31 @@ Triviality is not judged in B4. Every item gets label `claim` | `not_claim` | `u
 **Implementation notes (decided during the B4 build, not in the original task brief):** PDF loading for c8's context field uses a dedicated table of only the 12 dev papers (never `eval/replay_stage1.py`'s path table, which may reference held-out/sealed PDFs), each behind a pinned sha256 check. PDF text extraction is a local reimplementation of `main.py`'s `extract_pdf_text_sync` loop — `main.py` itself is never imported, since its module top level has real side effects (telemetry init, Psycopg instrumentation). c4's `p2` input is computed only after verifying every `_summary.json` record's `call_kind == "pass2"`. c7's sentence count is cross-checked against each paper's bucket-count sum before use; any disagreement aborts the run.
 
 **Claim definition:** [NITIN: paste the rubric's claim definition here, or write one sentence if the rubric has none]
+
+## Experiment 3 B4 scorer fix - 2026-10-16
+
+Written before any label exists (packs/sheet/keys from the B4 method entry above were never opened or read for content). An independent read-only audit of `eval/exp3_b4.py` found two real bugs in `cmd_score`'s not-yet-run c8 logic, plus two claims that did not hold up on verification.
+
+**Confirmed and fixed:**
+- **c8 per-run sample size included repeats.** A repeat item (`copy.deepcopy` of its original in `cmd_build_c8`) inherits its original's `run_memberships`, so `cmd_score`'s per-run `run_ids` filter counted repeats toward that run's sample. Verified against the real generated `c8_key.json`: `pass2_r2`'s sample would have scored at n=32 (28 own + 2 `pass2_both` + 2 `pass2_r2`-group repeats), not the pre-registered 30; `pass2_r1` happened to read as 30 only because no `pass2_r1`-group repeat was drawn. Fixed: `run_ids` now also requires `repeat_of is None`; `cmd_score` asserts `n == 30` for each run and aborts (`SystemExit`) naming the run and actual `n` otherwise.
+- **Report-only groupings double-counted / wrong population.** `pass1_control`'s `n` included its 3 repeats (33, not 30). Separately, `useful_claim_rate`/`not_claim_reason_counts` were accumulated inside the per-run loop keyed by raw group, so a `pass2_both` item's answer was counted twice into that raw group's bucket, and the three *per-run* views the pre-registration actually wants (`pass2_r1 = pass2_r1-only ∪ pass2_both`, `pass2_r2 = pass2_r2-only ∪ pass2_both`, `pass1_control`) didn't exist. Fixed: both metrics are now computed in a single pass over originals only (`repeat_of is None`), bucketed once by raw group, then merged into exactly those three views - each item contributes to a view at most once per view (a `both` item legitimately counts once in the r1 view and once in the r2 view; that is the two views being different, not double-counting within either one).
+
+**Checked and rejected (no bug, no change):**
+- Self-consistency pairing (`repeat_pairs`) already only ever includes the 5 (original, repeat) pairs by construction - pinned with a new test, not changed.
+- No test or production code path writes into the real `docs/evals/exp3_b4/` directory - every test uses `tmp_path`; `cmd_lock`/`cmd_score` only ever write to the CLI-supplied `output_dir`. This also means the audit's separate claim that `lock.json`/`b4_result.json` already exist was independently checked and found false: `Glob` over the real `docs/evals/exp3_b4/` directory, both before and after this fix, shows only the 7 expected pack/key/deterministic files - neither `lock.json` nor `b4_result.json` exists, and `lock`/`score` were never run.
+
+**Also refactored (no behavior change):** the per-row tie-rule decision (c1 recovered + pass-1/pass-2 credit) was extracted from an inline check into `_credit_c1_match`, a small pure function, so it has its own direct unit tests instead of only being exercised through the full `cmd_score` path.
+
+**Packs/sheet/keys unchanged** - sha256 before and after this fix, for every file this fix was forbidden to touch:
+
+| file | sha256 |
+|---|---|
+| `deterministic.json` | `e4f68302f7f7128bd6360bb98a8f19fd3c68b374a069d3e1b87775ffdb2c2d14` |
+| `c1_adjudication.csv` | `50b57d26504c0c5cd927f1bd8f7d718ea4f23a883eabee1499bb2fe04a691658` |
+| `c1_review_pack.md` | `f57bfe0326b710c14fb8971366bae472ab788e17dd31034d4070d4722956a177` |
+| `c1_key.json` | `adadbc0f41798a5d3e4f4ea1ddf8f472c7f85e4ab1679e66ea01b8e7d4a0e626` |
+| `c8_sheet.csv` | `3108b4bf930eb748bfe17bc0504d44cdd80f7e3a03601bd169ea517f219d249e` |
+| `c8_README.md` | `85a4c4e739fc0f7ca306f5edb63d25343903545bea57bb74943d15c644b04dd2` |
+| `c8_key.json` | `ab9631d091845096a2a0750bc3717ad259c70f4a99b2128c56ae7c3f06b54071` |
+
+All identical before and after. `uv run pytest -q tests/test_exp3_b4.py`: 36 passed (was 26; 10 new tests for the two fixes plus the two pinned non-bugs and distinct-per-run-input coverage for c3/c4/c7). Full suite `uv run pytest -q`: 298 passed, 1 deselected. No gate or threshold in `exp3_thresholds.json` changed; nothing in `cmd_build_c1`/`cmd_build_c8` (pack/sheet/key generation) was touched.

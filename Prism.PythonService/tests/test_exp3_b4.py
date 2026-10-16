@@ -291,16 +291,180 @@ def test_c7_aborts_when_sentence_counts_disagree(tmp_path, monkeypatch):
 # the small, decoupled pieces cmd_score uses (no file I/O needed for these).
 # --------------------------------------------------------------------------
 
-def test_tie_rule_credits_pass1_when_both_present():
-    """A row whose present match_ids include one pass-1 and one pass-2 claim
-    in the same run must be credited to pass 1 (reported as a run-1
-    adjudication disagreement), never to c6."""
-    present_entries = [{"present": True, "pass": 1, "merged_index": 0}, {"present": True, "pass": 2, "merged_index": 1}]
-    credited_to_pass2 = not any(e["pass"] == 1 for e in present_entries)
-    assert credited_to_pass2 is False
-
-
 def test_unsure_counts_as_not_claim_for_c8():
     answer = C8Answer.model_validate({"id": "K001", "label": "unsure", "reason": "other", "duplicate": "", "note": ""})
     is_claim = answer.label == "claim"
     assert is_claim is False
+
+
+# --------------------------------------------------------------------------
+# exp3_b4.py: _credit_c1_match (extracted tie-rule helper), exercised
+# directly - this is the actual production function cmd_score calls, not a
+# reimplementation of its logic in the test.
+# --------------------------------------------------------------------------
+
+def test_credit_c1_match_empty_is_not_recovered():
+    assert exp3_b4._credit_c1_match([]) == (False, None)
+
+
+def test_credit_c1_match_pass2_only_credits_pass2():
+    present = [{"present": True, "pass": 2, "merged_index": 0}]
+    assert exp3_b4._credit_c1_match(present) == (True, "pass2")
+
+
+def test_credit_c1_match_pass1_only_credits_pass1():
+    present = [{"present": True, "pass": 1, "merged_index": 0}]
+    assert exp3_b4._credit_c1_match(present) == (True, "pass1")
+
+
+def test_credit_c1_match_tie_credits_pass1():
+    """A row whose present match_ids include one pass-1 and one pass-2 claim
+    in the same run must still count as recovered (c1) but be credited to
+    pass 1 (reported as a run-1 adjudication disagreement), never c6."""
+    present = [{"present": True, "pass": 1, "merged_index": 0}, {"present": True, "pass": 2, "merged_index": 1}]
+    assert exp3_b4._credit_c1_match(present) == (True, "pass1")
+
+
+# --------------------------------------------------------------------------
+# exp3_b4.py: c8 scoring - repeats must not inflate a run's sample size,
+# and must not be double-counted in report-only groupings (independent
+# audit fix, 2026-10-16).
+# --------------------------------------------------------------------------
+
+def _make_c8_key(pass2_r1=28, pass2_r2=28, pass2_both=2, pass1_control=30, repeats=()):
+    """Builds a synthetic c8_key.json "items" dict with the given raw group
+    sizes, then appends repeat entries (each a dict {from_group, run_memberships})
+    pointing at the first item of that group."""
+    key: dict[str, dict] = {}
+    counter = 0
+    group_sizes = {"pass2_r1": pass2_r1, "pass2_r2": pass2_r2, "pass2_both": pass2_both, "pass1_control": pass1_control}
+    run_memberships_by_group = {
+        "pass2_r1": ["pass2_r1"],
+        "pass2_r2": ["pass2_r2"],
+        "pass2_both": ["pass2_r1", "pass2_r2"],
+        "pass1_control": [],
+    }
+    first_of_group: dict[str, str] = {}
+    for group, size in group_sizes.items():
+        for _ in range(size):
+            counter += 1
+            kid = f"K{counter:03d}"
+            key[kid] = {"group": group, "run_memberships": run_memberships_by_group[group], "position": 0, "repeat_of": None}
+            first_of_group.setdefault(group, kid)
+
+    for group in repeats:
+        counter += 1
+        kid = f"K{counter:03d}"
+        original_id = first_of_group[group]
+        key[kid] = {
+            "group": group,
+            "run_memberships": run_memberships_by_group[group],
+            "position": 0,
+            "repeat_of": original_id,
+        }
+    return key
+
+
+def _c8_run_sample(c8_key, run):
+    return [
+        kid for kid, info in c8_key.items()
+        if run in info.get("run_memberships", []) and info.get("repeat_of") is None
+    ]
+
+
+def test_c8_run_sample_excludes_repeats_and_stays_30():
+    c8_key = _make_c8_key(repeats=["pass2_r2", "pass2_r2"])  # mirrors the real run's 2 pass2_r2 repeats
+    r1_sample = _c8_run_sample(c8_key, "pass2_r1")
+    r2_sample = _c8_run_sample(c8_key, "pass2_r2")
+    assert len(r1_sample) == 30
+    assert len(r2_sample) == 30  # without the fix this would be 32
+
+
+def test_c8_run_sample_repeat_label_not_double_counted():
+    c8_key = _make_c8_key(repeats=["pass2_r2"])
+    repeat_id = next(kid for kid, info in c8_key.items() if info["repeat_of"] is not None)
+    original_id = c8_key[repeat_id]["repeat_of"]
+
+    r2_sample = _c8_run_sample(c8_key, "pass2_r2")
+    assert repeat_id not in r2_sample
+    assert original_id in r2_sample
+    # the repeat's own label (even if different from the original's) must
+    # never be counted toward the run's claims total - it's excluded entirely.
+
+
+def test_c8_control_n_excludes_repeats():
+    c8_key = _make_c8_key(repeats=["pass1_control", "pass1_control", "pass1_control"])
+    originals = {kid: info for kid, info in c8_key.items() if info["repeat_of"] is None}
+    control_ids = [kid for kid, info in originals.items() if info["group"] == "pass1_control"]
+    assert len(control_ids) == 30  # without the fix this would be 33
+
+
+def test_c8_control_useful_rate_and_reasons_populated(tmp_path):
+    c8_key = _make_c8_key(pass2_r1=2, pass2_r2=2, pass2_both=0, pass1_control=4, repeats=["pass1_control"])
+    answers = {}
+    control_originals = [kid for kid, info in c8_key.items() if info["repeat_of"] is None and info["group"] == "pass1_control"]
+    for i, kid in enumerate(control_originals):
+        if i % 2 == 0:
+            answers[kid] = C8Answer.model_validate({"id": kid, "label": "claim", "duplicate": "no", "reason": "", "note": ""})
+        else:
+            answers[kid] = C8Answer.model_validate({"id": kid, "label": "not_claim", "reason": "method_setup", "duplicate": "", "note": ""})
+
+    useful_flags = [answers[kid].label == "claim" and answers[kid].duplicate == "no" for kid in control_originals]
+    reasons = [answers[kid].reason for kid in control_originals if answers[kid].label != "claim"]
+    assert len(control_originals) == 4  # originals only, repeat excluded
+    assert sum(useful_flags) == 2
+    assert reasons == ["method_setup", "method_setup"]
+
+
+# --------------------------------------------------------------------------
+# exp3_b4.py: self-consistency pairing - exactly the (original, repeat)
+# pairs, never more (issue 3 from the independent audit: confirmed already
+# correct, pinned here so it can't silently regress).
+# --------------------------------------------------------------------------
+
+def test_self_consistency_pairs_exactly_the_repeats():
+    c8_key = _make_c8_key(repeats=["pass2_r1", "pass2_r2", "pass1_control", "pass1_control", "pass2_both"])
+    repeat_pairs = [(info["repeat_of"], kid) for kid, info in c8_key.items() if info.get("repeat_of")]
+    assert len(repeat_pairs) == 5
+    for original_id, repeat_id in repeat_pairs:
+        assert c8_key[original_id]["repeat_of"] is None
+        assert c8_key[repeat_id]["repeat_of"] == original_id
+
+
+# --------------------------------------------------------------------------
+# exp3_b4.py: _c3_and_c4 / _c7 with genuinely different per-run inputs, so
+# a bug that silently reuses run 1's numbers for run 2 can't pass.
+# --------------------------------------------------------------------------
+
+def test_c7_per_run_values_and_cross_run_difference(tmp_path, monkeypatch):
+    monkeypatch.setattr(exp3_b4, "DEV_PAPERS", ["P1"])
+    _write_fixture_paper(tmp_path, "pass2_r1", "P1", pass1_n=1, merged_n=1, sentences_n=10, dropped_ungrounded=1)  # rate 0.9
+    _write_fixture_paper(tmp_path, "pass2_r2", "P1", pass1_n=1, merged_n=1, sentences_n=20, dropped_ungrounded=1)  # rate 0.95
+
+    result = exp3_b4._c7(tmp_path)
+    assert result["pass2_r1"]["sentences"] == 10
+    assert result["pass2_r1"]["rate"] == pytest.approx(0.9)
+    assert result["pass2_r1"]["pass"] is False
+    assert result["pass2_r2"]["sentences"] == 20
+    assert result["pass2_r2"]["rate"] == pytest.approx(0.95)
+    assert result["pass2_r2"]["pass"] is True
+    assert result["pass2_r1"]["rate"] != result["pass2_r2"]["rate"]
+
+
+def test_c3_and_c4_per_run_values_differ_and_average_correctly(tmp_path, monkeypatch):
+    monkeypatch.setattr(exp3_b4, "DEV_PAPERS", ["P1"])
+    _write_fixture_paper(tmp_path, "pass2_r1", "P1", pass1_n=10, merged_n=20)  # ratio 2.0
+    _write_json(tmp_path / "pass2_r1" / "_summary.json", {"cost_inr": 10.0, "records": [{"paper_id": "P1", "call_kind": "pass2"}]})
+    _write_fixture_paper(tmp_path, "pass2_r2", "P1", pass1_n=10, merged_n=40)  # ratio 4.0
+    _write_json(tmp_path / "pass2_r2" / "_summary.json", {"cost_inr": 20.0, "records": [{"paper_id": "P1", "call_kind": "pass2"}]})
+
+    result = exp3_b4._c3_and_c4(tmp_path)
+    per_run = result["c3_per_run"]
+    assert per_run["pass2_r1"]["r_mean"] == pytest.approx(2.0)
+    assert per_run["pass2_r2"]["r_mean"] == pytest.approx(4.0)
+    assert per_run["pass2_r1"]["p2"] == pytest.approx(10.0)
+    assert per_run["pass2_r2"]["p2"] == pytest.approx(20.0)
+
+    # averaged across the two (deliberately different) runs
+    assert result["c4_mean_reading"]["r"] == pytest.approx(3.0)
+    assert result["c4_mean_reading"]["p2"] == pytest.approx(15.0)

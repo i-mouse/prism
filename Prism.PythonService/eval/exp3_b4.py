@@ -751,6 +751,26 @@ def cmd_lock(args: argparse.Namespace) -> None:
 # score
 # --------------------------------------------------------------------------
 
+def _credit_c1_match(present_entries: list[dict]) -> tuple[bool, Optional[str]]:
+    """Given one target row's present match entries in one run, decides
+    whether the row is recovered and which pass gets credit.
+
+    Tie rule: if present_entries includes both a pass-1 and a pass-2 claim,
+    the row still counts as recovered (c1) but is credited to pass 1 (not
+    c6) - reported separately as a run-1 adjudication disagreement, since
+    pass 1 is frozen and should never be the thing that newly matches a
+    target row in pass2_r1/pass2_r2.
+
+    Returns (recovered, credit) where credit is "pass1" or "pass2", or
+    (False, None) if present_entries is empty (not recovered at all).
+    """
+    if not present_entries:
+        return False, None
+    if any(e["pass"] == 1 for e in present_entries):
+        return True, "pass1"
+    return True, "pass2"
+
+
 def cmd_score(args: argparse.Namespace) -> None:
     output_dir = args.output_dir
     c1_csv = output_dir / "c1_adjudication.csv"
@@ -779,12 +799,13 @@ def cmd_score(args: argparse.Namespace) -> None:
             continue
         for run in PASS2_RUNS:
             present_entries = [c1_key[mid][run] for mid in answer.match_ids if mid in c1_key and c1_key[mid][run]["present"]]
-            if not present_entries:
+            recovered, credit = _credit_c1_match(present_entries)
+            if not recovered:
                 continue
             c1_recovered[run].append(row_id)
             stability[row_id].add(run)
             c5_by_shape[run][row["shape"]] += 1
-            if any(e["pass"] == 1 for e in present_entries):
+            if credit == "pass1":
                 run1_disagreements[run].append(row_id)
             else:
                 c6_credited[run].append(row_id)
@@ -795,37 +816,61 @@ def cmd_score(args: argparse.Namespace) -> None:
         for runs in [stability.get(row_id, set())]
     }
 
-    # c8: per run, which K-ids belong to that run's own 30-sample.
+    # c8 gate scoring: each run's own 30-sample, excluding repeats (a
+    # repeat inherits its original's run_memberships via copy.deepcopy in
+    # cmd_build_c8, so it must be excluded here or it inflates that run's n
+    # past the pre-registered 30).
     c8_per_run = {}
-    reason_counts: dict[str, Counter] = defaultdict(Counter)
-    useful_by_group: dict[str, list[bool]] = defaultdict(list)
     for run in PASS2_RUNS:
-        run_ids = [kid for kid, info in c8_key.items() if run in info.get("run_memberships", [])]
-        claims = 0
-        for kid in run_ids:
+        run_ids = [
+            kid for kid, info in c8_key.items()
+            if run in info.get("run_memberships", []) and info.get("repeat_of") is None
+        ]
+        n = len(run_ids)
+        if n != C8_SAMPLE_K:
+            raise SystemExit(f"c8 abort: {run} sample size is {n}, expected {C8_SAMPLE_K} (repeats must be excluded)")
+        claims = sum(1 for kid in run_ids if kid in c8_answers and c8_answers[kid].label == "claim")
+        low, high = wilson_interval(claims, n)
+        c8_per_run[run] = {"claims": claims, "n": n, "rate": (claims / n if n else None), "wilson": (low, high), "pass": (n > 0 and claims / n >= 0.70)}
+
+    # Report-only groupings: originals only (repeat_of is None), bucketed
+    # once by raw group, then merged into exactly the three views the
+    # pre-registration reports on. pass2_both items legitimately appear in
+    # BOTH the pass2_r1 and pass2_r2 views (that's intentional - each view
+    # is its own run's full 30-sample) but never twice within one view.
+    originals = {kid: info for kid, info in c8_key.items() if info.get("repeat_of") is None}
+    raw_groups: dict[str, list[str]] = defaultdict(list)
+    for kid, info in originals.items():
+        raw_groups[info["group"]].append(kid)
+
+    report_views = {
+        "pass2_r1": raw_groups.get("pass2_r1", []) + raw_groups.get("pass2_both", []),
+        "pass2_r2": raw_groups.get("pass2_r2", []) + raw_groups.get("pass2_both", []),
+        "pass1_control": raw_groups.get("pass1_control", []),
+    }
+
+    reason_counts: dict[str, Counter] = {}
+    useful_rates = {}
+    for view_name, ids in report_views.items():
+        counts: Counter = Counter()
+        useful_flags = []
+        for kid in ids:
             answer = c8_answers.get(kid)
             if answer is None:
                 continue
             is_claim = answer.label == "claim"
-            claims += is_claim
             if not is_claim:
-                reason_counts[c8_key[kid]["group"]][answer.reason or "unspecified"] += 1
-            useful_by_group[c8_key[kid]["group"]].append(is_claim and answer.duplicate == "no")
-        n = len(run_ids)
-        low, high = wilson_interval(claims, n)
-        c8_per_run[run] = {"claims": claims, "n": n, "rate": (claims / n if n else None), "wilson": (low, high), "pass": (n > 0 and claims / n >= 0.70)}
+                counts[answer.reason or "unspecified"] += 1
+            useful_flags.append(is_claim and answer.duplicate == "no")
+        reason_counts[view_name] = counts
+        useful_count = sum(useful_flags)
+        n = len(useful_flags)
+        useful_rates[view_name] = {"useful": useful_count, "n": n, "rate": (useful_count / n if n else None), "wilson": wilson_interval(useful_count, n)}
 
-    control_ids = [kid for kid, info in c8_key.items() if info["group"] == "pass1_control"]
+    control_ids = report_views["pass1_control"]
     control_claims = sum(1 for kid in control_ids if kid in c8_answers and c8_answers[kid].label == "claim")
     control_n = len(control_ids)
     control_wilson = wilson_interval(control_claims, control_n)
-
-    useful_rates = {}
-    for group in ("pass2_r1", "pass2_r2", "pass1_control"):
-        flags = useful_by_group.get(group, [])
-        useful_count = sum(flags)
-        n = len(flags)
-        useful_rates[group] = {"useful": useful_count, "n": n, "rate": (useful_count / n if n else None), "wilson": wilson_interval(useful_count, n)}
 
     repeat_pairs = [(info["repeat_of"], kid) for kid, info in c8_key.items() if info.get("repeat_of")]
     agree_label = 0
