@@ -2603,3 +2603,23 @@ All identical before and after. `uv run pytest -q tests/test_exp3_b4.py`: 36 pas
 - Verdict: REJECTED on c4, per the pre-registered outcomes. EXTRACTOR_SECOND_PASS stays default off; code kept behind the flag. The push ends. Exit decision is next.
 - Junk/bloat measurement is deferred to the claim-count R&D item, measured on the pass-1 (shipping) path with its own pre-registered design.
 - Push spend INR 185.79 (meter). B4 spend INR 0.
+
+## Experiment 3 c1/c6 result (AI-proposed, human-verified) - 2026-10-16
+
+Labelling of `c1_adjudication.csv` (11 of 13 run-1 extraction misses matched, 2 "none") per the B4 method's blind pack. Pass attribution read from `c1_key.json` after locking the adjudication.
+
+- **c1 per run (gate >= 5):** pass2_r1 = 8/13 (PASS); pass2_r2 = 8/13 (PASS).
+- **c6 per run (gate >= 3):** pass2_r1 = 8/13 (PASS); pass2_r2 = 8/13 (PASS). Identical to c1 in both runs — no row's locked matches mixed a pass-1 claim with a pass-2 claim, so the tie rule never fired.
+- **Rows matched to a pass-1 claim (= run-1 adjudication disagreement):** 0 of 13.
+- **Row stability:** both runs = 7 (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3, P9-R1, P11-R3); r1 only = 1 (P7-R2); r2 only = 1 (P2-R1); neither = 4 (P1-R2, P4-R3, P11-R1, P12-R1).
+
+Decision input: pass 2 kept for clean-extraction work if c6 >= 3 in both runs; otherwise pass 2 is dropped and work focuses on pass 1.
+
+## Clean-extraction attempt, supersedes 2026-10-10 exit rule - 2026-10-16
+- The 2026-10-10 exit rule (sealed run, then stop or release) is superseded. Reason: Nitin chooses to improve the core product (extractor, then auditor) before showing numbers.
+- Correction: the Exp 3 c1/c6 result (8/13 both runs) was done after the rejection, AI-proposed and human-verified, not the pre-registered blind adjudication. It is exploratory only, not a PASS.
+- Limits: ONE clean-extraction attempt. Hard cap INR 350. Pass marks written here before any test.
+- Testing: smoke test on saved outputs (INR 0) first; then audit only the new cleaned claims, reusing run-1 pass-1 audits.
+- Known risks: semantic dedup may merge broad/narrow claim pairs; tuning on the same 8 rows is overfitting (smoke test is not proof; unseen papers needed).
+- If the attempt does not move the dev score: stop extraction work and decide between the auditor attempt or release with honest numbers.
+- Release targets from 2026-10-10 (refusal floor 70%, stretch 80%, false rejections <= 10%) still stand as the bar for publishing.
