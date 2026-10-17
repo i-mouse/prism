@@ -2644,7 +2644,19 @@ not move the dev score: stop extraction work". Logged before any test.
   recovered rows (both runs) sits at or after a References / Bibliography /
   Acknowledgments / checklist heading. The result is quoted in a dated line
   under this entry. If any does, stop and revise S1 before testing.
-- Claim definition used for all labelling: [NITIN: fill in]
+- Claim definition (used for labelling, the pass-2 prompt and the filter):
+  A claim is a sentence (or two tightly linked sentences) that a reader would
+  take as THIS paper's finding or position: (a) a result about its own method
+  or system, with or without a number; (b) a positioning statement: beats or
+  avoids a whole class of methods, generalizes or applies broadly, is robust,
+  efficient, cheap or simple; (c) a premise the method relies on, stated as
+  fact. Hedged statements are claims (keep the hedge). A broader and a
+  narrower statement of the same result are two separate claims. NOT a claim:
+  findings of prior or related work, future work, pure setup or implementation
+  details with no stated outcome, definitions, headings, fragments.
+  Labelling: duplicate = yes only if same meaning AND same scope as a listed
+  similar claim; broader or narrower = no. Part (c) was prompted by one dev
+  miss (P12-R1); any gain from it counts only on new papers.
 - Kill switch (free, before building): in the c8 sample, share labelled
   claim (unsure counts as claim) AND duplicate=no >= 0.40 in either run ->
   stop, spend nothing. duplicate=yes means same meaning AND same scope;
@@ -2671,3 +2683,43 @@ not move the dev score: stop extraction work". Logged before any test.
   off; decide auditor attempt on pass-1 claims vs release with honest numbers.
 - Moved to the auditor phase: replay_audit.py inline-claims support,
   --max-inr, and grounding cost logging.
+
+## Clean-extraction attempt amended: new pass-2 prompt + filter - 2026-10-17
+Amends "Clean-extraction attempt revised: extraction-only marks - 2026-10-17".
+Logged before any build, run or test.
+- 2026-10-17 section check result: FAIL. Recovered rows P2-R3, P2-R4
+  (2610.11132v1) and P11-R3 (2610.12114v1) sit in the Appendix, after the
+  last References heading, in both runs. kept_new at/after the cut: r1 294,
+  r2 280 (lower bounds); only 1 per run is in the reference list itself, the
+  rest are in Appendices. Decision: S1 removed. No section is skipped.
+- P12 check: pipeline text is clean; P12-R1's sentence is in window 0. Cause
+  is pass-2 yield, not the PDF. No row-specific fix.
+- Scope: one package behind EXTRACTOR_PASS2_CLEAN (default off): (1) a
+  rewritten pass-2 prompt built from the claim definition above, generic,
+  invented non-AI examples only, no dev or golden text, must pass the leak
+  check; (2) the filter S2 + S3 (S1 removed). Pass 1 untouched: the frozen
+  Exp 3 pass-1 outputs are reused. The pass-1 "extract both versions" rule is
+  not changed in this attempt.
+- Runs: pass-2 thinking LOW (as Exp 3). Pilot 1 paper (2610.10590v1), then
+  2 full runs on all 12 papers, then the filter on both. Each paid step needs
+  an explicit "go".
+- Budget: pilot <= INR 15; each pass-2 run <= INR 85 (--max-inr); filter
+  <= INR 40 for both runs; attempt total <= INR 350.
+- Kill switch changed to a diagnostic: the c8 labels (old prompt output) are
+  the baseline junk rate and do not stop the attempt, because the saved
+  outputs are replaced by new runs.
+- Marks K1-K8 apply to the new cleaned outputs, with these definitions:
+  - K1: blind human adjudication (fuzzy shortlist, no LLM matcher, no pass
+    attribution shown) of the 13 run-1 extraction-miss rows against each new
+    cleaned run. The 7 stable rows (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3,
+    P9-R1, P11-R3) found in both runs; total found >= 7 in each run.
+  - K4: p2 = measured pass-2 INR/paper from the new runs.
+  - K5: new pass-2 Stage-1 grounding rate >= 0.95.
+  - K2, K3, K6, K7, K8 unchanged.
+- Report only: the other 6 target rows (P1-R2, P2-R1, P4-R3, P7-R2, P11-R1,
+  P12-R1). In-sample (they motivated the definition), not evidence of gain.
+- Order: decisions (this entry) -> Nitin labels c8 (blind) -> build (prompt +
+  filter, free tests) -> pilot -> 2 runs -> filter -> blind K1 adjudication,
+  K6/K7 labelling -> score.
+- Pass -> freeze the cleaned claim list; auditor phase next. Fail -> flag off;
+  decide auditor attempt on pass-1 claims vs release with honest numbers.
