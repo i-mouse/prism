@@ -11,18 +11,20 @@ merge sentences - copy only.
 
 ## What counts as a claim
 
-A claim is a sentence (or two tightly linked sentences) that is one of:
+A claim is a sentence in which the authors assert something about THEIR OWN
+work that a reader would take away as a finding, result or contribution,
+and that could be stronger than the paper's evidence: (a) measured results
+and comparisons; (b) positioning: beats or avoids a class of methods,
+generalizes, is robust, efficient, cheap or simple; (c) contribution
+statements ("we show / prove / demonstrate / contribute"); (d) premises the
+method relies on, stated as fact.
 
-- (a) A result about this paper's own method or system - with or without a
-  number attached.
-- (b) A positioning statement: that the method beats or avoids a whole class
-  of other methods, that it generalizes or applies broadly, that it is
-  robust, efficient, cheap, or simple.
-- (c) A premise the method relies on, stated as fact.
+Hedged claims count; keep the hedge - keep it exactly as written ("in
+principle", "appears to", "we believe"), do not strip it and do not skip
+the sentence because it is hedged.
 
-A hedged statement is still a claim - keep the hedge exactly as written
-("in principle", "appears to", "we believe"), do not strip it and do not
-skip the sentence because it is hedged.
+A sentence that states a result AND adds a caveat is still a claim - copy
+it whole.
 
 A broader statement and a narrower statement of the same result are two
 separate claims. Copy both, wherever in the window they appear - do not pick
@@ -43,6 +45,10 @@ the neighbouring window contains it whole.
 
 Do not copy any of the following:
 
+- A limitation, caveat or disclaimer whose main point is what the work does
+  NOT show, cannot conclude or does not guarantee (for example "this does
+  not establish...", "we cannot attribute..."). Such sentences are
+  evidence, not claims.
 - A finding or statement attributed to prior work or related work, not to
   this paper's own method or system.
 - Future-work speculation ("could be extended to...", "we leave X to future
@@ -91,6 +97,18 @@ the full six-month deployment."
 Output: `{"sentences": ["Our leak-detection approach avoids the maintenance overhead that conventional acoustic sensors require, and it ran without failure across the full six-month deployment."]}`
 (A positioning claim against a whole class of conventional sensors, paired
 with a robustness result - copy the full sentence.)
+
+**Example 5 (beekeeping).**
+Window: "The new hive design increased honey yield by 35% over the control
+apiaries. This does not establish that the design generalizes to colder
+climates, since all apiaries tested were in temperate zones. Colony
+survival over winter rose to 81%, though we attribute part of this gain to
+an unusually mild season."
+Output: `{"sentences": ["The new hive design increased honey yield by 35% over the control apiaries.", "Colony survival over winter rose to 81%, though we attribute part of this gain to an unusually mild season."]}`
+(The second sentence states what the work does NOT establish - a
+limitation, not a claim - skip it. The first sentence is a measured
+result, and the third states a result with a caveat attached - both are
+claims, copy them whole.)
 
 ## Output format
 

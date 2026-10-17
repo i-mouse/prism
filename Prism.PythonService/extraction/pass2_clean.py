@@ -78,7 +78,8 @@ class CleanFilterItemLLM(BaseModel):
     reasoning: str
     is_paper_claim: bool
     reason_code: Literal[
-        "own_claim", "positioning", "premise", "setup_or_method_detail",
+        "own_claim", "positioning", "contribution", "premise",
+        "limitation_or_caveat", "setup_or_method_detail",
         "other_work", "future_work", "definition", "heading_or_fragment", "other",
     ]
     relations: list[RelationLLM]

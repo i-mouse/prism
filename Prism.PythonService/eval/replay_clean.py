@@ -71,7 +71,7 @@ from eval.pricing import cost_inr
 from eval.replay_audit import _hash_check_and_load_text
 from extraction import engine
 from extraction.merge import merge_pass2_claims
-from extraction.pass2_clean import BATCH_SIZE, filter_merged_claims
+from extraction.pass2_clean import BATCH_SIZE, _build_items, filter_merged_claims
 from extraction.prompt_loader import build_gemini_messages_for_pass2, build_gemini_messages_for_pass2_clean_filter
 from extraction.prompt_version import get_prompt_version
 from extraction.windowing import make_windows
@@ -106,6 +106,18 @@ def _load_paper_ids(pass1_run_dir: Path, papers_filter: str | None) -> list[str]
 
 def _load_pass1_fixture(pass1_run_dir: Path, paper_id: str) -> dict:
     return json.loads((pass1_run_dir / f"{paper_id}_pass1.json").read_text(encoding="utf-8"))
+
+
+def _load_paper_ids_from_merged(from_run_dir: Path, papers_filter: str | None) -> list[str]:
+    paper_ids = sorted(p.stem[: -len("_merged")] for p in from_run_dir.glob("*_merged.json"))
+    if papers_filter:
+        wanted = {s.strip() for s in papers_filter.split(",")}
+        paper_ids = [p for p in paper_ids if any(w in p for w in wanted)]
+    return paper_ids
+
+
+def _load_merged_fixture(from_run_dir: Path, paper_id: str) -> dict:
+    return json.loads((from_run_dir / f"{paper_id}_merged.json").read_text(encoding="utf-8"))
 
 
 class _Instrumentation:
@@ -251,6 +263,115 @@ async def _print_estimate(pass1_run_dir: Path, paper_ids: list[str]) -> None:
               "filter cost not estimated")
 
     print(f"[replay_clean] settings.llm_extraction_model={settings.llm_extraction_model}")
+
+
+async def _print_filter_only_estimate(from_run_dir: Path, paper_ids: list[str]) -> None:
+    """--filter-only --estimate: real countTokens calls built from the
+    --from-run folder's own real merged.json candidates (every pass-2-
+    tagged claim across every batch a real run would send), not the
+    synthetic frozen-exp3 sample _print_estimate uses when no clean run
+    exists yet."""
+    from config import settings
+
+    _FILTER_ASSUMED_OUTPUT_TOKENS_PER_ITEM = 80  # unmeasured - no real filter run exists yet
+
+    total_filter_input = 0
+    total_items = 0
+    total_batches = 0
+
+    for paper_id in paper_ids:
+        merged_fixture = _load_merged_fixture(from_run_dir, paper_id)
+        paper_text = await _hash_check_and_load_text(paper_id, merged_fixture["header"])
+        if paper_text is None:
+            print(f"[replay_clean] --filter-only --estimate: SKIPPED {paper_id} (paper text unavailable)")
+            continue
+
+        _, _, items = _build_items(merged_fixture["claims"], paper_text)
+        total_items += len(items)
+        if not items:
+            continue
+        batches = [items[i:i + BATCH_SIZE] for i in range(0, len(items), BATCH_SIZE)]
+        total_batches += len(batches)
+        for batch in batches:
+            batch_payload = [
+                {"id": item["id"], "candidate": item["candidate"], "context": item["context"], "neighbours": item["neighbours"]}
+                for item in batch
+            ]
+            messages = build_gemini_messages_for_pass2_clean_filter(batch_payload)
+            total_filter_input += await _estimate_tokens(messages)
+
+    filter_output = total_items * _FILTER_ASSUMED_OUTPUT_TOKENS_PER_ITEM
+    filter_cost = cost_inr(total_filter_input, filter_output)
+
+    print(f"[replay_clean] --filter-only --estimate (REAL countTokens, ZERO generateContent calls): "
+          f"{len(paper_ids)} papers, {total_items} pass-2 candidates, {total_batches} filter batches")
+    print(f"[replay_clean] filter: {total_filter_input} real input tokens, "
+          f"{filter_output} ASSUMED output tokens ({_FILTER_ASSUMED_OUTPUT_TOKENS_PER_ITEM}/item, unmeasured) "
+          f"-> ~INR {filter_cost:.1f}")
+    print(f"[replay_clean] settings.llm_extraction_model={settings.llm_extraction_model}")
+
+
+async def _run_filter_only(
+    from_run_dir: Path, paper_ids: list[str], run_id: str, dry_run: bool, max_inr: float | None,
+    thinking_level: str | None,
+) -> tuple[Path, list[CallRecord]]:
+    """--filter-only: reruns S2+S3 (extraction.pass2_clean.filter_merged_claims)
+    over each paper's already-frozen merged.json, making zero pass-2 calls.
+    filter_merged_claims itself only ever builds filter items from the
+    pass-2-tagged subset of merged_claims (see its _build_items helper) and
+    always returns pass-1 claims first, unchanged, in their original order
+    - so pass-1 claims pass through this mode exactly as they do in the
+    normal --pass1-run path."""
+    out_dir = OUTPUT_ROOT / run_id
+    out_dir.mkdir(parents=True, exist_ok=True)
+    instrumentation = _Instrumentation(out_dir)
+
+    with instrumentation:
+        for paper_id in paper_ids:
+            if dry_run:
+                print(f"[replay_clean] DRY-RUN filter-only {paper_id} run_id={run_id} from_run={from_run_dir.name}")
+                continue
+
+            spent_so_far = _spent_so_far(instrumentation)
+            if max_inr is not None and spent_so_far >= max_inr:
+                print(f"[replay_clean] ABORT before {paper_id}: spend so far INR {spent_so_far:.2f} >= --max-inr {max_inr}")
+                break
+
+            merged_fixture = _load_merged_fixture(from_run_dir, paper_id)
+            merged_header = merged_fixture["header"]
+            merged_claims = merged_fixture["claims"]
+            paper_text = await _hash_check_and_load_text(paper_id, merged_header)
+            if paper_text is None:
+                continue
+
+            instrumentation.set_context(paper_id, "filter")
+            filter_result = await filter_merged_claims(
+                merged_claims, paper_text, "replay-clean-filter-only", None,
+                thinking_level=thinking_level,
+            )
+            final_claims = filter_result["filtered_claims"]
+
+            header = dict(merged_header)
+            header["filter_only"] = {
+                "from_run": from_run_dir.name,
+                "run_id": run_id,
+                "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            }
+            header["incomplete"] = filter_result["incomplete"]
+
+            (out_dir / f"{paper_id}_filtered.json").write_text(
+                json.dumps({"header": header, "claims": final_claims}, indent=2), encoding="utf-8"
+            )
+            (out_dir / f"{paper_id}_clean.json").write_text(
+                json.dumps({"header": header, "decisions": filter_result["decisions"]}, indent=2), encoding="utf-8"
+            )
+            print(
+                f"[replay_clean] filter-only wrote {paper_id} "
+                f"({filter_result['pre_filter_pass2_count']} pre-filter pass2, "
+                f"{filter_result['post_filter_pass2_count']} post-filter pass2 kept)"
+            )
+
+    return out_dir, instrumentation.records
 
 
 async def _run_once(
@@ -425,6 +546,47 @@ async def _main(args: argparse.Namespace) -> int:
     for key in ("OTEL_EXPORTER_OTLP_ENDPOINT", "APPLICATIONINSIGHTS_CONNECTION_STRING"):
         os.environ.pop(key, None)
 
+    if args.filter_only:
+        if not args.from_run:
+            print("[replay_clean] ABORT: --filter-only requires --from-run")
+            return 1
+        from_run_dir = OUTPUT_ROOT / args.from_run
+        if not from_run_dir.exists():
+            print(f"[replay_clean] ABORT: --from-run directory not found: {from_run_dir}")
+            return 1
+        if args.run_id and args.run_id == args.from_run:
+            print("[replay_clean] ABORT: --run-id must differ from --from-run "
+                  "(refuses to overwrite the from-run folder)")
+            return 1
+
+        paper_ids = _load_paper_ids_from_merged(from_run_dir, args.papers)
+        if not paper_ids:
+            print("[replay_clean] ABORT: no papers selected")
+            return 1
+
+        if args.estimate:
+            await _print_filter_only_estimate(from_run_dir, paper_ids)
+            return 0
+
+        if not args.run_id:
+            print("[replay_clean] ABORT: --run-id is required for --dry-run and real runs")
+            return 1
+
+        if not args.dry_run and args.max_inr is None:
+            print("[replay_clean] ABORT: refuses to make paid calls without --max-inr")
+            return 1
+
+        out_dir, records = await _run_filter_only(
+            from_run_dir, paper_ids, args.run_id, args.dry_run, args.max_inr, args.pass2_thinking_level,
+        )
+        if not args.dry_run:
+            _print_summary(out_dir, records)
+        return 0
+
+    if not args.pass1_run:
+        print("[replay_clean] ABORT: --pass1-run is required unless --filter-only")
+        return 1
+
     pass1_run_dir = EXP3_ROOT / args.pass1_run
     if not pass1_run_dir.exists():
         print(f"[replay_clean] ABORT: --pass1-run directory not found: {pass1_run_dir}")
@@ -458,15 +620,21 @@ async def _main(args: argparse.Namespace) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--pass1-run", required=True,
+    parser.add_argument("--pass1-run", default=None,
                          help="Experiment 3 replay subdirectory under docs/evals/fixtures/dev/exp3/ "
-                              "to reuse frozen pass-1 claims from (e.g. pass2_r1)")
+                              "to reuse frozen pass-1 claims from (e.g. pass2_r1). Required unless --filter-only")
     parser.add_argument("--run-id", help="output subdirectory name under docs/evals/fixtures/dev/clean/")
-    parser.add_argument("--papers", help="comma-separated paper_id substrings (omit for all papers in --pass1-run)")
+    parser.add_argument("--papers", help="comma-separated paper_id substrings (omit for all papers in --pass1-run/--from-run)")
     parser.add_argument("--estimate", action="store_true", help="real countTokens calls only, zero generateContent calls")
     parser.add_argument("--dry-run", action="store_true", help="print what would be replayed, zero LLM calls")
     parser.add_argument("--max-inr", type=float, default=None, help="REQUIRED for a real run: hard stop on real measured spend")
     parser.add_argument("--no-filter", action="store_true", help="run pass 2 + merge only; skip the filter (report pre-filter counts)")
+    parser.add_argument("--filter-only", action="store_true",
+                         help="skip pass 1 and pass 2 entirely; rerun only the filter over an existing "
+                              "--from-run run's <paper>_merged.json files")
+    parser.add_argument("--from-run", default=None,
+                         help="existing docs/evals/fixtures/dev/clean/<from_run>/ subdirectory to read "
+                              "<paper>_merged.json from. Required with --filter-only; must differ from --run-id")
     from config import PASS2_THINKING_LEVELS
 
     parser.add_argument(

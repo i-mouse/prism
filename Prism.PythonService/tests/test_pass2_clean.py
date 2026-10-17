@@ -232,6 +232,44 @@ def test_locate_context_returns_none_when_candidate_not_in_paper_text():
     assert pass2_clean.locate_context("Not present anywhere.", "Completely different text here.") is None
 
 
+def test_limitation_or_caveat_reason_code_is_dropped(monkeypatch):
+    merged = _merged(
+        ["Our method achieves 90% accuracy on the benchmark."],
+        ["This does not establish that the method generalizes beyond the benchmark tested."],
+    )
+    decision_map = {
+        "This does not establish that the method generalizes beyond the benchmark tested.": {
+            "is_paper_claim": False, "reason_code": "limitation_or_caveat",
+        },
+    }
+    monkeypatch.setattr(engine, "_call_gemini_structured", _decision_fake(decision_map))
+
+    result = asyncio.run(filter_merged_claims(merged, PAPER_TEXT, chat_id="c1"))
+
+    assert result["post_filter_pass2_count"] == 0
+    assert result["decisions"]["P0"]["decision"] == "dropped"
+    assert result["decisions"]["P0"]["reason_code"] == "limitation_or_caveat"
+
+
+def test_contribution_reason_code_is_kept(monkeypatch):
+    merged = _merged(
+        [],
+        ["We show that the benchmark admits a closed-form solution for this class of inputs."],
+    )
+    decision_map = {
+        "We show that the benchmark admits a closed-form solution for this class of inputs.": {
+            "is_paper_claim": True, "reason_code": "contribution",
+        },
+    }
+    monkeypatch.setattr(engine, "_call_gemini_structured", _decision_fake(decision_map))
+
+    result = asyncio.run(filter_merged_claims(merged, PAPER_TEXT, chat_id="c1"))
+
+    assert result["post_filter_pass2_count"] == 1
+    assert result["decisions"]["P0"]["decision"] == "kept"
+    assert result["decisions"]["P0"]["reason_code"] == "contribution"
+
+
 def test_neighbour_pool_grows_positionally_across_pass2_candidates(monkeypatch):
     """The second pass-2 candidate's neighbour pool must be able to include
     the first pass-2 candidate's text (positional "earlier", per this
