@@ -536,6 +536,23 @@ async def extract_claims(
             f"{len(merge_result['kept_new'])} kept_new"
         )
 
+        if settings.extractor_pass2_clean:
+            from extraction.pass2_clean import filter_merged_claims
+
+            with tracer.start_as_current_span("pass2_clean") as span:
+                span.set_attribute("correlation_id", correlation_id or "")
+                span.set_attribute("chat_id", chat_id)
+                filter_result = await filter_merged_claims(
+                    claims, paper_text, chat_id, correlation_id, thinking_level=settings.pass2_thinking_level,
+                )
+            claims = filter_result["filtered_claims"]
+            print(
+                f"[extraction] chat_id={chat_id} correlation_id={correlation_id} pass2_clean: "
+                f"{filter_result['pre_filter_pass2_count']} pre-filter pass2 claims, "
+                f"{filter_result['post_filter_pass2_count']} post-filter, "
+                f"{filter_result['failed_batch_count']} failed_batch_count"
+            )
+
     if on_detail is not None:
         try:
             await on_detail(f"Extracted {len(claims)} claims from paper")

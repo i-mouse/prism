@@ -167,6 +167,50 @@ class C8Answer(BaseModel):
         return self
 
 
+class K6Answer(BaseModel):
+    """One hand-filled row of the clean-extraction attempt's K6 sheet (30
+    kept cleaned pass-2 claims per run) - same label/reason/duplicate/note
+    shape as C8Answer, reused as its own model (rather than aliased to
+    C8Answer) since the two sheets are scored by different callers and may
+    diverge later."""
+
+    id: str
+    label: Literal["claim", "not_claim", "unsure"]
+    reason: Optional[Literal["method_setup", "background_related_work", "number_no_assertion", "other"]] = None
+    duplicate: Optional[Literal["yes", "no"]] = None
+    note: str = ""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _blank_strings_to_none(cls, data):
+        if isinstance(data, dict):
+            data = dict(data)
+            for field in ("reason", "duplicate"):
+                if isinstance(data.get(field), str) and not data[field].strip():
+                    data[field] = None
+        return data
+
+    @model_validator(mode="after")
+    def _check_conditional_fields(self):
+        if self.label != "claim" and self.reason is None:
+            raise ValueError(f"{self.id}: reason is required when label is '{self.label}'")
+        if self.label == "claim" and self.duplicate is None:
+            raise ValueError(f"{self.id}: duplicate is required when label is 'claim'")
+        return self
+
+
+class K7Answer(BaseModel):
+    """One hand-filled row of the clean-extraction attempt's K7 sheet (30
+    "same" drops per run, all if fewer) - a human's own independent
+    judgment of the relation between the dropped candidate and the
+    neighbour the filter matched it to as "same", checking the filter's
+    own dedup safety."""
+
+    id: str
+    verdict: Literal["same", "broader", "narrower", "different"]
+    note: str = ""
+
+
 def provenance(input_paths: list[Path]) -> dict[str, str]:
     """sha256 of every input file a writer used, keyed by path string -
     embedded in every output file this module helps write."""

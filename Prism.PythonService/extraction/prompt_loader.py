@@ -260,16 +260,53 @@ def build_gemini_messages_for_structure(
     ]
 
 
-def build_gemini_messages_for_pass2(window_text: str) -> list[dict]:
+def build_gemini_messages_for_pass2(window_text: str, prompt_filename: str | None = None) -> list[dict]:
     """Assembles the Gemini message list for an Experiment 3 pass-2 call
     (one call per window - see extraction/windowing.py).
 
     No few-shot examples, no paper text beyond the window itself - see
     docs/decisions.md's "Experiment 3 B1 review" entry.
+
+    prompt_filename: None (default) reads extract_claims_pass2_system.md,
+    byte-identical to this function's behavior before this parameter
+    existed. The clean-extraction attempt (docs/decisions.md, "Clean-
+    extraction attempt amended...") passes "extract_claims_pass2_v2_system.md"
+    explicitly when settings.extractor_pass2_clean is on - see
+    extraction/pass2.py.
     """
     return [
-        {"role": "system", "content": _read_prompt_file("extract_claims_pass2_system.md")},
+        {"role": "system", "content": _read_prompt_file(prompt_filename or "extract_claims_pass2_system.md")},
         {"role": "user", "content": window_text},
+    ]
+
+
+def build_gemini_messages_for_pass2_clean_filter(items: list[dict]) -> list[dict]:
+    """Assembles the Gemini message list for the clean-extraction attempt's
+    S3 batched filter call (one call per batch of at most
+    extraction.pass2_clean.BATCH_SIZE candidates from one paper - see
+    extraction/pass2_clean.py::filter_merged_claims).
+
+    No few-shot examples beyond what the system prompt
+    (extract_claims_pass2_clean_system.md) itself carries. The user message
+    is a JSON array of candidates in the exact order the response must
+    answer them in - the response schema
+    (extraction/pass2_clean.py::CleanFilterBatchLLM) carries no id field of
+    its own, so position is the only correspondence between request and
+    response. Each item's internal bookkeeping (its source claim dict) is
+    never sent - only id/candidate/context/neighbours.
+    """
+    payload = [
+        {
+            "id": item["id"],
+            "candidate": item["candidate"],
+            "context": item["context"],
+            "neighbours": item["neighbours"],
+        }
+        for item in items
+    ]
+    return [
+        {"role": "system", "content": _read_prompt_file("extract_claims_pass2_clean_system.md")},
+        {"role": "user", "content": json.dumps({"candidates": payload}, indent=2)},
     ]
 
 

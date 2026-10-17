@@ -39,8 +39,17 @@ async def _call_pass2_window(
     # here at call time avoids a circular import at module load.
     from extraction import engine
 
+    # Clean-extraction attempt (docs/decisions.md, "Clean-extraction attempt
+    # amended: new pass-2 prompt + filter - 2026-10-17"): active only when
+    # extractor_second_pass is also on - matches the fact that this function
+    # is only ever reached via run_pass2, itself only called when
+    # extractor_second_pass is on (extraction/engine.py::extract_claims).
+    # settings.extractor_second_pass is not re-checked here; it is implied
+    # by this call existing at all.
+    prompt_filename = "extract_claims_pass2_v2_system.md" if settings.extractor_pass2_clean else None
+
     result = await engine._call_gemini_structured(
-        messages=build_gemini_messages_for_pass2(window_text),
+        messages=build_gemini_messages_for_pass2(window_text, prompt_filename=prompt_filename),
         response_schema=SentenceListLLM,
         chat_id=chat_id,
         correlation_id=correlation_id,

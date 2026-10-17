@@ -49,11 +49,27 @@ SECOND_PASS_PROMPT_FILENAMES = (
     "extract_claims_pass2_system.md",
 )
 
+# Clean-extraction attempt - the new pass-2 prompt plus the filter's own
+# system prompt. Hashed ONLY when both extractor_second_pass and
+# extractor_pass2_clean are on, and - per docs/decisions.md's "Clean-
+# extraction attempt amended: new pass-2 prompt + filter - 2026-10-17" -
+# these two files are hashed INSTEAD OF SECOND_PASS_PROMPT_FILENAMES in
+# that case, not in addition to it: the clean pass-2 prompt replaces the old
+# one, it doesn't run alongside it. extractor_second_pass on with
+# extractor_pass2_clean off is unaffected (today's second-pass-only hash,
+# unchanged); extractor_second_pass off is unaffected regardless of
+# extractor_pass2_clean's value (these files are never read at all).
+CLEAN_PASS2_PROMPT_FILENAMES = (
+    "extract_claims_pass2_v2_system.md",
+    "extract_claims_pass2_clean_system.md",
+)
+
 
 def get_prompt_version(
     fewshot_fix: bool | None = None,
     fewshot_shapes: bool | None = None,
     extractor_second_pass: bool | None = None,
+    extractor_pass2_clean: bool | None = None,
 ) -> str:
     """Returns a 12-character SHA-256 hash of the current prompt files.
 
@@ -83,7 +99,19 @@ def get_prompt_version(
     today (SECOND_PASS_PROMPT_FILENAMES' bytes are not read, no marker
     appended). On reads SECOND_PASS_PROMPT_FILENAMES' bytes (after the
     fewshot_fix/fewshot_shapes markers, if any) and appends its own literal
-    marker. schemas.py is never touched by this flag.
+    marker - UNLESS extractor_pass2_clean is also on, in which case
+    CLEAN_PASS2_PROMPT_FILENAMES' bytes are read instead (see below).
+    schemas.py is never touched by this flag.
+
+    extractor_pass2_clean: the clean-extraction attempt's new pass-2 prompt
+    plus filter prompt. None (default) reads settings.extractor_pass2_clean;
+    pass True/False explicitly to force a variant. Has no effect at all when
+    extractor_second_pass is off (matching the live pipeline: the clean flag
+    alone changes nothing - see extraction/engine.py::extract_claims). When
+    both are on, CLEAN_PASS2_PROMPT_FILENAMES' bytes are read INSTEAD OF
+    SECOND_PASS_PROMPT_FILENAMES' bytes (after the fewshot_fix/fewshot_shapes
+    markers, if any) and its own literal marker is appended - the old
+    second-pass-only hash is intentionally unreachable in that combination.
     """
     if fewshot_fix is None:
         fewshot_fix = settings.extractor_fewshot_fix
@@ -91,6 +119,8 @@ def get_prompt_version(
         fewshot_shapes = settings.extractor_fewshot_shapes
     if extractor_second_pass is None:
         extractor_second_pass = settings.extractor_second_pass
+    if extractor_pass2_clean is None:
+        extractor_pass2_clean = settings.extractor_pass2_clean
 
     combined = b""
     paths = [PROMPTS_DIR / filename for filename in PROMPT_FILENAMES] + list(EXTRA_HASHED_FILES)
@@ -110,7 +140,14 @@ def get_prompt_version(
             combined += path.read_bytes()
         combined += b"\x00extractor_fewshot_shapes=1"
 
-    if extractor_second_pass:
+    if extractor_second_pass and extractor_pass2_clean:
+        for filename in CLEAN_PASS2_PROMPT_FILENAMES:
+            path = PROMPTS_DIR / filename
+            if not path.exists():
+                raise FileNotFoundError(f"Prompt file not found at {path}")
+            combined += path.read_bytes()
+        combined += b"\x00extractor_second_pass=1\x00extractor_pass2_clean=1"
+    elif extractor_second_pass:
         for filename in SECOND_PASS_PROMPT_FILENAMES:
             path = PROMPTS_DIR / filename
             if not path.exists():

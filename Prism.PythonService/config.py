@@ -138,6 +138,19 @@ class PrismSettings(BaseSettings):
             )
         return value
 
+    # Clean-extraction attempt (docs/decisions.md, "Clean-extraction attempt
+    # amended: new pass-2 prompt + filter - 2026-10-17"). Off (default) is
+    # byte-identical to today, independent of extractor_second_pass's own
+    # value. Active only when extractor_second_pass is ALSO on - this flag
+    # alone (extractor_second_pass off) changes nothing: see
+    # extraction/engine.py::extract_claims. When both are on, pass 2 uses
+    # prompts/extract_claims_pass2_v2_system.md instead of
+    # extract_claims_pass2_system.md (extraction/pass2.py), and
+    # extraction/pass2_clean.py's filter runs after merge. See
+    # extraction/prompt_version.py::get_prompt_version for the prompt-hash
+    # implication.
+    extractor_pass2_clean: bool = False
+
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000
 
