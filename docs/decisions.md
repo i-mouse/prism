@@ -2723,3 +2723,52 @@ Logged before any build, run or test.
   K6/K7 labelling -> score.
 - Pass -> freeze the cleaned claim list; auditor phase next. Fail -> flag off;
   decide auditor attempt on pass-1 claims vs release with honest numbers.
+
+## Claim definition revised: limitations are evidence, not claims - 2026-10-17
+Supersedes the claim definition in "Clean-extraction attempt revised:
+extraction-only marks - 2026-10-17". Logged before any further build or run.
+- Pilot 1 (2610.10590v1, hash b7eb1ab2f3fa, INR 4.4): pass-1 37, new pass-2
+  kept 27 before filter, 26 after (r 1.70; old prompt on same paper kept 20,
+  r 1.54). CC read-only diagnosis: the filter worked as specified; it kept
+  broader/narrower siblings by design and "unsure -> keep" kept weak items.
+- Blind judge check (ChatGPT, Gemini Pro; same prompt; 26 pass-2 sentences +
+  6 hidden pass-1 controls, shuffled; categories A claim / B limitation /
+  C description / D other): controls judged A 5/6 and 4/6 (judges not too
+  strict). Pass-2 sentences: A 9 and 7 of 26, B 12 and 12, C 5 and 6. Both
+  agree A on 6. About half of what pass 2 adds is limitation/caveat text.
+- External basis: RIGOURATE (arXiv 2601.04350, intra-paper overstatement
+  detection) defines a claim as a sentence presenting an original claim,
+  finding or result central to the contributions, excluding background,
+  context and prior work; hedged claims are kept and judged for strength.
+  The NeurIPS checklist treats claims (contributions and scope) and
+  limitations as separate items. Pei & Jurgens (EMNLP 2021): hedges are
+  only part of certainty.
+- New claim definition (used for labelling, the pass-2 prompt and the filter):
+  A claim is a sentence in which the authors assert something about THEIR OWN
+  work that a reader would take away as a finding, result or contribution,
+  and that could be stronger than the paper's evidence: (a) measured results
+  and comparisons; (b) positioning: beats or avoids a class of methods,
+  generalizes, is robust, efficient, cheap or simple; (c) contribution
+  statements ("we show / prove / demonstrate / contribute"); (d) premises the
+  method relies on, stated as fact. Hedged claims count; keep the hedge. A
+  sentence that states a result AND adds a caveat is still a claim.
+  NOT a claim: limitations, caveats and disclaimers whose main point is what
+  the work does NOT show, cannot conclude or does not guarantee (these are
+  evidence for the auditor, not claims to audit); background and prior work;
+  future work; setup or implementation description with no result;
+  definitions; headings; fragments; bare table rows.
+  Labelling: duplicate = yes only if same meaning AND same scope; broader or
+  narrower = no.
+- Changes (behind EXTRACTOR_PASS2_CLEAN, default off): pass-2 v2 prompt and
+  filter prompt use this definition; filter adds reason codes
+  limitation_or_caveat and contribution. Drop rule unchanged (not a claim, or
+  "same"); broader/narrower never drop; pass 1 untouched.
+- Test order: (1) filter-only re-run on the saved pilot-1 merged output,
+  cap INR 5, diagnostic only; (2) pilot 2 on a different paper,
+  2610.10871v1, cap INR 15; (3) if pilot 2 r is near or below 1.4, the 2 full
+  runs (each pass-2 run <= INR 85, filter <= INR 40 total).
+- Marks K1-K8 unchanged. Pilot-1 paper is now in-sample for this design;
+  marks are judged on the full runs. Dev results stay in-sample; the sealed
+  set is the real test.
+- Caveats: the judges are LLMs (Nitin's own check pending); one paper.
+- Spend so far this attempt: INR 4.4 of 350.
