@@ -166,17 +166,27 @@ def _spent_so_far(instrumentation: "_Instrumentation") -> float:
 async def _estimate_tokens(messages: list[dict]) -> int:
     """Real countTokens call (zero generateContent calls, zero paid
     tokens) for one message list, mirroring extraction.engine's own
-    system/contents translation."""
+    system/contents translation.
+
+    The Gemini Developer API's countTokens does not accept a system
+    instruction in its config (CountTokensConfig's system_instruction is a
+    Vertex-only field - raises "system_instruction parameter is not
+    supported in Gemini API"). Fold the system prompt in as a plain content
+    entry instead, same as eval/replay_extract.py's own
+    _print_count_tokens_estimate; countTokens sums all content tokens
+    regardless of role, so this is still an accurate count, just not routed
+    through the config field the real generateContent call
+    (extraction.engine._call_gemini_structured) actually uses."""
     client = engine._build_client()
     system_prompt = engine._extract_system_prompt(messages)
-    contents = engine._to_gemini_contents(messages)
     from config import settings
     from google.genai import types
+
+    contents = [types.Content(role="user", parts=[types.Part.from_text(text=system_prompt)])] + engine._to_gemini_contents(messages)
 
     result = await client.aio.models.count_tokens(
         model=settings.llm_extraction_model,
         contents=contents,
-        config=types.CountTokensConfig(system_instruction=system_prompt),
     )
     return result.total_tokens or 0
 
