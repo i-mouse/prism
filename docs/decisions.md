@@ -2623,3 +2623,51 @@ Decision input: pass 2 kept for clean-extraction work if c6 >= 3 in both runs; o
 - Known risks: semantic dedup may merge broad/narrow claim pairs; tuning on the same 8 rows is overfitting (smoke test is not proof; unseen papers needed).
 - If the attempt does not move the dev score: stop extraction work and decide between the auditor attempt or release with honest numbers.
 - Release targets from 2026-10-10 (refusal floor 70%, stretch 80%, false rejections <= 10%) still stand as the bar for publishing.
+
+## Clean-extraction attempt revised: extraction-only marks - 2026-10-17
+Supersedes, in "Clean-extraction attempt, supersedes 2026-10-10 exit rule -
+2026-10-16": the paid audit of cleaned claims and the line "If the attempt does
+not move the dev score: stop extraction work". Logged before any test.
+- Reason: clean the claim list first, then improve the auditor on one frozen
+  list. Extraction gains are upper bounds only; finding a claim is not catching
+  it (run 1: the auditor caught about 44% of the refusal rows it saw). No dev
+  score is claimed from this attempt.
+- Design: flag EXTRACTOR_PASS2_CLEAN (default off). Pass-2 kept claims only;
+  drop-only; never rewrite or merge; pass-1 claims never touched. S1 drop
+  sentences at or after the last References / Bibliography / Acknowledgments /
+  checklist heading (not found = drop nothing; no other section skipped).
+  S2 top-3 neighbours by token_set_ratio (free). S3 one batched LLM call per
+  paper: is_paper_claim + relation to each neighbour (same / broader /
+  narrower / different). Drop only "not a claim" or "same". Broader and
+  narrower never drop.
+- Section check: before any S1 run, the free check must show that none of the
+  recovered rows (both runs) sits at or after a References / Bibliography /
+  Acknowledgments / checklist heading. The result is quoted in a dated line
+  under this entry. If any does, stop and revise S1 before testing.
+- Claim definition used for all labelling: [NITIN: fill in]
+- Kill switch (free, before building): in the c8 sample, share labelled
+  claim (unsure counts as claim) AND duplicate=no >= 0.40 in either run ->
+  stop, spend nothing. duplicate=yes means same meaning AND same scope;
+  broader or narrower = no.
+- Marks (all required, both saved runs pass2_r1 and pass2_r2):
+  - K1 the 7 stable recovered rows (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3,
+    P9-R1, P11-R3) kept in both runs; total >= 7 of each run's 8.
+  - K2 18/18 matched rows kept (filter never touches pass 1; checked by test
+    and count).
+  - K3 r <= 1.40, mean per-paper and pooled.
+  - K4 87 x r + p2 + f <= INR 130 per paper (f = measured filter INR/paper).
+  - K5 pass-2 Stage-1 grounding rate >= 0.95 on the cleaned set.
+  - K6 junk: blind hand label of 30 kept cleaned pass-2 claims per run
+    (seed 20261017): precision >= 0.70.
+  - K7 dedup safety: blind hand check of 30 "same" drops per run (all if
+    fewer, seed 20261017): at most 1 is really broader/narrower/different.
+  - K8 spend: filter run on saved outputs <= INR 40; attempt total <= INR 350.
+- Smoke test on saved outputs is not proof: same rows the design came from.
+  r and junk precision are label-free and get checked again on new papers;
+  recall needs the sealed set.
+- No re-runs, prompt edits or threshold changes to rescue a failed mark.
+- Pass -> freeze the cleaned claim list; next work is the auditor on that list
+  (dev score measured there, with marks written first). Fail -> flag stays
+  off; decide auditor attempt on pass-1 claims vs release with honest numbers.
+- Moved to the auditor phase: replay_audit.py inline-claims support,
+  --max-inr, and grounding cost logging.

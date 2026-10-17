@@ -10,7 +10,8 @@
       "Read(/Prism.PythonService/downloads/2609.20812v3.pdf)",
       "Read(//h/Work projects/prism-sealed/**)",
       "Read(**/sealed/**)",
-      "Read(/docs/LABEL_RUBRIC.md)"
+      "Read(/docs/LABEL_RUBRIC.md)",
+      "Read(/docs/evals/exp3_targets.json)"
     ]
   }
 }
