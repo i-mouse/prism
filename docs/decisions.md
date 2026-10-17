@@ -2772,3 +2772,22 @@ extraction-only marks - 2026-10-17". Logged before any further build or run.
   set is the real test.
 - Caveats: the judges are LLMs (Nitin's own check pending); one paper.
 - Spend so far this attempt: INR 4.4 of 350.
+
+## Claim boundary rule (revised): "could it be wrong?" - 2026-10-18
+Revises "Claim boundary rule: 'our system does X' sentences - 2026-10-17"
+(keyword hints removed). Added before reconciling the arxiv-2610.10590v1
+claim inventories.
+- Test: could this sentence be wrong even if the authors are completely
+  honest? Yes -> claim. No -> not a claim.
+- Not a claim: sentences true by construction - what the authors chose or
+  did (setup, design, procedure), e.g. "our experiments use a prompted
+  model without additional training".
+- Claim: results, observed behaviour, guarantees a system could fail
+  (e.g. "returns exact archived payloads"), advantages over other
+  approaches, generality.
+- Signal words ("exact", "without requiring", "guarantees") are hints
+  only; the sentence itself must make the assertion.
+- A plain sentence with no number or strong word can still be a claim
+  ("both candidates compile").
+- Extraction decides what goes to the auditor; not_supported is the
+  auditor's verdict. A claim with no evidence is still a claim.
