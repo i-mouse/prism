@@ -2835,3 +2835,32 @@ source in "Pass-2 keep/drop rule for the 2610.10590v1 comparison -
   no pass-1 / pass-2 label shown; arm revealed only after locking.
 - Caveat: labels are AI-assisted by the same two reviewers whose
   disagreement produced the disputed list; blind to pipeline output.
+
+## Pass-2 comparison result for 2610.10590v1: KEEP - 2026-10-18
+Rule from "Pass-2 keep/drop rule..." and "Answer-key labelling and Phase B
+method..." (both 2026-10-18), applied by eval/compare_2610_10590v1.py,
+which was written and tested before any real match.
+- Inputs: pass 1 = 37 claims; pilot-1 pass 2 = 27 kept before filter;
+  filter v2 = 18 kept. Key A = 73, Key B = 78.
+- Key B: pass 1 found 33/78 (42%); pass 1 + filtered pass 2 found 48/78
+  (62%); gain 19.23 pp (15/78); precision 0.833 (15/18) -> KEEP.
+- Key A: gain 19.18 pp (14/73); precision 0.778 (14/18) -> KEEP.
+- Final: KEEP (A and B agree). Full numbers in
+  docs/evals/claim_inventory/arxiv-2610.10590v1/comparison_pass1_pass2.md.
+- Still missed: about 38% of the paper's claims (Key B) even with pass 2.
+- Pass 1: 4 of 37 claims have no match in the key (not proven junk).
+- Margin: gain well above 10 pp; precision under Key A is 0.078 above the
+  bar (2 fewer matched sentences of 18 would fail it).
+- Deviation: per-arm counts were seen before borderline review; the
+  borderline set was one pair (K038), judged no.
+- Caveat: one paper, in-sample (it shaped claim definition v2 and the
+  filter). Directional only.
+- Consequences: EXTRACTOR_PASS2_CLEAN proceeds to the 2 full runs (flag
+  stays off by default until marks pass); K3 report-only; K4 cost guard;
+  K6 gates.
+- Open before the full runs: (1) K6 needs a labelling method that shows
+  each sentence with its surrounding paragraph; (2) estimated cost on this
+  paper is about INR 130-135 per paper (r = 1.49), at or over the K4 cap.
+  K4 is applied as logged on the full runs (mean over 12 papers); it is
+  not changed. If K4 fails, EXTRACTOR_PASS2_CLEAN stays off until audit
+  cost is lowered (e.g. caching) and re-checked.
