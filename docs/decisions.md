@@ -2791,3 +2791,19 @@ claim inventories.
   ("both candidates compile").
 - Extraction decides what goes to the auditor; not_supported is the
   auditor's verdict. A claim with no evidence is still a claim.
+
+## Pass-2 keep/drop rule for the 2610.10590v1 comparison - 2026-10-18
+Logged before any pipeline-vs-inventory scoring.
+- Answer key = reconciled_claims.md + disputed items Nitin labels "claim"
+  (adjudicated blind to pipeline output).
+- Pass 2 kept only if both: (a) recall of pass 1 + filtered pass 2 is
+  >= 10 percentage points above pass-1 recall; (b) filtered pass-2
+  precision >= 0.70, strict (a kept sentence with no key match = not a
+  claim).
+- Kept -> K3 becomes report-only, K4 stays the cost guard, K6 gates the
+  2 full runs. Dropped -> EXTRACTOR_PASS2_CLEAN stays off; auditor phase
+  on pass-1 claims.
+- One in-sample paper: directional only. No prompt edits from this
+  result. Full-inventory recall is judged on a new sealed paper. No
+  further inventory work on this paper. Extraction is frozen for this
+  version after this decision.
