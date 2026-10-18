@@ -2807,3 +2807,31 @@ Logged before any pipeline-vs-inventory scoring.
   result. Full-inventory recall is judged on a new sealed paper. No
   further inventory work on this paper. Extraction is frozen for this
   version after this decision.
+
+## Answer-key labelling and Phase B method for 2610.10590v1 - 2026-10-18
+Logged before any pipeline-vs-inventory scoring. Amends the labelling
+source in "Pass-2 keep/drop rule for the 2610.10590v1 comparison -
+2026-10-18"; the keep/drop thresholds are unchanged.
+- Reason: labelling the 24 disputed sentences needs full-paper context
+  Nitin does not have; forced labels would be guesses biased toward
+  "not claim".
+- Labels: 13 where a second ChatGPT and Gemini adjudication (with paper
+  context, blind to pipeline output) agreed; 6 decided by the logged
+  2026-10-18 boundary rule and claim definition v2 (D002, D019 not
+  claim; D004, D005, D006, D012 claim); 5 unsure (D007, D008, D009,
+  D013, D016).
+- Unsure tie-break: answer key and KEEP/DROP computed twice, unsure as
+  claim (key 78) and unsure as not claim (key 73). Same verdict -> that
+  is the result. Different verdicts -> DROP.
+- Matching (per arm, one-to-one, greedy by score, on normalize_for_match
+  text): token_set_ratio and partial_ratio only to shortlist candidates.
+  fuzz.ratio >= 90 -> auto match. Borderline (human review) if
+  fuzz.ratio 60-89, OR partial_ratio >= 90 (one sentence contains the
+  other). Otherwise no match. Reason: token_set_ratio scores 100 on word
+  subsets (would auto-credit fragments), while fuzz.ratio alone would
+  under-match pass-1 claims that are partial or two-sentence spans, which
+  biases the test toward pass 2.
+- Borderline review is blind to arm: one shuffled table (seed 20261018),
+  no pass-1 / pass-2 label shown; arm revealed only after locking.
+- Caveat: labels are AI-assisted by the same two reviewers whose
+  disagreement produced the disputed list; blind to pipeline output.
