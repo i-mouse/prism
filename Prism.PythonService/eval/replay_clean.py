@@ -352,6 +352,8 @@ async def _run_filter_only(
             final_claims = filter_result["filtered_claims"]
 
             header = dict(merged_header)
+            header["merged_prompt_hash"] = merged_header.get("prompt_hash")
+            header["prompt_hash"] = get_prompt_version(extractor_second_pass=True, extractor_pass2_clean=True)
             header["filter_only"] = {
                 "from_run": from_run_dir.name,
                 "run_id": run_id,

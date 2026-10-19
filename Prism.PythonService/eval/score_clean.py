@@ -6,9 +6,12 @@ eval/replay_clean.py).
 
   K2, K3, K4, K5, K8  computed directly from each run's own output files -
       no human input needed.
-  K1, K6, K7          read from a LOCKED, hand-filled sheet (see
-      eval/build_clean_review_pack.py and eval/build_clean_sheets.py) -
-      verify_lock refuses to score an unlocked or since-edited sheet.
+  K1                  read from a LOCKED, hand-filled sheet (see
+      eval/build_clean_review_pack.py) - verify_lock refuses to score an
+      unlocked or since-edited sheet.
+  K6, K7              read from eval/score_label_pack.py's <mode>_score.json
+      output (eval/build_label_pack.py builds the pack and key that
+      produces it). The older sheet-based --k6k7-run path is removed.
 
 Also reports pre-filter vs. post-filter pass-2 claim counts per paper, and
 reason_code counts across every dropped candidate (informational, not
@@ -19,8 +22,11 @@ No LLM calls. main.py is never imported.
 Usage:
   uv run python -m eval.score_clean --run clean_r1:docs/evals/fixtures/dev/clean/clean_r1 \\
       --run clean_r2:docs/evals/fixtures/dev/clean/clean_r2 \\
-      --k1-dir docs/evals/clean_k1/clean_r1=docs/evals/clean_k1/clean_r2 \\
-      --k6k7-dir docs/evals/clean_k6k7/clean_r1=docs/evals/clean_k6k7/clean_r2
+      --k1-run clean_r1:docs/evals/clean_k1/clean_r1 --k1-run clean_r2:docs/evals/clean_k1/clean_r2 \\
+      --k6-score clean_r1:docs/evals/clean_k6k7_pack/clean_r1/k6_score.json \\
+      --k6-score clean_r2:docs/evals/clean_k6k7_pack/clean_r2/k6_score.json \\
+      --k7-score clean_r1:docs/evals/clean_k6k7_pack/clean_r1/k7_score.json \\
+      --k7-score clean_r2:docs/evals/clean_k6k7_pack/clean_r2/k7_score.json
 """
 import argparse
 import json
@@ -30,7 +36,7 @@ from typing import Optional
 
 from pydantic import ValidationError
 
-from eval.blind_review import C1Answer, K6Answer, K7Answer, verify_lock, wilson_interval
+from eval.blind_review import C1Answer, verify_lock
 from eval.match_map import fingerprint_claim_text, load_match_map
 from eval.matrix_loader import load_matrix
 
@@ -261,58 +267,39 @@ def score_k1(k1_dirs: dict[str, Path]) -> dict:
 
 
 # --------------------------------------------------------------------------
-# K6 / K7: blind hand-label sheets, locked
+# K6 / K7: read from eval/score_label_pack.py's <mode>_score.json output
+# (eval/build_label_pack.py + eval/score_label_pack.py - 2026-10-19 method,
+# replacing the old sheet-based build_clean_sheets.py scoring this used to
+# do inline). Gate thresholds are recomputed here from the raw counts
+# rather than trusting the input file's own "pass" field, so this scorer
+# stays the single source of truth for the K6/K7 gate.
 # --------------------------------------------------------------------------
 
-def score_k6(k6k7_dirs: dict[str, Path]) -> dict:
+def score_k6(k6_score_paths: dict[str, Path]) -> dict:
     per_run = {}
-    for run_name, sheet_dir in k6k7_dirs.items():
-        csv_path = sheet_dir / "k6_sheet.csv"
-        verify_lock(sheet_dir / "lock.json", {"k6_sheet.csv": csv_path, "k7_sheet.csv": sheet_dir / "k7_sheet.csv"})
-
-        import csv as csv_module
-
-        with open(csv_path, encoding="utf-8-sig", newline="") as f:
-            rows = list(csv_module.DictReader(f))
-        answers = {}
-        errors = []
-        for raw_row in rows:
-            try:
-                answers[raw_row["id"]] = K6Answer.model_validate(raw_row)
-            except ValidationError as exc:
-                errors.append(f"{raw_row.get('id', '?')}: {exc}")
-        n = len(answers)
-        claims = sum(1 for a in answers.values() if a.label == "claim")
-        low, high = wilson_interval(claims, n) if n else (None, None)
+    for run_name, score_path in k6_score_paths.items():
+        data = json.loads(score_path.read_text(encoding="utf-8"))
+        n = data["n"]
+        claims = data["counts"]["A"]
+        precision = claims / n if n else None
         per_run[run_name] = {
-            "claims": claims, "n": n, "rate": (claims / n if n else None), "wilson": (low, high),
-            "errors": errors,
-            "pass": len(errors) == 0 and n == K6_SAMPLE_K and n > 0 and claims / n >= K6_MIN_PRECISION,
+            "n": n, "counts": data["counts"], "not_found_count": data.get("not_found_count", 0),
+            "precision_unsure_not_claim": precision,
+            "precision_unsure_claim": data.get("precision_unsure_claim"),
+            "pass": n == K6_SAMPLE_K and precision is not None and precision >= K6_MIN_PRECISION,
         }
     return per_run
 
 
-def score_k7(k6k7_dirs: dict[str, Path]) -> dict:
+def score_k7(k7_score_paths: dict[str, Path]) -> dict:
     per_run = {}
-    for run_name, sheet_dir in k6k7_dirs.items():
-        csv_path = sheet_dir / "k7_sheet.csv"
-        verify_lock(sheet_dir / "lock.json", {"k6_sheet.csv": sheet_dir / "k6_sheet.csv", "k7_sheet.csv": csv_path})
-
-        import csv as csv_module
-
-        with open(csv_path, encoding="utf-8-sig", newline="") as f:
-            rows = list(csv_module.DictReader(f))
-        answers = {}
-        errors = []
-        for raw_row in rows:
-            try:
-                answers[raw_row["id"]] = K7Answer.model_validate(raw_row)
-            except ValidationError as exc:
-                errors.append(f"{raw_row.get('id', '?')}: {exc}")
-        not_same = sum(1 for a in answers.values() if a.verdict != "same")
+    for run_name, score_path in k7_score_paths.items():
+        data = json.loads(score_path.read_text(encoding="utf-8"))
+        n = data["n"]
+        not_same = n - data["counts"]["same"]
         per_run[run_name] = {
-            "n": len(answers), "not_same": not_same, "errors": errors,
-            "pass": len(errors) == 0 and not_same <= K7_MAX_NOT_SAME,
+            "n": n, "counts": data["counts"], "not_same": not_same,
+            "pass": n > 0 and not_same <= K7_MAX_NOT_SAME,
         }
     return per_run
 
@@ -335,16 +322,27 @@ def main() -> None:
                          help="name:path, repeatable, e.g. clean_r1:docs/evals/fixtures/dev/clean/clean_r1")
     parser.add_argument("--k1-run", action="append", dest="k1_runs",
                          help="name:path to a k1 output dir (eval.build_clean_review_pack --output-dir), repeatable")
-    parser.add_argument("--k6k7-run", action="append", dest="k6k7_runs",
-                         help="name:path to a k6/k7 output dir (eval.build_clean_sheets --output-dir), repeatable")
+    parser.add_argument("--k6-score", action="append", dest="k6_scores",
+                         help="name:path to a k6_score.json (eval.score_label_pack --mode k6 output), repeatable")
+    parser.add_argument("--k7-score", action="append", dest="k7_scores",
+                         help="name:path to a k7_score.json (eval.score_label_pack --mode k7 output), repeatable")
+    parser.add_argument("--k6k7-run", action="append", dest="k6k7_runs", help=argparse.SUPPRESS)
     parser.add_argument("--dev-eval-path", type=Path, default=DEFAULT_DEV_EVAL_PATH)
     parser.add_argument("--match-map-path", type=Path, default=DEFAULT_MATCH_MAP_PATH)
     parser.add_argument("--output-path", type=Path, default=None)
     args = parser.parse_args()
 
+    if args.k6k7_runs:
+        parser.error(
+            "--k6k7-run was removed: the K6/K7 gate now reads eval.score_label_pack output. "
+            "Use --k6-score name:path/to/k6_score.json and --k7-score name:path/to/k7_score.json "
+            "(built via eval.build_label_pack + eval.score_label_pack)."
+        )
+
     run_dirs = _parse_named_paths(args.runs)
     k1_dirs = _parse_named_paths(args.k1_runs)
-    k6k7_dirs = _parse_named_paths(args.k6k7_runs)
+    k6_scores = _parse_named_paths(args.k6_scores)
+    k7_scores = _parse_named_paths(args.k7_scores)
 
     result = {
         "k2": {run: score_k2(run_dir, args.dev_eval_path, args.match_map_path) for run, run_dir in run_dirs.items()},
@@ -355,9 +353,10 @@ def main() -> None:
     }
     if k1_dirs:
         result["k1"] = score_k1(k1_dirs)
-    if k6k7_dirs:
-        result["k6"] = score_k6(k6k7_dirs)
-        result["k7"] = score_k7(k6k7_dirs)
+    if k6_scores:
+        result["k6"] = score_k6(k6_scores)
+    if k7_scores:
+        result["k7"] = score_k7(k7_scores)
 
     print(json.dumps(result, indent=2, default=str))
     if args.output_path:
