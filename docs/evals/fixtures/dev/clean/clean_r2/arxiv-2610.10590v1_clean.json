@@ -1,0 +1,196 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.10590v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7cd024de-ee74-4f7d-858c-d4cfdb5df894",
+    "generated_at": "2026-10-19T14:10:04Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": true
+  },
+  "decisions": {
+    "P0": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P1": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P2": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P3": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P4": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P5": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P6": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P7": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P8": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P9": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P10": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P11": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P12": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P13": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P14": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P15": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P16": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P17": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P18": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P19": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P20": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P21": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P22": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P23": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P24": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P25": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P26": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P27": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P28": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    },
+    "P29": {
+      "decision": "kept_undecided_failed_batch",
+      "reason_code": null,
+      "relations": [],
+      "is_paper_claim": null
+    }
+  }
+}

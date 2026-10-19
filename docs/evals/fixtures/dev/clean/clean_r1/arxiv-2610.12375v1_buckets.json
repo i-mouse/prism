@@ -1,0 +1,614 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12375v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8",
+    "generated_at": "2026-10-19T14:02:10Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 2,
+  "dropped_duplicate": [
+    {
+      "sentence": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "best_match": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "best_match": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "best_match": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "best_match": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "best_match": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "best_match": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "best_match": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "best_match": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "best_match": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Our contribution is making this alignment work on a live stream, which cannot be done by just re-running the batch method after each step due to the following structural challenges:",
+      "best_match": "Our contribution is making this alignment work on a live stream, which cannot be done by just re-running the batch method after each step due to the following structural challenges:",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "best_match": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "best_match": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We are not aware of a deployed system that reasons about the structure of the execution graph while that graph is still growing.",
+      "best_match": "We are not aware of a deployed system that reasons about the structure of the execution graph while that graph is still growing.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Reversible actions are never blocked, preserving cheap exploration.",
+      "best_match": "Reversible actions are never blocked, preserving cheap exploration.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "best_match": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113\u22650.66 while valid steps stay \u22640.24, comfortably bracketing \u03b8leak = 0.6.",
+      "best_match": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113\u22650.66 while valid steps stay \u22640.24, comfortably bracketing \u03b8leak = 0.6.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "First, attribution: loops and stalls are carried en- tirely by the reference-free L1 heuristics \u2014 every variant, including the rule baseline, matches on them.",
+      "best_match": "First, attribution: loops and stalls are carried entirely by the reference-free L1 heuristics \u2014 every variant, including the rule baseline, matches on them.",
+      "ratio_score": 99.36305732484077,
+      "partial_ratio_score": 98.71794871794873
+    },
+    {
+      "sentence": "Second, at the shipped threshold the quadratic structure term selects a lower-FPR operating point: removing the mask changes almost nothing (13/40 \u219214/40 false-positive traces at essentially identical recall), while removing the GW term more than doubles the benign false-alarm count (29/40), to nearly the level of running no transport at all (L1-only 31/40, rule baseline 32/40).",
+      "best_match": "Second, at the shipped threshold the quadratic structure term selects a lower-FPR operating point: removing the mask changes almost nothing (13/40 \u219214/40 false-positive traces at essentially identical recall), while removing the GW term more than doubles the benign false-alarm count (29/40), to nearly the level of running no transport at all (L1-only 31/40, rule baseline 32/40).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Third, the recall side remains an operating-point contrast, not a dominance result: at the shipped thresholds the full system sits at a conserva- tive point (12/30 recall on hallucinations and inversions) while the no-GW and rule variants sit at high-recall, high-FPR points (21\u201326/30 recall at 29\u201332/40 FPR).",
+      "best_match": "Third, the recall side remains an operating-point contrast, not a dominance result: at the shipped thresholds the full system sits at a conservative point (12/30 recall on hallucinations and inversions) while the no-GW and rule variants sit at high-recall, high-FPR points (21\u201326/30 recall at 29\u201332/40 FPR).",
+      "ratio_score": 99.67532467532467,
+      "partial_ratio_score": 99.3485342019544
+    },
+    {
+      "sentence": "We therefore claim the FPR contrast at deployed thresholds, not curve-level dominance.",
+      "best_match": "We therefore claim the FPR contrast at deployed thresholds, not curve-level dominance.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 con- ditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, re- tries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "best_match": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "ratio_score": 99.56989247311829,
+      "partial_ratio_score": 99.13606911447084
+    },
+    {
+      "sentence": "The end-of- stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+      "best_match": "The end-of-stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+      "ratio_score": 99.80353634577604,
+      "partial_ratio_score": 99.60629921259843
+    },
+    {
+      "sentence": "First, the \u2206CI excludes zero at k \u226410, and the advan- tage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.",
+      "best_match": "First, the \u2206CI excludes zero at k \u226410, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.",
+      "ratio_score": 99.53271028037383,
+      "partial_ratio_score": 99.06103286384976
+    },
+    {
+      "sentence": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+      "best_match": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+      "best_match": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "What we claim is a candidate policy: \u224818% savings at \u224820% balanced false stops at the illustrated point, not production readiness.",
+      "best_match": "What we claim is a candidate policy: \u224818% savings at \u224820% balanced false stops at the illustrated point, not produc- tion readiness.",
+      "ratio_score": 99.23664122137404,
+      "partial_ratio_score": 98.46153846153847
+    },
+    {
+      "sentence": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "best_match": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At a matched \u224820% false-stop rate, flag-density (17.9%) and an interpolated step-cutoff (\u224816.5%) save comparable cost; at \u224829% false stops, blunt early policies save more (cosine-cutoff 37.9%, budget-cutoff 31.9%, vs. flag-density 28.0%), because savings track how early a policy fires and nothing fires earlier than a cutoff that barely looks at the trace (cosine-cutoff\u2019s median abort is step 6, vs. 33\u201344 for flag density).",
+      "best_match": "At a matched \u224820% false-stop rate, flag- density (17.9%) and an interpolated step-cutoff (\u224816.5%) save comparable cost; at \u224829% false stops, blunt early policies save more (cosine-cutoff 37.9%, budget-cutoff 31.9%, vs. flag-density 28.0%), because savings track how early a policy fires and nothing fires earlier than a cutoff that barely looks at the trace (cosine-cutoff\u2019s median abort is step 6, vs. 33\u201344 for flag density).",
+      "ratio_score": 99.88276670574443,
+      "partial_ratio_score": 99.76525821596243
+    },
+    {
+      "sentence": "The hybrid tracks the step-cutoff frontier and adds nothing.",
+      "best_match": "The hybrid tracks the step-cutoff frontier and adds nothing.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+      "best_match": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+      "best_match": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The honest result is that such splices sit near the detection floor on this corpus: AUC(score) = 0.546, AUC(flags) = 0.540, cosine 0.516, and the per-trace leakage delta between spliced and clean versions is not significant (p = 0.93).",
+      "best_match": "The honest result is that such splices sit near the detection floor on this corpus: AUC(score) = 0.546, AUC(flags) = 0.540, cosine 0.516, and the per-trace leakage delta between spliced and clean versions is not significant (p = 0.93).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+      "best_match": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On a balanced sample (50 resolved, 50 unresolved), no method reliably separates outcomes (Table 8): OnTrack reaches 0.581, cosine 0.643, with widely overlapping bootstrap CIs.",
+      "best_match": "On a balanced sample (50 resolved, 50 unresolved), no method reliably separates outcomes (Table 8): OnTrack reaches 0.581, cosine 0.643, with widely overlapping bootstrap CIs.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+      "best_match": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192more accumulated transport cost).",
+      "best_match": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192more accumulated transport cost).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "OnTrack shows that structure-aware optimal transport \u2014 until now a post-hoc instrument \u2014 can run inside the agent loop and act in real time, without surrendering the properties that made it worth having.",
+      "best_match": "OnTrack shows that structure-aware optimal transport \u2014 until now a post-hoc instrument \u2014 can run inside the agent loop and act in real time, without surrendering the properties that made it worth having.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On 2,294 SWE-agent trajectories, OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out protocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10) \u2014 and a candidate flag-density abort policy stops roughly one in four failing runs, saving 17\u201318% of compute on the failed population at \u224883% deployment-adjusted precision.",
+      "best_match": "On 2,294 SWE-agent trajectories, OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out protocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10) \u2014 and a candidate flag-14 density abort policy stops roughly one in four failing runs, saving 17\u201318% of compute on the failed population at \u224883% deployment-adjusted precision.",
+      "ratio_score": 99.68186638388123,
+      "partial_ratio_score": 99.36170212765958
+    },
+    {
+      "sentence": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "best_match": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [],
+  "kept_new": [
+    {
+      "sentence": "Our contribution is making this alignment work on a live stream, which cannot be done by just re-running the batch method after each step due to the following structural challenges:",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 45.60570071258907,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "OnTrack addresses all four challenges.",
+      "best_match": "Reversible actions are never blocked, preserving cheap exploration.",
+      "ratio_score": 36.1904761904762,
+      "partial_ratio_score": 41.0958904109589
+    },
+    {
+      "sentence": "For S2, a new step\u2019s structural influence starts at zero and phases in as later steps use its output; edges discovered late are inserted into the graph in place (Sec. 4.4).",
+      "best_match": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "ratio_score": 49.079754601227,
+      "partial_ratio_score": 47.97047970479705
+    },
+    {
+      "sentence": "For S4, decisions come from per-step signals with a short grace window for new steps, never from the aggregate score (Sec. 4.5).",
+      "best_match": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "ratio_score": 49.64539007092199,
+      "partial_ratio_score": 49.122807017543856
+    },
+    {
+      "sentence": "We are not aware of a deployed system that reasons about the structure of the execution graph while that graph is still growing.",
+      "best_match": "Our contribution is making this alignment work on a live stream, which cannot be done by just re-running the batch method after each step due to the following structural challenges:",
+      "ratio_score": 42.71844660194175,
+      "partial_ratio_score": 49.21875
+    },
+    {
+      "sentence": "That combination, as far as we know, is new.",
+      "best_match": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "ratio_score": 40.0,
+      "partial_ratio_score": 43.67816091954023
+    },
+    {
+      "sentence": "This extraction is deterministic string matching, not an LLM call \u2014 cheap and auditable \u2014 but it fails when a dependency leaves no matchable identifier.",
+      "best_match": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "ratio_score": 43.103448275862064,
+      "partial_ratio_score": 44.73684210526315
+    },
+    {
+      "sentence": "OnTrack separates signals by their prerequisites into three decoupled layers: L1 vital signs (reference-free intrinsic diagnostics: loop detection, information gain, stall) run always; L2 transport alignment (the streaming UFGW machinery, Secs. 4.1\u20134.5) requires references; L3 pre-execution policy gate (tool-contract prerequisite checks plus a one-row proposal alignment, Sec. 4.5) requires schemas and is the only synchronous component \u2014 it evaluates the proposed action before the tool executes, exclusively for irreversible calls, so worst-case added latency is confined to the rare actions that warrant it.",
+      "best_match": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "ratio_score": 40.372093023255815,
+      "partial_ratio_score": 41.46868250539957
+    },
+    {
+      "sentence": "OnTrack keeps the true objective by observing that the standard batch UFGW solver \u2014 conditional gradient (CG) \u2014 is already an iterative linearization scheme, and amortizing it: one warm-started CG iteration per event; the coupling tracks the moving optimum the way stochastic gradient descent tracks a drifting loss.",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 43.16546762589928,
+      "partial_ratio_score": 48.32214765100671
+    },
+    {
+      "sentence": "No intervention is ever taken on a stale linearization, and the converged-solve cost is paid exactly when it is cheapest relative to the tool call about to be prevented.",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 48.41075794621027,
+      "partial_ratio_score": 50.29585798816568
+    },
+    {
+      "sentence": "The coupling is not recomputed retroactively; the next CG step absorbs the change \u2014 a further payoff of the streaming-CG framing.",
+      "best_match": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "ratio_score": 44.99999999999999,
+      "partial_ratio_score": 46.846846846846844
+    },
+    {
+      "sentence": "The finalization path disables age weights entirely \u2014 batch evaluation uses the unweighted structure \u2014 so the final score cannot depend on emission ages.",
+      "best_match": "We are not aware of a deployed system that reasons about the structure of the execution graph while that graph is still growing.",
+      "ratio_score": 46.97508896797154,
+      "partial_ratio_score": 50.2092050209205
+    },
+    {
+      "sentence": "Streaming inherits this; we default to unsigned magnitudes and note that causal inversions are caught earlier and more directly by the premature-step check of Sec. 4.2(c).",
+      "best_match": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "ratio_score": 46.15384615384615,
+      "partial_ratio_score": 45.833333333333336
+    },
+    {
+      "sentence": "No transport mass is required \u2014 the gate is a schema-plus-proposal check, which is what makes synchronous operation possible.",
+      "best_match": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "ratio_score": 44.91525423728814,
+      "partial_ratio_score": 47.05882352941176
+    },
+    {
+      "sentence": "It is a policy gate, not a soundness guarantee: its coverage is bounded by the schema annotations.",
+      "best_match": "Reversible actions are never blocked, preserving cheap exploration.",
+      "ratio_score": 43.63636363636364,
+      "partial_ratio_score": 48.64864864864865
+    },
+    {
+      "sentence": "With no reference at all, L2 is off and OnTrack degrades, explicitly, to L1 + L3.",
+      "best_match": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "ratio_score": 40.74074074074075,
+      "partial_ratio_score": 42.85714285714286
+    },
+    {
+      "sentence": "Under the constant per-node mass of Eq. (3), the increase in the optimal objective is at most \u03bb/ \u00afm \u2014 the generalized-KL cost of annihilating the node\u2019s mass \u00b5 = 1/ \u00afm \u2014 so the aggregate perturbation decays as O(1/t) relative to total transported mass; its node leakage \u2113lies in [0, 1] by definition (Eq. 4) and attains 1 exactly when the node\u2019s mass is fully destroyed.",
+      "best_match": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "ratio_score": 41.01040118870728,
+      "partial_ratio_score": 42.26289517470882
+    },
+    {
+      "sentence": "Mid-stream serialization invariance is therefore an empirical property: Scenario B of Table 2, where a reordered run tracks and finalizes to the identical score, is its validation.",
+      "best_match": "The finalization path disables age weights entirely \u2014 batch evaluation uses the unweighted structure \u2014 so the final score cannot depend on emission ages.",
+      "ratio_score": 44.44444444444444,
+      "partial_ratio_score": 45.559845559845556
+    },
+    {
+      "sentence": "Table 2: all eight scenarios behave as designed.",
+      "best_match": "That combination, as far as we know, is new.",
+      "ratio_score": 45.652173913043484,
+      "partial_ratio_score": 52.63157894736843
+    },
+    {
+      "sentence": "At K=3 references, m=40, t \u226440, the fast path measures p50 0.85 ms / p95 1.6 ms per event (Apple M5 Max core).",
+      "best_match": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "ratio_score": 40.104166666666664,
+      "partial_ratio_score": 62.745098039215684
+    },
+    {
+      "sentence": "First, attribution: loops and stalls are carried entirely by the reference-free L1 heuristics \u2014 every variant, including the rule baseline, matches on them.",
+      "best_match": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "ratio_score": 46.927374301675975,
+      "partial_ratio_score": 49.358974358974365
+    },
+    {
+      "sentence": "Second, at the shipped threshold the quadratic structure term selects a lower-FPR operating point: removing the mask changes almost nothing (13/40 \u219214/40 false-positive traces at essentially identical recall), while removing the GW term more than doubles the benign false-alarm count (29/40), to nearly the level of running no transport at all (L1-only 31/40, rule baseline 32/40).",
+      "best_match": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "ratio_score": 41.812865497076025,
+      "partial_ratio_score": 43.23432343234324
+    },
+    {
+      "sentence": "Third, the recall side remains an operating-point contrast, not a dominance result: at the shipped thresholds the full system sits at a conservative point (12/30 recall on hallucinations and inversions) while the no-GW and rule variants sit at high-recall, high-FPR points (21\u201326/30 recall at 29\u201332/40 FPR).",
+      "best_match": "Second, at the shipped threshold the quadratic structure term selects a lower-FPR operating point: removing the mask changes almost nothing (13/40 \u219214/40 false-positive traces at essentially identical recall), while removing the GW term more than doubles the benign false-alarm count (29/40), to nearly the level of running no transport at all (L1-only 31/40, rule baseline 32/40).",
+      "ratio_score": 43.31395348837209,
+      "partial_ratio_score": 44.52054794520548
+    },
+    {
+      "sentence": "We therefore claim the FPR contrast at deployed thresholds, not curve-level dominance.",
+      "best_match": "We are not aware of a deployed system that reasons about the structure of the execution graph while that graph is still growing.",
+      "ratio_score": 42.990654205607484,
+      "partial_ratio_score": 50.63291139240506
+    },
+    {
+      "sentence": "Threshold sweeps with per-point counts and Wilson in- tervals (released with the code; n=120 benign, 100 per fault) quantify this: loop and stall AUPRC is 0.70\u20130.74 for every variant (base rate 0.45), while hallucination and inversion AUPRC sits at 0.44\u20130.47 \u2014 essentially the base rate \u2014 for all variants, i.e., the precision\u2013recall curves are indistinguishable and only the shipped operating point differs.",
+      "best_match": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+      "ratio_score": 44.7585394581861,
+      "partial_ratio_score": 45.833333333333336
+    },
+    {
+      "sentence": "Table 5: Primary protocol: AUROC at partial trajectory (first k steps), every evaluation-partition trace with \u2265 k steps (N = 2,055 at k=5 down to 1,405 at k=20), all methods scored on the same traces, instance-level bootstrap 95% CIs (n=1,000) on the OnTrack\u2212cosine difference.",
+      "best_match": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "ratio_score": 40.653357531760435,
+      "partial_ratio_score": 40.51094890510949
+    },
+    {
+      "sentence": "The \u2206CI excludes zero for k \u226410.",
+      "best_match": "Table 2: all eight scenarios behave as designed.",
+      "ratio_score": 35.0,
+      "partial_ratio_score": 36.73469387755102
+    },
+    {
+      "sentence": "Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content- and structure-aware method there but not the length prior \u2014 its clearest regime is k=8\u201310, after the length prior fades and before content accumulates.",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 44.35946462715105,
+      "partial_ratio_score": 46.088794926004226
+    },
+    {
+      "sentence": "Third, LinUOT tracks OnTrack within 0.003\u20130.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full sys- tem, confirming the mask\u2019s null ranking effect here as well.",
+      "best_match": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "ratio_score": 41.84615384615385,
+      "partial_ratio_score": 43.78283712784589
+    },
+    {
+      "sentence": "Fourth, the balanced multi-seed protocol (Appendix A) agrees in direction with somewhat larger deltas; we cite the primary protocol\u2019s numbers everywhere.",
+      "best_match": "No intervention is ever taken on a stale linearization, and the converged-solve cost is paid exactly when it is cheapest relative to the tool call about to be prevented.",
+      "ratio_score": 42.85714285714286,
+      "partial_ratio_score": 45.18518518518518
+    },
+    {
+      "sentence": "The advantage is consis- tent across all three operating points.",
+      "best_match": "Reversible actions are never blocked, preserving cheap exploration.",
+      "ratio_score": 45.80152671755725,
+      "partial_ratio_score": 45.90163934426229
+    },
+    {
+      "sentence": "A na\u00a8\u0131ve \u201cabort at first flag\u201d policy is useless: nearly every trace \u2014 resolved or not \u2014 emits at least one EXPLORING flag early on (false-stop rate 99%).",
+      "best_match": "No intervention is ever taken on a stale linearization, and the converged-solve cost is paid exactly when it is cheapest relative to the tool call about to be prevented.",
+      "ratio_score": 41.9753086419753,
+      "partial_ratio_score": 43.50877192982456
+    },
+    {
+      "sentence": "On an earlier, independent draw of the profile sample the same threshold gave 25.3% true stops at 12.7% false stops and 17.0% savings: the savings figure is stable across trace mixes (\u224817\u201318%), while the false-stop rate varies (13\u201321%) and should be validated on deployment traffic.",
+      "best_match": "Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content- and structure-aware method there but not the length prior \u2014 its clearest regime is k=8\u201310, after the length prior fades and before content accumulates.",
+      "ratio_score": 44.95575221238938,
+      "partial_ratio_score": 45.40540540540541
+    },
+    {
+      "sentence": "What we claim is a candidate policy: \u224818% savings at \u224820% balanced false stops at the illustrated point, not produc- tion readiness.",
+      "best_match": "The finalization path disables age weights entirely \u2014 batch evaluation uses the unweighted structure \u2014 so the final score cannot depend on emission ages.",
+      "ratio_score": 44.91228070175438,
+      "partial_ratio_score": 46.45669291338582
+    },
+    {
+      "sentence": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "best_match": "What we claim is a candidate policy: \u224818% savings at \u224820% balanced false stops at the illustrated point, not produc- tion readiness.",
+      "ratio_score": 45.333333333333336,
+      "partial_ratio_score": 46.753246753246756
+    },
+    {
+      "sentence": "At a matched \u224820% false-stop rate, flag- density (17.9%) and an interpolated step-cutoff (\u224816.5%) save comparable cost; at \u224829% false stops, blunt early policies save more (cosine-cutoff 37.9%, budget-cutoff 31.9%, vs. flag-density 28.0%), because savings track how early a policy fires and nothing fires earlier than a cutoff that barely looks at the trace (cosine-cutoff\u2019s median abort is step 6, vs. 33\u201344 for flag density).",
+      "best_match": "On an earlier, independent draw of the profile sample the same threshold gave 25.3% true stops at 12.7% false stops and 17.0% savings: the savings figure is stable across trace mixes (\u224817\u201318%), while the false-stop rate varies (13\u201321%) and should be validated on deployment traffic.",
+      "ratio_score": 40.056417489421726,
+      "partial_ratio_score": 41.843971631205676
+    },
+    {
+      "sentence": "The hybrid tracks the step-cutoff frontier and adds nothing.",
+      "best_match": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "ratio_score": 54.90196078431373,
+      "partial_ratio_score": 56.666666666666664
+    },
+    {
+      "sentence": "First, threshold stability: cosine-cutoff\u2019s frontier is pathologically sensitive \u2014 moving its threshold from 0.40 to 0.55 swings the false-stop rate from 3.3% to 28% to 73% to 95%, so a miscalibration of 0.05 turns it from inert into a kill-everything switch \u2014 whereas flag density degrades gracefully across its entire range (29% to 19% false stops over thresholds 0.2\u20130.7).",
+      "best_match": "Third, the recall side remains an operating-point contrast, not a dominance result: at the shipped thresholds the full system sits at a conservative point (12/30 recall on hallucinations and inversions) while the no-GW and rule variants sit at high-recall, high-FPR points (21\u201326/30 recall at 29\u201332/40 FPR).",
+      "ratio_score": 41.05571847507331,
+      "partial_ratio_score": 42.3407917383821
+    },
+    {
+      "sentence": "We therefore present the abort experiment as evidence that the verdict stream supports a candidate operating policy that is reasonably stable on this corpus, not that it dominates the savings frontier.",
+      "best_match": "No intervention is ever taken on a stale linearization, and the converged-solve cost is paid exactly when it is cheapest relative to the tool call about to be prevented.",
+      "ratio_score": 45.40540540540541,
+      "partial_ratio_score": 45.562130177514796
+    },
+    {
+      "sentence": "The relevant distinction is when and how the signal is usable: a raw step count offers no principled stopping rule mid-trace (any length cutoff is a per-task guess), whereas the severe-flag density that drives Table 6 is a calibrated, task-agnostic trigger that identifies the loop/flounder behavior producing the cost overrun while budget remains to save.",
+      "best_match": "Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content- and structure-aware method there but not the length prior \u2014 its clearest regime is k=8\u201310, after the length prior fades and before content accumulates.",
+      "ratio_score": 42.87949921752738,
+      "partial_ratio_score": 45.8252427184466
+    },
+    {
+      "sentence": "Table 7: Exit-status detection: cost-limit vs. clean submission (balanced 50+50 sample). OnTrack matches n steps; the value added is the calibrated mid-trace trigger (Table 6), not the full-trace AUROC.",
+      "best_match": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "ratio_score": 43.84384384384384,
+      "partial_ratio_score": 50.38167938931297
+    },
+    {
+      "sentence": "The honest result is that such splices sit near the detection floor on this corpus: AUC(score) = 0.546, AUC(flags) = 0.540, cosine 0.516, and the per-trace leakage delta between spliced and clean versions is not significant (p = 0.93).",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 42.94736842105264,
+      "partial_ratio_score": 43.628509719222464
+    },
+    {
+      "sentence": "Every spliced trace raises at least one flag, but unspliced host traces of comparable length flag at nearly the same rate, so trace-level \u201cdetection rate\u201d is not a meaningful metric here and we do not report it as one.",
+      "best_match": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+      "ratio_score": 44.55205811138014,
+      "partial_ratio_score": 44.38356164383561
+    },
+    {
+      "sentence": "Loops and stalls are also precisely the fault modes that dominate real cost-limit failures (Table 7), which is why the abort policy of Table 6 works despite the per-fault AUROC floor on the harder categories.",
+      "best_match": "We therefore present the abort experiment as evidence that the verdict stream supports a candidate operating policy that is reasonably stable on this corpus, not that it dominates the savings frontier.",
+      "ratio_score": 45.47677261613692,
+      "partial_ratio_score": 46.81933842239185
+    },
+    {
+      "sentence": "Our controlled validation initially failed on hallucination detection.",
+      "best_match": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "ratio_score": 44.171779141104295,
+      "partial_ratio_score": 44.03669724770643
+    },
+    {
+      "sentence": "With the batch-evaluation default \u03bb = 1 and node costs normalized to [0, 1], a hallucinated step with M \u22481 retains a large fraction of its mass: the solver prefers transporting garbage over destroying it, and leakage-based diagnostics never fire.",
+      "best_match": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "ratio_score": 43.62139917695473,
+      "partial_ratio_score": 46.04651162790697
+    },
+    {
+      "sentence": "Online, where the marginals are the signal, 2\u03bb + \u03b5 acts as a soft cost threshold below which mass is destroyed rather than moved.",
+      "best_match": "We therefore present the abort experiment as evidence that the verdict stream supports a candidate operating policy that is reasonably stable on this corpus, not that it dominates the savings frontier.",
+      "ratio_score": 44.242424242424235,
+      "partial_ratio_score": 43.83561643835616
+    },
+    {
+      "sentence": "The calibrated value falls below the batch default by roughly 3\u201310\u00d7 across our two settings \u2014 \u03bb = 0.1 on the controlled tasks with synthetic embeddings, \u03bb = 0.3 on SWE-bench with all-MiniLM-L6-v2 (Sec. 6.2) \u2014 and with it, clean separation emerges.",
+      "best_match": "With the batch-evaluation default \u03bb = 1 and node costs normalized to [0, 1], a hallucinated step with M \u22481 retains a large fraction of its mass: the solver prefers transporting garbage over destroying it, and leakage-based diagnostics never fire.",
+      "ratio_score": 40.97363083164301,
+      "partial_ratio_score": 42.51626898047722
+    },
+    {
+      "sentence": "The dependence on the embedding model confirms that \u03bb must be recalibrated whenever the encoder (and hence the cost scale) changes.",
+      "best_match": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "ratio_score": 46.42857142857143,
+      "partial_ratio_score": 45.40540540540541
+    },
+    {
+      "sentence": "Point estimates are unstable at this sample size \u2014 an independent draw of the evaluation sample yields OnTrack 0.666 vs. cosine 0.657, reversing the ordering \u2014 so the only conclusion the data support is that neither process alignment nor content similarity predicts patch correctness from the trajectory alone.",
+      "best_match": "On an earlier, independent draw of the profile sample the same threshold gave 25.3% true stops at 12.7% false stops and 17.0% savings: the savings figure is stable across trace mixes (\u224817\u201318%), while the false-stop rate varies (13\u201321%) and should be validated on deployment traffic.",
+      "ratio_score": 43.24324324324324,
+      "partial_ratio_score": 45.018450184501845
+    },
+    {
+      "sentence": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192more accumulated transport cost).",
+      "best_match": "Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content- and structure-aware method there but not the length prior \u2014 its clearest regime is k=8\u201310, after the length prior fades and before content accumulates.",
+      "ratio_score": 44.9438202247191,
+      "partial_ratio_score": 46.58823529411765
+    },
+    {
+      "sentence": "We report this as a delimiter, not a defect: the monitor\u2019s job (Secs. 6.3\u20136.4) is to catch the runaway-length failure mode early, and the length sensitivity is precisely the mechanism by which it does so.",
+      "best_match": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "ratio_score": 46.0,
+      "partial_ratio_score": 46.93877551020408
+    },
+    {
+      "sentence": "Empirically this is a negative result: at \u03b3eff = 0.3 the coupling quality degrades across ablations (on a held-out tool-calling corpus, mean ablation AUROC drops from 0.825 to 0.715), because observations are high-variance \u2014 correct and incorrect executions of the same step both produce textually different outputs every time, so the effect term dilutes the action/tool signal that correctly drives the alignment.",
+      "best_match": "Point estimates are unstable at this sample size \u2014 an independent draw of the evaluation sample yields OnTrack 0.666 vs. cosine 0.657, reversing the ordering \u2014 so the only conclusion the data support is that neither process alignment nor content similarity predicts patch correctness from the trajectory alone.",
+      "ratio_score": 43.0939226519337,
+      "partial_ratio_score": 44.83870967741935
+    },
+    {
+      "sentence": "The same information is useful downstream of the coupling: a mass-weighted content-divergence signal (does the observation match what the reference saw at the coupled node?) contributes to struggling-agent detection without touching the transport.",
+      "best_match": "The relevant distinction is when and how the signal is usable: a raw step count offers no principled stopping rule mid-trace (any length cutoff is a per-task guess), whereas the severe-flag density that drives Table 6 is a calibrated, task-agnostic trigger that identifies the loop/flounder behavior producing the cost overrun while budget remains to save.",
+      "ratio_score": 45.1077943615257,
+      "partial_ratio_score": 43.85964912280702
+    },
+    {
+      "sentence": "OnTrack shows that structure-aware optimal transport \u2014 until now a post-hoc instrument \u2014 can run inside the agent loop and act in real time, without surrendering the properties that made it worth having.",
+      "best_match": "OnTrack keeps the true objective by observing that the standard batch UFGW solver \u2014 conditional gradient (CG) \u2014 is already an iterative linearization scheme, and amortizing it: one warm-started CG iteration per event; the coupling tracks the moving optimum the way stochastic gradient descent tracks a drifting loss.",
+      "ratio_score": 44.70134874759152,
+      "partial_ratio_score": 44.93827160493827
+    },
+    {
+      "sentence": "The quadratic structure term survives through amortized conditional gradient; the prefix problem is solved by frontier-masked marginals that keep order-freedom where the DAG permits it and convert agent-side mass leakage into a real-time signal; and every intervention rests on per-node transport marginals, escalated to a converged solve before action.",
+      "best_match": "Second, at the shipped threshold the quadratic structure term selects a lower-FPR operating point: removing the mask changes almost nothing (13/40 \u219214/40 false-positive traces at essentially identical recall), while removing the GW term more than doubles the benign false-alarm count (29/40), to nearly the level of running no transport at all (L1-only 31/40, rule baseline 32/40).",
+      "ratio_score": 44.95912806539509,
+      "partial_ratio_score": 47.14285714285714
+    },
+    {
+      "sentence": "On 2,294 SWE-agent trajectories, OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out protocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10) \u2014 and a candidate flag-14 density abort policy stops roughly one in four failing runs, saving 17\u201318% of compute on the failed population at \u224883% deployment-adjusted precision.",
+      "best_match": "On an earlier, independent draw of the profile sample the same threshold gave 25.3% true stops at 12.7% false stops and 17.0% savings: the savings figure is stable across trace mixes (\u224817\u201318%), while the false-stop rate varies (13\u201321%) and should be validated on deployment traffic.",
+      "ratio_score": 39.20529801324504,
+      "partial_ratio_score": 42.54385964912281
+    },
+    {
+      "sentence": "The precise summary of the real-trace evidence is this: on homogeneous SWE-agent traces, OnTrack provides a modest early advantage over content similarity, and its main structural contribution is selecting a lower-false-alarm operating point rather than improving ranking.",
+      "best_match": "We therefore present the abort experiment as evidence that the verdict stream supports a candidate operating policy that is reasonably stable on this corpus, not that it dominates the savings frontier.",
+      "ratio_score": 46.93446088794926,
+      "partial_ratio_score": 45.45454545454546
+    },
+    {
+      "sentence": "Absolute AUROC runs a few points higher than the primary protocol (balanced samples over-weight the resolved class relative to the 81%-unresolved population) and the deltas are somewhat larger; the direction and the early-k concentration of the advantage agree with Table 5, whose numbers we cite throughout.",
+      "best_match": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192more accumulated transport cost).",
+      "ratio_score": 44.00715563506261,
+      "partial_ratio_score": 46.21513944223108
+    }
+  ]
+}

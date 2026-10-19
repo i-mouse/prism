@@ -1,0 +1,566 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11519v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2",
+    "generated_at": "2026-10-19T14:20:06Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "We propose Residual Advantage (RA), which treats the teacher\u2013student probability residual as a bounded one-step reward, subtracts the corresponding state value under the student policy to form a standard advantage, and centers the result within each response before adding it to the verifier advantage.",
+      "claim_summary": "Residual Advantage combines bounded teacher residual rewards with verifier advantages.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "claim_summary": "RA's guidance term maintains zero mean, preserving response-level verifier labels.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "claim_summary": "Co-RA adapts teacher guidance by updating a teacher LoRA on student batches.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "claim_summary": "RA improves base algorithms in all 24 benchmark comparisons across models.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "claim_summary": "RA outperforms teacher-only OPD, and Co-RA provides additional performance gains.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The construction requires no schedule, threshold, or learned component.",
+      "claim_summary": "RA requires no learned components, thresholds, or training schedules.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Scaled in this way by the student\u2019s own probability, it also stays small wherever the student is already sure, so the teacher mainly adjusts the choices the student is still weighing instead of imposing its preference on those the student has settled, and it does not inflate small disagreements into large labels.",
+      "claim_summary": "RA scales guidance by student probability, focusing on uncertain student decisions.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "claim_summary": "RA guidance naturally fades as student and teacher distributions converge.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "claim_summary": "RA improves three-seed benchmark means in all 24 evaluated settings.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+      "claim_summary": "RA provides substantial macro Avg@8 and Pass@8 improvements over baselines.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "GRPO keeps the higher completion accuracy after guidance, but REINFORCE++ with RA has the higher macro Pass@8 at both sizes, a trade between accuracy and coverage that a single score would hide.",
+      "claim_summary": "RA with REINFORCE++ achieves higher Pass@8 coverage than with GRPO.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+      "claim_summary": "RA combinations outperform teacher-only OPD in both Avg@8 and Pass@8.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In training, OPD also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of the shared budget (Appendix C).",
+      "claim_summary": "OPD learns slower and stays below RA+REINFORCE++ during training.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "At the same budget, OPD followed by REINFORCE++ reaches 28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++ (Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).",
+      "claim_summary": "RA+REINFORCE++ outperforms sequential and joint OPD-RL baselines.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "claim_summary": "Co-RA further raises macro Avg@8 across all benchmark settings.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Co-RA+GRPO is the most accurate run for both students.",
+      "claim_summary": "Co-RA combined with GRPO achieves highest accuracy for both model sizes.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "claim_summary": "Co-RA's adapted teacher becomes a worse solver but a better guide.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "claim_summary": "RA's advantage over baselines expands significantly up to Pass@512.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "claim_summary": "Ablating the student value baseline consistently degrades RA performance.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Removing both operations costs 1.73 Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by \u22120.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).",
+      "claim_summary": "Removing both baselines shifts response means and degrades accuracy.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "claim_summary": "Response centering provides consistent accuracy improvements across weights.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Across seeds, full RA also varies less than the uncentered control in macro Avg@8 at every weight (Table 23).",
+      "claim_summary": "Full RA shows lower performance variance across seeds than uncentered controls.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "claim_summary": "RA improves performance over verifier-only training across all tested weights.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+      "claim_summary": "The probability residual outperforms all log-ratio guidance variants.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "A full-vocabulary squared-distance loss, whose gradient at each visited prefix equals the expected update of the uncentered residual label (Appendix A.2), beats verifier-only training but stays below RA and the uncentered control at every weight (Table 2).",
+      "claim_summary": "Direct squared-distance loss performs worse than RA across all weights.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Because RA\u2019s teacher term acts on the tokens the verifier scores, 64% of its gradient mass raises correct or lowers incorrect responses, against 49% for the direct loss, and after clipping and Adam the teacher takes 0.28 of the update against 0.44, keeping RA\u2019s update closer to the verifier\u2019s direction (cosine 0.93 against 0.80).",
+      "claim_summary": "RA produces updates better aligned with the verifier than direct loss.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Confident tokens, with p(at) \u22650.9, are 61% of all tokens and receive under 1% of either label, as the factor 1\u2212p(a) predicts.",
+      "claim_summary": "Confident student tokens receive under 1% of RA guidance.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+      "claim_summary": "RA concentrates most guidance on undecided student decision steps.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "claim_summary": "Centered log ratio concentrates half its guidance on teacher-rare tokens.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Under sampled OPD (Table 4) the branch raises macro Avg@8 from 24.80 to 25.10 and the Avg@8 of every seed.",
+      "claim_summary": "Adding a teacher-peak branch slightly improves sampled OPD performance.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Under REINFORCE++, where \u03bb scales only the branch, it lowers macro Avg@8 by 0.38\u20131.76 points and Pass@8 by 0.46\u20132.11 points, a loss that grows with the branch weight.",
+      "claim_summary": "Teacher-peak branch supervision degrades REINFORCE++ performance.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+      "claim_summary": "Adding dense teacher-peak supervision degrades RA across all seeds.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "claim_summary": "Ablating RA baselines or adding direct peak supervision reduces accuracy.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "To this end, we propose Residual Advantage (RA).",
+      "claim_summary": "To this end, we propose Residual Advantage (RA).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "RA then centers the local advantages within the response and adds them to the verifier advantage, At = AV + \u03bb(Ad t \u2212A d), where A d is the response mean and \u03bb the guidance weight.",
+      "claim_summary": "RA then centers the local advantages within the response and adds them to the verifier advantage, At = AV + \u03bb(Ad t \u2212A d), where A d is the response mean and \u03bb the guidance weight.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The guidance is thus student-relative twice over, as an advantage under the student\u2019s own next-token distribution and as a deviation within the student\u2019s own response.",
+      "claim_summary": "The guidance is thus student-relative twice over, as an advantage under the student\u2019s own next-token distribution and as a deviation within the student\u2019s own response.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The local advantage is a single inner product, Ad(a) = \u27e8ea \u2212p, q \u2212p\u27e9, and three properties follow from it.",
+      "claim_summary": "The local advantage is a single inner product, Ad(a) = \u27e8ea \u2212p, q \u2212p\u27e9, and three properties follow from it.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It is the rate at which the squared distance 1 2\u2225p \u2212q\u22252 2 falls when the student moves probability toward a.",
+      "claim_summary": "It is the rate at which the squared distance 1 2\u2225p \u2212q\u22252 2 falls when the student moves probability toward a.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "claim_summary": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Co-RA extends the construction to a teacher that learns from the student\u2019s attempts.",
+      "claim_summary": "Co-RA extends the construction to a teacher that learns from the student\u2019s attempts.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Across two students, two estimators, and three mathematical benchmarks, 2 Preprint RA improves all 24 three-seed benchmark means of its base estimator, both combinations surpass teacher-only OPD, and Co-RA raises accuracy further with mixed changes in coverage.",
+      "claim_summary": "Across two students, two estimators, and three mathematical benchmarks, 2 Preprint RA improves all 24 three-seed benchmark means of its base estimator, both combinations surpass teacher-only OPD, and Co-RA raises accuracy further with mixed changes in coverage.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The reward is immediate, so nothing is propagated to earlier positions; credit across positions comes from the verifier advantage.",
+      "claim_summary": "The reward is immediate, so nothing is propagated to earlier positions; credit across positions comes from the verifier advantage.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "None of this is imposed by hand.",
+      "claim_summary": "None of this is imposed by hand.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The relative comparison, the confidence scaling, the zero mean, and the bound are all read off one inner product.",
+      "claim_summary": "The relative comparison, the confidence scaling, the zero mean, and the bound are all read off one inner product.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Without it, a nonzero response mean in the teacher label would be indistinguishable from a change of AV , since both multiply the same mean score direction P t ct\u03c8t.",
+      "claim_summary": "Without it, a nonzero response mean in the teacher label would be indistinguishable from a change of AV , since both multiply the same mean score direction P t ct\u03c8t.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+      "claim_summary": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The log ratio also vanishes at exact agreement but admits no such bound, since it diverges at a token of vanishing student probability while \u2225p \u2212q\u22252 \u21920.",
+      "claim_summary": "The log ratio also vanishes at exact agreement but admits no such bound, since it diverges at a token of vanishing student probability while \u2225p \u2212q\u22252 \u21920.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further.",
+      "claim_summary": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The gains are larger for REINFORCE++, narrowing its macro Avg@8 deficit to GRPO at both sizes.",
+      "claim_summary": "The gains are larger for REINFORCE++, narrowing its macro Avg@8 deficit to GRPO at both sizes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "RA improves every matched comparison.",
+      "claim_summary": "RA improves every matched comparison.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The guidance transfers across estimators.",
+      "claim_summary": "The guidance transfers across estimators.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Verifier plus teacher improves on teacher-only distillation.",
+      "claim_summary": "Verifier plus teacher improves on teacher-only distillation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Teaching the teacher on student rollouts raises accuracy in every tested setting.",
+      "claim_summary": "Teaching the teacher on student rollouts raises accuracy in every tested setting.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10).",
+      "claim_summary": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The margin over the untrained student persists up to Pass@512.",
+      "claim_summary": "The margin over the untrained student persists up to Pass@512.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "claim_summary": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 2: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+      "claim_summary": "Table 2: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 3: The probability residual with both baselines is the best construction, and no log-ratio variant reaches it at any swept weight.",
+      "claim_summary": "Table 3: The probability residual with both baselines is the best construction, and no log-ratio variant reaches it at any swept weight.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The residual thus weights the forks of the student\u2019s own reasoning, consistent with the finding that a few high-entropy tokens carry most of the useful RL signal (Wang et al., 2025), whereas the log ratio puts it on tokens that one side considers nearly impossible.",
+      "claim_summary": "The residual thus weights the forks of the student\u2019s own reasoning, consistent with the finding that a few high-entropy tokens carry most of the useful RL signal (Wang et al., 2025), whereas the log ratio puts it on tokens that one side considers nearly impossible.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+      "claim_summary": "Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It does answer the question it was designed for: stronger and denser teacher supervision does not by itself yield better performance.",
+      "claim_summary": "It does answer the question it was designed for: stronger and denser teacher supervision does not by itself yield better performance.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "What distinguishes RA is its restraint: the teacher acts not as a distillation target, as in these works, but as a critic-like signal within RL.",
+      "claim_summary": "What distinguishes RA is its restraint: the teacher acts not as a distillation target, as in these works, but as a critic-like signal within RL.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On the closed simplex, this strictly concave function has the unique maximizer\np\u22c6= \u03a0\u2206(q + Q/\u03bb),\np\u22c6(v) = [q(v) + Q(v)/\u03bb \u2212\u03c4]+,\nwhere \u03c4 makes the entries sum to one.",
+      "claim_summary": "On the closed simplex, this strictly concave function has the unique maximizer\np\u22c6= \u03a0\u2206(q + Q/\u03bb),\np\u22c6(v) = [q(v) + Q(v)/\u03bb \u2212\u03c4]+,\nwhere \u03c4 makes the entries sum to one.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At fixed Q and \u03bb, the map q 7\u2192p\u22c6is nonexpansive in \u21132.",
+      "claim_summary": "At fixed Q and \u03bb, the map q 7\u2192p\u22c6is nonexpansive in \u21132.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Since D/L \u21920, the residual pushes a confidently wrong mode more gently than the log ratio.",
+      "claim_summary": "Since D/L \u21920, the residual pushes a confidently wrong mode more gently than the log ratio.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This is the usual distinction between Q and Q\u2212V ; in expectation, sampled OPD still follows the negative full-vocabulary reverse-KL gradient.",
+      "claim_summary": "This is the usual distinction between Q and Q\u2212V ; in expectation, sampled OPD still follows the negative full-vocabulary reverse-KL gradient.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "claim_summary": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In Table 7, the rare action supplies most of the expected update despite its low sampling probability.",
+      "claim_summary": "In Table 7, the rare action supplies most of the expected update despite its low sampling probability.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It is chosen for the conditional zero mean that Proposition 4 requires, and that property has this variance cost.",
+      "claim_summary": "It is chosen for the conditional zero mean that Proposition 4 requires, and that property has this variance cost.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Bounded sensitivity is the bounded-influence property of the quadratic comparison (Hampel, 1974; Basu et al., 1998), and Appendix A.4 places it among the alternatives.",
+      "claim_summary": "Bounded sensitivity is the bounded-influence property of the quadratic comparison (Hampel, 1974; Basu et al., 1998), and Appendix A.4 places it among the alternatives.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes.",
+      "claim_summary": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Teacher guidance adds variation to the actor label while preserving its response mean.",
+      "claim_summary": "Teacher guidance adds variation to the actor label while preserving its response mean.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Orthogonality of the label components does not extend to their parameter gradients (Appendix A.7).",
+      "claim_summary": "Orthogonality of the label components does not extend to their parameter gradients (Appendix A.7).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "claim_summary": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Local advantages and scores are both martingale differences under the student's sampling, so every cross-position term vanishes.",
+      "claim_summary": "Local advantages and scores are both martingale differences under the student's sampling, so every cross-position term vanishes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Without the student value baseline this cancellation fails, and the disagreement levels of other prefixes enter each token's update through centering.",
+      "claim_summary": "Without the student value baseline this cancellation fails, and the disagreement levels of other prefixes enter each token's update through centering.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At one prefix the student value baseline leaves the expected update unchanged (Proposition 1(ii)).",
+      "claim_summary": "At one prefix the student value baseline leaves the expected update unchanged (Proposition 1(ii)).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Under the hypotheses of Proposition 4, centering therefore leaves the expected update almost unchanged, and the response mean it removes, A d, has zero expectation and fluctuation of order M \u22121/2.",
+      "claim_summary": "Under the hypotheses of Proposition 4, centering therefore leaves the expected update almost unchanged, and the response mean it removes, A d, has zero expectation and fluctuation of order M \u22121/2.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The local advantages average to 3 \u00d7 10\u22124 per token, so the student value baseline holds in practice and the response mean carries no systematic part, and on responses longer than 1,000 tokens \u03bbA d has an SD below 0.03, as the hypotheses predict.",
+      "claim_summary": "The local advantages average to 3 \u00d7 10\u22124 per token, so the student value baseline holds in practice and the response mean carries no systematic part, and on responses longer than 1,000 tokens \u03bbA d has an SD below 0.03, as the hypotheses predict.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On shorter responses, where few tokens set the average, its SD is 0.32, and 8% of all responses carry |\u03bbA d| > 0.5, the scale of a verifier advantage.",
+      "claim_summary": "On shorter responses, where few tokens set the average, its SD is 0.32, and 8% of all responses carry |\u03bbA d| > 0.5, the scale of a verifier advantage.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The hypotheses of Proposition 4 thus describe the long responses, which carry most of the tokens, and the small gain of centering in Section 4.1, about half a point at every weight, is what acting on the rest is worth.",
+      "claim_summary": "The hypotheses of Proposition 4 thus describe the long responses, which carry most of the tokens, and the small gain of centering in Section 4.1, about half a point at every weight, is what acting on the rest is worth.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The verifier moves the response along its mean score direction and the teacher along the covariance between local advantages and scores.",
+      "claim_summary": "The verifier moves the response along its mean score direction and the teacher along the covariance between local advantages and scores.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The two label components are orthogonal, but these two parameter directions need not be, so the mean identity fixes the teacher\u2019s share of the label and not of the update.",
+      "claim_summary": "The two label components are orthogonal, but these two parameter directions need not be, so the mean identity fixes the teacher\u2019s share of the label and not of the update.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The teacher part pushes toward the peak apart from the shift by \u00afhi, as the next proposition shows.",
+      "claim_summary": "The teacher part pushes toward the peak apart from the shift by \u00afhi, as the next proposition shows.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Teacher adaptation thus preserves the mean identity, bounded guidance, and uniform vanishing with distributional agreement at each scoring step, and the fixed-prefix expected-gradient identity holds with q = q\u03d5k.",
+      "claim_summary": "Teacher adaptation thus preserves the mean identity, bounded guidance, and uniform vanishing with distributional agreement at each scoring step, and the fixed-prefix expected-gradient identity holds with q = q\u03d5k.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At a fixed student distribution, replacing a teacher by q + \u2206q changes the local advantage by \u27e8ea \u2212p, \u2206q\u27e9, as in Equation 26, so teacher adaptation changes the existing guidance without adding another student signal.",
+      "claim_summary": "At a fixed student distribution, replacing a teacher by q + \u2206q changes the local advantage by \u27e8ea \u2212p, \u2206q\u27e9, as in Equation 26, so teacher adaptation changes the existing guidance without adding another student signal.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Both distributions and the visited prefixes move across iterations, and the identities above do not by themselves give monotone distance reduction, policy improvement, or declining guidance during training.",
+      "claim_summary": "Both distributions and the visited prefixes move across iterations, and the identities above do not by themselves give monotone distance reduction, policy improvement, or declining guidance during training.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Adding the raw log ratio improves both macro scores over plain REINFORCE++ at \u03b2 \u22640.6 and lowers both at \u03b2 \u22651.2, whereas the complete RA guidance term improves both at every tested weight (Tables 23 and 24).",
+      "claim_summary": "Adding the raw log ratio improves both macro scores over plain REINFORCE++ at \u03b2 \u22640.6 and lowers both at \u03b2 \u22651.2, whereas the complete RA guidance term improves both at every tested weight (Tables 23 and 24).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "claim_summary": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "With verifier feedback present in both guided runs, this comparison favors the complete RA construction over the raw log ratio.",
+      "claim_summary": "With verifier feedback present in both guided runs, this comparison favors the complete RA construction over the raw log ratio.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "RA maintains higher training accuracy than its verifier-only estimator over most of training.",
+      "claim_summary": "RA maintains higher training accuracy than its verifier-only estimator over most of training.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+      "claim_summary": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Correct-response mean length rises but stays below about 4,000 tokens.",
+      "claim_summary": "Correct-response mean length rises but stays below about 4,000 tokens.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Incorrect-response mean length rises more sharply and later fluctuates mostly between 9,000 and 12,000 tokens, close to the cap; the shaped reward penalizes length only for correct responses, so nothing in the reward opposes the growth of incorrect ones.",
+      "claim_summary": "Incorrect-response mean length rises more sharply and later fluctuates mostly between 9,000 and 12,000 tokens, close to the cap; the shaped reward penalizes length only for correct responses, so nothing in the reward opposes the growth of incorrect ones.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Averaged over 64 resampled tokens, the sampled teacher gradient matches its analytic expectation (cosine 0.994 for RA, norm ratio 1.001), so the gap does not lie in the expected teacher gradient.",
+      "claim_summary": "Averaged over 64 resampled tokens, the sampled teacher gradient matches its analytic expectation (cosine 0.994 for RA, norm ratio 1.001), so the gap does not lie in the expected teacher gradient.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The sampled gradient is noisier; for the uncentered label, most of its extra second moment relative to the direct loss is the estimator's own noise (75\u201390%), and 15\u201325% comes from sharing the verifier's sampled path: cos(gT , gV ) is +0.18 for RA on the sampled tokens and +0.02 on resampled ones, whereas the direct loss, which acts on every token, is uncorrelated with the verifier.",
+      "claim_summary": "The sampled gradient is noisier; for the uncentered label, most of its extra second moment relative to the direct loss is the estimator's own noise (75\u201390%), and 15\u201325% comes from sharing the verifier's sampled path: cos(gT , gV ) is +0.18 for RA on the sampled tokens and +0.02 on resampled ones, whereas the direct loss, which acts on every token, is uncorrelated with the verifier.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On the next batch, RA's step raises the verifier objective 1.10\u20131.16 times as much as the direct loss's step and wins 66\u201374% of paired comparisons.",
+      "claim_summary": "On the next batch, RA's step raises the verifier objective 1.10\u20131.16 times as much as the direct loss's step and wins 66\u201374% of paired comparisons.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The ordering RA, uncentered label, direct loss holds on every seed for the shared-path term, the outcome-compatible mass, the teacher share, and the cosine with the verifier's step.",
+      "claim_summary": "The ordering RA, uncentered label, direct loss holds on every seed for the shared-path term, the outcome-compatible mass, the teacher share, and the cosine with the verifier's step.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The divergence between the uncentered label and the direct loss grows with the weight (update cosine 0.97, 0.91, and 0.83 at 5, 10, and 20), as does the margin of RA over the direct loss in Table 2, and it lies mostly on tokens with 0.1 \u2264p(at) < 0.5 (55%), the forks of Section 4.3.",
+      "claim_summary": "The divergence between the uncentered label and the direct loss grows with the weight (update cosine 0.97, 0.91, and 0.83 at 5, 10, and 20), as does the margin of RA over the direct loss in Table 2, and it lies mostly on tokens with 0.1 \u2264p(at) < 0.5 (55%), the forks of Section 4.3.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Response centering corrects the uncentered label mainly on responses shorter than 1,000 tokens (79% of the correction), in line with Section 4.1.",
+      "claim_summary": "Response centering corrects the uncentered label mainly on responses shorter than 1,000 tokens (79% of the correction), in line with Section 4.1.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At every weight, each seed of RA with the branch falls below the same seed of RA.",
+      "claim_summary": "At every weight, each seed of RA with the branch falls below the same seed of RA.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "With REINFORCE++, each seed with the branch falls below the same verifier-only seed at the weights 5 and 10, and two of the three seeds do at 20.",
+      "claim_summary": "With REINFORCE++, each seed with the branch falls below the same verifier-only seed at the weights 5 and 10, and two of the three seeds do at 20.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The sequential run improves on both stages, reaching 28.39 macro Avg@8 and 43.61 Pass@8, and stays 0.86 and 1.59 points below RA+REINFORCE++, which spends the same budget in one stage.",
+      "claim_summary": "The sequential run improves on both stages, reaching 28.39 macro Avg@8 and 43.61 Pass@8, and stays 0.86 and 1.59 points below RA+REINFORCE++, which spends the same budget in one stage.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It is ahead of RA on AIME25 Avg@8 and behind on the other five benchmark scores, and every RA seed exceeds every sequential seed in macro Avg@8, whereas the Pass@8 seeds overlap.",
+      "claim_summary": "It is ahead of RA on AIME25 Avg@8 and behind on the other five benchmark scores, and every RA seed exceeds every sequential seed in macro Avg@8, whereas the Pass@8 seeds overlap.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The sampled variant reaches 24.80 macro Avg@8 and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below verifier-only REINFORCE++, and it is lower than full-vocabulary OPD on every benchmark score.",
+      "claim_summary": "The sampled variant reaches 24.80 macro Avg@8 and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below verifier-only REINFORCE++, and it is lower than full-vocabulary OPD on every benchmark score.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "A single sampled update can point against the expected one (Table 5), and in this setting the variance of the sampled estimate costs 2.65 macro Avg@8 points.",
+      "claim_summary": "A single sampled update can point against the expected one (Table 5), and in this setting the variance of the sampled estimate costs 2.65 macro Avg@8 points.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Verifier-only training lifts macro Avg@8 by 12 to 15 points over the untrained students; RA adds 1.7 to 3.6 points and Co-RA 2.8 to 5.0 over the corresponding estimator.",
+      "claim_summary": "Verifier-only training lifts macro Avg@8 by 12 to 15 points over the untrained students; RA adds 1.7 to 3.6 points and Co-RA 2.8 to 5.0 over the corresponding estimator.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The most accurate 4B run, Co-RA+GRPO, ends 5.4 macro Avg@8 points below the teacher, 1.6 on MATH-500 and about 7 on each AIME set, and teacher-only OPD reaches 62% and 79% of the teacher\u2019s macro Avg@8 at the two sizes.",
+      "claim_summary": "The most accurate 4B run, Co-RA+GRPO, ends 5.4 macro Avg@8 points below the teacher, 1.6 on MATH-500 and about 7 on each AIME set, and teacher-only OPD reaches 62% and 79% of the teacher\u2019s macro Avg@8 at the two sizes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Every trained run exceeds the untrained student\u2019s Pass@8 on every benchmark, and Appendix D.7 follows the 1.7B REINFORCE++ runs to Pass@512.",
+      "claim_summary": "Every trained run exceeds the untrained student\u2019s Pass@8 on every benchmark, and Appendix D.7 follows the 1.7B REINFORCE++ runs to Pass@512.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 30: The adapted teacher is a worse solver than the frozen teacher.",
+      "claim_summary": "Table 30: The adapted teacher is a worse solver than the frozen teacher.",
+      "pass": "pass2"
+    }
+  ]
+}

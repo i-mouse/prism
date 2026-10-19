@@ -1,0 +1,795 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11132v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "18fea726-4814-47d3-a60f-94a01faee4d8",
+    "generated_at": "2026-10-19T13:47:02Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 0,
+  "dropped_duplicate": [
+    {
+      "sentence": "We introduce SFT-as-context, a training-free method in which the parent model uses the SFT model\u2019s response as context to answer the query.",
+      "best_match": "We introduce SFT-as-context, a training-free method in which the parent model uses the SFT model\u2019s response as context to answer the query.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This allows the parent model to acquire fine-tuned capabilities from the SFT response through in-context learning while preserving its own general capabilities.",
+      "best_match": "This allows the parent model to acquire fine-tuned capabilities from the SFT response through in-context learning while preserving its own general capabilities.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context remains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and 2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE on NutriBench-English, while staying within 2.2 percentage points of the parent models on general capabilities on average.",
+      "best_match": "Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context remains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and 2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE on NutriBench-English, while staying within 2.2 percentage points of the parent models on general capabilities on average.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Remarkably, it can solve queries requiring both fine-tuned and general capabilities, even when neither the parent nor SFT model succeeds alone.",
+      "best_match": "Remarkably, it can solve queries requiring both fine-tuned and general capabilities, even when neither the parent nor SFT model succeeds alone.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This approach also extends beyond parent-SFT pairs: responses from a small open-source SFT model can improve a strong closed-source LLM, outperforming either model alone.",
+      "best_match": "This approach also extends beyond parent-SFT pairs: responses from a small open-source SFT model can improve a strong closed-source LLM, outperforming either model alone.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "best_match": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In addition, we visualize the attention weights and find that the parent model attends more to useful SFT responses and less to irrelevant ones, suggesting that selective attention helps the parent model use the SFT response through in-context learning.",
+      "best_match": "In addition, we visualize the attention weights and find that the parent model attends more to useful SFT responses and less to irrelevant ones, suggesting that selective attention helps the parent model use the SFT response through in-context learning.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Instead, we propose a training-free method, SFT-as-context, which leverages the in-context learning capability of language models by providing a fine-tuned model's response as context to its parent model and prompting the parent model to generate the final answer.",
+      "best_match": "Instead, we propose a training-free method, SFT-as-context, which leverages the in-context learning capability of language models by providing a fine-tuned model\u2019s response as context to its parent model and prompting the parent model to generate the final answer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Despite its simplicity, SFT-as-context preserves fine-tuning gains while mitigating forgetting across all 19 evaluated parent-fine-tuned model pairs and 11 benchmarks, spanning mathematical reasoning, coding, nutrition estimation, and general capabilities.",
+      "best_match": "Despite its simplicity, SFT-as-context preserves fine-tuning gains while mitigating forgetting across all 19 evaluated parent-fine-tuned model pairs and 11 benchmarks, spanning mathematical reasoning, coding, nutrition estimation, and general capabilities.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Using SFT checkpoints collected from Hugging Face, SFT-as-context achieves 95.0% and 94.1% recovery rates of the fine-tuning gains on AIME 2024 and LiveCodeBench (Jain et al., 2025), respectively.",
+      "best_match": "Using SFT checkpoints collected from Hugging Face, SFT-as-context achieves 95.0% and 94.1% recovery rates of the fine-tuning gains on AIME 2024 and LiveCodeBench (Jain et al., 2025), respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At the same time, it achieves an average recovery rate of 94.2% for general capabilities across instruction-following, multilingual tasks, question answering, and planning.",
+      "best_match": "At the same time, it achieves an average recovery rate of 94.2% for general capabilities across instruction-following, multilingual tasks, question answering, and planning.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Additionally, SFT-as-context combines fine-tuned and general capabilities within the same response, going beyond what either model can achieve alone.",
+      "best_match": "Additionally, SFT-as-context combines fine-tuned and general capabilities within the same response, going beyond what either model can achieve alone.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For example, on NutriBench-Non-English (Dhaliwal et al., 2025), as shown in Figure 1(c), SFT-as-context achieves recovery rates of 84.6% for nutrition estimation and 95.2% for language consistency.",
+      "best_match": "For example, on NutriBench-Non-English (Dhaliwal et al., 2025), as shown in Figure 1(c), SFT-as-context achieves recovery rates of 84.6% for nutrition estimation and 95.2% for language consistency.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "More importantly, SFT-as-context requires only standard text input-output interfaces, making it applicable to closed-source models without access to their parameters.",
+      "best_match": "More importantly, SFT-as-context requires only standard text input-output interfaces, making it applicable to closed-source models without access to their parameters.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Notably, this holds for a strong proprietary model: providing responses from a fine-tuned Qwen3-4B as context to Gemini 3.5 Flash reduces macro MAE from 17.44 to 14.08 on NutriBench-English, outperforming either model alone.",
+      "best_match": "Notably, this holds for a strong proprietary model: providing responses from a fine-tuned Qwen3-4B as context to Gemini 3.5 Flash reduces macro MAE from 17.44 to 14.08 on NutriBench-English, outperforming either model alone.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We find that the parent model selectively attends to the SFT output based on its effectiveness.",
+      "best_match": "We find that the parent model selectively attends to the SFT output based on its effectiveness.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For example, as shown in Figure 1(d), the parent model allocates substantially more attention to the SFT response for nutrition queries than for unrelated queries (37.44% versus 15.11%).",
+      "best_match": "For example, as shown in Figure 1(d), the parent model allocates substantially more attention to the SFT response for nutrition queries than for unrelated queries (37.44% versus 15.11%).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We find that the parent model selectively attends to the SFT output based on its effectiveness.",
+      "best_match": "We find that the parent model selectively attends to the SFT output based on its effectiveness.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For example, as shown in Figure 1(d), the parent model allocates substantially more attention to the SFT response for nutrition queries than for unrelated queries (37.44% versus 15.11%).",
+      "best_match": "For example, as shown in Figure 1(d), the parent model allocates substantially more attention to the SFT response for nutrition queries than for unrelated queries (37.44% versus 15.11%).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Consistent with prior observations of forgetting after SFT (Chen et al., 2026; Huan et al., 2026), we find that the improvement of fine-tuned capabilities comes at the expense of general capabilities.",
+      "best_match": "Consistent with prior observations of forgetting after SFT (Chen et al., 2026; Huan et al., 2026), we find that the improvement of fine-tuned capabilities comes at the expense of general capabilities.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As shown in Table 1, SFT causes substantial forgetting of general capabilities, reducing general capability scores by 33.2 percentage points on average.",
+      "best_match": "As shown in Table 1, SFT causes substantial forgetting of general capabilities, reducing general capability scores by 33.2 percentage points on average.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For example, among the three nutrition SFT models, Qwen3-8B shows the largest drop in acknowledging non-food queries, from 99.6% to 10.7%, catastrophically forgetting the instruction-following capability of its parent model.",
+      "best_match": "For example, among the three nutrition SFT models, Qwen3-8B shows the largest drop in acknowledging non-food queries, from 99.6% to 10.7%, catastrophically forgetting the instruction-following capability of its parent model.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Crucially, SFT-as-context is a novel, training-free approach to mitigating forgetting that requires neither access to model weights nor the fine-tuning process.",
+      "best_match": "Crucially, SFT-as-context is a novel, training-free approach to mitigating forgetting that requires neither access to model weights nor the fine-tuning process.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across 19 parent-fine-tuned model pairs and 11 benchmarks, SFT-as-context preserves 92.0% of the fine-tuning gains on average, while recovering 94.2% of the general-capability performance gap between parent and SFT models.",
+      "best_match": "Across 19 parent-fine-tuned model pairs and 11 benchmarks, SFT-as-context preserves 92.0% of the fine-tuning gains on average, while recovering 94.2% of the general-capability performance gap between parent and SFT models.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across 19 parent-fine-tuned model pairs and 11 benchmarks, SFT-as-context preserves 92.0% of the fine-tuning gains on average, while recovering 94.2% of the general-capability performance gap between parent and SFT models.",
+      "best_match": "Across 19 parent-fine-tuned model pairs and 11 benchmarks, SFT-as-context preserves 92.0% of the fine-tuning gains on average, while recovering 94.2% of the general-capability performance gap between parent and SFT models.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "More impor- tantly, SFT-as-context can combine fine-tuned and general capabilities within the same response, which neither the parent nor the SFT model can achieve alone.",
+      "best_match": "More importantly, SFT-as-context can combine fine-tuned and general capabilities within the same response, which neither the parent nor the SFT model can achieve alone.",
+      "ratio_score": 99.40828402366864,
+      "partial_ratio_score": 98.80952380952381
+    },
+    {
+      "sentence": "SFT-as-context brings this performance back to near the parent model\u2019s level, with a gap of only 0.8 percentage points, while preserving most of the gains on LiveCodeBench (39.8 out of 41.8 per- centage points).",
+      "best_match": "SFT-as-context brings this performance back to near the parent model\u2019s level, with a gap of only 0.8 percentage points, while preserving most of the gains on LiveCodeBench (39.8 out of 41.8 percentage points).",
+      "ratio_score": 99.52380952380952,
+      "partial_ratio_score": 99.04306220095694
+    },
+    {
+      "sentence": "Figure 1(d) shows that the parent model attends more to useful SFT responses than hallucinated ones, with a 22.33 percentage point difference in the average share of attention allocated to the SFT responses.",
+      "best_match": "Figure 1(d) shows that the parent model attends more to useful SFT responses than hallucinated ones, with a 22.33 percentage point difference in the average share of attention allocated to the SFT responses.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Figure 1(d) shows that the parent model attends more to useful SFT responses than hallucinated ones, with a 22.33 percentage point difference in the average share of attention allocated to the SFT responses.",
+      "best_match": "Figure 1(d) shows that the parent model attends more to useful SFT responses than hallucinated ones, with a 22.33 percentage point difference in the average share of attention allocated to the SFT responses.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This selective attention suggests that the parent model can use useful information from SFT responses through in-context learning while limiting the influence of irrelevant context, providing a possible explanation for how SFT-as-context mitigates forgetting while preserving fine-tuned capabilities.",
+      "best_match": "This selective attention suggests that the parent model can use useful information from SFT responses through in-context learning while limiting the influence of irrelevant context, providing a possible explanation for how SFT-as-context mitigates forgetting while preserving fine- tuned capabilities.",
+      "ratio_score": 99.83361064891847,
+      "partial_ratio_score": 99.66666666666667
+    },
+    {
+      "sentence": "As shown in Table 2, using responses from open-source SFT models as context consistently improves the performance of a strong proprietary model on NutriBench-English, achieving lower MAE than either model alone.",
+      "best_match": "As shown in Table 2, using responses from open-source SFT models as context consistently improves the performance of a strong proprietary model on NutriBench-English, achieving lower MAE than either model alone.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Hence, we have provided sufficient details to allow full reproduction of the results.",
+      "best_match": "Hence, we have provided sufficient details to allow full reproduction of the results.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "However, with this prompt for training and inference, SFT models fail to preserve these general capabilities.",
+      "best_match": "However, with this prompt for training and inference, SFT models fail to preserve these general capabilities.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The fallback rate is generally low under the permissive token budget.",
+      "best_match": "The fallback rate is generally low under the permissive token budget.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We provide two examples where Qwen2.5-7B-Instruct fails to follow the original task instructions\nduring SFT-as-context and only outputs a boxed answer.",
+      "best_match": "We provide two examples where Qwen2.5-7B-Instruct fails to follow the original task instructions during SFT-as-context and only outputs a boxed answer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 5: RL-trained models do not show forgetting of instruction-following capability com- pared to their parent, as measured by IFEval.",
+      "best_match": "Table 5: RL-trained models do not show forgetting of instruction-following capability com-\npared to their parent, as measured by IFEval.",
+      "ratio_score": 99.25925925925925,
+      "partial_ratio_score": 98.50746268656717
+    },
+    {
+      "sentence": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "best_match": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 8: LiveCodeBenchIF joint-success rates show that SFT-as-context outperforms the oracle router.",
+      "best_match": "Table 7: MathIF joint-success rates show that SFT-as-context outperforms the oracle router.",
+      "ratio_score": 91.09947643979058,
+      "partial_ratio_score": 92.94117647058823
+    },
+    {
+      "sentence": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "best_match": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 8: LiveCodeBenchIF joint-success rates show that SFT-as-context outperforms the or- acle router.",
+      "best_match": "Table 7: MathIF joint-success rates show that SFT-as-context outperforms the oracle router.",
+      "ratio_score": 90.15544041450777,
+      "partial_ratio_score": 91.86046511627907
+    },
+    {
+      "sentence": "Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+      "best_match": "Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+      "best_match": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Repeating the original task prompt in the SFT-as-context instructions helps instruction-following.",
+      "best_match": "Table 11: Repeating the original task prompt in the SFT-as-context instructions helps instruction-following.",
+      "ratio_score": 95.14563106796116,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For the benchmark MathIF, repeating the instruction significantly helps the instruction-following (Hard IF and Soft IF) accuracies of SFT-as-context.",
+      "best_match": "For the benchmark MathIF, repeating the instruction significantly helps the instruction-following (Hard IF and Soft IF) accuracies of SFT-as-context.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [
+    {
+      "sentence": "SFT-as-context brings this performance back to near the parent model\u2019s level, with a gap of only 0.8 percentage points, while preserving most",
+      "best_match": "SFT-as-context brings this performance back to near the parent model\u2019s level, with a gap of only 0.8 percentage points, while preserving most of the gains on LiveCodeBench (39.8 out of 41.8 percentage points).",
+      "ratio_score": 80.57142857142857,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For example, the fallback rate of MathIF is only 3.73%, corresponding to 376 of 10,080 responses, across eight model pairs and seeds 0, 1, and 2.",
+      "best_match": "For example, the fallback rate of MathIF is only 3.73%,",
+      "ratio_score": 55.00000000000001,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_new": [
+    {
+      "sentence": "When a query requires both fine-tuned nutrition estimation capability and general multilingual capability, only SFT-as-context satisfies both requirements.",
+      "best_match": "Remarkably, it can solve queries requiring both fine-tuned and general capabilities, even when neither the parent nor SFT model succeeds alone.",
+      "ratio_score": 50.33557046979866,
+      "partial_ratio_score": 52.43445692883895
+    },
+    {
+      "sentence": "Subfigure (d) shows that the parent model attends more to useful English SFT responses than to hallucinated SFT responses to non-food queries, suggesting that selective attention helps the parent model use the SFT response through in-context learning.",
+      "best_match": "In addition, we visualize the attention weights and find that the parent model attends more to useful SFT responses and less to irrelevant ones, suggesting that selective attention helps the parent model use the SFT response through in-context learning.",
+      "ratio_score": 76.98412698412699,
+      "partial_ratio_score": 83.6283185840708
+    },
+    {
+      "sentence": "First, we use a Bayesian framework for in-context learning (Xie et al., 2022; Hu et al., 2024) to provide theoretical guarantees that bound the differences in error between parent models, SFT models, and SFT-as-context.",
+      "best_match": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "ratio_score": 54.04157043879907,
+      "partial_ratio_score": 54.4578313253012
+    },
+    {
+      "sentence": "Taken together, these analyses suggest a single underlying principle of SFT-as-context: the parent model leverages in-context learning to selectively acquire fine-tuned capabilities from the SFT responses while preserving its own general capabilities.",
+      "best_match": "This allows the parent model to acquire fine-tuned capabilities from the SFT response through in-context learning while preserving its own general capabilities.",
+      "ratio_score": 63.26034063260341,
+      "partial_ratio_score": 78.83211678832117
+    },
+    {
+      "sentence": "Table 1: SFT-as-context successfully mitigates the forgetting of general capabilities and maintains high fine-tuned capabilities compared to SFT across all benchmarks.",
+      "best_match": "Additionally, SFT-as-context combines fine-tuned and general capabilities within the same response, going beyond what either model can achieve alone.",
+      "ratio_score": 51.26582278481013,
+      "partial_ratio_score": 52.94117647058824
+    },
+    {
+      "sentence": "Consistent with prior observations of forgetting after SFT (Chen et al., 2026; Huan et al., 2026), we find that the improvement of fine-tuned capabilities comes at the expense of general capabilities.",
+      "best_match": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "ratio_score": 54.106280193236714,
+      "partial_ratio_score": 58.08383233532935
+    },
+    {
+      "sentence": "As shown in Table 1, SFT causes substantial forgetting of general capabilities, reducing general capability scores by 33.2 percentage points on average.",
+      "best_match": "Table 1: SFT-as-context successfully mitigates the forgetting of general capabilities and maintains high fine-tuned capabilities compared to SFT across all benchmarks.",
+      "ratio_score": 57.05329153605015,
+      "partial_ratio_score": 58.02047781569966
+    },
+    {
+      "sentence": "For example, among the three nutrition SFT models, Qwen3-8B shows the largest drop in acknowledging non-food queries, from 99.6% to 10.7%, catastrophically forgetting the instruction-following capability of its parent model.",
+      "best_match": "At the same time, it achieves an average recovery rate of 94.2% for general capabilities across instruction-following, multilingual tasks, question answering, and planning.",
+      "ratio_score": 42.92929292929293,
+      "partial_ratio_score": 45.9214501510574
+    },
+    {
+      "sentence": "The SFT model significantly improves math correctness, from 40.6% to 65.0%, but fails to follow the format constraints.",
+      "best_match": "We find that the parent model selectively attends to the SFT output based on its effectiveness.",
+      "ratio_score": 42.056074766355145,
+      "partial_ratio_score": 40.54054054054054
+    },
+    {
+      "sentence": "Figure 2: Across individual model pairs, SFT-as-context maintains fine-tuned capabilities and mitigates forgetting of general capabilities.",
+      "best_match": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "ratio_score": 57.79036827195468,
+      "partial_ratio_score": 64.66165413533835
+    },
+    {
+      "sentence": "Taken together, fine-tuning substantially improves performance on the task the model is fine-tuned on, but at the expense of forgetting general capabilities that the parent model already possesses, e.g., instruction-following and multilingual understanding.",
+      "best_match": "At the same time, it achieves an average recovery rate of 94.2% for general capabilities across instruction-following, multilingual tasks, question answering, and planning.",
+      "ratio_score": 51.74825174825175,
+      "partial_ratio_score": 57.49235474006116
+    },
+    {
+      "sentence": "To mitigate forgetting in SFT models, we propose SFT-as-context, which leverages the in-context learning ability of the parent model by providing the SFT model\u2019s response as context when generating the final response.",
+      "best_match": "Instead, we propose a training-free method, SFT-as-context, which leverages the in-context learning capability of language models by providing a fine-tuned model\u2019s response as context to its parent model and prompting the parent model to generate the final answer.",
+      "ratio_score": 67.77546777546777,
+      "partial_ratio_score": 71.42857142857143
+    },
+    {
+      "sentence": "Despite its simplicity, SFT-as-context achieves performance close to the parent model on general capabilities while remaining close to the SFT model on fine-tuned capabilities, effectively combining the strengths of SFT and parent models, as shown in Table 1.",
+      "best_match": "Table 1: SFT-as-context successfully mitigates the forgetting of general capabilities and maintains high fine-tuned capabilities compared to SFT across all benchmarks.",
+      "ratio_score": 53.990610328638496,
+      "partial_ratio_score": 57.48502994011976
+    },
+    {
+      "sentence": "More importantly, SFT-as-context can combine fine-tuned and general capabilities within the same response, which neither the parent nor the SFT model can achieve alone.",
+      "best_match": "Additionally, SFT-as-context combines fine-tuned and general capabilities within the same response, going beyond what either model can achieve alone.",
+      "ratio_score": 80.7570977917981,
+      "partial_ratio_score": 80.53691275167785
+    },
+    {
+      "sentence": "Figure 2 shows that these trends extend across individual model pairs, including those with severe forgetting.",
+      "best_match": "Figure 2: Across individual model pairs, SFT-as-context maintains fine-tuned capabilities and mitigates forgetting of general capabilities.",
+      "ratio_score": 50.60240963855422,
+      "partial_ratio_score": 56.98324022346368
+    },
+    {
+      "sentence": "For OCR-Nemotron-1.1-14B, SFT reduces CoQA performance by 73.4 percentage points relative to the parent model, indicating severe forgetting in conversational question answering.",
+      "best_match": "To mitigate forgetting in SFT models, we propose SFT-as-context, which leverages the in-context learning ability of the parent model by providing the SFT model\u2019s response as context when generating the final response.",
+      "ratio_score": 46.700507614213194,
+      "partial_ratio_score": 46.89265536723164
+    },
+    {
+      "sentence": "This highlights that SFT-as-context can mitigate severe forgetting while preserving substantial fine-tuning gains.",
+      "best_match": "Crucially, SFT-as-context is a novel, training-free approach to mitigating forgetting that requires neither access to model weights nor the fine-tuning process.",
+      "ratio_score": 49.63503649635036,
+      "partial_ratio_score": 48.372093023255815
+    },
+    {
+      "sentence": "Then, by analyzing attention patterns, we empirically show that in SFT-as-context, a parent LLM attends more to useful SFT responses and less to hallucinated context, suggesting a possible mech- anism for recovering general capabilities while preserving fine-tuned capabilities (Section 4.2).",
+      "best_match": "In addition, we visualize the attention weights and find that the parent model attends more to useful SFT responses and less to irrelevant ones, suggesting that selective attention helps the parent model use the SFT response through in-context learning.",
+      "ratio_score": 55.779816513761475,
+      "partial_ratio_score": 57.31225296442688
+    },
+    {
+      "sentence": "The theorem identifies sufficient conditions under which SFT-as-context improves in-domain per- formance compared to the parent model while limiting degradation compared to the SFT model.",
+      "best_match": "Despite its simplicity, SFT-as-context achieves performance close to the parent model on general capabilities while remaining close to the SFT model on fine-tuned capabilities, effectively combining the strengths of SFT and parent models, as shown in Table 1.",
+      "ratio_score": 49.327354260089685,
+      "partial_ratio_score": 62.089552238805965
+    },
+    {
+      "sentence": "The inequality above shows that for out-of-domain queries the SFT-as-context method performs similarly to the parent model by upper bounding the difference in error.",
+      "best_match": "The theorem identifies sufficient conditions under which SFT-as-context improves in-domain per- formance compared to the parent model while limiting degradation compared to the SFT model.",
+      "ratio_score": 52.27272727272727,
+      "partial_ratio_score": 53.65853658536586
+    },
+    {
+      "sentence": "We have thus shown the conditions under which the errors of SFT-as-context are bounded relative to the SFT model on in- domain queries and relative to the parent model on out-of-domain queries.",
+      "best_match": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "ratio_score": 61.42506142506142,
+      "partial_ratio_score": 67.06231454005935
+    },
+    {
+      "sentence": "Our theoretical results bolster our empirical claims: SFT-as-context remains close to the SFT model on fine-tuned capabil- ities while staying close to the parent model on general capabilities (Table 1 and Figure 2).",
+      "best_match": "Furthermore, we use a Bayesian framework to derive theoretical guarantees that bound the error of SFT-as-context relative to the SFT model on fine-tuned capabilities and to the parent model on general capabilities.",
+      "ratio_score": 66.04651162790698,
+      "partial_ratio_score": 69.45812807881772
+    },
+    {
+      "sentence": "This selective attention suggests that the parent model can use useful information from SFT responses through in-context learning while limiting the influence of irrelevant context, providing a possible explanation for how SFT-as-context mitigates forgetting while preserving fine- tuned capabilities.",
+      "best_match": "Then, by analyzing attention patterns, we empirically show that in SFT-as-context, a parent LLM attends more to useful SFT responses and less to hallucinated context, suggesting a possible mech- anism for recovering general capabilities while preserving fine-tuned capabilities (Section 4.2).",
+      "ratio_score": 54.97470489038786,
+      "partial_ratio_score": 54.82758620689655
+    },
+    {
+      "sentence": "Here, we extend SFT-as-context to a strong proprietary model, showing that responses from open-source SFT models can further improve its performance with only text input-output access (Section 5.1).",
+      "best_match": "This approach also extends beyond parent-SFT pairs: responses from a small open-source SFT model can improve a strong closed-source LLM, outperforming either model alone.",
+      "ratio_score": 51.08695652173913,
+      "partial_ratio_score": 54.98489425981873
+    },
+    {
+      "sentence": "We also provide ablation studies to show that the recovery of both fine-tuned and general capabilities does not arise solely from the SFT-as-context instructions (Section 5.2).",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 55.38461538461539,
+      "partial_ratio_score": 56.3758389261745
+    },
+    {
+      "sentence": "Table 2: A strong proprietary model can use context from open-source SFT models to further improve fine-tuned capabilities.",
+      "best_match": "Here, we extend SFT-as-context to a strong proprietary model, showing that responses from open-source SFT models can further improve its performance with only text input-output access (Section 5.1).",
+      "ratio_score": 59.81308411214954,
+      "partial_ratio_score": 71.54471544715447
+    },
+    {
+      "sentence": "On NutriBench-English, using the context from Qwen3-4B achieves the best macro MAE.",
+      "best_match": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "ratio_score": 43.47826086956522,
+      "partial_ratio_score": 46.47887323943662
+    },
+    {
+      "sentence": "Table 3: SFT-as-context achieves the best balance between fine-tuned and general capabilities.",
+      "best_match": "Figure 2: Across individual model pairs, SFT-as-context maintains fine-tuned capabilities and mitigates forgetting of general capabilities.",
+      "ratio_score": 54.93562231759657,
+      "partial_ratio_score": 58.51063829787234
+    },
+    {
+      "sentence": "This result also shows that the proprietary model does not merely copy the SFT response during inference.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 54.33070866141732,
+      "partial_ratio_score": 52.38095238095239
+    },
+    {
+      "sentence": "Instead, it can combine task-specific information from the SFT response with its own capabilities to produce a more accurate final answer.",
+      "best_match": "More importantly, SFT-as-context can combine fine-tuned and general capabilities within the same response, which neither the parent nor the SFT model can achieve alone.",
+      "ratio_score": 48.366013071895416,
+      "partial_ratio_score": 50.90909090909091
+    },
+    {
+      "sentence": "In contrast, SFT-as-context requires only text input-output access, using the fine-tuned model\u2019s response as context for the parent model.",
+      "best_match": "More importantly, SFT-as-context requires only standard text input-output interfaces, making it applicable to closed-source models without access to their parameters.",
+      "ratio_score": 64.47368421052632,
+      "partial_ratio_score": 62.92134831460674
+    },
+    {
+      "sentence": "In this paper, we propose SFT-as-context, a training-free method that leverages the in-context learning ability of LLMs to mitigate the forgetting of general capabilities in SFT models while preserving their fine-tuned capabilities.",
+      "best_match": "Taken together, these analyses suggest a single underlying principle of SFT-as-context: the parent model leverages in-context learning to selectively acquire fine-tuned capabilities from the SFT responses while preserving its own general capabilities.",
+      "ratio_score": 60.45548654244306,
+      "partial_ratio_score": 65.08313539192399
+    },
+    {
+      "sentence": "Comprehensive experiments across domains, tasks, and model sizes demonstrate the effectiveness of SFT-as-context.",
+      "best_match": "Figure 2 shows that these trends extend across individual model pairs, including those with severe forgetting.",
+      "ratio_score": 44.84304932735426,
+      "partial_ratio_score": 45.77114427860697
+    },
+    {
+      "sentence": "We further analyze its underlying mechanism through a Bayesian view of in-context learning and attention analysis, showing that useful SFT responses can steer the parent model toward the fine-tuned domain while having less influence on unrelated queries, thereby preserving general capabilities.",
+      "best_match": "Taken together, these analyses suggest a single underlying principle of SFT-as-context: the parent model leverages in-context learning to selectively acquire fine-tuned capabilities from the SFT responses while preserving its own general capabilities.",
+      "ratio_score": 52.38095238095239,
+      "partial_ratio_score": 54.06593406593407
+    },
+    {
+      "sentence": "Hence, we have provided sufficient details to allow full reproduction of the results.",
+      "best_match": "We find that the parent model selectively attends to the SFT output based on its effectiveness.",
+      "ratio_score": 43.333333333333336,
+      "partial_ratio_score": 42.95302013422819
+    },
+    {
+      "sentence": "LiveCodeBenchIF is a benchmark we constructed, in a similar fashion to MathIF, where we ap- pend a short formatting requirement to the end of the original questions from LiveCodeBench.",
+      "best_match": "Crucially, SFT-as-context is a novel, training-free approach to mitigating forgetting that requires neither access to model weights nor the fine-tuning process.",
+      "ratio_score": 44.18604651162791,
+      "partial_ratio_score": 46.557377049180324
+    },
+    {
+      "sentence": "However, with this prompt for training and inference, SFT models fail to preserve these general capabilities.",
+      "best_match": "Table 2: A strong proprietary model can use context from open-source SFT models to further improve fine-tuned capabilities.",
+      "ratio_score": 53.448275862068975,
+      "partial_ratio_score": 54.73684210526315
+    },
+    {
+      "sentence": "This design choice is justified by an additional ablation study in Appendix J.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 39.647577092511014,
+      "partial_ratio_score": 48.529411764705884
+    },
+    {
+      "sentence": "The fallback rate is generally low under the permissive token budget.",
+      "best_match": "Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+      "ratio_score": 42.58064516129032,
+      "partial_ratio_score": 44.927536231884055
+    },
+    {
+      "sentence": "For example, the fallback rate of MathIF is only 3.73%,",
+      "best_match": "The fallback rate is generally low under the permissive token budget.",
+      "ratio_score": 46.7741935483871,
+      "partial_ratio_score": 55.81395348837209
+    },
+    {
+      "sentence": "The gaps on fine-tuned and general capabilities are over 20 percentage points, much larger than 3.73%.",
+      "best_match": "Remarkably, it can solve queries requiring both fine-tuned and general capabilities, even when neither the parent nor SFT model succeeds alone.",
+      "ratio_score": 53.06122448979591,
+      "partial_ratio_score": 60.7843137254902
+    },
+    {
+      "sentence": "Hence, the improved capabilities of SFT-as-context cannot be attributed to the fallback conditions.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 52.41935483870967,
+      "partial_ratio_score": 60.60606060606061
+    },
+    {
+      "sentence": "The SFT-as-context method generates a response with the correct answer and formatting, outperforming both parent and SFT models.",
+      "best_match": "More importantly, SFT-as-context can combine fine-tuned and general capabilities within the same response, which neither the parent nor the SFT model can achieve alone.",
+      "ratio_score": 51.35135135135135,
+      "partial_ratio_score": 54.6875
+    },
+    {
+      "sentence": "SFT-as-context preserves the correct derivation and result, while using lowercase prose and notation r.",
+      "best_match": "The SFT-as-context method generates a response with the correct answer and formatting, outperforming both parent and SFT models.",
+      "ratio_score": 53.67965367965368,
+      "partial_ratio_score": 55.78947368421052
+    },
+    {
+      "sentence": "The SFT response is correct but fully ignores the instruction of using 3 comments.",
+      "best_match": "The SFT-as-context method generates a response with the correct answer and formatting, outperforming both parent and SFT models.",
+      "ratio_score": 46.666666666666664,
+      "partial_ratio_score": 51.21951219512195
+    },
+    {
+      "sentence": "The SFT-as-context response keeps the same executable Python structure from the SFT context and adds exactly three comment lines.",
+      "best_match": "The SFT-as-context method generates a response with the correct answer and formatting, outperforming both parent and SFT models.",
+      "ratio_score": 51.36186770428015,
+      "partial_ratio_score": 54.377880184331794
+    },
+    {
+      "sentence": "We provide two examples where Qwen2.5-7B-Instruct fails to follow the original task instructions during SFT-as-context and only outputs a boxed answer.",
+      "best_match": "We also provide ablation studies to show that the recovery of both fine-tuned and general capabilities does not arise solely from the SFT-as-context instructions (Section 5.2).",
+      "ratio_score": 44.64831804281345,
+      "partial_ratio_score": 44.029850746268664
+    },
+    {
+      "sentence": "In the first example below, only outputting the boxed answer violates the requirement of using the word \u201cnumber.\u201d",
+      "best_match": "The inequality above shows that for out-of-domain queries the SFT-as-context method performs similarly to the parent model by upper bounding the difference in error.",
+      "ratio_score": 46.043165467625904,
+      "partial_ratio_score": 45.24886877828054
+    },
+    {
+      "sentence": "Table 5: RL-trained models do not show forgetting of instruction-following capability com-\npared to their parent, as measured by IFEval.",
+      "best_match": "Table 1: SFT-as-context successfully mitigates the forgetting of general capabilities and maintains high fine-tuned capabilities compared to SFT across all benchmarks.",
+      "ratio_score": 50.498338870431894,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "This observation provides a possible explanation for why SFT-as-context recovers general instruction-following capabilities even when the context is generated by an SFT model that has lost these capabilities.",
+      "best_match": "In this paper, we propose SFT-as-context, a training-free method that leverages the in-context learning ability of LLMs to mitigate the forgetting of general capabilities in SFT models while preserving their fine-tuned capabilities.",
+      "ratio_score": 51.36363636363637,
+      "partial_ratio_score": 50.264550264550266
+    },
+    {
+      "sentence": "However, consistent with prior work (Chen et al., 2026), we find that RL post-training induces negligible forgetting of instruction-following capabilities, as measured by IFEval.",
+      "best_match": "Table 5: RL-trained models do not show forgetting of instruction-following capability com-\npared to their parent, as measured by IFEval.",
+      "ratio_score": 58.33333333333333,
+      "partial_ratio_score": 71.83673469387755
+    },
+    {
+      "sentence": "These two examples show that the mean share of prompt-directed attention is higher for useful context (29.95%) than for hallucinated context (15.61%).",
+      "best_match": "For example, as shown in Figure 1(d), the parent model allocates substantially more attention to the SFT response for nutrition queries than for unrelated queries (37.44% versus 15.11%).",
+      "ratio_score": 49.404761904761905,
+      "partial_ratio_score": 47.81144781144781
+    },
+    {
+      "sentence": "Words like \u201cunrelated\u201d and \u201cirrelevant\u201d are more attended to when the query does not contain a food, demonstrating that the parent model is not distracted by hallucinated context and adheres to the original task instructions.",
+      "best_match": "To mitigate forgetting in SFT models, we propose SFT-as-context, which leverages the in-context learning ability of the parent model by providing the SFT model\u2019s response as context when generating the final response.",
+      "ratio_score": 47.96380090497737,
+      "partial_ratio_score": 48.157248157248155
+    },
+    {
+      "sentence": "Table 6 shows that SFT-as-context largely preserves the harmful responses produced by the abliterated model.",
+      "best_match": "In contrast, SFT-as-context requires only text input-output access, using the fine-tuned model\u2019s response as context for the parent model.",
+      "ratio_score": 54.47154471544715,
+      "partial_ratio_score": 52.475247524752476
+    },
+    {
+      "sentence": "In other words, when fine-tuned and general capabilities conflict, the parent model follows the fine-tuned capability under SFT-as-context.",
+      "best_match": "Remarkably, it can solve queries requiring both fine-tuned and general capabilities, even when neither the parent nor SFT model succeeds alone.",
+      "ratio_score": 56.02836879432624,
+      "partial_ratio_score": 61.15702479338842
+    },
+    {
+      "sentence": "Table 6: SFT-as-context fails to recover the safety capability of the parent model when the context is adversarial.",
+      "best_match": "Table 3: SFT-as-context achieves the best balance between fine-tuned and general capabilities.",
+      "ratio_score": 56.459330143540676,
+      "partial_ratio_score": 63.22580645161291
+    },
+    {
+      "sentence": "Table 7: MathIF joint-success rates show that SFT-as-context outperforms the oracle router.",
+      "best_match": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "ratio_score": 68.63905325443787,
+      "partial_ratio_score": 80.0
+    },
+    {
+      "sentence": "These results highlight a fundamental limitation of routing.",
+      "best_match": "The SFT response is correct but fully ignores the instruction of using 3 comments.",
+      "ratio_score": 47.887323943661976,
+      "partial_ratio_score": 48.33333333333333
+    },
+    {
+      "sentence": "Even with oracle selection between the parent and SFT models, neither model alone can reliably satisfy requirements that depend on both sets of capabilities.",
+      "best_match": "Consistent with prior observations of forgetting after SFT (Chen et al., 2026; Huan et al., 2026), we find that the improvement of fine-tuned capabilities comes at the expense of general capabilities.",
+      "ratio_score": 49.85994397759104,
+      "partial_ratio_score": 50.965250965250966
+    },
+    {
+      "sentence": "In contrast, SFT-as-context enables the two capabilities to be combined within a single response.",
+      "best_match": "In contrast, SFT-as-context requires only text input-output access, using the fine-tuned model\u2019s response as context for the parent model.",
+      "ratio_score": 53.61702127659574,
+      "partial_ratio_score": 58.10055865921788
+    },
+    {
+      "sentence": "However, we identify a failure case for these methods.",
+      "best_match": "Hence, we have provided sufficient details to allow full reproduction of the results.",
+      "ratio_score": 47.48201438848921,
+      "partial_ratio_score": 46.29629629629629
+    },
+    {
+      "sentence": "Table 9 shows that, although both token-level baselines sometimes outperform SFT-as-context on fine-tuned capabilities, neither successfully mitigates forgetting of general capabilities.",
+      "best_match": "Figure 2: Across individual model pairs, SFT-as-context maintains fine-tuned capabilities and mitigates forgetting of general capabilities.",
+      "ratio_score": 64.61538461538461,
+      "partial_ratio_score": 72.94117647058825
+    },
+    {
+      "sentence": "These results suggest that SFT-as-context can address certain shifts in token probability distributions that are difficult to correct through token-level manipulation.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 56.96202531645569,
+      "partial_ratio_score": 60.30534351145038
+    },
+    {
+      "sentence": "Table 10 shows that, for all math and coding model pairs, the second pass incurs only modest overhead relative to the typically long responses generated by the SFT model in the first pass.",
+      "best_match": "We have thus shown the conditions under which the errors of SFT-as-context are bounded relative to the SFT model on in- domain queries and relative to the parent model on out-of-domain queries.",
+      "ratio_score": 49.34383202099738,
+      "partial_ratio_score": 49.6
+    },
+    {
+      "sentence": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 56.37065637065637,
+      "partial_ratio_score": 63.1578947368421
+    },
+    {
+      "sentence": "For the nutrition estimation task, however, the parent model generates relatively longer responses during the second pass, as it performs additional reasoning to compare the SFT-generated reference with its own estimate.",
+      "best_match": "Figure 1(d) shows that the parent model attends more to useful SFT responses than hallucinated ones, with a 22.33 percentage point difference in the average share of attention allocated to the SFT responses.",
+      "ratio_score": 48.711943793911004,
+      "partial_ratio_score": 49.87277353689568
+    },
+    {
+      "sentence": "Nevertheless, the absolute number of generated tokens remains comparable to that of the other tasks, ranging from a few hundred to slightly over one thousand tokens.",
+      "best_match": "The SFT-as-context method generates a response with the correct answer and formatting, outperforming both parent and SFT models.",
+      "ratio_score": 47.098976109215016,
+      "partial_ratio_score": 48.4375
+    },
+    {
+      "sentence": "Table 9: Token-level baselines (ensemble and contrastive decoding) fail to recover general ca- pabilities.",
+      "best_match": "Table 3: SFT-as-context achieves the best balance between fine-tuned and general capabilities.",
+      "ratio_score": 56.00000000000001,
+      "partial_ratio_score": 55.21472392638036
+    },
+    {
+      "sentence": "Table 11 shows that repeating the original task instructions significantly helps instruction-following, while barely affecting the fine-tuned math capability.",
+      "best_match": "This allows the parent model to acquire fine-tuned capabilities from the SFT response through in-context learning while preserving its own general capabilities.",
+      "ratio_score": 50.314465408805034,
+      "partial_ratio_score": 50.47923322683706
+    },
+    {
+      "sentence": "Although SFT-as-context adds a second inference pass after the first inference pass of the SFT model, only a small number of additional tokens is generated in the second pass for most benchmarks.",
+      "best_match": "We introduce SFT-as-context, a training-free method in which the parent model uses the SFT model\u2019s response as context to answer the query.",
+      "ratio_score": 50.29940119760479,
+      "partial_ratio_score": 54.67625899280575
+    },
+    {
+      "sentence": "Nutrition estimation is an outlier, where SFT-as-context generates more response tokens to compare the reference with its own estimation.",
+      "best_match": "For the nutrition estimation task, however, the parent model generates relatively longer responses during the second pass, as it performs additional reasoning to compare the SFT-generated reference with its own estimate.",
+      "ratio_score": 61.06442577030813,
+      "partial_ratio_score": 59.92217898832685
+    },
+    {
+      "sentence": "Table 11: Repeating the original task prompt in the SFT-as-context instructions helps instruction-following.",
+      "best_match": "Table 11 shows that repeating the original task instructions significantly helps instruction-following, while barely affecting the fine-tuned math capability.",
+      "ratio_score": 57.89473684210527,
+      "partial_ratio_score": 72.38095238095238
+    },
+    {
+      "sentence": "For the benchmark MathIF, repeating the instruction significantly helps the instruction-following (Hard IF and Soft IF) accuracies of SFT-as-context.",
+      "best_match": "Table 11 shows that repeating the original task instructions significantly helps instruction-following, while barely affecting the fine-tuned math capability.",
+      "ratio_score": 58.63192182410424,
+      "partial_ratio_score": 61.53846153846154
+    },
+    {
+      "sentence": "SFT-as-context supplies the SFT response ySFT and instructions I as additional evidence for domain inference.",
+      "best_match": "These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-context instructions or an additional inference pass.",
+      "ratio_score": 54.26356589147288,
+      "partial_ratio_score": 64.22018348623853
+    },
+    {
+      "sentence": "Under our shared conditional-output model, this evidence changes the domain posterior while leaving the conditional response distributions fixed.",
+      "best_match": "For the nutrition estimation task, however, the parent model generates relatively longer responses during the second pass, as it performs additional reasoning to compare the SFT-generated reference with its own estimate.",
+      "ratio_score": 46.57534246575342,
+      "partial_ratio_score": 46.896551724137936
+    },
+    {
+      "sentence": "Thus, the modeled improvement arises from assigning greater probability to an existing domain capability.",
+      "best_match": "Figure 2: Across individual model pairs, SFT-as-context maintains fine-tuned capabilities and mitigates forgetting of general capabilities.",
+      "ratio_score": 48.36065573770492,
+      "partial_ratio_score": 50.77720207253886
+    },
+    {
+      "sentence": "Subtracting this upper bound from the lower bound on Eparent (Equation 12) gives us the result.",
+      "best_match": "In the first example below, only outputting the boxed answer violates the requirement of using the word \u201cnumber.\u201d",
+      "ratio_score": 44.230769230769226,
+      "partial_ratio_score": 47.953216374269005
+    },
+    {
+      "sentence": "Unlike the improvement guarantee over the parent model, this closeness guarantee does not require output separability.",
+      "best_match": "Even with oracle selection between the parent and SFT models, neither model alone can reliably satisfy requirements that depend on both sets of capabilities.",
+      "ratio_score": 50.18181818181818,
+      "partial_ratio_score": 50.847457627118644
+    },
+    {
+      "sentence": "Together, Theorems 3 and 4 are presented as Theorem 1 in Section 4.1.",
+      "best_match": "SFT-as-context preserves the correct derivation and result, while using lowercase prose and notation r.",
+      "ratio_score": 45.34883720930233,
+      "partial_ratio_score": 43.79562043795621
+    },
+    {
+      "sentence": "Thus, when the SFT context only weakly suppresses the parent posterior, the additional out-of-domain error is small: \u2212log(1\u2212\u03c1o) = \u03c1o +O(\u03c12 o) as \u03c1o \u21920.",
+      "best_match": "Table 6 shows that SFT-as-context largely preserves the harmful responses produced by the abliterated model.",
+      "ratio_score": 44.78764478764479,
+      "partial_ratio_score": 55.10204081632652
+    },
+    {
+      "sentence": "This proves Theorem 2 from Section 4.1 above.",
+      "best_match": "Together, Theorems 3 and 4 are presented as Theorem 1 in Section 4.1.",
+      "ratio_score": 54.385964912280706,
+      "partial_ratio_score": 67.56756756756756
+    }
+  ]
+}

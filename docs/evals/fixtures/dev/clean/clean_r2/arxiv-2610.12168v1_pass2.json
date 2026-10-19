@@ -1,0 +1,36 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12168v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "generated_at": "2026-10-19T14:24:03Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "sentences": [
+    "We introduce a self-improvement loop for reasoning models based on the following observation: Even when the difficulty of a problem exceeds the model\u2019s current solving abilities, an additionally supplied solution might enable the model to extract useful solution ideas in hindsight.",
+    "We operationalize this by jointly training the same model to exhibit the following three capabilities: predicting solution ideas from problems alone, reverse-engineering ideas from problems and known solutions, and solving problems using provided ideas.",
+    "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+    "We express solution ideas at several levels of detail, forming a hierarchy from overarching strategies to detailed plans.",
+    "We provide a formal specification of our method for a general problem setting, together with the optional refinement for verifiable problem domains.",
+    "We provide an optional refinement of our method which accomplishes this in the case of verifiable problem domains, i.e., when proposed solution candidates can be procedurally verified: For each problem and reference solution, we generate several candidate hierarchies in hindsight.",
+    "We provide a formal specification of our method for a general problem setting, together with the optional refinement for verifiable problem domains.",
+    "We also give a concrete instantiation for interactive theorem proving in the Lean theorem prover [2], where natural language proof ideas guide tactic generation during proof search.",
+    "Our Lean instantiation builds on language-model-guided proof search, conditioning tactic generation on learned hierarchies of proof ideas.",
+    "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+    "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+    "This signal enters entirely through data selection; the training objective remains unchanged.",
+    "To instantiate our method in the special case of interactive theorem proving (see Section 3.1), we provide concrete realizations of the abstract concepts introduced in Section 4.",
+    "We use Lean and the verifier-guided choice for ConstructTriple from Section 4.6, as summarized in Algorithm 2.",
+    "We use a single language model as the shared backbone of all three system components, with role-specific prompt templates.",
+    "All three components are implemented using a single underlying language model with shared parameters, and we distinguish between components using role-specific prompt templates.",
+    "We implement the foresight component F\u03b8 and the hindsight component H\u03b8 via iterative calls to the language model that mirror the setup in Section 4.2.",
+    "The solver component S\u03b8 executes a best-first search, using the language model as a tactic oracle.",
+    "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple's hierarchy.",
+    "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy."
+  ]
+}

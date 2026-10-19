@@ -1,0 +1,471 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11312v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "8ded6019-9807-4e1e-a42e-de3873a4d163",
+    "generated_at": "2026-10-19T13:52:14Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "Based on this formulation, we introduce MedBenchAgent, a multi-agent framework with a Benchmark Intermediate Representation (BIR) that encodes task definitions, evidence mappings, evaluation protocols, and item specifications across construction stages.",
+      "claim_summary": "MedBenchAgent introduces a multi-agent framework with a unified BIR structure",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent separates planning, which derives and verifies the specification, from instantiation, which constructs and audits items under the locked specification.",
+      "claim_summary": "MedBenchAgent separates planning specifications from concrete item instantiation",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent achieves a Task-Space F1 of 90.9%, outperforming direct task induction (79.2\u201380.0%) and prior-guided induction (85.1%); 994 of 1,000 sampled items from correctly identified tasks pass human audit.",
+      "claim_summary": "MedBenchAgent reaches 90.9% Task-Space F1 and 99.4% human audit pass rate",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "We further demonstrate portability to a specialized medical domain and evaluate twelve VLMs, revealing task- and setting-specific variation obscured by aggregate scores.",
+      "claim_summary": "Demonstrates domain portability and uncovers fine-grained VLM performance variations",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "claim_summary": "Constrained compilation provides a scalable and auditable framework for benchmark creation",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "We address this challenge with MedBenchAgent, a multi-agent framework for systematic medical VLM benchmark construction.",
+      "claim_summary": "MedBenchAgent provides a multi-agent system for systematic medical VLM benchmark creation",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "We cast benchmark construction as constrained compilation, in which the benchmark specification is progressively established from an intended evaluation scope, heterogeneous source annotations, and medical knowledge, with each confirmed decision narrowing the space of subsequent construction.",
+      "claim_summary": "Formulates benchmark construction as constrained compilation across stages",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Together, constrained compilation and the BIR provide an explicit mechanism for carrying semantic and evidential constraints from benchmark specification into downstream construction.",
+      "claim_summary": "Constrained compilation and BIR explicitly preserve semantic and evidential constraints",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In this way, MedBenchAgent extends automation from predefined medical scopes or question structures to benchmark specification itself, while preserving the annotation and medical constraints required for reliable construction.",
+      "claim_summary": "MedBenchAgent automates benchmark specification while preserving medical and annotation constraints",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In construction analysis, MedBenchAgent achieves a Task-Space F1 of 90.9%, compared with 79.2\u201380.0% for direct task induction and 85.1% when the same task prior is provided to the direct model.",
+      "claim_summary": "MedBenchAgent beats direct and prior-guided task induction in F1 score",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "For correctly identified tasks, 994 of 1,000 sampled items pass human audit.",
+      "claim_summary": "994 out of 1,000 generated items pass human audit review",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Model evaluation reveals substantial variation across tasks, imaging settings, and evaluation metrics that aggregate scores can obscure, reinforcing fine-grained benchmark specification as an important component of medical VLM evaluation.",
+      "claim_summary": "Evaluation reveals task and metric variations masked by overall aggregate scores",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "As shown in Table 1, BIR-mediated construction achieves 90.9% Task-Space F1, compared with 79.2\u201380.0% for direct induction.",
+      "claim_summary": "BIR-mediated task planning achieves 90.9% Task-Space F1",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Providing T0 improves direct DeepSeek-V4-Flash induction to 85.1% F1, while MedBenchAgent further increases precision from 76.9% to 87.0% at the same 95.2% recall, reducing false positives from six to three.",
+      "claim_summary": "MedBenchAgent raises precision to 87.0% and reduces false positive tasks",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "All methods achieve 100% EMA on matched tasks.",
+      "claim_summary": "All tested methods achieve 100% evidence-mapping agreement on matched tasks",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "claim_summary": "Human audit confirms a 99.4% item consistency rate",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "As shown in Table 3, medical VLMs outperform general-purpose VLMs by 6.23 points in Overall Acc. but trail by 2.48 points on AC, indicating that the aggregate advantage is not uniform across tasks.",
+      "claim_summary": "Medical VLMs beat general models overall but trail on assessment tasks",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "To quantify such changes, we compare all 66 model pairs and find that 12\u201324 pairs (18.2\u201336.4%) reverse ordering between Overall Acc. and individual-task Acc.; within tasks, 4\u201315 pairs (6.1\u201322.7%) reverse between Acc. and F1.",
+      "claim_summary": "Model relative rankings reverse frequently across tasks and evaluation metrics",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Across these measures, 28\u201334 of 66 model pairs (42.4\u201351.5%) reverse ordering relative to Overall Acc.",
+      "claim_summary": "Over 40% of model rank pairs flip between overall accuracy and spatial metrics",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Across four medical VLMs, Acc. decreases by 5.86\u201317.97 percentage points (pp) and F1 by 6.33\u201322.61 pp (Table 5).",
+      "claim_summary": "Image blurring causes consistent drop in accuracy and F1 across medical VLMs",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "All seven proposed tasks and their supporting-field mappings were retained without task-space revision.",
+      "claim_summary": "All seven ISIC dermoscopy task plans passed task-space review without changes",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "All sampled items passed checks of reference\u2013evidence consistency, task\u2013query consistency, and evaluation-format integrity against the normalized annotations and locked task contracts.",
+      "claim_summary": "100% of sampled cross-domain items passed all consistency and integrity audits",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Our analyses identify open-ended task-space specification as the primary source of construction uncertainty, while annotation-evidence mapping and item instantiation become substantially more reliable once benchmark semantics are fixed.",
+      "claim_summary": "Fixing benchmark semantics stabilizes downstream mapping and item creation",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Together with the cross-domain instantiation under a specialized medical setting, these results show that constrained, multi-agent benchmark construction can support both scalable medical VLM evaluation and systematic study of the benchmark-construction process itself.",
+      "claim_summary": "Constrained multi-agent framework enables scalable evaluation and benchmark meta-analysis",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "We formulate benchmark construction as constrained compilation, in which the benchmark specification is progressively derived from evaluation requirements, heterogeneous annotations, and medical knowledge.",
+      "claim_summary": "We formulate benchmark construction as constrained compilation, in which the benchmark specification is progressively derived from evaluation requirements, heterogeneous annotations, and medical knowledge.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "To make these constraints explicit and preserve them across stages, we introduce a Benchmark Intermediate Representation (BIR) that records the evaluation scope, task hierarchy, annotation evidence mappings, evaluation protocols, sample allocations, and item-construction specifications.",
+      "claim_summary": "To make these constraints explicit and preserve them across stages, we introduce a Benchmark Intermediate Representation (BIR) that records the evaluation scope, task hierarchy, annotation evidence mappings, evaluation protocols, sample allocations, and item-construction specifications.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent operationalizes this formulation through a staged multi-agent workflow for medical benchmark construction: 1) planning resolves and verifies the specification against dataset annotations and medical references before locking the BIR; and 2) instantiation constructs and audits evaluation items under this fixed specification.",
+      "claim_summary": "MedBenchAgent operationalizes this formulation through a staged multi-agent workflow for medical benchmark construction: 1) planning resolves and verifies the specification against dataset annotations and medical references before locking the BIR; and 2) instantiation constructs and audits evaluation items under this fixed specification.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Overall, this work makes three contributions: (1) Conceptually, we model the construction of medical VLM benchmarks and formulate it as constrained compilation; (2) Methodologically, we introduce a multi-agent MedBenchAgent framework and its Benchmark Intermediate Representation (BIR); and (3) Empirically, we derive insights into both the benchmark-construction process and medical VLM evaluation, while providing reusable benchmark artifacts.",
+      "claim_summary": "Overall, this work makes three contributions: (1) Conceptually, we model the construction of medical VLM benchmarks and formulate it as constrained compilation; (2) Methodologically, we introduce a multi-agent MedBenchAgent framework and its Benchmark Intermediate Representation (BIR); and (3) Empirically, we derive insights into both the benchmark-construction process and medical VLM evaluation, while providing reusable benchmark artifacts.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We formulate benchmark construction as constrained compilation: planning progressively establishes the benchmark specification, and each confirmed decision restricts the admissible choices of subsequent stages within the mapping F.",
+      "claim_summary": "We formulate benchmark construction as constrained compilation: planning progressively establishes the benchmark specification, and each confirmed decision restricts the admissible choices of subsequent stages within the mapping F.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This step connects an evidence-supported task to its medical evaluation semantics, thereby supporting Desideratum D2.",
+      "claim_summary": "This step connects an evidence-supported task to its medical evaluation semantics, thereby supporting Desideratum D2.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This separation allows linguistic variation in the query while preserving annotation-grounded reference answers and the item-level entailment requirement of Desideratum D1.",
+      "claim_summary": "This separation allows linguistic variation in the query while preserving annotation-grounded reference answers and the item-level entailment requirement of Desideratum D1.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These results show that the BIR-mediated design primarily improves the selection of valid prediction targets, while supporting-field identification is reliable once the task is correctly identified.",
+      "claim_summary": "These results show that the BIR-mediated design primarily improves the selection of valid prediction targets, while supporting-field identification is reliable once the task is correctly identified.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "claim_summary": "The high consistency rate supports locked specifications for large-scale item construction while identifying targets for semantic verification.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent promotes consistent item construction by locking item-construction requirements in the confirmed specification before instantiation.",
+      "claim_summary": "MedBenchAgent promotes consistent item construction by locking item-construction requirements in the confirmed specification before instantiation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent retains annotation-supported prediction targets as separate tasks and records their evaluation protocols in the BIR.",
+      "claim_summary": "MedBenchAgent retains annotation-supported prediction targets as separate tasks and records their evaluation protocols in the BIR.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent also preserves localization annotations as spatial prediction targets rather than converting them into choice-based questions.",
+      "claim_summary": "MedBenchAgent also preserves localization annotations as spatial prediction targets rather than converting them into choice-based questions.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "For example, Lingshu-7B has higher Overall Acc. than Qwen2.5-VL-32B (47.00% vs. 44.65%), while Qwen2.5-VL-32B performs better on all six spatial measures in Table 4.",
+      "claim_summary": "For example, Lingshu-7B has higher Overall Acc. than Qwen2.5-VL-32B (47.00% vs. 44.65%), while Qwen2.5-VL-32B performs better on all six spatial measures in Table 4.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These results support Desideratum D3: preserving annotation-supported tasks across capability dimensions and assigning task-appropriate metrics materially changes the evidence provided by the benchmark, motivating decomposition of aggregate results by prediction target to reveal capability differences obscured by Overall summaries.",
+      "claim_summary": "These results support Desideratum D3: preserving annotation-supported tasks across capability dimensions and assigning task-appropriate metrics materially changes the evidence provided by the benchmark, motivating decomposition of aggregate results by prediction target to reveal capability differences obscured by Overall summaries.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent treats the annotations associated with each source image as the reference standard.",
+      "claim_summary": "MedBenchAgent treats the annotations associated with each source image as the reference standard.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The consistent degradation indicates that benchmark performance remains sensitive to visual evidence from the corresponding image, despite references being derived directly from source annotations rather than model-based visual judgments.",
+      "claim_summary": "The consistent degradation indicates that benchmark performance remains sensitive to visual evidence from the corresponding image, despite references being derived directly from source annotations rather than model-based visual judgments.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Representative VLMs show different relative strengths across prediction targets rather than a uniform performance pattern.",
+      "claim_summary": "Representative VLMs show different relative strengths across prediction targets rather than a uniform performance pattern.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This indicates that the same workflow can instantiate a domain-appropriate task structure under a distinct annotation schema",
+      "claim_summary": "This indicates that the same workflow can instantiate a domain-appropriate task structure under a distinct annotation schema",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These results provide cross-domain evidence for the portability of MedBenchAgent across annotation semantics and task definitions.",
+      "claim_summary": "These results provide cross-domain evidence for the portability of MedBenchAgent across annotation semantics and task definitions.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We introduced MedBenchAgent, a multi-agent framework that treats medical VLM benchmark construction as constrained compilation and makes benchmark specification an explicit, auditable object of construction.",
+      "claim_summary": "We introduced MedBenchAgent, a multi-agent framework that treats medical VLM benchmark construction as constrained compilation and makes benchmark specification an explicit, auditable object of construction.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Through the Benchmark Intermediate Representation (BIR), MedBenchAgent separates specification planning from downstream item instantiation, allowing construction decisions to be evaluated stage by stage rather than only through the final benchmark.",
+      "claim_summary": "Through the Benchmark Intermediate Representation (BIR), MedBenchAgent separates specification planning from downstream item instantiation, allowing construction decisions to be evaluated stage by stage rather than only through the final benchmark.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Evaluation of the resulting benchmark further reveals task-, metric-, and imaging-dependent variation across VLMs that aggregate scores can obscure.",
+      "claim_summary": "Evaluation of the resulting benchmark further reveals task-, metric-, and imaging-dependent variation across VLMs that aggregate scores can obscure.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 6 transcribes every task that TaskPlanningAgent marked retain in the initial task plans/v1.json output, before researcher confirmation.",
+      "claim_summary": "Table 6 transcribes every task that TaskPlanningAgent marked retain in the initial task plans/v1.json output, before researcher confirmation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It shows the model\u2019s original task decomposition and its exact mapping from each proposed task to authorized annotation evidence.",
+      "claim_summary": "It shows the model\u2019s original task decomposition and its exact mapping from each proposed task to authorized annotation evidence.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The 20 entries in Figures 4 and 5 give one audited item for every atomic dataset\u2013task pair instantiated in the realized breast-imaging benchmark, spanning BrEaST, BUS-BRA, and VinDr-Mammo.",
+      "claim_summary": "The 20 entries in Figures 4 and 5 give one audited item for every atomic dataset\u2013task pair instantiated in the realized breast-imaging benchmark, spanning BrEaST, BUS-BRA, and VinDr-Mammo.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This comparison therefore evaluates catalog-initialized BIR compilation against direct task induction",
+      "claim_summary": "This comparison therefore evaluates catalog-initialized BIR compilation against direct task induction",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Under the atomic matching protocol below, the table contains 21 reference prediction targets in total.",
+      "claim_summary": "Under the atomic matching protocol below, the table contains 21 reference prediction targets in total.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The staged framework and the resulting T \u22c6were developed before the automated task-space experiments and were fixed prior to evaluating MedBenchAgent or any direct-construction baseline.",
+      "claim_summary": "The staged framework and the resulting T \u22c6were developed before the automated task-space experiments and were fixed prior to evaluating MedBenchAgent or any direct-construction baseline.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent\u2019s residual errors are concentrated in semantic boundary cases, including a redundant BUS-BRA finding-type proposal, a visual-grounding proposal that did not define a capability distinct from generic detection, a shortcut-prone VinDr view-identification task, and the omitted finding-level assessment target.",
+      "claim_summary": "MedBenchAgent\u2019s residual errors are concentrated in semantic boundary cases, including a redundant BUS-BRA finding-type proposal, a visual-grounding proposal that did not define a capability distinct from generic detection, a shortcut-prone VinDr view-identification task, and the omitted finding-level assessment target.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In contrast, the direct baselines more frequently introduce nonvisual metadata, acquisition or marker shortcuts, invalid spatial evidence, or omit otherwise supported visual prediction targets.",
+      "claim_summary": "In contrast, the direct baselines more frequently introduce nonvisual metadata, acquisition or marker shortcuts, invalid spatial evidence, or omit otherwise supported visual prediction targets.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Across the complete audit, there were four task\u2013query-alignment failures and six evaluation-integrity failures, with no reference-groundedness or unambiguity failures.",
+      "claim_summary": "Across the complete audit, there were four task\u2013query-alignment failures and six evaluation-integrity failures, with no reference-groundedness or unambiguity failures.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Importantly, the fixed annotation-derived reference answers remained supported by the authorized evidence in all six cases.",
+      "claim_summary": "Importantly, the fixed annotation-derived reference answers remained supported by the authorized evidence in all six cases.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Different checkpoints lead on different task metrics, providing complementary evaluation profiles.",
+      "claim_summary": "Different checkpoints lead on different task metrics, providing complementary evaluation profiles.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Together with the task-space review and item audit, these results demonstrate application of MedBenchAgent to the ISIC annotation schema.",
+      "claim_summary": "Together with the task-space review and item audit, these results demonstrate application of MedBenchAgent to the ISIC annotation schema.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 10 shows that the cross-domain benchmark preserves substantial variation across task families and model checkpoints.",
+      "claim_summary": "Table 10 shows that the cross-domain benchmark preserves substantial variation across task families and model checkpoints.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "No single checkpoint exhibits uniformly strong performance across diagnosis, dermoscopic attributes, and lesion localization, and the relative behavior of general-purpose and medical VLMs varies across these task types.",
+      "claim_summary": "No single checkpoint exhibits uniformly strong performance across diagnosis, dermoscopic attributes, and lesion localization, and the relative behavior of general-purpose and medical VLMs varies across these task types.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In particular, categorical performance does not reliably predict spatial-localization performance.",
+      "claim_summary": "In particular, categorical performance does not reliably predict spatial-localization performance.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We strictly follow the protocols of all models that claim to have spatial evaluation capabilities.",
+      "claim_summary": "We strictly follow the protocols of all models that claim to have spatial evaluation capabilities.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Predictions were converted from the configured model-specific coordinate representation to absolute original-image coordinates before scoring.",
+      "claim_summary": "Predictions were converted from the configured model-specific coordinate representation to absolute original-image coordinates before scoring.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Spatial metrics were computed over all evaluated items, including invalid outputs.",
+      "claim_summary": "Spatial metrics were computed over all evaluated items, including invalid outputs.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Accordingly, mIoU and Acc@IoU0.5 measure end-to-end bounding-box prediction under the specified response protocol.",
+      "claim_summary": "Accordingly, mIoU and Acc@IoU0.5 measure end-to-end bounding-box prediction under the specified response protocol.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Thus, 28\u201334 of the 66 model pairs (42.4\u201351.5%) reverse their ordering across the spatial measures.",
+      "claim_summary": "Thus, 28\u201334 of the 66 model pairs (42.4\u201351.5%) reverse their ordering across the spatial measures.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Strong task-family performance can coexist with substantial variation among its constituent prediction targets.",
+      "claim_summary": "Strong task-family performance can coexist with substantial variation among its constituent prediction targets.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "BreastGPT-8B achieves the highest aggregate finding-attribute scores, yet its BrEaST Macro-F1 ranges from 78.0 on margin and 63.7 on halo to 33.2 on posterior features and 35.0 on calcifications (Table 12).",
+      "claim_summary": "BreastGPT-8B achieves the highest aggregate finding-attribute scores, yet its BrEaST Macro-F1 ranges from 78.0 on margin and 63.7 on halo to 33.2 on posterior features and 35.0 on calcifications (Table 12).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The choice of metric also changes comparisons within an individual attribute.",
+      "claim_summary": "The choice of metric also changes comparisons within an individual attribute.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On posterior features, QoQ-Med-7B achieves higher Accuracy than BreastGPT-8B (57.9 versus 54.8), whereas BreastGPT-8B achieves higher Macro-F1 (33.2 versus 25.8).",
+      "claim_summary": "On posterior features, QoQ-Med-7B achieves higher Accuracy than BreastGPT-8B (57.9 versus 54.8), whereas BreastGPT-8B achieves higher Macro-F1 (33.2 versus 25.8).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The same ordering reversal occurs on halo: QoQ-Med-7B leads in Accuracy (72.0 versus 70.3), but BreastGPT-8B leads in Macro-F1 (63.7 versus 41.8).",
+      "claim_summary": "The same ordering reversal occurs on halo: QoQ-Med-7B leads in Accuracy (72.0 versus 70.3), but BreastGPT-8B leads in Macro-F1 (63.7 versus 41.8).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These reversals extend the metric-dependent rankings observed in the main results to atomic prediction targets.",
+      "claim_summary": "These reversals extend the metric-dependent rankings observed in the main results to atomic prediction targets.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "claim_summary": "Qwen3-VL-8B-T exceeds Qwen3-VL-8B-I by only 0.60 Accuracy points overall, but the task-level changes are much larger (Table 3).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "FA improves by 27.09 points, while AA, FT, AC, DX, and PS decrease by 9.37, 1.22, 0.53, 4.85, and 7.50 points, respectively.",
+      "claim_summary": "FA improves by 27.09 points, while AA, FT, AC, DX, and PS decrease by 9.37, 1.22, 0.53, 4.85, and 7.50 points, respectively.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Under the reported equal weighting of task families, the FA improvement contributes approximately 4.52 points to Overall Accuracy, while the other five tasks jointly contribute approximately \u22123.91 points.",
+      "claim_summary": "Under the reported equal weighting of task families, the FA improvement contributes approximately 4.52 points to Overall Accuracy, while the other five tasks jointly contribute approximately \u22123.91 points.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The small net change thus results from opposing task-level changes rather than uniformly similar performance.",
+      "claim_summary": "The small net change thus results from opposing task-level changes rather than uniformly similar performance.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The FA improvement is itself concentrated in particular attributes.",
+      "claim_summary": "The FA improvement is itself concentrated in particular attributes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On BrEaST, halo Accuracy increases from 11.4 to 63.4 and skin-thickening Accuracy from 2.7 to 76.6, whereas posterior-feature Accuracy decreases from 37.3 to 22.2 (Table 12).",
+      "claim_summary": "On BrEaST, halo Accuracy increases from 11.4 to 63.4 and skin-thickening Accuracy from 2.7 to 76.6, whereas posterior-feature Accuracy decreases from 37.3 to 22.2 (Table 12).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Reporting both preserves distinctions that either metric alone would omit.",
+      "claim_summary": "Reporting both preserves distinctions that either metric alone would omit.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Decomposing the comparison at both levels therefore reveals a pattern that the Overall score obscures: a substantial gain within one task family is driven largely by a subset of its prediction targets and offset by declines elsewhere.",
+      "claim_summary": "Decomposing the comparison at both levels therefore reveals a pattern that the Overall score obscures: a substantial gain within one task family is driven largely by a subset of its prediction targets and offset by declines elsewhere.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In contrast, Qwen3-VL-32B improves over Qwen3-VL-8B-I on aggregate multiple-choice performance and all three reported breast-imaging spatial settings (Tables 3 and 4).",
+      "claim_summary": "In contrast, Qwen3-VL-32B improves over Qwen3-VL-8B-I on aggregate multiple-choice performance and all three reported breast-imaging spatial settings (Tables 3 and 4).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These checkpoint comparisons show that aggregate improvements can have different task-level compositions.",
+      "claim_summary": "These checkpoint comparisons show that aggregate improvements can have different task-level compositions.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "They support examining the resulting performance profile rather than using model scale or the thinking designation as a substitute for task-specific evaluation.",
+      "claim_summary": "They support examining the resulting performance profile rather than using model scale or the thinking designation as a substitute for task-specific evaluation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Relative performance on categorical tasks does not consistently carry over to bounding-box prediction.",
+      "claim_summary": "Relative performance on categorical tasks does not consistently carry over to bounding-box prediction.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On ISIC, Hulu-Med-7B achieves the highest diagnosis Accuracy and Macro-F1 among the evaluated checkpoints (56.3 and 34.4), but obtains 0.7 mIoU and 0.2 Acc@IoU0.5 on detection.",
+      "claim_summary": "On ISIC, Hulu-Med-7B achieves the highest diagnosis Accuracy and Macro-F1 among the evaluated checkpoints (56.3 and 34.4), but obtains 0.7 mIoU and 0.2 Acc@IoU0.5 on detection.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Qwen3-VL-8B-I achieves lower diagnosis scores (53.2 and 22.8), yet substantially higher detection scores (80.3 and 91.4; Table 10).",
+      "claim_summary": "Qwen3-VL-8B-I achieves lower diagnosis scores (53.2 and 22.8), yet substantially higher detection scores (80.3 and 91.4; Table 10).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These results describe complementary task profiles within the same dataset family.",
+      "claim_summary": "These results describe complementary task profiles within the same dataset family.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Spatial rankings also change across imaging settings.",
+      "claim_summary": "Spatial rankings also change across imaging settings.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "BreastGPT-8B leads Qwen3-VL-32B on BUS-BRA detection, with Acc@IoU0.5 of 82.80 versus 62.08, whereas Qwen3-VL-32B leads on VinDr-Mammo detection, with 12.86 versus 0.90 (Table 4).",
+      "claim_summary": "BreastGPT-8B leads Qwen3-VL-32B on BUS-BRA detection, with Acc@IoU0.5 of 82.80 versus 62.08, whereas Qwen3-VL-32B leads on VinDr-Mammo detection, with 12.86 versus 0.90 (Table 4).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This ranking reversal shows that a model\u2019s advantage within one localization setting need not persist in another.",
+      "claim_summary": "This ranking reversal shows that a model\u2019s advantage within one localization setting need not persist in another.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Reporting each dataset\u2013task pair separately preserves this distinction and prevents a pooled spatial score from obscuring where the observed advantage applies.",
+      "claim_summary": "Reporting each dataset\u2013task pair separately preserves this distinction and prevents a pooled spatial score from obscuring where the observed advantage applies.",
+      "pass": "pass2"
+    }
+  ]
+}

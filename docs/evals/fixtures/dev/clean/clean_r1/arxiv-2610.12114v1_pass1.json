@@ -1,0 +1,140 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12114v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "0dbaad7a-9e6f-4f23-a314-6c8c1a889c15",
+    "generated_at": "2026-10-19T13:55:38Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "We introduce Universal Textual Teaching (UTT), a parameter-update-free framework that distills observed Teacher-Student knowledge gaps into a textual, interpretable, and reusable natural-language artifact called Primer.",
+      "claim_summary": "UTT distills Teacher-Student knowledge gaps into an interpretable natural-language Primer without parameter updates."
+    },
+    {
+      "claim_text_verbatim": "Empirically, on the challenging math (Omni-MATH-2) and code generation (KernelBench) tasks, extensive results confirm the effectiveness of the method: UTT remarkably raises the Student\u2019s accuracy from 9.4% to 48.6% and Fast1 accuracy from 9% to 35% on KernelBench, while increasing mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "claim_summary": "UTT significantly improves Student accuracy and Fast1 on KernelBench and Omni-MATH-2."
+    },
+    {
+      "claim_text_verbatim": "UTT also performs better than representative prompt engineering and parameter-based KD methods.",
+      "claim_summary": "UTT outperforms representative prompt engineering and parameter-updating knowledge distillation methods."
+    },
+    {
+      "claim_text_verbatim": "Of note, UTT is shown to be generalizable across different Teachers and Students: a Primer synthesized for one Teacher-Student pair can generalize to other Students that do not participate in the synthesis.",
+      "claim_summary": "Primers synthesized for one Teacher-Student pair generalize to other Students without resynthesis."
+    },
+    {
+      "claim_text_verbatim": "Relying solely on interactions among LLMs, the process requires no model training or parameter updates and supports both open-source and API-only commercial models.",
+      "claim_summary": "UTT requires no model training or parameter updates and supports API-only commercial models."
+    },
+    {
+      "claim_text_verbatim": "Empirically, across various Teacher-Student configurations in mathematical reasoning and code generation, the synthesized Primers consistently improve their source Students and remain effective when transferred to other Students without resynthesis, demonstrating both effectiveness and cross-model reusability.",
+      "claim_summary": "Primers consistently improve source Students and remain effective when transferred across models."
+    },
+    {
+      "claim_text_verbatim": "Relative to the unprimed Student baselines, UTT improves KernelBench accuracy from 9.4% to 48.6%, Fast1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "claim_summary": "UTT boosts KernelBench accuracy, Fast1, and math accuracy over unprimed baselines."
+    },
+    {
+      "claim_text_verbatim": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "claim_summary": "UTT outperforms prompt engineering and parameter-updating KD across evaluated settings."
+    },
+    {
+      "claim_text_verbatim": "We formulate LLM distillation as representing the Teacher-Student knowledge gap in natural language rather than encoding it in a specific Student\u2019s parameters, making the distilled knowledge interpretable and reusable across models.",
+      "claim_summary": "Formulating KD in natural language makes distilled knowledge interpretable and reusable across models."
+    },
+    {
+      "claim_text_verbatim": "UTT identifies knowledge gaps through paired evaluation and iteratively synthesizes a deployable global Primer from Student attempts, Prompter feedback, and Teacher demonstrations, without updating any model parameters.",
+      "claim_summary": "UTT synthesizes a deployable global Primer without updating any model parameters."
+    },
+    {
+      "claim_text_verbatim": "Across math and code tasks, UTT demonstrates effectiveness and transferability, with Primers transferable across models without resynthesis.",
+      "claim_summary": "UTT demonstrates effectiveness and cross-model transferability without resynthesis across tasks."
+    },
+    {
+      "claim_text_verbatim": "Notably, the resulting Primer can improve the performance of the source Student and other Students that are not involved in creating the Primer.",
+      "claim_summary": "Primers improve performance for both source Students and uninvolved target Students."
+    },
+    {
+      "claim_text_verbatim": "For the target Student Qwen3.6-27B, Primers synthesized from the Teacher-Student pairs (shown at the bottom of the figure) consistently improve accuracy.",
+      "claim_summary": "Primers synthesized from Teacher-Student pairs consistently improve Qwen3.6-27B accuracy."
+    },
+    {
+      "claim_text_verbatim": "Even when Qwen3.6-27B does not participate in the Primer synthesis, the absolute accuracy gains reach 41.8% and 31.5% (see the rightmost column) on KernelBench and Omni-MATH-2, respectively.",
+      "claim_summary": "Transferring Primers to Qwen3.6-27B yields up to 41.8% and 31.5% accuracy gains."
+    },
+    {
+      "claim_text_verbatim": "The Primer yields substantial gains of 39.2, 26, and 24.1 percentage points over the Student baseline on KernelBench accuracy, Fast1, and Math accuracy, respectively, improving the corresponding scores from 9.4% to 48.6%, 9% to 35%, and 27.6% to 51.7%.",
+      "claim_summary": "Pro->Flash Primer increases KernelBench accuracy, Fast1, and Math accuracy substantially."
+    },
+    {
+      "claim_text_verbatim": "Keeping Pro as the Teacher, we further synthesize a new Primer for Qwen, which achieves 50.0%, 32%, and 62.4% on the same metrics.",
+      "claim_summary": "Pro->Qwen Primer achieves 50.0% KernelBench accuracy, 32% Fast1, and 62.4% Math accuracy."
+    },
+    {
+      "claim_text_verbatim": "The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast1, and Math accuracy, respectively.",
+      "claim_summary": "Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 points across metrics."
+    },
+    {
+      "claim_text_verbatim": "The Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 percentage points on the same metrics.",
+      "claim_summary": "Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 points across metrics."
+    },
+    {
+      "claim_text_verbatim": "These results show that knowledge distilled through interactions with one Student can transfer to another Student without resynthesizing the Primer.",
+      "claim_summary": "Knowledge distilled with one Student transfers to another Student without resynthesizing."
+    },
+    {
+      "claim_text_verbatim": "It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+      "claim_summary": "Opus->Flash Primer improves Flash by 38.8, 30, and 19.0 percentage points."
+    },
+    {
+      "claim_text_verbatim": "Finally, applying this Primer unchanged to Qwen yields 51.0% KernelBench accuracy, 22% Fast1, and 65.8% Math accuracy.",
+      "claim_summary": "Applying the Opus-Flash Primer to Qwen reaches 51.0% accuracy and 65.8% Math accuracy."
+    },
+    {
+      "claim_text_verbatim": "On the distillation training set, Pro\u2192Flash accuracy on KernelBench increases from 6.7% to 65.2%, indicating that the synthesized Primer effectively improves Student performance on knowledge-gap samples.",
+      "claim_summary": "Pro->Flash accuracy on KernelBench distillation training increases from 6.7% to 65.2%."
+    },
+    {
+      "claim_text_verbatim": "On the distillation test set, Pro\u2192Qwen accuracy on the math task increases from 9.7% to 64.8%.",
+      "claim_summary": "Pro->Qwen math accuracy on the distillation test set rises from 9.7% to 64.8%."
+    },
+    {
+      "claim_text_verbatim": "These results show that knowledge distilled into text can generalize to unseen problems, with benefits extending beyond the samples used for synthesis.",
+      "claim_summary": "Textually distilled knowledge generalizes to unseen problems beyond synthesis samples."
+    },
+    {
+      "claim_text_verbatim": "On the retention subset, the three KernelBench configurations show no decline in accuracy; instead, they improve from 34.0% to 74.0%, 27.0% to 81.0%, and 37.1% to 78.6%, respectively.",
+      "claim_summary": "Retention accuracy on KernelBench improves across all three configurations without declining."
+    },
+    {
+      "claim_text_verbatim": "This indicates that the Primer largely preserves the Student\u2019s existing capabilities while improving performance on knowledge-gap samples.",
+      "claim_summary": "The Primer largely preserves existing capabilities while boosting performance on knowledge gaps."
+    },
+    {
+      "claim_text_verbatim": "This shows that the Primer can help the Student solve some problems that neither the Teacher nor the Student solved during baseline evaluation, extending the observed capability frontier.",
+      "claim_summary": "Primers help Students solve problems neither Teacher nor Student solved originally."
+    },
+    {
+      "claim_text_verbatim": "UTT performs best across all six combinations, with consistent gains across tasks and target models.",
+      "claim_summary": "UTT outperforms prompt engineering methods across all six evaluated combinations."
+    },
+    {
+      "claim_text_verbatim": "With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1, respectively.",
+      "claim_summary": "UTT beats the best parameter-updating KD baseline across all evaluated metrics."
+    },
+    {
+      "claim_text_verbatim": "On the challenging math and code generation tasks (Omni-MATH-2 and KernelBench), UTT substantially improves the Student\u2019s performance across various Teacher-Student settings.",
+      "claim_summary": "UTT substantially improves Student performance across various Teacher-Student settings."
+    },
+    {
+      "claim_text_verbatim": "Compared with knowledge implicitly encoded in model parameters, the Primer is interpretable and not tied to particular model weights, enabling direct transfer to other models.",
+      "claim_summary": "The Primer is interpretable, independent of weights, and directly transferable to other models."
+    }
+  ]
+}

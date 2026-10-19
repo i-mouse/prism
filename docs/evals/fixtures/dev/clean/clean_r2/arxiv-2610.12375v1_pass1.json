@@ -1,0 +1,124 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12375v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8",
+    "generated_at": "2026-10-19T14:27:23Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "claim_summary": "OnTrack monitors agent trajectories in real-time, taking about a millisecond per step."
+    },
+    {
+      "claim_text_verbatim": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "claim_summary": "OnTrack outperforms content similarity approaches by +0.057 AUROC at step 8."
+    },
+    {
+      "claim_text_verbatim": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "claim_summary": "An abort policy saves ~18% compute with 83% precision on failing runs."
+    },
+    {
+      "claim_text_verbatim": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "claim_summary": "OnTrack uses optimal transport to flag trajectory issues in about one millisecond per step."
+    },
+    {
+      "claim_text_verbatim": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "claim_summary": "OnTrack operates flexibly without requiring reference trajectories to run."
+    },
+    {
+      "claim_text_verbatim": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "claim_summary": "OnTrack retains loop, stall, and prerequisite violation detection even with minimal inputs."
+    },
+    {
+      "claim_text_verbatim": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "claim_summary": "OnTrack seamlessly degrades across data access regimes without requiring manual reconfiguration."
+    },
+    {
+      "claim_text_verbatim": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "claim_summary": "OnTrack's frontier masking prevents punishing agents for completing steps early."
+    },
+    {
+      "claim_text_verbatim": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "claim_summary": "Amortized warm-started iterations keep per-step execution time down to about one millisecond."
+    },
+    {
+      "claim_text_verbatim": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "claim_summary": "OnTrack's final solve aligns with batch evaluation when online dependency extraction matches."
+    },
+    {
+      "claim_text_verbatim": "Reversible actions are never blocked, preserving cheap exploration.",
+      "claim_summary": "OnTrack only blocks irreversible actions, leaving reversible actions open for exploration."
+    },
+    {
+      "claim_text_verbatim": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "claim_summary": "The fast path executes in 0.85 ms median per step for typical lengths."
+    },
+    {
+      "claim_text_verbatim": "Scenario B finalizes to the in-order score exactly (0.913 = 0.913), the empirical face of Prop. 2.",
+      "claim_summary": "Validly reordered trajectories receive scores identical to in-order executions."
+    },
+    {
+      "claim_text_verbatim": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113\u22650.66 while valid steps stay \u22640.24, comfortably bracketing \u03b8leak = 0.6.",
+      "claim_summary": "Node leakage distinguishes hallucinated steps from valid execution steps."
+    },
+    {
+      "claim_text_verbatim": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "claim_summary": "Randomized testing shows high fault recall with zero false interventions on benign runs."
+    },
+    {
+      "claim_text_verbatim": "The end-of-stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+      "claim_summary": "Fast-path diagnostic closely tracks finalization output with minimal discrepancy."
+    },
+    {
+      "claim_text_verbatim": "First, the \u2206CI excludes zero at k \u226410, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.",
+      "claim_summary": "OnTrack demonstrates a statistically significant ranking advantage over cosine similarity for steps <=10."
+    },
+    {
+      "claim_text_verbatim": "At k=8, OnTrack achieves TPR 6.6% / 23.2% / 33.3% at FPR 1% / 5% / 10%, compared to cosine 1.5% / 9.6% / 20.7% and n steps 1.0% / 5.6% / 13.6%.",
+      "claim_summary": "At step 8, OnTrack delivers higher true positive rates across low false positive rates."
+    },
+    {
+      "claim_text_verbatim": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+      "claim_summary": "A 0.60 flag density threshold saves 17.9% compute on unresolved trajectories."
+    },
+    {
+      "claim_text_verbatim": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+      "claim_summary": "Deploying the abort policy yields approximately 83% precision for interrupted runs."
+    },
+    {
+      "claim_text_verbatim": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+      "claim_summary": "OnTrack matches step count and dominates cosine similarity in cost-limit exit detection."
+    },
+    {
+      "claim_text_verbatim": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+      "claim_summary": "OnTrack achieves high TPR for cost-limit exits at low false positive rates."
+    },
+    {
+      "claim_text_verbatim": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+      "claim_summary": "Severe-flag density triggers catch 90% of cost-limit failures with ~41% steps remaining."
+    },
+    {
+      "claim_text_verbatim": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+      "claim_summary": "Flag-based detection performs strongest on structural loops and stalls in real traces."
+    },
+    {
+      "claim_text_verbatim": "On a balanced sample (50 resolved, 50 unresolved), no method reliably separates outcomes (Table 8): OnTrack reaches 0.581, cosine 0.643, with widely overlapping bootstrap CIs.",
+      "claim_summary": "OnTrack and baselines show comparable, modest trajectory-level outcome separation."
+    },
+    {
+      "claim_text_verbatim": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+      "claim_summary": "Trajectory outcome prediction collapses near chance when step length is controlled."
+    },
+    {
+      "claim_text_verbatim": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "claim_summary": "OnTrack achieves 0.979 AUROC on cost-limit failures in real-time mid-trace monitoring."
+    }
+  ]
+}

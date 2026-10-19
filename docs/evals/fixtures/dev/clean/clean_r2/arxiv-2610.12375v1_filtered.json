@@ -1,0 +1,416 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12375v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8",
+    "generated_at": "2026-10-19T14:27:23Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "claim_summary": "OnTrack monitors agent trajectories in real-time, taking about a millisecond per step.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "claim_summary": "OnTrack outperforms content similarity approaches by +0.057 AUROC at step 8.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "claim_summary": "An abort policy saves ~18% compute with 83% precision on failing runs.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "claim_summary": "OnTrack uses optimal transport to flag trajectory issues in about one millisecond per step.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The references are optional, however\u2014the monitor runs with whatever is available.",
+      "claim_summary": "OnTrack operates flexibly without requiring reference trajectories to run.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "claim_summary": "OnTrack retains loop, stall, and prerequisite violation detection even with minimal inputs.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "claim_summary": "OnTrack seamlessly degrades across data access regimes without requiring manual reconfiguration.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "claim_summary": "OnTrack's frontier masking prevents punishing agents for completing steps early.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "claim_summary": "Amortized warm-started iterations keep per-step execution time down to about one millisecond.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "claim_summary": "OnTrack's final solve aligns with batch evaluation when online dependency extraction matches.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Reversible actions are never blocked, preserving cheap exploration.",
+      "claim_summary": "OnTrack only blocks irreversible actions, leaving reversible actions open for exploration.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "claim_summary": "The fast path executes in 0.85 ms median per step for typical lengths.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Scenario B finalizes to the in-order score exactly (0.913 = 0.913), the empirical face of Prop. 2.",
+      "claim_summary": "Validly reordered trajectories receive scores identical to in-order executions.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113\u22650.66 while valid steps stay \u22640.24, comfortably bracketing \u03b8leak = 0.6.",
+      "claim_summary": "Node leakage distinguishes hallucinated steps from valid execution steps.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "claim_summary": "Randomized testing shows high fault recall with zero false interventions on benign runs.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The end-of-stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+      "claim_summary": "Fast-path diagnostic closely tracks finalization output with minimal discrepancy.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "First, the \u2206CI excludes zero at k \u226410, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.",
+      "claim_summary": "OnTrack demonstrates a statistically significant ranking advantage over cosine similarity for steps <=10.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "At k=8, OnTrack achieves TPR 6.6% / 23.2% / 33.3% at FPR 1% / 5% / 10%, compared to cosine 1.5% / 9.6% / 20.7% and n steps 1.0% / 5.6% / 13.6%.",
+      "claim_summary": "At step 8, OnTrack delivers higher true positive rates across low false positive rates.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+      "claim_summary": "A 0.60 flag density threshold saves 17.9% compute on unresolved trajectories.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+      "claim_summary": "Deploying the abort policy yields approximately 83% precision for interrupted runs.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+      "claim_summary": "OnTrack matches step count and dominates cosine similarity in cost-limit exit detection.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "At low FPR operating points (balanced 100+100 sample), OnTrack achieves TPR 37% / 81% / 92% at FPR 1% / 5% / 10%, matching n steps (33% / 82% / 92%) and far exceeding cosine (0% / 3% / 9%).",
+      "claim_summary": "OnTrack achieves high TPR for cost-limit exits at low false positive rates.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+      "claim_summary": "Severe-flag density triggers catch 90% of cost-limit failures with ~41% steps remaining.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Injecting the controlled fault types into real resolved traces, flag-based AUROC is strongest on loops (0.699) and stalls (0.646), where structural repetition is pronounced; in-distribution hallucinations (0.572) and inversions (0.496) are near the floor for the same reason as the splice experiment \u2014 on homogeneous 30-step debugging traces, a locally plausible wrong step is indistinguishable from exploration without task-level semantics.",
+      "claim_summary": "Flag-based detection performs strongest on structural loops and stalls in real traces.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On a balanced sample (50 resolved, 50 unresolved), no method reliably separates outcomes (Table 8): OnTrack reaches 0.581, cosine 0.643, with widely overlapping bootstrap CIs.",
+      "claim_summary": "OnTrack and baselines show comparable, modest trajectory-level outcome separation.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+      "claim_summary": "Trajectory outcome prediction collapses near chance when step length is controlled.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "claim_summary": "OnTrack achieves 0.979 AUROC on cost-limit failures in real-time mid-trace monitoring.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Our contribution is making this alignment work on a live stream, which cannot be done by just re-running the batch method after each step due to the following structural challenges:",
+      "claim_summary": "Our contribution is making this alignment work on a live stream, which cannot be done by just re-running the batch method after each step due to the following structural challenges:",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "OnTrack addresses all four challenges.",
+      "claim_summary": "OnTrack addresses all four challenges.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "For S2, a new step\u2019s structural influence starts at zero and phases in as later steps use its output; edges discovered late are inserted into the graph in place (Sec. 4.4).",
+      "claim_summary": "For S2, a new step\u2019s structural influence starts at zero and phases in as later steps use its output; edges discovered late are inserted into the graph in place (Sec. 4.4).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "For S4, decisions come from per-step signals with a short grace window for new steps, never from the aggregate score (Sec. 4.5).",
+      "claim_summary": "For S4, decisions come from per-step signals with a short grace window for new steps, never from the aggregate score (Sec. 4.5).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "That combination, as far as we know, is new.",
+      "claim_summary": "That combination, as far as we know, is new.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This extraction is deterministic string matching, not an LLM call \u2014 cheap and auditable \u2014 but it fails when a dependency leaves no matchable identifier.",
+      "claim_summary": "This extraction is deterministic string matching, not an LLM call \u2014 cheap and auditable \u2014 but it fails when a dependency leaves no matchable identifier.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "OnTrack separates signals by their prerequisites into three decoupled layers: L1 vital signs (reference-free intrinsic diagnostics: loop detection, information gain, stall) run always; L2 transport alignment (the streaming UFGW machinery, Secs. 4.1\u20134.5) requires references; L3 pre-execution policy gate (tool-contract prerequisite checks plus a one-row proposal alignment, Sec. 4.5) requires schemas and is the only synchronous component \u2014 it evaluates the proposed action before the tool executes, exclusively for irreversible calls, so worst-case added latency is confined to the rare actions that warrant it.",
+      "claim_summary": "OnTrack separates signals by their prerequisites into three decoupled layers: L1 vital signs (reference-free intrinsic diagnostics: loop detection, information gain, stall) run always; L2 transport alignment (the streaming UFGW machinery, Secs. 4.1\u20134.5) requires references; L3 pre-execution policy gate (tool-contract prerequisite checks plus a one-row proposal alignment, Sec. 4.5) requires schemas and is the only synchronous component \u2014 it evaluates the proposed action before the tool executes, exclusively for irreversible calls, so worst-case added latency is confined to the rare actions that warrant it.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "OnTrack instead assigns constant per-node agent mass \u00b5i = 1/ \u00afm, \u00afm = 1 K P k mk, (3) so one agent step carries the same nominal mass as an average reference step (exact for references of size \u00afm), the agent total grows as t/ \u00afm, and the per-node normalized leakage \u2113i = h 1 \u22121 \u00b5i X j Tij i [0,1] (4) is a scale-free, calibrated trigger at every t; the clip to [0, 1] is part of the definition, since in unbalanced OT a row mass can exceed \u00b5i (over-transported rows are treated as fully matched).",
+      "claim_summary": "OnTrack instead assigns constant per-node agent mass \u00b5i = 1/ \u00afm, \u00afm = 1 K P k mk, (3) so one agent step carries the same nominal mass as an average reference step (exact for references of size \u00afm), the agent total grows as t/ \u00afm, and the per-node normalized leakage \u2113i = h 1 \u22121 \u00b5i X j Tij i [0,1] (4) is a scale-free, calibrated trigger at every t; the clip to [0, 1] is part of the definition, since in unbalanced OT a row mass can exceed \u00b5i (over-transported rows are treated as fully matched).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "All members of the currently executable antichain of R are active simultaneously, so an agent that executes independent reference steps in any topological order is never penalized for order (Prop. 2).",
+      "claim_summary": "All members of the currently executable antichain of R are active simultaneously, so an agent that executes independent reference steps in any topological order is never penalized for order (Prop. 2).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Agent-side leakage (Eq. 4) is the real-time signal \u2014 it means hallucination, digression, or prematurity now.",
+      "claim_summary": "Agent-side leakage (Eq. 4) is the real-time signal \u2014 it means hallucination, digression, or prematurity now.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "OnTrack keeps the true objective by observing that the standard batch UFGW solver \u2014 conditional gradient (CG) \u2014 is already an iterative linearization scheme, and amortizing it: one warm-started CG iteration per event; the coupling tracks the moving optimum the way stochastic gradient descent tracks a drifting loss.",
+      "claim_summary": "OnTrack keeps the true objective by observing that the standard batch UFGW solver \u2014 conditional gradient (CG) \u2014 is already an iterative linearization scheme, and amortizing it: one warm-started CG iteration per event; the coupling tracks the moving optimum the way stochastic gradient descent tracks a drifting loss.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "No intervention is ever taken on a stale linearization, and the converged-solve cost is paid exactly when it is cheapest relative to the tool call about to be prevented.",
+      "claim_summary": "No intervention is ever taken on a stale linearization, and the converged-solve cost is paid exactly when it is cheapest relative to the tool call about to be prevented.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "All verdict thresholds are calibrated directly on the implemented quantities, so the deviations affect interpretation of the loss scale, not the calibrated behavior.",
+      "claim_summary": "All verdict thresholds are calibrated directly on the implemented quantities, so the deviations affect interpretation of the loss scale, not the calibrated behavior.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "No transport mass is required \u2014 the gate is a schema-plus-proposal check, which is what makes synchronous operation possible.",
+      "claim_summary": "No transport mass is required \u2014 the gate is a schema-plus-proposal check, which is what makes synchronous operation possible.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Independent coupling states are maintained per reference and aggregated by temperature-controlled soft-min [4]; K is small (3\u201310) and cost is linear in K.",
+      "claim_summary": "Independent coupling states are maintained per reference and aggregated by temperature-controlled soft-min [4]; K is small (3\u201310) and cost is linear in K.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The running arg min doubles as a live \u201cwhich strategy is the agent following\u201d diagnostic.",
+      "claim_summary": "The running arg min doubles as a live \u201cwhich strategy is the agent following\u201d diagnostic.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "With no reference at all, L2 is off and OnTrack degrades, explicitly, to L1 + L3.",
+      "claim_summary": "With no reference at all, L2 is off and OnTrack degrades, explicitly, to L1 + L3.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Scenario B of Table 2, where a reordered run tracks and finalizes to the identical score, is its validation.",
+      "claim_summary": "Scenario B of Table 2, where a reordered run tracks and finalizes to the identical score, is its validation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 2: all eight scenarios behave as designed.",
+      "claim_summary": "Table 2: all eight scenarios behave as designed.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At K=3 references, m=40, t \u226440, the fast path measures p50 0.85 ms / p95 1.6 ms per event (Apple M5 Max core).",
+      "claim_summary": "At K=3 references, m=40, t \u226440, the fast path measures p50 0.85 ms / p95 1.6 ms per event (Apple M5 Max core).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The fix recomputes the frontier from the current coupling inside the gate; after it, G-a allows, G-b/H still block, the false-block rate is 0/50, and all prior results are unaffected (the SWE-bench corpus contains no irreversible-annotated tools, so the gate never fires there).",
+      "claim_summary": "The fix recomputes the frontier from the current coupling inside the gate; after it, G-a allows, G-b/H still block, the false-block rate is 0/50, and all prior results are unaffected (the SWE-bench corpus contains no irreversible-annotated tools, so the gate never fires there).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We therefore claim the FPR contrast at deployed thresholds, not curve-level dominance.",
+      "claim_summary": "We therefore claim the FPR contrast at deployed thresholds, not curve-level dominance.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The \u2206CI excludes zero for k \u226410.",
+      "claim_summary": "The \u2206CI excludes zero for k \u226410.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content- and structure-aware method there but not the length prior \u2014 its clearest regime is k=8\u201310, after the length prior fades and before content accumulates.",
+      "claim_summary": "Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content- and structure-aware method there but not the length prior \u2014 its clearest regime is k=8\u201310, after the length prior fades and before content accumulates.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Third, LinUOT tracks OnTrack within 0.003\u20130.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full sys- tem, confirming the mask\u2019s null ranking effect here as well.",
+      "claim_summary": "Third, LinUOT tracks OnTrack within 0.003\u20130.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full sys- tem, confirming the mask\u2019s null ranking effect here as well.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Fourth, the balanced multi-seed protocol (Appendix A) agrees in direction with somewhat larger deltas; we cite the primary protocol\u2019s numbers everywhere.",
+      "claim_summary": "Fourth, the balanced multi-seed protocol (Appendix A) agrees in direction with somewhat larger deltas; we cite the primary protocol\u2019s numbers everywhere.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The advantage is consis- tent across all three operating points.",
+      "claim_summary": "The advantage is consis- tent across all three operating points.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On an earlier, independent draw of the profile sample the same threshold gave 25.3% true stops at 12.7% false stops and 17.0% savings: the savings figure is stable across trace mixes (\u224817\u201318%), while the false-stop rate varies (13\u201321%) and should be validated on deployment traffic.",
+      "claim_summary": "On an earlier, independent draw of the profile sample the same threshold gave 25.3% true stops at 12.7% false stops and 17.0% savings: the savings figure is stable across trace mixes (\u224817\u201318%), while the false-stop rate varies (13\u201321%) and should be validated on deployment traffic.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "What we claim is a candidate policy: \u224818% savings at \u224820% balanced false stops at the illustrated point, not produc- tion readiness.",
+      "claim_summary": "What we claim is a candidate policy: \u224818% savings at \u224820% balanced false stops at the illustrated point, not produc- tion readiness.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "claim_summary": "The honest finding is that the savings-vs-false-stop frontier alone does not select a winner.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At a matched \u224820% false-stop rate, flag- density (17.9%) and an interpolated step-cutoff (\u224816.5%) save comparable cost; at \u224829% false stops, blunt early policies save more (cosine-cutoff 37.9%, budget-cutoff 31.9%, vs. flag-density 28.0%), because savings track how early a policy fires and nothing fires earlier than a cutoff that barely looks at the trace (cosine-cutoff\u2019s median abort is step 6, vs. 33\u201344 for flag density).",
+      "claim_summary": "At a matched \u224820% false-stop rate, flag- density (17.9%) and an interpolated step-cutoff (\u224816.5%) save comparable cost; at \u224829% false stops, blunt early policies save more (cosine-cutoff 37.9%, budget-cutoff 31.9%, vs. flag-density 28.0%), because savings track how early a policy fires and nothing fires earlier than a cutoff that barely looks at the trace (cosine-cutoff\u2019s median abort is step 6, vs. 33\u201344 for flag density).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The hybrid tracks the step-cutoff frontier and adds nothing.",
+      "claim_summary": "The hybrid tracks the step-cutoff frontier and adds nothing.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "First, threshold stability: cosine-cutoff\u2019s frontier is pathologically sensitive \u2014 moving its threshold from 0.40 to 0.55 swings the false-stop rate from 3.3% to 28% to 73% to 95%, so a miscalibration of 0.05 turns it from inert into a kill-everything switch \u2014 whereas flag density degrades gracefully across its entire range (29% to 19% false stops over thresholds 0.2\u20130.7).",
+      "claim_summary": "First, threshold stability: cosine-cutoff\u2019s frontier is pathologically sensitive \u2014 moving its threshold from 0.40 to 0.55 swings the false-stop rate from 3.3% to 28% to 73% to 95%, so a miscalibration of 0.05 turns it from inert into a kill-everything switch \u2014 whereas flag density degrades gracefully across its entire range (29% to 19% false stops over thresholds 0.2\u20130.7).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Second, actionability: a cutoff emits a bare kill signal, while a severe-flag trigger fires with a verdict (LOOP at step t, STALLED since step t\u2212w) that supports graduated responses \u2014 replan, inject guidance, escalate to a human \u2014 of which aborting is only the bluntest.",
+      "claim_summary": "Second, actionability: a cutoff emits a bare kill signal, while a severe-flag trigger fires with a verdict (LOOP at step t, STALLED since step t\u2212w) that supports graduated responses \u2014 replan, inject guidance, escalate to a human \u2014 of which aborting is only the bluntest.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We therefore present the abort experiment as evidence that the verdict stream supports a candidate operating policy that is reasonably stable on this corpus, not that it dominates the savings frontier.",
+      "claim_summary": "We therefore present the abort experiment as evidence that the verdict stream supports a candidate operating policy that is reasonably stable on this corpus, not that it dominates the savings frontier.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We do not claim an edge over trace length here \u2014 at full-trace granularity, cost-limit detection is essentially length, and a step counter is equally available online.",
+      "claim_summary": "We do not claim an edge over trace length here \u2014 at full-trace granularity, cost-limit detection is essentially length, and a step counter is equally available online.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The relevant distinction is when and how the signal is usable: a raw step count offers no principled stopping rule mid-trace (any length cutoff is a per-task guess), whereas the severe-flag density that drives Table 6 is a calibrated, task-agnostic trigger that identifies the loop/flounder behavior producing the cost overrun while budget remains to save.",
+      "claim_summary": "The relevant distinction is when and how the signal is usable: a raw step count offers no principled stopping rule mid-trace (any length cutoff is a per-task guess), whereas the severe-flag density that drives Table 6 is a calibrated, task-agnostic trigger that identifies the loop/flounder behavior producing the cost overrun while budget remains to save.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The honest result is that such splices sit near the detection floor on this corpus: AUC(score) = 0.546, AUC(flags) = 0.540, cosine 0.516, and the per-trace leakage delta between spliced and clean versions is not significant (p = 0.93).",
+      "claim_summary": "The honest result is that such splices sit near the detection floor on this corpus: AUC(score) = 0.546, AUC(flags) = 0.540, cosine 0.516, and the per-trace leakage delta between spliced and clean versions is not significant (p = 0.93).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Every spliced trace raises at least one flag, but unspliced host traces of comparable length flag at nearly the same rate, so trace-level \u201cdetection rate\u201d is not a meaningful metric here and we do not report it as one.",
+      "claim_summary": "Every spliced trace raises at least one flag, but unspliced host traces of comparable length flag at nearly the same rate, so trace-level \u201cdetection rate\u201d is not a meaningful metric here and we do not report it as one.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Loops and stalls are also precisely the fault modes that dominate real cost-limit failures (Table 7), which is why the abort policy of Table 6 works despite the per-fault AUROC floor on the harder categories.",
+      "claim_summary": "Loops and stalls are also precisely the fault modes that dominate real cost-limit failures (Table 7), which is why the abort policy of Table 6 works despite the per-fault AUROC floor on the harder categories.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Online, where the marginals are the signal, 2\u03bb + \u03b5 acts as a soft cost threshold below which mass is destroyed rather than moved.",
+      "claim_summary": "Online, where the marginals are the signal, 2\u03bb + \u03b5 acts as a soft cost threshold below which mass is destroyed rather than moved.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The calibrated value falls below the batch default by roughly 3\u201310\u00d7 across our two settings \u2014 \u03bb = 0.1 on the controlled tasks with synthetic embeddings, \u03bb = 0.3 on SWE-bench with all-MiniLM-L6-v2 (Sec. 6.2) \u2014 and with it, clean separation emerges.",
+      "claim_summary": "The calibrated value falls below the batch default by roughly 3\u201310\u00d7 across our two settings \u2014 \u03bb = 0.1 on the controlled tasks with synthetic embeddings, \u03bb = 0.3 on SWE-bench with all-MiniLM-L6-v2 (Sec. 6.2) \u2014 and with it, clean separation emerges.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The dependence on the embedding model confirms that \u03bb must be recalibrated whenever the encoder (and hence the cost scale) changes.",
+      "claim_summary": "The dependence on the embedding model confirms that \u03bb must be recalibrated whenever the encoder (and hence the cost scale) changes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Point estimates are unstable at this sample size \u2014 an independent draw of the evaluation sample yields OnTrack 0.666 vs. cosine 0.657, reversing the ordering \u2014 so the only conclusion the data support is that neither process alignment nor content similarity predicts patch correctness from the trajectory alone.",
+      "claim_summary": "Point estimates are unstable at this sample size \u2014 an independent draw of the evaluation sample yields OnTrack 0.666 vs. cosine 0.657, reversing the ordering \u2014 so the only conclusion the data support is that neither process alignment nor content similarity predicts patch correctness from the trajectory alone.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192more accumulated transport cost).",
+      "claim_summary": "This confirms that the modest full-trajectory outcome correlation is largely mediated by trace length \u2014 unresolved traces are longer on average \u2014 and that OnTrack score is length-sensitive by construction (more steps \u2192more accumulated transport cost).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Empirically this is a nega- tive result: at \u03b3eff = 0.3 the coupling quality degrades across ablations (on a held-out tool-calling corpus, mean ablation AUROC drops from 0.825 to 0.715), because observations are high-variance \u2014 correct and incorrect executions of the same step both produce textually dif- ferent outputs every time, so the effect term dilutes the action/tool signal that correctly drives the alignment.",
+      "claim_summary": "Empirically this is a nega- tive result: at \u03b3eff = 0.3 the coupling quality degrades across ablations (on a held-out tool-calling corpus, mean ablation AUROC drops from 0.825 to 0.715), because observations are high-variance \u2014 correct and incorrect executions of the same step both produce textually dif- ferent outputs every time, so the effect term dilutes the action/tool signal that correctly drives the alignment.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The same information is useful downstream of the cou- pling: a mass-weighted content-divergence signal (does the observation match what the reference saw at the coupled node?) contributes to struggling-agent detection without touching the transport.",
+      "claim_summary": "The same information is useful downstream of the cou- pling: a mass-weighted content-divergence signal (does the observation match what the reference saw at the coupled node?) contributes to struggling-agent detection without touching the transport.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On SWE- agent traces, which follow a narrow search\u2013read\u2013edit\u2013test template, a checkpoint-level ablation at k=5 and k=10 (5 seeds) shows Full OnTrack exceeds the No-GW (\u03b8=0) variant by only +0.009 and +0.001 respectively \u2014 within sampling noise.",
+      "claim_summary": "On SWE- agent traces, which follow a narrow search\u2013read\u2013edit\u2013test template, a checkpoint-level ablation at k=5 and k=10 (5 seeds) shows Full OnTrack exceeds the No-GW (\u03b8=0) variant by only +0.009 and +0.001 respectively \u2014 within sampling noise.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "OnTrack shows that structure-aware optimal transport \u2014 until now a post-hoc instrument \u2014 can run inside the agent loop and act in real time, without surrendering the properties that made it worth having.",
+      "claim_summary": "OnTrack shows that structure-aware optimal transport \u2014 until now a post-hoc instrument \u2014 can run inside the agent loop and act in real time, without surrendering the properties that made it worth having.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The quadratic structure term survives through amortized conditional gradient; the prefix problem is solved by frontier-masked marginals that keep order-freedom where the DAG per- mits it and convert agent-side mass leakage into a real- time signal; and every intervention rests on per-node transport marginals, escalated to a converged solve be- fore action.",
+      "claim_summary": "The quadratic structure term survives through amortized conditional gradient; the prefix problem is solved by frontier-masked marginals that keep order-freedom where the DAG per- mits it and convert agent-side mass leakage into a real- time signal; and every intervention rests on per-node transport marginals, escalated to a converged solve be- fore action.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "On 2,294 SWE-agent trajectories, OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out pro- tocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10) \u2014 and a candidate flag- density abort policy stops roughly one in four failing runs, saving 17\u201318% of compute on the failed population at \u224883% deployment-adjusted precision.",
+      "claim_summary": "On 2,294 SWE-agent trajectories, OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out pro- tocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10) \u2014 and a candidate flag- density abort policy stops roughly one in four failing runs, saving 17\u201318% of compute on the failed population at \u224883% deployment-adjusted precision.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The component study clarifies what the transport machinery changes on real traces: not recall \u2014 L1 heuristics and even a prerequisite-rule baseline match or exceed it there \u2014 but the operating point: at shipped thresholds the quadratic structure term selects a point with less than half the benign false-alarm rate of every reference-free variant (13/40 vs. 29\u201332/40 benign traces flagged; removing the frontier mask instead shifts the count by one trace); establishing curve-level dominance remains open, and we do not claim generally superior detection precision.",
+      "claim_summary": "The component study clarifies what the transport machinery changes on real traces: not recall \u2014 L1 heuristics and even a prerequisite-rule baseline match or exceed it there \u2014 but the operating point: at shipped thresholds the quadratic structure term selects a point with less than half the benign false-alarm rate of every reference-free variant (13/40 vs. 29\u201332/40 benign traces flagged; removing the frontier mask instead shifts the count by one trace); establishing curve-level dominance remains open, and we do not claim generally superior detection precision.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The precise summary of the real-trace evidence is this: on homogeneous SWE-agent traces, OnTrack provides a modest early advantage over content similarity, and its main structural contribution is selecting a lower-false-alarm operating point rather than improving ranking.",
+      "claim_summary": "The precise summary of the real-trace evidence is this: on homogeneous SWE-agent traces, OnTrack provides a modest early advantage over content similarity, and its main structural contribution is selecting a lower-false-alarm operating point rather than improving ranking.",
+      "pass": "pass2"
+    }
+  ]
+}
