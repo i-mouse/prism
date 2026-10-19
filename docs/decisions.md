@@ -2864,3 +2864,48 @@ which was written and tested before any real match.
   K4 is applied as logged on the full runs (mean over 12 papers); it is
   not changed. If K4 fails, EXTRACTOR_PASS2_CLEAN stays off until audit
   cost is lowered (e.g. caching) and re-checked.
+
+## Clean-extraction attempt: K6/K7 labelling method, caching dropped, K4 path - 2026-10-19
+Logged before the 2 full runs. Amends "Clean-extraction attempt amended: new
+pass-2 prompt + filter - 2026-10-17" and closes the two open items in "Pass-2
+comparison result for 2610.10590v1: KEEP - 2026-10-18".
+- K6 method: code draws the sample of 30 kept cleaned pass-2 claims per run
+  (seed 20261017) before any labelling. Each item is shown inside its
+  paragraph (paragraph before, the sentence highlighted, paragraph after,
+  nearest heading), taken from the raw pipeline paper text using the existing
+  paragraph-context function in extraction/grounding.py. A sentence that
+  appears in both runs (same paper, same normalized text) is labelled once and
+  the label applies to both. Items are shuffled; run, pass and filter verdict
+  are hidden; the key is stored separately and opened only after the labels
+  file is locked (its sha256 is recorded in the score report).
+- K6 labels: A claim / B limitation or caveat / C setup or description /
+  D other / unsure, using claim definition v2 (2026-10-17). Only A counts as a
+  claim. Gate: unsure = not claim; precision >= 0.70 (>= 21 of 30) per run.
+  Unsure-as-claim is reported, not gating. Human labels only; no AI judge.
+- K7 method: same pack style. Each "same" drop is shown next to the claim it
+  was judged the same as, each with its own context, pair order shuffled.
+  Labels: same / broader / narrower / different / unsure. Gate unchanged: at
+  most 1 of 30 per run (all if fewer) is not "same"; unsure counts as not same.
+- A sampled sentence that cannot be located in the paper text is shown bare,
+  flagged, and counted in the report. It is not replaced or dropped.
+- Caching: not built for the current auditor. Reason: the auditor phase is
+  expected to replace the "full paper per claim" design, so caching it now is
+  throwaway work. K4 is applied as logged (87 x r + p2 + f <= INR 130, mean
+  over 12 papers). If K4 fails, EXTRACTOR_PASS2_CLEAN stays off until auditor
+  cost is lowered and re-checked, per the 2026-10-18 entry. K4's formula and
+  cap are not changed.
+- After the 2 runs are scored, the claim list is frozen. No further
+  extraction experiments in this version.
+- Scope note (no change now): the product brief targets headline claims;
+  extraction covers the whole paper. Not changed in this attempt, because the
+  dev set and rubric are whole-paper and changing scope after seeing results
+  would move the goalposts. Revisit after the auditor phase as its own logged
+  decision, applied to a new sealed set from the start.
+- Next after this attempt: auditor phase. Candidate design, NOT approved:
+  evidence-first judging (paper split into numbered sentences, relevant
+  sentences selected, claim judged on those only) plus majority vote across
+  repeats. External basis: RIGOURATE (arXiv 2601.04350): sentence IDs, small
+  contexts, multi-model majority vote; CLAIM-BENCH (IJCNLP 2025): decomposed
+  prompting raises recall. Marks and budget are written before any run; all
+  numbers are re-baselined.
+- The K6/K7 tooling makes no LLM or API calls (INR 0).
