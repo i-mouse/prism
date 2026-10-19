@@ -1,0 +1,932 @@
+{
+  "seed": 20261017,
+  "n": 30,
+  "provenance": {
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.10590v1_clean.json": "0617cad62088f0101e96b8177c41adf03cabb9f0ba6890eb9f01d7e76202b00b",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.10871v1_clean.json": "fa138736c91a396872274d7aab4c830caec39e1476e3a4796d845f5e931b6085",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11132v1_clean.json": "149e03f3110057e7b55e41aad8d32c6b9394e7bf75677998b0983f51c645d9fd",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11135v1_clean.json": "03e2748cbb792cf483a2482f2c37a058fb331a914f664f0f20df04ba7edb5b4b",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11291v1_clean.json": "be6fb259d00653a27c3765596ef377972341cd6ae98b45f474dbe441e213a315",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11312v1_clean.json": "77bc7c955e6aaf52c015170360a363c52a8625faf9572e013c27375921968b46",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11519v1_clean.json": "062eb748d76c43c0bda9e849187c7a2c96e3d71897050398d9b67569fad0ae72",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12114v1_clean.json": "dfcbf07e336f9878011c0c81ea7ef9ca5dbffe73429478927cd2d2126aceb13a",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12124v1_clean.json": "981fdf176493d2baba77a1fb0b01d9d7bfb30b7e0a19a082d0e964fd32e42b96",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12168v1_clean.json": "e5ee37cf0f67843452c5edc97193974b4dd2abdb8ea935007adf3bcd60d6a4ec",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12176v1_clean.json": "dcea07c93f2ee808623652a22d129cefb59e685cd9516e43b44784405f6a38e2",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12375v1_clean.json": "213ce5aa3ba95006ef1757bb1773bf85ed94f2f16a16b46dc9712e65c9b4da6f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.10590v1_clean.json": "2b57c8bfdf8619c5f04417334c7e042b0c3f02c82f6df70ee1ed4ea39e1980b5",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.10871v1_clean.json": "8d8442e9ff5445cbd3d211ccf478204592992d60b4bfe070a86834d7a4cc037c",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11132v1_clean.json": "75087c70063aa41164b9655b1722af20ac72b0ba3db8ad5e3f45bfb0cef3177d",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11135v1_clean.json": "a36e3f20821d5c930161e077c4e66058d9857bcab43065ef36f59a7bb6b49f46",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11291v1_clean.json": "6a72907a9ba4cc6313b87163d7756598d66e67a2aadba4543ad8e003d836ae4f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11312v1_clean.json": "85d64f311a156aba7e3d955fccd73cbce770f4900f487127be2d1128fed987b4",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11519v1_clean.json": "1b6bf82ef3f48d6b9146f91a7118bf10b665ce9d5bed6fbce85d6e9f9f02644c",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12114v1_clean.json": "4256bce43fcc3cdf83f3b8ba673f7ec1662419689e86ca9ee95df58451dcb578",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12124v1_clean.json": "a6265c54b51016e0fd95b9a48e30ea1bd2309be98ab002997013b3e3354d8375",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12168v1_clean.json": "1da07d7eb1136561372311943254c64344d79f01ad6ab185b1d7339fd3363727",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12176v1_clean.json": "a9f21242edce8912a50f071157dc291eeb055ec486e7a634afe7ee82422186e7",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12375v1_clean.json": "51d1036b588668560428adad0f23c8f49cde2d32a349915112740b70b1d1cc03"
+  },
+  "items": {
+    "L001": {
+      "paper_id": "arxiv-2610.12168v1",
+      "run": "clean_r1",
+      "candidate_id": "P3",
+      "neighbour_id": "C1",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L002": {
+      "paper_id": "arxiv-2610.12168v1",
+      "run": "clean_r1",
+      "candidate_id": "P2",
+      "neighbour_id": "C13",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L003": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r2",
+      "candidate_id": "P53",
+      "neighbour_id": "P50",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L004": {
+      "paper_id": "arxiv-2610.11291v1",
+      "run": "clean_r2",
+      "candidate_id": "P32",
+      "neighbour_id": "P29",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L005": {
+      "paper_id": "arxiv-2610.11291v1",
+      "run": "clean_r1",
+      "candidate_id": "P40",
+      "neighbour_id": "C13",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L006": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P22",
+      "neighbour_id": "C27",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": true
+      }
+    },
+    "L007": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r1",
+      "candidate_id": "P17",
+      "neighbour_id": "C0",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L008": {
+      "paper_id": "arxiv-2610.12168v1",
+      "run": "clean_r1",
+      "candidate_id": "P5",
+      "neighbour_id": "C2",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L009": {
+      "paper_id": "arxiv-2610.11312v1",
+      "run": "clean_r2",
+      "candidate_id": "P24",
+      "neighbour_id": "C16",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L010": {
+      "paper_id": "arxiv-2610.11135v1",
+      "run": "clean_r2",
+      "candidate_id": "P38",
+      "neighbour_id": "C17",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L011": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P58",
+      "neighbour_id": "C24",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L012": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r2",
+      "candidate_id": "P100",
+      "neighbour_id": "C16",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L013": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r1",
+      "candidate_id": "P87",
+      "neighbour_id": "P38",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L014": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r1",
+      "candidate_id": "P22",
+      "neighbour_id": "C1",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L015": {
+      "paper_id": "arxiv-2610.10871v1",
+      "run": "clean_r1",
+      "candidate_id": "P32",
+      "neighbour_id": "C6",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L016": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P18",
+      "neighbour_id": "C6",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L017": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P31",
+      "neighbour_id": "C13",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L018": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P24",
+      "neighbour_id": "C8",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L019": {
+      "paper_id": "arxiv-2610.12375v1",
+      "run": "clean_r1",
+      "candidate_id": "P40",
+      "neighbour_id": "C26",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L020": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P23",
+      "neighbour_id": "C0",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L021": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P9",
+      "neighbour_id": "C8",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L022": {
+      "paper_id": "arxiv-2610.12124v1",
+      "run": "clean_r1",
+      "candidate_id": "P34",
+      "neighbour_id": "C0",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L023": {
+      "paper_id": "arxiv-2610.10871v1",
+      "run": "clean_r2",
+      "candidate_id": "P29",
+      "neighbour_id": "C2",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L024": {
+      "paper_id": "arxiv-2610.10590v1",
+      "run": "clean_r1",
+      "candidate_id": "P3",
+      "neighbour_id": "C9",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L025": {
+      "paper_id": "arxiv-2610.11135v1",
+      "run": "clean_r2",
+      "candidate_id": "P47",
+      "neighbour_id": "C26",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L026": {
+      "paper_id": "arxiv-2610.12168v1",
+      "run": "clean_r2",
+      "candidate_id": "P5",
+      "neighbour_id": "P4",
+      "is_paper_claim": false,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L027": {
+      "paper_id": "arxiv-2610.11291v1",
+      "run": "clean_r1",
+      "candidate_id": "P35",
+      "neighbour_id": "C28",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L028": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r1",
+      "candidate_id": "P108",
+      "neighbour_id": "C16",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L029": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P25",
+      "neighbour_id": "C23",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L030": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P13",
+      "neighbour_id": "C11",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L031": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P3",
+      "neighbour_id": "C1",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L032": {
+      "paper_id": "arxiv-2610.12124v1",
+      "run": "clean_r2",
+      "candidate_id": "P8",
+      "neighbour_id": "C7",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L033": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P51",
+      "neighbour_id": "P3",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L034": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r1",
+      "candidate_id": "P84",
+      "neighbour_id": "C12",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L035": {
+      "paper_id": "arxiv-2610.11291v1",
+      "run": "clean_r1",
+      "candidate_id": "P12",
+      "neighbour_id": "C3",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L036": {
+      "paper_id": "arxiv-2610.12176v1",
+      "run": "clean_r2",
+      "candidate_id": "P31",
+      "neighbour_id": "C11",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L037": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P30",
+      "neighbour_id": "P26",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L038": {
+      "paper_id": "arxiv-2610.12168v1",
+      "run": "clean_r1",
+      "candidate_id": "P10",
+      "neighbour_id": "P9",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L039": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r2",
+      "candidate_id": "P101",
+      "neighbour_id": "C16",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L040": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P7",
+      "neighbour_id": "C8",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L041": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r1",
+      "candidate_id": "P54",
+      "neighbour_id": "P53",
+      "is_paper_claim": false,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L042": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r2",
+      "candidate_id": "P77",
+      "neighbour_id": "C19",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L043": {
+      "paper_id": "arxiv-2610.11312v1",
+      "run": "clean_r2",
+      "candidate_id": "P4",
+      "neighbour_id": "C22",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L044": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r2",
+      "candidate_id": "P80",
+      "neighbour_id": "C25",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L045": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r2",
+      "candidate_id": "P12",
+      "neighbour_id": "C11",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L046": {
+      "paper_id": "arxiv-2610.11291v1",
+      "run": "clean_r1",
+      "candidate_id": "P0",
+      "neighbour_id": "C6",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L047": {
+      "paper_id": "arxiv-2610.11519v1",
+      "run": "clean_r2",
+      "candidate_id": "P31",
+      "neighbour_id": "P29",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L048": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r2",
+      "candidate_id": "P35",
+      "neighbour_id": "P21",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L049": {
+      "paper_id": "arxiv-2610.12176v1",
+      "run": "clean_r2",
+      "candidate_id": "P9",
+      "neighbour_id": "C7",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L050": {
+      "paper_id": "arxiv-2610.12176v1",
+      "run": "clean_r2",
+      "candidate_id": "P60",
+      "neighbour_id": "P16",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L051": {
+      "paper_id": "arxiv-2610.12176v1",
+      "run": "clean_r2",
+      "candidate_id": "P1",
+      "neighbour_id": "C17",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L052": {
+      "paper_id": "arxiv-2610.11135v1",
+      "run": "clean_r2",
+      "candidate_id": "P48",
+      "neighbour_id": "P24",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L053": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r2",
+      "candidate_id": "P24",
+      "neighbour_id": "C22",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L054": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r2",
+      "candidate_id": "P3",
+      "neighbour_id": "C1",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L055": {
+      "paper_id": "arxiv-2610.11132v1",
+      "run": "clean_r1",
+      "candidate_id": "P57",
+      "neighbour_id": "P56",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L056": {
+      "paper_id": "arxiv-2610.11312v1",
+      "run": "clean_r2",
+      "candidate_id": "P28",
+      "neighbour_id": "C0",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L057": {
+      "paper_id": "arxiv-2610.11135v1",
+      "run": "clean_r1",
+      "candidate_id": "P0",
+      "neighbour_id": "C8",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L058": {
+      "paper_id": "arxiv-2610.12114v1",
+      "run": "clean_r1",
+      "candidate_id": "P36",
+      "neighbour_id": "P18",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L059": {
+      "paper_id": "arxiv-2610.10871v1",
+      "run": "clean_r1",
+      "candidate_id": "P18",
+      "neighbour_id": "P12",
+      "is_paper_claim": true,
+      "order": [
+        "candidate",
+        "neighbour"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    },
+    "L060": {
+      "paper_id": "arxiv-2610.12176v1",
+      "run": "clean_r1",
+      "candidate_id": "P65",
+      "neighbour_id": "P15",
+      "is_paper_claim": true,
+      "order": [
+        "neighbour",
+        "candidate"
+      ],
+      "not_found": {
+        "candidate": false,
+        "neighbour": false
+      }
+    }
+  }
+}
