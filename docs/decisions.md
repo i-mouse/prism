@@ -2931,3 +2931,9 @@ Logged before any paid call of the 2 full runs.
   (b7eb1ab2f3fa). The true filter hash is 7b3e37e260b9. The copy bug was
   fixed in replay_clean.py on 2026-10-19; the old files are left as they are.
 - Marks K1-K8 are unchanged.
+
+- Amendment 2026-10-19: the filter runs inside each run (the code has no
+  clean split). --max-inr 105 per run covers pass 2 + filter together;
+  total stays <= INR 210. p2 and f are still recorded separately
+  (pass2_cost_inr, filter_cost_inr) for K4. A run where any paper's filter
+  was skipped by the cap is void.
