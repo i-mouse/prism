@@ -2937,3 +2937,14 @@ Logged before any paid call of the 2 full runs.
   total stays <= INR 210. p2 and f are still recorded separately
   (pass2_cost_inr, filter_cost_inr) for K4. A run where any paper's filter
   was skipped by the cap is void.
+
+  - Amendment 2026-10-19 (before any paid call): the filter runs inside each
+  run (the code has no clean split), so one cap covers pass 2 + filter
+  together. Measured pilot rates re-project run 1 at about INR 128 (154 with
+  +20% margin); filter cost is far above the 20 first assumed. Cap set to
+  --max-inr 160 per run; both runs <= INR 320; attempt total stays
+  <= INR 350. p2 and f are still recorded separately (pass2_cost_inr,
+  filter_cost_inr) for K4. A run where any paper's filter was skipped by
+  the cap is void. Run 2 starts only after run 1's real cost is reviewed.
+  K1-K8 and the K4 formula are unchanged; K4 is expected to fail on cost
+  (flag stays off, per the 2026-10-18 entry).
