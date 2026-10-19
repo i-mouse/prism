@@ -2909,3 +2909,25 @@ comparison result for 2610.10590v1: KEEP - 2026-10-18".
   prompting raises recall. Marks and budget are written before any run; all
   numbers are re-baselined.
 - The K6/K7 tooling makes no LLM or API calls (INR 0).
+
+## Clean-extraction full runs: settings and run plan - 2026-10-19
+Logged before any paid call of the 2 full runs.
+- Code: filter v2, clean prompt hash 7b3e37e260b9 (pass2 v2 + clean
+  prompts + schemas.py). EXTRACTOR_PASS2_CLEAN is on only for these replay
+  runs; the default stays off.
+- Papers: the 12 dev papers only. Pass 1: the frozen Exp 3 pass-1 outputs,
+  reused unchanged, as decided 2026-10-17.
+- Settings: --pass2-thinking-level low; same model as the pilot; no prompt,
+  threshold or config change between runs.
+- Caps: each pass-2 run --max-inr 85; filter <= INR 40 for both runs
+  together; attempt total <= INR 350 (about INR 6.4 spent so far). A run
+  stopped by a cap is void and is not rerun without a new dated entry.
+- Order: free estimate -> run 1 -> run 2 -> filter on both -> build K6/K7
+  packs and the K1 review sheet (free) -> human labels -> score K1-K8.
+  Each paid step needs an explicit "go".
+- Outputs: docs/evals/fixtures/dev/clean/clean_r1 and clean_r2. Pass-2
+  cost (p2) and filter cost (f) are logged separately per paper for K4.
+- Note: the clean_filter2 fixture headers carry a stale prompt_hash
+  (b7eb1ab2f3fa). The true filter hash is 7b3e37e260b9. The copy bug was
+  fixed in replay_clean.py on 2026-10-19; the old files are left as they are.
+- Marks K1-K8 are unchanged.
