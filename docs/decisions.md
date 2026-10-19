@@ -2954,3 +2954,12 @@ Logged before any paid call of the 2 full runs.
   hash 7b3e37e260b9, 0 failed windows, 0 fallback calls. Headroom under 160
   is too thin for run 2, so run 2 cap is set to --max-inr 185. Attempt
   total stays <= INR 350 (6.4 + 155.26 + 185 = 346.7). No other change.
+
+  - Amendment 2026-10-19 (before any labels are seen): K1, K6 and K7
+  labelling is AI-assisted, replacing "human labels only". ChatGPT and
+  Gemini each label the same blind pack with the same prompt; no key file
+  is ever shared. Both agree -> that label. Disagree or either unsure ->
+  Nitin decides with claim definition v2 and the 2026-10-18 boundary rule;
+  still unsure -> "unsure" (K6: not claim; K7: not same). Gates unchanged.
+  Agreement rate is reported. Caveat: AI-assisted labels, same method as
+  the 2610.10590v1 answer key.
