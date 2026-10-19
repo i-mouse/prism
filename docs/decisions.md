@@ -2948,3 +2948,9 @@ Logged before any paid call of the 2 full runs.
   the cap is void. Run 2 starts only after run 1's real cost is reviewed.
   K1-K8 and the K4 formula are unchanged; K4 is expected to fail on cost
   (flag stays off, per the 2026-10-18 entry).
+
+  - Amendment 2026-10-19 (after run 1, before run 2): run 1 real cost
+  INR 155.26 (pass 2 91.0, filter 64.25); 12/12 papers, filter ran on all,
+  hash 7b3e37e260b9, 0 failed windows, 0 fallback calls. Headroom under 160
+  is too thin for run 2, so run 2 cap is set to --max-inr 185. Attempt
+  total stays <= INR 350 (6.4 + 155.26 + 185 = 346.7). No other change.
