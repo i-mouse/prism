@@ -210,3 +210,60 @@ def test_no_hard_stop_for_run_name_not_in_expected_counts(tmp_path, monkeypatch)
     ])
     diag.main()
     assert output_path.exists()
+
+
+# ---------------------------------------------------------------------------
+# --no-filter mode: S3 == S2, never reads _filtered.json/_clean.json, and
+# default (no_filter=False) stays byte-identical to existing behavior.
+# ---------------------------------------------------------------------------
+
+def test_no_filter_makes_s3_equal_s2_without_filtered_or_clean_files(tmp_path, monkeypatch):
+    run_dir = tmp_path / "run"
+    _write(run_dir, "paperA", "pass1", {"header": _header(), "claims": []})
+    _write(run_dir, "paperA", "pass2", {"header": _header(), "sentences": [ROW_TEXT]})
+    _write(run_dir, "paperA", "merged", {"header": _header(), "claims": [
+        {"claim_text_verbatim": ROW_TEXT, "pass": "pass2"},
+    ]})
+    _write(run_dir, "paperA", "buckets", {"header": _header(), "dropped_ungrounded": 0, "dropped_duplicate": []})
+    # Deliberately NOT writing _filtered.json or _clean.json - they must never be read.
+    monkeypatch.setattr(diag, "_k1_target_rows", lambda *a, **k: [ROW])
+
+    result = diag.run_diagnostic({"exp3_r1": run_dir}, Path("x"), Path("y"), Path("z"), no_filter=True)
+    row = result["per_run"]["exp3_r1"]["rows"][0]
+    assert row["loss_stage_low"] == "found"  # S3 (== S2) finds it, even with no filter files
+    assert row["loss_stage_high"] == "found"
+    assert (run_dir / "paperA_filtered.json").exists() is False
+    assert (run_dir / "paperA_clean.json").exists() is False
+
+
+def test_no_filter_default_false_matches_previous_behavior(tmp_path, monkeypatch):
+    run_dir = _empty_run(tmp_path)
+    item = {"paper_id": "paperA", "text": ROW_TEXT}
+    monkeypatch.setattr(diag, "_s0_items", lambda *a, **k: [])
+    monkeypatch.setattr(diag, "_s1_items", lambda *a, **k: [item])
+    monkeypatch.setattr(diag, "_s2_items", lambda *a, **k: [item])
+    monkeypatch.setattr(diag, "_s3_items", lambda *a, **k: [item])
+    monkeypatch.setattr(diag, "_k1_target_rows", lambda *a, **k: [ROW])
+
+    default_result = diag.run_diagnostic({"r": run_dir}, Path("x"), Path("y"), Path("z"))
+    explicit_false_result = diag.run_diagnostic({"r": run_dir}, Path("x"), Path("y"), Path("z"), no_filter=False)
+    assert default_result == explicit_false_result
+
+
+def test_main_no_filter_flag_threads_through(tmp_path, monkeypatch):
+    run_dir = tmp_path / "run"
+    _write(run_dir, "paperA", "pass1", {"header": _header(), "claims": []})
+    _write(run_dir, "paperA", "pass2", {"header": _header(), "sentences": [ROW_TEXT]})
+    _write(run_dir, "paperA", "merged", {"header": _header(), "claims": [
+        {"claim_text_verbatim": ROW_TEXT, "pass": "pass2"},
+    ]})
+    _write(run_dir, "paperA", "buckets", {"header": _header(), "dropped_ungrounded": 0, "dropped_duplicate": []})
+    monkeypatch.setattr(diag, "_k1_target_rows", lambda *a, **k: [ROW])
+    output_path = tmp_path / "report.md"
+
+    monkeypatch.setattr("sys.argv", [
+        "diag_k1_stages", "--run", f"exp3_r1:{run_dir}", "--no-filter", "--output-path", str(output_path),
+    ])
+    diag.main()
+    assert output_path.exists()
+    assert "found" in output_path.read_text(encoding="utf-8")

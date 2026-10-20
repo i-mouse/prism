@@ -3022,3 +3022,31 @@ docs/evals/clean_labels/clean_attempt_score.md.
 - Next, in order: free K1 diagnostic (exploratory); pre-registered filter fix with a
   free K7 re-check; merge; auditor phase (cost); claim-scope decision after the
   auditor phase as logged 2026-10-19.
+
+## K1 diagnostics and filter status (exploratory) - 2026-10-20
+- Stage diagnostic (docs/evals/clean_labels/k1_stage_diagnostic.md): all 8 lost target
+  rows were lost at the pass-2 output stage in both clean runs; zero merge or filter
+  drops (pre-filter = final). The filter did not cause the K1 shortfall.
+- Old vs new pass-2 prompt, same fuzzy method (k1_prompt_comparison.md): old 6/13 and
+  6/13, new 5/13 and 6/13; stable rows old 5/7, new 4/7. Rule (>= 2 in both pairings)
+  not met: no clear recall loss from the v2 prompt.
+- Correction: Experiment 3's earlier 8/13 used AI-proposed, human-verified matching; on
+  the same fuzzy method the old prompt scores 6/13. Not comparable.
+- Thinking level: both sides ran pass-2 thinking LOW (2026-10-15, 2026-10-19 entries),
+  consistent with thought-token counts exp3 pass2_r1=9,234, exp3 pass2_r2=7,713, clean
+  clean_r1=13,947, clean clean_r2=13,961. Not stored in fixture headers: logging gap.
+- Filter-off question answered from existing data, no new run: removing the filter does
+  not change K1 (pre-filter = final) and keeps more non-claims and more claims (Exp 3
+  without the LLM filter r 2.73 / 2.75; clean with it r 2.50 / 2.47; prompt also
+  differed). Pass 2 stays off.
+- K7 filter fix PARKED (design kept): drop as "same" only if the candidate adds no new
+  number or content word; never resolve "same" against a dropped neighbour; validate
+  neighbour ids; add an id to each filter answer. Revisit with the pass-2 redesign.
+- Pass-2-recovered claims (about 5-6 of 13) were never audited: their end-to-end value
+  is unmeasured.
+- Reading: both prompts miss about 7 of 13 hard rows; cause is the copy-from-window
+  method. Order: auditor first (better and cheaper; a weak auditor wastes extraction
+  gains), then pass 2 or a numbered-sentence extraction, measured end to end with the
+  new auditor.
+- Next: pre-merge review; PR eval/dev-baseline-run1 -> main; auditor phase.
+  PRISM_STATUS.md sync deferred.

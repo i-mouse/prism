@@ -274,15 +274,20 @@ def diagnose_row(run_dir: Path, row: dict, s0: list[dict], s1: list[dict], s2: l
 
 def run_diagnostic(
     run_dirs: dict[str, Path], dev_eval_path: Path, match_map_path: Path, run1_fixture_dir: Path,
+    no_filter: bool = False,
 ) -> dict:
+    """no_filter=True: S3 is taken as S2 (`_filtered.json`/`_clean.json` are
+    never read) - for runs with no filter stage at all, e.g.
+    docs/evals/fixtures/dev/exp3/pass2_r1|r2. Default False keeps every
+    existing caller's behavior byte-identical."""
     target_rows = _k1_target_rows(dev_eval_path, match_map_path, run1_fixture_dir)
     per_run = {}
     for run_name, run_dir in run_dirs.items():
         paper_ids = _paper_ids(run_dir)
-        s0, s1, s2, s3 = (
-            _s0_items(run_dir, paper_ids), _s1_items(run_dir, paper_ids),
-            _s2_items(run_dir, paper_ids), _s3_items(run_dir, paper_ids),
-        )
+        s0 = _s0_items(run_dir, paper_ids)
+        s1 = _s1_items(run_dir, paper_ids)
+        s2 = _s2_items(run_dir, paper_ids)
+        s3 = s2 if no_filter else _s3_items(run_dir, paper_ids)
         rows = [diagnose_row(run_dir, row, s0, s1, s2, s3) for row in target_rows]
 
         def count(stage: str, bound: str) -> int:
@@ -399,11 +404,16 @@ def main() -> None:
     parser.add_argument("--dev-eval-path", type=Path, default=DEFAULT_DEV_EVAL_PATH)
     parser.add_argument("--match-map-path", type=Path, default=DEFAULT_MATCH_MAP_PATH)
     parser.add_argument("--run1-fixture-dir", type=Path, default=DEFAULT_RUN1_FIXTURE_DIR)
+    parser.add_argument("--no-filter", action="store_true",
+                         help="S3 is taken as S2; never reads _filtered.json/_clean.json "
+                              "(for runs with no filter stage, e.g. exp3/pass2_r1|r2)")
     parser.add_argument("--output-path", type=Path, required=True)
     args = parser.parse_args()
 
     run_dirs = _parse_named_paths(args.runs)
-    result = run_diagnostic(run_dirs, args.dev_eval_path, args.match_map_path, args.run1_fixture_dir)
+    result = run_diagnostic(
+        run_dirs, args.dev_eval_path, args.match_map_path, args.run1_fixture_dir, no_filter=args.no_filter,
+    )
 
     mismatches = _check_hard_stop(result)
     if mismatches:
