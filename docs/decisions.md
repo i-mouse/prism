@@ -3001,3 +3001,24 @@ Logged before any K1-K8 number is computed. No key has been opened.
   AI-agreed K7 items. A filter fix is planned as a separate, pre-registered change
   after this attempt is scored. Claim-scope (headline vs every result) stays deferred
   as logged 2026-10-19.
+
+## Clean-extraction attempt result: FAIL, pass 2 stays off - 2026-10-20
+Scored with the bounded method logged above (commit 3a95425). Report:
+docs/evals/clean_labels/clean_attempt_score.md.
+- K1 FAIL: 5/13 (r1), 6/13 (r2) in both bounds (no borderline matches); 4 of the 7
+  stable rows found in both runs.
+- K2 PASS (18/18). K3 report-only: r mean 2.50, pooled 2.47.
+- K4 FAIL: projected INR 230.52/paper (mean), 227.55 (pooled), cap 130. The formula
+  scales the whole INR 87 per-paper pipeline by r (conservative, as logged).
+- K5 PASS: 0.991 / 0.991.
+- K6 PASS: precision 0.81 (worst) to 0.95 (best), bar 0.70.
+- K7 FAIL: not-same 43 (worst) / 18 (best), bar <= 1.
+- K8 FAIL on the filter sub-cap (INR 64.25 / 58.31 vs 40; foreseen in the 2026-10-19
+  amendment); attempt total INR 311.04 <= 350.
+- Decision: EXTRACTOR_PASS2_CLEAN stays off. Code kept behind the flag.
+- Reading: pass-2 output is mostly real claims (K5, K6), but the filter drops real
+  claims as "same" (K7), recall on the 13 target rows is low (K1), and volume (r 2.5)
+  makes per-claim processing cost too high (K4).
+- Next, in order: free K1 diagnostic (exploratory); pre-registered filter fix with a
+  free K7 re-check; merge; auditor phase (cost); claim-scope decision after the
+  auditor phase as logged 2026-10-19.
