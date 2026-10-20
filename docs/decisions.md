@@ -2972,3 +2972,32 @@ Logged before any paid call of the 2 full runs.
   disagreements. Spot-check: if he disagrees with the AI label on 3 or more
   of the 10, AI labels are rejected and he labels every item. Same rule for
   K7 and K1.
+
+## Clean-extraction attempt: spot-check result, diagnostic, bounded scoring - 2026-10-20
+Logged before any K1-K8 number is computed. No key has been opened.
+- Spot-checks: K6 6 of 10 differ (independent recount confirms), K7 4 of 10. Under the
+  2026-10-19 rule this rejects the AI labels.
+- Diagnostic (labels unchanged): on the 10 differing items, read in context against
+  claim definition v2 and the K7 labels, the AI labels matched the written definitions
+  in about 8 of 10. The reference labeller applied a narrower "headline claim" notion
+  (K6) and a "same gist" notion (K7), and states he labelled by gist without full
+  context. The spot-check therefore tested the AIs against an off-definition reference.
+- Method change (deviation, logged before scoring): AI-agreed items take the AI label.
+  K6 agreement on claim vs not-claim (both not-claim with different letters: ChatGPT's
+  letter). AI disagreements (K6 8, K7 25) are not resolved by anyone; each mark is
+  scored twice: worst case (K6 not claim; K7 different) and best case (K6 A; K7 same).
+  Both pass -> PASS; both fail -> FAIL; otherwise INCONCLUSIVE (counts as not passed).
+  Same rule as the 2026-10-18 Key A / Key B method. Nitin's review labels stay
+  committed for transparency and are not used in scoring.
+- K1 (deviation, logged before scoring): per run, each of the 13 target rows vs every
+  claim in the run's cleaned list, on normalize_for_match text. fuzz.ratio >= 90 ->
+  found (both bounds). fuzz.ratio 60-89 or partial_ratio >= 90 -> found only in the
+  best case. Otherwise not found. No LLM, no human judgement.
+- Other deviations: the AI-assisted labelling amendments were committed after the label
+  files were created (method decided in chat before labelling). Raw ChatGPT K7 output
+  recovered (format-only difference, all 60 labels identical); raw Gemini K7 output
+  was not kept.
+- Filter note: the S3 "same" verdict was confirmed "same" by both AIs on 17 of 35
+  AI-agreed K7 items. A filter fix is planned as a separate, pre-registered change
+  after this attempt is scored. Claim-scope (headline vs every result) stays deferred
+  as logged 2026-10-19.
