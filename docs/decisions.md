@@ -2963,3 +2963,12 @@ Logged before any paid call of the 2 full runs.
   still unsure -> "unsure" (K6: not claim; K7: not same). Gates unchanged.
   Agreement rate is reported. Caveat: AI-assisted labels, same method as
   the 2610.10590v1 answer key.
+
+  - Amendment 2026-10-19 (before any labels are scored): no exchange round
+  between the AIs. Agreed items take the AI label (K6 on claim vs
+  not-claim; K7 exact label). Nitin labels a blind, shuffled review list:
+  all disagreements plus 10 random agreed items (seed 20261019), without
+  seeing AI labels or which items are which. His label is final on
+  disagreements. Spot-check: if he disagrees with the AI label on 3 or more
+  of the 10, AI labels are rejected and he labels every item. Same rule for
+  K7 and K1.
