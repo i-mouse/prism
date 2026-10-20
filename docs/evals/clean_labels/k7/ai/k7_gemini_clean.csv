@@ -1,0 +1,61 @@
+item_id,label,note
+L001,same,Both state joint training of one model on the same three tasks.
+L002,different,A includes triple selection while B specifies withholding reference solutions during assessment.
+L003,same,Both state RL post-training causes negligible instruction-following forgetting on IFEval.
+L004,same,Identical sentence from the same paragraph with a minor boundary split.
+L005,same,Both state separate execution phases allow full GPU use for each stage.
+L006,different,A claims textual knowledge gains while B claims best six-combination model performance.
+L007,broader,A additionally specifies distilling teacher-student gaps into an interpretable reusable Primer.
+L008,same,Both state the loop alternates between reverse-engineering ideas and joint three-task training.
+L009,different,A reports Table 3 VLM scores while B describes Figure 3 results.
+L010,narrower,B additionally claims superiority at every position and gives specific AUC scores.
+L011,broader,A covers both Tables 7 and 8 whereas B covers only MathIF.
+L012,different,A compares 1.7B versus 4B drops while B claims guided students improve.
+L013,narrower,B additionally specifies divergence on tokens given probability below 10^-4 by teacher.
+L014,narrower,B additionally states the guidance term has zero mean within each response.
+L015,narrower,B additionally explains the mismatch between entrywise approximation and matrix multiplication.
+L016,same,Both state parent attention favors useful SFT responses over irrelevant context.
+L017,broader,A additionally claims applicability to closed-source models without parameter access.
+L018,narrower,B additionally specifies representing teacher-student gaps and making knowledge interpretable.
+L019,same,Both state cost-limit detection matches trace length and adds a mid-trace trigger.
+L020,broader,A additionally specifies distilling teacher-student gaps into an interpretable reusable Primer.
+L021,same,Both state UTT represents teacher-student knowledge gaps as an inspectable reusable text.
+L022,broader,A additionally specifies continual consolidation and selective recall of interaction history.
+L023,broader,A additionally claims negligible latency overhead under matched settings.
+L024,narrower,B additionally specifies that edits are restricted to individual tool-result occurrences.
+L025,same,Both report the same AUC gains and significance across Jev and DeepSeek.
+L026,same,Both state all three components share one language model with role-specific prompts.
+L027,narrower,A qualifies the positive-token advantage to 15 of 16 model pairs.
+L028,different,A compares 1.7B versus 4B drops while B claims guided students improve.
+L029,narrower,B additionally rules out an extra inference pass as explaining the gains.
+L030,same,Both state SFT-as-context combines fine-tuned and general capabilities beyond either model alone.
+L031,same,Both state the parent acquires fine-tuned skills in-context while preserving general capabilities.
+L032,same,Both state use-and-disuse dynamics unify memory recovery and continual learning.
+L033,narrower,A only covers recovering instruction-following while B covers all capabilities.
+L034,narrower,B additionally states that OPD later exceeds REINFORCE++ among one-response runs.
+L035,different,A requires student and teacher on-policyness while B requires full trajectory coverage.
+L036,broader,A covers coordination behaviors broadly while B specifies only information-handoff behaviors.
+L037,broader,A covers gains for all source students while B specifies only Qwen3.6-27B.
+L038,same,Both state all three components share one language model with role-specific prompts.
+L039,narrower,B additionally reports the specific Avg@8 and Pass@8 drops below frozen teacher.
+L040,broader,A additionally claims the distilled knowledge is interpretable and reusable across models.
+L041,same,Both state the example shows how a Primer guides student code generation.
+L042,broader,A additionally reports the 1.73 Avg@8 and 2.77 Pass@8 performance drop.
+L043,same,Both state open-ended task specification is harder than evidence mapping and instantiation.
+L044,narrower,B additionally reports post-Adam update shares and cosine similarity to the verifier.
+L045,same,Both state the Primer improves both the source Student and other Students.
+L046,same,Identical claim from Figure 1 caption where A includes the figure title.
+L047,narrower,B additionally states that degradation increases with branch weight under REINFORCE++.
+L048,broader,A covers both Bayesian and attention analyses while B covers only attention.
+L049,broader,A additionally claims the trained model discovers high-quality workflows faster.
+L050,broader,A includes unconditional redundancy falling in all four configurations alongside task-centered results.
+L051,broader,A compares effectiveness against single-agent trajectories while B only states multi-agent effectiveness.
+L052,same,Both state the input recipe helps models similarly so model choice dominates.
+L053,broader,A claims general fine-tuned capability gains while B restricts to NutriBench-English MAE.
+L054,same,Both state the parent acquires fine-tuned skills in-context while preserving general capabilities.
+L055,broader,A generalizes to any capability conflict while B specifies only adversarial safety.
+L056,different,A claims stage-by-stage evaluation via planning separation while B lists BIR contents.
+L057,narrower,B additionally claims JevKT beats deep KT up to N=64 on average.
+L058,narrower,B covers prompt engineering and KD baselines while A covers only KD.
+L059,same,Both state MASA selects units preserving AX rather than large matrix entries.
+L060,same,Both report identical unconditional and task-centered redundancy trends from i=3 to i=11.

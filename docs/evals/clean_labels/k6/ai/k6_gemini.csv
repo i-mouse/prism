@@ -1,0 +1,60 @@
+﻿item_id,label,note
+L001,A,Hedged finding that text serves as a universal knowledge transfer medium
+L002,A,Measured accuracy results comparing trained runs against the teacher model
+L003,A,Case study result comparing retention granularity between two method variants
+L004,A,Comparative finding favoring the complete RA construction over raw log ratio
+L005,A,Comparative ablation finding showing playbook induction offers no clear advantage
+L006,A,Measured fluctuation result on shorter responses motivating response centering
+L007,A,Measured benchmark results showing the sampled variant underperforms full-vocabulary OPD
+L008,B,Limitation stating spliced traces sit near the detection floor without significance
+L009,A,Measured comparison showing RA improves the verifier objective over direct loss
+L010,A,Measured comparison showing metric-dependent ranking reversals between two models
+L011,A,Hedged positioning claim about reducing the cost of comparing teachers
+L012,A,Measured result showing the mean absolute guidance term falls over training
+L013,B,Caveat showing precision-recall curves are indistinguishable across variants in sweeps
+L014,D,Corrupted extraction fragment splicing a confidence interval with a headless clause
+L015,A,Empirical finding demonstrating the parent model is not distracted by hallucinations
+L016,A,Measured result identifying the sole model pair where OPD rollouts shorten
+L017,A,Measured comparison of gradient magnitudes and update shares during training
+L018,A,Measured result showing every trained run beats the untrained student baseline
+L019,A,Comparative result claiming a consistent advantage across all three operating points
+L020,A,States a false-alarm reduction result alongside caveats on recall and precision
+L021,A,Theoretical result stating the student value baseline leaves expected updates unchanged
+L022,A,Empirical result showing post-trained models discover successful workflows earlier
+L023,A,Positioning claim that reported margins over deep KT baselines are conservative
+L024,A,Measured accuracy gains across all four knowledge-gap evaluation subsets
+L025,A,Measured training result on the mean token length of correct responses
+L026,A,Result claim asserting strong performance across memory knowledge use and learning
+L027,A,Analytical claim comparing the direct L2 control expectation and update dynamics
+L028,C,Experimental setup description stating what the prompted condition tests without results
+L029,A,Comparative result and efficiency claim against deep KT and LLM-KT baselines
+L030,C,Method description defining the mathematical formula for the RA advantage label
+L031,A,States a measured completion time speedup alongside a causal attribution caveat
+L032,A,Measured zero-shot AUC result on the target platform without training data
+L033,A,Comparative ablation result on replacing the evaluator versus both roles
+L034,A,Figure caption stating the empirical finding that on-policy rollouts inflate
+L035,A,Measured comparative result on rollout length growth between OPD and Semi-OPD
+L036,A,Measured report-delivery counts and percentages across three model generations
+L037,A,Finding that results support transfer from self-supervision to optimization and evaluation
+L038,A,Case study finding showing revision and checking without a favorable conclusion
+L039,A,Table caption claiming every residual variant and full RA outperform controls
+L040,A,Premise asserting agent-side leakage is a real-time signal of specific faults
+L041,A,Table caption stating RL-trained models show no instruction-following forgetting on IFEval
+L042,A,Finding that localization advantage in one setting need not persist elsewhere
+L043,A,Measured contamination test result showing no dataset is flagged
+L044,A,Theoretical contribution claim identifying sufficient conditions for in-domain performance gains
+L045,A,States measured savings stability across trace mixes alongside a validation caveat
+L046,A,Measured comparative result showing JevKT beats the best DLKT across windows
+L047,A,Contribution statement showing benefit correlates with initial teacher-student top-k overlap
+L048,A,Qualitative comparison result showing the SFT baseline ignores formatting instructions
+L049,A,Measured comparative result showing Jev outperforms LLM-based and deep KT baselines
+L050,A,Theoretical result showing the guidance term vanishes under uniform distributional agreement
+L051,A,Measured statistical significance results across datasets and training sample sizes
+L052,A,Empirical finding that teaching the teacher on student rollouts raises accuracy
+L053,A,Positioning claim that MASA avoids materializing the large contribution tensor
+L054,B,Delimiter caveat explaining outcome correlation is mediated by trace length sensitivity
+L055,A,Analytical result showing cross-prefix disagreement enters token updates without the baseline
+L056,A,Measured result comparing task-centered correlation estimates across four encoders
+L057,C,Method description of how PRECIP preserves structural impressions of consulted material
+L058,C,Method description explaining how MASA defines its sparse selection objective
+L059,A,Positioning claim that Semi-OPD provides full trajectory coverage with shorter rollouts
