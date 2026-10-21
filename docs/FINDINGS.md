@@ -1,6 +1,6 @@
 # Findings
 
-## 1. Headline numbers
+## 1. Headline numbers (golden set)
 - Official refusal rate: 5/16 (frozen run hash `cb3272cce551`).
 - 95% range: ~14-56%.
 - Expected refusal ≈ 5.8/16 (est); frozen 5/16 was a slightly unlucky draw.
@@ -29,6 +29,8 @@
 - **Experiment 1 (auditor thinking_level=high):** fixed rows 1/10 (needed >=3), lost hits 0/8. FAIL, rejected. AUDITOR_THINKING_LEVEL stays unset. Spend INR 411.95. See docs/decisions.md, "Experiment 1 result - Stage A FAIL, rejected - 2026-10-12".
 - **Experiment 2 (extractor few-shot claim-shape repair):** A1 FAIL (1/13 recovered, needed >=5/13), A2 FAIL (1-3=-2, needed >=3), A3 FAIL (kept 11/13 and 9/13, needed >=12/13), A4 PASS. All four required; FAIL, rejected. Diagnosis leans task-design problem (one list-all-claims call), not teaching. Spend INR 177.93. See docs/decisions.md, "Experiment 2 - Stage A result - 2026-10-14".
 - **Experiment 3 pre-checks (Checks A-E):** Checks A and D (the only ones with a pass/fail bar, >=95% WHOLE) both FAILED; best: regex splitter 75.6% (Check A), fixed windows 94.1% (Check D, FAIL by 1 row). The bar was set above the raw-text ceiling of 112/119 - a design error in the check. Decision: Experiment 3 uses fixed windows (6000/1500 chars) on raw PyMuPDF text. See docs/decisions.md, "Experiment 3 pre-checks result - 2026-10-14", and docs/evals/exp3_prechecks/.
+- **Experiment 3 (windowed pass-2 re-extraction, flag `extractor_second_pass`):** pre-registered 2026-10-15, built and run 2026-10-15/16. REJECTED on the cost gate c4: projected INR 237.59/paper (pooled) / 243.75 (mean) vs the INR 130 cap. c7 (grounding rate) and c2 (18/18 matched rows kept) both passed; c1/c6/c8 (recall, junk precision, dedup safety) were NOT MEASURED — the pre-registered blind human adjudication was skipped (deviation, recorded). Flag stays default off. Spend INR 185.79. See docs/decisions.md, "Experiment 3 B4 result - 2026-10-16".
+- **Clean-extraction attempt (claim-cleaning filter on top of Exp 3, flag `extractor_pass2_clean`):** a separate, later attempt (2026-10-16 to 2026-10-20) to recover Experiment 3's recall shortfall with a drop-only filter. REJECTED: K1 (recall) FAIL 5-6/13 target rows found; K4 (cost) FAIL ~INR 230/paper vs 130 cap; K7 (dedup safety) FAIL — the filter dropped real claims as duplicates; K8 FAIL on the filter's own sub-cap (INR 64.25/58.31 vs 40). K2, K5, K6 passed: pass-2 output is mostly real claims (precision 0.81-0.95), but the filter over-drops and recall stays low. Flag stays default off. Spend INR 311.04 of a separate INR 350 cap. See docs/decisions.md, "Clean-extraction attempt result: FAIL, pass 2 stays off - 2026-10-20".
 
 ## 5. Root finding
 - The auditor gets the full paper (no retrieval at audit stage). In 5 of 6 wrongly affirmed rows it verified a narrowed version of the claim.
@@ -39,11 +41,11 @@
 - ~Rs 500 on 7 Oct live runs.
 - ~Rs 204 on Exp 1 pilot (scoped-auditor pilot; not decisions.md Experiment 1, which cost INR 411.95).
 - Experiment 2 (extractor few-shot claim-shape repair): INR 177.93.
-- All audits are free.
+- Read-only agent audits cost nothing (no LLM calls).
 
 ## 7. Ops summary
 - **Observability:** 7 telemetry and logging gaps found (e.g., silent claim drops, missing token logs). Plan recorded in `docs/observability-and-cost-plan.md`.
-- **Deployment:** Live environment decommissioned 2026-09-28. Demos use a recorded walkthrough or local Aspire stack with Dev Tunnels. See `docs/decisions.md` and `docs/PRISM_STATUS.md`.
+- **Deployment:** Demos use the local Aspire stack. A recorded walkthrough is planned; a public tunnel demo is designed but unverified (decisions.md 2026-09-28).
 
 ## 8. Lessons
 - **Missing-abstraction bug pattern:** when the same class of bug (e.g. "forgot to attach auth header") shows up in more than one independent call site, the fix is a shared abstraction (apiClient.ts), not patching each site — patching sites individually guarantees a future site will drift the same way.
@@ -56,6 +58,6 @@
 ## 9. What's next
 - **Stop rule:** Decision 9 Oct: stop core changes; clean up; ship with honest numbers.
   Superseded by the 2026-10-10 release targets in decisions.md.
-- **New papers:** Label 2-3 new dev papers and 1 new sealed held-out (single-sentence rows, blind, before any run).
-- **Optional model test:** Run the same legacy auditor on a newer Flash model, once, against a fresh baseline, with marks written first.
-- **Experiment 3:** pre-checks done 2026-10-14 (fixed windows chosen as reader); not yet pre-registered. One more counted experiment before the exit decision (docs/decisions.md, "Push extension past Experiment 2 - 2026-10-14").
+- **New papers:** Done: 12 dev papers labelled (dev_eval.json, 2026-10-11). Still to do: a new sealed set, labelled before any run.
+- **Optional model test:** reordered, not cancelled — a newer-Flash-with-thinking auditor experiment remains a candidate for a later experiment slot if budget allows, behind the scoped extractor work (decisions.md:1652).
+- **Experiment 3:** pre-registered 2026-10-15, run 2026-10-15/16, REJECTED on the cost gate (INR 237.59/paper vs 130 cap; see §4). The follow-on clean-extraction attempt (2026-10-16 to 2026-10-20) was also REJECTED (see §4). The 2026-10-10 exit rule was superseded 2026-10-16 (Nitin chose to keep improving the core product first); next is the auditor phase — an evidence-first, numbered-sentence auditor plus majority vote, not yet approved or built, marks and budget to be pre-registered before any run (docs/decisions.md, "Clean-extraction attempt, supersedes 2026-10-10 exit rule - 2026-10-16"; "K1 diagnostics and filter status - 2026-10-20").
