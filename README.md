@@ -50,13 +50,13 @@ flowchart LR
     DB --> UI[React UI / chat]
 ```
 
-This is what runs today, locally. For the (decommissioned) hosted-deployment design, see [Architecture](#architecture) below.
+This is what runs today, locally. The full architecture, including the decommissioned Azure design, is below.
 
 ## Architecture
 
-![Prism architecture — Azure deployment design](docs/diagrams/architecture.png)
+![Prism architecture — local stack and decommissioned Azure design](docs/diagrams/architecture.png)
 
-Azure deployment design (built 2026-09, decommissioned 2026-09-28 to control cost) — **not what runs today.** This diagram shows the Container Apps topology Prism was deployed on before the shutdown; the pipeline diagram above is the accurate picture of the current local system. `docs/diagrams/current.png` and `docs/diagrams/target.png` belong to a different project (TenderAI) and are not used here.
+Solid boxes run today (local, .NET Aspire). The dashed grey band is the Azure deployment design, built 2026-09 and decommissioned 2026-09-28 to control cost. The pipeline diagram above shows the request flow in short.
 
 ## Evaluation method
 
@@ -130,7 +130,7 @@ dotnet user-secrets set "Parameters:QdrantApiKey" "any-strong-string"
 
 *(Versions confirmed against `Prism.AppHost/Prism.AppHost.csproj`, `Prism.PythonService/pyproject.toml`, `Prism.Web/package.json`. Postgres/Qdrant/RabbitMQ server version numbers and EF Core's version are not pinned in `AppHost.cs`, so not confirmable from the repo and left unversioned here.)*
 
-**Target (relaunch design, not deployed — [Architecture](#architecture)):** Azure Container Apps for API/worker/frontend, Azure Postgres Flexible Server, Azure Blob Storage, Azure Key Vault, Managed Identity, Application Insights.
+**Azure design (deployed 2026-09, decommissioned 2026-09-28 — [Architecture](#architecture)):** Azure Container Apps for API/worker/frontend, Azure Postgres Flexible Server, Azure Blob Storage, Azure Key Vault, Managed Identity, Application Insights.
 
 ## Links
 
