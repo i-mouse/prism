@@ -1,0 +1,34 @@
+rapidfuzz version: 3.14.5
+window_size=6000 overlap=1500 step=4500
+
+=== Check D candidate 3: fixed windows (6000/1500 overlap) ===
+Total dev rows: 119; refusal-family rows: 31
+overall: WHOLE=112 NOT_FOUND=7  WHOLE%=94.1  bar(>=95%)=FAIL
+refusal-family (31 rows): WHOLE=30 NOT_FOUND=1
+
+--- fuzzy-only hits (exact miss, rapidfuzz partial_ratio >= 95): 7 ---
+  P1-S1 (2610.11519v1.pdf) score=95.6 window_idx=1
+  P3-S6 (2610.11135v1.pdf) score=99.3 window_idx=4
+  P5-R2 (2610.11291v1.pdf) score=99.5 window_idx=1
+  P5-S2 (2610.11291v1.pdf) score=99.0 window_idx=3
+  P7-S1 (2610.10590v1.pdf) score=99.7 window_idx=0
+  P9-S6 (2610.12375v1.pdf) score=99.4 window_idx=11
+  P10-S6 (2610.12176v1.pdf) score=99.4 window_idx=6
+
+--- non-WHOLE refusal-family rows (1) with best-window fuzzy score ---
+  P5-R2 (2610.11291v1.pdf) best_fuzzy_score=99.5
+    best window (truncated): 'D outperforms standard OPD when the initial teacher-student overlap is low. (a) Accuracy gain vs. initial top-64 overlap across 17 pairs ranging from 1.5B to 235B, spanning thinking and non-thinking modes and multiple model families, with a Pearson correlation of r= −0.73. Accuracy gain is the area '
+
+--- per-paper window counts ---
+  2610.10590v1.pdf: 9
+  2610.10871v1.pdf: 15
+  2610.11132v1.pdf: 27
+  2610.11135v1.pdf: 34
+  2610.11291v1.pdf: 17
+  2610.11312v1.pdf: 22
+  2610.11519v1.pdf: 29
+  2610.12114v1.pdf: 19
+  2610.12124v1.pdf: 23
+  2610.12168v1.pdf: 18
+  2610.12176v1.pdf: 30
+  2610.12375v1.pdf: 18

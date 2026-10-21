@@ -59,3 +59,4 @@ aspire.config.json
 
 .gemini/
 scratch/
+Prism.PythonService/_scratch_*

@@ -1,0 +1,446 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.10590v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7cd024de-ee74-4f7d-858c-d4cfdb5df894",
+    "generated_at": "2026-10-19T13:43:53Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 0,
+  "dropped_duplicate": [
+    {
+      "sentence": "In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider-reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28\u2013$1.44 versus approximately $4.38.",
+      "best_match": "In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider-reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28\u2013$1.44 versus approximately $4.38.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Both arms passed the two-case primary behavioral oracle; neither fully satisfied the follow-up evaluation.",
+      "best_match": "Both arms passed the two-case primary behavioral oracle; neither fully satisfied the follow-up evaluation.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method made more requests and took 17% longer.",
+      "best_match": "The method made more requests and took 17% longer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "best_match": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "best_match": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "best_match": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The report contributes: (1) a concrete reversible tool-result contract with stable identifiers, in-place notes, protected instruction messages, and atomic batch validation; (2) an independently graded debugging-and-pivot case with provider usage and cache-aware cost accounting; and (3) contrasting and adverse observations that delimit where the mechanism is useful.",
+      "best_match": "The report contributes: (1) a concrete reversible tool-result contract with stable identifiers, in-place notes, protected instruction messages, and atomic batch validation; (2) an independently graded debugging-and-pivot case with provider usage and cache-aware cost accounting; and (3) contrasting and adverse observations that delimit where the mechanism is useful.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "best_match": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Our contract preserves user, system and assistant messages and returns exact archived payloads on recovery.",
+      "best_match": "Our contract preserves user, system and assistant messages and returns exact archived payloads on recovery.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The trace preserves original observations independently of the active representation.",
+      "best_match": "The trace preserves original observations independently of the active representation.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The trace preserves original observations independently of the active representation.",
+      "best_match": "The trace preserves original observations independently of the active representation.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 1 shows sub-stantial reduction in active and cumulative input under the method despite more requests.",
+      "best_match": "Table 1 shows substantial reduction in active and cumulative input under the method despite more requests.",
+      "ratio_score": 99.53051643192488,
+      "partial_ratio_score": 99.05660377358491
+    },
+    {
+      "sentence": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "best_match": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "best_match": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method peak is 381,299 versus 912,492 tokens.",
+      "best_match": "The method peak is 381,299 versus 912,492 tokens.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 1 shows sub- stantial reduction in active and cumulative input under the method despite more requests.",
+      "best_match": "Table 1 shows substantial reduction in active and cumulative input under the method despite more requests.",
+      "ratio_score": 99.06542056074767,
+      "partial_ratio_score": 98.11320754716981
+    },
+    {
+      "sentence": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "best_match": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "best_match": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method peak is 381,299 versus 912,492 tokens.",
+      "best_match": "The method peak is 381,299 versus 912,492 tokens.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Cumulative input decreases by 50%, and input plus completion tokens decrease by 50%.",
+      "best_match": "Cumulative input decreases by 50%, and input plus completion tokens decrease by 50%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The estimated cost is approximately 67\u201371% lower, even after reported cache usage is included.",
+      "best_match": "The estimated cost is approximately 67\u201371% lower, even after reported cache usage is included.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "best_match": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Both primary candidates pass the two-case behavioral oracle.",
+      "best_match": "Both primary candidates pass the two-case behavioral oracle.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For the follow-up, both candidates compile.",
+      "best_match": "For the follow-up, both candidates compile.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method exits with status 0 after SIGTERM in 8.43 seconds and after SIGINT in 8.85 seconds.",
+      "best_match": "The method exits with status 0 after SIGTERM in 8.43 seconds and after SIGINT in 8.85 seconds.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Retained fails both probes and is killed with status 137.",
+      "best_match": "Retained fails both probes and is killed with status 137.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Conversely, retained passes the occupied-port startup-failure probe with status 1; the method\u2019s second process does not finish within 30 seconds.",
+      "best_match": "Conversely, retained passes the occupied-port startup-failure probe with status 1; the method\u2019s second process does not finish within 30 seconds.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method therefore shows stronger tested signal handling but weaker tested startup-failure handling.",
+      "best_match": "The method therefore shows stronger tested signal handling but weaker tested startup-failure handling.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The frozen mixed grader reports 3/6 for method and 2/6 for retained.",
+      "best_match": "The frozen mixed grader reports 3/6 for method and 2/6 for retained.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In total, 26 results containing 2,247,229 text characters are represented by 9,709 note characters.",
+      "best_match": "In total, 26 results containing 2,247,229 text characters are represented by 9,709 note characters.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "All 26 archived text payloads and image lists match their recorded tool returns exactly.",
+      "best_match": "All 26 archived text payloads and image lists match their recorded tool returns exactly.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "best_match": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Archival of 34 results removes only 69,685 net history characters; this does not offset the differing generated trajectories and method overhead.",
+      "best_match": "Archival of 34 results removes only 69,685 net history characters; this does not offset the differing generated trajectories and method overhead.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "best_match": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "best_match": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "best_match": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Both arms support the twelve journeys at the available assessment resolution, with the gaps described above.",
+      "best_match": "Both arms support the twelve journeys at the available assessment resolution, with the gaps described above.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "best_match": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "best_match": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "An earlier browser-based workflow-design continuation used 63% fewer total tokens with the method but received a manual score of 4/12 versus 6/12 for retained.",
+      "best_match": "An earlier browser-based workflow-design continuation used 63% fewer total tokens with the method but received a manual score of 4/12 versus 6/12 for retained.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In the central noisy debugging case, reversible curation accompanies a 75% smaller final measured prompt, 50% less cumulative input, and substantially lower estimated API cost, while both arms pass the same two primary behavioral cases.",
+      "best_match": "In the central noisy debugging case, reversible curation accompanies a 75% smaller final measured prompt, 50% less cumulative input, and substantially lower estimated API cost, while both arms pass the same two primary behavioral cases.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In the central noisy debugging case, reversible curation accompanies a 75% smaller final measured prompt, 50% less cumulative input, and substantially lower estimated API cost, while both arms pass the same two primary behavioral cases.",
+      "best_match": "In the central noisy debugging case, reversible curation accompanies a 75% smaller final measured prompt, 50% less cumulative input, and substantially lower estimated API cost, while both arms pass the same two primary behavioral cases.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The method also requires more actions and time, and follow-up correctness remains incomplete.",
+      "best_match": "The method also requires more actions and time, and follow-up correctness remains incomplete.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [],
+  "kept_new": [
+    {
+      "sentence": "The report contributes: (1) a concrete reversible tool-result contract with stable identifiers, in-place notes, protected instruction messages, and atomic batch validation; (2) an independently graded debugging-and-pivot case with provider usage and cache-aware cost accounting; and (3) contrasting and adverse observations that delimit where the mechanism is useful.",
+      "best_match": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "ratio_score": 41.30434782608695,
+      "partial_ratio_score": 44.776119402985074
+    },
+    {
+      "sentence": "Our contribution is an implementation and exploratory evaluation of a restricted, auditable operation over individual tool-result occurrences, not a claim to invent agent-controlled memory.",
+      "best_match": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "ratio_score": 43.31550802139037,
+      "partial_ratio_score": 44.95677233429395
+    },
+    {
+      "sentence": "We study how this operation behaves in real coding and browser trajectories, including a case in which retained history exceeds 900,000 reported prompt tokens.",
+      "best_match": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "ratio_score": 45.93023255813954,
+      "partial_ratio_score": 46.0
+    },
+    {
+      "sentence": "Our interface restricts edits to individual tool-result occurrences, automatically archives exact originals, and preserves user, system, and assistant messages.",
+      "best_match": "Our contribution is an implementation and exploratory evaluation of a restricted, auditable operation over individual tool-result occurrences, not a claim to invent agent-controlled memory.",
+      "ratio_score": 50.429799426934096,
+      "partial_ratio_score": 56.3573883161512
+    },
+    {
+      "sentence": "This enables comparison of archived payloads against recorded tool returns.",
+      "best_match": "All 26 archived text payloads and image lists match their recorded tool returns exactly.",
+      "ratio_score": 60.12269938650307,
+      "partial_ratio_score": 61.33333333333333
+    },
+    {
+      "sentence": "Such equality checks validate storage integrity; they do not validate the semantic adequacy of notes.",
+      "best_match": "The backend validates the entire batch before committing a change.",
+      "ratio_score": 45.50898203592815,
+      "partial_ratio_score": 54.700854700854705
+    },
+    {
+      "sentence": "The provider projection also handles API representation constraints, so preservation of stored assistant responses should not be confused with byte-identical wire serialization in every error case.",
+      "best_match": "Our contribution is an implementation and exploratory evaluation of a restricted, auditable operation over individual tool-result occurrences, not a claim to invent agent-controlled memory.",
+      "ratio_score": 45.59585492227979,
+      "partial_ratio_score": 46.93333333333334
+    },
+    {
+      "sentence": "The condition therefore tests prompted, model-selected curation.",
+      "best_match": "The method therefore shows stronger tested signal handling but weaker tested startup-failure handling.",
+      "ratio_score": 48.19277108433735,
+      "partial_ratio_score": 57.65765765765766
+    },
+    {
+      "sentence": "It does not show that an unprompted base model spontaneously discovers a need to forget, and it does not involve parameter learning during the experiment.",
+      "best_match": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "ratio_score": 47.176079734219265,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "Prompt size includes the request representation and is an operational proxy for active context, not a direct measure of usable reasoning capacity.",
+      "best_match": "The provider projection also handles API representation constraints, so preservation of stored assistant responses should not be confused with byte-identical wire serialization in every error case.",
+      "ratio_score": 47.8134110787172,
+      "partial_ratio_score": 49.48453608247423
+    },
+    {
+      "sentence": "This is an exploratory systems study using the provider model identifier z-ai/glm-5.3-flash through TensorX.",
+      "best_match": "User, system, and assistant messages are not selectable through the context tools.",
+      "ratio_score": 44.21052631578948,
+      "partial_ratio_score": 46.34146341463414
+    },
+    {
+      "sentence": "Selecting the high-noise case after earlier experiments makes it a development-informed case study rather than a held-out confirmatory benchmark.",
+      "best_match": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "ratio_score": 43.150684931506845,
+      "partial_ratio_score": 45.238095238095234
+    },
+    {
+      "sentence": "We report the repaired OpenTelemetry pair as the central case, the completed Planroom pair as a workload contrast, and the earlier six-session Sphinx batch as descriptive supporting evidence.",
+      "best_match": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "ratio_score": 45.05494505494505,
+      "partial_ratio_score": 47.46835443037975
+    },
+    {
+      "sentence": "Neither condition reaches those limits.",
+      "best_match": "The condition therefore tests prompted, model-selected curation.",
+      "ratio_score": 48.54368932038835,
+      "partial_ratio_score": 61.76470588235294
+    },
+    {
+      "sentence": "Both candidates contain remaining-budget calculations.",
+      "best_match": "The backend validates the entire batch before committing a change.",
+      "ratio_score": 48.33333333333333,
+      "partial_ratio_score": 46.728971962616825
+    },
+    {
+      "sentence": "The method makes five successful archival batches in the primary phase and four in the follow-up.",
+      "best_match": "Both arms passed the two-case primary behavioral oracle; neither fully satisfied the follow-up evaluation.",
+      "ratio_score": 48.275862068965516,
+      "partial_ratio_score": 50.26178010471204
+    },
+    {
+      "sentence": "No recovery is used in this pair, and no image payload is archived.",
+      "best_match": "Our contract preserves user, system and assistant messages and returns exact archived payloads on recovery.",
+      "ratio_score": 48.275862068965516,
+      "partial_ratio_score": 52.23880597014925
+    },
+    {
+      "sentence": "The archive verifies exact payload preservation while the agent repeatedly curates context and continues working; this pair does not test retrieval behavior because no recovery is requested.",
+      "best_match": "Post-exposure curation gives the agent a further choice over continued retention without requiring changes to the source tool.",
+      "ratio_score": 48.73417721518988,
+      "partial_ratio_score": 54.761904761904766
+    },
+    {
+      "sentence": "Both arms support the twelve journeys at the available assessment resolution, with the gaps described above.",
+      "best_match": "Both arms submit both tasks normally, without recorded provider errors.",
+      "ratio_score": 46.927374301675975,
+      "partial_ratio_score": 50.38167938931297
+    },
+    {
+      "sentence": "The method completes in 24.29 rather than 31.78 minutes; this single pair does not isolate the cause of the timing difference.",
+      "best_match": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "ratio_score": 47.61904761904761,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "The OpenTelemetry archive illustrates that the agent can act on this distinction.",
+      "best_match": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "ratio_score": 48.484848484848484,
+      "partial_ratio_score": 49.66442953020134
+    },
+    {
+      "sentence": "Planroom provides a concrete boundary case.",
+      "best_match": "The backend validates the entire batch before committing a change.",
+      "ratio_score": 44.03669724770643,
+      "partial_ratio_score": 46.51162790697675
+    },
+    {
+      "sentence": "The same-session continuation exercises the mechanism beyond one isolated answer.",
+      "best_match": "The condition therefore tests prompted, model-selected curation.",
+      "ratio_score": 49.6551724137931,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "It shows that the method can continue implementing after context edits while retained history continues to grow.",
+      "best_match": "We study how this operation behaves in real coding and browser trajectories, including a case in which retained history exceeds 900,000 reported prompt tokens.",
+      "ratio_score": 50.92250922509225,
+      "partial_ratio_score": 52.67857142857143
+    },
+    {
+      "sentence": "The method also requires more actions and time, and follow-up correctness remains incomplete.",
+      "best_match": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "ratio_score": 54.23728813559322,
+      "partial_ratio_score": 55.319148936170215
+    },
+    {
+      "sentence": "Agent-controlled forgetting provides an explicit way for a tool-using model to distinguish in-formation it needed to inspect from information it still needs to carry.",
+      "best_match": "A Python harness exposes batch archival and explicit recovery without task-specific model training, while protecting user instructions and assistant messages from these operations.",
+      "ratio_score": 46.820809248554916,
+      "partial_ratio_score": 47.05882352941176
+    },
+    {
+      "sentence": "Contrasting application development and an adverse continuation show that neither resource savings nor quality preservation follows automatically from a smaller active history.",
+      "best_match": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "ratio_score": 53.86819484240688,
+      "partial_ratio_score": 58.33333333333333
+    },
+    {
+      "sentence": "The practical result is that an agent can complete noisy tool-driven work with substantially less active context and repeated input, using explicit archival decisions during the task.",
+      "best_match": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "ratio_score": 53.93939393939393,
+      "partial_ratio_score": 58.33333333333333
+    }
+  ]
+}

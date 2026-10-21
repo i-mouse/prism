@@ -1,0 +1,213 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11135v1",
+    "variant": "treatment",
+    "fewshot_fix": true,
+    "fewshot_shapes": true,
+    "prompt_hash": "da3a1ab6b587",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "fa82bf24-0a94-4c5f-8ae2-2b29843751b8",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-14T08:05:12Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "On seven datasets, Jev without any data from the target platform reaches a mean AUC of .706, above the best of 28 deep KT models trained on 8 learners (.689) and above System-Two Thinking-KT on all seven datasets (.650) at about 1/100 of its API cost.",
+      "claim_summary": "Zero-shot Jev reaches .706 AUC, beating 8-learner deep KT and System-Two Thinking-KT"
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "Adding examples and a similar-learner statistic from the logged learners (JevKT) raises this to .722; JevKT stays significantly ahead of deep KT up to 16 learners and ahead on average up to 64, and supervised KT catches up between 64 and 128 learners.",
+      "claim_summary": "JevKT raises AUC to .722, staying ahead of deep KT up to 64 learners"
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "Among the readers we tested, the gain is specific to Jev, since three other LLMs queried with the byte-identical typed request through the official System-One adapter fall below it on all seven datasets, and reader swaps and contamination checks find no evidence that the input format or memorised data explain the gain.",
+      "claim_summary": "The performance gain is specific to Jev rather than input format or memorization"
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "claim_summary": "Jev's advantage holds for new learners, but deep KT leads on unseen items with full logs"
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "With no learners logged, Jev0-shot reaches a mean AUC of .706, above the best deep KT model trained on 8 learners (.689) and above Thinking-KT on all seven datasets.",
+      "claim_summary": "Jev0-shot without training logs outperforms 8-learner deep KT and Thinking-KT"
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "With evidence from the logged learners, JevKT stays significantly ahead of the best deep KT model up to 16 learners (+.033 AUC at N=8, 7/7 datasets) and on average up to 64; supervised KT catches up between 64 and 128 learners.",
+      "claim_summary": "JevKT leads deep KT up to 16 learners significantly and on average up to 64"
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "Among the readers we tested, the gain comes from the model, as other LLMs reading the identical input, directly or through the vendor\u2019s System-One adapter, are worse on every dataset, and contamination checks find no sign of memorised data.",
+      "claim_summary": "Performance gains originate from Jev itself, as alternative LLMs fail to match it"
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "For the Qwen3.5-9B backbone of Thinking-KT, reasoning does not help, as it is never significantly better than the same model without reasoning.",
+      "claim_summary": "Reasoning tokens fail to significantly improve performance for the Qwen3.5-9B backbone"
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "Finding. With no learner logs, an off-the-shelf System-One LLM (Jev) outperforms deep KT trained on 8 learners on average and prompted System-Two LLM-KT on all seven datasets (RQ1).",
+      "claim_summary": "Without training logs, off-the-shelf Jev beats 8-learner deep KT and prompted System-Two models"
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "Where it holds. A cold-start evaluation on identical targets (7 datasets; few training learners, new learners, new items) shows how long the lead lasts as learners are logged (RQ2, RQ3); a training-free input recipe (JevKT), whose gain comes mostly from one similar-learner statistic, keeps it until supervised KT takes over.",
+      "claim_summary": "JevKT's cold-start lead, driven by a similar-learner statistic, holds until supervised KT overtakes"
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "Why. Controlled analyses (reader swap, other LLMs behind the same interface, contamination checks) find that the gain comes from the model rather than from the typed format or memorised data.",
+      "claim_summary": "Controlled tests confirm gains stem from the model, not format or data contamination"
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "KC-matched shots help and saturate at k\u224864, random shots do not, and the similar-learner statistic adds on top; the ranking on the development split transfers to test.",
+      "claim_summary": "KC-matched shots improve results up to k\u224864, complemented by similar-learner statistics"
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "Without any data from the target platform, Jev0-shot reaches .706 mean AUC (first block of Table 1).",
+      "claim_summary": "Jev0-shot achieves .706 mean AUC without any target platform data"
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+      "claim_summary": "Jev0-shot outperforms LOKT (.671) and 8-learner deep KT (.689)"
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "It also beats System-Two Thinking-KT (.650) on all seven datasets with one call instead of ten, at about 1/100 of its API cost (Section 5.4).",
+      "claim_summary": "Jev0-shot beats Thinking-KT across all datasets in one call at 1/100 the cost"
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+      "claim_summary": "JevKT maintains an AUC advantage over deep KT at N=8, 16, 32, and 64"
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "LOKT, whose only use of the logged learners is answer-option weights, barely moves with N (.672 at N=8 and .672 with all learners, against .671 at N=0) and stays below both.",
+      "claim_summary": "LOKT performance remains static as training learners increase, lagging behind JevKT"
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "The crossover therefore lies between 64 and 128 learners on average and varies by dataset (Figure 7, Appendix D).",
+      "claim_summary": "Supervised deep KT overtakes JevKT between 64 and 128 training learners"
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "The lead is Holm-significant on 7/7 datasets at N=8 and 6/7 at N=16, 3/7 at N=32 and 2/7 at N=64 (Table 15).",
+      "claim_summary": "JevKT's lead over deep KT is statistically significant across most datasets up to N=16"
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+      "claim_summary": "JevKT outperforms deep KT across sequence positions for new learners in 33/35 cells"
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+      "claim_summary": "On unseen items, deep KT with full logs (.729) beats JevKT (.713)"
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "A typed one-pass head without training (B0) is worse than reading the label probability directly (A), .630 vs. .688 AUC, and .701 vs. .752 with the similar-learner statistic.",
+      "claim_summary": "A typed head without training scores lower AUC than directly reading label probabilities"
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "Distilling Jev into these weights (C, JEV-9B) does not beat A (.679 and .741), and the same holds at N=8 (A .700, B0 .659, C .699).",
+      "claim_summary": "Distilling Jev into Qwen3.5-9B weights does not outperform plain label readout"
+    },
+    {
+      "index": 23,
+      "claim_text_verbatim": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets \u00d7 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+      "claim_summary": "Swapping the reader from Qwen3.5-9B to Jev increases AUC across all 35 test cells"
+    },
+    {
+      "index": 24,
+      "claim_text_verbatim": "At N=0, GPT-4o-mini (.680), Gemini-2.5-Flash-Lite (.670) and DeepSeek-V4-Flash (.626) are below Jev0-shot (.706) on every dataset (paired bootstrap, p<.01).",
+      "claim_summary": "Other LLMs via the adapter perform significantly below Jev0-shot at N=0"
+    },
+    {
+      "index": 25,
+      "claim_text_verbatim": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the input.",
+      "claim_summary": "The JevKT input format yields modest gains across models; performance gaps depend on the model"
+    },
+    {
+      "index": 26,
+      "claim_text_verbatim": "Only Jev and the Jev-distilled JEV-9B (.687 at N=0, .699 at N=8) come close to or exceed the best deep KT model trained on 8 learners (.689), while Laya, an open-source model that reproduces Jev\u2019s typed interface with a small encoder, stays near chance (.536).",
+      "claim_summary": "Only Jev variants approach or beat 8-learner deep KT, while Laya performs near chance"
+    },
+    {
+      "index": 27,
+      "claim_text_verbatim": "At N=8 the prior alone reaches .706, the similar-learner statistic alone .595, and both together .722, against .689 for the best deep KT model (Table 1).",
+      "claim_summary": "Combining model prior (.706) and similar-learner statistic (.595) yields .722 AUC at N=8"
+    },
+    {
+      "index": 28,
+      "claim_text_verbatim": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "claim_summary": "At N=16, the similar-learner statistic carries most of the improvement over Jev0-shot"
+    },
+    {
+      "index": 29,
+      "claim_text_verbatim": "At N=8 JevKT leads both on items that the logged learners answered (+.036) and on items none of them answered (+.028), and the lead is largest for learners whose accuracy so far is very low or very high (+.050 and +.063), where eight learners give a supervised model little to learn from.",
+      "claim_summary": "JevKT leads deep KT on both answered/unanswered items, especially for extreme learner accuracies"
+    },
+    {
+      "index": 30,
+      "claim_text_verbatim": "A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+      "claim_summary": "Reasoning budgets do not significantly aid Qwen3.5-9B, whereas single-pass Jev beats Thinking-KT"
+    },
+    {
+      "index": 31,
+      "claim_text_verbatim": "They pile up at 0 and 1, and the mean ECE of Thinking-KT is .253 (LOKT .209), against .084 for the single Jev0-shot pass.",
+      "claim_summary": "Single-pass Jev0-shot shows far better calibration (.084 ECE) than System-Two vote frequencies (.253 ECE)"
+    },
+    {
+      "index": 32,
+      "claim_text_verbatim": "With N=8 learners, JevKT is as well calibrated as the best deep KT model (ECE .070 vs. .076; Brier .182 vs. .192), without any post-hoc scaling such as temperature scaling (Guo et al., 2017).",
+      "claim_summary": "JevKT achieves comparable calibration to deep KT at N=8 without post-hoc scaling"
+    },
+    {
+      "index": 33,
+      "claim_text_verbatim": "Within each dataset, the third of targets with the longest reasoning has lower AUC than the shortest third (.668 vs. .719 at budget 2048; .675 vs. .726 at 1024), and reasoning length correlates with the absolute error (Spearman +.29), also among targets on which all ten votes agree.",
+      "claim_summary": "Longer reasoning traces correlate with higher prediction error in Thinking-KT"
+    },
+    {
+      "index": 34,
+      "claim_text_verbatim": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+      "claim_summary": "JevKT is 130x faster and 5x cheaper per prediction than Thinking-KT"
+    },
+    {
+      "index": 35,
+      "claim_text_verbatim": "Asked about an item\u2019s difficulty or skill from its ID alone, Jev and three open LLMs do no better with real IDs than with format-matched fake IDs on any dataset, and continuing rows of the public files shows no recall.",
+      "claim_summary": "Item ID contamination probes show no memorization of benchmark public files"
+    },
+    {
+      "index": 36,
+      "claim_text_verbatim": "Relabelling IDs and removing names changes Jev0-shot AUC by at most .012, never significantly (Holm), and no dataset is flagged.",
+      "claim_summary": "De-identification and ID relabeling cause no significant drop in Jev0-shot AUC"
+    },
+    {
+      "index": 37,
+      "claim_text_verbatim": "On six synthetic datasets generated after the model release, JevKT is still at or above the best deep KT model at N=8.",
+      "claim_summary": "JevKT matches or beats deep KT at N=8 on post-release synthetic datasets"
+    },
+    {
+      "index": 38,
+      "claim_text_verbatim": "With hyper-parameters tuned on the validation learners of each cell (four strong pyKT models, eight configurations each), deep KT stays below JevKT by +.070, +.042, +.030 and +.010 at N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7, 5/7 and 4/7 datasets), so default hyper-parameters do not explain the gap.",
+      "claim_summary": "Validation-tuned deep KT still falls short of JevKT across N=8 to 64"
+    }
+  ]
+}

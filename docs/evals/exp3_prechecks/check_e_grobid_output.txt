@@ -1,0 +1,85 @@
+Text source: TEI XML reused from scratch/exp3/grobid_tei/*.tei.xml (saved by check_d_grobid_v2.py) - no network call made in this script.
+
+=== Check E Step 1: ceiling / splitter loss / reader loss (grobid) ===
+CEILING: 81/119 overall; 24/31 refusal-family
+  [grobid_sentences] SPLITTER LOSS (in ceiling, not WHOLE): 17 rows: ['P1-S2', 'P1-S4', 'P1-S6', 'P1-S8', 'P10-S1', 'P10-S5', 'P11-S3', 'P12-S2', 'P2-R3', 'P2-R4', 'P4-R2', 'P4-S8', 'P5-S3', 'P5-S6', 'P6-S1', 'P9-R1', 'P9-S1']
+READER LOSS (not in ceiling): 38 rows: ['P1-S1', 'P1-S9', 'P10-S2', 'P10-S3', 'P10-S4', 'P10-S6', 'P11-S1', 'P11-S2', 'P11-S7', 'P12-S6', 'P12-S7', 'P2-S6', 'P3-R1', 'P3-S1', 'P3-S2', 'P3-S5', 'P3-S6', 'P3-S7', 'P4-R1', 'P4-R3', 'P4-S1', 'P4-S2', 'P4-S3', 'P4-S4', 'P5-R1', 'P5-S4', 'P5-S5', 'P6-R2', 'P6-S3', 'P6-S5', 'P7-R2', 'P7-S1', 'P8-R2', 'P8-S4', 'P8-S5', 'P9-S2', 'P9-S3', 'P9-S8']
+
+=== Check E Step 2: per-row causes for reader-loss rows (grobid) ===
+  P1-S1 (2610.11519v1.pdf) refusal=False score=73.6 cause=text_dropped
+    diff: Across two students, two estimators, and three[- mathematical-] benchmarks, RA improves [-all 24-]{+every matched+} three-seed [-benchmark means of its base estimator-]{+mean+}, both combinations surpass teacher-only OPD, and Co-RA [-rais-]{+improv+}es accuracy further w[-ith mixed changes in covera...[truncated]
+  P1-S9 (2610.11519v1.pdf) refusal=False score=74.3 cause=text_dropped
+    diff: [-On the 256-]{+ the+} offline responses[- of -]{+. The local advantages average to 3 × 10 -4 per token, so the student value baseline holds in practice and the response mean carries no systematic part, and on responses longer than 1,000 tokens λ+}A[-ppendix C.2, the local advantages average to 3 × ...[truncated]
+  P2-S6 (2610.11132v1.pdf) refusal=False score=99.1 cause=ligature_or_unicode
+    diff: This is effectively mitigated by a larger parent: the 32B parent exhibits this failure far less often, yielding a smaller remaining gap for the 32B models than for the 7B ones (an average gap of [-−-]{+-+}1.8 versus [-−-]{+-+}7.5).
+  P3-R1 (2610.11135v1.pdf) refusal=True score=67.3 cause=text_dropped
+    diff: {+ +}Among the readers we tested, the gain comes from the model{+,+} [-r-]a[-ther than the typed format; the input recipe help-]s other LLMs {+re+}a{+ding the identical input, directly or through the vendor'+}s {+Syste+}m[-uch as it h-]{+-On+}e[-lps Jev.-]
+  P3-S1 (2610.11135v1.pdf) refusal=False score=99.0 cause=other
+    diff: [-W-]ithout any data from the target platform, Jev{+ +}0-shot reaches .706 mean AUC (first block of Table 1).
+  P3-S2 (2610.11135v1.pdf) refusal=False score=97.0 cause=ligature_or_unicode
+    diff: JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N{+ +}=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N{+ +}=64, [-−.002 at N-]{+-.002 at N +}=128, [-−.008 at N-]{+-.008 at N +}=256 and [-−-]{+-+}.028 with the full training d[-ata.-]
+  P3-S5 (2610.11135v1.pdf) refusal=False score=99.6 cause=other
+    diff: One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev{+ +}0-shot costs $44[-.-]
+  P3-S6 (2610.11135v1.pdf) refusal=False score=98.6 cause=other
+    diff: At N{+ +}=16 the similar-learner statistic alone raises Jev{+ +}0-shot from .706 to .729, 64 KC[---]matched shots alone to .724, and both together to .730[-.-]
+  P3-S7 (2610.11135v1.pdf) refusal=False score=99.5 cause=other
+    diff: JevKT (.713) and Jev{+ +}0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10)[-.-]
+  P4-R1 (2610.10871v1.pdf) refusal=True score=67.8 cause=text_dropped
+    diff: A{+ a+}cross multiple sparse [-b-]a[-s-]{+tt+}e[-l-]{+nt+}i{+o+}n{+ m+}e{+thod+}s, benchmarks, and LLM backbones[-,-]{+.+} [-MASA gives consistent gains u-]{+U+}nder matched settings with [-n-]{+th+}e[-gl-]{+ or+}igi{+nal +}b{+ase+}l{+in+}e{+s,+} [-la-]{+MASA gives consis+}ten[-cy-]{+t+} [-overhead....[truncated]
+  P4-R3 (2610.10871v1.pdf) refusal=True score=56.6 cause=text_dropped
+    diff: {+ view of sparse attention. We review sparse attention methods through three representative frameworks used to evaluate +}MASA[- does not change the sparse kerne-]{+, then forma+}l[-s, candidate sparse units, or budget rules of existing methods, making it orthogonal to low-level attention kernels a...[truncated]
+  P4-S1 (2610.10871v1.pdf) refusal=False score=99.3 cause=hyphenation_or_linebreak
+    diff: {+ +}MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama-[- -]and Qwen-family backbones.
+  P4-S2 (2610.10871v1.pdf) refusal=False score=49.5 cause=text_dropped
+    diff: {+t. Each +}A[-c-]{+vg. summa+}r[-os-]{+ize+}s the [-f-]{+c+}o[-u-]{+rresponding task o+}r [-RULER-]{+length+} [-configura-]{+se+}t[-ions at 32K, 64K, and 128K,-]{+.+} MASA improves [-11-]{+all+} [-of 12-]{+eight+} matched [-length-le-]{+a+}ve[-l-]{+rage+} scores[-.-]{+ ac+}
+  P4-S3 (2610.10871v1.pdf) refusal=False score=51.5 cause=text_dropped
+    diff: [-Fo-]{+' +}r[- -]e[-v-]{+l+}e[-ry-]{+ased+} configuration{+s+},{+ where+} the [-mean -]{+ori+}g[-a-]in{+al+} [-ove-]{+spa+}r[- the-]se [-l-]{+meth+}o[-nger context-]{+d+}s a[-t-]{+lready+} [-32K-128K-]{+approach or+} exceed[-s-] th[-at-]{+e+} [-at-]{+dense+} [-4K-16K.-]{+ref+}
+  P4-S4 (2610.10871v1.pdf) refusal=False score=65.2 cause=text_dropped
+    diff: [-At-]{+, and+} 128K[-,-]{+.+} [-M-]A[-SA imp-]{+c+}ro[-ve-]{+s+}s MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen[- by 1.28, 0.48, 1.45, and 2.16 points-], re{+placing the original ranking +}s[-p-]{+cor+}e[-c-]{+ wi+}t[-iv-]{+h MASA adds +}e[-ly.-]{+m+}
+  P5-R1 (2610.11291v1.pdf) refusal=True score=60.9 cause=text_dropped
+    diff: [-T-]he [-gain-]{+two curve+}s [-transf-]{+divid+}e[-r-]{+d+} b[-e-]y[-ond-] the training [-d-]{+h+}o[-ma-]{+r+}i{+zo+}n.
+  P5-S4 (2610.11291v1.pdf) refusal=False score=99.1 cause=ligature_or_unicode
+    diff: {+ +}The two quantities are strongly correlated (Pearson's [-r-]= [-−-]{+-+}0.73 across 17 pairs): pairs with lower initial overlap ratios tend to benefit substantially more from Semi-OPD, while OPD is only needed for pairs with high overlap ratios.
+  P5-S5 (2610.11291v1.pdf) refusal=False score=99.7 cause=text_reordered
+    diff: We observe that (1) on the Qwen3-1.7B (non-thinking) and Qwen3-4B (non-thinking) students, which have low teacher-student overlap ratios, Semi-OPD outperforms all other baselines in accuracy while also being the most efficient, e.g., achieving +7.1% and +8.8% higher accuracy with 35× and 19.5× less ...[truncated]
+  P6-R2 (2610.11312v1.pdf) refusal=True score=99.4 cause=hyphenation_or_linebreak
+    diff: We further demonstrate portability to a specialized medical domain and evaluate twelve VLMs, revealing task-[- -]and setting-specific variation obscured by aggregate scores.{+ +}
+  P6-S3 (2610.11312v1.pdf) refusal=False score=99.5 cause=other
+    diff: Providing T{+ +}0 improves direct DeepSeek-V4-Flash induction to 85.1% F1, while MedBenchAgent further increases precision from 76.9% to 87.0% at the same 95.2% recall, reducing false positives from six to three[-.-]
+  P6-S5 (2610.11312v1.pdf) refusal=False score=46.7 cause=text_dropped
+    diff: [-A-]s [-sh-]{+n+}o[-wn-]{+t+} {+rel+}i[-n T-]abl[-e-]{+y+} [-3, m-]{+pr+}edic{+t spati+}al{+-localization+} [-VLMs out-]perform{+ance.+} [-g-]{+Th+}e[-neral-purpo-]se [-VLM-]{+result+}s {+are consistent with the +}b[-y 6.23 po-]{+reast-imag+}in{+g evalua+}t[-s-]{+ion+} in [-Overall Acc. but trail b...[truncated]
+  P7-R2 (2610.10590v1.pdf) refusal=True score=50.5 cause=text_dropped
+    diff: [-In -]p{+a+}r[-incipl-]{+at+}e[-,-]{+s+} the{+se+} {+component+}s{+, +}a{+nd no co+}m{+parison tests provider-sid+}e cont[-ract can cover documentation, diagnostic logs, browser t-]ext{+ editing+}, a{+ lear+}n{+e+}d [-i-]m{+an+}age[-s.-]{+r,+}
+  P7-S1 (2610.10590v1.pdf) refusal=False score=99.7 cause=hyphenation_or_linebreak
+    diff: {+ +}In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider[---]reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28-$1.44 versus appro...[truncated]
+  P8-R2 (2610.12124v1.pdf) refusal=True score=57.1 cause=text_dropped
+    diff: [-The-]s{+iv+}e {+P+}re[-sults-]{+fix+} [-dem-]{+C+}ons[-tr-]{+olid+}at{+ion. Tog+}e[- -]{+t+}h[-ow ou-]{+e+}r{+,+} use[---]{+ +}and[---]{+ +}disuse c[-y-]{+onne+}c[-l-]{+t task +}e[- s-]{+xec+}u[-pp-]{+ti+}o[-rts-]{+n,+} memory{+,+} and learning {+in a con+}t[-hr-]{+inu+}ou[-gh interaction hi-]s[-t...[truncated]
+  P8-S4 (2610.12124v1.pdf) refusal=False score=60.8 cause=text_dropped
+    diff: {+oMo, +}Hippocam achieves 7[-8-]{+7+}.[-9-]{+6+}%[- mean progress, improving-] over[- P-]{+a+}l[-ain by 30.1 pp-]{+l+} a[-nd-]{+ccuracy,+} exceeding the strongest baseline, A[-CE-]{+-Mem+}, by 1[-6-]{+0+}.[-2-]{+1+} pp{+ (Table 3)+}.{+ It leads or tie+}
+  P8-S5 (2610.12124v1.pdf) refusal=False score=47.4 cause=text_dropped
+    diff: [-On-] [-FEVER, Frozen sc-]or{+ ti+}es {+a+}c{+ross a+}l{+l fo+}u[-ste-]r a{+nswe+}r{+able questi+}o[-u-]n[-d-] [-Pl-]{+c+}a{+tegor+}i[-n'-]{+e+}s[- 59.3%-], with [-Hip-]{+tem+}po[-c-]{+r+}a[-m-]{+l+} a[-nd HiAgent-]{+ccuracy+} reaching {+8+}6[-1-].[-8-]{+6+}%[-.-]{+ +}
+  P9-S2 (2610.12375v1.pdf) refusal=False score=99.1 cause=other
+    diff: First, the ∆{+ +}CI excludes zero at k ≤{+ +}10, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates i[-n.-]
+  P9-S3 (2610.12375v1.pdf) refusal=False score=99.7 cause=text_reordered
+    diff: Second, at the shipped threshold the quadratic structure term selects a lower-FPR operating point: removing the mask changes almost nothing (13/40 →{+ +}14/40 false-positive traces at essentially identical recall), while removing the GW term more than doubles the benign false-alarm count (29/40), to...[truncated]
+  P9-S8 (2610.12375v1.pdf) refusal=False score=99.3 cause=other
+    diff: {+. +}Second, at the earliest checkpoint trace length alone is the single best signal (n steps .622 at k=5); OnTrack leads every content-[- -]and structure-aware method there but not the length prior -[- -]its clearest regime is k=8-10, after the length prior fades and before content accumulates.
+  P10-S2 (2610.12176v1.pdf) refusal=False score=99.2 cause=other
+    diff: More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S{+ +}++ while using 31.4% fewer tokens[-.-]
+  P10-S3 (2610.12176v1.pdf) refusal=False score=96.2 cause=other
+    diff: [-Th-]e agreement increases from 0.73 for L{+ +}(0) to 0.91 for L{+ +}(1) and 0.93 for L{+ +}(2)[-.-]
+  P10-S4 (2610.12176v1.pdf) refusal=False score=97.5 cause=other
+    diff: [-D-]elegation rises from 1/110 trajectories for L{+ +}(0) to 48/110 for L{+ +}(1) and 87/110 for L{+ +}(2){+ +}, while code handoffs rise from 1/110 to 42/110 and 83/110, respective[-ly.-]
+  P10-S6 (2610.12176v1.pdf) refusal=False score=99.4 cause=hyphenation_or_linebreak
+    diff: {+ +}Multi-agent executions generate approximately 2.4× more tokens on average than single[---]agent executions and are preferred in 85.1% of external judgments overall.
+  P11-S1 (2610.12114v1.pdf) refusal=False score=99.4 cause=other
+    diff: [-R-]elative to the unprimed Student baselines, UTT improves KernelBench accuracy from 9.4% to 48.6%, Fast{+ +}1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to 51.7%.
+  P11-S2 (2610.12114v1.pdf) refusal=False score=98.6 cause=other
+    diff: The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast{+ +}1{+ +}, and Math accuracy, respectivel[-y.-]
+  P11-S7 (2610.12114v1.pdf) refusal=False score=98.9 cause=other
+    diff: With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast{+ +}1{+ +}, respectivel[-y.-]
+  P12-S6 (2610.12168v1.pdf) refusal=False score=83.3 cause=other
+    diff: {+p.+}Thus, each mini-batch contains a total of b = b{+ +}S + (n + 1)(b{+ +}F + b{+ +}H{+ +}) [-p-]{+t+}r[-ompt-r-]{+av+}e[-sponse pai-]rs[-.-]{+ing every+}
+  P12-S7 (2610.12168v1.pdf) refusal=False score=98.3 cause=other
+    diff: The concrete prompt templates in Appendix A.3 use two levels (n = 1): a detailed plan z{+ +}0 and a coarse proof idea z{+ +}1{+ +}; neither is required to consist of executable Lean comman[-ds.-]
+cause counts: {'text_dropped': 14, 'ligature_or_unicode': 3, 'other': 15, 'hyphenation_or_linebreak': 4, 'text_reordered': 2}

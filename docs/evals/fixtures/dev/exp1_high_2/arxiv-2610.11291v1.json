@@ -1,0 +1,122 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:21:45.818342+00:00",
+    "paper_id": "arxiv-2610.11291v1",
+    "filename": "2610.11291v1.pdf",
+    "extraction_run_id": "ce761dd0-6291-4e3d-81c2-387d40d90ea8",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-10-12T16:27:01Z"
+    },
+    "claims_scope": [
+      33,
+      1
+    ]
+  },
+  "claims": [
+    {
+      "index": 33,
+      "label": "partially_supported",
+      "claim_summary": "Distillation gains transfer beyond training domains to broader reasoning tasks",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This suggests that the gains are not limited to fitting the math training distribution but transfer to broader reasoning tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "As shown in Fig. 11, models distilled only on math-heavy datasets [26] also improve on HumanEval and HumanEval+, with Semi-OPD remaining ahead of OPD.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 11 | Transfer to coding. Code performance of models distilled on math only (Qwen3-1.7B \u2190 Qwen3-4B-Instruct-2507).",
+          "source_section": "Figure 11",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "Semi-OPD beats OPD on 14/17 pairs with up to 13.6% accuracy gain",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Across 17 teacher\u2013student pairs ranging from 1.5B to 235B parameters, Semi-OPD outperforms OPD in 14 cases, with up to +13.6% accuracy and 11.4\u00d7 training speedup.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 3 | All 17 teacher\u2013student pairs, sorted by AUC gain of Semi-OPD over OPD.",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "We observe that Semi-OPD outperforms OPD on 14 of 17 pairs with improvements of up to \u223c13% over OPD at the last step",
+          "source_section": "Section 2.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "OPD 56.8 11.4\u00d7",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Semi-OPD 5.0 \u2013",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P5-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P5-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P5-R3",
+      "actual_index": 27
+    },
+    {
+      "expected_id": "P5-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P5-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P5-S3",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P5-S4",
+      "actual_index": 21
+    },
+    {
+      "expected_id": "P5-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P5-S6",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "P5-S7",
+      "actual_index": 20
+    }
+  ]
+}

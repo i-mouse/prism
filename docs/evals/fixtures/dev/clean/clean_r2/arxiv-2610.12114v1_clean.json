@@ -1,0 +1,1118 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12114v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "0dbaad7a-9e6f-4f23-a314-6c8c1a889c15",
+    "generated_at": "2026-10-19T14:21:34Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "decisions": {
+    "P0": {
+      "decision": "kept",
+      "reason_code": "contribution",
+      "relations": [
+        {
+          "neighbour_id": "C0",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C8",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P1": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C23",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C30",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P2": {
+      "decision": "dropped",
+      "reason_code": "contribution",
+      "relations": [
+        {
+          "neighbour_id": "C0",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "P0",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P3": {
+      "decision": "dropped",
+      "reason_code": "heading_or_fragment",
+      "relations": [
+        {
+          "neighbour_id": "C2",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C17",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C16",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P4": {
+      "decision": "dropped",
+      "reason_code": "heading_or_fragment",
+      "relations": [
+        {
+          "neighbour_id": "C0",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P0",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P2",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P5": {
+      "decision": "dropped",
+      "reason_code": "heading_or_fragment",
+      "relations": [
+        {
+          "neighbour_id": "C27",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C8",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C29",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P6": {
+      "decision": "dropped",
+      "reason_code": "positioning",
+      "relations": [
+        {
+          "neighbour_id": "C7",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C2",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C27",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P7": {
+      "decision": "dropped",
+      "reason_code": "premise",
+      "relations": [
+        {
+          "neighbour_id": "C8",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C9",
+          "relation": "broader"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P8": {
+      "decision": "kept",
+      "reason_code": "positioning",
+      "relations": [
+        {
+          "neighbour_id": "P7",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C3",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P9": {
+      "decision": "dropped",
+      "reason_code": "premise",
+      "relations": [
+        {
+          "neighbour_id": "P7",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C8",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C3",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P10": {
+      "decision": "kept",
+      "reason_code": "premise",
+      "relations": [
+        {
+          "neighbour_id": "C9",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P7",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P11": {
+      "decision": "kept",
+      "reason_code": "positioning",
+      "relations": [
+        {
+          "neighbour_id": "C18",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C5",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P12": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C30",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C11",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P13": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C19",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C1",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C10",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P14": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P13",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C10",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C29",
+          "relation": "broader"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P15": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C10",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P16": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P1",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C30",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C4",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P17": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C14",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C28",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C21",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P18": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C11",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C24",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C21",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P19": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P17",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C13",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C16",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P20": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C23",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "P15",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "P13",
+          "relation": "broader"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P21": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C3",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P9",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C5",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P22": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P1",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C27",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P23": {
+      "decision": "dropped",
+      "reason_code": "contribution",
+      "relations": [
+        {
+          "neighbour_id": "P2",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C0",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "P0",
+          "relation": "broader"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P24": {
+      "decision": "dropped",
+      "reason_code": "positioning",
+      "relations": [
+        {
+          "neighbour_id": "P23",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C8",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "P4",
+          "relation": "broader"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P25": {
+      "decision": "dropped",
+      "reason_code": "premise",
+      "relations": [
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C9",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "P0",
+          "relation": "broader"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P26": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C11",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P12",
+          "relation": "same"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P27": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C6",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C17",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P17",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P28": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P27",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C21",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C14",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P29": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P27",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P28",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C6",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P30": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C12",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "P26",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C29",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P31": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P22",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P5",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "P1",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P32": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P28",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P27",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C19",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P33": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C27",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C7",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "P14",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P34": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P21",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P7",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C19",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P35": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P26",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P15",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P36": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C11",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C3",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C21",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P37": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P34",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C26",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P10",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P38": {
+      "decision": "dropped",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C8",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P21",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "P10",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P39": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C4",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P26",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C19",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P40": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P25",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C9",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C27",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P41": {
+      "decision": "dropped",
+      "reason_code": "positioning",
+      "relations": [
+        {
+          "neighbour_id": "P15",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P6",
+          "relation": "same"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P42": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C21",
+          "relation": "broader"
+        },
+        {
+          "neighbour_id": "C25",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P43": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C24",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C22",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C14",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P44": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C17",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P43",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P17",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P45": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P22",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P11",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P46": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P43",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P44",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C24",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P47": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P45",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P10",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P48": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P43",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P46",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P44",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P49": {
+      "decision": "dropped",
+      "reason_code": "limitation_or_caveat",
+      "relations": [
+        {
+          "neighbour_id": "P12",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P45",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C24",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P50": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P46",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P44",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P43",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P51": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P50",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P42",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C27",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P52": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P48",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P46",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P44",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P53": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P45",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P34",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C18",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P54": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P42",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C6",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C16",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P55": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "P15",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C5",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C10",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P56": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "C26",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P49",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P7",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P57": {
+      "decision": "dropped",
+      "reason_code": "contribution",
+      "relations": [
+        {
+          "neighbour_id": "C23",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P1",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "P45",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    }
+  }
+}

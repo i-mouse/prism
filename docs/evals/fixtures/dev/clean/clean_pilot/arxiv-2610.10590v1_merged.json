@@ -1,0 +1,336 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.10590v1",
+    "run_id": "clean_pilot",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "b7eb1ab2f3fa",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7cd024de-ee74-4f7d-858c-d4cfdb5df894",
+    "generated_at": "2026-10-17T11:36:13Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "A Python harness exposes batch archival and explicit recovery without task-specific model training, while protecting user instructions and assistant messages from these operations.",
+      "claim_summary": "Python harness enables batch archival/recovery without model training while protecting system instructions",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider-reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28\u2013$1.44 versus approximately $4.38.",
+      "claim_summary": "Method reduced OpenTelemetry prompt tokens, cumulative input by 50%, and cost substantially",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both arms passed the two-case primary behavioral oracle; neither fully satisfied the follow-up evaluation.",
+      "claim_summary": "Both method and baseline passed primary oracle but failed full follow-up evaluation",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The method made more requests and took 17% longer.",
+      "claim_summary": "The proposed method required more API requests and 17% longer execution time",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "claim_summary": "Application development task yielded no savings, and an earlier run showed lower quality",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "These observations demonstrate substantial resource savings in noisy tool-use trajectories and identify workload dependence as a central consideration for reversible context management.",
+      "claim_summary": "Reversible context management provides resource savings on noisy tasks but depends on workload",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Its potential benefit lies in reducing repeated input and leaving less obsolete material in subsequent requests.",
+      "claim_summary": "Method benefits agents by reducing repeated input tokens in multi-turn requests",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Post-exposure curation gives the agent a further choice over continued retention without requiring changes to the source tool.",
+      "claim_summary": "Post-exposure curation lets models decide retention without modifying underlying tools",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "claim_summary": "Main benchmark showed major context reduction while maintaining primary behavioral success",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Our contract preserves user, system and assistant messages and returns exact archived payloads on recovery.",
+      "claim_summary": "Method contract preserves non-tool messages and accurately restores archived tool payloads",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The backend validates the entire batch before committing a change.",
+      "claim_summary": "System validates full archival batch atomically before making state changes",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Unknown, duplicate, already archived, or otherwise unavailable identifiers produce a corrective error without partial mutation.",
+      "claim_summary": "Invalid archival requests trigger error responses without partial state mutations",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "User, system, and assistant messages are not selectable through the context tools.",
+      "claim_summary": "Context management tools cannot target or alter user, system, or assistant messages",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The trace preserves original observations independently of the active representation.",
+      "claim_summary": "System trace retains raw observations independently of active prompt context modifications",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both arms submit both tasks normally, without recorded provider errors.",
+      "claim_summary": "Both test conditions completed execution without encountering provider-level API errors",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Table 1 shows substantial reduction in active and cumulative input under the method despite more requests.",
+      "claim_summary": "Method substantially lowered active and cumulative prompt tokens despite making more requests",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "claim_summary": "Method achieved 85% prompt token reduction at primary task submission",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "claim_summary": "Method maintained 75% prompt token reduction after completing follow-up task",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The method peak is 381,299 versus 912,492 tokens.",
+      "claim_summary": "Peak prompt token usage was significantly lower under the proposed method",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Cumulative input decreases by 50%, and input plus completion tokens decrease by 50%.",
+      "claim_summary": "Cumulative input and total token consumption both dropped by 50%",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The estimated cost is approximately 67\u201371% lower, even after reported cache usage is included.",
+      "claim_summary": "Estimated API execution cost was reduced by 67-71% including caching",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "claim_summary": "Method produced over double the completion tokens and increased wall-clock time by 17%",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both primary candidates pass the two-case behavioral oracle.",
+      "claim_summary": "Both method and baseline candidates passed the primary behavioral test suite",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "For the follow-up, both candidates compile.",
+      "claim_summary": "Code solutions generated by both experimental conditions successfully compiled",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The method exits with status 0 after SIGTERM in 8.43 seconds and after SIGINT in 8.85 seconds.",
+      "claim_summary": "Method solution shut down cleanly in under 9 seconds on termination signals",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Retained fails both probes and is killed with status 137.",
+      "claim_summary": "Baseline solution failed termination signal probes and timed out",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Conversely, retained passes the occupied-port startup-failure probe with status 1; the method\u2019s second process does not finish within 30 seconds.",
+      "claim_summary": "Baseline passed startup-failure test whereas proposed method solution timed out",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The method therefore shows stronger tested signal handling but weaker tested startup-failure handling.",
+      "claim_summary": "Method demonstrated superior signal handling but inferior startup-failure recovery",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The frozen mixed grader reports 3/6 for method and 2/6 for retained.",
+      "claim_summary": "Method scored 3/6 compared to baseline's 2/6 on follow-up grading suite",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In total, 26 results containing 2,247,229 text characters are represented by 9,709 note characters.",
+      "claim_summary": "Archival compressed 2.25M raw text characters into under 10k note characters",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "All 26 archived text payloads and image lists match their recorded tool returns exactly.",
+      "claim_summary": "Archive system maintained byte-exact fidelity with original recorded tool outputs",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "claim_summary": "Planroom benchmark yielded no prompt token, total token, or cost reductions",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Archival of 34 results removes only 69,685 net history characters; this does not offset the differing generated trajectories and method overhead.",
+      "claim_summary": "Archival on Planroom task removed insufficient characters to overcome method overhead",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "claim_summary": "Method achieved top accuracy scores in two Sphinx sessions compared to one baseline",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "claim_summary": "Sphinx method sessions consistently achieved smaller final prompts than baseline sessions",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "An earlier browser-based workflow-design continuation used 63% fewer total tokens with the method but received a manual score of 4/12 versus 6/12 for retained.",
+      "claim_summary": "Earlier browser run reduced tokens by 63% but had lower quality scores",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In the central noisy debugging case, reversible curation accompanies a 75% smaller final measured prompt, 50% less cumulative input, and substantially lower estimated API cost, while both arms pass the same two primary behavioral cases.",
+      "claim_summary": "Reversible curation cut prompt size 75% and input 50% with equal primary success",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The report contributes: (1) a concrete reversible tool-result contract with stable identifiers, in-place notes, protected instruction messages, and atomic batch validation; (2) an independently graded debugging-and-pivot case with provider usage and cache-aware cost accounting; and (3) contrasting and adverse observations that delimit where the mechanism is useful.",
+      "claim_summary": "The report contributes: (1) a concrete reversible tool-result contract with stable identifiers, in-place notes, protected instruction messages, and atomic batch validation; (2) an independently graded debugging-and-pivot case with provider usage and cache-aware cost accounting; and (3) contrasting and adverse observations that delimit where the mechanism is useful.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Our contribution is an implementation and exploratory evaluation of a restricted, auditable operation over individual tool-result occurrences, not a claim to invent agent-controlled memory.",
+      "claim_summary": "Our contribution is an implementation and exploratory evaluation of a restricted, auditable operation over individual tool-result occurrences, not a claim to invent agent-controlled memory.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We study how this operation behaves in real coding and browser trajectories, including a case in which retained history exceeds 900,000 reported prompt tokens.",
+      "claim_summary": "We study how this operation behaves in real coding and browser trajectories, including a case in which retained history exceeds 900,000 reported prompt tokens.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Our interface restricts edits to individual tool-result occurrences, automatically archives exact originals, and preserves user, system, and assistant messages.",
+      "claim_summary": "Our interface restricts edits to individual tool-result occurrences, automatically archives exact originals, and preserves user, system, and assistant messages.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Human instructions therefore remain a verbatim task anchor under our context operations.",
+      "claim_summary": "Human instructions therefore remain a verbatim task anchor under our context operations.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This enables comparison of archived payloads against recorded tool returns.",
+      "claim_summary": "This enables comparison of archived payloads against recorded tool returns.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Such equality checks validate storage integrity; they do not validate the semantic adequacy of notes.",
+      "claim_summary": "Such equality checks validate storage integrity; they do not validate the semantic adequacy of notes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The condition therefore tests prompted, model-selected curation.",
+      "claim_summary": "The condition therefore tests prompted, model-selected curation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It does not show that an unprompted base model spontaneously discovers a need to forget, and it does not involve parameter learning during the experiment.",
+      "claim_summary": "It does not show that an unprompted base model spontaneously discovers a need to forget, and it does not involve parameter learning during the experiment.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These are resource savings without a speed advantage in this case.",
+      "claim_summary": "These are resource savings without a speed advantage in this case.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The archive verifies exact payload preservation while the agent repeatedly curates context and continues working; this pair does not test retrieval behavior because no recovery is requested.",
+      "claim_summary": "The archive verifies exact payload preservation while the agent repeatedly curates context and continues working; this pair does not test retrieval behavior because no recovery is requested.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The method completes in 24.29 rather than 31.78 minutes; this single pair does not isolate the cause of the timing difference.",
+      "claim_summary": "The method completes in 24.29 rather than 31.78 minutes; this single pair does not isolate the cause of the timing difference.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The original result therefore remains an observed quality loss alongside a resource saving.",
+      "claim_summary": "The original result therefore remains an observed quality loss alongside a resource saving.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The OpenTelemetry archive illustrates that the agent can act on this distinction.",
+      "claim_summary": "The OpenTelemetry archive illustrates that the agent can act on this distinction.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It shows that the method can continue implementing after context edits while retained history continues to grow.",
+      "claim_summary": "It shows that the method can continue implementing after context edits while retained history continues to grow.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Curation frequency is consequently not a useful success metric on its own.",
+      "claim_summary": "Curation frequency is consequently not a useful success metric on its own.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Our accounting includes reported cache usage; the different workloads and models preclude a direct numerical comparison.",
+      "claim_summary": "Our accounting includes reported cache usage; the different workloads and models preclude a direct numerical comparison.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Protecting user messages prevents direct archival of the task text.",
+      "claim_summary": "Protecting user messages prevents direct archival of the task text.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "It does not ensure that the agent follows those instructions or preserves the evidence needed to satisfy them.",
+      "claim_summary": "It does not ensure that the agent follows those instructions or preserves the evidence needed to satisfy them.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The experiments therefore establish neither superiority over other context-management systems nor novelty of the shared archival and recovery design.",
+      "claim_summary": "The experiments therefore establish neither superiority over other context-management systems nor novelty of the shared archival and recovery design.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We cannot attribute the entire between-arm resource difference to text archival alone.",
+      "claim_summary": "We cannot attribute the entire between-arm resource difference to text archival alone.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The archive audit establishes byte-exact preservation, not the su\ufb00iciency of every note or the dispensability of every removed result.",
+      "claim_summary": "The archive audit establishes byte-exact preservation, not the su\ufb00iciency of every note or the dispensability of every removed result.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Smaller active context alone is not a measure of greater reasoning ability or a guarantee of preserved quality.",
+      "claim_summary": "Smaller active context alone is not a measure of greater reasoning ability or a guarantee of preserved quality.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Gold/baseline separation validates the instrument against its reference candidates but does not eliminate these limits.",
+      "claim_summary": "Gold/baseline separation validates the instrument against its reference candidates but does not eliminate these limits.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The method also requires more actions and time, and follow-up correctness remains incomplete.",
+      "claim_summary": "The method also requires more actions and time, and follow-up correctness remains incomplete.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Contrasting application development and an adverse continuation show that neither resource savings nor quality preservation follows automatically from a smaller active history.",
+      "claim_summary": "Contrasting application development and an adverse continuation show that neither resource savings nor quality preservation follows automatically from a smaller active history.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The practical result is that an agent can complete noisy tool-driven work with substantially less active context and repeated input, using explicit archival decisions during the task.",
+      "claim_summary": "The practical result is that an agent can complete noisy tool-driven work with substantially less active context and repeated input, using explicit archival decisions during the task.",
+      "pass": "pass2"
+    }
+  ]
+}

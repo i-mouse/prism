@@ -1,0 +1,23 @@
+{
+  "_comment": "Experiment 3 pre-registration (docs/decisions.md, 'Experiment 3 pre-registration - 2026-10-15', revised after the c2 correction). GATES (must all pass): c1_min_recovered, c6_min_own_pass1_miss_adds, c4_projected_full_cost_max_inr, c7_min_pass2_grounding_rate, c8_min_pass2_precision. REPORT ONLY (null, no gate, _pass(None, x) always returns None per eval/score_exp3.py:145-146 - confirmed no crash, no fabricated FAIL): c2_min_matched_retained, c3_max_claim_ratio, c4_max_cost_inr_per_paper, c5_min_by_shape. Only c1/c2/c3/c4_max_cost_inr_per_paper/c5 are read by score_exp3.py; c6/c7/c8/c4_projected_full_cost_max_inr are hand-computed in B4 and kept here only as the single place all values are recorded together.",
+  "c1_min_recovered": 5,
+  "c1_comment": "GATE. Target rows (of 13) matched in merged output, in BOTH treatment runs. Scorer-computed (score_exp3.py's c1_recovered).",
+  "c2_min_matched_retained": null,
+  "c2_comment": "REPORT ONLY, not a gate. extraction/merge.py:145-147 copies every pass-1 claim into merged output unconditionally, so merge cannot drop a matched row - the only real failure source is pass-1 run-to-run variance (Experiment 2's A3 observation). The first draft's value of 13 was wrong: copied from Experiment 2's _in_replay_scope-filtered 13-of-18 subset. score_exp3.py's own _classify_rows has no such filter, so the unscoped dev-wide matched set is 18, not 13.",
+  "c3_max_claim_ratio": null,
+  "c3_comment": "REPORT ONLY, not a gate. Reported as the same-run ratio r per run (claims in *_merged.json / claims in that same run's own *_pass1.json) - this is the same r used inside c4_projected_full_cost_max_inr's formula below, kept visible on its own rather than only buried inside it.",
+  "c4_max_cost_inr_per_paper": null,
+  "c4_comment": "REPORT ONLY, not a gate. This is score_exp3.py's own key/computation: real measured replay cost per paper from _summary.json (eval/score_exp3.py:161-170). Distinct from c4_projected_full_cost_max_inr below - both kept under different keys so neither overwrites the other.",
+  "c5_min_by_shape": null,
+  "c5_comment": "REPORT ONLY, not a gate. Recovered-target breakdown by claim shape (E1-E5), informational.",
+  "c6_min_own_pass1_miss_adds": 3,
+  "c6_comment": "GATE. Not read by score_exp3.py. Target rows whose locked match (after blind adjudication) is a pass-2 claim, >= 3 in EACH run. Hand-counted in B4.",
+  "c7_min_pass2_grounding_rate": 0.95,
+  "c7_comment": "GATE. Not read by score_exp3.py. Share of pass-2 sentences grounding at partial_ratio >= 88, from *_buckets.json. Hand-computed in B4: (sentences emitted - dropped_ungrounded) / sentences emitted.",
+  "c8_min_pass2_precision": 0.70,
+  "c8_comment": "GATE. Not read by score_exp3.py. Per run, a random sample of 30 kept_new pass-2 claims (all of them if fewer than 30; fixed seed 20261015, sampling method written in B4 before labelling), hand-labelled claim/not-claim by Nitin against the label rubric's claim definition. Share labelled claim must be >= 0.70.",
+  "c4_projected_full_cost_max_inr": 130,
+  "c4_projected_comment": "GATE. Not read by score_exp3.py. projected = 87 * r + p2, where r = mean over both runs of (claims in that run's *_merged.json / claims in that run's own *_pass1.json), p2 = mean pass-2-only INR/paper from *_summary.json records labelled pass2. Deliberately conservative upper bound (assumes all of INR 87 scales with claim count). Hand-computed in B4.",
+  "targets_sha256": "69c60127cdf1d7130311b11b615e1e4490cf85ca637418d1c73ca6a3c18917b3",
+  "flag_on_prompt_hash": "d03695c495ff"
+}

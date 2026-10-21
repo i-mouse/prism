@@ -1,0 +1,60 @@
+﻿item_id,label,note
+L001,A,Generalizes the paper's results into a knowledge-transfer positioning claim.
+L002,A,Reports benchmark comparisons and teacher-relative performance.
+L003,A,Reports observed differences between intent-guided and unguided retention.
+L004,A,States a comparative result favoring the complete RA construction.
+L005,A,Reports no clear advantage for the playbook variant.
+L006,A,Reports measured variability and frequency of large guidance values.
+L007,A,Reports benchmark scores and underperformance against baselines.
+L008,A,Reports detector metrics showing near-floor discrimination on this corpus.
+L009,A,Reports comparative verifier-objective gains and paired win rates.
+L010,A,Reports metric-dependent model rankings on posterior features.
+L011,A,Claims a practical cost-reduction benefit from reusing cached data.
+L012,A,Reports measured guidance-term decline during training.
+L013,A,Reports AUPRC results and indistinguishable precision-recall curves.
+L014,D,Malformed highlighted excerpt; the selected text is a fragment.
+L015,A,Infers the model resists hallucinated context from attention patterns.
+L016,A,Reports the sole observed exception to rollout lengthening.
+L017,A,Reports gradient and optimizer-update magnitudes for compared losses.
+L018,A,Reports training-run performance gains across benchmarks.
+L019,A,Summarizes consistency across measured operating points.
+L020,A,Reports lower false-alarm rates while qualifying broader dominance.
+L021,A,States a theoretical effect of the student value baseline.
+L022,A,Reports an observed workflow-discovery benefit from post-training.
+L023,A,Asserts that the reported margins are conservative.
+L024,A,Reports measured accuracy gains across four subsets.
+L025,A,Reports observed response-length behavior during training.
+L026,A,Summarizes evaluation performance across three capability areas.
+L027,C,Describes the control construction and its relation to the local expectation.
+L028,C,Explains what the experimental condition tests rather than a result.
+L029,A,Claims superiority to baselines and identifies where supervised KT catches up.
+L030,D,Defines the RA advantage calculation and response-level quantities.
+L031,A,Reports completion-time differences while noting causal ambiguity.
+L032,A,Reports the measured zero-shot AUC.
+L033,A,Reports comparative improvement from changing the evaluator versus both components.
+L034,D,Figure caption heading rather than a sentence to audit.
+L035,A,Reports rollout length differences across model pairs.
+L036,A,Reports report-delivery counts across three conditions.
+L037,A,Claims transfer across optimization and self-evaluation roles.
+L038,A,Claims the case demonstrates revision and checking without a positive outcome.
+L039,A,Reports comparative improvements across tested weights and controls.
+L040,D,Defines the agent-side leakage signal and its semantics.
+L041,A,Reports an empirical instruction-following retention result.
+L042,A,Draws a general inference from a measured ranking reversal.
+L043,A,Reports a dataset-level outcome from the evaluation.
+L044,A,Summarizes a theoretical result about sufficient performance conditions.
+L045,A,Reports independent-draw metrics and notes deployment validation remains needed.
+L046,A,Reports superiority across dataset-window cells including early positions.
+L047,A,Reports broad model-pair evaluation and correlation with overlap.
+L048,A,Reports behavior observed in an example response.
+L049,A,Reports comparisons against baselines across datasets and training sizes.
+L050,A,States a theoretical property when student and teacher agree.
+L051,A,Reports statistical significance counts across sample sizes.
+L052,A,Reports a consistent accuracy benefit across tested settings.
+L053,A,Claims MASA avoids a costly tensor representation.
+L054,A,Interprets correlation as mediated by trace length and names a design sensitivity.
+L055,A,States a theoretical failure mode without the student value baseline.
+L056,A,Reports an empirical exception among task-centered estimates.
+L057,A,Claims PRECIP preserves structure and location for later inspection.
+L058,A,Positions MASA as preserving AX rather than large attention entries.
+L059,A,Claims Semi-OPD provides coverage with shorter rollouts.

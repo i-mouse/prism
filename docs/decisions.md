@@ -1649,6 +1649,8 @@ Order of work (current plan first, then core changes):
 7. Core changes (extractor or auditor) chosen from the latest dev failure map (from the runs of the best accepted configuration). One change batch = one experiment.
 The golden failure map (2026-10-08) already shows extraction is the largest leak: 7 of 11 golden refusal misses were never extracted, so auditor-only changes cap golden at 9/16 (56%). Reaching the floor is expected to need extractor-side work.
 
+**Amended 2026-10-13:** item 6 ("Experiment 2: newer Flash with thinking pinned") is superseded. Per the 2026-10-12 Experiment 1 rejection's own next-step note ("the extractor experiment must be scoped... designed and pre-registered in a new entry"), a scoped extractor few-shot experiment (see "Experiment 2 (redesigned) pre-registration - few-shot repair (claim-shape pairs)" below) is run as Experiment 2 instead. The newer-Flash-with-thinking idea is not cancelled, just reordered behind this scoped, cheaper, already-diagnosed work; it remains a candidate for a later experiment slot if budget allows.
+
 Exit:
 - Hard exit after 8 counted experiments, or when total spend from this entry reaches the push cap, whichever comes first. The push cap is set after the cost check and logged here before experiment 1.
 - At the exit: one sealed final run. Then log one of two decisions here: keep the floor and stop this version, or set a new floor and release with honest numbers. No further experiments on this version after the exit.
@@ -1698,3 +1700,1353 @@ Marks:
 - M2 baseline: report mean, min, max over 3 runs for refusal-family (31), positives, false rejections on S rows, and not_supported count (4).
 - M3 experiment accept, all required: mean refusal gain >= max(3 rows, 2 x baseline min-max spread); every run >= baseline mean; false rejections <= 10% and not more than 1 row worse than baseline mean; positives not more than 2 rows down. The spread number is fixed in a new entry right after baseline, before experiment 1.
 - M4 stop: hard exit at 8 counted experiments or the push cap.
+
+## Baseline run 1 paused at 4 of 12; diagnose before spend - 2026-10-11
+
+Measured:
+- AI Studio spend INR 1,250.00 -> 1,655.55 for 4 papers = about INR 101 per paper (about INR 1,220 per 12-paper run). Earlier estimate assumed about 10 claims per paper; real extraction is about 35 (37, 34, 26, 42).
+- Prism labels on those 4 papers: 139 claims, 135 S, 4 PS, 0 NS.
+
+Decisions:
+- The 3-run baseline is dropped for now. The baseline is 1 run on all 12 papers, used for diagnosis and as the "before" number.
+- 3 runs are kept for the release number and only for experiment candidates within reach of the floor.
+- The remaining 8 papers are uploaded only after a failure map on the 4 done papers (extraction miss vs audit miss).
+- Draft fixtures for the 4 papers use the eval matcher (1 call per paper, small); official fixtures are re-dumped later with the adjudicated --match-map (no LLM call).
+- Per-run cap: INR 1,500. AI Studio cap raised to INR 2,800 before the 8 uploads. Push cap and experiment design: new entry after run 1.
+
+## Dev run 1 - fixture dump and pre-registered adjudication rules - 2026-10-12
+
+Fixture dump (run 1, 8 remaining dev papers)
+- 8 draft fixtures written by eval/dump_fixture.py into docs/evals/fixtures/dev/run1/
+  with --matrix-path docs/evals/dev_eval.json passed explicitly. Match counts equal dev row counts.
+- 10 matcher calls (2 extra on 2610.11291v1, see below). Real cost INR 11.38 (about INR 1.1 per call).
+- Config identical across all 12 papers: prompt_version cb3272cce551, model gemini-3.6-flash.
+- --dry-run in dump_fixture.py still makes the matcher API call; it only skips the disk write.
+- Not persisted anywhere: thinking setting, span-grounding model actually used (fallback not
+  tracked), per-call token/cost. Ticket after the config freeze ends.
+- Prism labels on all 12 papers (effective_status): 362 claims, 325 S, 24 PS, 13 NS.
+  7 of the 13 NS are grounding demotions (raw label S, effective_status NS); 0 on the first 4 papers.
+
+Adjudication rules (written before the 20-row pack was opened)
+- Verdict classes: HIT, extraction miss, audit miss, grounding miss (claim matched, auditor label
+  right, effective_status changed by grounding).
+- Partial sibling = extraction miss: if Prism extracted only the safe half of a claim and not the
+  overreaching half, the row is an extraction miss.
+- Floor: 70% of 31 refusal-family rows = 22 rows.
+- If hits + audit misses + grounding misses < 22, the floor needs extractor work.
+- Fix order: experiments 1 and 2 run first as planned. The first core change targets the largest
+  miss class in the full 12-paper failure map; on a tie, extractor first.
+- Noise rule: single-run baseline, so a change of 2 refusal rows or fewer is not counted as a win.
+- Official numbers come only from the hand-adjudicated match map, never the live matcher.
+
+## Experiment 1 pre-registration (auditor thinking_level=high) - 2026-10-12
+**Change:** auditor call only gets thinking_level=high (config
+AUDITOR_THINKING_LEVEL, default unset = API default medium). Extractor,
+structurer, grounding models and prompts unchanged; prompt hash cb3272cce551.
+**Method:** audit-only replay on run 1 claims (eval/replay_audit.py): re-runs
+audit + structure + grounding, extraction held fixed. Reason: a full re-ingest
+resamples the extractor and breaks the adjudicated match map, so it would test
+two changes at once. Scored with eval/score_replay.py against
+docs/evals/dev_match_map.json (reproduces run 1 at 8/31).
+**Budget (supersedes the 2026-10-11 push-cap formula, which assumed 3 runs per
+experiment; the 3-run baseline was dropped):**
+- Push cap: INR 1,150 for all experiment spend from this entry on.
+- Sealed run + Milestone A reserve: INR 300, never drawn by the push.
+- Per-run cap: INR 1,500 (unchanged).
+- AI Studio cap: raise by INR 1,000 only before a run that exceeds the remaining
+  monthly headroom (about INR 490 now).
+- Gemini Flex tier: out of scope (google-genai 1.64.0 has no service_tier).
+  Separate ticket.
+- Open: the release floor and false-rejection cap still say "mean of 3 runs";
+  restate before Milestone A.
+**Stage A:** the 18 refusal-row claims (docs/evals/exp1_stage_a_claims.json:
+10 run-1 audit misses + 8 run-1 hits), high x3 and medium x2.
+Estimate INR 229-253.
+**Stage A marks (written before any Stage A output exists):**
+- A run-1 audit-miss row counts as fixed only if it is PS/NS in >= 2 of 3 high
+  repeats AND in 0 of 2 medium repeats.
+- PASS = fixed rows >= 3 of 10 AND run-1 hits lost (S in >= 2 of 3 high
+  repeats) <= 1 of 8.
+- Report the not_supported count and per-row labels across all repeats.
+- Stop the run if actual spend exceeds 1.3x the estimate.
+**Then:** PASS -> Stage B (false-rejection check) with scope and cost decided
+in a new entry before it runs; no configuration is accepted on Stage A alone.
+FAIL -> experiment 1 rejected, AUDITOR_THINKING_LEVEL stays unset, remaining
+budget goes to extractor work. Stage A + Stage B together count as one
+experiment.
+
+## Experiment 1 Stage A - amendment after control arm, before any high output - 2026-10-12
+**Written after the medium x2 control finished and BEFORE any high-thinking
+output exists (the high run was stopped before its first call: 0 calls, INR 0).**
+**Control result:** the unchanged auditor (medium) is not stable on the same
+claims: refusal hits 8 (run 1) / 7 / 5 across three medium samples; P2-R5,
+P6-R1, P8-R1, P12-R2, P1-R3, P5-R1, P8-R2 flip between repeats. Single-run dev
+numbers carry roughly +/-3 rows of auditor noise on these 18 claims.
+**Cost rule triggered:** medium arm cost INR 155.11 (computed from tokens at
+list price) vs estimate 86.52 (1.79x, over the 1.3x stop line). Cause: estimate
+assumed 600 audit thought tokens (real 2,279) and zero structurer thinking (real
+852, the API default). --estimate is fixed to use measured tokens. Real AI Studio
+spend: [fill in].
+**Amendments:**
+- Stage A is scored on the RAW auditor label (the only thing experiment 1
+  changes). Reason: grounding fell back from Groq to gemini-3.1-flash-lite on
+  92 of 99 span audits (rolling Groq daily cap), so arms would have different
+  graders. effective_status is still reported alongside; only 1 of 36 control
+  results depended on grounding.
+- Medium samples = run 1 + medium_1 + medium_2 (3 samples).
+- Fixed row (unchanged in spirit): a run-1 audit-miss row that is S in 3 of 3
+  medium samples AND PS/NS in >= 2 of 3 high repeats.
+- Lost hit (amended; the old rule fails on noise alone, medium_2 "lost" 4 of 8):
+  a row that is PS/NS in >= 2 of 3 medium samples AND S in >= 2 of 3 high repeats.
+- PASS = fixed rows >= 3 AND lost hits <= 1.
+- High x3 revised estimate INR 279-371; stop if actual exceeds INR 480.
+- Stage B at full size (362 claims, about INR 1,900-2,500 at real token cost)
+  is unaffordable. If Stage A passes, Stage B is limited to the run-1 claims that
+  match dev S rows, with scope and estimate logged in a new entry first.
+
+## Experiment 1 result - Stage A FAIL, rejected - 2026-10-12
+**Result against the amended marks (written before any high output):**
+fixed rows 1 of 10 (P1-R1); lost hits 0 of 8. PASS needed fixed >= 3.
+**Verdict: FAIL. Experiment 1 rejected. AUDITOR_THINKING_LEVEL stays unset.
+Stage B not run.** The switch and replay tooling stay in the code (default off).
+**Raw hits/31 (identical in raw and effective mode):** run1 8, medium 7 and 5,
+high 10, 10, 10. P5-R1 and P8-R2 were PS in all 3 high repeats but also PS in
+one medium sample, so by the mark they are noise, not fixes.
+**Observation, not a result (never pre-registered):** high was stable across
+3 repeats (0 variance) where medium was not (8/7/5), and lost no hits. Any test
+of this needs its own pre-registered experiment with a stability metric.
+**Product finding:** at the default (medium) setting, the auditor gives
+different verdicts on the same claim from run to run; single-run dev numbers
+carry roughly +/-3 rows of noise on these 18 claims.
+**Grounding:** Groq's rolling daily cap pushed 92 of 99 (medium) and 159 of 160
+(high) span audits to the gemini-3.1-flash-lite fallback; no hit/miss changed
+between raw and effective mode.
+**Spend:** medium x2 INR 155.11, high x3 INR 256.84, total INR 411.95 (computed
+at list price). Push budget left about INR 738; sealed reserve INR 300 untouched.
+Counted experiments: 1 of 8.
+**Next:** per the pre-registered FAIL rule, the remaining budget goes to
+extractor work (13 extraction misses; auditor-only ceiling 18/31 is below the
+22/31 floor). A full 12-paper re-run (about INR 1,050+) does not fit the
+remaining budget, so the extractor experiment must be scoped (extraction-only
+replay plus audit of new claims only), designed and pre-registered in a new entry.
+
+## Experiment 2 (redesigned) pre-registration - few-shot repair (claim-shape pairs) - 2026-10-13
+**Main objective (read first):** the goal is not to push a number but to find
+the real cause of the extractor's 13 dev extraction misses - is the gap a
+TEACHING problem (examples and prompt) or a TASK-DESIGN problem (one call
+that lists claims, vs checking every sentence)? The marks below are the
+referee; the diagnosis after Stage A states which cause the evidence
+supports, whatever the result.
+
+**Cause hypothesis (written before any run, per Phase 0):**
+- Points to TEACHING problem: treatment (shapes on) recovers >= 5/13 target
+  rows, total claim count stays <= 1.5x control, and the rows recovered are
+  specifically the E1/E2/E3/E5 rows the 8 new examples target - the model
+  could already do this, it just hadn't seen the right demonstrations.
+- Points to TASK-DESIGN problem: treatment recovers few or none of the
+  targeted rows despite seeing matching examples almost verbatim in its own
+  context, OR claim count blows past 1.5x without hitting the target rows
+  (over-extracts generally rather than learning the specific shapes) -
+  either pattern suggests a single list-all-claims call cannot reliably apply
+  shape-specific rules no matter how they're taught, and that a per-sentence
+  or multi-pass check is needed instead.
+- E3 attribution check: control (loader fix on, shapes off) already exposes
+  base example #4, `abstract_broad_and_narrow_together` (broad Abstract claim
+  + narrow Results claim, both must be extracted) - this example carries a
+  `note`, so under today's loader bug (flag off) it was itself blanked to
+  empty claims in run 1; control un-blanks it for the first time, and it
+  teaches almost the same lesson as the E3 shape (keep a broad claim
+  alongside its narrower sibling instead of dropping one). So if **control
+  alone** already recovers most of the 4 E3 rows, the E3 cause was the loader
+  bug - already fixed by the base fix - not a missing example, and the new E3
+  examples would be confirming the fix rather than causing new recovery.
+  Stage A scoring (eval/score_exp2.py) reports E3 row recovery for control
+  and every treatment run separately, not folded into the combined count, so
+  this can be told apart from genuine shapes-driven recovery.
+
+**Change:** two independent config flags, both default off.
+- EXTRACTOR_FEWSHOT_FIX (already built, duplicates PR-1 #115's loader fix,
+  which had a prior negative coverage result on golden - kept here as
+  correctness fix and BASE for both arms, not the thing under test). Off:
+  extraction/prompt_loader.py::_is_negative_example treats any claims
+  few-shot example with a top-level "note" field as negative (today's bug -
+  see 2026-10-05/06 entries). On: that check is replaced by a check on the
+  real output (empty claims list).
+- EXTRACTOR_FEWSHOT_SHAPES (new, the thing under test this experiment). Off:
+  extractor renders only the base 11 claims examples. On: appends 8 new
+  examples (prompts/extract_claims_fewshot_shapes.json - one positive +
+  one near-miss negative for each of E1 hedged/in-principle, E2 table
+  captions/table-derived quantities, E3 overreach-vs-safer-sibling, E5 bare
+  "we observed" statements) after the base 11, and appends a system-prompt
+  addendum (prompts/extract_claims_system_shapes.md, 120 words, one rule per
+  shape) to the extractor system prompt. Every new example uses a
+  `rationale` key, never `note`, so none of them can be mis-treated as
+  negative by _is_negative_example's note-based branch. All example text
+  (method/dataset/benchmark names, numbers, sentences) is invented; a
+  RapidFuzz token_set_ratio sentence-level check against all 12 dev PDFs +
+  the 3 golden PDFs (held-out/sealed sources never read) found no sentence
+  scoring >= 70 (max observed: 65.2), and the repo's own hash-based
+  eval/check_prompt_leak.py also passed clean (0 leaks, 0 warnings) on both
+  new prompt files.
+- E4 (method/setup statements not treated as claims, 1 miss: P11-R1) is out
+  of scope by design - it overlaps the existing "do not extract
+  implementation details" rule in extract_claims_system.md; a new example
+  here risks contradicting that rule rather than complementing it.
+- Three gap-no-evidence claim types are deferred, no examples drafted: plain
+  unhedged cause/mechanism assertions (the only mechanism-shaped misses found
+  are specifically hedged, already covered by the E1 examples), novelty
+  ("first to..."), and negative-result framing ("method X did not help") -
+  none of the 13 confirmed dev-miss rows isolates any of these three as its
+  own failure, so there is no evidence to design against yet.
+- Scope: extractor rendering only
+  (extraction/prompt_loader.py::build_gemini_messages_for_extractor).
+  Confirmed no shared code path with the auditor or structurer message
+  builders (tests/test_extractor_fewshot_shapes.py covers both flags in every
+  state). get_prompt_version() takes both flag states into its hash,
+  independently recomputed (not asserted blind) in
+  tests/test_extractor_fewshot_shapes.py:
+  - both flags off: cb3272cce551 (unchanged, frozen baseline, not used by
+    either arm here).
+  - fix on, shapes off (**control**): 0e07bb0f2680 (same hash the original,
+    now-superseded Experiment 2 draft registered for its "flag on" arm).
+  - fix on, shapes on (**treatment**): da3a1ab6b587 (new).
+  Auditor/structurer prompt files, AUDITOR_THINKING_LEVEL, AUDIT_MODE, and
+  GROUNDING_NORMALIZE are untouched.
+**Numbering (amends the 2026-10-10 order of work, see that entry's
+2026-10-13 amendment above):** this redesigned experiment still runs as
+Experiment 2, in place of the previously planned "newer Flash with thinking
+pinned" (deferred, not dropped - remains a candidate for a later slot if
+budget allows), per the 2026-10-12 Experiment 1 rejection's own next-step
+note. It replaces this entry's own earlier same-day draft (the plain loader
+fix alone, with no claim-shape examples), which is superseded by this
+version before any Stage A call was made under it.
+**Scope:** 10 papers with a run-1 extraction miss (P1, P2, P3, P4, P5, P7,
+P8, P9, P11, P12). 13 target rows (extraction misses) + 18 matched rows
+(regression check), both resolved via eval.score_replay.resolve_adjudicated_rows
+against docs/evals/dev_match_map.json.
+**Runs:** control x1 (fix on, shapes off), treatment x2 (fix on, shapes on).
+Model pinned to run 1 (gemini-3.6-flash); extractor thinking unset (no
+thinking_config sent, matching today's behavior) in every run. Pilot: 1 paper
+(the smallest of the 10, P7/arxiv-2610.10590v1), control variant, --max-inr
+30, inside Stage A's cap.
+**No LLM matcher:** matching for the review pack is fuzzy shortlist
+(RapidFuzz token_sort_ratio on GROUNDING_NORMALIZE-normalised text,
+eval/build_exp2_review_pack.py) plus human adjudication - never an
+LLM-as-judge call.
+**Marks (written before any Stage A output exists; all four must pass to
+accept):**
+- A1: at least 5/13 target rows recovered in BOTH treatment runs independently.
+- A2: min(treatment recovered) - control recovered >= 3.
+- A3: each treatment run keeps at least 17/18 matched rows (no regression -
+  a matched row losing its match would mean the change broke something
+  already working).
+- A4: treatment's total claim count is at most 1.5x control's, in every
+  treatment run (guards against the new examples also loosening extraction
+  generally, not just recovering the 4 targeted shapes' lesson).
+- Accept only if all four pass. Stage B (auditor replay on recovered +
+  changed claims) is reported, not gating - it measures projected refusal
+  hits, but Stage A alone decides whether the flag ships.
+**Informational, not gating (reported alongside the marks):**
+- control vs run 1 recovery - isolates the loader fix's own effect, since
+  control is no longer "both flags off" the way the superseded draft's
+  control was.
+- E3 row recovery for control and every treatment run separately (see the
+  E3 attribution check above) - eval/score_exp2.py prints a per-shape
+  (E1/E2/E3/E4/E5) recovered-row breakdown per run.
+- miss_cause counts per run for target rows NOT recovered (shape_not_taught |
+  saw_example_still_skipped | split_or_merged_differently | other), a new
+  per-row field in the adjudication template
+  (eval/build_exp2_review_pack.py) and scorer (eval/score_exp2.py).
+- Stage B projected refusal hits.
+**Adjudication rules (same as run 1, 2026-10-12):** "same claim, other
+sentence" counts as a recovery/match; a "safe half only" sibling claim (a
+narrower claim that misses the broader assertion a golden row needs) does
+not count.
+**Known gap:** new claims that would match a dev S (not_supported) row
+outside the 13+18 scope are not audited here, so the full false-rejection
+check against dev S rows waits for Milestone A. This experiment can improve
+refusal recall without yet proving it does not also raise false rejections
+on supported rows outside its scope.
+**Caps:** Stage A INR 250 (pilot spend counts inside this). Stage B INR 100.
+Total INR 350.
+**Paid-step approval gates (non-negotiable, no step is pre-approved by an
+earlier "go"):** show the free countTokens estimate -> "go pilot" -> run
+pilot, show pilot-scaled full-Stage-A estimate -> "go Stage A" -> run full
+Stage A -> adjudicate -> score -> (if PASS) show Stage B --estimate -> "go
+Stage B" -> run Stage B.
+**Counted experiment:** 2 of 8. After this experiment the push ends and the
+exit decision above (the 2026-10-10 order-of-work entry's "Exit:" rule) is
+taken, whatever the result.
+
+**Amended 2026-10-14:** Stage A cap raised 250 -> 280 INR and total cap 350
+-> 380 INR, after the pilot measured thinking tokens (~65% of generated
+tokens; scaled Stage A estimate ~233 INR). Marks A1-A4 unchanged. Made before
+any Stage A result.
+
+**Amended 2026-10-14 (second, after the Stage A runs, before adjudication):**
+A3's "18 matched rows" scope gap found while building the Stage A review
+pack: of the 18 dev-wide matched rows, 5 (P6-R1, P6-R2, P10-R1, P10-R2,
+P10-R3) belong to P6 and P10, which have no extraction miss and so were
+never part of the 10-paper replay scope - no fixture for either paper exists
+in control_r1/treatment_r1/treatment_r2. A3 is redefined to score only the
+13 matched rows whose paper was actually replayed: **"at least 12/13 matched
+rows kept in every treatment run"** (12/13 preserves the original mark's "at
+most 1 regression" budget, not a proportional rescaling of 17/18). The other
+5 rows are out of scope by definition, not scored, not counted toward this
+mark. A1, A2, A4 unchanged. eval/score_exp2.py's A3_FLOOR and matched-row
+classification (REPLAYED_PAPER_SUBSTRINGS) updated to match. Made before any
+adjudication.
+
+## Experiment 2 - Stage A result - 2026-10-14
+**Marks:**
+- A1: FAIL. At least 5/13 target rows required in both treatment runs; treatment_r1
+  recovered 1/13, treatment_r2 recovered 1/13.
+- A2: FAIL. min(treatment recovered) - control recovered >= 3 required; actual
+  1 - 3 = -2.
+- A3: FAIL. At least 12/13 matched rows required in every treatment run (redefined
+  2026-10-14 scope, see above); treatment_r1 kept 11/13, treatment_r2 kept 9/13.
+- A4: PASS. Treatment claims <= 1.5x control's (463.5) required; control=309,
+  treatment_r1=285, treatment_r2=287 - treatment claim counts were lower than
+  control's, not higher.
+**Verdict: FAIL. Experiment 2 (redesigned) rejected.** All four marks were
+pre-registered as required together; A4 alone passing does not change this.
+Stage B not run (gated on a PASS). Spend: INR 177.93 (pilot 2.77 + control-batch
+56.58 + treatment_r1 59.63 + treatment_r2 58.95), against the amended 280 cap.
+
+**Diagnosis (required, teaching problem vs task-design problem):**
+Per the pre-registered cause hypothesis, the evidence leans toward a
+TASK-DESIGN problem but does not prove it. Treatment saw the 8 new claim-shape
+examples and the addendum, invented examples of the same shapes it needed to
+recover, and still missed almost all of them: E2 (table captions/derived
+quantities) 0/3 in both treatment runs, E3 (overreach-vs-sibling) 0/4 in both
+treatment runs, E5 (bare "we observed") 0/1 in both treatment runs. Of the 4 E1
+(hedged/in-principle) rows, treatment recovered only 1 (P12-R1) in both runs -
+fewer than control's 2 (P12-R1 and P1-R2; treatment lost P1-R2 despite control
+having recovered it). This is the specific failure pattern the pre-registered
+hypothesis named as pointing to task design: a single list-all-claims call
+failing to reliably apply shape-specific rules on a per-sentence basis with
+this teaching approach (8 examples + addendum). The alternative explanation
+(treatment over-extracts broadly rather than learning the specific shapes) is
+ruled out by A4: treatment's claim counts were lower than control's, not
+higher, so there is no sign of indiscriminate over-grabbing masking the
+targeted shapes elsewhere. However, run-to-run variance is large - control
+itself lost 6/13 matched rows with no change at all (see observation below) -
+and there was only one control run, so the 3-vs-1 target-row difference
+between control and treatment may be within that same noise rather than a
+real effect of the new examples.
+
+The human-adjudicated miss_cause field describes the setup rather than serving
+as independent evidence: treatment's unrecovered rows were tagged
+"saw_example_still_skipped" specifically because treatment is the arm that had
+the examples (11 of 12 unrecovered target rows in each treatment run), while
+control's were tagged "shape_not_taught" because control never had them (7 of
+10). This records which arm was which; it does not independently confirm the
+task-design reading above.
+
+The E3 attribution check (pre-registered) showed control alone recovered 1/4
+E3 rows, consistent with the un-blanked base example
+(abstract_broad_and_narrow_together), but a single row in a single run cannot
+be separated from variance. Treatment recovered 0/4 E3 rows in both runs - the
+new E3-shaped examples demonstrated no additional effect on E3 beyond whatever
+the loader fix alone provided.
+
+**Observation (not pre-registered):** control's matched-row retention was 7/13
+(lost 6/13: P1-R1, P4-R2, P5-R1, P7-R1, P8-R1, P8-R2) - a loss rate not gated by
+any mark, since A3 only checks treatment, but relevant context for A3's FAIL.
+Every matched row lost by either treatment run was also lost by control
+(treatment_r1 lost P1-R1, P5-R1 - both control losses; treatment_r2 lost P1-R1,
+P5-R1, P7-R1, P8-R2 - all four also control losses). No treatment run lost a
+matched row that control did not also lose. This suggests A3's FAIL reflects
+run-to-run extraction variance already present in the loader-fix-only arm, not
+a regression specifically caused by adding the 8 shape examples - though A3 was
+pre-registered against treatment only, and formally still FAILs as scored.
+
+**Decision:** both flags (EXTRACTOR_FEWSHOT_FIX, EXTRACTOR_FEWSHOT_SHAPES) stay
+default off. PR-1 (#115, the same loader fix) stays a draft, unmerged. Counted
+experiment: 2 of 8. The push ends after this experiment per the 2026-10-10
+Exit rule; the exit decision is next. Candidate lead for a future experiment
+(not started, needs its own dated entry): per-sentence or multi-pass
+extraction instead of one list-all-claims call.
+
+## Push extension past Experiment 2 - 2026-10-14
+Amends the Experiment 2 entry's "After this experiment the push ends". Logged before any Experiment 3 design or spend.
+- Reason: the Experiment 2 diagnosis leans toward a task-design problem (one list-all-claims call). The main objective is improving the extractor, and one untested lead remains: per-sentence or multi-pass extraction.
+- Scope: exactly ONE more counted experiment (Experiment 3). After it, the exit decision is taken, whatever the result. Any further extension needs a new dated entry.
+- Budget: Experiment 3 spends from the remaining push budget (about INR 560 = 738 - 177.93). Sealed reserve INR 300 untouched. Exact cap and marks go in the Experiment 3 pre-registration, before any paid call.
+- Design constraint (from the Experiment 2 observation): at least 2 control runs, because control alone lost 6/13 matched rows.
+- Unchanged: 8-experiment hard exit, 70% floor, 10% false-rejection cap, golden regression gate, no prompt tuning to move the number, human-only adjudication.
+
+## Experiment 3 pre-checks result - 2026-10-14
+Local-only pre-checks (no LLM/API calls) ahead of Experiment 3's pre-registration. Full detail: `docs/evals/exp3_prechecks/`.
+- Checks run: A (splitter survival), B (sentence-count sanity check), C (union of past runs), D (reader bake-off), E (failure diagnosis). Row counts: Check A/D/E against 119 dev rows (31 refusal-family); Check C against the 13 run-1 extraction-miss target rows (13 matched rows).
+- Only Checks A and D carry a pre-set pass/fail bar (>=95% WHOLE, i.e. 113/119). **Both FAILED.** Check A: best splitter (regex) 75.6% WHOLE. Check D: best candidate (fixed windows, 6000/1500 chars, no sentence splitting) 94.1% WHOLE (112/119) — FAIL by 1 row.
+- The bar itself was set above the raw-text ceiling (112/119 — the most any reader-plus-splitter combination on raw PyMuPDF text can reach, since 7 rows are lost at the reader/extraction stage before any splitting happens). A check requiring >=113/119 when the input ceiling is 112/119 cannot be passed by any splitter choice. This is recorded here as a design error in the check, not a splitter or reader failure.
+- Check E (failure diagnosis, no bar): the fixed-windows candidate's 7 NOT_FOUND rows are identical to the 7 raw-text reader-loss rows (P1-S1, P3-S6, P5-R2, P5-S2, P7-S1, P9-S6, P10-S6) — windowing itself added zero additional loss beyond what the raw extracted text already could not represent.
+- Reader ceilings (Check E, Step 1): raw_pipeline_text 112/119 (30/31 refusal-family); GROBID 0.9.0 81/119 (24/31 refusal-family); PyMuPDF4LLM 77/119 (27/31 refusal-family).
+- **Decision:** Experiment 3 uses fixed windows (6000 chars / 1500 overlap) on today's PyMuPDF raw text. Sentence splitting (pysbd or regex), GROBID, and PyMuPDF4LLM are rejected as the Experiment 3 input/reader choice.
+- **Parked:** GROBID emits the Unicode minus sign U+2212 for negative numbers; `normalize_for_match`'s quote/dash table does not map it to ASCII `-` (only handles curly quotes, en-dash, em-dash). Confirmed source of GROBID-specific mismatches (3 rows, Check E). Not fixed here — parked, since GROBID is not the Experiment 3 reader choice.
+- Evidence: `docs/evals/exp3_prechecks/` (unchanged copy of `scratch/exp3/`, which is git-ignored and untracked).
+
+## Backfill: records missing from this log - 2026-10-15
+Four gaps found while compiling `docs/research/fact_inventory_2026-10-14.md`; recorded here, not reinterpreted.
+1. **Scoped-auditor pilot** has no entry in this log at all. Per `docs/FINDINGS.md:27`: "1 run, 44 claims, ~Rs 204... Failed P3: 4 of 11 baseline refusals flipped to supported... Negative result; AUDIT_MODE stays legacy. Code archived on tag `archive/exp1-scoped-auditor`." Exact run date: NOT RECORDED (checked `docs/FINDINGS.md` and `docs/discovery/D1_report.md` in full; neither gives a date beyond "2026", both near the PR-1/B5.1 entries).
+2. **2026-10-09 stop-rule decision**, quoted at `docs/FINDINGS.md:53`: "Decision 9 Oct: stop core changes; clean up; ship with honest numbers." This has no corresponding entry in this log. It was superseded by this log's own 2026-10-10 "Release targets" entry (release floor = 70% dev refusal, stretch 80%, false-rejection hard cap 10%, hard exit after 8 counted experiments or push-cap exhaustion) — work continued past 2026-10-09 (Dev run 1, Experiment 1, Experiment 2, Experiment 3 pre-checks) under that later entry's rules, not under the stop-core-changes decision.
+3. **`pr2_feasibility_report.md`**, cited as a source at this log's line 1532 (PR-2 section-by-section extraction entry), does not exist in the repo. Confirmed via `Glob **/pr2_feasibility_report.md` -> 0 results.
+4. **`docs/research/fact_inventory_2026-10-14.md`** was created 2026-10-14 as a read-only evidence base, citing this log, `docs/PRISM_STATUS.md`, `README.md`, `docs/discovery/D1_report.md`, `scratch/exp3/report.md`, `docs/evals/dev_adjudication_run1.md`, `docs/FINDINGS.md`, and code files. No git commands were run to produce it.
+
+## Experiment 3 B1 review - 2026-10-15
+B1 (read-only, INR 0) checked the Experiment 3 design. Findings and decisions:
+- The extractor prompt has no importance filter; it already says "do not filter".
+  The hypothesis is now about model behaviour: one whole-paper call that writes
+  about 30 structured claims drops quiet claims; short per-window calls that only
+  copy claim sentences recover them.
+- Pass-2 claims have no claim_summary; engine.py reads it directly and the schema
+  requires it. Decision: for pass-2 claims, claim_summary = the copied sentence.
+  No extra LLM call.
+- Dedup: partial_ratio would drop a short claim that sits inside a longer pass-1
+  sentence, which is the E3 shape this experiment targets. Decision: drop a pass-2
+  sentence only when fuzz.ratio >= 88 (after normalize_for_match) against a pass-1
+  claim's source span or claim text. Log every drop and every "contained but kept"
+  case for hand review.
+- Cost: the INR 3.9 per claim audit figure was never measured; use only the
+  measured INR 87 per paper. Pass 2 adds about 22 calls per paper. The paid-run
+  estimate decides scope; any cut is logged here before spending.
+- Ceiling: even perfect extraction gives 21/31 (68%), below the 22/31 floor,
+  because 10 audit misses are out of scope. Experiment 3 tests the mechanism, not
+  release readiness.
+- Sealed reserve INR 300 covers 3 new papers at INR 87, not 4.
+- Safety: B1 reported no deny rules because it checked only
+  .claude/settings.local.json. Deny rules for held-out and sealed paths already
+  existed in .claude/settings.json since 2026-10-11 (commit 3f9d70f). On
+  2026-10-15, Read(/docs/LABEL_RUBRIC.md) was added. A Read deny also blocks Edit
+  and Write on that path. It does not block scripts that open files themselves or
+  recursive grep, so shell and script calls stay on "Allow once" and must never
+  touch these paths.
+- Product note: the Brief's Overstated Claims and Questions to Scrutinize sections
+  moved into paper chat on 2026-08-22; the handoff and B1 prompt used the old list.
+- Open research item (after the exit decision, not part of the push): how the
+  extractor decides what counts as a claim. Claim count should follow the paper's
+  real claims, not its length or a fixed number.
+
+## Experiment 3 build - 2026-10-15
+What was built: pass-2 windowed "copy-only" extraction behind
+`EXTRACTOR_SECOND_PASS` (`config.settings.extractor_second_pass`, default
+`False`). Off is byte-identical to today: `extract_claims` runs pass 1 only
+and `get_prompt_version()`'s output is unaffected. Pass 1 itself is unchanged
+and was never removed.
+
+Files: `extraction/windowing.py` (new; fixed 6000-char windows, 1500-char
+overlap, pure function, ports the Exp 3 pre-checks geometry), `extraction/pass2.py`
+(new; one `_call_gemini_structured` call per window, `SentenceListLLM` schema -
+kept out of `extraction/schemas.py` deliberately, since that file's bytes are
+part of the prompt hash and the flag must stay a no-op when off), `extraction/merge.py`
+(new; grounds every pass-2 sentence at Stage-1 `fuzz.partial_ratio>=RAPIDFUZZ_THRESHOLD`
+against the raw paper text or drops it as `dropped_ungrounded`; dedups at
+`fuzz.ratio>=88` - not `partial_ratio` - against pass-1 `claim_text_verbatim`
+or an already-kept pass-2 sentence, specifically so a short claim nested inside
+a longer pass-1 sentence is NOT dropped as a duplicate, since that's the E3
+shape this experiment targets; a sentence with a high partial_ratio match but
+ratio below 88 is kept and logged as `kept_but_contained` for hand review),
+`prompts/extract_claims_pass2_system.md` (new; generic instructions - find and
+copy verbatim any sentence making a claim about the paper's own method/results,
+explicitly calling out hedged claims, table-only numbers, narrower claims next
+to broader ones, and bare "we observed" statements; no worked examples),
+`eval/replay_exp3.py` (new; CLI replay harness, see Phase 0 report above for
+its exact flags/enforcement), `eval/score_exp3.py` (new; scores C1-C5 against
+`exp3_thresholds.json`), `docs/evals/exp3_targets.json` (new; 13 confirmed
+run-1 extraction-miss target rows, straight copy of `score_exp2.py`'s
+`ROW_ID_TO_SHAPE`), `docs/evals/exp3_thresholds.json` (new; all-null skeleton
+at build time), `extraction/engine.py` (added `_extract_usage_and_finish_reason`
+- reads `usage_metadata`/`finish_reason` off a Gemini response for logging
+only, side-channel, never fed back into any return value or pipeline decision;
+wired into `_write_structured_log` and both `_call_gemini_structured`/
+`_call_gemini_json`; `extract_claims` gained the `if settings.extractor_second_pass:`
+block that calls `run_pass2` + `merge_pass2_claims` and replaces `claims` with
+the merged list), `extraction/prompt_loader.py` (added
+`build_gemini_messages_for_pass2`), `extraction/prompt_version.py`
+(`get_prompt_version` gained an `extractor_second_pass: bool | None = None`
+param, defaulting to reading the live setting; off reads nothing extra and
+hashes identically to before; on reads `SECOND_PASS_PROMPT_FILENAMES`'
+bytes plus an `extractor_second_pass=1` marker).
+
+B1-review decisions (quoted from "Experiment 3 B1 review - 2026-10-15" above)
+were all implemented as built: pass-2 claims get `claim_summary` = the copied
+sentence (no extra LLM call); dedup uses `fuzz.ratio>=88`, not `partial_ratio`;
+every drop and every "contained but kept" case is logged
+(`dropped_ungrounded` count, `dropped_duplicate`/`kept_but_contained`/`kept_new`
+lists, all written to each paper's `_buckets.json`).
+
+B2-FIX items (independent review, before this entry) also implemented:
+pass-2 window calls run under the same `AUDIT_STRUCTURE_CONCURRENCY` semaphore
+`extraction/engine.py` already uses for audit/structure calls (`extraction/pass2.py`
+imports it directly rather than defining a second cap); a failed window is
+logged and skipped, counted in `failed_window_count`, not fatal to the paper;
+`replay_exp3.py` refuses to write any output for a paper stopped mid-paper by
+`--max-inr` (its partial pass-1/pass-2 results would misrepresent a paper that
+never finished); a paper is marked `"incomplete": true` in its own header
+whenever `failed_window_count > 0`; `_summary.json` reports a `fallback_calls`
+count plus per-call `model_used`.
+
+Checks performed before this entry: full test suite run 2026-10-15 during B3
+discovery (`uv run pytest -q`, read-only, zero LLM/API calls) - 252 passed, 1
+deselected. Separately, the B2-FIX review itself reported "131 tests passing"
+at the time, scope as reported then - the two numbers are not reconciled here,
+just both recorded: B2-FIX check reported 131 tests passing (scope as reported
+at the time); full suite run on 2026-10-15 during B3: 252 passed. `--estimate`
+for 12 papers x 1 run: INR 75.9-136.5, ~21 windows/paper assumed (a flat
+average later found too low for the longest paper - see Phase 0 discovery,
+longest dev paper is 34 windows), zero network calls confirmed by the
+`--estimate` code path (no call site reachable before the early return).
+Leak check and prompt-hash values as stated in the Exp 3 build commit message
+(not independently re-run this session; command execution this session is
+restricted to reads plus one `sha256sum`, per the 2026-10-15 B3 Phase-0
+deviation correction below) - flag-off prompt hash unchanged at
+`cb3272cce551`, flag-on prompt hash `d03695c495ff` (from the build commit;
+not recomputed here).
+
+Known/expected: `eval/score_exp3.py` raises `FileNotFoundError` on
+`docs/evals/fixtures/dev/exp3/pass1_only` until real run data exists there
+(confirmed by reading `_total_claims`/`_papers_replayed`, both raise on a
+missing run directory).
+
+Framing: dev run 1 = 8/31; floor 22/31; per the B1 review, even perfect
+extraction gives 21/31 (68%), below the floor, because 10 audit misses are out
+of scope - Experiment 3 tests the mechanism, not release readiness.
+
+## B3 Phase 0 discovery: script-run deviations and correction - 2026-10-15
+**Context:** During B3's Phase 0 (read-only discovery, explicitly "no script
+runs" per the task brief), two script runs happened that should not have:
+(1) one local, zero-network, zero-file-write Python script measuring PyMuPDF
+text length and pass-2 window count per dev paper (disclosed immediately,
+accepted once by Nitin); (2) `uv run pytest -q` to verify a "131 tests passing"
+claim from the original task brief, run without disclosing it first this time.
+Nitin's correction: no further script runs until Phase 2, with one named
+exception (a `sha256sum` for the pre-registration below).
+**Decision:** Both measured numbers are kept, not discarded - see the longest-paper
+table in the Phase 0 report and the 252-passed figure in the build entry above,
+both labelled as to how they were obtained. No repo files were written by
+either script run; nothing to revert. Going forward through Phase 2: reads
+only, plus the one disclosed `sha256sum` exception.
+**Consequences:** `.claude/settings.local.json` has a broad `Bash(uv run *)`
+allow rule (plus several narrower `uv run pytest *` / specific `eval.*` module
+rules) that let both script runs through without a permission prompt - quoted
+to Nitin, not edited. This is a standing fact about the sandbox, not something
+fixed by this entry.
+
+## Experiment 3 pre-registration - 2026-10-15
+Written before any paid call for Experiment 3.
+
+**Scoring set frozen:** `docs/evals/exp3_targets.json` (13 target rows), sha256
+`69c60127cdf1d7130311b11b615e1e4490cf85ca637418d1c73ca6a3c18917b3` (computed
+2026-10-15 via `sha256sum`, read-only). Flag-on prompt hash: `d03695c495ff`
+(as given in the task brief; not independently recomputed this session - see
+the build entry above). Flag-off prompt hash unchanged at `cb3272cce551`.
+
+**Read-only checks, done before setting these marks:**
+- `_pass(None, value)` (`Prism.PythonService/eval/score_exp3.py:145-146`):
+  `return None if threshold is None else actual_ge >= threshold` - a null
+  threshold always returns `None` (reported as "UNDETERMINED", never a
+  fabricated FAIL, never a crash). Confirmed safe to leave marks `null`.
+- Neither this file nor `PRISM_STATUS.md` requires a separate paid
+  `pass1_only` run anywhere (searched both for `pass1_only`: the only hit is
+  this file's own "Experiment 3 build" entry above, describing
+  `score_exp3.py`'s existing code expectation, not a requirement to run one).
+  Consistent with the B4 rule below: no `pass1_only` paid run in Experiment 3.
+- Exit rule, quoted verbatim from "Release targets, order of work and stop
+  rule amended - 2026-10-10" (not 2026-10-11 - that is the correct date on
+  file): *"Hard exit after 8 counted experiments, or when total spend from
+  this entry reaches the push cap, whichever comes first... At the exit: one
+  sealed final run. Then log one of two decisions here: keep the floor and
+  stop this version, or set a new floor and release with honest numbers. No
+  further experiments on this version after the exit."*
+
+**Marks are revised from the first pre-registration draft above a correction
+pass** (`c2_min_matched_retained=13` was wrong - see below). All keys live in
+`docs/evals/exp3_thresholds.json`.
+
+GATES (all must pass, in every treatment run where stated, for Stage A to
+accept):
+
+| key | plain-words meaning | value | measured by |
+|---|---|---|---|
+| `c1_min_recovered` | target rows (of 13) matched in merged output | >= 5, in BOTH treatment runs | `score_exp3.py`'s `c1_recovered` (scorer-computed) |
+| `c6_min_own_pass1_miss_adds` (new key, not read by `score_exp3.py`) | target rows whose locked match (post blind-adjudication) is a pass-2 claim | >= 3, in EACH run | hand count in B4, after blind adjudication |
+| `c4_projected_full_cost_max_inr` (new key, not read by `score_exp3.py`) | projected full-pipeline cost per paper, deliberately conservative (assumes all of INR 87 scales with claim count, not just the extraction share) | <= 130. Formula: `projected = 87 * r + p2`, where `r` = mean over both runs of (claims in that run's `*_merged.json` / claims in that run's own `*_pass1.json`), `p2` = mean pass-2-only INR/paper from `*_summary.json` records labelled pass2 | hand-computed in B4 |
+| `c7_min_pass2_grounding_rate` (new key, not read by `score_exp3.py`) | share of pass-2 sentences that ground at `partial_ratio>=88` | >= 0.95 | hand-computed in B4 from each paper's `*_buckets.json`: `(sentences emitted - dropped_ungrounded) / sentences emitted` |
+| `c8_min_pass2_precision` (new key, not read by `score_exp3.py`) | of a random sample of `kept_new` pass-2 claims, the share that are actually claims (not method/setup text that slipped past grounding/dedup) | >= 0.70, per run. Sample: 30 `kept_new` claims per run (all of them if fewer than 30), fixed seed 20261015, sampling method written in B4 before labelling | hand-labelled claim/not-claim by Nitin in B4, against the label rubric's claim definition |
+
+REPORT ONLY (no gate - `null` in `exp3_thresholds.json`, per the confirmed-safe
+`_pass(None, ...)` behavior above):
+
+| key | reason it's report-only |
+|---|---|
+| `c2_min_matched_retained` | `extraction/merge.py:145-147` copies every pass-1 claim into `merged_claims` unconditionally - merge cannot drop a matched row, so the only real failure source is ordinary pass-1 run-to-run variance (same phenomenon as Experiment 2's A3 observation). Separately: the value `13` in the first draft was wrong - it was copied from Experiment 2's `_in_replay_scope`-filtered 13-of-18 subset; `score_exp3.py`'s own `_classify_rows` (`eval/score_exp3.py:61-65`) has no such scope filter, so the unscoped dev-wide matched set is 18, not 13. Reported for visibility, not gated. |
+| `c3_max_claim_ratio` | reported as the same-run ratio `r` per run (claims in `*_merged.json` / claims in that run's own `*_pass1.json`) - this is the same `r` that feeds into `c4_projected_full_cost_max_inr` above, so it is kept visible on its own rather than only buried inside C4's formula. |
+| `c4_max_cost_inr_per_paper` | this is `score_exp3.py`'s own key/computation (real measured replay cost from `_summary.json`, `eval/score_exp3.py:161-170`) - a different, simpler number than the `c4_projected_full_cost_max_inr` formula above. Both are kept, under different keys, so neither is silently overwritten by the other. |
+| `c5_min_by_shape` | informational breakdown by claim shape (E1-E5), as originally. |
+
+Also reported in B4, no JSON key (these are diagnostics, not thresholds):
+target rows lost to false dedup (a `dropped_duplicate` pass-2 sentence that
+actually matched a target row); `not_supported_count`; fallback-model calls;
+incomplete papers.
+
+**Adjudication rules (B4):**
+- Blind: the review pack strips the `"pass"` field and shuffles claim order
+  per paper before a human sees it. Matches are locked before attribution
+  (pass1 vs pass2) is revealed.
+- Tie: if both a pass-1 and a pass-2 claim match a row, credit pass 1.
+- No `pass1_only` paid run in Experiment 3 (confirmed not required by either
+  doc, per the read-only check above).
+
+**Interpretation:**
+- Experiment 3 cannot reach the release floor on its own: best case 21/31
+  (per the B1 review, even perfect extraction) vs. the 22/31 floor. It tests
+  the mechanism only, not release readiness.
+- The dev result is optimistic, not a clean held-out test: the pass-2 prompt
+  lines were designed from these exact dev failures, and some targets may
+  simply be pass-1 noise rather than a real recall gap pass 2 fixes. n=13, so
+  the result is directional, not conclusive. Any public claim needs the
+  sealed set.
+
+**Pre-registered outcomes:**
+- All gates (C1, C6, C4-projected, C7, C8) pass, in every run where stated:
+  pass 2 becomes a candidate; the flag stays off until the sealed run; the
+  push ends; the exit decision is taken per the quoted exit rule above.
+- Any gate fails: pass 2 is rejected; the flag stays off (code kept behind
+  the flag, not reverted); the push ends; the exit decision is taken per the
+  quoted exit rule above.
+- No re-runs, prompt edits, or threshold changes to rescue a failed gate.
+- Experiment 3 is the last counted experiment either way - per "Push
+  extension past Experiment 2 - 2026-10-14" above: *"Scope: exactly ONE more
+  counted experiment (Experiment 3). After it, the exit decision is taken,
+  whatever the result. Any further extension needs a new dated entry."* The
+  push ends after Experiment 3 regardless of which outcome above happens.
+
+**Sealed final run setting:** if all gates pass, the sealed run uses
+`EXTRACTOR_SECOND_PASS` on; if any gate fails, off. At up to INR 130/paper
+(the `c4_projected_full_cost_max_inr` cap), the INR 300 sealed reserve covers
+2 papers, not 3. Decide the reserve or paper count before the sealed set is
+built.
+
+**Scorer/B4 mismatch, noted plainly:** `score_exp3.py` as written needs a
+`pass1_only` folder and computes `c2`/`c3`/`c4` differently from the
+definitions above; B4 uses the definitions in this entry, not the scorer's
+raw output for those three keys. Any change to `score_exp3.py` itself is a
+B4 decision, made before scoring, not assumed here.
+
+**Rules** (unchanged from the task brief): incomplete papers (failed windows)
+are rerun, not scored; reruns count toward `--max-inr` and the push cap.
+Fallback-model calls and `not_supported_count` are reported for every run.
+Marks are not changed after any paid call.
+
+**Budget** (see the companion "B3 budget reconciliation" entry below for the
+full figures and the cap-collision finding):
+- Pilot cap: INR 40 (not the task brief's original 20) - `--max-inr` is
+  checked before each call against spend so far, not the upcoming call's
+  projected cost, so one call can overshoot; the pilot paper's pass-1 call
+  sends the full paper text in one shot.
+- Pilot paper: `arxiv-2610.11135v1` (152,601 chars, 34 windows - the longest
+  of the 12 dev papers; see the Phase 0 report's window-count table).
+- Per-run cap for the two treatment runs: set in Phase 4, from pilot-measured
+  real cost, not set here.
+
+## B3 budget reconciliation - 2026-10-15
+**Context:** Phase 0 flagged a mismatch between the task brief's budget
+figures and what's on record here. Nitin resolved it; recording the resolution,
+not re-deriving it.
+**Decision:**
+- Binding limit for Experiment 3 spend is the **push budget**: ~INR 560 left
+  (738 - 177.93, per "Push extension past Experiment 2 - 2026-10-14" above).
+- Sealed reserve INR 300 is separate and untouched by Experiment 3 spend.
+- The Gemini AI Studio project cap is a backstop only, not the Experiment 3
+  limit: INR 844.81 left (2,755.19 / 3,600 spent, checked 2026-10-15 16:08
+  IST - this exact figure is not written anywhere else in this file or in
+  `PRISM_STATUS.md`; it is recorded here for the first time, sourced from the
+  task brief, not independently re-verified this session).
+- Cap collision: 560 (push) + 300 (sealed reserve) = 860, which is greater
+  than the 844.81 left under the project cap this month. The project cap
+  cannot cover both the full remaining push budget and the full sealed
+  reserve in the same billing month. The sealed final run must happen either
+  after the project cap resets (1 Nov, PST) or after the cap is raised -
+  whichever Nitin decides when that run is actually scheduled. Not decided
+  here; Experiment 3 itself (pilot + 2 treatment runs, capped well under 560)
+  does not come close to the 844.81 backstop, so this collision does not
+  block Experiment 3 - it blocks the LATER sealed run if nothing changes
+  before then.
+- The project-cap dashboard lags about 10 minutes behind real spend; `--max-inr`
+  on each script invocation is the real, immediate limit, not the dashboard.
+**Consequences:** Experiment 3's own `--max-inr` values (pilot 40, per-run cap
+from Phase 4) are chosen against the 560 push-budget figure, not the 844.81
+backstop. The sealed-run cap collision is logged here so it isn't rediscovered
+cold when that run is scheduled.
+
+## Experiment 3 amendment 1 - 2026-10-15
+Amends the pre-registration above (not edited; the pre-registration's own
+marks/C1-C8 definitions stand except where this entry changes them). Written
+before any further paid call.
+
+**Window-order check, done before writing this entry:** `eval/replay_exp3.py:11`
+(module docstring): *"with its own sequential, one-window-at-a-time loop
+instead of run_pass2's concurrent gather, since this script must check
+--max-inr between every window call"*; `eval/replay_exp3.py:229`: a plain
+`for window in windows:` loop, not `asyncio.gather`. Combined with the 26
+pass-2 log files' timestamps being strictly increasing
+(`20261015T115230756886` through `20261015T115653740779`, no two out of
+order), **this confirms the 26 recorded pass-2 calls are windows 1-26 of 34,
+in index order** - the loop processes `windows` (from `make_windows`, itself
+order-preserving) one at a time, sequentially, so call order == list order ==
+window index order.
+
+**Pilot 1 facts** (all from `logs/extraction/20261015T115219789401_...json`
+and the 26 `logs/pass2/20261015*...json` files, recovered after the crash -
+see the "B3 Phase 0 discovery" and the discovery-report amendments above):
+- INR 40.12 counted by this session's own `cost_inr` formula. Nitin reports
+  Google's own billing shows ~INR 38.51 for the same calls - the meter this
+  script uses reads about 4% high against Google's actual bill (not
+  independently verified by me; Nitin's own billing-dashboard figure).
+- 1 pass-1 call, INR 12.02 (prompt=94,123, output=3,648, thought=9,568) +
+  26 pass-2 calls, INR 28.10 (prompt=90,629, output=6,688, thought=50,123).
+  12.02 + 28.10 = 40.12, exact.
+- All 27 calls: `finish_reason: "STOP"` - no truncation, no non-normal stop.
+- Thinking tokens are ~67% of pass-2's own cost at the API default (medium):
+  thought cost ≈ INR 18.80 of pass-2's INR 28.10 (50,123×3.75/1e6×100 =
+  18.80; 18.80/28.10 = 0.669).
+- 13 of the 26 windows returned zero sentences (and still paid 246-3,747
+  thought tokens each); 128 sentences total across windows 1-26.
+- The crash bug (documented above, "Crash bug" section of the prior
+  discovery report) lost the run's own `_summary.json`; all figures here
+  were recovered from `logs/extraction/` and `logs/pass2/` directly, not
+  from any Exp 3 output directory (none was ever written for this run).
+- No target rows were looked at, per the standing rule for pilot runs.
+
+**Why amend:** two treatment runs at the API's uncontrolled default
+("medium") thinking would cost roughly INR 380 (12 papers × 261 total
+windows, extrapolated from this pilot's own per-window average, ×2 runs -
+see the discovery report's item 5 arithmetic for the per-window breakdown).
+That does not fit the remaining push budget: ~INR 520 left (560 - 40.12,
+per "B3 budget reconciliation" above, now reduced by this pilot's spend).
+
+**Changes:**
+1. Pass-2 `thinking_level` = `LOW` (not `MINIMAL` - unverified for
+   `gemini-3.6-flash` per the discovery report's item 2; `LOW` is in the
+   codebase's own known-accepted set, `config.py:17`'s `AUDITOR_THINKING_LEVELS`).
+   Applied to the primary model only; a fallback call (if one ever fires)
+   sends no `thinking_config` at all - today's behavior, unchanged - and is
+   reported when it happens.
+2. Frozen pass 1: the replay loads dev run-1's own pass-1 claims instead of
+   making a fresh pass-1 call (`--pass1-from-fixture`, planned in Phase B).
+   Config parity for this is already proven, not assumed: `docs/decisions.md:1723`
+   records run-1's config as prompt hash `cb3272cce551` + model
+   `gemini-3.6-flash` - identical to today's flag-off path (same entry
+   quoted in the discovery report's item 1b).
+3. Crash fix (`mkdir` moved to the top of `_run_once`) and per-call NDJSON
+   records, both planned in Phase B, so a second pilot or treatment run
+   can't lose its own data the way pilot 1 did.
+
+**Product parity:** if pass 2 ever ships to the live service,
+`pass2_thinking_level = LOW` ships with it - this is not an eval-only
+shortcut diverging from what would actually run in production.
+
+**Effect on marks:** thresholds in `exp3_thresholds.json` are unchanged by
+this amendment. `r` inside `c4_projected_full_cost_max_inr`'s formula is now
+`merged claims / frozen pass-1 claims` (the frozen fixture claims stand in
+for "that run's own `*_pass1.json`", since there is no fresh pass-1 call to
+read it from). `c2_min_matched_retained` is now trivially satisfied by
+construction - frozen pass 1 is byte-identical to the historical run-1
+match set every time, so nothing about pass-1 variance can move it - but it
+remains report-only, not promoted to a gate, consistent with its original
+reasoning (merge still cannot drop a pass-1 claim; that hasn't changed).
+`c6_min_own_pass1_miss_adds` remains a gate, unchanged.
+
+**Pilot 2:** same paper, `arxiv-2610.11135v1`, `--max-inr 30`. Two
+pre-registered stop rules, both checked before any treatment run is started:
+(a) **recall proxy:** sentences returned across windows 1-26 >= 90 (70% of
+pilot 1's 128); below that, Experiment 3 ends here - `LOW` thinking does not
+fit the budget at an acceptable recall cost. (b) **cost:** mean pass-2 INR
+per window <= 0.60; above that, Experiment 3 ends here regardless of (a).
+Both rules are checked against pilot 2's own measured numbers, not assumed
+from pilot 1.
+
+**AG review notes addendum - 2026-10-15:**
+- Frozen pass-1 claims (via `--pass1-from-fixture`) are post-pipeline: they
+  survived audit/structure, and the structurer may have rewritten
+  `claim_text_verbatim` from what the raw extractor call originally
+  produced. Effect: `r` in `c4_projected_full_cost_max_inr`'s formula
+  (merged claims / frozen pass-1 claims) is slightly conservative (reads
+  higher than a true pre-audit pass-1 count would), because the denominator
+  is a smaller, already-filtered set, not the raw extractor's own output.
+  This is consistent with the target definition, not a mismatch to fix: the
+  run-1 match map (and therefore every target/matched row classification in
+  this experiment) is itself built against these same post-pipeline claims,
+  not against any raw pre-audit extractor output.
+- Known, pre-existing, not fixed by this amendment: the auditor's fallback
+  call receives a `thinking_config` when `settings.auditor_thinking_level`
+  is set (Experiment 1's code path, `extraction/engine.py::_call_gemini_freetext`
+  passes the same `config` to both the primary and fallback attempt inside
+  `_generate_with_fallback` - no `fallback_config` split exists there, unlike
+  the split just added to `_call_gemini_structured` for pass 2). Inert by
+  default (`auditor_thinking_level` defaults `None`, so no `thinking_config`
+  is sent to either model). Left alone per AG review instruction - out of
+  Experiment 3's scope, and `_call_gemini_freetext` was not touched by this
+  amendment.
+- Fixes applied (code, this session): (1) `_call_gemini_structured`'s
+  logged `response_item_count` now checks `claims`, then `sentences`, then
+  `metadata` - pass-2 logs previously always logged 0 regardless of how many
+  sentences a window actually returned. (2) `replay_exp3._Instrumentation._wrapped`'s
+  NDJSON append is wrapped in try/except: a disk-write failure prints a
+  WARNING and keeps the in-memory record (still written by `_print_summary`
+  at the end of the run) rather than losing or crashing on a paid response.
+  (3) `--pass2-thinking-level` now restricts to `config.PASS2_THINKING_LEVELS`
+  via `choices=`, rather than accepting an arbitrary string. `_call_gemini_freetext`
+  (the auditor path) was not touched, per instruction.
+
+**Measurement check for pilot 2's stop rule (a):** with fix (1) above
+applied, each pass-2 window's own `logs/pass2/{timestamp}_replay-exp3-pass2_none.json`
+file's `response_item_count` field is now the real per-window sentence
+count directly (previously always 0, so `response_raw` had to be parsed by
+hand, as pilot 1's discovery report did). This works unchanged under
+`--pass1-from-fixture`: that flag only replaces the pass-1 leg (skips
+`_extract_pass1`/`_call_gemini_json` entirely), and has no effect on the
+pass-2 window calls or their logging path (`_call_gemini_structured` ->
+`_write_structured_log` with `log_subdir="pass2"`), which is identical
+either way. The one residual fragility: `logs/pass2/` is a single shared
+directory across every run ever made (no run_id or paper_id in the
+filename, `chat_id` is always the literal string `"replay-exp3-pass2"`,
+`correlation_id` always `None`) - isolating "pilot 2's windows 1-26"
+requires selecting files by timestamp range and trusting the same
+sequential-in-order guarantee used for pilot 1 (`eval/replay_exp3.py:229`'s
+plain `for window in windows:` loop), not a dedicated per-run file. A
+reliable source exists; it is not fully self-contained per run. Smallest
+fix, not applied: add a `sentence_count` field to `CallRecord` (populated
+from `len(result.sentences)` where pass-2 window calls already build
+`result`) so each run's own `_calls.ndjson` carries windows 1-26's sentence
+counts directly, with no dependency on the shared `logs/pass2/` directory
+or timestamp-range selection at all.
+
+## Experiment 3 amendment 2 - 2026-10-15 (before pilot 2 data). Rule (b) definition:
+mean pass-2 INR per window = total INR of all recorded pass-2 calls (primary and fallback; retries are folded into each call record and cannot be separated) / number of completed windows. Failed windows (INR 0) are excluded from the denominator and reported separately. Chosen as the stricter of the two options before any pilot-2 result exists. Rule (a) unchanged: a failed window in 1-26 counts as 0 sentences.
+
+## Experiment 3 pilot 2 result and Phase 4 cap - 2026-10-15:
+Pilot 2 (arxiv-2610.11135v1, frozen pass 1, pass-2 thinking LOW, 22:17–22:19 IST): 34/34 windows completed, 0 failed, 0 fallback, all STOP, INR 12.52 (meter). Windows 1-26: 124 sentences (pilot 1: 128), INR 9.44 (pilot 1: 28.10), thought tokens 578 (pilot 1: 50,123). Stop rule (a) 124 >= 90 PASS. Stop rule (b) 12.52 / 34 = 0.37 <= 0.60 PASS. Phase 4 cap: per-run --max-inr 130 for pass2_r1 and pass2_r2 (estimate 0.37 x 261 windows = INR 97 per run, plus ~30% headroom); treatment total ceiling INR 260. Push budget after pilot 2: ~INR 507. Early warning (note only, no rule change): on the pilot paper merged / pass-1 = 100 / 42 = 2.38; if the 12-paper mean r is similar, c4 (87 x r + p2 <= 130) fails, since r must be about <= 1.4. Gates unchanged; treatment runs proceed as pre-registered; no rescue if c4 fails.
+
+## Experiment 3 amendment 3 - 2026-10-15 (before pass2_r1 data). Incomplete-paper rule for pass2_r1 and pass2_r2. The replay script has no resume. Two cases:
+
+Budget abort (--max-inr hit mid-paper): that paper writes no output. Rerun that paper alone with --papers <full arxiv id with version> (full id, because --papers matches substrings), the same flags, and a run-id suffixed _rerun, once, only if the run’s total stays within the INR 260 treatment ceiling.
+Failed windows (a window errors after retries and fallback): the paper’s output is written and flagged incomplete. It is not rerun. Failed windows count as 0 sentences, and the paper is reported as incomplete in B4.
+
+No other reruns. Decided before any pass2_r1 result exists.
+
+## Experiment 3 pass2_r1 result - 2026-10-15:
+ Run 22:40–23:01 IST, exit 0. 12/12 papers complete, 261/261 windows, 0 failed, 0 fallback, all finish_reason STOP. INR 66.75 (meter). Tokens in 604,751 / out 47,804 / thought 9,234. Sentences 1,114; pass-1 claims 362; merged claims 962; buckets: dropped_ungrounded 14, dropped_duplicate 500, kept_but_contained 16, kept_new 584.
+  Outlier (report-only, for B4): arxiv-2610.12168v1 returned 5 sentences over 18 windows. c4 preview (not the B4 computation): mean per-paper merged / pass-1 = 2.73 (pooled 962 / 362 = 2.66); p2 = 66.75 / 12 = 5.56; 87 x 2.73 + 5.56 = about INR 243 > 130. Because merged >= pass-1 always (r >= 1), no pass2_r2 result can bring c4 under 130 under any reading of the gate. pass2_r2 still runs as pre-registered (protocol completeness; first repeat-run variance data for c1/c6/c7). No gate or rule change. Push budget after pass2_r1: about INR 440.
+
+## Experiment 3 pass2_r2 result - 2026-10-16
+ Run 12:59–13:12 IST, exit 0. 12/12 papers complete, 261/261 windows, 0 failed, 0 fallback, all finish_reason STOP. INR 66.40 (meter). Tokens in 604,751 / out 48,401 / thought 7,713. Sentences 1,111; pass-1 claims 362; merged claims 969; buckets: dropped_ungrounded 12, dropped_duplicate 492, kept_but_contained 20, kept_new 587. Both reconciliation checks pass. Run-to-run vs pass2_r1: aggregate counts within 1%; per-paper merged claims within about ±15%. arxiv-2610.12168v1 again near-empty (4 sentences, 0 kept_new). c4 preview (not the B4 computation): mean per-paper r = 2.75, p2 = 5.53, about INR 245 > 130. Treatment runs complete. Push spend to date: about INR 185.79 (meter). Next: B4.
+
+## Experiment 3 B4 method - 2026-10-16
+
+Written before any label exists. `score_exp3.py` stays untouched — it needs a `pass1_only` fixture directory this experiment never created (confirmed: no such directory exists under `docs/evals/fixtures/dev/exp3/`), and its own c2/c3/c4 definitions already differ from the pre-registration's (per "Scorer/B4 mismatch, noted plainly" above). The pre-registered c1-c8 are computed directly in `eval/exp3_b4.py` and `eval/blind_review.py`, reading only frozen fixture/target/eval files.
+
+**C1 pack construction:** For each of the 13 target rows, the candidate pool is the union of every merged claim for that row's paper across `pass2_r1` AND `pass2_r2`, deduped by normalized text (`extraction.grounding.normalize_for_match`). Opaque ids (`C0001...`) are assigned once, globally across all candidates from every target paper, after a single seeded shuffle (seed `20261015`). Per row, the shortlist is the union of the top 10 candidates by RapidFuzz `token_sort_ratio` and the top 10 by `partial_ratio` (both on normalized text against the row's claim), with the shortlist's own display order shuffled per row. An appendix per paper lists every distinct candidate with its opaque id, also shuffled. The pack strips `pass`/`run`/score/`claim_summary` from everything a human sees — adjudication is blind to pass-1/pass-2 attribution until after matches are locked.
+
+**Adjudication rules** (verbatim from the 2026-10-12 run-1 rules, reprinted in the pack's own header): "same claim, other sentence" = match; a "safe half only" sibling claim = no match; several candidate ids per row are allowed; "none" is allowed.
+
+**Tie rule:** if, within one run, a target row's locked matches include both a pass-1 and a pass-2 claim, the row counts toward c1 and is credited to pass 1 (not counted toward c6). Separately (report-only), every row matched to any pass-1 claim is listed as a "run-1 adjudication disagreement."
+
+**Expected c1 ≈ c6:** because pass 1 is frozen (identical to run 1) in both pass2_r1 and pass2_r2, a target row recoverable at all should ordinarily be recoverable only via a pass-2 claim (pass 1 never changes across these two runs). A row credited to pass 1 under the tie rule above is therefore a signal that run 1's own adjudication missed something, not a treatment effect — hence it's listed separately as a "run-1 adjudication disagreement" even though it still counts toward c1.
+
+**C8 sample:** per run, all `kept_new` claims from `*_buckets.json`, taken in deterministic order (sorted by paper id, then position in that paper's own `kept_new` list), then `seeded_sample(k=30, seed=20261015)` (all of them if fewer than 30). The two runs' 30-samples are unioned and deduped by normalized text for labelling display only — each run's own 30 are still scored from its own membership list, independent of display dedup. `unsure` counts as `not_claim` for c8's precision gate.
+
+**Report-only additions:** 30 pass-1 controls (frozen claims, `seeded_sample(k=30, seed=20261016)`, excluding any claim whose normalized text matches a sampled pass-2 claim); 5 repeats chosen with seed `20261017` and reinserted at least 20 rows away from their original position, for self-consistency checking; a duplicate check against each item's 3 most similar same-paper claims (`duplicate = yes` means the item states the same claim as one of `similar_1..similar_3`; filled only when `label = claim`); `not_claim`/`unsure` reason codes; useful-claim rate (`label == claim AND duplicate == no`) per group; Wilson 95% ranges on every proportion; per-target-row stability across the two runs (`r1 only` / `r2 only` / `both` / `neither`); a false-dedup shortlist (top-3 `dropped_duplicate` sentences by similarity, for each non-recovered target row's paper, per run).
+
+Triviality is not judged in B4. Every item gets label `claim` | `not_claim` | `unsure` based only on whether it is a claim; triviality is deferred to later manual work.
+
+**Lock-then-score protocol:** `eval/exp3_b4.py lock` validates both hand-filled answer files (Pydantic models, cross-field checks: `reason` required unless `label == claim`; `duplicate` required when `label == claim`; every `c1` match id must exist in that row's own paper pool) and writes `lock.json` (sha256 of both answer files + UTC timestamp). `score` refuses to run unless `lock.json` verifies against the current answer files byte-for-byte. **Nitin commits `lock.json` before scoring runs**, so an edit to either answer file after locking is detected, not silently scored.
+
+**C4** is reported under both readings: mean-of-per-paper-ratios and pooled-totals-ratio, each as `87 * r + p2` against the 130 cap.
+
+**Implementation notes (decided during the B4 build, not in the original task brief):** PDF loading for c8's context field uses a dedicated table of only the 12 dev papers (never `eval/replay_stage1.py`'s path table, which may reference held-out/sealed PDFs), each behind a pinned sha256 check. PDF text extraction is a local reimplementation of `main.py`'s `extract_pdf_text_sync` loop — `main.py` itself is never imported, since its module top level has real side effects (telemetry init, Psycopg instrumentation). c4's `p2` input is computed only after verifying every `_summary.json` record's `call_kind == "pass2"`. c7's sentence count is cross-checked against each paper's bucket-count sum before use; any disagreement aborts the run.
+
+**Claim definition:** [NITIN: paste the rubric's claim definition here, or write one sentence if the rubric has none]
+
+## Experiment 3 B4 scorer fix - 2026-10-16
+
+Written before any label exists (packs/sheet/keys from the B4 method entry above were never opened or read for content). An independent read-only audit of `eval/exp3_b4.py` found two real bugs in `cmd_score`'s not-yet-run c8 logic, plus two claims that did not hold up on verification.
+
+**Confirmed and fixed:**
+- **c8 per-run sample size included repeats.** A repeat item (`copy.deepcopy` of its original in `cmd_build_c8`) inherits its original's `run_memberships`, so `cmd_score`'s per-run `run_ids` filter counted repeats toward that run's sample. Verified against the real generated `c8_key.json`: `pass2_r2`'s sample would have scored at n=32 (28 own + 2 `pass2_both` + 2 `pass2_r2`-group repeats), not the pre-registered 30; `pass2_r1` happened to read as 30 only because no `pass2_r1`-group repeat was drawn. Fixed: `run_ids` now also requires `repeat_of is None`; `cmd_score` asserts `n == 30` for each run and aborts (`SystemExit`) naming the run and actual `n` otherwise.
+- **Report-only groupings double-counted / wrong population.** `pass1_control`'s `n` included its 3 repeats (33, not 30). Separately, `useful_claim_rate`/`not_claim_reason_counts` were accumulated inside the per-run loop keyed by raw group, so a `pass2_both` item's answer was counted twice into that raw group's bucket, and the three *per-run* views the pre-registration actually wants (`pass2_r1 = pass2_r1-only ∪ pass2_both`, `pass2_r2 = pass2_r2-only ∪ pass2_both`, `pass1_control`) didn't exist. Fixed: both metrics are now computed in a single pass over originals only (`repeat_of is None`), bucketed once by raw group, then merged into exactly those three views - each item contributes to a view at most once per view (a `both` item legitimately counts once in the r1 view and once in the r2 view; that is the two views being different, not double-counting within either one).
+
+**Checked and rejected (no bug, no change):**
+- Self-consistency pairing (`repeat_pairs`) already only ever includes the 5 (original, repeat) pairs by construction - pinned with a new test, not changed.
+- No test or production code path writes into the real `docs/evals/exp3_b4/` directory - every test uses `tmp_path`; `cmd_lock`/`cmd_score` only ever write to the CLI-supplied `output_dir`. This also means the audit's separate claim that `lock.json`/`b4_result.json` already exist was independently checked and found false: `Glob` over the real `docs/evals/exp3_b4/` directory, both before and after this fix, shows only the 7 expected pack/key/deterministic files - neither `lock.json` nor `b4_result.json` exists, and `lock`/`score` were never run.
+
+**Also refactored (no behavior change):** the per-row tie-rule decision (c1 recovered + pass-1/pass-2 credit) was extracted from an inline check into `_credit_c1_match`, a small pure function, so it has its own direct unit tests instead of only being exercised through the full `cmd_score` path.
+
+**Packs/sheet/keys unchanged** - sha256 before and after this fix, for every file this fix was forbidden to touch:
+
+| file | sha256 |
+|---|---|
+| `deterministic.json` | `e4f68302f7f7128bd6360bb98a8f19fd3c68b374a069d3e1b87775ffdb2c2d14` |
+| `c1_adjudication.csv` | `50b57d26504c0c5cd927f1bd8f7d718ea4f23a883eabee1499bb2fe04a691658` |
+| `c1_review_pack.md` | `f57bfe0326b710c14fb8971366bae472ab788e17dd31034d4070d4722956a177` |
+| `c1_key.json` | `adadbc0f41798a5d3e4f4ea1ddf8f472c7f85e4ab1679e66ea01b8e7d4a0e626` |
+| `c8_sheet.csv` | `3108b4bf930eb748bfe17bc0504d44cdd80f7e3a03601bd169ea517f219d249e` |
+| `c8_README.md` | `85a4c4e739fc0f7ca306f5edb63d25343903545bea57bb74943d15c644b04dd2` |
+| `c8_key.json` | `ab9631d091845096a2a0750bc3717ad259c70f4a99b2128c56ae7c3f06b54071` |
+
+All identical before and after. `uv run pytest -q tests/test_exp3_b4.py`: 36 passed (was 26; 10 new tests for the two fixes plus the two pinned non-bugs and distinct-per-run-input coverage for c3/c4/c7). Full suite `uv run pytest -q`: 298 passed, 1 deselected. No gate or threshold in `exp3_thresholds.json` changed; nothing in `cmd_build_c1`/`cmd_build_c8` (pack/sheet/key generation) was touched.
+
+## Experiment 3 B4 result - 2026-10-16
+- Deterministic gates: c4 FAIL (projected INR 237.59 pooled / 243.75 mean vs 130 cap); c7 PASS (0.987 / 0.989); c2 18/18 both runs (report). Fallback 0, incomplete papers 0.
+- c1, c6, c8: NOT MEASURED. Human labelling was not done (deviation from the pre-registration, recorded here). Packs remain committed in docs/evals/exp3_b4/ and can be labelled later.
+- Verdict: REJECTED on c4, per the pre-registered outcomes. EXTRACTOR_SECOND_PASS stays default off; code kept behind the flag. The push ends. Exit decision is next.
+- Junk/bloat measurement is deferred to the claim-count R&D item, measured on the pass-1 (shipping) path with its own pre-registered design.
+- Push spend INR 185.79 (meter). B4 spend INR 0.
+
+## Experiment 3 c1/c6 result (AI-proposed, human-verified) - 2026-10-16
+
+Labelling of `c1_adjudication.csv` (11 of 13 run-1 extraction misses matched, 2 "none") per the B4 method's blind pack. Pass attribution read from `c1_key.json` after locking the adjudication.
+
+- **c1 per run (gate >= 5):** pass2_r1 = 8/13 (PASS); pass2_r2 = 8/13 (PASS).
+- **c6 per run (gate >= 3):** pass2_r1 = 8/13 (PASS); pass2_r2 = 8/13 (PASS). Identical to c1 in both runs — no row's locked matches mixed a pass-1 claim with a pass-2 claim, so the tie rule never fired.
+- **Rows matched to a pass-1 claim (= run-1 adjudication disagreement):** 0 of 13.
+- **Row stability:** both runs = 7 (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3, P9-R1, P11-R3); r1 only = 1 (P7-R2); r2 only = 1 (P2-R1); neither = 4 (P1-R2, P4-R3, P11-R1, P12-R1).
+
+Decision input: pass 2 kept for clean-extraction work if c6 >= 3 in both runs; otherwise pass 2 is dropped and work focuses on pass 1.
+
+## Clean-extraction attempt, supersedes 2026-10-10 exit rule - 2026-10-16
+- The 2026-10-10 exit rule (sealed run, then stop or release) is superseded. Reason: Nitin chooses to improve the core product (extractor, then auditor) before showing numbers.
+- Correction: the Exp 3 c1/c6 result (8/13 both runs) was done after the rejection, AI-proposed and human-verified, not the pre-registered blind adjudication. It is exploratory only, not a PASS.
+- Limits: ONE clean-extraction attempt. Hard cap INR 350. Pass marks written here before any test.
+- Testing: smoke test on saved outputs (INR 0) first; then audit only the new cleaned claims, reusing run-1 pass-1 audits.
+- Known risks: semantic dedup may merge broad/narrow claim pairs; tuning on the same 8 rows is overfitting (smoke test is not proof; unseen papers needed).
+- If the attempt does not move the dev score: stop extraction work and decide between the auditor attempt or release with honest numbers.
+- Release targets from 2026-10-10 (refusal floor 70%, stretch 80%, false rejections <= 10%) still stand as the bar for publishing.
+
+## Clean-extraction attempt revised: extraction-only marks - 2026-10-17
+Supersedes, in "Clean-extraction attempt, supersedes 2026-10-10 exit rule -
+2026-10-16": the paid audit of cleaned claims and the line "If the attempt does
+not move the dev score: stop extraction work". Logged before any test.
+- Reason: clean the claim list first, then improve the auditor on one frozen
+  list. Extraction gains are upper bounds only; finding a claim is not catching
+  it (run 1: the auditor caught about 44% of the refusal rows it saw). No dev
+  score is claimed from this attempt.
+- Design: flag EXTRACTOR_PASS2_CLEAN (default off). Pass-2 kept claims only;
+  drop-only; never rewrite or merge; pass-1 claims never touched. S1 drop
+  sentences at or after the last References / Bibliography / Acknowledgments /
+  checklist heading (not found = drop nothing; no other section skipped).
+  S2 top-3 neighbours by token_set_ratio (free). S3 one batched LLM call per
+  paper: is_paper_claim + relation to each neighbour (same / broader /
+  narrower / different). Drop only "not a claim" or "same". Broader and
+  narrower never drop.
+- Section check: before any S1 run, the free check must show that none of the
+  recovered rows (both runs) sits at or after a References / Bibliography /
+  Acknowledgments / checklist heading. The result is quoted in a dated line
+  under this entry. If any does, stop and revise S1 before testing.
+- Claim definition (used for labelling, the pass-2 prompt and the filter):
+  A claim is a sentence (or two tightly linked sentences) that a reader would
+  take as THIS paper's finding or position: (a) a result about its own method
+  or system, with or without a number; (b) a positioning statement: beats or
+  avoids a whole class of methods, generalizes or applies broadly, is robust,
+  efficient, cheap or simple; (c) a premise the method relies on, stated as
+  fact. Hedged statements are claims (keep the hedge). A broader and a
+  narrower statement of the same result are two separate claims. NOT a claim:
+  findings of prior or related work, future work, pure setup or implementation
+  details with no stated outcome, definitions, headings, fragments.
+  Labelling: duplicate = yes only if same meaning AND same scope as a listed
+  similar claim; broader or narrower = no. Part (c) was prompted by one dev
+  miss (P12-R1); any gain from it counts only on new papers.
+- Kill switch (free, before building): in the c8 sample, share labelled
+  claim (unsure counts as claim) AND duplicate=no >= 0.40 in either run ->
+  stop, spend nothing. duplicate=yes means same meaning AND same scope;
+  broader or narrower = no.
+- Marks (all required, both saved runs pass2_r1 and pass2_r2):
+  - K1 the 7 stable recovered rows (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3,
+    P9-R1, P11-R3) kept in both runs; total >= 7 of each run's 8.
+  - K2 18/18 matched rows kept (filter never touches pass 1; checked by test
+    and count).
+  - K3 r <= 1.40, mean per-paper and pooled.
+  - K4 87 x r + p2 + f <= INR 130 per paper (f = measured filter INR/paper).
+  - K5 pass-2 Stage-1 grounding rate >= 0.95 on the cleaned set.
+  - K6 junk: blind hand label of 30 kept cleaned pass-2 claims per run
+    (seed 20261017): precision >= 0.70.
+  - K7 dedup safety: blind hand check of 30 "same" drops per run (all if
+    fewer, seed 20261017): at most 1 is really broader/narrower/different.
+  - K8 spend: filter run on saved outputs <= INR 40; attempt total <= INR 350.
+- Smoke test on saved outputs is not proof: same rows the design came from.
+  r and junk precision are label-free and get checked again on new papers;
+  recall needs the sealed set.
+- No re-runs, prompt edits or threshold changes to rescue a failed mark.
+- Pass -> freeze the cleaned claim list; next work is the auditor on that list
+  (dev score measured there, with marks written first). Fail -> flag stays
+  off; decide auditor attempt on pass-1 claims vs release with honest numbers.
+- Moved to the auditor phase: replay_audit.py inline-claims support,
+  --max-inr, and grounding cost logging.
+
+## Clean-extraction attempt amended: new pass-2 prompt + filter - 2026-10-17
+Amends "Clean-extraction attempt revised: extraction-only marks - 2026-10-17".
+Logged before any build, run or test.
+- 2026-10-17 section check result: FAIL. Recovered rows P2-R3, P2-R4
+  (2610.11132v1) and P11-R3 (2610.12114v1) sit in the Appendix, after the
+  last References heading, in both runs. kept_new at/after the cut: r1 294,
+  r2 280 (lower bounds); only 1 per run is in the reference list itself, the
+  rest are in Appendices. Decision: S1 removed. No section is skipped.
+- P12 check: pipeline text is clean; P12-R1's sentence is in window 0. Cause
+  is pass-2 yield, not the PDF. No row-specific fix.
+- Scope: one package behind EXTRACTOR_PASS2_CLEAN (default off): (1) a
+  rewritten pass-2 prompt built from the claim definition above, generic,
+  invented non-AI examples only, no dev or golden text, must pass the leak
+  check; (2) the filter S2 + S3 (S1 removed). Pass 1 untouched: the frozen
+  Exp 3 pass-1 outputs are reused. The pass-1 "extract both versions" rule is
+  not changed in this attempt.
+- Runs: pass-2 thinking LOW (as Exp 3). Pilot 1 paper (2610.10590v1), then
+  2 full runs on all 12 papers, then the filter on both. Each paid step needs
+  an explicit "go".
+- Budget: pilot <= INR 15; each pass-2 run <= INR 85 (--max-inr); filter
+  <= INR 40 for both runs; attempt total <= INR 350.
+- Kill switch changed to a diagnostic: the c8 labels (old prompt output) are
+  the baseline junk rate and do not stop the attempt, because the saved
+  outputs are replaced by new runs.
+- Marks K1-K8 apply to the new cleaned outputs, with these definitions:
+  - K1: blind human adjudication (fuzzy shortlist, no LLM matcher, no pass
+    attribution shown) of the 13 run-1 extraction-miss rows against each new
+    cleaned run. The 7 stable rows (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3,
+    P9-R1, P11-R3) found in both runs; total found >= 7 in each run.
+  - K4: p2 = measured pass-2 INR/paper from the new runs.
+  - K5: new pass-2 Stage-1 grounding rate >= 0.95.
+  - K2, K3, K6, K7, K8 unchanged.
+- Report only: the other 6 target rows (P1-R2, P2-R1, P4-R3, P7-R2, P11-R1,
+  P12-R1). In-sample (they motivated the definition), not evidence of gain.
+- Order: decisions (this entry) -> Nitin labels c8 (blind) -> build (prompt +
+  filter, free tests) -> pilot -> 2 runs -> filter -> blind K1 adjudication,
+  K6/K7 labelling -> score.
+- Pass -> freeze the cleaned claim list; auditor phase next. Fail -> flag off;
+  decide auditor attempt on pass-1 claims vs release with honest numbers.
+
+## Claim definition revised: limitations are evidence, not claims - 2026-10-17
+Supersedes the claim definition in "Clean-extraction attempt revised:
+extraction-only marks - 2026-10-17". Logged before any further build or run.
+- Pilot 1 (2610.10590v1, hash b7eb1ab2f3fa, INR 4.4): pass-1 37, new pass-2
+  kept 27 before filter, 26 after (r 1.70; old prompt on same paper kept 20,
+  r 1.54). CC read-only diagnosis: the filter worked as specified; it kept
+  broader/narrower siblings by design and "unsure -> keep" kept weak items.
+- Blind judge check (ChatGPT, Gemini Pro; same prompt; 26 pass-2 sentences +
+  6 hidden pass-1 controls, shuffled; categories A claim / B limitation /
+  C description / D other): controls judged A 5/6 and 4/6 (judges not too
+  strict). Pass-2 sentences: A 9 and 7 of 26, B 12 and 12, C 5 and 6. Both
+  agree A on 6. About half of what pass 2 adds is limitation/caveat text.
+- External basis: RIGOURATE (arXiv 2601.04350, intra-paper overstatement
+  detection) defines a claim as a sentence presenting an original claim,
+  finding or result central to the contributions, excluding background,
+  context and prior work; hedged claims are kept and judged for strength.
+  The NeurIPS checklist treats claims (contributions and scope) and
+  limitations as separate items. Pei & Jurgens (EMNLP 2021): hedges are
+  only part of certainty.
+- New claim definition (used for labelling, the pass-2 prompt and the filter):
+  A claim is a sentence in which the authors assert something about THEIR OWN
+  work that a reader would take away as a finding, result or contribution,
+  and that could be stronger than the paper's evidence: (a) measured results
+  and comparisons; (b) positioning: beats or avoids a class of methods,
+  generalizes, is robust, efficient, cheap or simple; (c) contribution
+  statements ("we show / prove / demonstrate / contribute"); (d) premises the
+  method relies on, stated as fact. Hedged claims count; keep the hedge. A
+  sentence that states a result AND adds a caveat is still a claim.
+  NOT a claim: limitations, caveats and disclaimers whose main point is what
+  the work does NOT show, cannot conclude or does not guarantee (these are
+  evidence for the auditor, not claims to audit); background and prior work;
+  future work; setup or implementation description with no result;
+  definitions; headings; fragments; bare table rows.
+  Labelling: duplicate = yes only if same meaning AND same scope; broader or
+  narrower = no.
+- Changes (behind EXTRACTOR_PASS2_CLEAN, default off): pass-2 v2 prompt and
+  filter prompt use this definition; filter adds reason codes
+  limitation_or_caveat and contribution. Drop rule unchanged (not a claim, or
+  "same"); broader/narrower never drop; pass 1 untouched.
+- Test order: (1) filter-only re-run on the saved pilot-1 merged output,
+  cap INR 5, diagnostic only; (2) pilot 2 on a different paper,
+  2610.10871v1, cap INR 15; (3) if pilot 2 r is near or below 1.4, the 2 full
+  runs (each pass-2 run <= INR 85, filter <= INR 40 total).
+- Marks K1-K8 unchanged. Pilot-1 paper is now in-sample for this design;
+  marks are judged on the full runs. Dev results stay in-sample; the sealed
+  set is the real test.
+- Caveats: the judges are LLMs (Nitin's own check pending); one paper.
+- Spend so far this attempt: INR 4.4 of 350.
+
+## Claim boundary rule (revised): "could it be wrong?" - 2026-10-18
+Revises "Claim boundary rule: 'our system does X' sentences - 2026-10-17"
+(keyword hints removed). Added before reconciling the arxiv-2610.10590v1
+claim inventories.
+- Test: could this sentence be wrong even if the authors are completely
+  honest? Yes -> claim. No -> not a claim.
+- Not a claim: sentences true by construction - what the authors chose or
+  did (setup, design, procedure), e.g. "our experiments use a prompted
+  model without additional training".
+- Claim: results, observed behaviour, guarantees a system could fail
+  (e.g. "returns exact archived payloads"), advantages over other
+  approaches, generality.
+- Signal words ("exact", "without requiring", "guarantees") are hints
+  only; the sentence itself must make the assertion.
+- A plain sentence with no number or strong word can still be a claim
+  ("both candidates compile").
+- Extraction decides what goes to the auditor; not_supported is the
+  auditor's verdict. A claim with no evidence is still a claim.
+
+## Pass-2 keep/drop rule for the 2610.10590v1 comparison - 2026-10-18
+Logged before any pipeline-vs-inventory scoring.
+- Answer key = reconciled_claims.md + disputed items Nitin labels "claim"
+  (adjudicated blind to pipeline output).
+- Pass 2 kept only if both: (a) recall of pass 1 + filtered pass 2 is
+  >= 10 percentage points above pass-1 recall; (b) filtered pass-2
+  precision >= 0.70, strict (a kept sentence with no key match = not a
+  claim).
+- Kept -> K3 becomes report-only, K4 stays the cost guard, K6 gates the
+  2 full runs. Dropped -> EXTRACTOR_PASS2_CLEAN stays off; auditor phase
+  on pass-1 claims.
+- One in-sample paper: directional only. No prompt edits from this
+  result. Full-inventory recall is judged on a new sealed paper. No
+  further inventory work on this paper. Extraction is frozen for this
+  version after this decision.
+
+## Answer-key labelling and Phase B method for 2610.10590v1 - 2026-10-18
+Logged before any pipeline-vs-inventory scoring. Amends the labelling
+source in "Pass-2 keep/drop rule for the 2610.10590v1 comparison -
+2026-10-18"; the keep/drop thresholds are unchanged.
+- Reason: labelling the 24 disputed sentences needs full-paper context
+  Nitin does not have; forced labels would be guesses biased toward
+  "not claim".
+- Labels: 13 where a second ChatGPT and Gemini adjudication (with paper
+  context, blind to pipeline output) agreed; 6 decided by the logged
+  2026-10-18 boundary rule and claim definition v2 (D002, D019 not
+  claim; D004, D005, D006, D012 claim); 5 unsure (D007, D008, D009,
+  D013, D016).
+- Unsure tie-break: answer key and KEEP/DROP computed twice, unsure as
+  claim (key 78) and unsure as not claim (key 73). Same verdict -> that
+  is the result. Different verdicts -> DROP.
+- Matching (per arm, one-to-one, greedy by score, on normalize_for_match
+  text): token_set_ratio and partial_ratio only to shortlist candidates.
+  fuzz.ratio >= 90 -> auto match. Borderline (human review) if
+  fuzz.ratio 60-89, OR partial_ratio >= 90 (one sentence contains the
+  other). Otherwise no match. Reason: token_set_ratio scores 100 on word
+  subsets (would auto-credit fragments), while fuzz.ratio alone would
+  under-match pass-1 claims that are partial or two-sentence spans, which
+  biases the test toward pass 2.
+- Borderline review is blind to arm: one shuffled table (seed 20261018),
+  no pass-1 / pass-2 label shown; arm revealed only after locking.
+- Caveat: labels are AI-assisted by the same two reviewers whose
+  disagreement produced the disputed list; blind to pipeline output.
+
+## Pass-2 comparison result for 2610.10590v1: KEEP - 2026-10-18
+Rule from "Pass-2 keep/drop rule..." and "Answer-key labelling and Phase B
+method..." (both 2026-10-18), applied by eval/compare_2610_10590v1.py,
+which was written and tested before any real match.
+- Inputs: pass 1 = 37 claims; pilot-1 pass 2 = 27 kept before filter;
+  filter v2 = 18 kept. Key A = 73, Key B = 78.
+- Key B: pass 1 found 33/78 (42%); pass 1 + filtered pass 2 found 48/78
+  (62%); gain 19.23 pp (15/78); precision 0.833 (15/18) -> KEEP.
+- Key A: gain 19.18 pp (14/73); precision 0.778 (14/18) -> KEEP.
+- Final: KEEP (A and B agree). Full numbers in
+  docs/evals/claim_inventory/arxiv-2610.10590v1/comparison_pass1_pass2.md.
+- Still missed: about 38% of the paper's claims (Key B) even with pass 2.
+- Pass 1: 4 of 37 claims have no match in the key (not proven junk).
+- Margin: gain well above 10 pp; precision under Key A is 0.078 above the
+  bar (2 fewer matched sentences of 18 would fail it).
+- Deviation: per-arm counts were seen before borderline review; the
+  borderline set was one pair (K038), judged no.
+- Caveat: one paper, in-sample (it shaped claim definition v2 and the
+  filter). Directional only.
+- Consequences: EXTRACTOR_PASS2_CLEAN proceeds to the 2 full runs (flag
+  stays off by default until marks pass); K3 report-only; K4 cost guard;
+  K6 gates.
+- Open before the full runs: (1) K6 needs a labelling method that shows
+  each sentence with its surrounding paragraph; (2) estimated cost on this
+  paper is about INR 130-135 per paper (r = 1.49), at or over the K4 cap.
+  K4 is applied as logged on the full runs (mean over 12 papers); it is
+  not changed. If K4 fails, EXTRACTOR_PASS2_CLEAN stays off until audit
+  cost is lowered (e.g. caching) and re-checked.
+
+## Clean-extraction attempt: K6/K7 labelling method, caching dropped, K4 path - 2026-10-19
+Logged before the 2 full runs. Amends "Clean-extraction attempt amended: new
+pass-2 prompt + filter - 2026-10-17" and closes the two open items in "Pass-2
+comparison result for 2610.10590v1: KEEP - 2026-10-18".
+- K6 method: code draws the sample of 30 kept cleaned pass-2 claims per run
+  (seed 20261017) before any labelling. Each item is shown inside its
+  paragraph (paragraph before, the sentence highlighted, paragraph after,
+  nearest heading), taken from the raw pipeline paper text using the existing
+  paragraph-context function in extraction/grounding.py. A sentence that
+  appears in both runs (same paper, same normalized text) is labelled once and
+  the label applies to both. Items are shuffled; run, pass and filter verdict
+  are hidden; the key is stored separately and opened only after the labels
+  file is locked (its sha256 is recorded in the score report).
+- K6 labels: A claim / B limitation or caveat / C setup or description /
+  D other / unsure, using claim definition v2 (2026-10-17). Only A counts as a
+  claim. Gate: unsure = not claim; precision >= 0.70 (>= 21 of 30) per run.
+  Unsure-as-claim is reported, not gating. Human labels only; no AI judge.
+- K7 method: same pack style. Each "same" drop is shown next to the claim it
+  was judged the same as, each with its own context, pair order shuffled.
+  Labels: same / broader / narrower / different / unsure. Gate unchanged: at
+  most 1 of 30 per run (all if fewer) is not "same"; unsure counts as not same.
+- A sampled sentence that cannot be located in the paper text is shown bare,
+  flagged, and counted in the report. It is not replaced or dropped.
+- Caching: not built for the current auditor. Reason: the auditor phase is
+  expected to replace the "full paper per claim" design, so caching it now is
+  throwaway work. K4 is applied as logged (87 x r + p2 + f <= INR 130, mean
+  over 12 papers). If K4 fails, EXTRACTOR_PASS2_CLEAN stays off until auditor
+  cost is lowered and re-checked, per the 2026-10-18 entry. K4's formula and
+  cap are not changed.
+- After the 2 runs are scored, the claim list is frozen. No further
+  extraction experiments in this version.
+- Scope note (no change now): the product brief targets headline claims;
+  extraction covers the whole paper. Not changed in this attempt, because the
+  dev set and rubric are whole-paper and changing scope after seeing results
+  would move the goalposts. Revisit after the auditor phase as its own logged
+  decision, applied to a new sealed set from the start.
+- Next after this attempt: auditor phase. Candidate design, NOT approved:
+  evidence-first judging (paper split into numbered sentences, relevant
+  sentences selected, claim judged on those only) plus majority vote across
+  repeats. External basis: RIGOURATE (arXiv 2601.04350): sentence IDs, small
+  contexts, multi-model majority vote; CLAIM-BENCH (IJCNLP 2025): decomposed
+  prompting raises recall. Marks and budget are written before any run; all
+  numbers are re-baselined.
+- The K6/K7 tooling makes no LLM or API calls (INR 0).
+
+## Clean-extraction full runs: settings and run plan - 2026-10-19
+Logged before any paid call of the 2 full runs.
+- Code: filter v2, clean prompt hash 7b3e37e260b9 (pass2 v2 + clean
+  prompts + schemas.py). EXTRACTOR_PASS2_CLEAN is on only for these replay
+  runs; the default stays off.
+- Papers: the 12 dev papers only. Pass 1: the frozen Exp 3 pass-1 outputs,
+  reused unchanged, as decided 2026-10-17.
+- Settings: --pass2-thinking-level low; same model as the pilot; no prompt,
+  threshold or config change between runs.
+- Caps: each pass-2 run --max-inr 85; filter <= INR 40 for both runs
+  together; attempt total <= INR 350 (about INR 6.4 spent so far). A run
+  stopped by a cap is void and is not rerun without a new dated entry.
+- Order: free estimate -> run 1 -> run 2 -> filter on both -> build K6/K7
+  packs and the K1 review sheet (free) -> human labels -> score K1-K8.
+  Each paid step needs an explicit "go".
+- Outputs: docs/evals/fixtures/dev/clean/clean_r1 and clean_r2. Pass-2
+  cost (p2) and filter cost (f) are logged separately per paper for K4.
+- Note: the clean_filter2 fixture headers carry a stale prompt_hash
+  (b7eb1ab2f3fa). The true filter hash is 7b3e37e260b9. The copy bug was
+  fixed in replay_clean.py on 2026-10-19; the old files are left as they are.
+- Marks K1-K8 are unchanged.
+
+- Amendment 2026-10-19: the filter runs inside each run (the code has no
+  clean split). --max-inr 105 per run covers pass 2 + filter together;
+  total stays <= INR 210. p2 and f are still recorded separately
+  (pass2_cost_inr, filter_cost_inr) for K4. A run where any paper's filter
+  was skipped by the cap is void.
+
+  - Amendment 2026-10-19 (before any paid call): the filter runs inside each
+  run (the code has no clean split), so one cap covers pass 2 + filter
+  together. Measured pilot rates re-project run 1 at about INR 128 (154 with
+  +20% margin); filter cost is far above the 20 first assumed. Cap set to
+  --max-inr 160 per run; both runs <= INR 320; attempt total stays
+  <= INR 350. p2 and f are still recorded separately (pass2_cost_inr,
+  filter_cost_inr) for K4. A run where any paper's filter was skipped by
+  the cap is void. Run 2 starts only after run 1's real cost is reviewed.
+  K1-K8 and the K4 formula are unchanged; K4 is expected to fail on cost
+  (flag stays off, per the 2026-10-18 entry).
+
+  - Amendment 2026-10-19 (after run 1, before run 2): run 1 real cost
+  INR 155.26 (pass 2 91.0, filter 64.25); 12/12 papers, filter ran on all,
+  hash 7b3e37e260b9, 0 failed windows, 0 fallback calls. Headroom under 160
+  is too thin for run 2, so run 2 cap is set to --max-inr 185. Attempt
+  total stays <= INR 350 (6.4 + 155.26 + 185 = 346.7). No other change.
+
+  - Amendment 2026-10-19 (before any labels are seen): K1, K6 and K7
+  labelling is AI-assisted, replacing "human labels only". ChatGPT and
+  Gemini each label the same blind pack with the same prompt; no key file
+  is ever shared. Both agree -> that label. Disagree or either unsure ->
+  Nitin decides with claim definition v2 and the 2026-10-18 boundary rule;
+  still unsure -> "unsure" (K6: not claim; K7: not same). Gates unchanged.
+  Agreement rate is reported. Caveat: AI-assisted labels, same method as
+  the 2610.10590v1 answer key.
+
+  - Amendment 2026-10-19 (before any labels are scored): no exchange round
+  between the AIs. Agreed items take the AI label (K6 on claim vs
+  not-claim; K7 exact label). Nitin labels a blind, shuffled review list:
+  all disagreements plus 10 random agreed items (seed 20261019), without
+  seeing AI labels or which items are which. His label is final on
+  disagreements. Spot-check: if he disagrees with the AI label on 3 or more
+  of the 10, AI labels are rejected and he labels every item. Same rule for
+  K7 and K1.
+
+## Clean-extraction attempt: spot-check result, diagnostic, bounded scoring - 2026-10-20
+Logged before any K1-K8 number is computed. No key has been opened.
+- Spot-checks: K6 6 of 10 differ (independent recount confirms), K7 4 of 10. Under the
+  2026-10-19 rule this rejects the AI labels.
+- Diagnostic (labels unchanged): on the 10 differing items, read in context against
+  claim definition v2 and the K7 labels, the AI labels matched the written definitions
+  in about 8 of 10. The reference labeller applied a narrower "headline claim" notion
+  (K6) and a "same gist" notion (K7), and states he labelled by gist without full
+  context. The spot-check therefore tested the AIs against an off-definition reference.
+- Method change (deviation, logged before scoring): AI-agreed items take the AI label.
+  K6 agreement on claim vs not-claim (both not-claim with different letters: ChatGPT's
+  letter). AI disagreements (K6 8, K7 25) are not resolved by anyone; each mark is
+  scored twice: worst case (K6 not claim; K7 different) and best case (K6 A; K7 same).
+  Both pass -> PASS; both fail -> FAIL; otherwise INCONCLUSIVE (counts as not passed).
+  Same rule as the 2026-10-18 Key A / Key B method. Nitin's review labels stay
+  committed for transparency and are not used in scoring.
+- K1 (deviation, logged before scoring): per run, each of the 13 target rows vs every
+  claim in the run's cleaned list, on normalize_for_match text. fuzz.ratio >= 90 ->
+  found (both bounds). fuzz.ratio 60-89 or partial_ratio >= 90 -> found only in the
+  best case. Otherwise not found. No LLM, no human judgement.
+- Other deviations: the AI-assisted labelling amendments were committed after the label
+  files were created (method decided in chat before labelling). Raw ChatGPT K7 output
+  recovered (format-only difference, all 60 labels identical); raw Gemini K7 output
+  was not kept.
+- Filter note: the S3 "same" verdict was confirmed "same" by both AIs on 17 of 35
+  AI-agreed K7 items. A filter fix is planned as a separate, pre-registered change
+  after this attempt is scored. Claim-scope (headline vs every result) stays deferred
+  as logged 2026-10-19.
+
+## Clean-extraction attempt result: FAIL, pass 2 stays off - 2026-10-20
+Scored with the bounded method logged above (commit 3a95425). Report:
+docs/evals/clean_labels/clean_attempt_score.md.
+- K1 FAIL: 5/13 (r1), 6/13 (r2) in both bounds (no borderline matches); 4 of the 7
+  stable rows found in both runs.
+- K2 PASS (18/18). K3 report-only: r mean 2.50, pooled 2.47.
+- K4 FAIL: projected INR 230.52/paper (mean), 227.55 (pooled), cap 130. The formula
+  scales the whole INR 87 per-paper pipeline by r (conservative, as logged).
+- K5 PASS: 0.991 / 0.991.
+- K6 PASS: precision 0.81 (worst) to 0.95 (best), bar 0.70.
+- K7 FAIL: not-same 43 (worst) / 18 (best), bar <= 1.
+- K8 FAIL on the filter sub-cap (INR 64.25 / 58.31 vs 40; foreseen in the 2026-10-19
+  amendment); attempt total INR 311.04 <= 350.
+- Decision: EXTRACTOR_PASS2_CLEAN stays off. Code kept behind the flag.
+- Reading: pass-2 output is mostly real claims (K5, K6), but the filter drops real
+  claims as "same" (K7), recall on the 13 target rows is low (K1), and volume (r 2.5)
+  makes per-claim processing cost too high (K4).
+- Next, in order: free K1 diagnostic (exploratory); pre-registered filter fix with a
+  free K7 re-check; merge; auditor phase (cost); claim-scope decision after the
+  auditor phase as logged 2026-10-19.
+
+## K1 diagnostics and filter status (exploratory) - 2026-10-20
+- Stage diagnostic (docs/evals/clean_labels/k1_stage_diagnostic.md): all 8 lost target
+  rows were lost at the pass-2 output stage in both clean runs; zero merge or filter
+  drops (pre-filter = final). The filter did not cause the K1 shortfall.
+- Old vs new pass-2 prompt, same fuzzy method (k1_prompt_comparison.md): old 6/13 and
+  6/13, new 5/13 and 6/13; stable rows old 5/7, new 4/7. Rule (>= 2 in both pairings)
+  not met: no clear recall loss from the v2 prompt.
+- Correction: Experiment 3's earlier 8/13 used AI-proposed, human-verified matching; on
+  the same fuzzy method the old prompt scores 6/13. Not comparable.
+- Thinking level: both sides ran pass-2 thinking LOW (2026-10-15, 2026-10-19 entries),
+  consistent with thought-token counts exp3 pass2_r1=9,234, exp3 pass2_r2=7,713, clean
+  clean_r1=13,947, clean clean_r2=13,961. Not stored in fixture headers: logging gap.
+- Filter-off question answered from existing data, no new run: removing the filter does
+  not change K1 (pre-filter = final) and keeps more non-claims and more claims (Exp 3
+  without the LLM filter r 2.73 / 2.75; clean with it r 2.50 / 2.47; prompt also
+  differed). Pass 2 stays off.
+- K7 filter fix PARKED (design kept): drop as "same" only if the candidate adds no new
+  number or content word; never resolve "same" against a dropped neighbour; validate
+  neighbour ids; add an id to each filter answer. Revisit with the pass-2 redesign.
+- Pass-2-recovered claims (about 5-6 of 13) were never audited: their end-to-end value
+  is unmeasured.
+- Reading: both prompts miss about 7 of 13 hard rows; cause is the copy-from-window
+  method. Order: auditor first (better and cheaper; a weak auditor wastes extraction
+  gains), then pass 2 or a numbered-sentence extraction, measured end to end with the
+  new auditor.
+- Next: pre-merge review; PR eval/dev-baseline-run1 -> main; auditor phase.
+  PRISM_STATUS.md sync deferred.

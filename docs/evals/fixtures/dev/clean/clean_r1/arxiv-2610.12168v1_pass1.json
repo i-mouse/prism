@@ -1,0 +1,80 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12168v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "generated_at": "2026-10-19T13:58:50Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "We introduce a self-improvement loop for reasoning models based on the following observation: Even when the difficulty of a problem exceeds the model\u2019s current solving abilities, an additionally supplied solution might enable the model to extract useful solution ideas in hindsight.",
+      "claim_summary": "Introduces a self-improvement loop extracting solution ideas in hindsight from supplied solutions."
+    },
+    {
+      "claim_text_verbatim": "We operationalize this by jointly training the same model to exhibit the following three capabilities: predicting solution ideas from problems alone, reverse-engineering ideas from problems and known solutions, and solving problems using provided ideas.",
+      "claim_summary": "Jointly trains a model to predict, reverse-engineer, and solve using solution ideas."
+    },
+    {
+      "claim_text_verbatim": "The loop alternates between reverse engineering such ideas from problems with supplied solutions and using these ideas as additional supervision for joint training of all three capabilities.",
+      "claim_summary": "Alternates between reverse-engineering solution ideas and jointly training on all three tasks."
+    },
+    {
+      "claim_text_verbatim": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+      "claim_summary": "Provides formal method specifications and a Lean theorem prover instantiation without empirical evaluation."
+    },
+    {
+      "claim_text_verbatim": "We operationalize this observation by jointly training a model on three tasks.",
+      "claim_summary": "Operationalizes hindsight learning by jointly training a single model across three tasks."
+    },
+    {
+      "claim_text_verbatim": "All three components share a backbone network; for example, when their inputs and outputs can be represented as text, we may use a shared language model with role-specific prompt templates.",
+      "claim_summary": "Employs a shared backbone network with role-specific prompt templates across all components."
+    },
+    {
+      "claim_text_verbatim": "We express solution ideas at several levels of detail, forming a hierarchy from overarching strategies to detailed plans.",
+      "claim_summary": "Structures solution ideas as hierarchical levels ranging from high-level strategies to detailed plans."
+    },
+    {
+      "claim_text_verbatim": "The ideas reverse-engineered by the hindsight component are intended to provide guidance that could plausibly be followed from the problem alone, rather than merely describe the supplied solution or reflect hindsight bias.",
+      "claim_summary": "Hindsight-extracted solution ideas are designed as forward-usable guidance avoiding hindsight bias."
+    },
+    {
+      "claim_text_verbatim": "We provide an optional refinement of our method which accomplishes this in the case of verifiable problem domains, i.e., when proposed solution candidates can be procedurally verified: For each problem and reference solution, we generate several candidate hierarchies in hindsight.",
+      "claim_summary": "Offers an optional refinement for verifiable domains generating multiple hindsight candidate hierarchies."
+    },
+    {
+      "claim_text_verbatim": "We provide a formal specification of our method for a general problem setting, together with the optional refinement for verifiable problem domains.",
+      "claim_summary": "Formally specifies the method for general problem settings and verifiable domain refinements."
+    },
+    {
+      "claim_text_verbatim": "We also give a concrete instantiation for interactive theorem proving in the Lean theorem prover [2], where natural language proof ideas guide tactic generation during proof search.",
+      "claim_summary": "Instantiates the framework for Lean interactive theorem proving using natural language proof ideas."
+    },
+    {
+      "claim_text_verbatim": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "claim_summary": "Explicitly trains retrospective hierarchical rationale generation as a core model capability."
+    },
+    {
+      "claim_text_verbatim": "This differs from the forward generation of thoughts and tactics in Lean-STaR\u2019s expert iterations, and from DeepInsight\u2019s retrospective rationale generation using a teacher model: our loop repeatedly performs retrospective hierarchy generation with the same backbone that learns to predict and use the resulting hierarchies.",
+      "claim_summary": "Distinguishes the method from prior work by repeatedly retraining the same backbone retrospectively."
+    },
+    {
+      "claim_text_verbatim": "Finally, in verifiable problem domains, we additionally assess the reverse-engineered hierarchies through separate solving attempts, in which the model receives the problem and hierarchy while the reference solution is withheld.",
+      "claim_summary": "Evaluates reverse-engineered hierarchies in verifiable domains using reference-blind solving attempts."
+    },
+    {
+      "claim_text_verbatim": "As the three components share a backbone network, each of the individual training signals affects all three components.",
+      "claim_summary": "Shared backbone architecture ensures individual training signals jointly update all three components."
+    },
+    {
+      "claim_text_verbatim": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+      "claim_summary": "Algorithm 2 guarantees that all retained training triples contain valid solver-discovered solutions."
+    }
+  ]
+}

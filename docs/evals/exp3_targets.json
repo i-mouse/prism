@@ -1,0 +1,18 @@
+{
+  "_comment": "Straight copy of eval/score_exp2.py's ROW_ID_TO_SHAPE dict (13 confirmed run-1 extraction-miss target rows). score_exp2.py is not modified and does not read this file; eval/score_exp3.py reads only this file.",
+  "row_id_to_shape": {
+    "P7-R2": "E1",
+    "P2-R1": "E1",
+    "P1-R2": "E1",
+    "P12-R1": "E1",
+    "P2-R3": "E2",
+    "P2-R4": "E2",
+    "P9-R1": "E2",
+    "P4-R3": "E3",
+    "P3-R1": "E3",
+    "P5-R3": "E3",
+    "P8-R3": "E3",
+    "P11-R1": "E4",
+    "P11-R3": "E5"
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11519v1",
+    "variant": "treatment",
+    "fewshot_fix": true,
+    "fewshot_shapes": true,
+    "prompt_hash": "da3a1ab6b587",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-14T08:06:34Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "We propose Residual Advantage (RA), which treats the teacher\u2013student probability residual as a bounded one-step reward, subtracts the corresponding state value under the student policy to form a standard advantage, and centers the result within each response before adding it to the verifier advantage.",
+      "claim_summary": "RA subtracts state value from residual reward and centers it per response"
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "claim_summary": "RA guidance term has zero mean per response, preserving overall verifier advantage"
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "claim_summary": "Co-RA updates a teacher LoRA using verifier advantages on student rollouts"
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "claim_summary": "RA improves GRPO/REINFORCE++ across all 24 benchmark comparisons"
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "claim_summary": "RA combinations outperform teacher-only OPD, and Co-RA adds 1.0-1.5 Avg@8 points"
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "The guidance is thus student-relative twice over, as an advantage under the student\u2019s own next-token distribution and as a deviation within the student\u2019s own response.",
+      "claim_summary": "Guidance is student-relative via next-token distribution and response-level centering"
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "claim_summary": "Expected update is the logit gradient, scaled by student's token probability"
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "claim_summary": "Guidance is bounded by student-teacher distance and fades as policies converge"
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "Scaled in this way by the student\u2019s own probability, it also stays small wherever the student is already sure, so the teacher mainly adjusts the choices the student is still weighing instead of imposing its preference on those the student has settled, and it does not inflate small disagreements into large labels.",
+      "claim_summary": "Guidance automatically focuses on tokens where the student is uncertain"
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "The construction requires no schedule, threshold, or learned component.",
+      "claim_summary": "RA construction functions without schedules, thresholds, or learned components"
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "Training on the student\u2019s own rollouts with the verifier\u2019s advantages lets the teacher adapt to the reasoning along the student\u2019s solution paths, with the aim of reducing the bias a frozen teacher carries on trajectories it would not have generated itself.",
+      "claim_summary": "Co-RA adapts teacher to student paths using verifier advantages to reduce teacher bias"
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed benchmark means.",
+      "claim_summary": "RA improves base estimator performance across all 24 benchmark metrics"
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+      "claim_summary": "RA yields macro gains of 1.74-3.58 Avg@8 and 3.89-6.33 Pass@8 points"
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "The gains are larger for REINFORCE++, narrowing its macro Avg@8 deficit to GRPO at both sizes.",
+      "claim_summary": "RA provides larger gains for REINFORCE++ than GRPO"
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+      "claim_summary": "RA models outperform teacher-only OPD across both model sizes"
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "At the same budget, OPD followed by REINFORCE++ reaches 28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++ (Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).",
+      "claim_summary": "RA+REINFORCE++ outperforms sequential OPD+RLVR and joint reverse-KL loss alternatives"
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "claim_summary": "Co-RA consistently improves macro Avg@8 over standard RA across benchmarks"
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "Co-RA+GRPO is the most accurate run for both students.",
+      "claim_summary": "Co-RA+GRPO achieves highest overall completion accuracy for both student sizes"
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "claim_summary": "Co-RA adapted teacher performs worse independently, but serves as a better guide"
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "claim_summary": "RA's performance margin over baseline methods grows as evaluation sample size increases"
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "claim_summary": "Ablating the student value baseline significantly degrades performance across weights"
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "Removing both operations costs 1.73 Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by \u22120.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).",
+      "claim_summary": "Removing baseline and centering shifts response means and degrades performance"
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "claim_summary": "Response centering provides consistent performance improvements across all tested weights"
+    },
+    {
+      "index": 23,
+      "claim_text_verbatim": "Across seeds, full RA also varies less than the uncentered control in macro Avg@8 at every weight (Table 23).",
+      "claim_summary": "Full RA demonstrates lower variance across seeds compared to uncentered control"
+    },
+    {
+      "index": 24,
+      "claim_text_verbatim": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "claim_summary": "RA improves macro performance over verifier-only RL across all tested weights"
+    },
+    {
+      "index": 25,
+      "claim_text_verbatim": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+      "claim_summary": "Probability residual outperforms log-ratio guidance variants by >1.2 Avg@8 points"
+    },
+    {
+      "index": 26,
+      "claim_text_verbatim": "A full-vocabulary squared-distance loss, whose gradient at each visited prefix equals the expected update of the uncentered residual label (Appendix A.2), beats verifier-only training but stays below RA and the uncentered control at every weight (Table 2).",
+      "claim_summary": "Direct squared-distance loss underperforms RA despite identical expected gradient"
+    },
+    {
+      "index": 27,
+      "claim_text_verbatim": "Because RA\u2019s teacher term acts on the tokens the verifier scores, 64% of its gradient mass raises correct or lowers incorrect responses, against 49% for the direct loss, and after clipping and Adam the teacher takes 0.28 of the update against 0.44, keeping RA\u2019s update closer to the verifier\u2019s direction (cosine 0.93 against 0.80).",
+      "claim_summary": "RA's gradient updates align better with outcome feedback than direct L2 loss"
+    },
+    {
+      "index": 28,
+      "claim_text_verbatim": "The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+      "claim_summary": "Residual guidance concentrates heavily on tokens where the student is uncertain"
+    },
+    {
+      "index": 29,
+      "claim_text_verbatim": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+      "claim_summary": "Adding dense teacher-peak supervision consistently degrades RA performance"
+    }
+  ]
+}

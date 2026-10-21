@@ -1,0 +1,421 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.10871v1",
+    "run_id": "pass2_r1",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "4ae30589-6680-499c-bef5-8630897d3770",
+    "generated_at": "2026-10-15T17:21:03Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 0,
+  "dropped_duplicate": [
+    {
+      "sentence": "MASA replaces raw attention-mass ranking with a closed-form score that measures how much each sparse unit reduces matrix-product approximation error.",
+      "best_match": "MASA replaces raw attention-mass ranking with a closed-form score that measures how much each sparse unit reduces matrix-product approximation error.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As a theory-grounded plug-in correction, MASA can be added to existing sparse attention frameworks without changing their sparse kernels or budgets.",
+      "best_match": "As a theory-grounded plug-in correction, MASA can be added to existing sparse attention frameworks without changing their sparse kernels or budgets.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Extensive experiments across multiple sparse attention methods, benchmarks, and LLM backbones show consistent accuracy gains, supporting both MASA and the matrix-approximation view of sparse attention.",
+      "best_match": "Extensive experiments across multiple sparse attention methods, benchmarks, and LLM backbones show consistent accuracy gains, supporting both MASA and the matrix-approximation view of sparse attention.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Based on this view, we propose Matrix Approximation Sparse Attention (MASA), a theory-grounded plug-in correction for sparse attention.",
+      "best_match": "We propose Matrix Approximation Sparse Attention (MASA), a theory-grounded plug-in correction for sparse attention.",
+      "ratio_score": 91.2,
+      "partial_ratio_score": 99.56331877729258
+    },
+    {
+      "sentence": "MASA keeps the sparse units, kernels, and budgets of existing sparse attention methods, but replaces their raw attention-mass ranking with a closed-form score derived from matrix-product approximation error.",
+      "best_match": "MASA keeps the sparse units, kernels, and budgets of existing sparse attention methods, but replaces their raw attention-mass ranking with a closed-form score derived from matrix-product approximation error.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As a result, MASA can be added to diverse sparse attention frameworks without changing their implementation interface.",
+      "best_match": "As a result, MASA can be added to diverse sparse attention frameworks without changing their implementation interface.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "As a result, MASA can be added to diverse sparse attention frameworks without changing their implementation interface.",
+      "best_match": "As a result, MASA can be added to diverse sparse attention frameworks without changing their implementation interface.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We identify a long-standing selection mismatch in sparse attention: existing magnitude-based rules approximate the attention matrix entrywise, while the Transformer uses attention through matrix multiplication.",
+      "best_match": "We identify a long-standing selection mismatch in sparse attention: existing magnitude-based rules approximate the attention matrix entrywise, while the Transformer uses attention through matrix multiplication.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We propose MASA, a theory-grounded plug-in scoring method that ranks sparse units by their closed-form reduction in matrix-product approximation error.",
+      "best_match": "We propose MASA, a theory-grounded plug-in scoring method that ranks sparse units by their closed-form reduction in matrix-product approximation error.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "MASA can be integrated into existing sparse attention baselines while keeping their sparse kernels and budgets unchanged.",
+      "best_match": "MASA can be integrated into existing sparse attention baselines while keeping their sparse kernels and budgets unchanged.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Under matched settings with the original baselines, MASA gives consistent accuracy gains, supporting both the proposed method and the matrix-approximation view of sparse attention.",
+      "best_match": "Under matched settings with the original baselines, MASA gives consistent accuracy gains, supporting both the proposed method and the matrix-approximation view of sparse attention.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Fig. 1 gives a minimal two-column instance of this objective: although u2 has much lower mass, it receives a higher MASA score because it preserves AX substantially more accurately.",
+      "best_match": "Fig. 1 gives a minimal two-column instance of this objective: although u2 has much lower mass, it receives a higher MASA score because it preserves AX substantially more accurately.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This computation only uses matrix products and score matrices at the profile resolution, without materializing the N &#215; N &#215; r contribution tensor.",
+      "best_match": "This computation only uses matrix products and score matrices at the profile resolution, without materializing the N \u00d7 N \u00d7 r contribution tensor.",
+      "ratio_score": 95.33333333333334,
+      "partial_ratio_score": 91.72413793103449
+    },
+    {
+      "sentence": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+      "best_match": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On InfiniteBench, MASA raises FlexPrefill-Llama from 47.14 to 47.99 against a full-attention score of 48.06, recovering approximately 92% of the original average-score deficit.",
+      "best_match": "On InfiniteBench, MASA raises FlexPrefill-Llama from 47.14 to 47.99 against a full-attention score of 48.06, recovering approximately 92% of the original average-score deficit.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On RULER, MASA raises SeerAttention from 87.60 to 88.09, moving it from below the dense reference to above it.",
+      "best_match": "On RULER, MASA raises SeerAttention from 87.60 to 88.09, moving it from below the dense reference to above it.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For FlexPrefill-Llama on RULER, replacing the ranking score adds 0.76 points, exceeding the original method\u2019s 0.48-point advantage over full attention and increasing that advantage to 1.24 points.",
+      "best_match": "For FlexPrefill-Llama on RULER, replacing the ranking score adds 0.76 points, exceeding the original method\u2019s 0.48-point advantage over full attention and increasing that advantage to 1.24 points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Thus, MASA improves already strong sparse systems without increasing their sparse budgets or changing their kernels.",
+      "best_match": "Thus, MASA improves already strong sparse systems without increasing their sparse budgets or changing their kernels.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+      "best_match": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "MASA nevertheless delivers substantial gains relative to the dense-reference differences in several settings.",
+      "best_match": "MASA nevertheless delivers substantial gains relative to the dense-reference differences in several settings.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On InfiniteBench, MASA raises FlexPrefill-Llama from 47.14 to 47.99 against a full-attention score of 48.06, recovering approximately 92% of the original average-score deficit.",
+      "best_match": "On InfiniteBench, MASA raises FlexPrefill-Llama from 47.14 to 47.99 against a full-attention score of 48.06, recovering approximately 92% of the original average-score deficit.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On RULER, MASA raises SeerAttention from 87.60 to 88.09, moving it from below the dense reference to above it.",
+      "best_match": "On RULER, MASA raises SeerAttention from 87.60 to 88.09, moving it from below the dense reference to above it.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For FlexPrefill-Llama on RULER, replacing the ranking score adds 0.76 points, exceeding the original method\u2019s 0.48-point advantage over full attention and increasing that advantage to 1.24 points.",
+      "best_match": "For FlexPrefill-Llama on RULER, replacing the ranking score adds 0.76 points, exceeding the original method\u2019s 0.48-point advantage over full attention and increasing that advantage to 1.24 points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Thus, MASA improves already strong sparse systems without increasing their sparse budgets or changing their kernels.",
+      "best_match": "Thus, MASA improves already strong sparse systems without increasing their sparse budgets or changing their kernels.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across the four RULER configurations at 32K, 64K, and 128K, MASA improves 11 of 12 matched length-level scores.",
+      "best_match": "Across the four RULER configurations at 32K, 64K, and 128K, MASA improves 11 of 12 matched length-level scores.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For every configuration, the mean gain over these longer contexts at 32K\u2013128K exceeds that at 4K\u201316K.",
+      "best_match": "For every configuration, the mean gain over these longer contexts at 32K\u2013128K exceeds that at 4K\u201316K.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At 128K, MASA improves MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen by 1.28, 0.48, 1.45, and 2.16 points, respectively.",
+      "best_match": "At 128K, MASA improves MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen by 1.28, 0.48, 1.45, and 2.16 points, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At 64K, the gains reach 2.16 points for FlexPrefill-Llama and 3.65 points for FlexPrefill-Qwen.",
+      "best_match": "At 64K, the gains reach 2.16 points for FlexPrefill-Llama and 3.65 points for FlexPrefill-Qwen.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On LongBench, MASA improves SeerAttention\u2019s 8K+ score from 52.69 to 53.16.",
+      "best_match": "On LongBench, MASA improves SeerAttention\u2019s 8K+ score from 52.69 to 53.16.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The evaluated MASA configurations reduce normalized squared output error in all four framework\u2013backbone pairs, providing direct empirical support for matrix-product preservation.",
+      "best_match": "The evaluated MASA configurations reduce normalized squared output error in all four framework\u2013backbone pairs, providing direct empirical support for matrix-product preservation.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen, replacing the original ranking score with MASA adds empirically negligible overhead relative to the sparse attention runtime and remains far below the dense attention cost.",
+      "best_match": "Across MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen, replacing the original ranking score with MASA adds empirically negligible overhead relative to the sparse attention runtime and remains far below the dense attention cost.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The overhead also stays negligible at 128K, the main regime where sparse attention is needed.",
+      "best_match": "The overhead also stays negligible at 128K, the main regime where sparse attention is needed.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Therefore, MASA improves accuracy without weakening the practical efficiency of the underlying sparse attention method.",
+      "best_match": "Therefore, MASA improves accuracy without weakening the practical efficiency of the underlying sparse attention method.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "First, raw MASA already improves the original sparse baseline in several settings, which supports the matrix-product scoring objective itself.",
+      "best_match": "First, raw MASA already improves the original sparse baseline in several settings, which supports the matrix-product scoring objective itself.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Second, norm control can further improve the score in settings where value-norm outliers affect sparse-unit ranking.",
+      "best_match": "Second, norm control can further improve the score in settings where value-norm outliers affect sparse-unit ranking.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "First, raw MASA already improves the original sparse baseline in several settings, which supports the matrix-product scoring objective itself.",
+      "best_match": "First, raw MASA already improves the original sparse baseline in several settings, which supports the matrix-product scoring objective itself.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Second, norm control can further improve the score in settings where value-norm outliers affect sparse-unit ranking.",
+      "best_match": "Second, norm control can further improve the score in settings where value-norm outliers affect sparse-unit ranking.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Norm clipping is helpful for SeerAttention and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.",
+      "best_match": "Norm clipping is helpful for SeerAttention and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 8 shows lower attention-output error in every evaluated framework\u2013backbone pair, with all four reported paired confidence intervals above zero.",
+      "best_match": "Table 8 shows lower attention-output error in every evaluated framework\u2013backbone pair, with all four reported paired confidence intervals above zero.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The evaluated MASA configurations produce outputs closer to dense attention, providing empirical support for the matrix-approximation view alongside the downstream accuracy results.",
+      "best_match": "The evaluated MASA configurations produce outputs closer to dense attention, providing empirical support for the matrix-approximation view alongside the downstream accuracy results.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Norm control improves the best tested MInference and SeerAttention results, while its effect varies across FlexPrefill configurations.",
+      "best_match": "Norm control improves the best tested MInference and SeerAttention results, while its effect varies across FlexPrefill configurations.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 11 reports the LongBench ablation for SeerAttention, where clipping at p = 87.5 gives the highest average among the tested configurations.",
+      "best_match": "Table 11 reports the LongBench ablation for SeerAttention, where clipping at p = 87.5 gives the highest average among the tested configurations.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [
+    {
+      "sentence": "Norm clipping is helpful for See",
+      "best_match": "Norm clipping is helpful for SeerAttention and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.",
+      "ratio_score": 39.26380368098159,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "These results support both the proposed method and the broader matrix-approximation view of sparse attention.",
+      "best_match": "Under matched settings with the original baselines, MASA gives consistent accuracy gains, supporting both the proposed method and the matrix-approximation view of sparse attention.",
+      "ratio_score": 67.82006920415225,
+      "partial_ratio_score": 88.11881188118812
+    }
+  ],
+  "kept_new": [
+    {
+      "sentence": "Based on this view, we propose Matrix Approximation Sparse Attention (MASA).",
+      "best_match": "We propose Matrix Approximation Sparse Attention (MASA), a theory-grounded plug-in correction for sparse attention.",
+      "ratio_score": 57.59162303664922,
+      "partial_ratio_score": 82.44274809160305
+    },
+    {
+      "sentence": "Under the same one-column budget, conventional mass-based ranking selects u1, whose mass is 66\u00d7 larger but incurs 98% relative matrix-product error.",
+      "best_match": "MASA keeps the sparse units, kernels, and budgets of existing sparse attention methods, but replaces their raw attention-mass ranking with a closed-form score derived from matrix-product approximation error.",
+      "ratio_score": 49.57746478873239,
+      "partial_ratio_score": 51.36186770428015
+    },
+    {
+      "sentence": "MASA selects u2 and reduces the error to 3%.",
+      "best_match": "All MASA scores are computed at the same profile resolution as the baselines.",
+      "ratio_score": 44.628099173553714,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "We provide a matrix-approximation view that gives the correct selection objective.",
+      "best_match": "We propose Matrix Approximation Sparse Attention (MASA), a theory-grounded plug-in correction for sparse attention.",
+      "ratio_score": 53.807106598984774,
+      "partial_ratio_score": 56.48854961832062
+    },
+    {
+      "sentence": "Fig. 1 gives a minimal two-column instance of this objective: although u2 has much lower mass, it receives a higher MASA score because it preserves AX substantially more accurately.",
+      "best_match": "MASA keeps their sparse unit definitions, sparse kernels, and budget rules unchanged, and only replaces the score used to rank candidate sparse units.",
+      "ratio_score": 41.69184290030211,
+      "partial_ratio_score": 42.666666666666664
+    },
+    {
+      "sentence": "This keeps the scoring memory-safe while retaining the block-level reduction score.",
+      "best_match": "Thus, MASA improves already strong sparse systems without increasing their sparse budgets or changing their kernels.",
+      "ratio_score": 44.221105527638194,
+      "partial_ratio_score": 49.032258064516135
+    },
+    {
+      "sentence": "Appendix C shows that weighted output metrics can be written in the same form by choosing an appropriate probe X, and that the Frobenius matrix-product error controls the spectral matrix-product error.",
+      "best_match": "MASA replaces raw attention-mass ranking with a closed-form score that measures how much each sparse unit reduces matrix-product approximation error.",
+      "ratio_score": 47.42857142857143,
+      "partial_ratio_score": 48.32214765100671
+    },
+    {
+      "sentence": "This makes them a strong test bed for evaluating whether MASA is a general correction rather than a method-specific modification.",
+      "best_match": "This keeps the scoring memory-safe while retaining the block-level reduction score.",
+      "ratio_score": 47.16981132075472,
+      "partial_ratio_score": 51.80722891566265
+    },
+    {
+      "sentence": "Using the baselines\u2019 own benchmark settings avoids me choosing tasks that favor MASA.",
+      "best_match": "Based on this view, we propose Matrix Approximation Sparse Attention (MASA).",
+      "ratio_score": 43.47826086956522,
+      "partial_ratio_score": 46.15384615384615
+    },
+    {
+      "sentence": "These test MASA across different LLM backbones rather than a single model family.",
+      "best_match": "This makes them a strong test bed for evaluating whether MASA is a general correction rather than a method-specific modification.",
+      "ratio_score": 48.57142857142858,
+      "partial_ratio_score": 53.75
+    },
+    {
+      "sentence": "MASA nevertheless delivers substantial gains relative to the dense-reference differences in several settings.",
+      "best_match": "MASA therefore does not require a new full-resolution dense attention map beyond the information used for sparse-unit ranking.",
+      "ratio_score": 46.808510638297875,
+      "partial_ratio_score": 46.15384615384615
+    },
+    {
+      "sentence": "These results support the value of matrix-approximation ranking for long-context sparse prefill under the original frameworks\u2019 sparse budgets and kernels.",
+      "best_match": "Thus, MASA improves already strong sparse systems without increasing their sparse budgets or changing their kernels.",
+      "ratio_score": 47.40740740740741,
+      "partial_ratio_score": 51.37614678899083
+    },
+    {
+      "sentence": "Together with the main results in Sec. 4.2, the probe ablation in Table 4 supports two conclusions.",
+      "best_match": "This computation only uses matrix products and score matrices at the profile resolution, without materializing the N \u00d7 N \u00d7 r contribution tensor.",
+      "ratio_score": 45.08196721311475,
+      "partial_ratio_score": 47.179487179487175
+    },
+    {
+      "sentence": "These trends match the probe design: MASA should preserve value directions while preventing a small number of high-norm value vectors from dominating the selection score.",
+      "best_match": "This keeps the scoring memory-safe while retaining the block-level reduction score.",
+      "ratio_score": 45.0592885375494,
+      "partial_ratio_score": 52.71317829457365
+    },
+    {
+      "sentence": "Across multiple sparse baselines, benchmarks, and LLM backbones, MASA gives consistent gains under matched settings with negligible latency overhead.",
+      "best_match": "Extensive experiments across multiple sparse attention methods, benchmarks, and LLM backbones show consistent accuracy gains, supporting both MASA and the matrix-approximation view of sparse attention.",
+      "ratio_score": 58.857142857142854,
+      "partial_ratio_score": 64.42953020134227
+    },
+    {
+      "sentence": "MASA is orthogonal to sparse-kernel optimization and KV-cache storage design: it changes the selection criterion, not the execution kernel or cache representation.",
+      "best_match": "MASA keeps their sparse unit definitions, sparse kernels, and budget rules unchanged, and only replaces the score used to rank candidate sparse units.",
+      "ratio_score": 47.284345047923324,
+      "partial_ratio_score": 47.94007490636704
+    },
+    {
+      "sentence": "This distinction is the main novelty of MASA: it connects a structured matrix-approximation objective to a common ranking mechanism within existing sparse attention systems.",
+      "best_match": "Under matched settings with the original baselines, MASA gives consistent accuracy gains, supporting both the proposed method and the matrix-approximation view of sparse attention.",
+      "ratio_score": 49.29178470254958,
+      "partial_ratio_score": 50.847457627118644
+    },
+    {
+      "sentence": "It therefore complements advances in sparse execution and memory management with a theory-grounded correction to the selection principle.",
+      "best_match": "We propose Matrix Approximation Sparse Attention (MASA), a theory-grounded plug-in correction for sparse attention.",
+      "ratio_score": 50.79365079365079,
+      "partial_ratio_score": 54.92227979274611
+    },
+    {
+      "sentence": "Therefore, reducing the Frobenius matrix-product error also reduces an upper bound on stronger matrix-action errors such as the spectral norm.",
+      "best_match": "This computation only uses matrix products and score matrices at the profile resolution, without materializing the N \u00d7 N \u00d7 r contribution tensor.",
+      "ratio_score": 48.78048780487805,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "MASA uses the Frobenius objective because it gives the closed-form unit score in Sec. 3.2, while still measuring a matrix-product error rather than an entrywise attention-map error.",
+      "best_match": "MASA replaces raw attention-mass ranking with a closed-form score that measures how much each sparse unit reduces matrix-product approximation error.",
+      "ratio_score": 50.90909090909091,
+      "partial_ratio_score": 52.112676056338024
+    },
+    {
+      "sentence": "These full tables separate reported prior results from the matched MASA comparison, so the conclusion is not based on mixing results from different settings.",
+      "best_match": "These trends match the probe design: MASA should preserve value directions while preventing a small number of high-norm value vectors from dominating the selection score.",
+      "ratio_score": 46.48318042813455,
+      "partial_ratio_score": 46.40522875816993
+    },
+    {
+      "sentence": "Norm control improves the best tested MInference and SeerAttention results, while its effect varies across FlexPrefill configurations.",
+      "best_match": "Norm clipping is helpful for SeerAttention and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.",
+      "ratio_score": 52.83018867924528,
+      "partial_ratio_score": 52.34375
+    },
+    {
+      "sentence": "Table 11 reports the LongBench ablation for SeerAttention, where clipping at p = 87.5 gives the highest average among the tested configurations.",
+      "best_match": "Norm control improves the best tested MInference and SeerAttention results, while its effect varies across FlexPrefill configurations.",
+      "ratio_score": 50.35971223021583,
+      "partial_ratio_score": 51.8796992481203
+    }
+  ]
+}

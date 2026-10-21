@@ -1,0 +1,1 @@
+{"paper_id": "arxiv-2610.10590v1", "call_kind": "filter", "model_used": "gemini-3.6-flash", "prompt_tokens": 8600, "output_tokens": 3649, "thought_tokens": 0, "total_tokens": 12249, "finish_reason": "STOP", "latency_s": 15.019334100000378}

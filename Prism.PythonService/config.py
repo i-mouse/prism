@@ -11,8 +11,17 @@ prism_db_host); the two Aspire-style connection strings use an explicit
 validation_alias because their names ("ConnectionStrings__messaging") don't
 map onto a Python identifier.
 """
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+AUDITOR_THINKING_LEVELS = {"low", "medium", "high"}
+# Separate from AUDITOR_THINKING_LEVELS: the installed google-genai SDK's
+# ThinkingLevel enum also has MINIMAL (see docs/decisions.md, "Experiment 3
+# amendment 1 - 2026-10-15"), which AUDITOR_THINKING_LEVELS does not accept.
+# Kept as its own set since MINIMAL's support by gemini-3.6-flash is
+# unverified - accepting it here is a config-validation choice, not a claim
+# that the API honors it.
+PASS2_THINKING_LEVELS = {"minimal", "low", "medium", "high"}
 
 
 class PrismSettings(BaseSettings):
@@ -64,6 +73,83 @@ class PrismSettings(BaseSettings):
     # separate from the extraction pair above so the two workloads don't share a knob.
     llm_claim_audit_model: str
     llm_claim_audit_fallback_model: str
+
+    # Experiment 1 - auditor thinking level override for the live service. Unset
+    # means no thinking_config is sent (today's behavior, API default medium on
+    # 3.6-flash). Auditor call only - every other Gemini call is untouched. The
+    # eval replay script (eval/replay_audit.py) does not read this setting; it
+    # passes thinking_level explicitly per call instead.
+    auditor_thinking_level: str | None = None
+
+    @field_validator("auditor_thinking_level")
+    @classmethod
+    def _validate_auditor_thinking_level(cls, value: str | None) -> str | None:
+        if value is not None and value not in AUDITOR_THINKING_LEVELS:
+            raise ValueError(
+                f"auditor_thinking_level must be one of {sorted(AUDITOR_THINKING_LEVELS)} or unset, got {value!r}"
+            )
+        return value
+
+    # Experiment 2 - extractor few-shot "note" field fix. Off (default) keeps today's
+    # behavior: any claims few-shot example with a top-level "note" field renders as a
+    # negative ("no claims") example even when it has real claims. On, a "note" field
+    # alone no longer suppresses claims - only example_type == "negative_do_not_extract"
+    # or a genuinely empty output does. Extractor rendering only; see
+    # extraction/prompt_loader.py::_is_negative_example and
+    # extraction/prompt_version.py::get_prompt_version.
+    extractor_fewshot_fix: bool = False
+
+    # Experiment 2 (redesigned) - extractor few-shot claim-shape examples. Off
+    # (default) renders only the base 11 claims examples. On, appends 8 more
+    # examples (prompts/extract_claims_fewshot_shapes.json, teaching the E1/E2/
+    # E3/E5 claim shapes the base 11 do not cover) after the base 11, and
+    # appends a system-prompt addendum (prompts/extract_claims_system_shapes.md).
+    # Extractor rendering only; see extraction/prompt_loader.py::
+    # build_gemini_messages_for_extractor and extraction/prompt_version.py::
+    # get_prompt_version. Independent of extractor_fewshot_fix - both default
+    # off; both flags on together is Experiment 2 (redesigned)'s treatment arm,
+    # extractor_fewshot_fix alone (this flag off) is its control arm.
+    extractor_fewshot_shapes: bool = False
+
+    # Experiment 3 - pass-2 windowed "copy-only" extractor calls, merged into
+    # the pass-1 claim list before the (unchanged) audit/structure calls. Off
+    # (default) is byte-identical to today: extract_claims runs pass 1 only,
+    # and get_prompt_version()'s output is unaffected. See
+    # extraction/windowing.py, extraction/pass2.py, extraction/merge.py,
+    # extraction/engine.py::extract_claims, and extraction/prompt_version.py::
+    # get_prompt_version.
+    extractor_second_pass: bool = False
+
+    # Experiment 3 amendment 1 - pass-2 thinking_level override, applied to
+    # the primary model only (the fallback call, if one ever fires, sends no
+    # thinking_config - see extraction/engine.py::_call_gemini_structured).
+    # Unset (default) means no thinking_config is sent for pass-2 calls -
+    # byte-identical to today (API default, medium on 3.6-flash). Mirrors
+    # auditor_thinking_level's convention; see docs/decisions.md, "Experiment
+    # 3 amendment 1 - 2026-10-15".
+    pass2_thinking_level: str | None = None
+
+    @field_validator("pass2_thinking_level")
+    @classmethod
+    def _validate_pass2_thinking_level(cls, value: str | None) -> str | None:
+        if value is not None and value not in PASS2_THINKING_LEVELS:
+            raise ValueError(
+                f"pass2_thinking_level must be one of {sorted(PASS2_THINKING_LEVELS)} or unset, got {value!r}"
+            )
+        return value
+
+    # Clean-extraction attempt (docs/decisions.md, "Clean-extraction attempt
+    # amended: new pass-2 prompt + filter - 2026-10-17"). Off (default) is
+    # byte-identical to today, independent of extractor_second_pass's own
+    # value. Active only when extractor_second_pass is ALSO on - this flag
+    # alone (extractor_second_pass off) changes nothing: see
+    # extraction/engine.py::extract_claims. When both are on, pass 2 uses
+    # prompts/extract_claims_pass2_v2_system.md instead of
+    # extract_claims_pass2_system.md (extraction/pass2.py), and
+    # extraction/pass2_clean.py's filter runs after merge. See
+    # extraction/prompt_version.py::get_prompt_version for the prompt-hash
+    # implication.
+    extractor_pass2_clean: bool = False
 
     # FastAPI server port (api.py __main__ entrypoint)
     port: int = 8000

@@ -1,0 +1,61 @@
+item_id,label,note
+L001,same,Both describe the same three jointly trained capabilities.
+L002,broader,A also says assessment determines which training triples are selected.
+L003,same,Both report negligible or no instruction-following forgetting measured by IFEval.
+L004,same,Both state that freezing rollouts can improve accuracy.
+L005,same,Both describe separate phases enabling full-cluster GPU use.
+L006,different,A discusses general textual-knowledge gains while B claims best performance across six combinations.
+L007,broader,A specifies the Primer's textual form interpretability and reusability.
+L008,same,Both describe alternating hierarchy generation and joint training across three tasks.
+L009,narrower,A gives a specific medical-versus-general VLM comparison across two metrics.
+L010,narrower,A reports 33 of 35 cells without claiming superiority at every position.
+L011,broader,A refers to results in two tables while B specifies MathIF.
+L012,different,A compares drops by student size while B describes improved guidance.
+L013,same,Both contrast residual guidance on student uncertainty with log-ratio guidance.
+L014,same,Both say the verifier scores responses while the teacher redistributes step-level credit.
+L015,same,Both identify a mismatch between sparse selection and attention computation.
+L016,different,A proposes recovery of general capabilities while B emphasizes selective use through in-context learning.
+L017,narrower,A specifically addresses closed-source models without parameter access.
+L018,same,Both present natural language as reusable knowledge representation across models.
+L019,same,Both emphasize comparable detection performance and the calibrated mid-trace trigger.
+L020,broader,A specifies the Primer's textual form interpretability and reusability.
+L021,same,Both describe transferring the Teacher's knowledge advantage through reusable natural-language representations.
+L022,broader,A specifies continual consolidation and selective recall of interaction history.
+L023,different,A additionally claims negligible latency overhead while B emphasizes support for the matrix-approximation view.
+L024,different,A emphasizes exact payload recovery while B specifies edit restrictions and archival behavior.
+L025,narrower,A omits B's explicit conclusion about the model-dependent performance gap.
+L026,same,Both describe one shared language model with role-specific prompt templates.
+L027,different,A compares 15 of 16 pairs while B describes behavior throughout training.
+L028,different,A compares score drops by student size while B describes improved guidance.
+L029,narrower,A excludes instructions alone while B also excludes an additional inference pass.
+L030,same,Both say SFT-as-context combines capabilities unavailable individually from either model.
+L031,same,Both describe acquiring fine-tuned capabilities while preserving general capabilities through in-context learning.
+L032,different,A emphasizes recovering past experience while B emphasizes learning through work and feedback.
+L033,different,A explains recovery of instruction-following while B states a broader capability-transfer principle.
+L034,broader,A describes the trajectory without restricting the claim to one-response runs.
+L035,different,A requires on-policyness for both student and teacher while B additionally emphasizes stage coverage.
+L036,broader,A refers to coordination behaviors while B specifically identifies information-handoff behaviors.
+L037,broader,A claims positive gains for every source and transfer Student.
+L038,same,Both specify shared model parameters and role-specific prompt templates.
+L039,same,Both say adapted teachers become better guides but worse standalone solvers.
+L040,same,Both describe reusable natural-language representation of the Teacher-Student knowledge gap.
+L041,broader,A describes Primer guidance generally while B specifies CUDA operators.
+L042,different,A reports ablation costs and response-mean shifts while B describes residual shifts across length groups.
+L043,same,Both identify open-ended benchmark specification as more challenging than later construction stages.
+L044,narrower,A omits B's post-optimization update measurements and additional gradient-direction comparison.
+L045,same,Both state that Primers improve source Students and transfer to other Students.
+L046,same,Both report improved or comparable accuracy and speedups up to 11.4 times over OPD.
+L047,same,Both say the teacher's top token helps imitation-only training but harms verifier-trained students.
+L048,different,A emphasizes preserving general capabilities while B explains mitigating forgetting and preserving fine-tuned capabilities.
+L049,different,A links performance against deep KT to the reading model while B contrasts model effects with typed format.
+L050,broader,A includes unconditional changes across all configurations as well as task-centered changes.
+L051,broader,A explicitly compares against single-agent long-horizon trajectories.
+L052,different,A links performance against deep KT to the reading model while B contrasts model effects with typed format.
+L053,broader,A makes a general capability-improvement claim while B specifies NutriBench-English.
+L054,same,Both describe selective acquisition of fine-tuned capabilities while preserving general capabilities.
+L055,unsure,A is an incomplete fragment so its full claim cannot be reliably compared with B.
+L056,different,A emphasizes stage-by-stage evaluation while B describes the information encoded in BIR.
+L057,narrower,A omits B's additional result that JevKT remains ahead through N=64.
+L058,different,A claims superiority over all KD baselines while B includes representative prompt-engineering methods.
+L059,same,Both describe selecting units by their contribution to reconstructing the matrix product.
+L060,same,Both report decreases in unconditional estimates across four configurations and task-centered estimates in three.

@@ -1,0 +1,18 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12168v1",
+    "run_id": "pass2_r2",
+    "prompt_hash": "d03695c495ff",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "generated_at": "2026-10-16T07:39:46Z",
+    "failed_window_count": 0,
+    "incomplete": false
+  },
+  "sentences": [
+    "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+    "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+    "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the\nsolver under the triple\u2019s hierarchy.",
+    "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy."
+  ]
+}

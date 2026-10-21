@@ -1,0 +1,120 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:56.041576+00:00",
+    "paper_id": "arxiv-2610.12124v1",
+    "filename": "2610.12124v1.pdf",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-10-12T15:52:00Z"
+    },
+    "claims_scope": [
+      6,
+      7
+    ]
+  },
+  "claims": [
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "Unused details recede naturally without explicit importance scores or decay rules.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Experience that remains unused continues to recede in detail through recursive consolidation, without separately assigned importance scores or time-based forgetting rules.",
+      "evidence_spans": [
+        {
+          "source_text": "These thresholds control when context is consolidated, rather than assigning importance or decay scores to individual memories.",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Within this run, reusable knowledge persists as the details of individual episodes recede.",
+          "source_section": "Appendix A.7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "Use and disuse dynamics unify memory recall with continuous learning and capability expansion.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+      "evidence_spans": [
+        {
+          "source_text": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+          "source_section": "Introduction",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures. Memory, knowledge development, and learning arise from the same use-and-disuse cycle over its interaction history, demonstrating the broad applicability of a unified mechanism rather than separate capability-specific mechanisms.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Our analysis of knowledge changes across consecutive consolidations finds that items linked to intervening work are more often supplemented or updated (\u00a7 A.6). ALFWorld traces show repeated successful desklamp use supporting a lesson across objects and instruction wordings, and later successful searches revising earlier failure accounts to attribute them to search cost (\u00a7 A.7). Meanwhile, details of a routine placement episode recede through recursive consolidation (Fig. 7).",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P8-R1",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "P8-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P8-S3",
+      "actual_index": 10
+    },
+    {
+      "expected_id": "P8-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P8-S5",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P8-S6",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P8-S7",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P8-S8",
+      "actual_index": 27
+    }
+  ]
+}

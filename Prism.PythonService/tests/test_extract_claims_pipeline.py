@@ -46,9 +46,10 @@ def test_extract_claims_runs_extractor_audit_structure_pipeline(monkeypatch):
         assert log_subdir == "extraction"
         return EXTRACTOR_RESULT
 
-    async def fake_call_gemini_freetext(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model):
+    async def fake_call_gemini_freetext(messages, chat_id, correlation_id, log_subdir, model_name, fallback_model, thinking_level=None):
         nonlocal concurrent, max_concurrent
         assert log_subdir == "audit"
+        assert thinking_level is None
         concurrent += 1
         max_concurrent = max(max_concurrent, concurrent)
         await asyncio.sleep(0.01)

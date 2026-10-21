@@ -1,0 +1,794 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12176v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "008ce553-38d3-4d82-b46d-be74b17facb4",
+    "generated_at": "2026-10-19T14:00:43Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 0,
+  "dropped_duplicate": [
+    {
+      "sentence": "To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories.",
+      "best_match": "To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Through an evolutionary search constrained by structural guardrails, the model optimizes these computational-graph-like orchestrations, discovering the most effective distinct roles and information routing for a given task.",
+      "best_match": "Through an evolutionary search constrained by structural guardrails, the model optimizes these computational-graph-like orchestrations, discovering the most effective distinct roles and information routing for a given task.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6' performance per output tokens on four open-ended public benchmarks.",
+      "best_match": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6\u00d7 higher performance per output tokens on four open-ended public benchmarks.",
+      "ratio_score": 96.72727272727273,
+      "partial_ratio_score": 94.02985074626866
+    },
+    {
+      "sentence": "Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model\u2019s capabilities.",
+      "best_match": "Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model\u2019s capabilities.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4' more training tokens.",
+      "best_match": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "ratio_score": 99.37888198757764,
+      "partial_ratio_score": 99.37888198757764
+    },
+    {
+      "sentence": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, ScienceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "best_match": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, ScienceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "best_match": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "best_match": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We further find that optimized workflows develop more task-specific information handoffs and routing, consistent with our information-flow hypothesis (Section 4.3).",
+      "best_match": "We further find that optimized workflows develop more task-specific information handoffs and routing, consistent with our information-flow hypothesis (Section 4.3).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "best_match": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, Sci- enceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "best_match": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, ScienceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "ratio_score": 99.68847352024922,
+      "partial_ratio_score": 99.375
+    },
+    {
+      "sentence": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "best_match": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "best_match": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "We further find that optimized workflows develop more task-specific information handoffs and rout- ing, consistent with our information-flow hypothesis (Section 4.3).",
+      "best_match": "We further find that optimized workflows develop more task-specific information handoffs and routing, consistent with our information-flow hypothesis (Section 4.3).",
+      "ratio_score": 99.39393939393939,
+      "partial_ratio_score": 98.78048780487805
+    },
+    {
+      "sentence": "The first-cycle multi-agent stu- dent achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "best_match": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "ratio_score": 99.5475113122172,
+      "partial_ratio_score": 99.0909090909091
+    },
+    {
+      "sentence": "Our ablations further identify workflow optimization, rather than eval- uation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "best_match": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "ratio_score": 99.3006993006993,
+      "partial_ratio_score": 98.59154929577466
+    },
+    {
+      "sentence": "Finally, trajectory analysis provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).",
+      "best_match": "Finally, trajectory analysis provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "best_match": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "best_match": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "best_match": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "best_match": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0).",
+      "best_match": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "best_match": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "best_match": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+      "best_match": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "best_match": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "best_match": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At the same time, component redundancy generally decreases (Figure 5).",
+      "best_match": "At the same time, component redundancy generally decreases (Figure 5).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Claim 1. Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across work- flow components.",
+      "best_match": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "ratio_score": 97.05093833780161,
+      "partial_ratio_score": 98.89502762430939
+    },
+    {
+      "sentence": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "best_match": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Both M and M + exceed this piecewise-linear reference at their respective token budgets by 8.3 and 6.3 percentage points.",
+      "best_match": "Both M and M + exceed this piecewise-linear reference at their respective token budgets by 8.3 and 6.3 percentage points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer to- kens.",
+      "best_match": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+      "ratio_score": 99.21259842519686,
+      "partial_ratio_score": 98.41269841269842
+    },
+    {
+      "sentence": "Claim 2. Jointly learning coordination from orchestrator trajectories and bounded execu- tion from subagent trajectories may provide more effective RSI supervision than learning both from a single agent's long-horizon trajectories.",
+      "best_match": "Jointly learning coordination from orchestrator trajectories and bounded execution from subagent trajectories may provide more effective RSI supervision than learning both from a single agent\u2019s long-horizon trajectories.",
+      "ratio_score": 97.5609756097561,
+      "partial_ratio_score": 99.0909090909091
+    },
+    {
+      "sentence": "Here, our main claim is optimizer capacity, rather than the evaluator capacity, can be a bottleneck in the speed of RSI.",
+      "best_match": "Here, our main claim is optimizer capacity, rather than the evaluator capacity, can be a bottleneck in the speed of RSI.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "A stronger optimizer reaches successful workflows substantially earlier, while the all-L(0) loop eventually achieves unanimous wins on 11 of 12 tasks (Figure 7a).",
+      "best_match": "A stronger optimizer reaches successful workflows substantially earlier, while the all-L(0) loop even- tually achieves unanimous wins on 11 of 12 tasks (Figure 7a).",
+      "ratio_score": 99.38650306748467,
+      "partial_ratio_score": 98.76543209876543
+    },
+    {
+      "sentence": "Replacing only the evaluator with GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.",
+      "best_match": "Replacing only the evaluator with GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+      "best_match": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Drawing on the Society of Mind, we address this by forming a multi-agent system from multiple copies of the model and distilling their collective gains as self-supervision, and we show this provides useful self-supervision in RSI.",
+      "best_match": "Drawing on the Society of Mind, we address this by forming a multi-agent system from multiple copies of the model and distilling their collective gains as self-supervision, and we show this provides useful self-supervision in RSI.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "For L(0), L(1), and L(2), respectively, the mean rubric scores are 0.053 \u00b1 0.002, 0.055 \u00b1 0.004, and 0.067 \u00b1 0.017, where the standard deviations are computed over the three trial means.",
+      "best_match": "For L(0), L(1), and L(2), respectively, the mean rubric scores are 0.053 \u00b1 0.002, 0.055 \u00b1 0.004, and 0.067 \u00b1 0.017, where the standard deviations are computed over the three trial means.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Report-delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%).",
+      "best_match": "Report-delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "best_match": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "From iteration 3 to 11, roles and instructions lose task information, while contracts and hops gain it.",
+      "best_match": "From iteration 3 to 11, roles and instructions lose task information, while contracts and hops gain it.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Unconditional total correlation falls in all four encoder/estimator combinations.",
+      "best_match": "Unconditional total correlation falls in all four encoder/estimator combinations.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This shows that both coordination and execution-conditioned repair are available before post-training.",
+      "best_match": "This shows that both coordination and execution-conditioned repair are available before post-training.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "This episode receives five favorable judgments out of six, despite changing the physical meaning of success.",
+      "best_match": "This episode receives five favorable judgments out of six, despite changing the physical meaning of success.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Coordination and high workspace preference therefore do not guarantee that a revision preserves the scientific task.",
+      "best_match": "Coordination and high workspace preference therefore do not guarantee that a revision preserves the scientific task.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "MASS instead tests whether the resulting execution traces can improve shared weights and subsequent workflow search.",
+      "best_match": "MASS instead tests whether the resulting execution traces can improve shared weights and subsequent workflow search.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The experiments test transfer across model roles, performance per processed training token, and coordination under bare prompts.",
+      "best_match": "The experiments test transfer across model roles, performance per processed training token, and coordination under bare prompts.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [],
+  "kept_new": [
+    {
+      "sentence": "Guided by early findings that multi-agent topologies excel at complex reasoning, MASS prompts a single base model to iteratively propose, execute, and self-evaluate multi-agent workflows.",
+      "best_match": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "ratio_score": 44.25287356321839,
+      "partial_ratio_score": 46.39498432601881
+    },
+    {
+      "sentence": "These findings suggest that jointly learning orchestration and bounded subagent execution from multi-agent trajectories can provide an effective signal for RSI.",
+      "best_match": "Jointly learning coordination from orchestrator trajectories and bounded execution from subagent trajectories may provide more effective RSI supervision than learning both from a single agent\u2019s long-horizon trajectories.",
+      "ratio_score": 56.315789473684205,
+      "partial_ratio_score": 65.99999999999999
+    },
+    {
+      "sentence": "To this end, we propose Multi-Agent Self-Supervision (MASS) for RSI, a method that alternates between workflow optimization and model post-training (Figure 1).",
+      "best_match": "To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories.",
+      "ratio_score": 74.36619718309859,
+      "partial_ratio_score": 79.34426229508198
+    },
+    {
+      "sentence": "This suggests that jointly learning orchestration and bounded subagent execution can provide more effective supervision for RSI.",
+      "best_match": "These findings suggest that jointly learning orchestration and bounded subagent execution from multi-agent trajectories can provide an effective signal for RSI.",
+      "ratio_score": 79.86111111111111,
+      "partial_ratio_score": 75.9493670886076
+    },
+    {
+      "sentence": "Overall, our work introduces an algorithm that uses multi-agent coordination to generate self- supervision for RSI.",
+      "best_match": "This suggests that jointly learning orchestration and bounded subagent execution can provide more effective supervision for RSI.",
+      "ratio_score": 51.028806584362144,
+      "partial_ratio_score": 53.95348837209302
+    },
+    {
+      "sentence": "Defining multi-agent workflow in the prompt is demonstrated to be an effective way for LLMs to follow the organization instruction and act accordingly (Nielsen et al., 2026; Tang et al., 2026).",
+      "best_match": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "ratio_score": 42.93785310734464,
+      "partial_ratio_score": 45.911949685534594
+    },
+    {
+      "sentence": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0).",
+      "best_match": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6\u00d7 higher performance per output tokens on four open-ended public benchmarks.",
+      "ratio_score": 47.75086505190311,
+      "partial_ratio_score": 53.448275862068975
+    },
+    {
+      "sentence": "Figure 3a compares L(g)(xt\u2295w(g,i) t ) with L(0)(xt) across workflow iterations i \u2208[10] and MASS generations g \u2208{0, 1, 2}, showing that post-trained models discover successful workflows earlier.",
+      "best_match": "Guided by early findings that multi-agent topologies excel at complex reasoning, MASS prompts a single base model to iteratively propose, execute, and self-evaluate multi-agent workflows.",
+      "ratio_score": 40.0,
+      "partial_ratio_score": 40.68767908309455
+    },
+    {
+      "sentence": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+      "best_match": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+      "ratio_score": 46.02510460251046,
+      "partial_ratio_score": 65.38461538461539
+    },
+    {
+      "sentence": "Together, these results support transfer from task-solving self-supervision to workflow optimization and self-evaluation without separate training targets for those roles.",
+      "best_match": "To this end, we propose Multi-Agent Self-Supervision (MASS) for RSI, a method that alternates between workflow optimization and model post-training (Figure 1).",
+      "ratio_score": 50.90909090909091,
+      "partial_ratio_score": 52.22929936305732
+    },
+    {
+      "sentence": "This provides stronger evidence that the workflow optimizer itself naturally improves after post-training.",
+      "best_match": "To this end, we propose Multi-Agent Self-Supervision (MASS) for RSI, a method that alternates between workflow optimization and model post-training (Figure 1).",
+      "ratio_score": 49.81132075471698,
+      "partial_ratio_score": 54.45026178010471
+    },
+    {
+      "sentence": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "best_match": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "ratio_score": 46.47887323943662,
+      "partial_ratio_score": 49.60629921259843
+    },
+    {
+      "sentence": "At the same time, component redundancy generally decreases (Figure 5).",
+      "best_match": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "ratio_score": 40.56603773584906,
+      "partial_ratio_score": 49.62406015037594
+    },
+    {
+      "sentence": "These results suggest our first hypothesis.",
+      "best_match": "This provides stronger evidence that the workflow optimizer itself naturally improves after post-training.",
+      "ratio_score": 37.58389261744966,
+      "partial_ratio_score": 45.78313253012048
+    },
+    {
+      "sentence": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "best_match": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "ratio_score": 52.87356321839081,
+      "partial_ratio_score": 57.6271186440678
+    },
+    {
+      "sentence": "By i = 11, d TC(Z) falls in all four configurations; d TC(Z | T) falls in three and rises for permutation-adjusted MPNet.",
+      "best_match": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "ratio_score": 50.83333333333333,
+      "partial_ratio_score": 54.117647058823536
+    },
+    {
+      "sentence": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "best_match": "Together, these results support transfer from task-solving self-supervision to workflow optimization and self-evaluation without separate training targets for those roles.",
+      "ratio_score": 50.54945054945055,
+      "partial_ratio_score": 57.608695652173914
+    },
+    {
+      "sentence": "Multi-agent executions generate approximately 2.4\u00d7 more tokens on average than single- agent executions and are preferred in 85.1% of external judgments overall.",
+      "best_match": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "ratio_score": 47.20496894409938,
+      "partial_ratio_score": 48.23151125401929
+    },
+    {
+      "sentence": "Among the 10 episode pairs with similar generated trace lengths, the multi-agent preference remains 80.0% (Ap- pendix D.3).",
+      "best_match": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "ratio_score": 45.333333333333336,
+      "partial_ratio_score": 49.01960784313726
+    },
+    {
+      "sentence": "This suggests that the quality advantage is not explained solely by longer inference.",
+      "best_match": "This suggests that jointly learning orchestration and bounded subagent execution can provide more effective supervision for RSI.",
+      "ratio_score": 47.887323943661976,
+      "partial_ratio_score": 55.00000000000001
+    },
+    {
+      "sentence": "Here, our main claim is optimizer capacity, rather than the evaluator capacity, can be a bottleneck in the speed of RSI.",
+      "best_match": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "ratio_score": 57.25190839694656,
+      "partial_ratio_score": 61.66666666666667
+    },
+    {
+      "sentence": "A stronger optimizer reaches successful workflows substantially earlier, while the all-L(0) loop even- tually achieves unanimous wins on 11 of 12 tasks (Figure 7a).",
+      "best_match": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "ratio_score": 45.751633986928105,
+      "partial_ratio_score": 46.715328467153284
+    },
+    {
+      "sentence": "Replacing only the evaluator with GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.",
+      "best_match": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "ratio_score": 41.52249134948097,
+      "partial_ratio_score": 47.36842105263158
+    },
+    {
+      "sentence": "Thus, the evidence concerns the speed of workflow improvement, rather than an inability of the weaker model to discover useful workflows.",
+      "best_match": "Figure 3a compares L(g)(xt\u2295w(g,i) t ) with L(0)(xt) across workflow iterations i \u2208[10] and MASS generations g \u2208{0, 1, 2}, showing that post-trained models discover successful workflows earlier.",
+      "ratio_score": 46.666666666666664,
+      "partial_ratio_score": 49.63503649635036
+    },
+    {
+      "sentence": "Interestingly, improved workflow reachability (Figure 7a) does not guarantee stable optimization (Figure 7b): strong iterations can be followed by sharp performance regressions.",
+      "best_match": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+      "ratio_score": 44.44444444444444,
+      "partial_ratio_score": 47.42268041237113
+    },
+    {
+      "sentence": "We further analyze the size of successive workflow edits and find little Spearman correlation between textual edit size and the change in verdicts (|\u03c1edit| \u22640.12).",
+      "best_match": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "ratio_score": 45.90163934426229,
+      "partial_ratio_score": 46.043165467625904
+    },
+    {
+      "sentence": "Near-unanimous outcomes also reverse under both small and large edits.",
+      "best_match": "Here, our main claim is optimizer capacity, rather than the evaluator capacity, can be a bottleneck in the speed of RSI.",
+      "ratio_score": 40.0,
+      "partial_ratio_score": 42.85714285714286
+    },
+    {
+      "sentence": "Thus, the magnitude of the textual change from w(0,i\u22121) t to w(0,i) t is a weak predictor of the resulting performance change (Table 10 from Appendix E).",
+      "best_match": "Among the 10 episode pairs with similar generated trace lengths, the multi-agent preference remains 80.0% (Ap- pendix D.3).",
+      "ratio_score": 44.927536231884055,
+      "partial_ratio_score": 49.76076555023924
+    },
+    {
+      "sentence": "These behaviors emerge without providing the optimized workflow at inference time.",
+      "best_match": "This provides stronger evidence that the workflow optimizer itself naturally improves after post-training.",
+      "ratio_score": 45.74468085106383,
+      "partial_ratio_score": 53.42465753424658
+    },
+    {
+      "sentence": "These behaviors are also directly represented in the SFT data.",
+      "best_match": "These behaviors emerge without providing the optimized workflow at inference time.",
+      "ratio_score": 50.0,
+      "partial_ratio_score": 60.0
+    },
+    {
+      "sentence": "Among 114 audited teacher trajectories, 98 contain code handoffs and 57 contain subagent revisions; 79 and 37 of these trajectories, respectively, were sampled for SFT (Appendix G.2).",
+      "best_match": "These findings suggest that jointly learning orchestration and bounded subagent execution from multi-agent trajectories can provide an effective signal for RSI.",
+      "ratio_score": 47.23032069970845,
+      "partial_ratio_score": 49.375
+    },
+    {
+      "sentence": "Together, these suggest that post-training internalizes coordination behaviors from multi-agent trajectories.",
+      "best_match": "Finally, trajectory analysis provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).",
+      "ratio_score": 55.172413793103445,
+      "partial_ratio_score": 61.92893401015229
+    },
+    {
+      "sentence": "Drawing on the Society of Mind, we address this by forming a multi-agent system from multiple copies of the model and distilling their collective gains as self-supervision, and we show this provides useful self-supervision in RSI.",
+      "best_match": "Jointly learning coordination from orchestrator trajectories and bounded execution from subagent trajectories may provide more effective RSI supervision than learning both from a single agent\u2019s long-horizon trajectories.",
+      "ratio_score": 43.99999999999999,
+      "partial_ratio_score": 44.09090909090909
+    },
+    {
+      "sentence": "The retained workflow is the best under the sequential self-comparisons.",
+      "best_match": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "ratio_score": 46.7391304347826,
+      "partial_ratio_score": 47.55244755244755
+    },
+    {
+      "sentence": "The first-cycle training set contains 119 trajectories, yielding 2,435 windows: 282 orchestrator, 2,054 worker, and 99 auxiliary windows, with 17,221,055 supervised tokens.",
+      "best_match": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "ratio_score": 43.87755102040817,
+      "partial_ratio_score": 44.705882352941174
+    },
+    {
+      "sentence": "The first-cycle SFT run takes about 19 hours, including validation.",
+      "best_match": "These results suggest our first hypothesis.",
+      "ratio_score": 41.81818181818182,
+      "partial_ratio_score": 42.85714285714286
+    },
+    {
+      "sentence": "Table 4: Evaluation roles in homogeneous MASS.",
+      "best_match": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "ratio_score": 41.48936170212766,
+      "partial_ratio_score": 56.52173913043479
+    },
+    {
+      "sentence": "Table 5: Per-task comparison of M + with the no-harness base.",
+      "best_match": "Table 4: Evaluation roles in homogeneous MASS.",
+      "ratio_score": 46.728971962616825,
+      "partial_ratio_score": 46.15384615384615
+    },
+    {
+      "sentence": "Table 6: Main results for M + under the bare task prompt.",
+      "best_match": "Table 5: Per-task comparison of M + with the no-harness base.",
+      "ratio_score": 52.542372881355924,
+      "partial_ratio_score": 51.32743362831859
+    },
+    {
+      "sentence": "The mean win share is 0.64 when both workflow sets are executed by (L(0)).",
+      "best_match": "These behaviors emerge without providing the optimized workflow at inference time.",
+      "ratio_score": 47.43589743589743,
+      "partial_ratio_score": 47.14285714285714
+    },
+    {
+      "sentence": "Under this matched prompt, M + records 352 wins, 306 losses, and two ties against the base: a 53.5% share.",
+      "best_match": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "ratio_score": 43.78109452736319,
+      "partial_ratio_score": 44.21052631578948
+    },
+    {
+      "sentence": "Table 7: Public-benchmark results for L(k) + qwen-code.",
+      "best_match": "Table 6: Main results for M + under the bare task prompt.",
+      "ratio_score": 53.57142857142857,
+      "partial_ratio_score": 65.1685393258427
+    },
+    {
+      "sentence": "None of the 180 MLR-Bench executions calls the delegation tool, so this result does not establish delegation as the mechanism of public-benchmark transfer.",
+      "best_match": "Together, these suggest that post-training internalizes coordination behaviors from multi-agent trajectories.",
+      "ratio_score": 43.939393939393945,
+      "partial_ratio_score": 49.246231155778894
+    },
+    {
+      "sentence": "For L(0), L(1), and L(2), respectively, the mean rubric scores are 0.053 \u00b1 0.002, 0.055 \u00b1 0.004, and 0.067 \u00b1 0.017, where the standard deviations are computed over the three trial means.",
+      "best_match": "None of the 180 MLR-Bench executions calls the delegation tool, so this result does not establish delegation as the mechanism of public-benchmark transfer.",
+      "ratio_score": 38.12316715542522,
+      "partial_ratio_score": 38.914027149321264
+    },
+    {
+      "sentence": "Report-delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%).",
+      "best_match": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+      "ratio_score": 41.333333333333336,
+      "partial_ratio_score": 42.10526315789473
+    },
+    {
+      "sentence": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "best_match": "For L(0), L(1), and L(2), respectively, the mean rubric scores are 0.053 \u00b1 0.002, 0.055 \u00b1 0.004, and 0.067 \u00b1 0.017, where the standard deviations are computed over the three trial means.",
+      "ratio_score": 47.023809523809526,
+      "partial_ratio_score": 50.66666666666666
+    },
+    {
+      "sentence": "Among delivered reports, mean scores are 0.105, 0.095, and 0.088.",
+      "best_match": "Report-delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%).",
+      "ratio_score": 48.17518248175182,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "In percentages, the results are 37.5 \u00b1 2.2, 35.3 \u00b1 2.1, and 35.2 \u00b1 1.7 for L(0), L(1), and L(2), respectively.",
+      "best_match": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "ratio_score": 66.92307692307693,
+      "partial_ratio_score": 74.65437788018433
+    },
+    {
+      "sentence": "The unweighted means and sample standard deviations of the three trial pass rates are 62.6 \u00b1 1.4%, 61.8 \u00b1 1.9%, and 61.1 \u00b1 0.6% for L(0), L(1), and L(2), respectively.",
+      "best_match": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "ratio_score": 78.86435331230284,
+      "partial_ratio_score": 79.33333333333333
+    },
+    {
+      "sentence": "Across the eligible pools, the 210 multi-agent episodes average 141,844 generated tokens and the 103 single-agent episodes average 59,355.",
+      "best_match": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "ratio_score": 45.484949832775925,
+      "partial_ratio_score": 48.14814814814815
+    },
+    {
+      "sentence": "The ratio of these means is 2.39, or approximately 2.4 times as many generated tokens for multi-agent execution.",
+      "best_match": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "ratio_score": 49.532710280373834,
+      "partial_ratio_score": 52.0
+    },
+    {
+      "sentence": "Table 9: Teacher-output comparisons. W\u2013L counts judgments favoring or disfavoring the multi-agent output, with four judgments per pair and no ties.",
+      "best_match": "Overall, our work introduces an algorithm that uses multi-agent coordination to generate self- supervision for RSI.",
+      "ratio_score": 45.80152671755725,
+      "partial_ratio_score": 50.495049504950494
+    },
+    {
+      "sentence": "The pooled win rate is 85.1%; giving all eight task rates equal weight gives 79.3%.",
+      "best_match": "The mean win share is 0.64 when both workflow sets are executed by (L(0)).",
+      "ratio_score": 44.5859872611465,
+      "partial_ratio_score": 46.37681159420289
+    },
+    {
+      "sentence": "These results show an output-quality advantage in the saved comparisons, but do not isolate the effect of delegation: workflow mixtures, verification instructions, and successful-completion selection also differ.",
+      "best_match": "Defining multi-agent workflow in the prompt is demonstrated to be an effective way for LLMs to follow the organization instruction and act accordingly (Nielsen et al., 2026; Tang et al., 2026).",
+      "ratio_score": 47.40740740740741,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "Table 10 quantifies the weak association between edit size and changes in judged quality.",
+      "best_match": "We further analyze the size of successive workflow edits and find little Spearman correlation between textual edit size and the change in verdicts (|\u03c1edit| \u22640.12).",
+      "ratio_score": 50.0,
+      "partial_ratio_score": 61.79775280898876
+    },
+    {
+      "sentence": "The workflow files at iterations 16 and 17 are byte-identical, as are their rendered task-plus-workflow prompts; both runs record generation seed 350053.",
+      "best_match": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "ratio_score": 46.10778443113772,
+      "partial_ratio_score": 45.751633986928105
+    },
+    {
+      "sentence": "Nevertheless, the first episode completes and wins all six external reporting judgments against the fixed bare-agent reference, whereas the second halts under loop detection and loses all six (Table 11).",
+      "best_match": "Among the 10 episode pairs with similar generated trace lengths, the multi-agent preference remains 80.0% (Ap- pendix D.3).",
+      "ratio_score": 46.012269938650306,
+      "partial_ratio_score": 51.21951219512195
+    },
+    {
+      "sentence": "This case illustrates why edit size alone cannot account for every regression.",
+      "best_match": "This suggests that the quality advantage is not explained solely by longer inference.",
+      "ratio_score": 46.62576687116564,
+      "partial_ratio_score": 46.4516129032258
+    },
+    {
+      "sentence": "In particular, the recorded sampling seed does not make these full agent executions deterministic.",
+      "best_match": "The ratio of these means is 2.39, or approximately 2.4 times as many generated tokens for multi-agent execution.",
+      "ratio_score": 46.666666666666664,
+      "partial_ratio_score": 49.42528735632183
+    },
+    {
+      "sentence": "From iteration 3 to 11, roles and instructions lose task information, while contracts and hops gain it.",
+      "best_match": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "ratio_score": 64.86486486486487,
+      "partial_ratio_score": 74.86033519553072
+    },
+    {
+      "sentence": "Unconditional total correlation falls in all four encoder/estimator combinations.",
+      "best_match": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "ratio_score": 50.0,
+      "partial_ratio_score": 57.34265734265735
+    },
+    {
+      "sentence": "The task-centered estimate falls in three; permutation-adjusted MPNet is the exception.",
+      "best_match": "By i = 11, d TC(Z) falls in all four configurations; d TC(Z | T) falls in three and rises for permutation-adjusted MPNet.",
+      "ratio_score": 50.96153846153846,
+      "partial_ratio_score": 60.40268456375839
+    },
+    {
+      "sentence": "Table 12: Task-information estimates bI(Zc; T) (nats) along the crown path.",
+      "best_match": "Table 5: Per-task comparison of M + with the no-harness base.",
+      "ratio_score": 47.05882352941176,
+      "partial_ratio_score": 48.484848484848484
+    },
+    {
+      "sentence": "In all four encoder/estimator configurations, roles and instructions decrease while contracts and hops increase between i = 3 and i = 11 (arrows).",
+      "best_match": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "ratio_score": 58.33333333333333,
+      "partial_ratio_score": 61.71875
+    },
+    {
+      "sentence": "Table 13: Component redundancy (nats), with the same crown workflows and estimator variants as Table 12.",
+      "best_match": "Table 5: Per-task comparison of M + with the no-harness base.",
+      "ratio_score": 44.84848484848485,
+      "partial_ratio_score": 49.557522123893804
+    },
+    {
+      "sentence": "From i = 3 to i = 11, unconditional d TC(Z) decreases in all four configurations and task-centered d TC(Z | T) in three; the permutation-adjusted MPNet estimate increases.",
+      "best_match": "By i = 11, d TC(Z) falls in all four configurations; d TC(Z | T) falls in three and rises for permutation-adjusted MPNet.",
+      "ratio_score": 66.43835616438356,
+      "partial_ratio_score": 73.55371900826447
+    },
+    {
+      "sentence": "The base already performs the coordination patterns observed after SFT.",
+      "best_match": "These behaviors are also directly represented in the SFT data.",
+      "ratio_score": 49.62406015037594,
+      "partial_ratio_score": 51.48514851485149
+    },
+    {
+      "sentence": "With this prompt, both models delegate in every episode; the base performs code handoffs in 103 of 110 episodes.",
+      "best_match": "Across the eligible pools, the 210 multi-agent episodes average 141,844 generated tokens and the 103 single-agent episodes average 59,355.",
+      "ratio_score": 43.99999999999999,
+      "partial_ratio_score": 46.42857142857143
+    },
+    {
+      "sentence": "Under a bare prompt, the base\u2019s task 202 episode (seed 2154005) forms a six-worker pipeline and repairs an mmCIF-column mismatch after execution fails.",
+      "best_match": "Under this matched prompt, M + records 352 wins, 306 losses, and two ties against the base: a 53.5% share.",
+      "ratio_score": 43.57976653696498,
+      "partial_ratio_score": 46.07843137254902
+    },
+    {
+      "sentence": "This shows that both coordination and execution-conditioned repair are available before post-training.",
+      "best_match": "This suggests that jointly learning orchestration and bounded subagent execution can provide more effective supervision for RSI.",
+      "ratio_score": 49.56521739130435,
+      "partial_ratio_score": 51.0
+    },
+    {
+      "sentence": "These observations support increased bare-prompt use of coordination already available in the base.",
+      "best_match": "The base already performs the coordination patterns observed after SFT.",
+      "ratio_score": 50.588235294117645,
+      "partial_ratio_score": 54.67625899280575
+    },
+    {
+      "sentence": "The episode wins all six comparisons with its base reference.",
+      "best_match": "Table 5: Per-task comparison of M + with the no-harness base.",
+      "ratio_score": 50.81967213114754,
+      "partial_ratio_score": 55.23809523809524
+    },
+    {
+      "sentence": "The trace establishes artifact-dependent implementation, without certifying every simulation choice or reported metric.",
+      "best_match": "These behaviors emerge without providing the optimized workflow at inference time.",
+      "ratio_score": 45.77114427860697,
+      "partial_ratio_score": 47.43589743589743
+    },
+    {
+      "sentence": "This case shows revision and checking without requiring a favorable scientific conclusion.",
+      "best_match": "This shows that both coordination and execution-conditioned repair are available before post-training.",
+      "ratio_score": 53.125,
+      "partial_ratio_score": 52.57142857142857
+    },
+    {
+      "sentence": "This episode receives five favorable judgments out of six, despite changing the physical meaning of success.",
+      "best_match": "The episode wins all six comparisons with its base reference.",
+      "ratio_score": 43.786982248520715,
+      "partial_ratio_score": 44.26229508196722
+    },
+    {
+      "sentence": "Coordination and high workspace preference therefore do not guarantee that a revision preserves the scientific task.",
+      "best_match": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "ratio_score": 44.95412844036697,
+      "partial_ratio_score": 47.82608695652174
+    },
+    {
+      "sentence": "The retained paths through search iteration 11 are w0 \u2192w1 \u2192w8 \u2192w10 for task 51, w0 \u2192w8 for task 202, and w0 \u2192w1 \u2192w11 for task 307 (Figure 8).",
+      "best_match": "Across workflow optimization, roles and instructions become less task-specific, while contracts and hops become more task-specific (Figure 4).",
+      "ratio_score": 42.40282685512368,
+      "partial_ratio_score": 44.881889763779526
+    },
+    {
+      "sentence": "Task 51\u2019s workflow connects data collection, features, modeling, backtesting, auditing, and reporting, with explicit routes for failed checks.",
+      "best_match": "This suggests that jointly learning orchestration and bounded subagent execution can provide more effective supervision for RSI.",
+      "ratio_score": 43.7037037037037,
+      "partial_ratio_score": 44.534412955465584
+    },
+    {
+      "sentence": "Task 202\u2019s workflow connects structure acquisition, graph construction, model training, and eval- uation, with a validator that returns the failed agent, violation, and narrower assignment.",
+      "best_match": "Task 51\u2019s workflow connects data collection, features, modeling, backtesting, auditing, and reporting, with explicit routes for failed checks.",
+      "ratio_score": 53.776435045317214,
+      "partial_ratio_score": 58.08823529411764
+    },
+    {
+      "sentence": "MASS instead tests whether the resulting execution traces can improve shared weights and subsequent workflow search.",
+      "best_match": "This suggests that jointly learning orchestration and bounded subagent execution can provide more effective supervision for RSI.",
+      "ratio_score": 46.721311475409834,
+      "partial_ratio_score": 46.90265486725663
+    },
+    {
+      "sentence": "The experiments test transfer across model roles, performance per processed training token, and coordination under bare prompts.",
+      "best_match": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "ratio_score": 54.78260869565217,
+      "partial_ratio_score": 56.41025641025641
+    }
+  ]
+}

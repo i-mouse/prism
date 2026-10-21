@@ -1,0 +1,168 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12168v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "generated_at": "2026-10-19T14:24:03Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "decisions": {
+    "P0": {
+      "decision": "kept",
+      "reason_code": "positioning",
+      "relations": [
+        {
+          "neighbour_id": "C10",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C11",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C3",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P1": {
+      "decision": "kept",
+      "reason_code": "own_claim",
+      "relations": [
+        {
+          "neighbour_id": "C14",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C4",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C2",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": true
+    },
+    "P2": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "C3",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C10",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C9",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P3": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "C15",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C3",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C10",
+          "relation": "narrower"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P4": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "C5",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C14",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C2",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P5": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "P4",
+          "relation": "same"
+        },
+        {
+          "neighbour_id": "C5",
+          "relation": "narrower"
+        },
+        {
+          "neighbour_id": "C2",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P6": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "P4",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P5",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "C10",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    },
+    "P7": {
+      "decision": "dropped",
+      "reason_code": "setup_or_method_detail",
+      "relations": [
+        {
+          "neighbour_id": "P6",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P4",
+          "relation": "different"
+        },
+        {
+          "neighbour_id": "P5",
+          "relation": "different"
+        }
+      ],
+      "is_paper_claim": false
+    }
+  }
+}

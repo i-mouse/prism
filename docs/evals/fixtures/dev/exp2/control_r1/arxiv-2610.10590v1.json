@@ -1,0 +1,133 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.10590v1",
+    "variant": "control",
+    "fewshot_fix": true,
+    "fewshot_shapes": false,
+    "prompt_hash": "0e07bb0f2680",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "7cd024de-ee74-4f7d-858c-d4cfdb5df894",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-14T07:48:37Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "A Python harness exposes batch archival and explicit recovery without task-specific model training, while protecting user instructions and assistant messages from these operations.",
+      "claim_summary": "Harness provides batch archival and recovery without training, protecting user/assistant messages"
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider-reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28\u2013$1.44 versus approximately $4.38.",
+      "claim_summary": "On OpenTelemetry debugging, method used 232k prompt tokens vs 912k and reduced cost significantly"
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "Both arms passed the two-case primary behavioral oracle; neither fully satisfied the follow-up evaluation.",
+      "claim_summary": "Both methods passed the primary behavioral oracle, but neither fully passed follow-up evaluation"
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "The method made more requests and took 17% longer.",
+      "claim_summary": "The proposed method made more requests and required 17% more execution time"
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "A contrasting application-development pair produced no context or cost saving, and an earlier continuation exhibited lower manually assessed quality despite reduced context.",
+      "claim_summary": "Application development task showed no token or cost savings, with one lower quality run"
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "The central case demonstrates substantial reductions in active context and repeated input while preserving success on the tested primary behaviors.",
+      "claim_summary": "Central case shows large active context reduction while maintaining primary task success"
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "At primary submission the method carries 124,746 prompt tokens versus 847,674 for retained, an 85% reduction.",
+      "claim_summary": "Method reduced prompt tokens by 85% at primary task submission"
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "After the follow-up, the method carries 231,951 versus 912,492 prompt tokens, a 75% reduction.",
+      "claim_summary": "After follow-up phase, method maintained a 75% prompt token reduction over baseline"
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "The method peak is 381,299 versus 912,492 tokens.",
+      "claim_summary": "Peak prompt token count reached 381k for method vs 912k for baseline"
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "Cumulative input decreases by 50%, and input plus completion tokens decrease by 50%.",
+      "claim_summary": "Cumulative input tokens and total overall tokens decreased by 50% using method"
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "The estimated cost is approximately 67\u201371% lower, even after reported cache usage is included.",
+      "claim_summary": "Estimated API cost was 67% to 71% lower when accounting for caching"
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "The method generates more than twice as many completion tokens and takes 17% longer.",
+      "claim_summary": "Method generated over double the completion tokens and increased runtime by 17%"
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "Both primary candidates pass the two-case behavioral oracle.",
+      "claim_summary": "Primary implementations for both baseline and method passed the two behavioral oracle cases"
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "The method exits with status 0 after SIGTERM in 8.43 seconds and after SIGINT in 8.85 seconds.",
+      "claim_summary": "Method implementation correctly exited on signal termination probes within nine seconds"
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "Retained fails both probes and is killed with status 137.",
+      "claim_summary": "Retained context baseline failed signal termination probes and was forcefully killed"
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "Conversely, retained passes the occupied-port startup-failure probe with status 1; the method\u2019s second process does not finish within 30 seconds.",
+      "claim_summary": "Baseline passed occupied-port startup test while method timed out after 30 seconds"
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "The frozen mixed grader reports 3/6 for method and 2/6 for retained.",
+      "claim_summary": "Method achieved a 3/6 score on frozen mixed grader versus 2/6 baseline"
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "In total, 26 results containing 2,247,229 text characters are represented by 9,709 note characters.",
+      "claim_summary": "Archival condensed 2.25 million text characters across 26 results into 9,709 note characters"
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "All 26 archived text payloads and image lists match their recorded tool returns exactly.",
+      "claim_summary": "Archive preserved exact text payloads and image lists for all 26 archived results"
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "Planroom yields no context or cost saving: the method ends with 6% more prompt tokens (283,105 versus 265,965) and uses less than 1% more total tokens (68,136,934 versus 67,669,624).",
+      "claim_summary": "On Planroom benchmark, method achieved no savings, ending with 6% more prompt tokens"
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "The Sphinx batch contains two final 24/24 method outcomes and one retained 24/24 outcome.",
+      "claim_summary": "In Sphinx experiments, method achieved two perfect 24/24 scores versus one for baseline"
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "Every method session has a smaller final prompt than every retained session, while cumulative usage overlaps.",
+      "claim_summary": "Every Sphinx method run maintained a smaller final prompt than baseline runs"
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "An earlier browser-based workflow-design continuation used 63% fewer total tokens with the method but received a manual score of 4/12 versus 6/12 for retained.",
+      "claim_summary": "Earlier browser run saved 63% tokens but scored 4/12 versus baseline's 6/12 score"
+    }
+  ]
+}

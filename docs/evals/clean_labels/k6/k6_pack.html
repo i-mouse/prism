@@ -1,0 +1,721 @@
+<!doctype html><html><head><meta charset='utf-8'><title>K6 label pack</title><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;}mark{background:#ffe08a;} .heading{font-weight:bold;color:#555;}.not-found{color:#b00020;font-weight:bold;}</style></head><body><h1>K6 junk-rate labelling pack</h1><pre>A claim is a sentence in which the authors assert something about THEIR OWN
+work that a reader would take away as a finding, result or contribution,
+and that could be stronger than the paper&#x27;s evidence: (a) measured results
+and comparisons; (b) positioning: beats or avoids a class of methods,
+generalizes, is robust, efficient, cheap or simple; (c) contribution
+statements (&quot;we show / prove / demonstrate / contribute&quot;); (d) premises the
+method relies on, stated as fact. Hedged claims count; keep the hedge. A
+sentence that states a result AND adds a caveat is still a claim.
+NOT a claim: limitations, caveats and disclaimers whose main point is what
+the work does NOT show, cannot conclude or does not guarantee (these are
+evidence for the auditor, not claims to audit); background and prior work;
+future work; setup or implementation description with no result;
+definitions; headings; fragments; bare table rows.</pre><p>Label each item A (claim) / B (limitation or caveat) / C (setup or description) / D (other) / unsure in the labels CSV.</p><section id="L001"><h2>L001</h2><p class="before">tmost column) on KernelBench and Omni-MATH-2,
+respectively. </p><p class="sentence"><mark>These results suggest that text can serve as a universal medium for knowledge transfer
+among different LLMs for complex tasks.</mark></p><p class="after">
+ABSTRACT
+Knowledge distillation (KD) transfers knowledge from stronger Teacher models
+to weaker Student models, but most methods require training the Student pa-
+rameters, thereby binding the distilled knowledge to a specific architecture and
+checkpoint. This implicit representation is difficult to interpret or</p></section><section id="L002"><h2>L002</h2><p class="before">ver the corresponding estimator. </p><p class="sentence"><mark>The most accurate 4B run, Co-RA+GRPO, ends 5.4
+macro Avg@8 points below the teacher, 1.6 on MATH-500 and about 7 on each AIME set, and
+teacher-only OPD reaches 62% and 79% of the teacher’s macro Avg@8 at the two sizes.</mark></p><p class="after"> Every
+trained run exceeds the untrained student’s Pass@8 on every benchmark, and Appendix D.7 follows
+the 1.7B REINFORCE++ runs to Pass@512.
+Table 29: Untrained students and the teacher under the evaluation protocol. Qwen3-1.7B-Base
+and Qwen3-4B-Ba</p></section><section id="L003"><h2>L003</h2><p class="before">an illustrative Restaurant case outside the aggregate GoodAI comparison. Both runs
+received a detailed menu. </p><p class="sentence"><mark>Intent-guided consolidation retained the individual dishes, while the variant
+without intent guidance retained one menu memory chiefly as category names and number ranges.</mark></p><p class="after">
+When later asked to order, the former selected a listed dish and the latter named a dish absent from the
+menu. This illustrates a retention-granularity contrast rather than isolating the cause of the response.
+Hippocam</p></section><section id="L004"><h2>L004</h2><p class="before">remains 1.97 Avg@8 and 2.70 Pass@8
+points below full RA. </p><p class="sentence"><mark>With verifier feedback present in both guided runs, this comparison favors the
+complete RA construction over the raw log ratio.</mark></p><p class="after"> The following controls examine its components
+and a direct-loss alternative.
+Alternative advantage constructions.
+The centered log ratio uses the conventional action-minus-
+value construction with the log-ratio reward, followed by the same response centering. The control
+without the student value baseline retains</p></section><section id="L005"><h2>L005</h2><p class="before">, 2026). Both configurations achieve near-
+perfect task success, while the playbook variant uses slightly more actions on average (9.00 versus
+8.12). </p><p class="sentence"><mark>Inducing a playbook therefore offers no clear advantage here over directly using retained facts
+and grounded lessons (Table 9).</mark></p><p class="after">
+Recovering enough detail to proceed.
+In the MemoryAgentBench cases (Fig. 8), one question
+requires two levels of recall to recover a chain of facts, while another is resolved after one level
+without opening deeper referenc</p></section><section id="L006"><h2>L006</h2><p class="before">λA
+d has an SD below 0.03, as the hypotheses predict. The fluctuation is
+not uniformly small, however. </p><p class="sentence"><mark>On shorter responses, where few tokens set the average, its SD is 0.32,
+and 8% of all responses carry |λA
+d| &gt; 0.5, the scale of a verifier advantage.</mark></p><p class="after"> Without centering these
+responses receive a response-level label that the verifier did not assign, and Equation 6 removes it for
+every response. The hypotheses of Proposition 4 thus describe the long responses, which carry most
+of the tokens, and</p></section><section id="L007"><h2>L007</h2><p class="before"></p><p class="sentence"><mark>The sampled variant reaches 24.80 macro Avg@8
+and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below
+verifier-only REINFORCE++, and it is lower than full-vocabulary OPD on every benchmark score.</mark></p><p class="after"> A
+single sampled update can point against the expected one (Table 5), and in this setting the variance of
+the sampled estimate costs 2.65 macro Avg@8 points.
+D.7
+PASS@K UP TO 512
+Table 28 and Figure 6 give the macro Pass@K of the 1.7B REINFORCE++ runs for K ∈
+{8, 16,</p></section><section id="L008"><h2>L008</h2><p class="before">y as the host
+trace. </p><p class="sentence"><mark>The honest result is that such splices sit near
+the detection floor on this corpus: AUC(score) = 0.546,
+AUC(flags) = 0.540, cosine 0.516, and the per-trace leak-
+age delta between spliced and clean versions is not signif-
+icant (p = 0.93).</mark></p><p class="after"> Every spliced trace raises at least one
+flag, but unspliced host traces of comparable length flag
+at nearly the same rate, so trace-level “detection rate” is
+not a meaningful metric here and we do not report it as
+one. Three real SWE-agent</p></section><section id="L009"><h2>L009</h2><p class="before">ifier’s step falls from 0.88 to 0.74 for the direct loss while RA stays at 0.92–0.94. </p><p class="sentence"><mark>On the next
+batch, RA’s step raises the verifier objective 1.10–1.16 times as much as the direct loss’s step and
+wins 66–74% of paired comparisons.</mark></p><p class="after"> The ordering RA, uncentered label, direct loss holds on every
+seed for the shared-path term, the outcome-compatible mass, the teacher share, and the cosine with
+the verifier’s step. The divergence between the uncentered label and the direct loss grows with the
+weigh</p></section><section id="L010"><h2>L010</h2><p class="before">4.7
+1.5
+5.6
+2.0
+The choice of metric also changes comparisons within an individual attribute. </p><p class="sentence"><mark>On posterior features,
+QoQ-Med-7B achieves higher Accuracy than BreastGPT-8B (57.9 versus 54.8), whereas BreastGPT-
+8B achieves higher Macro-F1 (33.2 versus 25.8).</mark></p><p class="after"> The same ordering reversal occurs on halo:
+QoQ-Med-7B leads in Accuracy (72.0 versus 70.3), but BreastGPT-8B leads in Macro-F1 (63.7
+versus 41.8). These reversals extend the metric-dependent rankings observed in the main results
+to atomic pr</p></section><section id="L011"><h2>L011</h2><p class="before">be reused across different teachers; evaluating a new teacher only
+requires computing its log-probabilities on the cached rollouts. </p><p class="sentence"><mark>This can further reduce the cost of comparing
+or selecting teachers in practice.</mark></p><p class="after"> In contrast, Relay-OPD requires interleaved student and teacher generation
+throughout training, leading to higher training cost.
+Table 4 | Training cost. H100 GPU-hours for 100 training steps, excluding evaluation. Semi-OPD’s cost is
+the sum of rollout generation, teacher scoring, and</p></section><section id="L012"><h2>L012</h2><p class="before">each batch. (b) Mean response length separated by
+verifier correctness. The curves are from a single training seed.
+</p><p class="sentence"><mark>At the fixed weight λ = 10, the recorded mean absolute guidance term falls from about 0.43 to about
+0.30 over training (Figure 5a).</mark></p><p class="after"> The teacher signal weakens in this run without any weight reduction,
+as the distance bound of Equation 8 allows, while still contributing to the actor labels at the end of
+training. The quantity is a token average over responses whose lengths change du</p></section><section id="L013"><h2>L013</h2><p class="before">Third, the recall side remains
+an operating-point contrast, not a dominance result: at
+the shipped thresholds the full system sits at a conserva-
+tive point (12/30 recall on hallucinations and inversions)
+while the no-GW and rule variants sit at high-recall,
+high-FPR points (21–26/30 recall at 29–32/40 FPR)</p><p class="sentence"><mark>.
+Threshold sweeps with per-point counts and Wilson in-
+tervals (released with the code; n=120 benign, 100 per
+fault) quantify this: loop and stall AUPRC is 0.70–0.74
+for every variant (base rate 0.45), while hallucination and
+inversion AUPRC sits at 0.44–0.47 — essentially the base
+rate — for all variants, i.e., the precision–recall curves are
+indistinguishable and only the shipped operating point
+differs.</mark></p><p class="after"> We therefore claim the FPR contrast at deployed
+thresholds, not curve-level dominance.
+Scaled campaign.
+Beyond the eight unit scenarios, a
+randomized campaign (40 random-DAG tasks × 7 con-
+ditions, seeded) yields: loop recall 100% at detection
+latency 0; hallucination recall 100% at latency 2 (the
+grace window); causal-inversion recall 94.1% at latency 0
+via the premature-step check; and 0 false interventions
+over 200 benign runs that include valid reorderings, re-
+tries, and parallel exploration (a one-sided 95% upper
+10
+bound of 1.5% on the false-intervention rate)</p></section><section id="L014"><h2>L014</h2><p class="before">50 balanced), one
+row per trajectory-level signal. Bootstrap 95% CI: On-
+Track score [0.466, 0.689], cosine [0.53</p><p class="sentence"><mark>1, 0.759] — over-
+lapping.
+precisely the fault modes that dominate real cost-limit
+failures (Table 7), which is why the abort policy of Ta-
+ble 6 works despite the per-fault AUROC floor on the
+harder categories.
+</mark></p><p class="after">6.5
+The λ finding: relaxation strength is
+the detector
+Our controlled validation initially failed on hallucination
+detection. In entropic unbalanced OT with exponent
+η = λ/(λ</p></section><section id="L015"><h2>L015</h2><p class="before">d attention is
+higher for useful context (29.95%) than for hallucinated context (15.61%). </p><p class="sentence"><mark>Words like “unrelated”
+and “irrelevant” are more attended to when the query does not contain a food, demonstrating that the
+parent model is not distracted by hallucinated context and adheres to the original task instructions.</mark></p><p class="after">
+F
+A CASE STUDY ON SAFETY
+An LLM could be adversarially fine-tuned to remove safety guardrails. Here, the fine-tuned capa-
+bility directly conflicts with its general capabilities. This</p></section><section id="L016"><h2>L016</h2><p class="before">ared steps, OPD’s
+rollouts are 7–113% longer than Semi-OPD’s in 15 of 16 pairs. The growth is largest for the low-overlap
+non-thinking Qwen3 pairs, where OPD’s rollouts often exceed the teacher’s own length. </p><p class="sentence"><mark>The only exception is
+R1-Distill-1.5B ←JustRL-1.5B, whose OPD rollouts get shorter.</mark></p><p class="after">
+0
+40
+80
+1,000
+2,000
+3,000
+Training rollout
+length (tokens)
+Qwen3-1.7B
+ Qwen3-235B-Inst
+non-thinking · overlap 56.9%
++113%
+0
+80
+160
+9,000
+10,500
+12,000
+Qwen3-1.7B
+ Qwen3-30B-Think
+thinking · overlap 58.9%
++21%</p></section><section id="L017"><h2>L017</h2><p class="before">35%). </p><p class="sentence"><mark>The direct loss has the smaller gradient
+(0.43 of the verifier’s, against 0.58), but it is deterministic given the prefixes, and after clipping and
+Adam it takes the larger share of the update, 0.44 against 0.28.</mark></p><p class="after"> Over training this share rises from
+0.36 to 0.48 for the direct loss and falls from 0.30 to 0.25 for RA, and the cosine of the update with
+29
+Preprint
+Table 17: The sampled label reproduces the direct loss’s expected teacher gradient but shares
+the update with the verifier. Qwen3</p></section><section id="L018"><h2>L018</h2><p class="before">eacher, 1.6 on MATH-500 and about 7 on each AIME set, and
+teacher-only OPD reaches 62% and 79% of the teacher’s macro Avg@8 at the two sizes. </p><p class="sentence"><mark>Every
+trained run exceeds the untrained student’s Pass@8 on every benchmark, and Appendix D.7 follows
+the 1.7B REINFORCE++ runs to Pass@512.</mark></p><p class="after">
+Table 29: Untrained students and the teacher under the evaluation protocol. Qwen3-1.7B-Base
+and Qwen3-4B-Base before any training, and the Qwen3-8B teacher in non-thinking mode. Scores in
+%; ± is the sample SD across</p></section><section id="L019"><h2>L019</h2><p class="before">balanced). Precision is reported at the
+corpus base rate (81% of traces unresolved), which is the
+deployment-relevant figure; on the balanced sample it is
+necessarily near 50%.
+/ 10%, compared to cosine 1.5% / 9.6% / 20.7% and
+n steps 1.0% / 5.6% / 13.6%.</p><p class="sentence"><mark> The advantage is consis-
+tent across all three operating points.
+</mark></p><p class="after">Abort policy.
+A na¨ıve “abort at first flag” policy is
+useless: nearly every trace — resolved or not — emits
+at least one EXPLORING flag early on (false-stop rate
+99%). We restric</p></section><section id="L020"><h2>L020</h2><p class="before"></p><p class="sentence"><mark>The component
+study clarifies what the transport machinery changes
+on real traces: not recall — L1 heuristics and even a
+prerequisite-rule baseline match or exceed it there — but
+the operating point: at shipped thresholds the quadratic
+structure term selects a point with less than half the
+benign false-alarm rate of every reference-free variant
+(13/40 vs. 29–32/40 benign traces flagged; removing the
+frontier mask instead shifts the count by one trace); es-
+tablishing curve-level dominance remains open, and we
+do not claim generally superior detection precision.</mark></p><p class="after"> The
+precise summary of the real-trace evidence is this: on
+homogeneous SWE-agent traces, OnTrack provides a
+modest early advantage over content similarity, and its
+main structural contribution is selecting a lower-false-
+alarm operating point rather than improving ranking.
+On real traces, the demonstrated strengths are loops,
+stalls, deviation from a known reference structure, and
+schema-checkable prerequisite violations; we do not claim
+general in-the-wild detection of hallucinations or causal
+inversions, whose real-trace signal sits near the floor on
+homogeneous corpora</p></section><section id="L021"><h2>L021</h2><p class="before">r in both the expected logit update and the response-centered guidance term
+(Table 8). Pairing each teacher’s position with an agreement position isolates its own contribution.
+A.7
+COMPARING LOCAL ADVANTAGES ACROSS A RESPONSE
+</p><p class="sentence"><mark>At one prefix the student value baseline leaves the expected update unchanged (Proposition 1(ii)).</mark></p><p class="after"> Its
+role appears when local advantages from different prefixes are combined by centering. With Ft the
+prompt and actions before position t and ψt = ∇θ log pt(at), the local ad</p></section><section id="L022"><h2>L022</h2><p class="before">and evalu-
+ator across L(0) →L(1) →L(2). Note that post-training was only on task-solving traces. Figure 3a
+6
+</p><p class="sentence"><mark>Preprint
+compares L(g)(xt⊕w(g,i)
+t
+) with L(0)(xt) across workflow iterations i ∈[10] and MASS generations
+g ∈{0, 1, 2}, showing that post-trained models discover successful workflows earlier. </mark></p><p class="after">Figure 3c
+measures agreement between the self-evaluator L(g) and the external reference judgments. The
+agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2). Together, these re</p></section><section id="L023"><h2>L023</h2><p class="before">set (Figure 7, Ap-
+pendix D). The lead is Holm-significant on 7/7
+datasets at N=8 and 6/7 at N=16, 3/7 at N=32
+and 2/7 at N=64 (Table 15). </p><p class="sentence"><mark>Because the best deep
+KT model is chosen on test in every cell, these mar-
+gins are conservative.</mark></p><p class="after">
+P2, new learners (RQ3).
+Figure 3a scores the
+same N=8 predictions by the position of the target
+in a new learner’s sequence. JevKT is above the
+best deep KT model at every position, already for
+the second to fifth interactions (.714 vs. .691), when
+the new learne</p></section><section id="L024"><h2>L024</h2><p class="before">lting update frequency.
+Overall effectiveness. The full method improves over the Student without a Primer across all
+four knowledge-gap subsets. </p><p class="sentence"><mark>Accuracy increases from 33.7%, 33.3%, 60.0%, and 0.0% to 65.3%,
+56.0%, 72.5%, and 5.0% on the distillation-training, distillation-test, retention, and frontier subsets,
+respectively.</mark></p><p class="after">
+Effects of core components. Compared with random selection, knowledge-gap selection improves
+distillation-training and distillation-test accuracy by 9.7 and 6.0 percentage</p></section><section id="L025"><h2>L025</h2><p class="before">s at the end of
+training. The quantity is a token average over responses whose lengths change during training, so it
+is read together with panel (b).
+</p><p class="sentence"><mark>Correct-response mean length rises but stays below about 4,000 tokens.</mark></p><p class="after"> Incorrect-response mean
+length rises more sharply and later fluctuates mostly between 9,000 and 12,000 tokens, close to the
+cap; the shaped reward penalizes length only for correct responses, so nothing in the reward opposes
+the growth of incorrect ones. Correct responses in thi</p></section><section id="L026"><h2>L026</h2><p class="before">expands what it can accomplish. Hippocam thereby makes the agent’s
+lifetime of work the engine of continual learning, taking a step toward a unified architecture for
+memory, knowledge, and learning.
+</p><p class="sentence"><mark>Evaluations show that Hippocam achieves strong performance across memory, knowledge use,
+and learning.</mark></p><p class="after"> Whereas competing methods show more uneven performance across these demands,
+Hippocam leads or matches the best compared method on seven of the eight measures in Fig. 1.
+Ablations and case analyses</p></section><section id="L027"><h2>L027</h2><p class="before">ypotheses (Appendix A.7). </p><p class="sentence"><mark>The direct L2 control applies αJpd at each
+visited prefix through a differentiable loss and matches the uncentered local expectation at α = λ;
+response centering, gradient noise, and optimizer state still separate the two training updates.</mark></p><p class="after">
+A.3
+LOCAL PROBABILITY SCALING
+Proposition 3 (Local logit influence) Fix a prefix, positive distributions p, q, a finite verifier action-
+value vector Q, and nonnegative weights λ, β, before response centering. (i) On logit coordinate</p></section><section id="L028"><h2>L028</h2><p class="before">The reminder is appended as
+user-role content at the end of the outgoing request and is not persisted in conversation history.
+It describes maintenance rather than a deadline or an instruction to finish.
+</p><p class="sentence"><mark>The condition therefore tests prompted, model-selected curation.</mark></p><p class="after"> It does not show that
+an unprompted base model spontaneously discovers a need to forget, and it does not involve
+parameter learning during the experiment.
+Retained history omits the method instructions,
+reminder, and context tools while keeping the shared task tools and result labels.
+3.4
+Resource accounting
+For request 𝑡, let 𝑃𝑡be provider-reported prompt tokens and 𝑂𝑡completion tokens</p></section><section id="L029"><h2>L029</h2><p class="before">With hyper-parameters tuned on the
+validation learners of each cell (four strong pyKT
+models, eight configurations each), deep KT stays
+below JevKT by +.070, +.042, +.030 and +.010 at
+N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7,
+5/7 and 4/7 datasets), so default hyper-parameters
+do not explain the gap.
+6
+Conclusion
+Yes, an off-the-shelf System-One LLM already per-
+forms KT when few or no learners are logged.
+</p><p class="sentence"><mark>Without any data from the target platform, Jev
+beats deep KT trained on 8 learners on average and
+prompted System-Two LLM-KT on every dataset,
+at a fraction of its cost; with evidence from the
+logged learners, JevKT stays ahead until super-
+vised KT catches up between 64 and 128 learners.
+A</mark></p><p class="after">mong the readers we tested, the gain comes from
+the model rather than the typed format; the input
+recipe helps other LLMs as much as it helps Jev.
+Whether an open System-One model can match it
+remains open.
+Limitations
+Our finding concerns one closed System-One
+model</p></section><section id="L030"><h2>L030</h2><p class="before">r M positions), and let A
+d = P
+t ctAd
+t be the response mean of the local
+advantages. </p><p class="sentence"><mark>RA adds the centered local advantage, scaled by the guidance weight λ, to the verifier
+advantage,
+δt = λ (Ad
+t −A
+d),
+At = AV + δt,
+λ ≥0.</mark></p><p class="after">
+(5)
+For every response,
+X
+t
+ctAt = AV ,
+δt −δu = λ (Ad
+t −Ad
+u),
+(6)
+so the verifier advantage is exactly the response’s mean label and every difference between two
+decisions is preserved. Under the weighted inner product ⟨u, v⟩c = P
+t ctutvt, the constant verifier
+label and</p></section><section id="L031"><h2>L031</h2><p class="before">the gaps
+described above. Archival of 34 results removes only 69,685 net history characters; this does not
+offset the differing generated trajectories and method overhead. </p><p class="sentence"><mark>The method completes in 24.29
+rather than 31.78 minutes; this single pair does not isolate the cause of the timing difference.</mark></p><p class="after">
+Planroom evidence.
+Table 3. Sphinx pilot, all six sessions in execution order.
+Session
+Condition
+Final private
+cases
+Final prompt
+Total tokens
+Requests
+01
+Retained
+23/24
+267,349
+15,946,799
+116
+02
+Meth</p></section><section id="L032"><h2>L032</h2><p class="before">JevKT uses
+jev-1.13-20260917 via OpenRouter with H=25,
+k=64 and n=20 (Appendix B).
+4.2
+Main Results
+No learners logged, N=0 (RQ1).
+</p><p class="sentence"><mark>Without any
+data from the target platform, Jev0-shot reaches
+.706 mean AUC (first block of Table 1).</mark></p><p class="after"> This is
+above the strongest training-free LLM-KT baseline,
+LOKT (.671), and above the best deep KT model
+trained on 8 learners (.689; higher on 5/7 datasets).
+It also beats System-Two Thinking-KT (.650) on
+all seven datasets with one call instead of ten, at
+about 1/100 of its API cost (Section 5.4)</p></section><section id="L033"><h2>L033</h2><p class="before">ns on 11 of 12 tasks (Figure 7a). </p><p class="sentence"><mark>Replacing only the evaluator with
+GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.</mark></p><p class="after"> Thus, the evi-
+dence concerns the speed of workflow improvement, rather than an inability of the weaker model to
+discover useful workflows.
+Interestingly, improved workflow reachability (Figure 7a) does not guarantee stable optimization
+(Figure 7b): strong iterations can be followed by sharp performance regressions. We further analyze
+the size of su</p></section><section id="L034"><h2>L034</h2><p class="before">We
+show more qualitative examples of rollout comparisons between OPD and Semi-OPD in Appendix E.
+0
+50
+100
+1800
+2400
+3000
+Rollout length (tokens)
+Qwen3-1.7B (non-thinking)
+ Qwen3-4B-Instruct
+0
+50
+100
+1600
+2000
+2400
+Qwen3-1.7B (non-thinking)
+ Qwen3-8B (non-thinking)
+0
+75
+150
+7000
+8000
+9000
+10000
+R1-Distill-7B (thinking)
+ DeepCoder-14B
+0
+50
+100
+1.5
+3.0
+Self-corrections / 1k chars
+Qwen3-1.7B (non-thinking)
+ Qwen3-4B-Instruct
+0
+50
+100
+0.75
+1.00
+1.25
+1.50
+Qwen3-1.7B (non-thinking)
+ Qwen3-8B (non-thinking)
+0
+75
+150
+6.4
+7.2
+8.0
+R1-Distill-7B (thinking)
+ DeepCoder-14B
+Distillation step
+Length inflation
+Distillation step
+Self-correction inflation
+OPD (regenerated rollouts)
+OSRD (frozen 0 rollouts)
+Teacher
+</p><p class="sentence"><mark>Figure 18 | On-policy rollouts inflate during OPD.</mark></p><p class="after"> Rollout length (left three panels) and self-correction
+word density (right three panels) of the training rollouts</p></section><section id="L035"><h2>L035</h2><p class="before">13, OPD’s rollouts lengthen as training proceeds, while Semi-OPD’s
+stay at the length of the initial student’s rollouts by construction. </p><p class="sentence"><mark>Over the last 10 shared steps, OPD’s
+rollouts are 7–113% longer than Semi-OPD’s in 15 of 16 pairs.</mark></p><p class="after"> The growth is largest for the low-overlap
+non-thinking Qwen3 pairs, where OPD’s rollouts often exceed the teacher’s own length. The only exception is
+R1-Distill-1.5B ←JustRL-1.5B, whose OPD rollouts get shorter.
+0
+40
+80
+1,000
+2,000
+3,000
+Training rollout
+length (t</p></section><section id="L036"><h2>L036</h2><p class="before">0), L(1), and L(2), respectively, the mean rubric scores are 0.053 ± 0.002, 0.055 ± 0.004,
+and 0.067 ± 0.017, where the standard deviations are computed over the three trial means. </p><p class="sentence"><mark>Report-
+delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%). </mark></p><p class="after">Among delivered reports,
+mean scores are 0.105, 0.095, and 0.088. These conditional means refer to different sets of com-
+pleted tasks, so they do not measure a quality change on a common completed set.
+DSBench.
+We evaluate the 74 data-modeling</p></section><section id="L037"><h2>L037</h2><p class="before">r L(1) and 0.93 for L(2). </p><p class="sentence"><mark>Together, these results
+support transfer from task-solving self-supervision to workflow optimization and self-evaluation
+without separate training targets for those roles.</mark></p><p class="after">
+Executor Lagent
+Comparator Lagent
+Win rate
+L(1)(xt ⊕w(1,i)
+t
+)
+L(0)(xt ⊕w(0,i)
+t
+)
+0.80
+L(0)(xt ⊕w(1,i)
+t
+)
+L(0)(xt ⊕w(0,i)
+t
+)
+0.64
+L(0)(xt ⊕w(1,i)
+t
+)
+L(0)(xt)
+0.63
+L(0)(xt ⊕w(1,i)
+t
+)
+L(1)(xt ⊕w(1,i)
+t
+)
+0.29
+Table 1: Mean win rate over i ∈[11] iterations and
+t ∈[12] tasks. w(g,i)
+t
+indicates the w</p></section><section id="L038"><h2>L038</h2><p class="before">dependencies, not parallel execution. BC is behavior cloning; PDDL is Planning
+Domain Definition Language.
+as many expanded nodes. </p><p class="sentence"><mark>This case shows revision and checking without requiring a favorable
+scientific conclusion.</mark></p><p class="after">
+A revision that changes the test.
+In task 305 (seed 2310008), failed push and lever evaluations
+lead the student to request a simulator revision. The revision replaces force-driven motion with
+direct repositioning toward the goal and removes simulation steps. The worker then r</p></section><section id="L039"><h2>L039</h2><p class="before">e other positions (Proposition 4). Removing both operations costs 1.73
+Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by
+−0.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).
+</p><p class="sentence"><mark>Table 2: Every residual variant improves on verifier-only training at every tested weight, and full
+RA stays above every control at every matched weight.</mark></p><p class="after"> Qwen3-1.7B-Base with REINFORCE++;
+three-seed macro means in %. The weight is λ, γx, γraw, or α a</p></section><section id="L040"><h2>L040</h2><p class="before">s in any topological order is never penalized
+for order (Prop. 2).
+(b)
+Precision
+and
+recall
+acquire
+stream
+seman-
+tics.
+</p><p class="sentence"><mark>Agent-side leakage (Eq. 4) is the real-time
+signal
+—
+it
+means
+hallucination,
+digression,
+or
+prematurity now.</mark></p><p class="after">
+Reference-side coverage ρt
+=
+P
+j min(covt(j), 1) νj
+ P
+j νj is a progress meter; full-
+trajectory recall is only computed at termination with
+the mask removed.
+(c) Prematurity is detectable and disambiguable. A
+leaking step may still match an inactive (future) refer-
+en</p></section><section id="L041"><h2>L041</h2><p class="before">This weight is 1 for a token inside R and
+0 for a token outside R.
+We first sum the attention assigned to each region:
+me,ℓ,h,j(R) =
+X
+i
+we,i,R Ae,ℓ,h,i,j,
+R ∈{Q, I, C}.
+The total attention directed to the prompt is then
+de,ℓ,h,j = me,ℓ,h,j(Q) + me,ℓ,h,j(I) + me,ℓ,h,j(C).
+The share of the attention weight for each prompt region, for each layer, head, and response token j
+is then:
+se,ℓ,h,j(R) = me,ℓ,h,j(R)
+de,ℓ,h,j
+.
+27
+Preprint
+</p><p class="sentence"><mark>Table 5: RL-trained models do not show forgetting of instruction-following capability com-
+pared to their parent, as measured by IFEval.</mark></p><p class="after"> All RL models in this table share DeepSeek-R1-
+Distill-Qwen of the corresponding size (1.5B or 7B) as their parent model</p></section><section id="L042"><h2>L042</h2><p class="before">reastGPT-8B leads Qwen3-VL-32B on
+BUS-BRA detection, with Acc@IoU0.5 of 82.80 versus 62.08, whereas Qwen3-VL-32B leads on
+VinDr-Mammo detection, with 12.86 versus 0.90 (Table 4). </p><p class="sentence"><mark>This ranking reversal shows that a model’s
+advantage within one localization setting need not persist in another.</mark></p><p class="after"> Reporting each dataset–task
+pair separately preserves this distinction and prevents a pooled spatial score from obscuring where
+the observed advantage applies.
+25</p></section><section id="L043"><h2>L043</h2><p class="before">identification: relabelling IDs, then removing
+names and text, changes Jev0-shot AUC by at most
+.012 before text removal and never significantly at
+the ID step. </p><p class="sentence"><mark>No dataset is flagged (Table 17).</mark></p><p class="after">
+(iv) Synthetic learners: the six text-free synthetic
+datasets of Appendix D were generated after the
+model release, so Jev cannot have seen them. With
+N=8 training learners JevKT is at or above the best
+deep KT model on all six (+.001 to +.033 AUC),
+the same pattern as on the public datasets.
+M
+Full Per-</p></section><section id="L044"><h2>L044</h2><p class="before">For every in-domain query x ∈DSFT and the
+realized context (ySFT, I) satisfying these assumptions, the following are true:
+Improvement over the parent: Eparent −ESAC ≥2(1 −ϵ)2(ϵ′′)2 + log(1 −ϵ′).
+(3)
+Closeness to SFT: log(1 −ϵ′) ≤ESFT −ESAC ≤−log(1 −η).
+(4</p><p class="sentence"><mark>)
+The theorem identifies sufficient conditions under which SFT-as-context improves in-domain per-
+formance compared to the parent model while limiting degradation compared to the SFT model.</mark></p><p class="after">
+Intuitively, Equation 3 shows that the error of the parent for in-domain queries is greater than the er-
+ror of SFT-as-context under the Bayesian model of text generation</p></section><section id="L045"><h2>L045</h2><p class="before">on. </p><p class="sentence"><mark>On
+an earlier, independent draw of the profile sample the
+same threshold gave 25.3% true stops at 12.7% false stops
+and 17.0% savings: the savings figure is stable across
+trace mixes (≈17–18%), while the false-stop rate varies
+(13–21%) and should be validated on deployment traffic.</mark></p><p class="after">
+Because the corpus base rate is heavily skewed toward
+failure (81% unresolved), the balanced-sample false-stop
+rates translate to ≈83% precision in deployment: five of
+six aborted runs would indeed have failed. On</p></section><section id="L046"><h2>L046</h2><p class="before">predic-
+tions at N=8 by the position of the target in the
+new learner’s sequence, so every method is judged
+on how much of the learner it has seen. </p><p class="sentence"><mark>JevKT
+is above the best DLKT in 33/35 dataset–window
+cells, including the first positions (2–5), where the
+new learner has given almost no evidence; Jev0-shot,</mark></p><p class="after">
+14
+Table 9: P2 (new learners), every cell. AUC by the position of the target in a new learner’s sequence with N=8
+training learners (Jev0-shot uses none), mean±SD over 5 seeds (Jev0-shot: lea</p></section><section id="L047"><h2>L047</h2><p class="before">nt, without
+any teacher-SFT stage, and no refreshing. Beyond
+efficiency gain, we find that freezing rollouts can also
+improve accuracy. </p><p class="sentence"><mark>Moreover, rather than focusing
+on a few model pairs, we evaluate 17 diverse model
+pairs and show that this benefit is strongly correlated
+with the initial teacher–student top-𝑘overlap, with
+lower-overlap pairs benefiting more.</mark></p><p class="after">
+7. Conclusion
+This work revisits when on-policy sampling is truly
+necessary for LM distillation. By systematically com-
+paring OPD with t</p></section><section id="L048"><h2>L048</h2><p class="before">comment lines but sorts integers descending with
+nums.sort(reverse=True). For [1,2,3], this gives 11|10|1 = 11101 (29), while the correct
+maximum is 11|1|10 = 11110 (30). </p><p class="sentence"><mark>The SFT response is correct but fully ignores the instruction of
+using 3 comments.</mark></p><p class="after"> The SFT-as-context response keeps the same executable Python structure from
+the SFT context and adds exactly three comment lines.
+LiveCodeBenchIF Example Query
+You will be given a question (problem specification) and will generate a correct Pytho</p></section><section id="L049"><h2>L049</h2><p class="before">-start AUC (P1) of Jev against the best deep KT and the best LLM-based KT baseline with N training
+learners (mean over 5 seeds). </p><p class="sentence"><mark>Without training data, Jev0-shot is above LLM-based KT on all seven datasets and
+above deep KT trained on 8 learners on average; JevKT stays ahead of deep KT up to N=64 on average.</mark></p><p class="after"> Wins:
+datasets on which Jev beats every baseline in its block. †Best of 28 pyKT models, selected on test. ‡LOKT, the
+strongest LLM-based KT baseline. ◦N=0 value repeated (no answer options).</p></section><section id="L050"><h2>L050</h2><p class="before">With fixed weights and a perturbation
+only at position j, ∥∆δ∥2,c = λ
+p
+cj(1 −cj)|∆Ad
+j|, where ∥v∥2
+2,c = P
+t ctv2
+t .
+17
+Preprint
+Vanishing with distributional agreement.
+Cauchy–Schwarz also bounds each local advantage by
+the full residual, |Ad
+t | ≤
+√
+2∥dt∥2, so for any realized response and its normalized weights,
+|δt| ≤
+√
+2λ
+
+(1 −ct)∥dt∥2 +
+X
+u̸=t
+cu∥du∥2
+
+
+≤2
+√
+2λ(1 −ct) max
+u ∥du∥2.
+(30)
+For the mean absolute amplitude, weighted Cauchy–Schwarz and Varc(Ad) ≤P
+t ct(Ad
+t )2 give the
+sharper aggregate bound
+X
+t
+ct|δt| ≤∥δ∥2,c = λ
+q
+Varc(Ad) ≤
+√
+2λ
+ X
+t
+ct∥dt∥2
+2
+!1/2
+.
+(31)
+</p><p class="sentence"><mark>At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher
+agree uniformly at the scored prefixes.</mark></p><p class="after"> The implication runs one way</p></section><section id="L051"><h2>L051</h2><p class="before">een 64 and 128 learn-
+ers on average and varies by dataset (Figure 7, Ap-
+pendix D). </p><p class="sentence"><mark>The lead is Holm-significant on 7/7
+datasets at N=8 and 6/7 at N=16, 3/7 at N=32
+and 2/7 at N=64 (Table 15).</mark></p><p class="after"> Because the best deep
+KT model is chosen on test in every cell, these mar-
+gins are conservative.
+P2, new learners (RQ3).
+Figure 3a scores the
+same N=8 predictions by the position of the target
+in a new learner’s sequence. JevKT is above the
+best deep KT model at every position, already for
+the second to</p></section><section id="L052"><h2>L052</h2><p class="before">At the same budget, OPD followed by REINFORCE++ reaches
+28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++
+(Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at
+each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).
+</p><p class="sentence"><mark>Teaching the teacher on student rollouts raises accuracy in every tested setting.</mark></p><p class="after">
+Co-RA adds
+1.03–1.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark
+means</p></section><section id="L053"><h2>L053</h2><p class="before"></p><p class="sentence"><mark>MASA avoids this tensor.</mark></p><p class="after"> First compute
+OX = AX,
+C = OXX⊤,
+nj = ∥Xj∥2
+2.
+Then all pair scores are obtained by
+D = 2A ⊙C −A⊙2 ⊙(1n⊤),
+where Dij = sMASA(i, j), A⊙2 denotes entrywise square, and 1 is the all-one column vector.
+This computation only uses matrix products and score matrices at the profile resolution, without
+materializing the N × N × r contribution tensor.
+For vertical and slash units, we aggregate entries of D according to the unit definition of the baseline.
+For block units, we use Eq</p></section><section id="L054"><h2>L054</h2><p class="before">ollapse toward
+chance: OnTrack score 0.526, cosine 0.540, n steps
+0.500 by construction. </p><p class="sentence"><mark>This confirms that the modest
+full-trajectory outcome correlation is largely mediated by
+trace length — unresolved traces are longer on average —
+and that OnTrack score is length-sensitive by construc-
+tion (more steps →more accumulated transport cost).</mark></p><p class="after">
+We report this as a delimiter, not a defect: the monitor’s
+job (Secs. 6.3–6.4) is to catch the runaway-length failure
+mode early, and the length sensitivity</p></section><section id="L055"><h2>L055</h2><p class="before">g, so every
+cross-position term vanishes. </p><p class="sentence"><mark>Without the student value baseline this cancellation fails, and the
+disagreement levels of other prefixes enter each token’s update through centering.</mark></p><p class="after"> The identity needs
+the stated assumptions, and the response-mean identity of Equation 6 needs none of them.
+What the identity says about centering.
+With token-mean weights ct = 1/M, the factor 1 −ct
+is within 10−3 of one for a response of a thousand tokens or more. Under the hypotheses of
+Proposition 4, ce</p></section><section id="L056"><h2>L056</h2><p class="before">nformation, while contracts and hops gain it.
+Unconditional total correlation falls in all four encoder/estimator combinations. </p><p class="sentence"><mark>The task-centered
+estimate falls in three; permutation-adjusted MPNet is the exception.</mark></p><p class="after"> Intermediate values need not
+be monotone.
+The sample contains only 43–51 agents from 8–9 tasks, with shared task descriptions and hops
+within each workflow. These observations are not independent task replications. The decrease in
+redundancy concerns the retained path and does not ho</p></section><section id="L057"><h2>L057</h2><p class="before">th their concrete supporting evidence and provenance, alongside
+unprocessed material that enclosing intents may need. </p><p class="sentence"><mark>PRECIP also preserves an impression of
+the structure and location of consulted material to support targeted inspection in subsequent work.</mark></p><p class="after">
+3
+Informative failures are retained, and facts that jointly support a lesson or pattern are integrated into a
+shared insight. The process by which facts were discovered and material that establishes no fact for
+any intent in the stack are prun</p></section><section id="L058"><h2>L058</h2><p class="before">scores sparse patterns by the matrix-product approximation error
+LMASA(S; X) = ∥OX −OX,S∥2
+F = ∥(A −MS ⊙A)X∥2
+F .
+(6)
+When X = V , Eq. (6) becomes exactly the attention output error in Eq. (2). </p><p class="sentence"><mark>Thus, MASA changes
+sparse selection from preserving large entries of A to preserving the matrix product AX.</mark></p><p class="after"> Fig. 1
+gives a minimal two-column instance of this objective: although u2 has much lower mass, it receives
+a higher MASA score because it preserves AX substantially more accurately. We use the gener</p></section><section id="L059"><h2>L059</h2><p class="before">her are important.
+Semi-OPD exposes the student to more tokens
+preferred by the teacher. </p><p class="sentence"><mark>Semi-OPD exactly satis-
+fies the above requirement by providing full trajectory
+coverage with shorter rollout lengths.</mark></p><p class="after"> To analyze the
+resulting distillation signal, we measure the percent-
+age of training tokens with 𝑝𝑇&gt; 𝑝𝑆, i.e., tokens that
+receive a positive reward due to higher probabilities as-
+signed by the teacher. As shown in Fig. 7, Semi-OPD
+maintains a larger fraction of such tokens than OPD
+throug</p></section></body></html>

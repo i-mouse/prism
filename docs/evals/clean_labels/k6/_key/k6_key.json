@@ -1,0 +1,650 @@
+{
+  "seed": 20261017,
+  "n": 30,
+  "provenance": {
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.10590v1_merged.json": "7e0f099673cfe1dd2bb50685670a10637d58c7c629e8ab008b40d85e1a408d22",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.10871v1_merged.json": "b85a46ac6a24d672b3703f6dc86dff0d411897156650648d918966d409b33bae",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11132v1_merged.json": "14b357f002179c9ca8793c15ca40319be7bab0d0eb7ecc1322dba45de5c1102c",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11135v1_merged.json": "d63f5512007d5392321a395321b9fc23e17d9e1c86c403be3a21d4ea063bf94f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11291v1_merged.json": "68831468aa73497f1a483d0aa903fbd9ec29e1651655c4bf9bcf91f353895f4a",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11312v1_merged.json": "af4adc983bc5e7f5231f5a2e5bd1eaadad7cb17623b8fab2c4a6bf816871e4b5",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11519v1_merged.json": "b2bcabd96cb713d21d1acc71e6fc507a9e0d7219bf0029547bcb69d2b0e1068a",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12114v1_merged.json": "613f09bc3c16c38964b4aaf8b37d29d43f50a6028514796dfd7b352d886685ca",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12124v1_merged.json": "6f7911d5192ba4a1c559dd28dd6a7635dfdaff4e91398f5ecbb45f32b3a96a21",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12168v1_merged.json": "07122c1045a0bcc1a8654fc989fc106dd1eafa603c4ce62d744a64b9f1b09d78",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12176v1_merged.json": "1dc65387590d6fcf6da9f0d35daf1036a51f43e230b91392d92c1d7c890d44b8",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12375v1_merged.json": "a975929f19c8284d3adcc9898c2138934b9a3789386cd9eda72c38037a643895",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.10590v1_clean.json": "0617cad62088f0101e96b8177c41adf03cabb9f0ba6890eb9f01d7e76202b00b",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.10871v1_clean.json": "fa138736c91a396872274d7aab4c830caec39e1476e3a4796d845f5e931b6085",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11132v1_clean.json": "149e03f3110057e7b55e41aad8d32c6b9394e7bf75677998b0983f51c645d9fd",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11135v1_clean.json": "03e2748cbb792cf483a2482f2c37a058fb331a914f664f0f20df04ba7edb5b4b",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11291v1_clean.json": "be6fb259d00653a27c3765596ef377972341cd6ae98b45f474dbe441e213a315",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11312v1_clean.json": "77bc7c955e6aaf52c015170360a363c52a8625faf9572e013c27375921968b46",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.11519v1_clean.json": "062eb748d76c43c0bda9e849187c7a2c96e3d71897050398d9b67569fad0ae72",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12114v1_clean.json": "dfcbf07e336f9878011c0c81ea7ef9ca5dbffe73429478927cd2d2126aceb13a",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12124v1_clean.json": "981fdf176493d2baba77a1fb0b01d9d7bfb30b7e0a19a082d0e964fd32e42b96",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12168v1_clean.json": "e5ee37cf0f67843452c5edc97193974b4dd2abdb8ea935007adf3bcd60d6a4ec",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12176v1_clean.json": "dcea07c93f2ee808623652a22d129cefb59e685cd9516e43b44784405f6a38e2",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r1\\arxiv-2610.12375v1_clean.json": "213ce5aa3ba95006ef1757bb1773bf85ed94f2f16a16b46dc9712e65c9b4da6f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.10590v1_merged.json": "9dc8cc7bfb4bec1b52be39c858b59557e1d8cc69a3f54cda6f27228a1caec575",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.10871v1_merged.json": "448b50ad25bb3fb51dd67feccaa0fd41ee223502e1b47c2981b0cc9339102273",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11132v1_merged.json": "68d087bc267ef4c8fa1bb1956fe9ca48d2a231bf02c229cfadb1124d993fe9b3",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11135v1_merged.json": "6a01fb4e528509f9cec952ee84f1a2850434ad474b639047fa680af5e95df46b",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11291v1_merged.json": "acf2ea68b6284b61087a4553135a991c2a00c334487355411c39290781d5ed38",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11312v1_merged.json": "4cd0f44d51fc31d358cab49c5bf87c6dec7dc58098434dee8c96c3d6173cb99f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11519v1_merged.json": "8ae5a26d76f0ee4b7eeae9bbbe0de4e6591245bfa7a89e599f93c288cdc1bacb",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12114v1_merged.json": "5834b996c89187736f9e932a3ed27383b1dffe666b897ebee66119d66abc6179",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12124v1_merged.json": "5771c94ea060212d719803d65cb47221bb154238a84abb02de7f7404a9ec0368",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12168v1_merged.json": "d4d8d75b0c080fe3ba735f797a9ebd4c904d333676e86258bf23f08f7bd46882",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12176v1_merged.json": "83e74a8e8b6c763961ede02534e6d006e8e58889c974b6d5d53e5337203ff29f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12375v1_merged.json": "e873beabfae449386264d893064fd8dda8e3c47018a6fcdc26c687b571cdfae6",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.10590v1_clean.json": "2b57c8bfdf8619c5f04417334c7e042b0c3f02c82f6df70ee1ed4ea39e1980b5",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.10871v1_clean.json": "8d8442e9ff5445cbd3d211ccf478204592992d60b4bfe070a86834d7a4cc037c",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11132v1_clean.json": "75087c70063aa41164b9655b1722af20ac72b0ba3db8ad5e3f45bfb0cef3177d",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11135v1_clean.json": "a36e3f20821d5c930161e077c4e66058d9857bcab43065ef36f59a7bb6b49f46",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11291v1_clean.json": "6a72907a9ba4cc6313b87163d7756598d66e67a2aadba4543ad8e003d836ae4f",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11312v1_clean.json": "85d64f311a156aba7e3d955fccd73cbce770f4900f487127be2d1128fed987b4",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.11519v1_clean.json": "1b6bf82ef3f48d6b9146f91a7118bf10b665ce9d5bed6fbce85d6e9f9f02644c",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12114v1_clean.json": "4256bce43fcc3cdf83f3b8ba673f7ec1662419689e86ca9ee95df58451dcb578",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12124v1_clean.json": "a6265c54b51016e0fd95b9a48e30ea1bd2309be98ab002997013b3e3354d8375",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12168v1_clean.json": "1da07d7eb1136561372311943254c64344d79f01ad6ab185b1d7339fd3363727",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12176v1_clean.json": "a9f21242edce8912a50f071157dc291eeb055ec486e7a634afe7ee82422186e7",
+    "..\\docs\\evals\\fixtures\\dev\\clean\\clean_r2\\arxiv-2610.12375v1_clean.json": "51d1036b588668560428adad0f23c8f49cde2d32a349915112740b70b1d1cc03"
+  },
+  "items": {
+    "L001": {
+      "paper_id": "arxiv-2610.12114v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P0"
+        }
+      ],
+      "not_found": false
+    },
+    "L002": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P106"
+        }
+      ],
+      "not_found": false
+    },
+    "L003": {
+      "paper_id": "arxiv-2610.12124v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P29"
+        }
+      ],
+      "not_found": false
+    },
+    "L004": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P70"
+        }
+      ],
+      "not_found": false
+    },
+    "L005": {
+      "paper_id": "arxiv-2610.12124v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P28"
+        }
+      ],
+      "not_found": false
+    },
+    "L006": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P56"
+        }
+      ],
+      "not_found": false
+    },
+    "L007": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P101"
+        }
+      ],
+      "not_found": false
+    },
+    "L008": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P41"
+        }
+      ],
+      "not_found": false
+    },
+    "L009": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P82"
+        }
+      ],
+      "not_found": false
+    },
+    "L010": {
+      "paper_id": "arxiv-2610.11312v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P57"
+        }
+      ],
+      "not_found": false
+    },
+    "L011": {
+      "paper_id": "arxiv-2610.11291v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P41"
+        }
+      ],
+      "not_found": false
+    },
+    "L012": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P73"
+        }
+      ],
+      "not_found": false
+    },
+    "L013": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P24"
+        }
+      ],
+      "not_found": false
+    },
+    "L014": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P43"
+        }
+      ],
+      "not_found": false
+    },
+    "L015": {
+      "paper_id": "arxiv-2610.11132v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P54"
+        }
+      ],
+      "not_found": false
+    },
+    "L016": {
+      "paper_id": "arxiv-2610.11291v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P34"
+        }
+      ],
+      "not_found": false
+    },
+    "L017": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P90"
+        }
+      ],
+      "not_found": false
+    },
+    "L018": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P99"
+        }
+      ],
+      "not_found": false
+    },
+    "L019": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P30"
+        }
+      ],
+      "not_found": false
+    },
+    "L020": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P57"
+        }
+      ],
+      "not_found": false
+    },
+    "L021": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P53"
+        }
+      ],
+      "not_found": false
+    },
+    "L022": {
+      "paper_id": "arxiv-2610.12176v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P7"
+        }
+      ],
+      "not_found": false
+    },
+    "L023": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P5"
+        }
+      ],
+      "not_found": false
+    },
+    "L024": {
+      "paper_id": "arxiv-2610.12114v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P38"
+        }
+      ],
+      "not_found": false
+    },
+    "L025": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P74"
+        }
+      ],
+      "not_found": false
+    },
+    "L026": {
+      "paper_id": "arxiv-2610.12124v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P0"
+        }
+      ],
+      "not_found": false
+    },
+    "L027": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P52"
+        }
+      ],
+      "not_found": false
+    },
+    "L028": {
+      "paper_id": "arxiv-2610.10590v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P7"
+        }
+      ],
+      "not_found": false
+    },
+    "L029": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P16"
+        }
+      ],
+      "not_found": false
+    },
+    "L030": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P19"
+        }
+      ],
+      "not_found": false
+    },
+    "L031": {
+      "paper_id": "arxiv-2610.10590v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P19"
+        }
+      ],
+      "not_found": false
+    },
+    "L032": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P2"
+        }
+      ],
+      "not_found": false
+    },
+    "L033": {
+      "paper_id": "arxiv-2610.12176v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P22"
+        }
+      ],
+      "not_found": false
+    },
+    "L034": {
+      "paper_id": "arxiv-2610.11291v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P43"
+        }
+      ],
+      "not_found": false
+    },
+    "L035": {
+      "paper_id": "arxiv-2610.11291v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P32"
+        }
+      ],
+      "not_found": false
+    },
+    "L036": {
+      "paper_id": "arxiv-2610.12176v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P43"
+        }
+      ],
+      "not_found": false
+    },
+    "L037": {
+      "paper_id": "arxiv-2610.12176v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P10"
+        }
+      ],
+      "not_found": false
+    },
+    "L038": {
+      "paper_id": "arxiv-2610.12176v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P73"
+        }
+      ],
+      "not_found": false
+    },
+    "L039": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P26"
+        }
+      ],
+      "not_found": false
+    },
+    "L040": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P9"
+        }
+      ],
+      "not_found": false
+    },
+    "L041": {
+      "paper_id": "arxiv-2610.11132v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P50"
+        }
+      ],
+      "not_found": false
+    },
+    "L042": {
+      "paper_id": "arxiv-2610.11312v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P79"
+        }
+      ],
+      "not_found": false
+    },
+    "L043": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P64"
+        }
+      ],
+      "not_found": false
+    },
+    "L044": {
+      "paper_id": "arxiv-2610.11132v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P18"
+        }
+      ],
+      "not_found": false
+    },
+    "L045": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P31"
+        }
+      ],
+      "not_found": false
+    },
+    "L046": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P31"
+        }
+      ],
+      "not_found": false
+    },
+    "L047": {
+      "paper_id": "arxiv-2610.11291v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P33"
+        }
+      ],
+      "not_found": false
+    },
+    "L048": {
+      "paper_id": "arxiv-2610.11132v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P46"
+        }
+      ],
+      "not_found": false
+    },
+    "L049": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P1"
+        }
+      ],
+      "not_found": false
+    },
+    "L050": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P44"
+        }
+      ],
+      "not_found": false
+    },
+    "L051": {
+      "paper_id": "arxiv-2610.11135v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P4"
+        }
+      ],
+      "not_found": false
+    },
+    "L052": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P22"
+        }
+      ],
+      "not_found": false
+    },
+    "L053": {
+      "paper_id": "arxiv-2610.10871v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P16"
+        }
+      ],
+      "not_found": false
+    },
+    "L054": {
+      "paper_id": "arxiv-2610.12375v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P50"
+        },
+        {
+          "run": "clean_r2",
+          "candidate_id": "P49"
+        }
+      ],
+      "not_found": false
+    },
+    "L055": {
+      "paper_id": "arxiv-2610.11519v1",
+      "occurrences": [
+        {
+          "run": "clean_r2",
+          "candidate_id": "P52"
+        }
+      ],
+      "not_found": false
+    },
+    "L056": {
+      "paper_id": "arxiv-2610.12176v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P61"
+        }
+      ],
+      "not_found": false
+    },
+    "L057": {
+      "paper_id": "arxiv-2610.12124v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P9"
+        }
+      ],
+      "not_found": false
+    },
+    "L058": {
+      "paper_id": "arxiv-2610.10871v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P12"
+        }
+      ],
+      "not_found": false
+    },
+    "L059": {
+      "paper_id": "arxiv-2610.11291v1",
+      "occurrences": [
+        {
+          "run": "clean_r1",
+          "candidate_id": "P13"
+        }
+      ],
+      "not_found": false
+    }
+  }
+}

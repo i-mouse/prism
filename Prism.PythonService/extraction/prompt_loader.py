@@ -13,6 +13,8 @@ Four call kinds are supported:
 import json
 from pathlib import Path
 
+from config import settings
+
 PROMPTS_DIR = Path(__file__).parent.parent / "prompts"
 
 
@@ -47,37 +49,90 @@ def load_fewshot_examples(prompt_kind: str) -> list[dict]:
     return json.loads(fewshot_path.read_text(encoding="utf-8"))
 
 
-def _is_negative_example(example: dict) -> bool:
+def load_fewshot_shapes_examples() -> list[dict]:
+    """Reads and parses extract_claims_fewshot_shapes.json: Experiment 2
+    (redesigned)'s 8 claim-shape few-shot examples (E1/E2/E3/E5), appended
+    after the base 11 only when settings.extractor_fewshot_shapes (or an
+    explicit override) is on. Each example uses a "rationale" key instead of
+    "note" - "rationale" is pure curator commentary and is never read by
+    _is_negative_example, so these examples can never be mis-treated as
+    negative the way note-bearing base examples are under extractor_fewshot_fix
+    off (see _is_negative_example's docstring).
+
+    Raises:
+        FileNotFoundError: if extract_claims_fewshot_shapes.json is missing.
+    """
+    path = PROMPTS_DIR / "extract_claims_fewshot_shapes.json"
+    if not path.exists():
+        raise FileNotFoundError(f"Few-shot shapes examples not found at {path}")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _is_negative_example(example: dict, fewshot_fix: bool) -> bool:
     """Returns True if a claims example is the negative (do-not-extract) case.
 
-    Detected by example_type, a top-level "note" field, or a "note" field
-    nested inside "output" in place of a real claim payload.
+    Detected by example_type, or a "note" field nested inside "output" in
+    place of a real claim payload. With fewshot_fix off (default), a
+    top-level "note" field also counts - but that check fires on 8 of the
+    extractor's 9 claim-bearing examples, since "note" is used there purely
+    as curator rationale, not as a negative-example marker (see
+    docs/decisions.md, 2026-10-05/06: Experiment 2 fixes this). With
+    fewshot_fix on, the top-level "note" check is replaced by the signal
+    that actually distinguishes the two genuine negative examples: an empty
+    claims list in the real output.
     """
     if example.get("example_type") == "negative_do_not_extract":
-        return True
-    if "note" in example:
         return True
     output = example.get("output")
     if isinstance(output, dict) and "note" in output and "claim_text_verbatim" not in output:
         return True
-    return False
+    if fewshot_fix:
+        return isinstance(output, dict) and output.get("claims") == []
+    return "note" in example
 
 
-def build_gemini_messages_for_extractor(paper_text: str) -> list[dict]:
+def build_gemini_messages_for_extractor(
+    paper_text: str, fewshot_fix: bool | None = None, fewshot_shapes: bool | None = None,
+) -> list[dict]:
     """Assembles the full Gemini message list for the extractor call (Call #2).
 
-    Order: system prompt, then for each few-shot example a user message
-    (input_excerpt) followed by a model message (its output as a JSON
-    string - an empty claims array for the negative example), then a
+    Order: system prompt (plus the shapes addendum, when on), then for each
+    few-shot example - base 11, then the 8 shapes examples when on - a user
+    message (input_excerpt) followed by a model message (its output as a
+    JSON string - an empty claims array for the negative examples), then a
     final user message containing the paper text to extract from.
+
+    fewshot_fix: Experiment 2 override for _is_negative_example. None
+    (default) reads settings.extractor_fewshot_fix; pass True/False
+    explicitly to force a variant regardless of the live setting (used by
+    eval/replay_extract.py to run both control and treatment in one
+    process without touching global settings).
+
+    fewshot_shapes: Experiment 2 (redesigned) override - appends the 8
+    claim-shape examples and the system-prompt addendum. None (default)
+    reads settings.extractor_fewshot_shapes; pass True/False explicitly to
+    force a variant, same convention as fewshot_fix.
     """
+    if fewshot_fix is None:
+        fewshot_fix = settings.extractor_fewshot_fix
+    if fewshot_shapes is None:
+        fewshot_shapes = settings.extractor_fewshot_shapes
+
+    system_prompt = load_system_prompt("claims")
+    if fewshot_shapes:
+        system_prompt = system_prompt + "\n\n" + _read_prompt_file("extract_claims_system_shapes.md")
+
     messages: list[dict] = [
-        {"role": "system", "content": load_system_prompt("claims")},
+        {"role": "system", "content": system_prompt},
     ]
 
-    for example in load_fewshot_examples("claims"):
+    examples = load_fewshot_examples("claims")
+    if fewshot_shapes:
+        examples = examples + load_fewshot_shapes_examples()
+
+    for example in examples:
         messages.append({"role": "user", "content": example["input_excerpt"]})
-        if _is_negative_example(example):
+        if _is_negative_example(example, fewshot_fix):
             model_content = json.dumps({"claims": []})
         else:
             model_content = json.dumps(example["output"])
@@ -202,6 +257,56 @@ def build_gemini_messages_for_structure(
     return [
         {"role": "system", "content": _read_prompt_file("structure_verdict_system.md")},
         {"role": "user", "content": user_content},
+    ]
+
+
+def build_gemini_messages_for_pass2(window_text: str, prompt_filename: str | None = None) -> list[dict]:
+    """Assembles the Gemini message list for an Experiment 3 pass-2 call
+    (one call per window - see extraction/windowing.py).
+
+    No few-shot examples, no paper text beyond the window itself - see
+    docs/decisions.md's "Experiment 3 B1 review" entry.
+
+    prompt_filename: None (default) reads extract_claims_pass2_system.md,
+    byte-identical to this function's behavior before this parameter
+    existed. The clean-extraction attempt (docs/decisions.md, "Clean-
+    extraction attempt amended...") passes "extract_claims_pass2_v2_system.md"
+    explicitly when settings.extractor_pass2_clean is on - see
+    extraction/pass2.py.
+    """
+    return [
+        {"role": "system", "content": _read_prompt_file(prompt_filename or "extract_claims_pass2_system.md")},
+        {"role": "user", "content": window_text},
+    ]
+
+
+def build_gemini_messages_for_pass2_clean_filter(items: list[dict]) -> list[dict]:
+    """Assembles the Gemini message list for the clean-extraction attempt's
+    S3 batched filter call (one call per batch of at most
+    extraction.pass2_clean.BATCH_SIZE candidates from one paper - see
+    extraction/pass2_clean.py::filter_merged_claims).
+
+    No few-shot examples beyond what the system prompt
+    (extract_claims_pass2_clean_system.md) itself carries. The user message
+    is a JSON array of candidates in the exact order the response must
+    answer them in - the response schema
+    (extraction/pass2_clean.py::CleanFilterBatchLLM) carries no id field of
+    its own, so position is the only correspondence between request and
+    response. Each item's internal bookkeeping (its source claim dict) is
+    never sent - only id/candidate/context/neighbours.
+    """
+    payload = [
+        {
+            "id": item["id"],
+            "candidate": item["candidate"],
+            "context": item["context"],
+            "neighbours": item["neighbours"],
+        }
+        for item in items
+    ]
+    return [
+        {"role": "system", "content": _read_prompt_file("extract_claims_pass2_clean_system.md")},
+        {"role": "user", "content": json.dumps({"candidates": payload}, indent=2)},
     ]
 
 

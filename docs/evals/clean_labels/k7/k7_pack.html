@@ -1,0 +1,1261 @@
+<!doctype html><html><head><meta charset='utf-8'><title>K7 label pack</title><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;}mark{background:#ffe08a;} .heading{font-weight:bold;color:#555;}.not-found{color:#b00020;font-weight:bold;} .side{border-top:1px solid #ccc;padding:0.5rem 0;}</style></head><body><h1>K7 dedup-safety labelling pack</h1><pre>A claim is a sentence in which the authors assert something about THEIR OWN
+work that a reader would take away as a finding, result or contribution,
+and that could be stronger than the paper&#x27;s evidence: (a) measured results
+and comparisons; (b) positioning: beats or avoids a class of methods,
+generalizes, is robust, efficient, cheap or simple; (c) contribution
+statements (&quot;we show / prove / demonstrate / contribute&quot;); (d) premises the
+method relies on, stated as fact. Hedged claims count; keep the hedge. A
+sentence that states a result AND adds a caveat is still a claim.
+NOT a claim: limitations, caveats and disclaimers whose main point is what
+the work does NOT show, cannot conclude or does not guarantee (these are
+evidence for the auditor, not claims to audit); background and prior work;
+future work; setup or implementation description with no result;
+definitions; headings; fragments; bare table rows.</pre><p>Label each item same / broader / narrower / different / unsure in the labels CSV: is A really the same claim as B?</p><section id="L001"><h2>L001</h2><div class="side"><h3>A</h3><p class="before">olution ideas in hindsight. </p><p class="sentence"><mark>We operationalize this
+by jointly training the same model to exhibit the following three capabilities: predicting solution ideas
+from problems alone, reverse-engineering ideas from problems and known solutions, and solving
+problems using provided ideas.</mark></p><p class="after"> The loop alternates between reverse engineering such ideas from
+problems with supplied solutions and using these ideas as additional supervision for joint training of
+all three capabilities. We give a formal specificat</p></div><div class="side"><h3>B</h3><p class="before">rospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained
+task. </p><p class="sentence"><mark>A shared backbone is jointly trained on three tasks: reverse engineering hierarchies from problems and reference
+solutions; predicting such hierarchies from problems alone; and solving problems using these hierarchies.</mark></p><p class="after"> Each retained
+training triple supervises all three tasks. The training loop alternates between generating training triples by reverse
+engineering hierarchies and jointly</p></div></section><section id="L002"><h2>L002</h2><div class="side"><h3>A</h3><p class="before">candidate selection at inference time [23, 24]. </p><p class="sentence"><mark>In the case of verifiable problem domains, our method uses separate
+solving attempts to assess reverse-engineered hierarchies and selects training triples based on that assessment.</mark></p><p class="after">
+Retrospective supervision and hierarchical guidance.
+STaR iteratively trains on self-generated rationales, including
+rationales constructed retrospectively using correct-answer hints that are removed before fine-tuning [25]. On-policy
+self-distillation transfers next-tok</p></div><div class="side"><h3>B</h3><p class="before">hies. </p><p class="sentence"><mark>Finally, in verifiable problem domains,
+we additionally assess the reverse-engineered hierarchies through separate solving attempts, in which the model receives
+the problem and hierarchy while the reference solution is withheld.</mark></p><p class="after"> We then select training triples based on this
+assessment, introducing an additional training signal through data selection, in the spirit of expert iteration [1].
+3
+Problem setting
+Let X be a set of problem instances and let Y be a set of candidate solutions. Write</p></div></section><section id="L003"><h2>L003</h2><div class="side"><h3>A</h3><p class="before">This weight is 1 for a token inside R and
+0 for a token outside R.
+We first sum the attention assigned to each region:
+me,ℓ,h,j(R) =
+X
+i
+we,i,R Ae,ℓ,h,i,j,
+R ∈{Q, I, C}.
+The total attention directed to the prompt is then
+de,ℓ,h,j = me,ℓ,h,j(Q) + me,ℓ,h,j(I) + me,ℓ,h,j(C).
+The share of the attention weight for each prompt region, for each layer, head, and response token j
+is then:
+se,ℓ,h,j(R) = me,ℓ,h,j(R)
+de,ℓ,h,j
+.
+27
+Preprint
+</p><p class="sentence"><mark>Table 5: RL-trained models do not show forgetting of instruction-following capability com-
+pared to their parent, as measured by IFEval.</mark></p><p class="after"> All RL models in this table share DeepSeek-R1-
+Distill-Qwen of the corresponding size (1.5B or 7B) as their parent model</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>However,
+consistent with prior work (Chen et al., 2026), we find that RL post-training induces negligible
+forgetting of instruction-following capabilities, as measured by IFEval.</mark></p><p class="after"> Hence, we do not apply
+SFT-as-context (or RL-as-context in this case) to close the gaps that are already small.
+28
+Preprint
+29.95% Attention on Context (Relevant Query)
+Query
+62.40% of prompt attention
+You are a nutrition estimation assistant.↵
+↵
+Your task is to estimate the total nutritional content of the following food
+ or meal description.↵
+↵
+Food or meal description:↵
+&quot;I&#x27;m enjoying a cup of chocolate soy milk this morning.&quot;↵
+↵
+Before estimating, first determine what kind of input you received</p></div></section><section id="L004"><h2>L004</h2><div class="side"><h3>A</h3><p class="before">s
+are sampled once from the initial student, without
+any teacher-SFT stage, and no refreshing. </p><p class="sentence"><mark>Beyond
+efficiency gain, we find that freezing rollouts can also
+improve accuracy.</mark></p><p class="after"> Moreover, rather than focusing
+on a few model pairs, we evaluate 17 diverse model
+pairs and show that this benefit is strongly correlated
+with the initial teacher–student top-𝑘overlap, with
+lower-overlap pairs benefiting more.
+7. Conclusion
+This work revisits when on-policy sampling is truly
+necessary for LM distillation.</p></div><div class="side"><h3>B</h3><p class="before">s
+are sampled once from the initial student, without
+any teacher-SFT stage, and no refreshing. Beyond
+efficiency gain, w</p><p class="sentence"><mark>e find that freezing rollouts can also
+improve accuracy. </mark></p><p class="after">Moreover, rather than focusing
+on a few model pairs, we evaluate 17 diverse model
+pairs and show that this benefit is strongly correlated
+with the initial teacher–student top-𝑘overlap, with
+lower-overlap pairs benefiting more.
+7. Conclusion
+This work revisits when on-policy sampling is truly
+necessary for LM distillation.</p></div></section><section id="L005"><h2>L005</h2><div class="side"><h3>A</h3><p class="before">teacher
+log-probabilities, without performing either online
+rollout generation or teacher forward passes. </p><p class="sentence"><mark>In addi-
+tion, rollout generation, teacher scoring, and student
+optimization are executed as separate phases, each
+of which can use the full GPU cluster rather than
+partitioning resources among concurrent student gen-
+eration, teacher serving, and training.</mark></p><p class="after">
+Comparison with Lightning OPD. A prior work,
+Lightning OPD [16], starts from a base student model
+and (1) performs supervised fine-tunin</p></div><div class="side"><h3>B</h3><p class="before">d teacher scoring are done once before training. </p><p class="sentence"><mark>Similar to
+Lightning OPD [16], this removes online rollout generation and teacher inference from the training loop, so all
+GPUs can be used for rollout generation, teacher log-probability scoring, and student training.</mark></p><p class="after"> For a fixed
+student, the same rollout cache can also be reused across different teachers; evaluating a new teacher only
+requires computing its log-probabilities on the cached rollouts. This can further reduce the cost of comparing
+o</p></div></section><section id="L006"><h2>L006</h2><div class="side"><h3>A</h3><p class="before">cy, KernelBench accuracy, and Fast1, respectively. </p><p class="sentence"><mark>These results
+indicate that explicit textual knowledge can yield stronger and more consistent gains across tasks.</mark></p><p class="after">
+Appendix B.3 reports the resources used to achieve these results.
+We have more results, but due to page limits, ablations of knowledge-gap selection, the Prompter,
+and validation gating, along with analyses of batch size, quantization, and thinking mode, are de-
+ferred to Appendix C. Potential limitations and future work are discusse</p></div><div class="side"><h3>B</h3><p class="not-found">NOT FOUND IN PAPER TEXT</p><p class="sentence">UTT performs best across all six combinations, with consistent gains across tasks and target models.</p></div></section><section id="L007"><h2>L007</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We introduce Univer-
+sal Textual Teaching (UTT), a parameter-update-free framework that distills ob-
+served Teacher-Student knowledge gaps into a textual, interpretable, and reusable
+natural-language artifact called Primer.</mark></p><p class="after"> Specifically, UTT first identifies represen-
+tative gap cases through paired evaluations, and iteratively updates the Primer via
+multi-role interactions: the Student attempts each task, the Prompter turns evalua-
+tion feedback into a teaching instruction, the Teacher provides a targeted demon-
+stration, and the Synthesizer consolidates validated lessons</p></div><div class="side"><h3>B</h3><p class="before">antization, and thinking mode, are de-
+ferred to Appendix C. Potential limitations and future work are discussed in Appendix E.
+5
+CONCLUSION</p><p class="sentence"><mark>
+This paper introduces Universal Textual Teaching (UTT), a parameter-update-free knowledge distil-
+lation method for large language models. </mark></p><p class="after">UTT first identifies Teacher-Student knowledge gaps and
+then synthesizes validated teaching records into a textual Primer through multi-role LLM interac-
+tions. On the challenging math and code generation tasks (Omni-MAT</p></div></section><section id="L008"><h2>L008</h2><div class="side"><h3>A</h3><p class="before">lving problems using these hierarchies. Each retained
+training triple supervises all three tasks. </p><p class="sentence"><mark>The training loop alternates between generating training triples by reverse
+engineering hierarchies and jointly training on the above three tasks.</mark></p><p class="after"> Consequently, subsequent retrospective hierarchy
+generation uses the updated model, with the aim of improving the hierarchies available for further training. This
+differs from the forward generation of thoughts and tactics in Lean-STaR’s expert iterations</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>The loop alternates between reverse engineering such ideas from
+problems with supplied solutions and using these ideas as additional supervision for joint training of
+all three capabilities.</mark></p><p class="after"> We give a formal specification of our method and a concrete instantiation for
+interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.
+1
+Introduction
+Our method is inspired by the following asymmetry in problem solving: It is, in general, harder to solve a problem from
+scratch than to reverse engineer the idea underlying a known solution</p></div></section><section id="L009"><h2>L009</h2><div class="side"><h3>A</h3><p class="before">valua-
+tion protocols in the BIR. We test whether these
+choices affect model assessment beyond increas-
+ing benchmark granularity.
+</p><p class="sentence"><mark>As shown in Ta-
+ble 3, medical VLMs outperform general-purpose
+VLMs by 6.23 points in Overall Acc. but trail by
+2.48 points on AC, indicating that the aggregate
+advantage is not uniform across tasks.</mark></p><p class="after"> To quan-
+tify such changes, we compare all 66 model pairs
+and find that 12–24 pairs (18.2–36.4%) reverse or-
+dering between Overall Acc. and individual-task
+Acc.; within</p></div><div class="side"><h3>B</h3><p class="before">nd represen-
+tative VLM results are summarized in
+Figure 3. </p><p class="sentence"><mark>Representative VLMs show
+different relative strengths across pre-
+diction targets rather than a uniform
+performance pattern.</mark></p><p class="after"> This indicates
+that the same workflow can instantiate
+a domain-appropriate task structure
+under a distinct annotation schema
+These results provide cross-domain evidence for the portability of MedBenchAgent across annotation
+semantics and task definitions. Additional details are provided in Appendix C.
+6
+CONCLUSION</p></div></section><section id="L010"><h2>L010</h2><div class="side"><h3>A</h3><p class="before">predic-
+tions at N=8 by the position of the target in the
+new learner’s sequence, so every method is judged
+on how much of the learner it has seen. </p><p class="sentence"><mark>JevKT
+is above the best DLKT in 33/35 dataset–window
+cells, including the first positions (2–5), where the
+new learner has given almost no evidence; Jev0-shot,</mark></p><p class="after">
+14
+Table 9: P2 (new learners), every cell. AUC by the position of the target in a new learner’s sequence with N=8
+training learners (Jev0-shot uses none), mean±SD over 5 seeds (Jev0-shot: lea</p></div><div class="side"><h3>B</h3><p class="before">he
+same N=8 predictions by the position of the target
+in a new learner’s sequence. </p><p class="sentence"><mark>JevKT is above the
+best deep KT model at every position, already for
+the second to fifth interactions (.714 vs. .691), when
+the new learner has shown little evidence, and in
+33/35 dataset–position cells (Table 9).</mark></p><p class="after">
+P3, new items (RQ3).
+Figure 3b restricts the
+targets to items held out of training and of all ex-
+amples and statistics. Here every training learner is
+available, so this setting isolates new items rathe</p></div></section><section id="L011"><h2>L011</h2><div class="side"><h3>A</h3><p class="before">cess requires both a correct answer and compliance with all constraints (hard
+instruction-following). For LiveCodeBenchIF, it requires both Pass@1 and exactly three comment
+lines. </p><p class="sentence"><mark>As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.</mark></p><p class="after"> These re-
+sults highlight a fundamental limitation of routing. Even with oracle selection between the parent
+and SFT models, neither model alone can reliably satisfy requirements that depend on both sets of
+capabilities. In contrast, SFT-as-</p></div><div class="side"><h3>B</h3><p class="before">The average recovery rate is calculated from the averaged
+scores.
+Parent Model
+Parent
+Abliterated
+SFT-as-Context
+Recovery
+Qwen2.5-7B-Instruct
+19.00
+63.25
+60.50
+6.21
+Qwen2.5-32B-Instruct
+14.50
+72.50
+62.00
+18.10
+Qwen3-4B
+28.00
+66.25
+65.75
+1.31
+Qwen3-8B
+24.25
+71.00
+67.00
+8.56
+Gemma-4-E4B-it
+9.50
+72.75
+71.75
+1.58
+Gemma-4-12B-it
+8.75
+70.75
+46.75
+38.71
+Gemma-4-31B-it
+18.00
+81.00
+62.00
+30.16
+Average (7 pairs)
+17.43
+71.07
+62.25
+16.44
+</p><p class="sentence"><mark>Table 7: MathIF joint-success rates show that SFT-as-context outperforms the oracle router.</mark></p><p class="after"> A
+response counts as a joint success when the answer is correct and Hard IF is satisfied</p></div></section><section id="L012"><h2>L012</h2><div class="side"><h3>A</h3><p class="before">ch, and ± is the sample SD across them.
+</p><p class="sentence"><mark>Every adapted teacher scores below the frozen teacher, by 0.8–2.3 macro Avg@8 and 0.7–3.5 Pass@8
+points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with
+the 4B student.</mark></p><p class="after"> The adapted teacher is a better guide for the student that trained it (Table 1) and a
+worse solver on its own, in line with the distinction between a strong solver and a good teacher drawn
+in Section 1. Table 31 lists the macro scores of eac</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Yet each
+adapted teacher scores 0.8–2.3 macro Avg@8 and 0.7–3.5 Pass@8 points below the frozen teacher
+(Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.</mark></p><p class="after">
+The margin over the untrained student persists up to Pass@512.
+From K = 8 to K = 512 for
+the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student
+grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4
+and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al</p></div></section><section id="L013"><h2>L013</h2><div class="side"><h3>A</h3><p class="before">e 4% of tokens the teacher
+assigns less than 10−4, where its label diverges. </p><p class="sentence"><mark>The residual thus weights the forks of the student’s
+own reasoning, consistent with the finding that a few high-entropy tokens carry most of the useful
+RL signal (Wang et al., 2025), whereas the log ratio puts it on tokens that one side considers nearly
+impossible.</mark></p><p class="after">
+4.4
+MORE GUIDANCE IS NOT ALWAYS BETTER
+RA assigns the teacher a restrained role. It labels only the tokens the student samples, so where the
+teacher clearly</p></div><div class="side"><h3>B</h3><p class="before">d. </p><p class="sentence"><mark>The residual
+concentrates on tokens where the student is uncertain, whereas the log ratio concentrates on tokens
+that one side considers nearly impossible, above all on tokens the teacher assigns less than 10−4,
+where its label diverges (Proposition 3); Section 4.3 discusses the pattern.</mark></p><p class="after">
+The response mean of the local advantages.
+Table 16 reports, on the same 256 responses, the
+mean over a response’s tokens of the local advantage, A
+d, and of the raw residual dt(at), both scaled
+by λ = 10. Wi</p></div></section><section id="L014"><h2>L014</h2><div class="side"><h3>A</h3><p class="before">se’s mean label and every difference between two
+decisions is preserved. Under the weighted inner product ⟨u, v⟩c = P
+t ctutvt, the constant verifier
+label and the centered guidance term are orthogonal, and the label splits as
+∥A∥2
+2,c = (AV )2 + λ2 Vart∼c(Ad
+t ).
+(7)
+</p><p class="sentence"><mark>The verifier decides how good the response is as a whole, and the teacher decides how that credit
+is shared among its steps.</mark></p><p class="after"> This division concerns the label. Multiplied by different score vectors, a
+zero-mean guidance term need no</p></div><div class="side"><h3>B</h3><p class="before">ach
+response before adding it to the verifier advantage. </p><p class="sentence"><mark>The guidance term has zero
+mean within each response, so the verifier advantage remains the response’s mean
+label and the teacher only redistributes credit among the steps within it.</mark></p><p class="after"> Co-
+RA further updates a teacher LoRA with verifier advantages on the same scored
+student batch and uses the updated teacher in the next iteration’s residual, adapting
+guidance to the student’s attempts. With Qwen3-1.7B-Base and Qwen3-4B-Base
+students and a Qw</p></div></section><section id="L015"><h2>L015</h2><div class="side"><h3>A</h3><p class="before">3.3.
+Setting
+Clip p
+Norm α
+Avg.
+RULER
+MInference
+–
+–
+87.13
+MInference
+90
+0.6
+87.27
+SeerAttention
+–
+–
+87.88
+SeerAttention
+90
+–
+88.09
+SeerAttention
+95
+–
+87.79
+FlexPrefill-Llama
+90
+–
+89.26
+FlexPrefill-Llama
+95
+–
+89.22
+FlexPrefill-Llama
+97.5
+–
+89.94
+FlexPrefill-Qwen
+–
+–
+72.16
+FlexPrefill-Qwen
+95
+–
+70.99
+InfiniteBench
+MInference
+–
+–
+39.05
+MInference
+80
+0.7
+39.20
+FlexPrefill-Llama
+–
+0.5
+47.99
+FlexPrefill-Qwen
+–
+–
+30.42
+FlexPrefill-Qwen
+–
+0.5
+30.31
+</p><p class="sentence"><mark>This paper identifies a fundamental selection mis-
+match in sparse attention.</mark></p><p class="after"> Existing methods usu-
+ally retain large attention entries or high-mass
+regions, which treats the attention matrix as a
+bag of scalar values</p></div><div class="side"><h3>B</h3><p class="before">selects u2 and reduces the error to 3%. Here, X is an
+illustrative probe matrix.
+In this work, our contributions are summa-
+rized as follows:
+• Theory.
+</p><p class="sentence"><mark>We identify a long-standing
+selection mismatch in sparse attention:
+existing magnitude-based rules approx-
+imate the attention matrix entrywise,
+while the Transformer uses attention
+through matrix multiplication.</mark></p><p class="after"> We pro-
+vide a matrix-approximation view that
+gives the correct selection objective.
+• Method. We propose MASA, a theory-
+grounded plu</p></div></section><section id="L016"><h2>L016</h2><div class="side"><h3>A</h3><p class="before">This is
+effectively mitigated by a larger parent: the 32B parent exhibits this failure far less often, yielding
+a smaller remaining gap for the 32B models than for the 7B ones (an average gap of −1.8 versus
+−7.5).
+4
+UNDERSTANDING THE MECHANISMS OF SFT-AS-CONTEXT
+To understand why SFT-as-context can mitigate forgetting while preserving the fine-tuned capabil-
+ities, we first analyze how LLMs combine capabilities from a theoretical perspective (Section 4.1).</p><p class="sentence"><mark>
+Then, by analyzing attention patterns, we empirically show that in SFT-as-context, a parent LLM
+attends more to useful SFT responses and less to hallucinated context, suggesting a possible mech-
+anism for recovering general capabilities while preserving fine-tuned capabilities (Section 4.2).
+</mark></p><p class="after">6
+Preprint
+4.1
+THEORETICAL EXPLANATION
+We explain the effectiveness of SFT-as-context using a Bayesian framework for in-context learning
+(Xie et al., 2022; Hu et al., 2024), building on earlier Bayesian models (Baum &amp; Petrie, 1966; Blei
+et al., 2003)</p></div><div class="side"><h3>B</h3><p class="before">ilities. </p><p class="sentence"><mark>In addition, we visualize the attention weights and find that
+the parent model attends more to useful SFT responses and less to irrelevant ones,
+suggesting that selective attention helps the parent model use the SFT response
+through in-context learning.</mark></p><p class="after">
+1
+INTRODUCTION
+Supervised fine-tuning (SFT) is widely used to adapt general-purpose large language models
+(LLMs) to specialized tasks and domains for practical deployment (Chung et al., 2024; Zeng et al.,
+2024; Guo et al., 2025). However</p></div></section><section id="L017"><h2>L017</h2><div class="side"><h3>A</h3><p class="before">For example, on NutriBench-Non-
+English (Dhaliwal et al., 2025), as shown in Figure 1(c), SFT-as-context achieves recovery rates of
+84.6% for nutrition estimation and 95.2% for language consistency.
+</p><p class="sentence"><mark>More importantly, SFT-as-context requires only standard text input-output interfaces, making it ap-
+plicable to closed-source models without access to their parameters.</mark></p><p class="after"> This flexibility allows responses
+from a small open-source SFT model to serve as context for a stronger closed-source model, even
+when the latter is not the parent of the SFT model</p></div><div class="side"><h3>B</h3><p class="before">t between parent and fine-tuned models during decoding. </p><p class="sentence"><mark>In contrast, SFT-as-context requires
+only text input-output access, using the fine-tuned model’s response as context for the parent model.</mark></p><p class="after">
+7
+CONCLUSION
+In this paper, we propose SFT-as-context, a training-free method that leverages the in-context learn-
+ing ability of LLMs to mitigate the forgetting of general capabilities in SFT models while pre-
+serving their fine-tuned capabilities. Comprehensive experiments across domains, tasks, and mo</p></div></section><section id="L018"><h2>L018</h2><div class="side"><h3>A</h3><p class="before">orms representative prompt engineering and KD methods. Compared with knowledge im-
+plicitly encoded in model parameters, the Primer is interpretable and not tied to particular model
+weights, enabling direct transfer to other models</p><p class="sentence"><mark>. This demonstrates that natural language can serve
+as a deployable knowledge carrier across models, providing a new parameter-update-free perspec-
+tive on knowledge distillation for large language models.</mark></p><p class="after">
+9
+UTT, Z. Lu and H. Wang
+REFERENCES
+Josh Achiam, Steven Adler,</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>We formulate LLM distillation as repre-
+senting the Teacher-Student knowledge gap in natural language rather than encoding it in a specific
+Student’s parameters, making the distilled knowledge interpretable and reusable across models.</mark></p><p class="after">
+(2) A parameter-update-free closed-loop KD framework.
+UTT identifies knowledge gaps
+through paired evaluation and iteratively synthesizes a deployable global Primer from Student at-
+tempts, Prompter feedback, and Teacher demonstrations, without updating any model parameters.
+(3) Empirical validation across tasks and models</p></div></section><section id="L019"><h2>L019</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>Cost-limit failures are detected
+at 0.979 AUROC, on par with trace length post hoc but
+available as a calibrated trigger mid-trace.</mark></p><p class="after"> We are equally
+transparent about the boundaries: on real, homogeneous
+traces, in-distribution splices sit near the detection floor,
+and no task-generic trajectory signal — ours or any base-
+line — predicts patch correctness once length is controlled.
+OnTrack is a process monitor, not an oracle, and we
+believe the distinction is worth drawing clearly.
+References
+[1] Luciano Floridi</p></div><div class="side"><h3>B</h3><p class="before">The severe-flag
+density trigger (th=0.60) fires on 90% of cost-limit traces,
+at a median of 58.6% of the trace elapsed — i.e., with
+12
+Method
+AUROC
+OnTrack score
+0.979
+OnTrack flags
+0.977
+n steps
+0.978
+Markov surprise
+0.905
+OnTrack leak
+0.958
+Cosine
+0.557
+grep frac
+0.447
+</p><p class="sentence"><mark>Table 7: Exit-status detection: cost-limit vs. clean sub-
+mission (balanced 50+50 sample). OnTrack matches
+n steps; the value added is the calibrated mid-trace trig-
+ger (Table 6), not the full-trace AUROC.</mark></p><p class="after">
+≈41% of the eventual trajectory steps still ahead at de-
+tection</p></div></section><section id="L020"><h2>L020</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We introduce Univer-
+sal Textual Teaching (UTT), a parameter-update-free framework that distills ob-
+served Teacher-Student knowledge gaps into a textual, interpretable, and reusable
+natural-language artifact called Primer.</mark></p><p class="after"> Specifically, UTT first identifies represen-
+tative gap cases through paired evaluations, and iteratively updates the Primer via
+multi-role interactions: the Student attempts each task, the Prompter turns evalua-
+tion feedback into a teaching instruction, the Teacher provides a targeted demon-
+stration, and the Synthesizer consolidates validated lessons</p></div><div class="side"><h3>B</h3><p class="before">antization, and thinking mode, are de-
+ferred to Appendix C. Potential limitations and future work are discussed in Appendix E.
+5
+CONCLUSION</p><p class="sentence"><mark>
+This paper introduces Universal Textual Teaching (UTT), a parameter-update-free knowledge distil-
+lation method for large language models. </mark></p><p class="after">UTT first identifies Teacher-Student knowledge gaps and
+then synthesizes validated teaching records into a textual Primer through multi-role LLM interac-
+tions. On the challenging math and code generation tasks (Omni-MAT</p></div></section><section id="L021"><h2>L021</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We formulate LLM distillation as repre-
+senting the Teacher-Student knowledge gap in natural language rather than encoding it in a specific
+Student’s parameters, making the distilled knowledge interpretable and reusable across models.</mark></p><p class="after">
+(2) A parameter-update-free closed-loop KD framework.
+UTT identifies knowledge gaps
+through paired evaluation and iteratively synthesizes a deployable global Primer from Student at-
+tempts, Prompter feedback, and Teacher demonstrations, without updating any model parameters.
+(3) Empirical validation across tasks and models</p></div><div class="side"><h3>B</h3><p class="before">for target-task performance, without using the knowledge gap between a designated Teacher and
+Student as its basis for optimization. </p><p class="sentence"><mark>Motivated by knowledge distillation, UTT explicitly targets
+the Teacher’s observed knowledge advantage over the Student for transfer, organizing it into an
+inspectable Primer reusable across Students.</mark></p><p class="after">
+Textual knowledge representations. Recent work has also explored natural-language represen-
+tations of models and task knowledge. Verbalized Machine Learning (Xiao et</p></div></section><section id="L022"><h2>L022</h2><div class="side"><h3>A</h3><p class="before">recede through recursive
+consolidation (Fig. 7). These observations show how use and disuse sustain a continuous cycle of
+learning through work.
+6
+CONCLUSION
+</p><p class="sentence"><mark>We introduced Hippocam, a unified architecture for memory, knowledge, and learning through
+the continual consolidation and selective recall of interaction history.</mark></p><p class="after"> Experiments and analyses
+demonstrate its broad applicability and illuminate how retained knowledge evolves through use and
+disuse. Our findings suggest a path toward agents that</p></div><div class="side"><h3>B</h3><p class="before">hts the critical challenge of transforming
+continuous experiences into reusable knowledge. </p><p class="sentence"><mark>To address this, we propose
+Hippocam, a hierarchical memory and continual learning architecture.</mark></p><p class="after"> Hippocam
+draws inspiration from two characteristics of human memory: cognitive processes
+selectively maintain information relevant to current goals, while long-term mem-
+ories form gradually through repeated consolidation. Accordingly, Hippocam
+structures an agent’s ongoing work as nested intents. The active co</p></div></section><section id="L023"><h2>L023</h2><div class="side"><h3>A</h3><p class="before">other LLM acceleration techniques as discussed
+in Appendix A. </p><p class="sentence"><mark>Across multiple sparse baselines,
+benchmarks, and LLM backbones, MASA gives
+consistent gains under matched settings with
+negligible latency overhead.</mark></p><p class="after"> These results sup-
+port both the proposed method and the broader
+matrix-approximation view of sparse attention.
+One practical boundary of MASA is that it cor-
+rects the selection score within a given sparse attention framework. It does not search for new sparse
+kernels, new sparse unit f</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Extensive experiments across multiple sparse atten-
+tion methods, benchmarks, and LLM backbones show consistent accuracy gains,
+supporting both MASA and the matrix-approximation view of sparse attention.</mark></p><p class="after">
+1
+INTRODUCTION
+Large Language Models (LLMs) have achieved strong performance across a wide range of applica-
+tions, from natural language processing (Radford et al., 2018) to mathematical reasoning (Ahn et al.,
+2024), multimodal tasks (Team et al., 2023), and scientific discovery (Zhang et al., 2025b)</p></div></section><section id="L024"><h2>L024</h2><div class="side"><h3>A</h3><p class="before">model. </p><p class="sentence"><mark>Our
+contract preserves user, system and assistant messages and returns exact archived payloads on
+recovery.</mark></p><p class="after"> ACM evaluates both an untrained management framework and a post-trained policy;
+absence of task-specific training alone is therefore not a distinguishing feature.
+Provider-side editing.
+Anthropic’s context-editing documentation (Anthropic, n.d.)
+de-
+scribes threshold-triggered removal of older tool results with placeholders, while the client retains
+the original conversation. It als</p></div><div class="side"><h3>B</h3><p class="before">the acting model general read-write access to its live context through a mirrored file,
+including offloading and retrieval. </p><p class="sentence"><mark>Our interface restricts edits to individual tool-result occur-
+rences, automatically archives exact originals, and preserves user, system, and assistant messages.</mark></p><p class="after">
+Human instructions therefore remain a verbatim task anchor under our context operations. This
+preservation guarantee does not extend to a separate compaction process that summarizes those
+messages, nor does it gu</p></div></section><section id="L025"><h2>L025</h2><div class="side"><h3>A</h3><p class="before">.124, all one-
+sided paired bootstrap p&lt;.01). </p><p class="sentence"><mark>On the same 1,000
+targets, going from N=0 to the JevKT input at
+N=8 raises AUC by +.016 for Jev and +.010 for
+DeepSeek-V4-Flash (paired learner-cluster boot-
+strap: significant on 2/7 and 1/7 datasets, mostly
+DBE-KT22 and Algebra05; the difference between
+the two gains is significant on 0/7).</mark></p><p class="after"> The recipe
+therefore helps both models a little, and which
+model reads the input decides whether deep KT
+is beaten. Two caveats concern the adapter. It reads
+P(</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>On identical tar-
+gets the JevKT input adds a similar, small amount
+to Jev (+.016) and to DeepSeek (+.010), significant
+on 2/7 and 1/7 datasets, and the two gains never
+differ significantly; the gap between the models
+(.077 at N=0) is set by the model, not by the in-
+put.</mark></p><p class="after"> Only Jev and the Jev-distilled JEV-9B (.687 at
+N=0, .699 at N=8) come close to or exceed the
+best deep KT model trained on 8 learners (.689),
+while Laya, an open-source model that reproduces
+Jev’s typed interface with a small encoder, stays
+near chance (.536).
+5.2
+What do the logged learners add?
+JevKT combines two sources, the model’s prior,
+which Jev0-shot measures alone, and evidence from
+the logged learners.
+At N=8 the prior alone
+reaches .706, the similar-learner statistic alone .595,
+and both together .722, against .689 for the best
+deep KT model (Table 1)</p></div></section><section id="L026"><h2>L026</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We use a single language model as the shared backbone of all three
+system components, with role-specific prompt templates.</mark></p><p class="after"> We specify the Lean instantiation of our method below;
+Appendix A provides concrete implementation details, including hyperparameter settings and prompt templates.
+8
+Learning to Plan by Looking Back
+A PREPRINT
+Algorithm 2: ConstructTriple in verifiable problem domains: verifier-guided selection of hindsight hierarchies.
+Given
+:Hindsight component Hθ, candidate count K ∈Z≥1; joint procedure (Utility, DiscoveredSolution); penalty
+Penalty; hyperparameters λ, δ &gt; 0
+Input
+:Pair (x, y) with Verify(x, y) = 1; parameters θ, held fixed throughout this call
+Output :One training triple in {x} × Y × Z or fail
+for i = 1,</p></div><div class="side"><h3>B</h3><p class="before">For example, there may be groups consisting of
+problems that are solved under an ordinary proof search budget, problems that are solved under a generous (but not
+under an ordinary) proof search budget, and problems that are not solved under any of the tested proof search budgets.
+Our concrete choice of SampleBatch is given in Appendix A.2.
+5.2
+Lean instantiation: system components
+</p><p class="sentence"><mark>All three components are implemented using a single underlying language model with shared parameters, and we
+distinguish between components using role-specific prompt templates.</mark></p><p class="after"> We implement the foresight component Fθ and
+the hindsight component Hθ via iterative calls to the language model that mirror the setup in Section 4.2</p></div></section><section id="L027"><h2>L027</h2><div class="side"><h3>A</h3><p class="before">aining rollout. The number in each panel
+is how much longer OPD’s rollouts are than Semi-OPD’s over the last 10 shared steps; the dotted line is the
+teacher’s length, where available.
+14
+When Do We Need On-Policy Distillation? Distilling on Offline Student Rollouts Is Often Better
+Positively supervised tokens.
+</p><p class="sentence"><mark>As shown in Fig. 14, Semi-OPD keeps a larger share of positively supervised
+tokens (𝑝𝑇&gt; 𝑝𝑆) than OPD in 15 of 16 pairs.</mark></p><p class="after"> The exception is again R1-Distill-1.5B ←JustRL-1.5B.
+0
+40
+80
+15
+30
+4</p></div><div class="side"><h3>B</h3><p class="before">percent-
+age of training tokens with 𝑝𝑇&gt; 𝑝𝑆, i.e., tokens that
+receive a positive reward due to higher probabilities as-
+signed by the teacher. </p><p class="sentence"><mark>As shown in Fig. 7, Semi-OPD
+maintains a larger fraction of such tokens than OPD
+throughout training.</mark></p><p class="after"> This indicates that Semi-OPD
+exposes the student to more teacher-preferred tokens,
+i.e., more on-policy w.r.t. the teacher, whereas OPD
+more often produces signals that suppress the stu-
+dent’s own sampled tokens. Importantly, Semi-OPD
+also outperforms O</p></div></section><section id="L028"><h2>L028</h2><div class="side"><h3>A</h3><p class="before">ch, and ± is the sample SD across them.
+</p><p class="sentence"><mark>Every adapted teacher scores below the frozen teacher, by 0.8–2.3 macro Avg@8 and 0.7–3.5 Pass@8
+points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with
+the 4B student.</mark></p><p class="after"> The adapted teacher is a better guide for the student that trained it (Table 1) and a
+worse solver on its own, in line with the distinction between a strong solver and a good teacher drawn
+in Section 1. Table 31 lists the macro scores of eac</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Yet each
+adapted teacher scores 0.8–2.3 macro Avg@8 and 0.7–3.5 Pass@8 points below the frozen teacher
+(Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.</mark></p><p class="after">
+The margin over the untrained student persists up to Pass@512.
+From K = 8 to K = 512 for
+the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student
+grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4
+and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al</p></div></section><section id="L029"><h2>L029</h2><div class="side"><h3>A</h3><p class="before">ut access (Sec-
+tion 5.1). </p><p class="sentence"><mark>We also provide ablation studies to show that the recovery of both fine-tuned and general
+capabilities does not arise solely from the SFT-as-context instructions (Section 5.2).</mark></p><p class="after">
+5.1
+SFT-AS-CONTEXT FURTHER IMPROVES PROPRIETARY MODELS
+Beyond combining the strengths of the parent and SFT models, SFT-as-context can further improve
+fine-tuned capabilities when the final response is generated by a stronger model rather than the
+original parent model. To be more specific, we f</p></div><div class="side"><h3>B</h3><p class="before">Language consistency and acknowledgment
+of non-food queries are only 1.3% and 17.9%, compared with 73.7% and 98.0% for SFT-as-context.
+</p><p class="sentence"><mark>These results suggest that the gains of SFT-as-context cannot be explained solely by the SFT-as-
+context instructions or an additional inference pass.
+</mark></p><p class="after">6
+RELATED WORK
+Forgetting and Mitigation.
+Prior work mitigates forgetting during fine-tuning through regular-
+ization toward pretrained behavior or parameters, as in Learning without Forgetting (Li &amp; Hoiem,
+2017) and RecAdam (Chen et al., 2020), replay-based methods such as LAMOL (Sun et al., 2020),
+constraints on parameter updates (Lopez-Paz &amp; Ranzato, 2017; Lin et al., 2026), or the choice of
+adaptation algorithm (Biderman et al., 2024; Chen et al., 2026)</p></div></section><section id="L030"><h2>L030</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>Additionally, SFT-as-context combines fine-tuned and general capabilities within the same
+response, going beyond what either model can achieve alone.</mark></p><p class="after"> For example, on NutriBench-Non-
+English (Dhaliwal et al., 2025), as shown in Figure 1(c), SFT-as-context achieves recovery rates of
+84.6% for nutrition estimation and 95.2% for language consistency.
+More importantly, SFT-as-context requires only standard text input-output interfaces, making it ap-
+plicable to closed-source models without access to their parameters</p></div><div class="side"><h3>B</h3><p class="before">apability performance gap between parent and SFT models. </p><p class="sentence"><mark>More impor-
+tantly, SFT-as-context can combine fine-tuned and general capabilities within the same response,
+which neither the parent nor the SFT model can achieve alone.</mark></p><p class="after"> We evaluate this setting on MathIF,
+LiveCodeBenchIF, and NutriBench-Non-English, where each query requires both fine-tuned and
+general capabilities, and we report the performance on both for each dataset in Table 1. For the
+same MathIF example discussed in Section 2.2, th</p></div></section><section id="L031"><h2>L031</h2><div class="side"><h3>A</h3><p class="before">We introduce SFT-as-context, a training-free method in which
+the parent model uses the SFT model’s response as context to answer the query.
+</p><p class="sentence"><mark>This allows the parent model to acquire fine-tuned capabilities from the SFT re-
+sponse through in-context learning while preserving its own general capabilities.</mark></p><p class="after">
+Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context re-
+mains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and
+2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE
+on NutriBench-English, while staying within 2.2 percentage points of the parent
+models on general capabilities on average</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Taken
+together, these analyses suggest a single underlying principle of SFT-as-context: the parent model
+leverages in-context learning to selectively acquire fine-tuned capabilities from the SFT responses
+while preserving its own general capabilities.</mark></p><p class="after">
+2
+SFT MODELS FORGET GENERAL CAPABILITIES
+In this section, we describe our experimental setup and then present the results showing that SFT
+improves fine-tuned capabilities while degrading general capabilities.
+2.1
+EXPERIMENT SETUP
+We evaluate models fine-tuned for three domains: mathematical reasoning, coding, and nutrition
+estimation</p></div></section><section id="L032"><h2>L032</h2><div class="side"><h3>A</h3><p class="before">ased forgetting rules. </p><p class="sentence"><mark>This natural dynamic
+of use and disuse unifies the recovery of past experience with learning that deepens what the agent
+knows, refines how it acts, and expands what it can accomplish.</mark></p><p class="after"> Hippocam thereby makes the agent’s
+lifetime of work the engine of continual learning, taking a step toward a unified architecture for
+memory, knowledge, and learning.
+Evaluations show that Hippocam achieves strong performance across memory, knowledge use,
+and learning. Whereas competing meth</p></div><div class="side"><h3>B</h3><p class="before">2026) learn from successful
+and failed trials and memory-guided exploration, respectively, by updating model parameters. </p><p class="sentence"><mark>Hip-
+pocam unifies memory and learning through the dynamics of use and disuse, developing knowledge
+through work and feedback rather than consolidation alone.</mark></p><p class="after">
+4
+EXPERIMENTS
+We examine Hippocam’s unified cycle of use and disuse through four research questions. RQ1
+Can Hippocam learn from accumulated experience? RQ2 Can what it learns generalize across task
+domains? RQ3 Does mem</p></div></section><section id="L033"><h2>L033</h2><div class="side"><h3>A</h3><p class="before">on specifying that non-
+food queries should be flagged as irrelevant. </p><p class="sentence"><mark>This observation provides a possible explanation for
+why SFT-as-context recovers general instruction-following capabilities even when the context is
+generated by an SFT model that has lost these capabilities.</mark></p><p class="after">
+E
+RL MODELS FORGET LESS
+We have evaluated SFT-as-context in a controlled setting where the model providing the context is
+obtained through standard SFT. Since SFT-as-context is agnostic to the post-training method used
+to</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Taken
+together, these analyses suggest a single underlying principle of SFT-as-context: the parent model
+leverages in-context learning to selectively acquire fine-tuned capabilities from the SFT responses
+while preserving its own general capabilities.</mark></p><p class="after">
+2
+SFT MODELS FORGET GENERAL CAPABILITIES
+In this section, we describe our experimental setup and then present the results showing that SFT
+improves fine-tuned capabilities while degrading general capabilities.
+2.1
+EXPERIMENT SETUP
+We evaluate models fine-tuned for three domains: mathematical reasoning, coding, and nutrition
+estimation</p></div></section><section id="L034"><h2>L034</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>In training, OPD
+also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of
+the shared budget (Appendix C).</mark></p><p class="after"> At the same budget, OPD followed by REINFORCE++ reaches
+28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++
+(Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at
+each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).
+Teaching the teacher on student rollouts raises accuracy in every tested setting.
+Co-RA adds
+1.03–1.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark
+means</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Among
+the one-response runs, OPD rises more slowly than REINFORCE++ at first and later exceeds it, while
+staying below RA+REINFORCE++ over most of the shared response budget, as the expanded early
+window shows.</mark></p><p class="after"> Teacher-only OPD trains without verifier feedback and without the length shaping of
+the verifier runs, so its trajectory reflects a different recipe and not only a different label.
+Training accuracy measures correctness on the training prompts under the rollout policy, whereas
+Table 1 evaluates held-out benchmarks at a different sampling temperature, so the sizes of the two
+gains need not agree.
+27
+Preprint
+C.1
+GUIDANCE MAGNITUDE AND RESPONSE LENGTH
+0
+90
+180
+270
+Training step
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+Mean |δt|
+(a) Teacher guidance
+0
+90
+180
+270
+Training step
+0
+2k
+4k
+6k
+8k
+10k
+12k
+Mean response length (tokens)
+Correct
+Incorrect
+(b) Response length by correctness
+Figure 5: Training diagnostics for the 4B student with RA+REINFORCE++</p></div></section><section id="L035"><h2>L035</h2><div class="side"><h3>A</h3><p class="before">1.4× training speedup. We further find that the choice between
+OPD and Semi-OPD depends on the alignment between the initial teacher and student, quantified by an
+output-token overlap ratio: OPD is beneficial only when the two are highly aligned with high overlap ratios.
+</p><p class="sentence"><mark>Our deeper investigation suggests that effective distillation requires on-policyness w.r.t. both the student and
+the teacher.</mark></p><p class="after"> For misaligned pairs, student rollouts can become increasingly off-policy w.r.t. the teacher as
+contex</p></div><div class="side"><h3>B</h3><p class="before">upervision to the first
+quarter substantially slows convergence and reduces
+final accuracy, whereas training on full trajectories
+achieves the best peak accuracy. </p><p class="sentence"><mark>Thus, both covering
+all reasoning stages and maintaining on-policyness
+w.r.t. the teacher are important.</mark></p><p class="after">
+Semi-OPD exposes the student to more tokens
+preferred by the teacher. Semi-OPD exactly satis-
+fies the above requirement by providing full trajectory
+coverage with shorter rollout lengths. To analyze the
+resulting distillation signa</p></div></section><section id="L036"><h2>L036</h2><div class="side"><h3>A</h3><p class="before">subagent revisions; 79 and 37 of these trajectories, respectively, were sam-
+pled for SFT (Appendix G.2). </p><p class="sentence"><mark>Together, these suggest that post-training internalizes coordination
+behaviors from multi-agent trajectories.</mark></p><p class="after">
+9
+Preprint
+Model
+D
+H Revision Main edit
+L(0)
+1/110
+1/110
+0/110
+1/110
+L(1)
+48/110 42/110
+10/110
+14/110
+L(2)
+87/110 83/110
+39/110
+12/110
+(a) Coordination under bare task prompts. D: dele-
+gation; H: code handoff.
+Behavior
+Recorded Sampled
+Orchestrator delegation
+114
+112
+Code handoff
+9</p></div><div class="side"><h3>B</h3><p class="before">mization, rather than eval-
+uation, as a major bottleneck in the homogeneous RSI loop (Section 5.1). </p><p class="sentence"><mark>Finally, trajectory analysis
+provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).</mark></p><p class="after">
+Overall, our work introduces an algorithm that uses multi-agent coordination to generate self-
+supervision for RSI.
+2
+NOTATIONS AND PROBLEM STATEMENT
+Task and language model. Let T denote a finite set of tasks, with xt denoting the prompt for task
+t ∈T . We denote a training</p></div></section><section id="L037"><h2>L037</h2><div class="side"><h3>A</h3><p class="before">sed through their official APIs, and the maximum output
+budget is set to 4,096 tokens. The synthesis procedure follows the main experiments.
+</p><p class="sentence"><mark>Table 5 shows that the Primer yields positive gains for every source and transfer Student.</mark></p><p class="after"> Under
+Qwen3.8-Max→Qwen3.6-27B, the source Student improves from 41.5% to 76.0%, while transfer-
+ring the same Primer to DeepSeek-V4.1-Flash improves its accuracy from 54.0% to 59.0%. When
+DeepSeek-V4.1-Flash serves as the source Student, its accuracy increases from 54</p></div><div class="side"><h3>B</h3><p class="before">.0%. After replacing the Teacher with Claude Opus 5, Qwen3.6-27B improves from
+41.5% to 80.5%, while applying the same Primer to DeepSeek-V4.1-Flash raises its accuracy from
+54.0% to 57.5%.
+</p><p class="sentence"><mark>Overall, Primers synthesized by different Teachers substantially improve Qwen3.6-27B, and all
+cross-Student transfers retain positive gains.</mark></p><p class="after"> These results indicate that UTT extends to multimodal
+reasoning tasks requiring joint understanding of images and text, and that its textual knowledge can
+15
+UTT, Z. Lu</p></div></section><section id="L038"><h2>L038</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We use a single language model as the shared backbone of all three
+system components, with role-specific prompt templates.</mark></p><p class="after"> We specify the Lean instantiation of our method below;
+Appendix A provides concrete implementation details, including hyperparameter settings and prompt templates.
+8
+Learning to Plan by Looking Back
+A PREPRINT
+Algorithm 2: ConstructTriple in verifiable problem domains: verifier-guided selection of hindsight hierarchies.
+Given
+:Hindsight component Hθ, candidate count K ∈Z≥1; joint procedure (Utility, DiscoveredSolution); penalty
+Penalty; hyperparameters λ, δ &gt; 0
+Input
+:Pair (x, y) with Verify(x, y) = 1; parameters θ, held fixed throughout this call
+Output :One training triple in {x} × Y × Z or fail
+for i = 1,</p></div><div class="side"><h3>B</h3><p class="before">For example, there may be groups consisting of
+problems that are solved under an ordinary proof search budget, problems that are solved under a generous (but not
+under an ordinary) proof search budget, and problems that are not solved under any of the tested proof search budgets.
+Our concrete choice of SampleBatch is given in Appendix A.2.
+5.2
+Lean instantiation: system components
+</p><p class="sentence"><mark>All three components are implemented using a single underlying language model with shared parameters, and we
+distinguish between components using role-specific prompt templates.</mark></p><p class="after"> We implement the foresight component Fθ and
+the hindsight component Hθ via iterative calls to the language model that mirror the setup in Section 4.2</p></div></section><section id="L039"><h2>L039</h2><div class="side"><h3>A</h3><p class="before">the adapters trained with the 1.7B student than for those trained with
+the 4B student. </p><p class="sentence"><mark>The adapted teacher is a better guide for the student that trained it (Table 1) and a
+worse solver on its own, in line with the distinction between a strong solver and a good teacher drawn
+in Section 1.</mark></p><p class="after"> Table 31 lists the macro scores of each adapter.
+Table 30: The adapted teacher is a worse solver than the frozen teacher. Qwen3-8B in non-
+thinking mode with the Co-RA adapter of each setting, under the evalua</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Yet each
+adapted teacher scores 0.8–2.3 macro Avg@8 and 0.7–3.5 Pass@8 points below the frozen teacher
+(Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.</mark></p><p class="after">
+The margin over the untrained student persists up to Pass@512.
+From K = 8 to K = 512 for
+the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student
+grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4
+and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al</p></div></section><section id="L040"><h2>L040</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We formulate LLM distillation as repre-
+senting the Teacher-Student knowledge gap in natural language rather than encoding it in a specific
+Student’s parameters, making the distilled knowledge interpretable and reusable across models.</mark></p><p class="after">
+(2) A parameter-update-free closed-loop KD framework.
+UTT identifies knowledge gaps
+through paired evaluation and iteratively synthesizes a deployable global Primer from Student at-
+tempts, Prompter feedback, and Teacher demonstrations, without updating any model parameters.
+(3) Empirical validation across tasks and models</p></div><div class="side"><h3>B</h3><p class="before">s. </p><p class="sentence"><mark>UTT retains the objective of knowledge distillation while explicitly
+representing the Teacher’s knowledge advantage over the Student as a natural-language Primer,
+which enhances the Student through context while keeping its parameters fixed.</mark></p><p class="after">
+Prompting techniques and engineering.
+Prompting techniques improve LLM performance
+through reusable input structures or invocation workflows, while prompt engineering selects, com-
+bines, evaluates, and refines these techniques (Schulhoff et al., 2024). R</p></div></section><section id="L041"><h2>L041</h2><div class="side"><h3>A</h3><p class="before">lementation patterns, and
+engineering troubleshooting experience for CUDA operators into textual guidance that can be di-
+rectly used by the Student. </p><p class="sentence"><mark>This example illustrates how a Primer combines computational patterns,
+implementation details, and engineering experience to guide code generation and validation.</mark></p><p class="after">
+Multimodal geometry reasoning Primer. The Primer in Example 3 organizes figure interpretation,
+geometric reasoning, and answer output into a sequential problem-solving process. It guides</p></div><div class="side"><h3>B</h3><p class="before">The Primer in Example 2 emphasizes output-format compliance
+and the basic requirements for custom CUDA implementations, and summarizes extension binding,
+scan-style operators, lazy compilation, and common compilation and runtime error</p><p class="sentence"><mark>s. This exam-
+ple illustrates how a Primer organizes code-generation requirements, implementation patterns, and
+engineering troubleshooting experience for CUDA operators into textual guidance that can be di-
+rectly used by the Student. </mark></p><p class="after">This example illustrates how a Primer combines computational patterns,
+implementation details, and engineering experience to guide code generation and validation.
+Multimodal geometry reasoning Primer</p></div></section><section id="L042"><h2>L042</h2><div class="side"><h3>A</h3><p class="before">int
+prefix-level effect over the other positions (Proposition 4). </p><p class="sentence"><mark>Removing both operations costs 1.73
+Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by
+−0.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).</mark></p><p class="after">
+Table 2: Every residual variant improves on verifier-only training at every tested weight, and full
+RA stays above every control at every matched weight. Qwen3-1.7B-Base with REINFORCE++;
+three-seed macro means in %. Th</p></div><div class="side"><h3>B</h3><p class="before">en 1,000 and 4,000, and 8% of all responses lie beyond 0.5 in absolute
+value, most of them positive (the 95th percentile is +0.54 and the 5th −0.29). </p><p class="sentence"><mark>The raw residual shifts
+every length group by a negative amount, −0.32 on average, with 26% of responses beyond 0.5.</mark></p><p class="after"> Only
+three of the 256 responses are correct, so no split by correctness is reported. Section 4.1 uses both
+facts.
+Table 16: Response mean of the guidance without centering. Mean and SD across responses of
+λA
+d (local advantage, with</p></div></section><section id="L043"><h2>L043</h2><div class="side"><h3>A</h3><p class="before">e by stage rather than only through the final benchmark. </p><p class="sentence"><mark>Our analy-
+ses identify open-ended task-space specification as the primary source of construction uncertainty,
+while annotation-evidence mapping and item instantiation become substantially more reliable once
+benchmark semantics are fixed.</mark></p><p class="after"> Evaluation of the resulting benchmark further reveals task-, metric-,
+and imaging-dependent variation across VLMs that aggregate scores can obscure. Together with
+the cross-domain instantiation under a sp</p></div><div class="side"><h3>B</h3><p class="before">rior is provided to the direct model. For correctly identified tasks, 994 of 1,000 sampled
+items pass human audit. </p><p class="sentence"><mark>Together, these results suggest that open-ended decisions about what should
+be evaluated are substantially more challenging than evidence mapping and item construction once
+benchmark semantics are constrained.</mark></p><p class="after"> We further instantiate the workflow in a specialized medical
+domain under a different annotation schema and evaluate twelve VLMs on the resulting benchmark.
+Model evaluation r</p></div></section><section id="L044"><h2>L044</h2><div class="side"><h3>A</h3><p class="before">acts on every token, is uncorrelated with the verifier. </p><p class="sentence"><mark>As a result, 64%
+of RA’s teacher-gradient mass is outcome-compatible against 49% for the direct loss, mainly because
+more of it lowers incorrect responses (46% against 35%).</mark></p><p class="after"> The direct loss has the smaller gradient
+(0.43 of the verifier’s, against 0.58), but it is deterministic given the prefixes, and after clipping and
+Adam it takes the larger share of the update, 0.44 against 0.28. Over training this share rises from
+0.36 to 0.48 for the</p></div><div class="side"><h3>B</h3><p class="before">dix C.3). </p><p class="sentence"><mark>Because RA’s teacher term acts on the tokens
+the verifier scores, 64% of its gradient mass raises correct or lowers incorrect responses, against 49%
+for the direct loss, and after clipping and Adam the teacher takes 0.28 of the update against 0.44,
+keeping RA’s update closer to the verifier’s direction (cosine 0.93 against 0.80).</mark></p><p class="after">
+4.3
+WHERE THE GUIDANCE LANDS
+By Equation 4 and Proposition 1(ii), the teacher moves logit b in expectation by p(b)(1 −p(b))
+times a bounded contrast. The stud</p></div></section><section id="L045"><h2>L045</h2><div class="side"><h3>A</h3><p class="before">-
+work that distills an LLM’s knowledge into a textual Primer through multi-role LLM interaction.
+</p><p class="sentence"><mark>Notably, the resulting Primer can improve the performance of the source Student and other Students
+that are not involved in creating the Primer.</mark></p><p class="after"> Right: For the target Student Qwen3.6-27B, Primers
+synthesized from the Teacher-Student pairs (shown at the bottom of the figure) consistently improve
+accuracy. Even when Qwen3.6-27B does not participate in the Primer synthesis, the absolute accu-
+racy gain</p></div><div class="side"><h3>B</h3><p class="before">tly provided to the Student model without updating model parameters. </p><p class="sentence"><mark>Experi-
+ments further validate that this language-based knowledge representation Primer not only enhances
+the source Student but also transfers to improve other Student models.</mark></p><p class="after"> Appendix D presents com-
+plete Primers for Olympiad-level mathematics, GPU kernel generation, and visual geometry.
+4
+EXPERIMENTAL RESULTS
+4.1
+EXPERIMENTAL SETTINGS
+Tasks and evaluation. We evaluate UTT on two representative LLM tasks, code generation and</p></div></section><section id="L046"><h2>L046</h2><div class="side"><h3>A</h3><p class="before">OPD
+0
+400
+800
+14.1× vs Relay-OPD
+4.5× vs OPD
+2.2× vs FastOPD
+Relay-OPD
+OPD
+FastOPD
+Semi-OPD (ours)
+</p><p class="sentence"><mark>Figure 1 | Accuracy &amp; training cost of different distillation methods. Our Semi-OPD achieves much
+improved/comparable accuracy for teacher–student pairs with low/high overlap, respectively, while reducing
+training time by up to 11.4× over OPD.</mark></p><p class="after"> Accuracy is averaged over AIME 24/25/26 and HMMT Feb 26.
+1. Introduction
+On-policy distillation (OPD) has emerged as an
+effective paradigm for transferring t</p></div><div class="side"><h3>B</h3><p class="before">× vs OPD
+2.2× vs FastOPD
+Relay-OPD
+OPD
+FastOPD
+Semi-OPD (ours)
+Figure 1 | Accuracy &amp; training cost of different distillation methods. </p><p class="sentence"><mark>Our Semi-OPD achieves much
+improved/comparable accuracy for teacher–student pairs with low/high overlap, respectively, while reducing
+training time by up to 11.4× over OPD.</mark></p><p class="after"> Accuracy is averaged over AIME 24/25/26 and HMMT Feb 26.
+1. Introduction
+On-policy distillation (OPD) has emerged as an
+effective paradigm for transferring the capabilities
+of a teacher languag</p></div></section><section id="L047"><h2>L047</h2><div class="side"><h3>A</h3><p class="before">top-k
+variant. REINFORCE++ learns from the verifier alone, so the branch is its only source of teacher
+signal. RA+REINFORCE++ already receives a teacher label at every sampled token.
+</p><p class="sentence"><mark>Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students
+trained with the verifier.</mark></p><p class="after"> Change in three-seed macro score when the branch is added, Qwen3-1.7B-
+Base, in points. The weight λ multiplies the branch’s teacher part and, with RA, also the sampled
+guidance. Absolute, benchmark,</p></div><div class="side"><h3>B</h3><p class="before">onger and denser teacher
+supervision does not by itself yield better performance. </p><p class="sentence"><mark>A student trained only to imitate the teacher
+benefits slightly from the teacher’s top token, whereas both students trained with the verifier degrade,
+increasingly so with the branch weight under REINFORCE++.</mark></p><p class="after"> One conjecture is that steering the
+student directly toward the teacher’s choice crowds out the exploration on which RL relies. RA
+instead scales its expected update on each token by the student’s probability</p></div></section><section id="L048"><h2>L048</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>We further analyze its underlying mechanism
+through a Bayesian view of in-context learning and attention analysis, showing that useful SFT re-
+sponses can steer the parent model toward the fine-tuned domain while having less influence on
+unrelated queries, thereby preserving general capabilities.</mark></p><p class="after"> Since the same framework could natu-
+rally extend beyond SFT to other post-training methods, such as reinforcement learning, we leave
+this as a promising future direction to combine capabilities acquired through post-training with the
+broad capabilities of pretrained models.
+AI USE STATEMENT
+In this work, we used generative AI tools for generating synthetic datasets, implementing methods,
+assisting with translation, cleaning and reformatting datasets, supporting qualitative and thematic
+data analysis, and interpreting results</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>This selective attention suggests that the parent model can use useful information
+from SFT responses through in-context learning while limiting the influence of irrelevant context,
+providing a possible explanation for how SFT-as-context mitigates forgetting while preserving fine-
+tuned capabilities.
+</mark></p><p class="after">5
+DISCUSSION
+Here, we extend SFT-as-context to a strong proprietary model, showing that responses from open-
+source SFT models can further improve its performance with only text input-output access (Sec-
+tion 5.1)</p></div></section><section id="L049"><h2>L049</h2><div class="side"><h3>A</h3><p class="before">all three roles
+in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3). </p><p class="sentence"><mark>The
+trained model discovers high-quality workflows faster, and the evaluator accuracy increases from
+73% to 93%.</mark></p><p class="after">
+We further find that optimized workflows develop more task-specific information handoffs and rout-
+ing, consistent with our information-flow hypothesis (Section 4.3). The first-cycle multi-agent stu-
+dent achieves a 68.3% win rate against the base model, compared with 64.0% f</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>The
+agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).</mark></p><p class="after"> Together, these results
+support transfer from task-solving self-supervision to workflow optimization and self-evaluation
+without separate training targets for those roles.
+Executor Lagent
+Comparator Lagent
+Win rate
+L(1)(xt ⊕w(1,i)
+t
+)
+L(0)(xt ⊕w(0,i)
+t
+)
+0.80
+L(0)(xt ⊕w(1,i)
+t
+)
+L(0)(xt ⊕w(0,i)
+t
+)
+0.64
+L(0)(xt ⊕w(1,i)
+t
+)
+L(0)(xt)
+0.63
+L(0)(xt ⊕w(1,i)
+t
+)
+L(1)(xt ⊕w(1,i)
+t
+)
+0.29
+Table 1: Mean win rate over i ∈[11] iterations and
+t ∈[12] tasks</p></div></section><section id="L050"><h2>L050</h2><div class="side"><h3>A</h3><p class="before">Vertical scales differ by component.
+3
+6
+9
+11
+−0.5
+0.0
+0.5
+Unconditional 
+̂
+TC(Z)
+3
+6
+9
+11
+−0.5
+0.0
+0.5
+Task-centered 
+̂
+TC(Z ∣T)
+Crown iteration i
+Δ
+̂
+TC (nats)
+text-embedding-3-large
+all-mpnet-base-v2
+Unadjusted
+Perm.-adjusted
+</p><p class="sentence"><mark>Figure 5: Component-redundancy change from each curve’s value at i = 3. By i = 11, d
+TC(Z) falls
+in all four configurations; d
+TC(Z | T) falls in three and rises for permutation-adjusted MPNet.</mark></p><p class="after">
+We test the learning efficiency of multi-agent trajectories by fine-tuning L(0) on five different
+datasets</p></div><div class="side"><h3>B</h3><p class="before">nformation, while contracts and hops gain it.
+Unconditional total correlation falls in all four encoder/estimator combinations. </p><p class="sentence"><mark>The task-centered
+estimate falls in three; permutation-adjusted MPNet is the exception.</mark></p><p class="after"> Intermediate values need not
+be monotone.
+The sample contains only 43–51 agents from 8–9 tasks, with shared task descriptions and hops
+within each workflow. These observations are not independent task replications. The decrease in
+redundancy concerns the retained path and does not ho</p></div></section><section id="L051"><h2>L051</h2><div class="side"><h3>A</h3><p class="before">tion
+motivates our second hypothesis.
+8
+Preprint
+Claim 2. </p><p class="sentence"><mark>Jointly learning coordination from orchestrator trajectories and bounded execu-
+tion from subagent trajectories may provide more effective RSI supervision than learning
+both from a single agent’s long-horizon trajectories.</mark></p><p class="after">
+5
+ABLATIONS
+5.1
+WHAT IS THE BOTTLENECK IN WORKFLOW OPTIMIZATION?
+0
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+0
+3
+6
+9
+12
+shared w0
+all 12 tasks
+workflow iteration i
+tasks won vs. bare (0)
+(0) (= agent = eval = opt)
+(0) (=agent); GPT-</p></div><div class="side"><h3>B</h3><p class="before">e-agent student trained on 1.4× more training tokens. </p><p class="sentence"><mark>These
+findings suggest that jointly learning orchestration and bounded subagent execu-
+tion from multi-agent trajectories can provide an effective signal for RSI.</mark></p><p class="after">
+§ code
+ blog
+workflow 
+self-optimizer
+workspace
+self-evaluator
+MASS from 
+optimal multi-agent workflow
+LLM Performance
+: LLM Agent
+Multi-agent executor
+: LLM
+: {                                                  }
+1 : { role: ... instruction : ...., output : ... }
+2 : { role: ... in</p></div></section><section id="L052"><h2>L052</h2><div class="side"><h3>A</h3><p class="before">-V4-Flash (paired learner-cluster boot-
+strap: significant on 2/7 and 1/7 datasets, mostly
+DBE-KT22 and Algebra05; the difference between
+the two gains is significant on 0/7). </p><p class="sentence"><mark>The recipe
+therefore helps both models a little, and which
+model reads the input decides whether deep KT
+is beaten.</mark></p><p class="after"> Two caveats concern the adapter. It reads
+P(correct) from a probability that the LLM writes
+as text, whereas Jev returns a distribution, so part
+of the gap may come from this readout; the reader
+swap in Secti</p></div><div class="side"><h3>B</h3><p class="before">With hyper-parameters tuned on the
+validation learners of each cell (four strong pyKT
+models, eight configurations each), deep KT stays
+below JevKT by +.070, +.042, +.030 and +.010 at
+N=8, 16, 32 and 64 (Holm-significant on 7/7, 7/7,
+5/7 and 4/7 datasets), so default hyper-parameters
+do not explain the gap.
+6
+Conclusion
+Yes, an off-the-shelf System-One LLM already per-
+forms KT when few or no learners are logged.
+Without any data from the target platform, Jev
+beats deep KT trained on 8 learners on average and
+prompted System-Two LLM-KT on every dataset,
+at a fraction of its cost; with evidence from the
+logged learners, JevKT stays ahead until super-
+vised KT catches up between 64 and 128 learners.
+</p><p class="sentence"><mark>Among the readers we tested, the gain comes from
+the model rather than the typed format; the input
+recipe helps other LLMs as much as it helps Jev.</mark></p><p class="after">
+Whether an open System-One model can match it
+remains open.
+Limitations
+Our finding concerns one closed System-One
+model</p></div></section><section id="L053"><h2>L053</h2><div class="side"><h3>A</h3><p class="before">abilities when the final response is generated by a stronger model rather than the
+original parent model. To be more specific, we fine-tune an open-source model such as Qwen3
+8
+Preprint
+</p><p class="sentence"><mark>Table 2: A strong proprietary model can use context from open-source SFT models to fur-
+ther improve fine-tuned capabilities.</mark></p><p class="after"> On NutriBench-English, using the context from Qwen3-4B
+achieves the best macro MAE. Best results are bolded and second-best results are underlined.
+Proprietary Model
+Open-Source SFT Models</p></div><div class="side"><h3>B</h3><p class="before">rmance. This
+flexibility is unique to SFT-as-context because it requires only standard text input-output access,
+without access to model weights or the fine-tuning process.
+</p><p class="sentence"><mark>As shown in Table 2, using responses from open-source SFT models as context consistently im-
+proves the performance of a strong proprietary model on NutriBench-English, achieving lower MAE
+than either model alone.</mark></p><p class="after"> This result also shows that the proprietary model does not merely copy the
+SFT response during inference. Instead</p></div></section><section id="L054"><h2>L054</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>Taken
+together, these analyses suggest a single underlying principle of SFT-as-context: the parent model
+leverages in-context learning to selectively acquire fine-tuned capabilities from the SFT responses
+while preserving its own general capabilities.</mark></p><p class="after">
+2
+SFT MODELS FORGET GENERAL CAPABILITIES
+In this section, we describe our experimental setup and then present the results showing that SFT
+improves fine-tuned capabilities while degrading general capabilities.
+2.1
+EXPERIMENT SETUP
+We evaluate models fine-tuned for three domains: mathematical reasoning, coding, and nutrition
+estimation</p></div><div class="side"><h3>B</h3><p class="before">We introduce SFT-as-context, a training-free method in which
+the parent model uses the SFT model’s response as context to answer the query.
+</p><p class="sentence"><mark>This allows the parent model to acquire fine-tuned capabilities from the SFT re-
+sponse through in-context learning while preserving its own general capabilities.</mark></p><p class="after">
+Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context re-
+mains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and
+2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE
+on NutriBench-English, while staying within 2.2 percentage points of the parent
+models on general capabilities on average</p></div></section><section id="L055"><h2>L055</h2><div class="side"><h3>A</h3><p class="before">ows that SFT-as-context largely
+preserves the harmful responses produced by the abliterated model. </p><p class="sentence"><mark>In other words, when fine-tuned
+and general capabilities conflict, the parent model follows the fine-tuned capability under SFT-as-
+2https:</mark></p><p class="after">//huggingface.co/huihui-ai/models
+29
+Preprint
+Table 6: SFT-as-context fails to recover the safety capability of the parent model when the con-
+text is adversarial. Abliterated models show far higher attack success rates (ASR) on HarmBench
+than their parent model</p></div><div class="side"><h3>B</h3><p class="before">ful responses produced by the abliterated model. In other words, when fine-tuned
+and general capabilities conflict, the parent model follows the fine-tuned capability under SFT-as-
+2https://huggingface.co/huihui-ai/models
+29
+Preprint
+</p><p class="sentence"><mark>Table 6: SFT-as-context fails to recover the safety capability of the parent model when the con-
+text is adversarial.</mark></p><p class="after"> Abliterated models show far higher attack success rates (ASR) on HarmBench
+than their parent models. SFT-as-context largely preserves the harmfulnes</p></div></section><section id="L056"><h2>L056</h2><div class="side"><h3>A</h3><p class="before">tion. </p><p class="sentence"><mark>Through the Benchmark Intermediate Representation (BIR), MedBenchA-
+gent separates specification planning from downstream item instantiation, allowing construction
+decisions to be evaluated stage by stage rather than only through the final benchmark.</mark></p><p class="after"> Our analy-
+ses identify open-ended task-space specification as the primary source of construction uncertainty,
+while annotation-evidence mapping and item instantiation become substantially more reliable once
+benchmark semantics are fixed. Eval</p></div><div class="side"><h3>B</h3><p class="before"></p><p class="sentence"><mark>Based on this formulation, we
+introduce MedBenchAgent, a multi-agent framework with a Benchmark Inter-
+mediate Representation (BIR) that encodes task definitions, evidence mappings,
+evaluation protocols, and item specifications across construction stages.</mark></p><p class="after"> MedBen-
+chAgent separates planning, which derives and verifies the specification, from
+instantiation, which constructs and audits items under the locked specification.
+MedBenchAgent achieves a Task-Space F1 of 90.9%, outperforming direct task
+induction (79.2–80.0%) and prior-guided induction (85.1%); 994 of 1,000 sampled
+items from correctly identified tasks pass human audit</p></div></section><section id="L057"><h2>L057</h2><div class="side"><h3>A</h3><p class="before">-9B backbone of Thinking-KT, reasoning
+does not help, as it is never significantly better than
+the same model without reasoning.
+Contributions.
+• Finding. </p><p class="sentence"><mark>With no learner logs, an off-the-shelf
+System-One LLM (Jev) outperforms deep KT
+trained on 8 learners on average and prompted
+System-Two LLM-KT on all seven datasets
+(RQ1).</mark></p><p class="after">
+• Where it holds. A cold-start evaluation on iden-
+tical targets (7 datasets; few training learners,
+new learners, new items) shows how long the
+lead lasts as learners are</p></div><div class="side"><h3>B</h3><p class="before">-start AUC (P1) of Jev against the best deep KT and the best LLM-based KT baseline with N training
+learners (mean over 5 seeds). </p><p class="sentence"><mark>Without training data, Jev0-shot is above LLM-based KT on all seven datasets and
+above deep KT trained on 8 learners on average; JevKT stays ahead of deep KT up to N=64 on average.</mark></p><p class="after"> Wins:
+datasets on which Jev beats every baseline in its block. †Best of 28 pyKT models, selected on test. ‡LOKT, the
+strongest LLM-based KT baseline. ◦N=0 value repeated (no answer options).</p></div></section><section id="L058"><h2>L058</h2><div class="side"><h3>A</h3><p class="before"></p><p class="sentence"><mark>Together with Table 3, these results show that UTT
+outperforms all KD baselines without parameter updates.</mark></p><p class="after"> However, because the two method fam-
+ilies primarily consume GPU training compute and API inference tokens, respectively, we do not
+interpret their resource measurements as strictly equivalent costs.
+C
+ABLATION STUDIES
+C.1
+EFFECTS OF CORE COMPONENTS AND BATCH SIZE
+Experimental setup.
+We examine knowledge-gap selection, the Prompter, validation gating,
+and batch size on Omni-MATH-2 under the Pro→Flash configuration</p></div><div class="side"><h3>B</h3><p class="before">(Omni-MATH-2 and KernelBench), UTT
+substantially improves the Student’s performance across various Teacher-Student settings. </p><p class="sentence"><mark>UTT also
+outperforms representative prompt engineering and KD methods.</mark></p><p class="after"> Compared with knowledge im-
+plicitly encoded in model parameters, the Primer is interpretable and not tied to particular model
+weights, enabling direct transfer to other models. This demonstrates that natural language can serve
+as a deployable knowledge carrier across models, providing a new parameter-</p></div></section><section id="L059"><h2>L059</h2><div class="side"><h3>A</h3><p class="before">by keeping the units with the largest sMASA(u) under the same budget
+as the baseline. If the budget is adaptive, units with non-positive scores can simply be skipped.
+</p><p class="sentence"><mark>Compared with the entrywise score in Eq. (3), MASA asks whether a unit helps reconstruct AX,
+not whether the entries inside the unit are large.</mark></p><p class="after">
+For a single query-key pair (i, j), let OX,i and Xj denote the corresponding row vectors of OX and
+X. Then
+sMASA(i, j) = 2Aij ⟨OX,i, Xj⟩−A2
+ij ∥Xj∥2
+2 .
+(8)
+This closed form shows why atte</p></div><div class="side"><h3>B</h3><p class="before">scores sparse patterns by the matrix-product approximation error
+LMASA(S; X) = ∥OX −OX,S∥2
+F = ∥(A −MS ⊙A)X∥2
+F .
+(6)
+When X = V , Eq. (6) becomes exactly the attention output error in Eq. (2). </p><p class="sentence"><mark>Thus, MASA changes
+sparse selection from preserving large entries of A to preserving the matrix product AX.</mark></p><p class="after"> Fig. 1
+gives a minimal two-column instance of this objective: although u2 has much lower mass, it receives
+a higher MASA score because it preserves AX substantially more accurately. We use the gener</p></div></section><section id="L060"><h2>L060</h2><div class="side"><h3>A</h3><p class="before">t-embedding-3-large
+all-mpnet-base-v2
+Unadjusted
+Perm.-adjusted
+Figure 5: Component-redundancy change from each curve’s value at i = 3. </p><p class="sentence"><mark>By i = 11, d
+TC(Z) falls
+in all four configurations; d
+TC(Z | T) falls in three and rises for permutation-adjusted MPNet.</mark></p><p class="after">
+We test the learning efficiency of multi-agent trajectories by fine-tuning L(0) on five different
+datasets. S uses 17 single-agent episodes, M uses 17 multi-agent episodes, X combines S and
+M, S+ uses 78 single-agent episodes, and S++ uses 29</p></div><div class="side"><h3>B</h3><p class="before">.19
+5.23
+4.87 ↓
+2.39
+2.68
+2.80
+2.57 ↑
+Table 13: Component redundancy (nats), with the same crown workflows and estimator variants as
+Table 12. </p><p class="sentence"><mark>From i = 3 to i = 11, unconditional d
+TC(Z) decreases in all four configurations and
+task-centered d
+TC(Z | T) in three; the permutation-adjusted MPNet estimate increases.</mark></p><p class="after">
+windows, are outside the audit’s coverage. All measurements use saved traces; no additional rollouts
+are required.
+The 220 student/base prompt files match the bare task prompts after tr</p></div></section></body></html>

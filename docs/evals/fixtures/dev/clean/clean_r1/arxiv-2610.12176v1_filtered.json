@@ -1,0 +1,401 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12176v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "008ce553-38d3-4d82-b46d-be74b17facb4",
+    "generated_at": "2026-10-19T14:00:43Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories.",
+      "claim_summary": "MASS alternates evolutionary workflow optimization with supervised fine-tuning on self-generated trajectories.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Through an evolutionary search constrained by structural guardrails, the model optimizes these computational-graph-like orchestrations, discovering the most effective distinct roles and information routing for a given task.",
+      "claim_summary": "Evolutionary search discovers effective roles and information routing for given tasks.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6\u00d7 higher performance per output tokens on four open-ended public benchmarks.",
+      "claim_summary": "Qwen3.6-27B with MASS achieves 1.2-1.6x higher token efficiency on public benchmarks.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model\u2019s capabilities.",
+      "claim_summary": "MASS enables continuous recursive bootstrapping as the model becomes a better optimizer and evaluator.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "claim_summary": "Multi-agent traces outperform single-agent training despite using 1.4x fewer tokens.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, ScienceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "claim_summary": "MASS increases test task win rate to 69.9% and benchmark token efficiency by 1.2-1.6x.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "claim_summary": "Post-training on task-solving trajectories simultaneously improves solving, workflow optimization, and evaluation.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "claim_summary": "Evaluator accuracy rises from 73% to 93% while workflow discovery speeds up.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "We further find that optimized workflows develop more task-specific information handoffs and routing, consistent with our information-flow hypothesis (Section 4.3).",
+      "claim_summary": "Workflows evolve more task-specific information handoffs and routing during optimization.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "claim_summary": "First-cycle multi-agent student hits 68.3% win rate, beating single-agent training with 1.4x tokens.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "claim_summary": "Workflow optimization is identified as the primary bottleneck in homogeneous RSI loops.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Finally, trajectory analysis provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).",
+      "claim_summary": "Post-training internalizes information-handoff coordination behaviors into model weights.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "claim_summary": "MASS improves performance across ScienceAgentBench, MLR-Bench, AstaBench, and DSBench.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "claim_summary": "Win rate against base model rises from 53.9% in cycle 1 to 69.9% in cycle 2.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "claim_summary": "Cycle 2 model achieves a 60.8% win rate over the cycle 1 model.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+      "claim_summary": "Workflows optimized by L(1) beat those from L(0) in 64% of comparisons.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "claim_summary": "Optimization increases task-specific routing information while reducing cross-component redundancy.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Jointly learning coordination from orchestrator trajectories and bounded execution from subagent trajectories may provide more effective RSI supervision than learning both from a single agent\u2019s long-horizon trajectories.",
+      "claim_summary": "Joint learning of coordination and subagent execution provides superior RSI supervision.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Both M and M + exceed this piecewise-linear reference at their respective token budgets by 8.3 and 6.3 percentage points.",
+      "claim_summary": "Multi-agent models outperform single-agent token efficiency references by 8.3 and 6.3 points.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+      "claim_summary": "M+ reaches 68.3% win rate using 31.4% fewer tokens than S++.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+      "claim_summary": "Delegation and code handoff occurrences increase dramatically across generations without prompting.",
+      "pass": "pass1"
+    },
+    {
+      "claim_text_verbatim": "Guided by early findings that multi-agent topologies excel at complex reasoning, MASS prompts a single base model to iteratively propose, execute, and self-evaluate multi-agent workflows.",
+      "claim_summary": "Guided by early findings that multi-agent topologies excel at complex reasoning, MASS prompts a single base model to iteratively propose, execute, and self-evaluate multi-agent workflows.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These findings suggest that jointly learning orchestration and bounded subagent execution from multi-agent trajectories can provide an effective signal for RSI.",
+      "claim_summary": "These findings suggest that jointly learning orchestration and bounded subagent execution from multi-agent trajectories can provide an effective signal for RSI.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "To this end, we propose Multi-Agent Self-Supervision (MASS) for RSI, a method that alternates between workflow optimization and model post-training (Figure 1).",
+      "claim_summary": "To this end, we propose Multi-Agent Self-Supervision (MASS) for RSI, a method that alternates between workflow optimization and model post-training (Figure 1).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Overall, our work introduces an algorithm that uses multi-agent coordination to generate self- supervision for RSI.",
+      "claim_summary": "Overall, our work introduces an algorithm that uses multi-agent coordination to generate self- supervision for RSI.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0).",
+      "claim_summary": "Figure 2 further compares score per output token: on these four research benchmarks, L(2) achieves 1.2\u20131.6\u00d7 higher score per output token than L(0).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Figure 3a compares L(g)(xt\u2295w(g,i) t ) with L(0)(xt) across workflow iterations i \u2208[10] and MASS generations g \u2208{0, 1, 2}, showing that post-trained models discover successful workflows earlier.",
+      "claim_summary": "Figure 3a compares L(g)(xt\u2295w(g,i) t ) with L(0)(xt) across workflow iterations i \u2208[10] and MASS generations g \u2208{0, 1, 2}, showing that post-trained models discover successful workflows earlier.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+      "claim_summary": "The agreement increases from 0.73 for L(0) to 0.91 for L(1) and 0.93 for L(2).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Together, these results support transfer from task-solving self-supervision to workflow optimization and self-evaluation without separate training targets for those roles.",
+      "claim_summary": "Together, these results support transfer from task-solving self-supervision to workflow optimization and self-evaluation without separate training targets for those roles.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This provides stronger evidence that the workflow optimizer itself naturally improves after post-training.",
+      "claim_summary": "This provides stronger evidence that the workflow optimizer itself naturally improves after post-training.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "At the same time, component redundancy generally decreases (Figure 5).",
+      "claim_summary": "At the same time, component redundancy generally decreases (Figure 5).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "claim_summary": "By i = 11, role and instruction information falls, while contract and hop information rises in all four configurations.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "By i = 11, d TC(Z) falls in all four configurations; d TC(Z | T) falls in three and rises for permutation-adjusted MPNet.",
+      "claim_summary": "By i = 11, d TC(Z) falls in all four configurations; d TC(Z | T) falls in three and rises for permutation-adjusted MPNet.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "claim_summary": "These results support higher performance per training token for multi-agent supervision in these runs.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Multi-agent executions generate approximately 2.4\u00d7 more tokens on average than single- agent executions and are preferred in 85.1% of external judgments overall.",
+      "claim_summary": "Multi-agent executions generate approximately 2.4\u00d7 more tokens on average than single- agent executions and are preferred in 85.1% of external judgments overall.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Among the 10 episode pairs with similar generated trace lengths, the multi-agent preference remains 80.0% (Ap- pendix D.3).",
+      "claim_summary": "Among the 10 episode pairs with similar generated trace lengths, the multi-agent preference remains 80.0% (Ap- pendix D.3).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This suggests that the quality advantage is not explained solely by longer inference.",
+      "claim_summary": "This suggests that the quality advantage is not explained solely by longer inference.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "A stronger optimizer reaches successful workflows substantially earlier, while the all-L(0) loop even- tually achieves unanimous wins on 11 of 12 tasks (Figure 7a).",
+      "claim_summary": "A stronger optimizer reaches successful workflows substantially earlier, while the all-L(0) loop even- tually achieves unanimous wins on 11 of 12 tasks (Figure 7a).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Replacing only the evaluator with GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.",
+      "claim_summary": "Replacing only the evaluator with GPT-5.5 yields less improvement than replacing both the evaluator and optimizer.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Thus, the evidence concerns the speed of workflow improvement, rather than an inability of the weaker model to discover useful workflows.",
+      "claim_summary": "Thus, the evidence concerns the speed of workflow improvement, rather than an inability of the weaker model to discover useful workflows.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Interestingly, improved workflow reachability (Figure 7a) does not guarantee stable optimization (Figure 7b): strong iterations can be followed by sharp performance regressions.",
+      "claim_summary": "Interestingly, improved workflow reachability (Figure 7a) does not guarantee stable optimization (Figure 7b): strong iterations can be followed by sharp performance regressions.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "We further analyze the size of successive workflow edits and find little Spearman correlation between textual edit size and the change in verdicts (|\u03c1edit| \u22640.12).",
+      "claim_summary": "We further analyze the size of successive workflow edits and find little Spearman correlation between textual edit size and the change in verdicts (|\u03c1edit| \u22640.12).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Near-unanimous outcomes also reverse under both small and large edits.",
+      "claim_summary": "Near-unanimous outcomes also reverse under both small and large edits.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Thus, the magnitude of the textual change from w(0,i\u22121) t to w(0,i) t is a weak predictor of the resulting performance change (Table 10 from Appendix E).",
+      "claim_summary": "Thus, the magnitude of the textual change from w(0,i\u22121) t to w(0,i) t is a weak predictor of the resulting performance change (Table 10 from Appendix E).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These behaviors emerge without providing the optimized workflow at inference time.",
+      "claim_summary": "These behaviors emerge without providing the optimized workflow at inference time.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These behaviors are also directly represented in the SFT data.",
+      "claim_summary": "These behaviors are also directly represented in the SFT data.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Among 114 audited teacher trajectories, 98 contain code handoffs and 57 contain subagent revisions; 79 and 37 of these trajectories, respectively, were sampled for SFT (Appendix G.2).",
+      "claim_summary": "Among 114 audited teacher trajectories, 98 contain code handoffs and 57 contain subagent revisions; 79 and 37 of these trajectories, respectively, were sampled for SFT (Appendix G.2).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Drawing on the Society of Mind, we address this by forming a multi-agent system from multiple copies of the model and distilling their collective gains as self-supervision, and we show this provides useful self-supervision in RSI.",
+      "claim_summary": "Drawing on the Society of Mind, we address this by forming a multi-agent system from multiple copies of the model and distilling their collective gains as self-supervision, and we show this provides useful self-supervision in RSI.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The retained workflow is the best under the sequential self-comparisons.",
+      "claim_summary": "The retained workflow is the best under the sequential self-comparisons.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The first-cycle training set contains 119 trajectories, yielding 2,435 windows: 282 orchestrator, 2,054 worker, and 99 auxiliary windows, with 17,221,055 supervised tokens.",
+      "claim_summary": "The first-cycle training set contains 119 trajectories, yielding 2,435 windows: 282 orchestrator, 2,054 worker, and 99 auxiliary windows, with 17,221,055 supervised tokens.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The first-cycle SFT run takes about 19 hours, including validation.",
+      "claim_summary": "The first-cycle SFT run takes about 19 hours, including validation.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The mean win share is 0.64 when both workflow sets are executed by (L(0)).",
+      "claim_summary": "The mean win share is 0.64 when both workflow sets are executed by (L(0)).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Under this matched prompt, M + records 352 wins, 306 losses, and two ties against the base: a 53.5% share.",
+      "claim_summary": "Under this matched prompt, M + records 352 wins, 306 losses, and two ties against the base: a 53.5% share.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "For L(0), L(1), and L(2), respectively, the mean rubric scores are 0.053 \u00b1 0.002, 0.055 \u00b1 0.004, and 0.067 \u00b1 0.017, where the standard deviations are computed over the three trial means.",
+      "claim_summary": "For L(0), L(1), and L(2), respectively, the mean rubric scores are 0.053 \u00b1 0.002, 0.055 \u00b1 0.004, and 0.067 \u00b1 0.017, where the standard deviations are computed over the three trial means.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Report-delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%).",
+      "claim_summary": "Report-delivery counts are 60/120 (50%), 69/120 (58%), and 91/120 (76%).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "claim_summary": "The means and sample standard deviations over three trials are 0.473 \u00b1 0.029, 0.465 \u00b1 0.011, and 0.482 \u00b1 0.025 for L(0), L(1), and L(2), respectively.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Among delivered reports, mean scores are 0.105, 0.095, and 0.088.",
+      "claim_summary": "Among delivered reports, mean scores are 0.105, 0.095, and 0.088.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "In percentages, the results are 37.5 \u00b1 2.2, 35.3 \u00b1 2.1, and 35.2 \u00b1 1.7 for L(0), L(1), and L(2), respectively.",
+      "claim_summary": "In percentages, the results are 37.5 \u00b1 2.2, 35.3 \u00b1 2.1, and 35.2 \u00b1 1.7 for L(0), L(1), and L(2), respectively.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The unweighted means and sample standard deviations of the three trial pass rates are 62.6 \u00b1 1.4%, 61.8 \u00b1 1.9%, and 61.1 \u00b1 0.6% for L(0), L(1), and L(2), respectively.",
+      "claim_summary": "The unweighted means and sample standard deviations of the three trial pass rates are 62.6 \u00b1 1.4%, 61.8 \u00b1 1.9%, and 61.1 \u00b1 0.6% for L(0), L(1), and L(2), respectively.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Across the eligible pools, the 210 multi-agent episodes average 141,844 generated tokens and the 103 single-agent episodes average 59,355.",
+      "claim_summary": "Across the eligible pools, the 210 multi-agent episodes average 141,844 generated tokens and the 103 single-agent episodes average 59,355.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The ratio of these means is 2.39, or approximately 2.4 times as many generated tokens for multi-agent execution.",
+      "claim_summary": "The ratio of these means is 2.39, or approximately 2.4 times as many generated tokens for multi-agent execution.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The pooled win rate is 85.1%; giving all eight task rates equal weight gives 79.3%.",
+      "claim_summary": "The pooled win rate is 85.1%; giving all eight task rates equal weight gives 79.3%.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Table 10 quantifies the weak association between edit size and changes in judged quality.",
+      "claim_summary": "Table 10 quantifies the weak association between edit size and changes in judged quality.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The workflow files at iterations 16 and 17 are byte-identical, as are their rendered task-plus-workflow prompts; both runs record generation seed 350053.",
+      "claim_summary": "The workflow files at iterations 16 and 17 are byte-identical, as are their rendered task-plus-workflow prompts; both runs record generation seed 350053.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Nevertheless, the first episode completes and wins all six external reporting judgments against the fixed bare-agent reference, whereas the second halts under loop detection and loses all six (Table 11).",
+      "claim_summary": "Nevertheless, the first episode completes and wins all six external reporting judgments against the fixed bare-agent reference, whereas the second halts under loop detection and loses all six (Table 11).",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This case illustrates why edit size alone cannot account for every regression.",
+      "claim_summary": "This case illustrates why edit size alone cannot account for every regression.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Unconditional total correlation falls in all four encoder/estimator combinations.",
+      "claim_summary": "Unconditional total correlation falls in all four encoder/estimator combinations.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The task-centered estimate falls in three; permutation-adjusted MPNet is the exception.",
+      "claim_summary": "The task-centered estimate falls in three; permutation-adjusted MPNet is the exception.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The base already performs the coordination patterns observed after SFT.",
+      "claim_summary": "The base already performs the coordination patterns observed after SFT.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "With this prompt, both models delegate in every episode; the base performs code handoffs in 103 of 110 episodes.",
+      "claim_summary": "With this prompt, both models delegate in every episode; the base performs code handoffs in 103 of 110 episodes.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "Under a bare prompt, the base\u2019s task 202 episode (seed 2154005) forms a six-worker pipeline and repairs an mmCIF-column mismatch after execution fails.",
+      "claim_summary": "Under a bare prompt, the base\u2019s task 202 episode (seed 2154005) forms a six-worker pipeline and repairs an mmCIF-column mismatch after execution fails.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This shows that both coordination and execution-conditioned repair are available before post-training.",
+      "claim_summary": "This shows that both coordination and execution-conditioned repair are available before post-training.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "These observations support increased bare-prompt use of coordination already available in the base.",
+      "claim_summary": "These observations support increased bare-prompt use of coordination already available in the base.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "The episode wins all six comparisons with its base reference.",
+      "claim_summary": "The episode wins all six comparisons with its base reference.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This case shows revision and checking without requiring a favorable scientific conclusion.",
+      "claim_summary": "This case shows revision and checking without requiring a favorable scientific conclusion.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "This episode receives five favorable judgments out of six, despite changing the physical meaning of success.",
+      "claim_summary": "This episode receives five favorable judgments out of six, despite changing the physical meaning of success.",
+      "pass": "pass2"
+    },
+    {
+      "claim_text_verbatim": "MASS instead tests whether the resulting execution traces can improve shared weights and subsequent workflow search.",
+      "claim_summary": "MASS instead tests whether the resulting execution traces can improve shared weights and subsequent workflow search.",
+      "pass": "pass2"
+    }
+  ]
+}

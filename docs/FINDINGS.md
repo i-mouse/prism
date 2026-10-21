@@ -26,6 +26,9 @@
 - **Sample-and-union (2 extractor calls):** estimated ~+0.2; dropped before building.
 - **Scoped auditor pilot (Exp 1):** 1 run, 44 claims, ~Rs 204. P1 passed (2/6 targets), P2 passed (positives held 6/6), P4 passed (0 errors). Failed P3: 4 of 11 baseline refusals flipped to supported. Code lowered once, wrongly (a positive). Negative result; AUDIT_MODE stays legacy. Code archived on tag `archive/exp1-scoped-auditor`.
 - **B5.1 checklist:** Archived, never merged. Refusals + positives shifted (6+12 -> 9+9 and 7+11) but net was unchanged (18). Same code gave different verdicts across runs.
+- **Experiment 1 (auditor thinking_level=high):** fixed rows 1/10 (needed >=3), lost hits 0/8. FAIL, rejected. AUDITOR_THINKING_LEVEL stays unset. Spend INR 411.95. See docs/decisions.md, "Experiment 1 result - Stage A FAIL, rejected - 2026-10-12".
+- **Experiment 2 (extractor few-shot claim-shape repair):** A1 FAIL (1/13 recovered, needed >=5/13), A2 FAIL (1-3=-2, needed >=3), A3 FAIL (kept 11/13 and 9/13, needed >=12/13), A4 PASS. All four required; FAIL, rejected. Diagnosis leans task-design problem (one list-all-claims call), not teaching. Spend INR 177.93. See docs/decisions.md, "Experiment 2 - Stage A result - 2026-10-14".
+- **Experiment 3 pre-checks (Checks A-E):** Checks A and D (the only ones with a pass/fail bar, >=95% WHOLE) both FAILED; best: regex splitter 75.6% (Check A), fixed windows 94.1% (Check D, FAIL by 1 row). The bar was set above the raw-text ceiling of 112/119 - a design error in the check. Decision: Experiment 3 uses fixed windows (6000/1500 chars) on raw PyMuPDF text. See docs/decisions.md, "Experiment 3 pre-checks result - 2026-10-14", and docs/evals/exp3_prechecks/.
 
 ## 5. Root finding
 - The auditor gets the full paper (no retrieval at audit stage). In 5 of 6 wrongly affirmed rows it verified a narrowed version of the claim.
@@ -34,7 +37,8 @@
 
 ## 6. Cost
 - ~Rs 500 on 7 Oct live runs.
-- ~Rs 204 on Exp 1 pilot.
+- ~Rs 204 on Exp 1 pilot (scoped-auditor pilot; not decisions.md Experiment 1, which cost INR 411.95).
+- Experiment 2 (extractor few-shot claim-shape repair): INR 177.93.
 - All audits are free.
 
 ## 7. Ops summary
@@ -51,5 +55,7 @@
 
 ## 9. What's next
 - **Stop rule:** Decision 9 Oct: stop core changes; clean up; ship with honest numbers.
+  Superseded by the 2026-10-10 release targets in decisions.md.
 - **New papers:** Label 2-3 new dev papers and 1 new sealed held-out (single-sentence rows, blind, before any run).
 - **Optional model test:** Run the same legacy auditor on a newer Flash model, once, against a fresh baseline, with marks written first.
+- **Experiment 3:** pre-checks done 2026-10-14 (fixed windows chosen as reader); not yet pre-registered. One more counted experiment before the exit decision (docs/decisions.md, "Push extension past Experiment 2 - 2026-10-14").

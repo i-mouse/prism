@@ -1,0 +1,41 @@
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\segmenter.py:66: SyntaxWarning: invalid escape sequence '\s'
+  for match in re.finditer('{0}\s*'.format(re.escape(sent)), self.original_text):
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\lang\arabic.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\lang\persian.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+PyMuPDF (fitz) version: 1.26.7
+Text source: freshly re-extracted via lib.extract_pdf_text_sync for this run - not read from any saved file.
+
+=== Check E Step 1: ceiling / splitter loss / reader loss (raw_pipeline_text) ===
+CEILING: 112/119 overall; 30/31 refusal-family
+  [pysbd_pdf_clean] SPLITTER LOSS (in ceiling, not WHOLE): 51 rows: ['P1-R2', 'P1-S2', 'P1-S3', 'P1-S4', 'P1-S6', 'P1-S8', 'P10-R2', 'P10-R3', 'P10-S1', 'P10-S2', 'P10-S5', 'P10-S7', 'P11-S1', 'P11-S6', 'P2-R1', 'P2-R3', 'P2-R4', 'P2-S2', 'P2-S3', 'P2-S5', 'P2-S6', 'P2-S7', 'P3-S1', 'P3-S2', 'P3-S4', 'P3-S5', 'P3-S7', 'P4-R1', 'P4-R3', 'P4-S4', 'P4-S7', 'P4-S8', 'P5-R3', 'P5-S3', 'P5-S4', 'P5-S5', 'P5-S6', 'P6-R1', 'P6-S3', 'P6-S5', 'P6-S8', 'P7-S4', 'P8-R1', 'P8-S1', 'P8-S2', 'P8-S3', 'P8-S7', 'P9-R1', 'P9-S2', 'P9-S3', 'P9-S7']
+  [pysbd_text_noclean] SPLITTER LOSS (in ceiling, not WHOLE): 106 rows: ['P1-R1', 'P1-R2', 'P1-R3', 'P1-S2', 'P1-S3', 'P1-S4', 'P1-S5', 'P1-S6', 'P1-S7', 'P1-S8', 'P1-S9', 'P10-R1', 'P10-R2', 'P10-R3', 'P10-S1', 'P10-S2', 'P10-S3', 'P10-S4', 'P10-S5', 'P10-S7', 'P10-S8', 'P11-R1', 'P11-R2', 'P11-R3', 'P11-S1', 'P11-S2', 'P11-S3', 'P11-S4', 'P11-S6', 'P11-S7', 'P12-R1', 'P12-R2', 'P12-S1', 'P12-S3', 'P12-S4', 'P12-S5', 'P12-S6', 'P12-S7', 'P12-S8', 'P2-R1', 'P2-R3', 'P2-R4', 'P2-S2', 'P2-S3', 'P2-S4', 'P2-S5', 'P2-S6', 'P2-S7', 'P2-S8', 'P3-R1', 'P3-R2', 'P3-S1', 'P3-S2', 'P3-S4', 'P3-S5', 'P3-S7', 'P4-R1', 'P4-R2', 'P4-R3', 'P4-S1', 'P4-S2', 'P4-S3', 'P4-S4', 'P4-S5', 'P4-S6', 'P4-S7', 'P4-S8', 'P5-R3', 'P5-S1', 'P5-S3', 'P5-S4', 'P5-S5', 'P5-S6', 'P5-S7', 'P6-R1', 'P6-R2', 'P6-S1', 'P6-S3', 'P6-S4', 'P6-S5', 'P6-S8', 'P7-R1', 'P7-R2', 'P7-S2', 'P7-S4', 'P7-S5', 'P7-S6', 'P7-S8', 'P8-R1', 'P8-R2', 'P8-R3', 'P8-S1', 'P8-S2', 'P8-S3', 'P8-S4', 'P8-S5', 'P8-S6', 'P8-S7', 'P8-S8', 'P9-R1', 'P9-S1', 'P9-S2', 'P9-S3', 'P9-S4', 'P9-S7', 'P9-S8']
+  [regex] SPLITTER LOSS (in ceiling, not WHOLE): 22 rows: ['P1-R1', 'P1-S3', 'P1-S7', 'P10-R3', 'P11-R1', 'P12-R1', 'P12-S1', 'P12-S4', 'P12-S5', 'P2-R1', 'P2-R3', 'P2-R4', 'P2-S6', 'P3-R2', 'P4-S8', 'P5-S3', 'P5-S5', 'P5-S6', 'P6-R1', 'P7-R1', 'P8-R2', 'P9-S4']
+READER LOSS (not in ceiling): 7 rows: ['P1-S1', 'P10-S6', 'P3-S6', 'P5-R2', 'P5-S2', 'P7-S1', 'P9-S6']
+
+=== Check E Step 2: per-row causes for reader-loss rows (raw_pipeline_text) ===
+  P1-S1 (2610.11519v1.pdf) refusal=False score=95.6 cause=other
+    diff: [-Acros-]s two students, two estimators, and three mathematical benchmarks,{+ 2 Preprint+} RA improves all 24 three-seed benchmark means of its base estimator, both combinations surpass teacher-only OPD, and Co-RA raises accuracy further with mixed changes in cov[-erage.-]
+  P3-S6 (2610.11135v1.pdf) refusal=False score=99.3 cause=hyphenation_or_linebreak
+    diff: At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC[---]matched shots alone to .724, and both together to .730.{+ +}
+  P5-R2 (2610.11291v1.pdf) refusal=True score=99.5 cause=other
+    diff: We evaluate across 17 teacher-student pairs spanning 1.5B to 235B parameters and three model families in both thinking and non-thinking modes, covering the most commonly used student-{+ +}teacher pairs in the OPD literature[-.-]
+  P5-S2 (2610.11291v1.pdf) refusal=False score=99.0 cause=other
+    diff: On the remaining three pairs, Semi-OPD still achieves comparable performance, with gaps of 0.1-{+ +}2.6%[-.-]
+  P7-S1 (2610.10590v1.pdf) refusal=False score=99.7 cause=hyphenation_or_linebreak
+    diff: {+ +}In an exploratory OpenTelemetry debugging case followed by an unrelated implementation task, the method ended with 231,951 provider[---]reported prompt tokens versus 912,492 under retained history, used 50% fewer cumulative input tokens, and had an estimated API cost of $1.28-$1.44 versus appro...[truncated]
+  P9-S6 (2610.12375v1.pdf) refusal=False score=99.4 cause=text_reordered
+    diff: [-Be-]yond the eight unit scenarios, a randomized campaign (40 random-DAG tasks × 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false int...[truncated]
+  P10-S6 (2610.12176v1.pdf) refusal=False score=99.4 cause=hyphenation_or_linebreak
+    diff: {+ +}Multi-agent executions generate approximately 2.4× more tokens on average than single[---]agent executions and are preferred in 85.1% of external judgments overall.
+cause counts: {'other': 3, 'hyphenation_or_linebreak': 3, 'text_reordered': 1}
+
+--- Check D candidate 3 (windows) 7 NOT_FOUND rows vs raw-text ceiling ---
+  P1-S1 (2610.11519v1.pdf): in raw-text ceiling = False
+  P3-S6 (2610.11135v1.pdf): in raw-text ceiling = False
+  P5-R2 (2610.11291v1.pdf): in raw-text ceiling = False
+  P5-S2 (2610.11291v1.pdf): in raw-text ceiling = False
+  P7-S1 (2610.10590v1.pdf): in raw-text ceiling = False
+  P9-S6 (2610.12375v1.pdf): in raw-text ceiling = False
+  P10-S6 (2610.12176v1.pdf): in raw-text ceiling = False

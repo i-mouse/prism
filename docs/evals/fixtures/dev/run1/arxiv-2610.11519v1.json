@@ -1,0 +1,958 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:36.833661+00:00",
+    "paper_id": "arxiv-2610.11519v1",
+    "filename": "2610.11519v1.pdf",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2"
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "supported",
+      "claim_summary": "Residual Advantage combines bounded teacher residual rewards with verifier advantages.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We propose Residual Advantage (RA), which treats the teacher\u2013student probability residual as a bounded one-step reward, subtracts the corresponding state value under the student policy to form a standard advantage, and centers the result within each response before adding it to the verifier advantage.",
+      "evidence_spans": [
+        {
+          "source_text": "At prefix s, we define the one-step reward of token v as the teacher\u2013student probability residual, Rs(v) = ds(v) = q(v | s) \u2212 p(v | s).",
+          "source_section": "Section 2.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Under the student policy, the state value of this reward is V p d (s) = Ev\u223cpRs(v) = \u27e8ps, ds\u27e9, its action value is the immediate reward Qd(s, a) = ds(a), and the token advantage is Ad s(a) = Qd(s, a) \u2212 V p d (s)",
+          "source_section": "Section 2.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "RA adds the centered local advantage, scaled by the guidance weight \u03bb, to the verifier advantage, \u03b4t = \u03bb (Ad t \u2212 A d), At = AV + \u03b4t",
+          "source_section": "Section 2.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "RA's guidance term maintains zero mean, preserving response-level verifier labels.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "evidence_spans": [
+        {
+          "source_text": "For every response,\nX\nt\nctAt = AV,\n\u03b4t \u2212\u03b4u = \u03bb (Ad\nt \u2212Ad\nu),\nso the verifier advantage is exactly the response\u2019s mean label and every difference between two decisions is preserved.",
+          "source_section": "Section 2.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "For any realized nonnegative weights with\nX\nt\nct = 1, the guidance term \u03b4t = \u03bb\nX\nu\u0338=t\ncu(Ad\nt \u2212Ad\nu) therefore satisfies\nX\nt\nct\u03b4t = 0,",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "Co-RA adapts teacher guidance by updating a teacher LoRA on student batches.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "evidence_spans": [
+        {
+          "source_text": "Each iteration scores a student batch, fixes its labels, and updates a teacher LoRA with the base estimator\u2019s verifier advantages while the student receives the guided label, much as actor and critic share a rollout batch in PPO (Schulman et al., 2017). The updated teacher supplies the distribution in the next iteration\u2019s residual, with the same advantage construction and weight as RA.",
+          "source_section": "Section 2.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "RA improves base algorithms in all 24 benchmark comparisons across models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means. The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+          "source_section": "Section 3 (RA improves all matched comparisons)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "1.7B RA+REINFORCE++ \u2212 REINFORCE++ +3.58 +5.76",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "4B RA+GRPO \u2212 GRPO +1.74 +3.89",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "RA outperforms teacher-only OPD, and Co-RA provides additional performance gains.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "label": "supported",
+      "claim_summary": "RA requires no learned components, thresholds, or training schedules.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The construction requires no schedule, threshold, or learned component.",
+      "evidence_spans": [
+        {
+          "source_text": "At prefix s, we define the one-step reward of token v as the teacher\u2013student probability residual, Rs(v) = ds(v) = q(v | s) \u2212 ps(v | s). Under the student policy, the state value of this reward is V pd (s) = Ev\u223cpRs(v) = \u27e8ps, ds\u27e9, its action value is the immediate reward Qd(s, a) = ds(a), and the token advantage is Ad s(a) = Qd(s, a) \u2212 V pd (s) = ds(a) \u2212 \u27e8ps, ds\u27e9 = \u27e8ea \u2212 ps, ds\u27e9.",
+          "source_section": "Section 2.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+          "source_section": "Section 2.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The method needs neither counterfactual continuations nor a separately fitted value head.",
+          "source_section": "Appendix B.9",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "RA scales guidance by student probability, focusing on uncertain student decisions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Scaled in this way by the student\u2019s own probability, it also stays small wherever the student is already sure, so the teacher mainly adjusts the choices the student is still weighing instead of imposing its preference on those the student has settled, and it does not inflate small disagreements into large labels.",
+      "evidence_spans": [
+        {
+          "source_text": "Confident tokens, with p(at) \u22650.9, are 61% of all tokens and receive under 1% of either label, as the factor 1\u2212p(a) predicts. The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The local advantage vanishes on a token the student has settled, whatever the teacher says, and by part (ii) logit b moves in expectation by p(b)(1 \u2212p(b)) times a bounded contrast, so the teacher acts most where the student is undecided.",
+          "source_section": "Section 2.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "partially_supported",
+      "claim_summary": "RA guidance naturally fades as student and teacher distributions converge.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "evidence_spans": [
+        {
+          "source_text": "(iii) |Ad(a)| \u2264 \u2225\u03c8a\u22252\u2225d\u22252 \u2264 \u221a2 (1 \u2212 p(a))\u2225d\u22252, and \u22121/2 \u2264 Ad(a) \u2264 2.",
+          "source_section": "Section 2.1 (Proposition 1)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+          "source_section": "Section 2.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+          "source_section": "Appendix C.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes. The implication runs one way. Small guidance can also arise when centering cancels large, nearly equal local advantages, and neither bound says how agreement or guidance evolve during training.",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "RA improves three-seed benchmark means in all 24 evaluated settings.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "evidence_spans": [
+        {
+          "source_text": "Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further. Three-seed means in %. Student rows are untrained, rows marked + add RA or Co-RA to the estimator above, bold marks the best per column and student, and the last row is the Qwen3-8B teacher; per-seed scores and SD are in Appendix D.",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed benchmark means. The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "RA provides substantial macro Avg@8 and Pass@8 improvements over baselines.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+      "evidence_spans": [
+        {
+          "source_text": "1.7B RA+REINFORCE++ \u2212 REINFORCE++ +3.58 +5.76",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "1.7B RA+GRPO \u2212 GRPO +2.37 +4.35",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4B RA+REINFORCE++ \u2212 REINFORCE++ +3.26 +6.33",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4B RA+GRPO \u2212 GRPO +1.74 +3.89",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "RA with REINFORCE++ achieves higher Pass@8 coverage than with GRPO.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "GRPO keeps the higher completion accuracy after guidance, but REINFORCE++ with RA has the higher macro Pass@8 at both sizes, a trade between accuracy and coverage that a single score would hide.",
+      "evidence_spans": [
+        {
+          "source_text": "+ RA 69.69 85.60 13.06 30.00 5.00 20.00 29.25 45.20",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "+ RA 70.96 86.47 11.81 24.44 6.81 23.33 29.86 44.75",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ RA 79.83 92.40 15.97 33.33 15.56 33.33 37.12 53.02",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ RA 81.33 92.40 17.50 33.33 13.89 30.00 37.57 51.91",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "RA combinations outperform teacher-only OPD in both Avg@8 and Pass@8.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+      "evidence_spans": [
+        {
+          "source_text": "1.7B RA+REINFORCE++ \u2212 OPD +1.80 +3.90",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "1.7B RA+GRPO \u2212 OPD +2.40 +3.45",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4B RA+REINFORCE++ \u2212 OPD +2.51 +3.84",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4B RA+GRPO \u2212 OPD +2.96 +2.73",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "label": "supported",
+      "claim_summary": "OPD learns slower and stays below RA+REINFORCE++ during training.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "In training, OPD also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of the shared budget (Appendix C).",
+      "evidence_spans": [
+        {
+          "source_text": "Among the one-response runs, OPD rises more slowly than REINFORCE++ at first and later exceeds it, while staying below RA+REINFORCE++ over most of the shared response budget, as the expanded early window shows.",
+          "source_section": "Appendix C",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "RA+REINFORCE++ outperforms sequential and joint OPD-RL baselines.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "At the same budget, OPD followed by REINFORCE++ reaches 28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++ (Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).",
+      "evidence_spans": [
+        {
+          "source_text": "The sequential run improves on both stages, reaching 28.39 macro Avg@8 and 43.61 Pass@8, and stays 0.86 and 1.59 points below RA+REINFORCE++, which spends the same budget in one stage.",
+          "source_section": "Appendix D.5",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At \u03b2 = 0.05, 0.2, and 0.6 it reaches 25.94, 26.14, and 25.82 macro Avg@8 and 39.71, 39.94, and 39.53 Pass@8.",
+          "source_section": "Appendix D.5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "The sampled variant reaches 24.80 macro Avg@8 and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below verifier-only REINFORCE++",
+          "source_section": "Appendix D.6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Co-RA further raises macro Avg@8 across all benchmark settings.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "evidence_spans": [
+        {
+          "source_text": "Co-RA+REINFORCE++ \u2212 RA+REINFORCE++ +1.45",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA+GRPO \u2212 RA+GRPO +1.03",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ Co-RA 71.13 85.80 14.17 33.33 6.81 20.00 30.70 46.38",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Co-RA combined with GRPO achieves highest accuracy for both model sizes.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Co-RA+GRPO is the most accurate run for both students.",
+      "evidence_spans": [
+        {
+          "source_text": "Co-RA+GRPO is the most accurate run for both students.",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ Co-RA 72.15 86.20 13.19 20.00 7.92 26.67 31.09 44.29",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ Co-RA 82.61 92.33 18.89 36.67 14.31 30.00 38.60 53.00",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Co-RA's adapted teacher becomes a worse solver but a better guide.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "evidence_spans": [
+        {
+          "source_text": "Every adapted teacher scores below the frozen teacher, by 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with the 4B student.",
+          "source_section": "Appendix D.9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "RA's advantage over baselines expands significantly up to Pass@512.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "evidence_spans": [
+        {
+          "source_text": "the margins over the untrained student at K = 8 and K = 512 are 7.6 and 6.6 points for REINFORCE++, 9.5 and 10.2 for OPD, and 13.4 and 16.9 for RA.",
+          "source_section": "Appendix D.7",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Table 28: Macro Pass@K up to K = 512, Qwen3-1.7B-Base with REINFORCE++. Three-seed means in %, with the increment from the previous K in gray.",
+          "source_section": "Table 28",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "Ablating the student value baseline consistently degrades RA performance.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Full RA (\u03bb) 28.84 29.25 29.29 44.94 45.20 45.29",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "w/o student value baseline (\u03b3x) 26.96 27.16 26.53 41.93 41.62 40.76",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "Removing both baselines shifts response means and degrades accuracy.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Removing both operations costs 1.73 Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by \u22120.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).",
+      "evidence_spans": [
+        {
+          "source_text": "Full RA (\u03bb) 28.84 29.25 29.29 44.94 45.20 45.29",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Raw residual (w/o both, \u03b3raw) 27.48 27.52 26.96 42.63 42.43 40.96",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The raw residual shifts every length group by a negative amount, \u22120.32 on average, with 26% of responses beyond 0.5.",
+          "source_section": "Section C.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "All 256 +0.03 0.30 \u22120.32 0.73",
+          "source_section": "Table 16",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "Response centering provides consistent accuracy improvements across weights.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Full RA (\u03bb) 28.84 29.25 29.29 44.94 45.20 45.29",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "w/o response centering (\u03bb) 28.37 28.71 28.66 44.46 44.74 44.67",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "Full RA shows lower performance variance across seeds than uncentered controls.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Across seeds, full RA also varies less than the uncentered control in macro Avg@8 at every weight (Table 23).",
+      "evidence_spans": [
+        {
+          "source_text": "28.84\u00b10.20",
+          "source_section": "Table 23",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "29.25\u00b10.25",
+          "source_section": "Table 23",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "29.29\u00b11.68",
+          "source_section": "Table 23",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "28.37\u00b10.76",
+          "source_section": "Table 23",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "28.71\u00b10.36",
+          "source_section": "Table 23",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "28.66\u00b12.19",
+          "source_section": "Table 23",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "RA improves performance over verifier-only training across all tested weights.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Verifier only (REINFORCE++)\n25.67\n39.44",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Full RA (\u03bb)\n28.84\n29.25\n29.29\n44.94\n45.20\n45.29",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "label": "supported",
+      "claim_summary": "The probability residual outperforms all log-ratio guidance variants.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+      "evidence_spans": [
+        {
+          "source_text": "Full RA q\u2212p both 10 29.25\u00b10.25 45.20\u00b11.81",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Clipped centered log ratio (c=5) log(q/p) both 0.6\u2020 28.04\u00b10.28 43.50\u00b10.59",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Verifier only (REINFORCE++) \u2013 \u2013 \u2013 25.67\u00b10.66 39.44\u00b11.65",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Fully centered log (\u03b3log) 0.05 26.61 / 41.47 26.30 / 40.29 26.59 / 40.96 26.50\u00b10.17 40.90\u00b10.59",
+          "source_section": "Table 24",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "label": "supported",
+      "claim_summary": "Direct squared-distance loss performs worse than RA across all weights.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "A full-vocabulary squared-distance loss, whose gradient at each visited prefix equals the expected update of the uncentered residual label (Appendix A.2), beats verifier-only training but stays below RA and the uncentered control at every weight (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Direct L2 loss (\u03b1) 27.83 28.02 27.71 43.39 43.44 42.96",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "label": "supported",
+      "claim_summary": "RA produces updates better aligned with the verifier than direct loss.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Because RA\u2019s teacher term acts on the tokens the verifier scores, 64% of its gradient mass raises correct or lowers incorrect responses, against 49% for the direct loss, and after clipping and Adam the teacher takes 0.28 of the update against 0.44, keeping RA\u2019s update closer to the verifier\u2019s direction (cosine 0.93 against 0.80).",
+      "evidence_spans": [
+        {
+          "source_text": "Outcome-compatible teacher mass 64% 60% 49%",
+          "source_section": "Table 17",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Teacher share of the update sT 0.28 0.31 0.44",
+          "source_section": "Table 17",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "cos(u, uV) 0.93 0.91 0.80",
+          "source_section": "Table 17",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "label": "supported",
+      "claim_summary": "Confident student tokens receive under 1% of RA guidance.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Confident tokens, with p(at) \u22650.9, are 61% of all tokens and receive under 1% of either label, as the factor 1\u2212p(a) predicts.",
+      "evidence_spans": [
+        {
+          "source_text": "p(at) \u22650.9 60.8% 0.4% (0.01\u00d7) 0.6% (0.01\u00d7)",
+          "source_section": "Table 15",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "RA concentrates most guidance on undecided student decision steps.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+      "evidence_spans": [
+        {
+          "source_text": "The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264 p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+          "source_section": "Section 4.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "0.1 \u2264 p(at) < 0.5 11.8% 58.9% (5.0\u00d7)",
+          "source_section": "Table 15",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "label": "supported",
+      "claim_summary": "Centered log ratio concentrates half its guidance on teacher-rare tokens.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "evidence_spans": [
+        {
+          "source_text": "q(at) < 10\u22124 3.8% 4.1% (1.1\u00d7) 50.1% (13\u00d7)",
+          "source_section": "Table 15",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "label": "supported",
+      "claim_summary": "Adding a teacher-peak branch slightly improves sampled OPD performance.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Under sampled OPD (Table 4) the branch raises macro Avg@8 from 24.80 to 25.10 and the Avg@8 of every seed.",
+      "evidence_spans": [
+        {
+          "source_text": "OPD, sampled token 62.31 82.47 7.64 20.00 4.44 13.33 24.80\u00b10.79 38.60\u00b12.42",
+          "source_section": "Table 27",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "S1 62.58 82.40 8.33 20.00 5.42 16.67 25.44 39.69",
+          "source_section": "Table 27",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "S2 61.33 80.80 6.67 16.67 3.75 10.00 23.91 35.82",
+          "source_section": "Table 27",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "S3 63.03 84.20 7.92 23.33 4.17 13.33 25.04 40.29",
+          "source_section": "Table 27",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Sampled OPD \u2013 63.23 83.27 7.50 20.00 4.58 14.44 25.10\u00b11.00 39.24\u00b12.53",
+          "source_section": "Table 21",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Sampled OPD \u2013 25.63 / 41.07 23.94 / 36.36 25.74 / 40.29",
+          "source_section": "Table 22",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "label": "supported",
+      "claim_summary": "Teacher-peak branch supervision degrades REINFORCE++ performance.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Under REINFORCE++, where \u03bb scales only the branch, it lowers macro Avg@8 by 0.38\u20131.76 points and Pass@8 by 0.46\u20132.11 points, a loss that grows with the branch weight.",
+      "evidence_spans": [
+        {
+          "source_text": "\u2206macro Avg@8 +0.30 \u22120.38 \u22120.88 \u22121.76 \u22122.05 \u22122.07 \u22122.16",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "\u2206macro Pass@8 +0.64 \u22120.46 \u22120.86 \u22122.11 \u22123.91 \u22123.41 \u22123.89",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "label": "supported",
+      "claim_summary": "Adding dense teacher-peak supervision degrades RA across all seeds.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "\u2206macro Avg@8 -2.05 -2.07 -2.16",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "\u2206macro Pass@8 -3.91 -3.41 -3.89",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Full RA (\u03bb) 28.84 29.25 29.29 44.94 45.20 45.29",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "label": "supported",
+      "claim_summary": "Ablating RA baselines or adding direct peak supervision reduces accuracy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "evidence_spans": [
+        {
+          "source_text": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P1-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P1-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-R3",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P1-S1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P1-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P1-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P1-S5",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P1-S6",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P1-S7",
+      "actual_index": 23
+    },
+    {
+      "expected_id": "P1-S8",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P1-S9",
+      "actual_index": null
+    }
+  ]
+}

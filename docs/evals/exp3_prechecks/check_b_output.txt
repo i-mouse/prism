@@ -1,0 +1,44 @@
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\segmenter.py:66: SyntaxWarning: invalid escape sequence '\s'
+  for match in re.finditer('{0}\s*'.format(re.escape(sent)), self.original_text):
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\lang\arabic.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+C:\Users\Imouse\AppData\Local\uv\cache\archive-v0\ceM5kVJHQiOMvao6\Lib\site-packages\pysbd\lang\persian.py:29: SyntaxWarning: invalid escape sequence '\.'
+  txt = re.sub('(?<={0})\.'.format(am), '∯', txt)
+=== Check B: sentence counts ===
+paper                                         splitter  total  pre-refs  refs? chunks(total) chunks(pre-refs)
+2610.10590v1.pdf                              pysbd_pdf_clean    611       543    yes            16               14
+2610.10590v1.pdf                              pysbd_text_noclean    935       863    yes            24               22
+2610.10590v1.pdf                              regex      342       315    yes             9                8
+2610.10871v1.pdf                              pysbd_pdf_clean   2116       388    yes            53               10
+2610.10871v1.pdf                              pysbd_text_noclean   2589      1297    yes            65               33
+2610.10871v1.pdf                              regex      499       252    yes            13                7
+2610.11132v1.pdf                              pysbd_pdf_clean   2941        52    yes            74                2
+2610.11132v1.pdf                              pysbd_text_noclean   3706      1265    yes            93               32
+2610.11132v1.pdf                              regex      811       213    yes            21                6
+2610.11135v1.pdf                              pysbd_pdf_clean   9436        53    yes           236                2
+2610.11135v1.pdf                              pysbd_text_noclean  10606      1309    yes           266               33
+2610.11135v1.pdf                              regex      586       175    yes            15                5
+2610.11291v1.pdf                              pysbd_pdf_clean   2647       895    yes            67               23
+2610.11291v1.pdf                              pysbd_text_noclean   3461      1573    yes            87               40
+2610.11291v1.pdf                              regex      392       190    yes            10                5
+2610.11312v1.pdf                              pysbd_pdf_clean   2385       828    yes            60               21
+2610.11312v1.pdf                              pysbd_text_noclean   3397      1203    yes            85               31
+2610.11312v1.pdf                              regex      722       192    yes            19                5
+2610.11519v1.pdf                              pysbd_pdf_clean   3751       773    yes            94               20
+2610.11519v1.pdf                              pysbd_text_noclean   4887      1148    yes           123               29
+2610.11519v1.pdf                              regex      765       188    yes            20                5
+2610.12114v1.pdf                              pysbd_pdf_clean   1561       621    yes            40               16
+2610.12114v1.pdf                              pysbd_text_noclean   2193       913    yes            55               23
+2610.12114v1.pdf                              regex      592       190    yes            15                5
+2610.12124v1.pdf                              pysbd_pdf_clean   2167       704    yes            55               18
+2610.12124v1.pdf                              pysbd_text_noclean   3037      1004    yes            76               26
+2610.12124v1.pdf                              regex      848       234    yes            22                6
+2610.12168v1.pdf                              pysbd_pdf_clean   1109       406    yes            28               11
+2610.12168v1.pdf                              pysbd_text_noclean   1629      1073    yes            41               27
+2610.12168v1.pdf                              regex      778       335    yes            20                9
+2610.12176v1.pdf                              pysbd_pdf_clean   2952       707    yes            74               18
+2610.12176v1.pdf                              pysbd_text_noclean   4080      1070    yes           102               27
+2610.12176v1.pdf                              regex      973       243    yes            25                7
+2610.12375v1.pdf                              pysbd_pdf_clean   1011       906    yes            26               23
+2610.12375v1.pdf                              pysbd_text_noclean   2271      2135    yes            57               54
+2610.12375v1.pdf                              regex      433       401    yes            11               11

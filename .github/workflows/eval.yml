@@ -57,6 +57,8 @@ jobs:
         run: uv sync --frozen
       - name: Run offline eval tests
         run: uv run pytest eval/tests/ -v
+      - name: Run service unit tests
+        run: uv run pytest tests/ -v
       - name: Check prompt leakage (eval-paper text, names, numbers)
         run: uv run python -m eval.check_prompt_leak
       - name: Check fixture freshness

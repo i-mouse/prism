@@ -1,0 +1,998 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11519v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2",
+    "generated_at": "2026-10-19T13:54:11Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "dropped_ungrounded": 2,
+  "dropped_duplicate": [
+    {
+      "sentence": "We propose Residual Advantage (RA), which treats the teacher\u2013student probability residual as a bounded one-step reward, subtracts the corresponding state value under the student policy to form a standard advantage, and centers the result within each response before adding it to the verifier advantage.",
+      "best_match": "We propose Residual Advantage (RA), which treats the teacher\u2013student probability residual as a bounded one-step reward, subtracts the corresponding state value under the student policy to form a standard advantage, and centers the result within each response before adding it to the verifier advantage.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Co- RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "best_match": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "ratio_score": 99.75308641975309,
+      "partial_ratio_score": 99.5049504950495
+    },
+    {
+      "sentence": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "best_match": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "best_match": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "To this end, we propose Residual Advantage (RA).",
+      "best_match": "To this end, we propose Residual Advantage (RA).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "best_match": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Scaled in this way by the student\u2019s own probability, it also stays small wherever the student is already sure, so the teacher mainly adjusts the choices the student is still weighing instead of imposing its preference on those the student has settled, and it does not inflate small disagreements into large labels.",
+      "best_match": "Scaled in this way by the student\u2019s own probability, it also stays small wherever the student is already sure, so the teacher mainly adjusts the choices the student is still weighing instead of imposing its preference on those the student has settled, and it does not inflate small disagreements into large labels.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The construction requires no schedule, threshold, or learned component.",
+      "best_match": "The construction requires no schedule, threshold, or learned component.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further.",
+      "best_match": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "best_match": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "best_match": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+      "best_match": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "GRPO keeps the higher completion accuracy after guidance, but REINFORCE++ with RA has the higher macro Pass@8 at both sizes, a trade between accuracy and coverage that a single score would hide.",
+      "best_match": "GRPO keeps the higher completion accuracy after guidance, but REINFORCE++ with RA has the higher macro Pass@8 at both sizes, a trade between accuracy and coverage that a single score would hide.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+      "best_match": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In training, OPD also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of the shared budget (Appendix C).",
+      "best_match": "In training, OPD also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of the shared budget (Appendix C).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At the same budget, OPD followed by REINFORCE++ reaches 28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++ (Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).",
+      "best_match": "At the same budget, OPD followed by REINFORCE++ reaches 28.39 and REINFORCE++ with an added reverse-KL loss 26.14, both below RA+REINFORCE++ (Appendix D.5), and sampling the log ratio at the generated token, with the same expected update at each prefix, drops OPD to 24.80 at 1.7B, below verifier-only training (Appendix D.6).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "best_match": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Co-RA+GRPO is the most accurate run for both students.",
+      "best_match": "Co-RA+GRPO is the most accurate run for both students.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "best_match": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "best_match": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "best_match": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Removing both operations costs 1.73 Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by \u22120.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).",
+      "best_match": "Removing both operations costs 1.73 Avg@8 and 2.77 Pass@8 points; the state value then also enters the response mean, shifting it by \u22120.32 on average and beyond 0.5 on a quarter of the offline responses (Table 16).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "best_match": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Table 2: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+      "best_match": "Table 2: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "best_match": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Across seeds, full RA also varies less than the uncentered control in macro Avg@8 at every weight (Table 23).",
+      "best_match": "Across seeds, full RA also varies less than the uncentered control in macro Avg@8 at every weight (Table 23).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "best_match": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+      "best_match": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "A full-vocabulary squared-distance loss, whose gradient at each visited prefix equals the expected update of the uncentered residual label (Appendix A.2), beats verifier-only training but stays below RA and the uncentered control at every weight (Table 2).",
+      "best_match": "A full-vocabulary squared-distance loss, whose gradient at each visited prefix equals the expected update of the uncentered residual label (Appendix A.2), beats verifier-only training but stays below RA and the uncentered control at every weight (Table 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Confident tokens, with p(at) \u22650.9, are 61% of all tokens and receive under 1% of either label, as the factor 1\u2212p(a) predicts.",
+      "best_match": "Confident tokens, with p(at) \u22650.9, are 61% of all tokens and receive under 1% of either label, as the factor 1\u2212p(a) predicts.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+      "best_match": "The residual puts 59% of its guidance on the 12% of tokens with 0.1 \u2264p(at) < 0.5, five times their share, where the student is choosing among live alternatives.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "best_match": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Under sampled OPD (Table 4) the branch raises macro Avg@8 from 24.80 to 25.10 and the Avg@8 of every seed.",
+      "best_match": "Under sampled OPD (Table 4) the branch raises macro Avg@8 from 24.80 to 25.10 and the Avg@8 of every seed.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Under REINFORCE++, where \u03bb scales only the branch, it lowers macro Avg@8 by 0.38\u20131.76 points and Pass@8 by 0.46\u20132.11 points, a loss that grows with the branch weight.",
+      "best_match": "Under REINFORCE++, where \u03bb scales only the branch, it lowers macro Avg@8 by 0.38\u20131.76 points and Pass@8 by 0.46\u20132.11 points, a loss that grows with the branch weight.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+      "best_match": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "best_match": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At fixed Q and \u03bb, the map q 7\u2192p\u22c6is nonexpansive in \u21132.",
+      "best_match": "At fixed Q and \u03bb, the map q 7\u2192p\u22c6is nonexpansive in \u21132.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "best_match": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "In Table 7, the rare action supplies most of the expected update despite its low sampling probability.",
+      "best_match": "In Table 7, the rare action supplies most of the expected update despite its low sampling probability.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "best_match": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Pairing each teacher\u2019s position with an agreement position isolates its own contribution.",
+      "best_match": "Pairing each teacher's position with an agreement position isolates its own contribution.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Local advantages and scores are both martingale differences under the student\u2019s sampling, so every cross-position term vanishes.",
+      "best_match": "Local advantages and scores are both martingale differences under the student's sampling, so every cross-position term vanishes.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Adding the raw log ratio improves both macro scores over plain REINFORCE++ at \u03b2 \u22640.6 and lowers both at \u03b2 \u22651.2, whereas the complete RA guidance term improves both at every tested weight (Tables 23 and 24).",
+      "best_match": "Adding the raw log ratio improves both macro scores over plain REINFORCE++ at \u03b2 \u22640.6 and lowers both at \u03b2 \u22651.2, whereas the complete RA guidance term improves both at every tested weight (Tables 23 and 24).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "best_match": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "With verifier feedback present in both guided runs, this comparison favors the complete RA construction over the raw log ratio.",
+      "best_match": "With verifier feedback present in both guided runs, this comparison favors the complete RA construction over the raw log ratio.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+      "best_match": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Response centering corrects the uncentered label mainly on responses shorter than 1,000 tokens (79% of the correction), in line with Section 4.1.",
+      "best_match": "Response centering corrects the uncentered label mainly on responses shorter than 1,000 tokens (79% of the correction), in line with Section 4.1.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The sampled variant reaches 24.80 macro Avg@8 and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below verifier-only REINFORCE++, and it is lower than full-vocabulary OPD on every benchmark score.",
+      "best_match": "The sampled variant reaches 24.80 macro Avg@8 and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below verifier-only REINFORCE++, and it is lower than full-vocabulary OPD on every benchmark score.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "A single sampled update can point against the expected one (Table 5), and in this setting the variance of the sampled estimate costs 2.65 macro Avg@8 points.",
+      "best_match": "A single sampled update can point against the expected one (Table 5), and in this setting the variance of the sampled estimate costs 2.65 macro Avg@8 points.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "Every adapted teacher scores below the frozen teacher, by 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with the 4B student.",
+      "best_match": "Every adapted teacher scores below the frozen teacher, by 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with the 4B student.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    },
+    {
+      "sentence": "The adapted teacher is a better guide for the student that trained it (Table 1) and a worse solver on its own, in line with the distinction between a strong solver and a good teacher drawn in Section 1.",
+      "best_match": "The adapted teacher is a better guide for the student that trained it (Table 1) and a worse solver on its own, in line with the distinction between a strong solver and a good teacher drawn in Section 1.",
+      "ratio_score": 100.0,
+      "partial_ratio_score": 100.0
+    }
+  ],
+  "kept_but_contained": [],
+  "kept_new": [
+    {
+      "sentence": "To this end, we propose Residual Advantage (RA).",
+      "best_match": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "ratio_score": 41.221374045801525,
+      "partial_ratio_score": 41.666666666666664
+    },
+    {
+      "sentence": "RA treats the probability difference d = q \u2212p as a bounded one-step reward.",
+      "best_match": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "ratio_score": 42.241379310344826,
+      "partial_ratio_score": 52.0
+    },
+    {
+      "sentence": "The guidance is thus student-relative twice over, as an advantage under the student\u2019s own next-token distribution and as a deviation within the student\u2019s own response.",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 52.72206303724929,
+      "partial_ratio_score": 50.29940119760479
+    },
+    {
+      "sentence": "The appeal of the construction is that it is both elegant and natural.",
+      "best_match": "The construction requires no schedule, threshold, or learned component.",
+      "ratio_score": 51.06382978723405,
+      "partial_ratio_score": 51.78571428571428
+    },
+    {
+      "sentence": "The local advantage is a single inner product, Ad(a) = \u27e8ea \u2212p, q \u2212p\u27e9, and three properties follow from it.",
+      "best_match": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "ratio_score": 41.93548387096774,
+      "partial_ratio_score": 43.689320388349515
+    },
+    {
+      "sentence": "It is the rate at which the squared distance 1 2\u2225p \u2212q\u22252 2 falls when the student moves probability toward a.",
+      "best_match": "RA treats the probability difference d = q \u2212p as a bounded one-step reward.",
+      "ratio_score": 45.90163934426229,
+      "partial_ratio_score": 45.333333333333336
+    },
+    {
+      "sentence": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "best_match": "It is the rate at which the squared distance 1 2\u2225p \u2212q\u22252 2 falls when the student moves probability toward a.",
+      "ratio_score": 50.364963503649626,
+      "partial_ratio_score": 56.48148148148149
+    },
+    {
+      "sentence": "Co-RA extends the construction to a teacher that learns from the student\u2019s attempts.",
+      "best_match": "Co-RA+GRPO is the most accurate run for both students.",
+      "ratio_score": 57.971014492753625,
+      "partial_ratio_score": 54.71698113207547
+    },
+    {
+      "sentence": "Across two students, two estimators, and three mathematical benchmarks, 2 Preprint RA improves all 24 three-seed benchmark means of its base estimator, both combinations surpass teacher-only OPD, and Co-RA raises accuracy further with mixed changes in coverage.",
+      "best_match": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "ratio_score": 45.070422535211264,
+      "partial_ratio_score": 65.48042704626334
+    },
+    {
+      "sentence": "The reward is immediate, so nothing is propagated to earlier positions; credit across positions comes from the verifier advantage.",
+      "best_match": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "ratio_score": 46.09375,
+      "partial_ratio_score": 45.08196721311475
+    },
+    {
+      "sentence": "Part (i) says what the local advantage measures.",
+      "best_match": "To this end, we propose Residual Advantage (RA).",
+      "ratio_score": 43.75,
+      "partial_ratio_score": 48.71794871794872
+    },
+    {
+      "sentence": "Part (ii) says what it does on average.",
+      "best_match": "Part (i) says what the local advantage measures.",
+      "ratio_score": 68.96551724137932,
+      "partial_ratio_score": 75.32467532467533
+    },
+    {
+      "sentence": "The update descends the squared distance to the teacher, and logit b moves by p(b)Ad(b), so the student\u2019s own probability of a token scales how far the teacher can move it.",
+      "best_match": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "ratio_score": 71.00591715976333,
+      "partial_ratio_score": 72.5
+    },
+    {
+      "sentence": "Since Ea\u223cp\u03c8a = 0, the student value baseline is applied automatically in expectation at a single prefix; its role appears only when local advantages are compared across prefixes (Appendix A.7).",
+      "best_match": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "ratio_score": 44.99999999999999,
+      "partial_ratio_score": 46.25
+    },
+    {
+      "sentence": "Part (iii) is where the residual parts from the log ratio, which estimates reverse-KL descent without bias but has no bound.",
+      "best_match": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "ratio_score": 45.86466165413534,
+      "partial_ratio_score": 47.45762711864406
+    },
+    {
+      "sentence": "The residual\u2019s bound gives the guidance bounds of Section 2.2.",
+      "best_match": "The appeal of the construction is that it is both elegant and natural.",
+      "ratio_score": 43.939393939393945,
+      "partial_ratio_score": 51.61290322580645
+    },
+    {
+      "sentence": "The local advantage vanishes on a token the student has settled, whatever the teacher says, and by part (ii) logit b moves in expectation by p(b)(1 \u2212p(b)) times a bounded contrast, so the teacher acts most where the student is undecided.",
+      "best_match": "The update descends the squared distance to the teacher, and logit b moves by p(b)Ad(b), so the student\u2019s own probability of a token scales how far the teacher can move it.",
+      "ratio_score": 52.322738386308075,
+      "partial_ratio_score": 54.65116279069768
+    },
+    {
+      "sentence": "None of this is imposed by hand.",
+      "best_match": "To this end, we propose Residual Advantage (RA).",
+      "ratio_score": 42.50000000000001,
+      "partial_ratio_score": 46.51162790697675
+    },
+    {
+      "sentence": "The relative comparison, the confidence scaling, the zero mean, and the bound are all read off one inner product.",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 47.45762711864406,
+      "partial_ratio_score": 50.442477876106196
+    },
+    {
+      "sentence": "RA adds the centered local advantage, scaled by the guidance weight \u03bb, to the verifier advantage, \u03b4t = \u03bb (Ad t \u2212A d), At = AV + \u03b4t, \u03bb \u22650.",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 43.260188087774296,
+      "partial_ratio_score": 46.2882096069869
+    },
+    {
+      "sentence": "For every response, X t ctAt = AV , \u03b4t \u2212\u03b4u = \u03bb (Ad t \u2212Ad u), (6) so the verifier advantage is exactly the response\u2019s mean label and every difference between two decisions is preserved.",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 53.00546448087431,
+      "partial_ratio_score": 56.707317073170735
+    },
+    {
+      "sentence": "Under the weighted inner product \u27e8u, v\u27e9c = P t ctutvt, the constant verifier label and the centered guidance term are orthogonal, and the label splits as \u2225A\u22252 2,c = (AV )2 + \u03bb2 Vart\u223cc(Ad t ).",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 42.35924932975871,
+      "partial_ratio_score": 44.44444444444444
+    },
+    {
+      "sentence": "The verifier decides how good the response is as a whole, and the teacher decides how that credit is shared among its steps.",
+      "best_match": "The guidance term has zero mean within each response, so the verifier advantage remains the response\u2019s mean label and the teacher only redistributes credit among the steps within it.",
+      "ratio_score": 52.94117647058824,
+      "partial_ratio_score": 64.51612903225806
+    },
+    {
+      "sentence": "Centering is the orthogonal projection onto zero-mean labels.",
+      "best_match": "Co-RA extends the construction to a teacher that learns from the student\u2019s attempts.",
+      "ratio_score": 46.896551724137936,
+      "partial_ratio_score": 52.52525252525253
+    },
+    {
+      "sentence": "The first bound limits each guidance term.",
+      "best_match": "The residual\u2019s bound gives the guidance bounds of Section 2.2.",
+      "ratio_score": 55.769230769230774,
+      "partial_ratio_score": 65.85365853658536
+    },
+    {
+      "sentence": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+      "best_match": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "ratio_score": 48.73563218390805,
+      "partial_ratio_score": 63.05732484076434
+    },
+    {
+      "sentence": "The log ratio also vanishes at exact agreement but admits no such bound, since it diverges at a token of vanishing student probability while \u2225p \u2212q\u22252 \u21920.",
+      "best_match": "It is the rate at which the squared distance 1 2\u2225p \u2212q\u22252 2 falls when the student moves probability toward a.",
+      "ratio_score": 45.38461538461539,
+      "partial_ratio_score": 48.88888888888889
+    },
+    {
+      "sentence": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further.",
+      "best_match": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "ratio_score": 49.16943521594684,
+      "partial_ratio_score": 50.59288537549407
+    },
+    {
+      "sentence": "RA improves every matched comparison.",
+      "best_match": "Co-RA+GRPO is the most accurate run for both students.",
+      "ratio_score": 39.56043956043956,
+      "partial_ratio_score": 42.10526315789473
+    },
+    {
+      "sentence": "The guidance transfers across estimators.",
+      "best_match": "The residual\u2019s bound gives the guidance bounds of Section 2.2.",
+      "ratio_score": 44.66019417475729,
+      "partial_ratio_score": 58.666666666666664
+    },
+    {
+      "sentence": "The gains are larger for REINFORCE++, narrowing its macro Avg@8 deficit to GRPO at both sizes.",
+      "best_match": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+      "ratio_score": 43.55555555555556,
+      "partial_ratio_score": 53.93258426966292
+    },
+    {
+      "sentence": "Verifier plus teacher improves on teacher-only distillation.",
+      "best_match": "The guidance transfers across estimators.",
+      "ratio_score": 45.54455445544554,
+      "partial_ratio_score": 49.31506849315068
+    },
+    {
+      "sentence": "Teaching the teacher on student rollouts raises accuracy in every tested setting.",
+      "best_match": "Co-RA extends the construction to a teacher that learns from the student\u2019s attempts.",
+      "ratio_score": 44.84848484848485,
+      "partial_ratio_score": 48.57142857142858
+    },
+    {
+      "sentence": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10).",
+      "best_match": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+      "ratio_score": 43.84615384615385,
+      "partial_ratio_score": 47.76119402985075
+    },
+    {
+      "sentence": "The margin over the untrained student persists up to Pass@512.",
+      "best_match": "The residual\u2019s bound gives the guidance bounds of Section 2.2.",
+      "ratio_score": 48.38709677419355,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "best_match": "Teaching the teacher on student rollouts raises accuracy in every tested setting.",
+      "ratio_score": 52.56410256410257,
+      "partial_ratio_score": 53.333333333333336
+    },
+    {
+      "sentence": "Table 2: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+      "best_match": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further.",
+      "ratio_score": 50.51903114186851,
+      "partial_ratio_score": 51.145038167938935
+    },
+    {
+      "sentence": "Table 3: The probability residual with both baselines is the best construction, and no log-ratio variant reaches it at any swept weight.",
+      "best_match": "Table 2: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+      "ratio_score": 48.44290657439446,
+      "partial_ratio_score": 50.66666666666666
+    },
+    {
+      "sentence": "The residual thus weights the forks of the student\u2019s own reasoning, consistent with the finding that a few high-entropy tokens carry most of the useful RL signal (Wang et al., 2025), whereas the log ratio puts it on tokens that one side considers nearly impossible.",
+      "best_match": "We propose Residual Advantage (RA), which treats the teacher\u2013student probability residual as a bounded one-step reward, subtracts the corresponding state value under the student policy to form a standard advantage, and centers the result within each response before adding it to the verifier advantage.",
+      "ratio_score": 46.913580246913575,
+      "partial_ratio_score": 47.924528301886795
+    },
+    {
+      "sentence": "Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+      "best_match": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "ratio_score": 46.88644688644688,
+      "partial_ratio_score": 47.36842105263158
+    },
+    {
+      "sentence": "It does answer the question it was designed for: stronger and denser teacher supervision does not by itself yield better performance.",
+      "best_match": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "ratio_score": 50.90909090909091,
+      "partial_ratio_score": 53.6
+    },
+    {
+      "sentence": "A student trained only to imitate the teacher benefits slightly from the teacher\u2019s top token, whereas both students trained with the verifier degrade, increasingly so with the branch weight under REINFORCE++.",
+      "best_match": "Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+      "ratio_score": 50.617283950617285,
+      "partial_ratio_score": 68.10344827586206
+    },
+    {
+      "sentence": "RA replaces the log ratio by the bounded residual, judges the chosen token against the student\u2019s own alternatives, and removes the teacher\u2019s response mean.",
+      "best_match": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "ratio_score": 51.71339563862929,
+      "partial_ratio_score": 53.003533568904594
+    },
+    {
+      "sentence": "What distinguishes RA is its restraint: the teacher acts not as a distillation target, as in these works, but as a critic-like signal within RL.",
+      "best_match": "The guidance is thus student-relative twice over, as an advantage under the student\u2019s own next-token distribution and as a deviation within the student\u2019s own response.",
+      "ratio_score": 46.945337620578776,
+      "partial_ratio_score": 50.70422535211267
+    },
+    {
+      "sentence": "at our matched budget both schedules stay below RA (Appendix D.5).",
+      "best_match": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "ratio_score": 42.553191489361694,
+      "partial_ratio_score": 44.27480916030534
+    },
+    {
+      "sentence": "Across two students, two estimators, and three benchmarks, RA improves every matched three-seed mean, both combinations surpass teacher-only OPD, and Co-RA improves accuracy further while its adapted teacher becomes a worse solver than the frozen one.",
+      "best_match": "Across two students, two estimators, and three mathematical benchmarks, 2 Preprint RA improves all 24 three-seed benchmark means of its base estimator, both combinations surpass teacher-only OPD, and Co-RA raises accuracy further with mixed changes in coverage.",
+      "ratio_score": 72.265625,
+      "partial_ratio_score": 71.31474103585657
+    },
+    {
+      "sentence": "Up to Pass@512 the margin of RA over the untrained student grows while that of verifier-only training narrows.",
+      "best_match": "The margin over the untrained student persists up to Pass@512.",
+      "ratio_score": 55.81395348837209,
+      "partial_ratio_score": 69.35483870967742
+    },
+    {
+      "sentence": "In particular d and Ad have the same expected update at a fixed prefix.",
+      "best_match": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "ratio_score": 46.57534246575342,
+      "partial_ratio_score": 48.22695035460993
+    },
+    {
+      "sentence": "On the closed simplex, this strictly concave function has the unique maximizer p\u22c6= \u03a0\u2206(q + Q/\u03bb), p\u22c6(v) = [q(v) + Q(v)/\u03bb \u2212\u03c4]+, where \u03c4 makes the entries sum to one.",
+      "best_match": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "ratio_score": 40.27777777777778,
+      "partial_ratio_score": 40.19607843137255
+    },
+    {
+      "sentence": "At fixed Q and \u03bb, the map q 7\u2192p\u22c6is nonexpansive in \u21132.",
+      "best_match": "Verifier plus teacher improves on teacher-only distillation.",
+      "ratio_score": 40.35087719298246,
+      "partial_ratio_score": 40.40404040404041
+    },
+    {
+      "sentence": "so the student-centered log ratio recovers the score contrast exactly, while the residual passes it through a student-weighted saturating map.",
+      "best_match": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "ratio_score": 47.67441860465116,
+      "partial_ratio_score": 52.066115702479344
+    },
+    {
+      "sentence": "A frozen solver need not be such a step for the current student, and RA builds its local advantage from the probability residual instead.",
+      "best_match": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "ratio_score": 46.01769911504425,
+      "partial_ratio_score": 48.90510948905109
+    },
+    {
+      "sentence": "The direct L2 control applies \u03b1Jpd at each visited prefix through a differentiable loss and matches the uncentered local expectation at \u03b1 = \u03bb; response centering, gradient noise, and optimizer state still separate the two training updates.",
+      "best_match": "A full-vocabulary squared-distance loss, whose gradient at each visited prefix equals the expected update of the uncentered residual label (Appendix A.2), beats verifier-only training but stays below RA and the uncentered control at every weight (Table 2).",
+      "ratio_score": 46.464646464646464,
+      "partial_ratio_score": 49.44812362030905
+    },
+    {
+      "sentence": "Since D/L \u21920, the residual pushes a confidently wrong mode more gently than the log ratio.",
+      "best_match": "Part (iii) is where the residual parts from the log ratio, which estimates reverse-KL descent without bias but has no bound.",
+      "ratio_score": 44.859813084112155,
+      "partial_ratio_score": 51.70068027210885
+    },
+    {
+      "sentence": "This is the usual distinction between Q and Q\u2212V ; in expectation, sampled OPD still follows the negative full-vocabulary reverse-KL gradient.",
+      "best_match": "Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+      "ratio_score": 44.3579766536965,
+      "partial_ratio_score": 45.945945945945944
+    },
+    {
+      "sentence": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "best_match": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "ratio_score": 48.93617021276596,
+      "partial_ratio_score": 50.45871559633027
+    },
+    {
+      "sentence": "In Table 7, the rare action supplies most of the expected update despite its low sampling probability.",
+      "best_match": "In particular d and Ad have the same expected update at a fixed prefix.",
+      "ratio_score": 48.554913294797686,
+      "partial_ratio_score": 51.06382978723405
+    },
+    {
+      "sentence": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes.",
+      "best_match": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "ratio_score": 52.27272727272727,
+      "partial_ratio_score": 52.208835341365464
+    },
+    {
+      "sentence": "Teacher guidance adds variation to the actor label while preserving its response mean.",
+      "best_match": "RA replaces the log ratio by the bounded residual, judges the chosen token against the student\u2019s own alternatives, and removes the teacher\u2019s response mean.",
+      "ratio_score": 47.30290456431535,
+      "partial_ratio_score": 53.503184713375795
+    },
+    {
+      "sentence": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "best_match": "In Table 7, the rare action supplies most of the expected update despite its low sampling probability.",
+      "ratio_score": 49.523809523809526,
+      "partial_ratio_score": 49.72375690607734
+    },
+    {
+      "sentence": "Pairing each teacher's position with an agreement position isolates its own contribution.",
+      "best_match": "Teaching the teacher on student rollouts raises accuracy in every tested setting.",
+      "ratio_score": 47.05882352941176,
+      "partial_ratio_score": 50.35971223021583
+    },
+    {
+      "sentence": "Local advantages and scores are both martingale differences under the student's sampling, so every cross-position term vanishes.",
+      "best_match": "The local advantage is a single inner product, Ad(a) = \u27e8ea \u2212p, q \u2212p\u27e9, and three properties follow from it.",
+      "ratio_score": 47.008547008547005,
+      "partial_ratio_score": 46.231155778894475
+    },
+    {
+      "sentence": "At one prefix the student value baseline leaves the expected update unchanged (Proposition 1(ii)).",
+      "best_match": "At a single prefix the student value baseline therefore has four times the raw trace variance whenever the latter is nonzero.",
+      "ratio_score": 58.29596412556054,
+      "partial_ratio_score": 63.29113924050633
+    },
+    {
+      "sentence": "Without the student value baseline this cancellation fails, and the disagreement levels of other prefixes enter each token\u2019s update through centering.",
+      "best_match": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "ratio_score": 52.76872964169381,
+      "partial_ratio_score": 53.65853658536586
+    },
+    {
+      "sentence": "The identity needs the stated assumptions, and the response-mean identity of Equation 6 needs none of them.",
+      "best_match": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "ratio_score": 49.302325581395344,
+      "partial_ratio_score": 50.98039215686274
+    },
+    {
+      "sentence": "The local advantages average to 3 \u00d7 10\u22124 per token, so the student value baseline holds in practice and the response mean carries no systematic part, and on responses longer than 1,000 tokens \u03bbA d has an SD below 0.03, as the hypotheses predict.",
+      "best_match": "The local advantage vanishes on a token the student has settled, whatever the teacher says, and by part (ii) logit b moves in expectation by p(b)(1 \u2212p(b)) times a bounded contrast, so the teacher acts most where the student is undecided.",
+      "ratio_score": 50.62240663900415,
+      "partial_ratio_score": 50.349650349650354
+    },
+    {
+      "sentence": "On shorter responses, where few tokens set the average, its SD is 0.32, and 8% of all responses carry |\u03bbA d| > 0.5, the scale of a verifier advantage.",
+      "best_match": "The reward is immediate, so nothing is propagated to earlier positions; credit across positions comes from the verifier advantage.",
+      "ratio_score": 47.14285714285714,
+      "partial_ratio_score": 50.847457627118644
+    },
+    {
+      "sentence": "Without centering these responses receive a response-level label that the verifier did not assign, and Equation 6 removes it for every response.",
+      "best_match": "The identity needs the stated assumptions, and the response-mean identity of Equation 6 needs none of them.",
+      "ratio_score": 49.40239043824701,
+      "partial_ratio_score": 47.663551401869164
+    },
+    {
+      "sentence": "The hypotheses of Proposition 4 thus describe the long responses, which carry most of the tokens, and the small gain of centering in Section 4.1, about half a point at every weight, is what acting on the rest is worth.",
+      "best_match": "The verifier decides how good the response is as a whole, and the teacher decides how that credit is shared among its steps.",
+      "ratio_score": 48.538011695906434,
+      "partial_ratio_score": 48.38709677419355
+    },
+    {
+      "sentence": "The verifier moves the response along its mean score direction and the teacher along the covariance between local advantages and scores.",
+      "best_match": "The verifier decides how good the response is as a whole, and the teacher decides how that credit is shared among its steps.",
+      "ratio_score": 57.692307692307686,
+      "partial_ratio_score": 57.64192139737992
+    },
+    {
+      "sentence": "The two label components are orthogonal, but these two parameter directions need not be, so the mean identity fixes the teacher\u2019s share of the label and not of the update.",
+      "best_match": "The verifier moves the response along its mean score direction and the teacher along the covariance between local advantages and scores.",
+      "ratio_score": 48.85993485342019,
+      "partial_ratio_score": 49.392712550607285
+    },
+    {
+      "sentence": "Each conditional term is the negative gradient of the local squared distance through that prefix\u2019s logits with the prefix held fixed; the identity does not differentiate the distribution of visited prefixes.",
+      "best_match": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "ratio_score": 48.257372654155496,
+      "partial_ratio_score": 49.22118380062306
+    },
+    {
+      "sentence": "Without the student value baseline the case u > t fails, because a later raw residual has conditional mean \u27e8pu, du\u27e9, and centering then couples position t to the disagreement levels of prefixes not yet visited.",
+      "best_match": "Without the student value baseline this cancellation fails, and the disagreement levels of other prefixes enter each token\u2019s update through centering.",
+      "ratio_score": 57.22222222222222,
+      "partial_ratio_score": 60.71428571428572
+    },
+    {
+      "sentence": "so response centering changes the expected update even though the student value baseline alone does not.",
+      "best_match": "The two teachers differ in both the expected logit update and the response-centered guidance term (Table 8).",
+      "ratio_score": 50.0,
+      "partial_ratio_score": 51.515151515151516
+    },
+    {
+      "sentence": "For the raw \u2113t the cross terms can survive because E[\u2113t | Ft] = \u2212KL(pt\u2225qt).",
+      "best_match": "The appeal of the construction is that it is both elegant and natural.",
+      "ratio_score": 41.379310344827594,
+      "partial_ratio_score": 44.44444444444444
+    },
+    {
+      "sentence": "The teacher part pushes toward the peak apart from the shift by \u00afhi, as the next proposition shows.",
+      "best_match": "Local advantages and scores are both martingale differences under the student's sampling, so every cross-position term vanishes.",
+      "ratio_score": 47.57709251101322,
+      "partial_ratio_score": 46.700507614213194
+    },
+    {
+      "sentence": "Teacher adaptation thus preserves the mean identity, bounded guidance, and uniform vanishing with distributional agreement at each scoring step, and the fixed-prefix expected-gradient identity holds with q = q\u03d5k.",
+      "best_match": "The guidance is thus student-relative twice over, as an advantage under the student\u2019s own next-token distribution and as a deviation within the student\u2019s own response.",
+      "ratio_score": 45.38258575197889,
+      "partial_ratio_score": 47.90419161676647
+    },
+    {
+      "sentence": "At a fixed student distribution, replacing a teacher by q + \u2206q changes the local advantage by \u27e8ea \u2212p, \u2206q\u27e9, as in Equation 26, so teacher adaptation changes the existing guidance without adding another student signal.",
+      "best_match": "Co-RA further updates a teacher LoRA with verifier advantages on the same scored student batch and uses the updated teacher in the next iteration\u2019s residual, adapting guidance to the student\u2019s attempts.",
+      "ratio_score": 48.325358851674636,
+      "partial_ratio_score": 50.38560411311054
+    },
+    {
+      "sentence": "Table 13 compares the teacher distributions of RA and Co-RA.",
+      "best_match": "Verifier plus teacher improves on teacher-only distillation.",
+      "ratio_score": 48.33333333333333,
+      "partial_ratio_score": 54.90196078431373
+    },
+    {
+      "sentence": "Adding the raw log ratio improves both macro scores over plain REINFORCE++ at \u03b2 \u22640.6 and lowers both at \u03b2 \u22651.2, whereas the complete RA guidance term improves both at every tested weight (Tables 23 and 24).",
+      "best_match": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+      "ratio_score": 48.257372654155496,
+      "partial_ratio_score": 45.484949832775925
+    },
+    {
+      "sentence": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "best_match": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+      "ratio_score": 51.533742331288344,
+      "partial_ratio_score": 63.07692307692307
+    },
+    {
+      "sentence": "With verifier feedback present in both guided runs, this comparison favors the complete RA construction over the raw log ratio.",
+      "best_match": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "ratio_score": 47.524752475247524,
+      "partial_ratio_score": 49.33333333333333
+    },
+    {
+      "sentence": "The method needs neither counterfactual continuations nor a separately fitted value head.",
+      "best_match": "Co-RA extends the construction to a teacher that learns from the student\u2019s attempts.",
+      "ratio_score": 49.71098265895954,
+      "partial_ratio_score": 52.121212121212125
+    },
+    {
+      "sentence": "RA maintains higher training accuracy than its verifier-only estimator over most of training.",
+      "best_match": "Teaching the teacher on student rollouts raises accuracy in every tested setting.",
+      "ratio_score": 48.275862068965516,
+      "partial_ratio_score": 49.68944099378882
+    },
+    {
+      "sentence": "Among the one-response runs, OPD rises more slowly than REINFORCE++ at first and later exceeds it, while staying below RA+REINFORCE++ over most of the shared response budget, as the expanded early window shows.",
+      "best_match": "In training, OPD also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of the shared budget (Appendix C).",
+      "ratio_score": 64.72303206997084,
+      "partial_ratio_score": 69.92481203007519
+    },
+    {
+      "sentence": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+      "best_match": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes.",
+      "ratio_score": 46.666666666666664,
+      "partial_ratio_score": 48.9451476793249
+    },
+    {
+      "sentence": "Correct-response mean length rises but stays below about 4,000 tokens.",
+      "best_match": "so response centering changes the expected update even though the student value baseline alone does not.",
+      "ratio_score": 43.67816091954023,
+      "partial_ratio_score": 46.875
+    },
+    {
+      "sentence": "The residual concentrates on tokens where the student is uncertain, whereas the log ratio concentrates on tokens that one side considers nearly impossible, above all on tokens the teacher assigns less than 10\u22124, where its label diverges (Proposition 3); Section 4.3 discusses the pattern.",
+      "best_match": "The centered log ratio puts 50% of its total on the 4% of tokens the teacher assigns less than 10\u22124, where its label diverges.",
+      "ratio_score": 53.623188405797094,
+      "partial_ratio_score": 70.63492063492063
+    },
+    {
+      "sentence": "The raw residual shifts every length group by a negative amount, \u22120.32 on average, with 26% of responses beyond 0.5.",
+      "best_match": "The relative comparison, the confidence scaling, the zero mean, and the bound are all read off one inner product.",
+      "ratio_score": 44.54148471615721,
+      "partial_ratio_score": 44.64285714285714
+    },
+    {
+      "sentence": "Averaged over 64 resampled tokens, the sampled teacher gradient matches its analytic expectation (cosine 0.994 for RA, norm ratio 1.001), so the gap does not lie in the expected teacher gradient.",
+      "best_match": "The local advantage vanishes on a token the student has settled, whatever the teacher says, and by part (ii) logit b moves in expectation by p(b)(1 \u2212p(b)) times a bounded contrast, so the teacher acts most where the student is undecided.",
+      "ratio_score": 46.75925925925925,
+      "partial_ratio_score": 47.692307692307686
+    },
+    {
+      "sentence": "The direct loss has the smaller gradient (0.43 of the verifier's, against 0.58), but it is deterministic given the prefixes, and after clipping and Adam it takes the larger share of the update, 0.44 against 0.28.",
+      "best_match": "Because RA\u2019s teacher term acts on the tokens the verifier scores, 64% of its gradient mass raises correct or lowers incorrect responses, against 49% for the direct loss, and after clipping and Adam the teacher takes 0.28 of the update against 0.44, keeping RA\u2019s update closer to the verifier\u2019s direction (cosine 0.93 against 0.80).",
+      "ratio_score": 50.82872928176796,
+      "partial_ratio_score": 57.0754716981132
+    },
+    {
+      "sentence": "On the next batch, RA's step raises the verifier objective 1.10\u20131.16 times as much as the direct loss's step and wins 66\u201374% of paired comparisons.",
+      "best_match": "Within the tested budget RA thus raises the coverage the student can reach.",
+      "ratio_score": 44.14414414414415,
+      "partial_ratio_score": 55.88235294117647
+    },
+    {
+      "sentence": "The ordering RA, uncentered label, direct loss holds on every seed for the shared-path term, the outcome-compatible mass, the teacher share, and the cosine with the verifier's step.",
+      "best_match": "The two label components are orthogonal, but these two parameter directions need not be, so the mean identity fixes the teacher\u2019s share of the label and not of the update.",
+      "ratio_score": 48.86363636363637,
+      "partial_ratio_score": 49.70414201183432
+    },
+    {
+      "sentence": "Response centering corrects the uncentered label mainly on responses shorter than 1,000 tokens (79% of the correction), in line with Section 4.1.",
+      "best_match": "so response centering changes the expected update even though the student value baseline alone does not.",
+      "ratio_score": 48.19277108433735,
+      "partial_ratio_score": 55.0561797752809
+    },
+    {
+      "sentence": "At every weight, each seed of RA with the branch falls below the same seed of RA.",
+      "best_match": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "ratio_score": 44.97041420118343,
+      "partial_ratio_score": 44.0251572327044
+    },
+    {
+      "sentence": "With REINFORCE++, each seed with the branch falls below the same verifier-only seed at the weights 5 and 10, and two of the three seeds do at 20.",
+      "best_match": "At every weight, each seed of RA with the branch falls below the same seed of RA.",
+      "ratio_score": 53.09734513274336,
+      "partial_ratio_score": 70.27027027027026
+    },
+    {
+      "sentence": "Table 23: Weight sweeps with the probability residual.",
+      "best_match": "At every weight, each seed of RA with the branch falls below the same seed of RA.",
+      "ratio_score": 45.925925925925924,
+      "partial_ratio_score": 50.0
+    },
+    {
+      "sentence": "The sequential run improves on both stages, reaching 28.39 macro Avg@8 and 43.61 Pass@8, and stays 0.86 and 1.59 points below RA+REINFORCE++, which spends the same budget in one stage.",
+      "best_match": "In training, OPD also starts more slowly than REINFORCE++ and stays below RA+REINFORCE++ over most of the shared budget (Appendix C).",
+      "ratio_score": 47.3186119873817,
+      "partial_ratio_score": 52.40174672489083
+    },
+    {
+      "sentence": "It is ahead of RA on AIME25 Avg@8 and behind on the other five benchmark scores, and every RA seed exceeds every sequential seed in macro Avg@8, whereas the Pass@8 seeds overlap.",
+      "best_match": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+      "ratio_score": 44.21052631578948,
+      "partial_ratio_score": 45.16129032258065
+    },
+    {
+      "sentence": "At \u03b2 = 0.05, 0.2, and 0.6 it reaches 25.94, 26.14, and 25.82 macro Avg@8 and 39.71, 39.94, and 39.53 Pass@8.",
+      "best_match": "At its best weight, \u03b2 = 0.2, it remains 1.97 Avg@8 and 2.70 Pass@8 points below full RA.",
+      "ratio_score": 43.87755102040817,
+      "partial_ratio_score": 45.238095238095234
+    },
+    {
+      "sentence": "Table 24: Weight sweeps with the log ratio.",
+      "best_match": "Table 23: Weight sweeps with the probability residual.",
+      "ratio_score": 76.28865979381443,
+      "partial_ratio_score": 86.07594936708861
+    },
+    {
+      "sentence": "The sampled variant reaches 24.80 macro Avg@8 and 38.60 Pass@8, 2.65 and 2.70 points below full-vocabulary OPD and 0.87 and 0.84 points below verifier-only REINFORCE++, and it is lower than full-vocabulary OPD on every benchmark score.",
+      "best_match": "The sequential run improves on both stages, reaching 28.39 macro Avg@8 and 43.61 Pass@8, and stays 0.86 and 1.59 points below RA+REINFORCE++, which spends the same budget in one stage.",
+      "ratio_score": 54.41527446300716,
+      "partial_ratio_score": 56.1307901907357
+    },
+    {
+      "sentence": "A single sampled update can point against the expected one (Table 5), and in this setting the variance of the sampled estimate costs 2.65 macro Avg@8 points.",
+      "best_match": "Its expected update at a prefix is the exact logit gradient of that distance, so the student\u2019s own probability of a token scales how strongly the teacher can move it.",
+      "ratio_score": 48.297213622291025,
+      "partial_ratio_score": 49.62406015037594
+    },
+    {
+      "sentence": "Pass@K is the share of problems solved at least once among the K completions, averaged over the three benchmarks and then over three seeds.",
+      "best_match": "The verifier moves the response along its mean score direction and the teacher along the covariance between local advantages and scores.",
+      "ratio_score": 48.727272727272734,
+      "partial_ratio_score": 50.76923076923077
+    },
+    {
+      "sentence": "Every run gains with K and the increments shrink, to 1.1, 1.3, and 1.3 points at the last doubling for the untrained student, REINFORCE++, and OPD, against 2.9 for RA; the margins over the untrained student at K = 8 and K = 512 are 7.6 and 6.6 points for REINFORCE++, 9.5 and 10.2 for OPD, and 13.4 and 16.9 for RA.",
+      "best_match": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "ratio_score": 42.92379471228615,
+      "partial_ratio_score": 49.16820702402958
+    },
+    {
+      "sentence": "Verifier-only training lifts macro Avg@8 by 12 to 15 points over the untrained students; RA adds 1.7 to 3.6 points and Co-RA 2.8 to 5.0 over the corresponding estimator.",
+      "best_match": "Under REINFORCE++, where \u03bb scales only the branch, it lowers macro Avg@8 by 0.38\u20131.76 points and Pass@8 by 0.46\u20132.11 points, a loss that grows with the branch weight.",
+      "ratio_score": 47.16417910447761,
+      "partial_ratio_score": 46.98795180722891
+    },
+    {
+      "sentence": "The most accurate 4B run, Co-RA+GRPO, ends 5.4 macro Avg@8 points below the teacher, 1.6 on MATH-500 and about 7 on each AIME set, and teacher-only OPD reaches 62% and 79% of the teacher's macro Avg@8 at the two sizes.",
+      "best_match": "It is ahead of RA on AIME25 Avg@8 and behind on the other five benchmark scores, and every RA seed exceeds every sequential seed in macro Avg@8, whereas the Pass@8 seeds overlap.",
+      "ratio_score": 45.45454545454546,
+      "partial_ratio_score": 47.297297297297305
+    },
+    {
+      "sentence": "Every trained run exceeds the untrained student's Pass@8 on every benchmark, and Appendix D.7 follows the 1.7B REINFORCE++ runs to Pass@512.",
+      "best_match": "The margin over the untrained student persists up to Pass@512.",
+      "ratio_score": 49.504950495049506,
+      "partial_ratio_score": 61.53846153846154
+    },
+    {
+      "sentence": "Every adapted teacher scores below the frozen teacher, by 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with the 4B student.",
+      "best_match": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "ratio_score": 59.47242206235013,
+      "partial_ratio_score": 59.2964824120603
+    },
+    {
+      "sentence": "The adapted teacher is a better guide for the student that trained it (Table 1) and a worse solver on its own, in line with the distinction between a strong solver and a good teacher drawn in Section 1.",
+      "best_match": "Teacher adaptation thus preserves the mean identity, bounded guidance, and uniform vanishing with distributional agreement at each scoring step, and the fixed-prefix expected-gradient identity holds with q = q\u03d5k.",
+      "ratio_score": 49.75845410628019,
+      "partial_ratio_score": 51.33689839572193
+    },
+    {
+      "sentence": "Table 30: The adapted teacher is a worse solver than the frozen teacher.",
+      "best_match": "Table 4: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+      "ratio_score": 51.06382978723405,
+      "partial_ratio_score": 54.54545454545454
+    }
+  ]
+}

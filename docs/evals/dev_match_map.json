@@ -1,0 +1,1080 @@
+{
+  "metadata": {
+    "prompt_hash": "cb3272cce551",
+    "fixture_file": "dev/run1",
+    "schema_version": 1
+  },
+  "rows": {
+    "P1-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "736edc9cc2265877472ba52fb2a085ba694321b22f5441dccc9c9a6302b0e0d8",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 32",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P1-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "4d7cfdb8f9b61e50ff75898c3f7d6224eb1c5e640cf68e7ffa3e09eac0748efc",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 7",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P1-S9": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P2-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P2-R4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P2-R5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "b7901565ff50bfbfb95d9a02dcdbc5512d547d6c7d69176cf5503235301a4e96",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 24",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P2-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P3-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "45cf7692de79aaab07678f5abb8941b10c86a0e749532851ea41e2bd71aa652d",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 3",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P3-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "032a2327cf2445735042650606b91bbcdcb56a086e244d3b1234a7154064858b",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 2",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "094187f9865a07c19f3294802aba07eb280db926cf3094c19cc8db9f8a69a4a2",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 30",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P4-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P4-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "f47a01e7b4362cc1ab55bceb437b5ebb43c9d57d8982666d30eab7e5aeb413b2",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 33",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "c93dd29064bdab10984b6aa360421ffdbef4a5b7015fd6503245de439092041f",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 1",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P5-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P5-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "57bae3b0869ac6aedf5454c69bd724d07e42cb523f9deac1444c32d6d9eac0b9",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 4",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "df0dcf5949900983d31345fd37ffd0ecc95e1f6899a20d6dafd02cd56eda8d88",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 3",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P6-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "396ab63a03f16d7cf407a245d3a8552dd28251e48278a2afaeb83b2e6b6d619b",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 5",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P7-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P7-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "bed07e8a7ef539750b8ff05957174b9c923a04c6450f708740225d1d803620d7",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 6",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "8b2e6213cb2e4e08dfe1e61f8b9f2c7383cd9a6e19a215d970d0c81a295e1964",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 7",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P8-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P8-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P9-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P9-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "aa5f49191a27d17a349a1d65e2d2bf6a681f2f08fbe9498a856c122c4bb42a68",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 3",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "314d257b8ea0377daf144c5920620c4a94e7351c78e9038d9b92dc46241931e8",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 4",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "0102d7e4d200ccb0ecaefefdc3f423119407dd8f294bf8791b8e32e86799ae16",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 16",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P10-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P11-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "55134925255d26532908b66685ae67a63281dc53165e98bb2789adeb5551e838",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 7",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-R3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P11-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P11-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-R1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "extraction miss - no claim in run 1 corresponds to this row",
+      "confirmed_no_match": true,
+      "suggested": null
+    },
+    "P12-R2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": "3ab63ee5061fbfa19caacce02c0ba77d30ebe789b15fdb8f52ce3c512f9ec2cb",
+      "decided_by": "Nitin + Claude chat (dev_adjudication_run1.md)",
+      "decided_on": "2026-10-12",
+      "reason": "adjudicated match to run1 claim index 0",
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S1": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S2": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S3": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S4": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S5": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S6": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S7": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    },
+    "P12-S8": {
+      "persisted_claim_id": null,
+      "claim_fingerprint": null,
+      "decided_by": null,
+      "decided_on": null,
+      "reason": null,
+      "confirmed_no_match": false,
+      "suggested": null
+    }
+  }
+}

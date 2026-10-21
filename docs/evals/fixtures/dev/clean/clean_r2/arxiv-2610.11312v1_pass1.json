@@ -1,0 +1,112 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.11312v1",
+    "run_id": "clean_r2",
+    "pass1_run": "pass2_r2",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "8ded6019-9807-4e1e-a42e-de3873a4d163",
+    "generated_at": "2026-10-19T14:18:07Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "Based on this formulation, we introduce MedBenchAgent, a multi-agent framework with a Benchmark Intermediate Representation (BIR) that encodes task definitions, evidence mappings, evaluation protocols, and item specifications across construction stages.",
+      "claim_summary": "MedBenchAgent introduces a multi-agent framework with a unified BIR structure"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent separates planning, which derives and verifies the specification, from instantiation, which constructs and audits items under the locked specification.",
+      "claim_summary": "MedBenchAgent separates planning specifications from concrete item instantiation"
+    },
+    {
+      "claim_text_verbatim": "MedBenchAgent achieves a Task-Space F1 of 90.9%, outperforming direct task induction (79.2\u201380.0%) and prior-guided induction (85.1%); 994 of 1,000 sampled items from correctly identified tasks pass human audit.",
+      "claim_summary": "MedBenchAgent reaches 90.9% Task-Space F1 and 99.4% human audit pass rate"
+    },
+    {
+      "claim_text_verbatim": "We further demonstrate portability to a specialized medical domain and evaluate twelve VLMs, revealing task- and setting-specific variation obscured by aggregate scores.",
+      "claim_summary": "Demonstrates domain portability and uncovers fine-grained VLM performance variations"
+    },
+    {
+      "claim_text_verbatim": "These results establish constrained compilation as a scalable and auditable framework for medical VLM benchmark construction beyond question generation.",
+      "claim_summary": "Constrained compilation provides a scalable and auditable framework for benchmark creation"
+    },
+    {
+      "claim_text_verbatim": "We address this challenge with MedBenchAgent, a multi-agent framework for systematic medical VLM benchmark construction.",
+      "claim_summary": "MedBenchAgent provides a multi-agent system for systematic medical VLM benchmark creation"
+    },
+    {
+      "claim_text_verbatim": "We cast benchmark construction as constrained compilation, in which the benchmark specification is progressively established from an intended evaluation scope, heterogeneous source annotations, and medical knowledge, with each confirmed decision narrowing the space of subsequent construction.",
+      "claim_summary": "Formulates benchmark construction as constrained compilation across stages"
+    },
+    {
+      "claim_text_verbatim": "Together, constrained compilation and the BIR provide an explicit mechanism for carrying semantic and evidential constraints from benchmark specification into downstream construction.",
+      "claim_summary": "Constrained compilation and BIR explicitly preserve semantic and evidential constraints"
+    },
+    {
+      "claim_text_verbatim": "In this way, MedBenchAgent extends automation from predefined medical scopes or question structures to benchmark specification itself, while preserving the annotation and medical constraints required for reliable construction.",
+      "claim_summary": "MedBenchAgent automates benchmark specification while preserving medical and annotation constraints"
+    },
+    {
+      "claim_text_verbatim": "In construction analysis, MedBenchAgent achieves a Task-Space F1 of 90.9%, compared with 79.2\u201380.0% for direct task induction and 85.1% when the same task prior is provided to the direct model.",
+      "claim_summary": "MedBenchAgent beats direct and prior-guided task induction in F1 score"
+    },
+    {
+      "claim_text_verbatim": "For correctly identified tasks, 994 of 1,000 sampled items pass human audit.",
+      "claim_summary": "994 out of 1,000 generated items pass human audit review"
+    },
+    {
+      "claim_text_verbatim": "Model evaluation reveals substantial variation across tasks, imaging settings, and evaluation metrics that aggregate scores can obscure, reinforcing fine-grained benchmark specification as an important component of medical VLM evaluation.",
+      "claim_summary": "Evaluation reveals task and metric variations masked by overall aggregate scores"
+    },
+    {
+      "claim_text_verbatim": "As shown in Table 1, BIR-mediated construction achieves 90.9% Task-Space F1, compared with 79.2\u201380.0% for direct induction.",
+      "claim_summary": "BIR-mediated task planning achieves 90.9% Task-Space F1"
+    },
+    {
+      "claim_text_verbatim": "Providing T0 improves direct DeepSeek-V4-Flash induction to 85.1% F1, while MedBenchAgent further increases precision from 76.9% to 87.0% at the same 95.2% recall, reducing false positives from six to three.",
+      "claim_summary": "MedBenchAgent raises precision to 87.0% and reduces false positive tasks"
+    },
+    {
+      "claim_text_verbatim": "All methods achieve 100% EMA on matched tasks.",
+      "claim_summary": "All tested methods achieve 100% evidence-mapping agreement on matched tasks"
+    },
+    {
+      "claim_text_verbatim": "Table 2 shows that 994 items pass, yielding a 99.4% consistency rate.",
+      "claim_summary": "Human audit confirms a 99.4% item consistency rate"
+    },
+    {
+      "claim_text_verbatim": "As shown in Table 3, medical VLMs outperform general-purpose VLMs by 6.23 points in Overall Acc. but trail by 2.48 points on AC, indicating that the aggregate advantage is not uniform across tasks.",
+      "claim_summary": "Medical VLMs beat general models overall but trail on assessment tasks"
+    },
+    {
+      "claim_text_verbatim": "To quantify such changes, we compare all 66 model pairs and find that 12\u201324 pairs (18.2\u201336.4%) reverse ordering between Overall Acc. and individual-task Acc.; within tasks, 4\u201315 pairs (6.1\u201322.7%) reverse between Acc. and F1.",
+      "claim_summary": "Model relative rankings reverse frequently across tasks and evaluation metrics"
+    },
+    {
+      "claim_text_verbatim": "Across these measures, 28\u201334 of 66 model pairs (42.4\u201351.5%) reverse ordering relative to Overall Acc.",
+      "claim_summary": "Over 40% of model rank pairs flip between overall accuracy and spatial metrics"
+    },
+    {
+      "claim_text_verbatim": "Across four medical VLMs, Acc. decreases by 5.86\u201317.97 percentage points (pp) and F1 by 6.33\u201322.61 pp (Table 5).",
+      "claim_summary": "Image blurring causes consistent drop in accuracy and F1 across medical VLMs"
+    },
+    {
+      "claim_text_verbatim": "All seven proposed tasks and their supporting-field mappings were retained without task-space revision.",
+      "claim_summary": "All seven ISIC dermoscopy task plans passed task-space review without changes"
+    },
+    {
+      "claim_text_verbatim": "All sampled items passed checks of reference\u2013evidence consistency, task\u2013query consistency, and evaluation-format integrity against the normalized annotations and locked task contracts.",
+      "claim_summary": "100% of sampled cross-domain items passed all consistency and integrity audits"
+    },
+    {
+      "claim_text_verbatim": "Our analyses identify open-ended task-space specification as the primary source of construction uncertainty, while annotation-evidence mapping and item instantiation become substantially more reliable once benchmark semantics are fixed.",
+      "claim_summary": "Fixing benchmark semantics stabilizes downstream mapping and item creation"
+    },
+    {
+      "claim_text_verbatim": "Together with the cross-domain instantiation under a specialized medical setting, these results show that constrained, multi-agent benchmark construction can support both scalable medical VLM evaluation and systematic study of the benchmark-construction process itself.",
+      "claim_summary": "Constrained multi-agent framework enables scalable evaluation and benchmark meta-analysis"
+    }
+  ]
+}

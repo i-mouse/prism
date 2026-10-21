@@ -1,0 +1,100 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12176v1",
+    "run_id": "clean_r1",
+    "pass1_run": "pass2_r1",
+    "prompt_hash": "7b3e37e260b9",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "008ce553-38d3-4d82-b46d-be74b17facb4",
+    "generated_at": "2026-10-19T14:00:43Z",
+    "failed_window_count": 0,
+    "no_filter": false,
+    "incomplete": false
+  },
+  "claims": [
+    {
+      "claim_text_verbatim": "To address this, we propose Multi-Agent Self-Supervision (MASS), an RSI method that alternates between evolutionary workflow optimization and supervised fine-tuning on self-generated trajectories.",
+      "claim_summary": "MASS alternates evolutionary workflow optimization with supervised fine-tuning on self-generated trajectories."
+    },
+    {
+      "claim_text_verbatim": "Through an evolutionary search constrained by structural guardrails, the model optimizes these computational-graph-like orchestrations, discovering the most effective distinct roles and information routing for a given task.",
+      "claim_summary": "Evolutionary search discovers effective roles and information routing for given tasks."
+    },
+    {
+      "claim_text_verbatim": "Over two MASS cycles with Qwen3.6-27B, the model achieves 1.2\u20131.6\u00d7 higher performance per output tokens on four open-ended public benchmarks.",
+      "claim_summary": "Qwen3.6-27B with MASS achieves 1.2-1.6x higher token efficiency on public benchmarks."
+    },
+    {
+      "claim_text_verbatim": "Because the improved model subsequently acts as a better optimizer and evaluator, this alternating framework enables a continuous, recursive bootstrapping of the model\u2019s capabilities.",
+      "claim_summary": "MASS enables continuous recursive bootstrapping as the model becomes a better optimizer and evaluator."
+    },
+    {
+      "claim_text_verbatim": "Moreover, multi-agent traces are also more training-efficient: a student trained on them outperforms a single-agent student trained on 1.4\u00d7 more training tokens.",
+      "claim_summary": "Multi-agent traces outperform single-agent training despite using 1.4x fewer tokens."
+    },
+    {
+      "claim_text_verbatim": "Across two MASS cycles, the trained model\u2019s win rate against the base model on the three test tasks increases from 53.9% to 69.9% (Section 4.2, Figure 3b), and on the four research benchmarks (MLR-Bench, ScienceAgentBench, DSBench, and AstaBench) its score per output token is 1.2\u20131.6\u00d7 that of the base model (Figure 2).",
+      "claim_summary": "MASS increases test task win rate to 69.9% and benchmark token efficiency by 1.2-1.6x."
+    },
+    {
+      "claim_text_verbatim": "Notably, post-training only on task-solving trajectories improves all three roles in the RSI loop: task solving, workflow optimization, and evaluation (Section 4.2, Figure 3).",
+      "claim_summary": "Post-training on task-solving trajectories simultaneously improves solving, workflow optimization, and evaluation."
+    },
+    {
+      "claim_text_verbatim": "The trained model discovers high-quality workflows faster, and the evaluator accuracy increases from 73% to 93%.",
+      "claim_summary": "Evaluator accuracy rises from 73% to 93% while workflow discovery speeds up."
+    },
+    {
+      "claim_text_verbatim": "We further find that optimized workflows develop more task-specific information handoffs and routing, consistent with our information-flow hypothesis (Section 4.3).",
+      "claim_summary": "Workflows evolve more task-specific information handoffs and routing during optimization."
+    },
+    {
+      "claim_text_verbatim": "The first-cycle multi-agent student achieves a 68.3% win rate against the base model, compared with 64.0% for a single-agent student trained on approximately 1.4\u00d7 more processed supervised tokens (Section 4.4, Figure 6).",
+      "claim_summary": "First-cycle multi-agent student hits 68.3% win rate, beating single-agent training with 1.4x tokens."
+    },
+    {
+      "claim_text_verbatim": "Our ablations further identify workflow optimization, rather than evaluation, as a major bottleneck in the homogeneous RSI loop (Section 5.1).",
+      "claim_summary": "Workflow optimization is identified as the primary bottleneck in homogeneous RSI loops."
+    },
+    {
+      "claim_text_verbatim": "Finally, trajectory analysis provides evidence that post-training internalizes information-handoff behaviors (Section 5.2).",
+      "claim_summary": "Post-training internalizes information-handoff coordination behaviors into model weights."
+    },
+    {
+      "claim_text_verbatim": "Performance improves on ScienceAgentBench from 28.7% to 31.8%, on MLR-Bench from 1.58 to 2.40, on AstaBench from 0.053 to 0.067, and on DSBench from 0.473 to 0.482.",
+      "claim_summary": "MASS improves performance across ScienceAgentBench, MLR-Bench, AstaBench, and DSBench."
+    },
+    {
+      "claim_text_verbatim": "On the three test tasks, L(1) achieves a 53.9% win rate against L(0), while L(2) reaches 69.9%.",
+      "claim_summary": "Win rate against base model rises from 53.9% in cycle 1 to 69.9% in cycle 2."
+    },
+    {
+      "claim_text_verbatim": "Directly comparing successive generations, L(2) also shows a larger gain over L(1), with a 60.8% win rate, compared with the 53.9% win rate of L(1) over L(0).",
+      "claim_summary": "Cycle 2 model achieves a 60.8% win rate over the cycle 1 model."
+    },
+    {
+      "claim_text_verbatim": "In this transfer setting, workflows optimized by L(1) outperform those optimized by L(0) in 64% of comparisons on average across 11 iterations and 12 tasks.",
+      "claim_summary": "Workflows optimized by L(1) beat those from L(0) in 64% of comparisons."
+    },
+    {
+      "claim_text_verbatim": "Optimized workflows increasingly place task-specific information in what agents communicate and how they are routed, while reducing redundant information across workflow components.",
+      "claim_summary": "Optimization increases task-specific routing information while reducing cross-component redundancy."
+    },
+    {
+      "claim_text_verbatim": "Jointly learning coordination from orchestrator trajectories and bounded execution from subagent trajectories may provide more effective RSI supervision than learning both from a single agent\u2019s long-horizon trajectories.",
+      "claim_summary": "Joint learning of coordination and subagent execution provides superior RSI supervision."
+    },
+    {
+      "claim_text_verbatim": "Both M and M + exceed this piecewise-linear reference at their respective token budgets by 8.3 and 6.3 percentage points.",
+      "claim_summary": "Multi-agent models outperform single-agent token efficiency references by 8.3 and 6.3 points."
+    },
+    {
+      "claim_text_verbatim": "More directly, M + reaches 68.3% with 28.82M processed supervised tokens, 4.3 points above S++ while using 31.4% fewer tokens.",
+      "claim_summary": "M+ reaches 68.3% win rate using 31.4% fewer tokens than S++."
+    },
+    {
+      "claim_text_verbatim": "Delegation rises from 1/110 trajectories for L(0) to 48/110 for L(1) and 87/110 for L(2), while code handoffs rise from 1/110 to 42/110 and 83/110, respectively.",
+      "claim_summary": "Delegation and code handoff occurrences increase dramatically across generations without prompting."
+    }
+  ]
+}

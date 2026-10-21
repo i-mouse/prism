@@ -1,0 +1,153 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12375v1",
+    "variant": "treatment",
+    "fewshot_fix": true,
+    "fewshot_shapes": true,
+    "prompt_hash": "da3a1ab6b587",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-14T08:08:56Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "To overcome this issue, we propose OnTrack, a streaming monitoring mechanism that, as the agent progresses in its task, compares its steps and the dependencies between them against recorded successful runs and alerts the user of potential issues or blocks the agent, taking about a millisecond per step.",
+      "claim_summary": "OnTrack compares agent steps against reference runs in ~1ms per step to detect issues"
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "Naturally, the expectation of the monitoring capability of OnTrack is reduced as data access is reduced, ranging from the detection of any violation of the plans to the detection of loops, stalls, and repeated tool calls without new results.",
+      "claim_summary": "OnTrack's capabilities gracefully degrade from plan monitoring to loop and stall detection as data access decreases"
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "claim_summary": "OnTrack ranks failing trajectories better than content similarity by +0.057 AUROC over the first 8 steps"
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "claim_summary": "Deploying an abort policy saves ~18% compute on failing agents with 83% precision"
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "As the run unfolds, the monitor compares this growing graph against reference solutions using optimal transport and flags potential issues in about a millisecond per step.",
+      "claim_summary": "OnTrack compares execution graphs to references using optimal transport in ~1ms per step"
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "With tool schemas alone, it still catches loops and stalls and blocks an irreversible action whose declared prerequisites are missing; with nothing but the event stream, loop and stall detection remain.",
+      "claim_summary": "OnTrack maintains loop, stall, and prerequisite checking capabilities even with reduced reference availability"
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "Nothing is reconfigured across these regimes; parts of the monitor simply switch off as their inputs disappear.",
+      "claim_summary": "OnTrack seamlessly adapts to lower data regimes without requiring manual reconfiguration"
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "For S1, the monitor only expects the parts of the reference the agent could have reached so far, so an agent is never punished for being early (Sec. 4.2).",
+      "claim_summary": "Frontier masking prevents punishing agents for executing steps ahead of reference progress"
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "For S2, a new step\u2019s structural influence starts at zero and phases in as later steps use its output; edges discovered late are inserted into the graph in place (Sec. 4.4).",
+      "claim_summary": "Structural influence phases in gradually for new steps, incorporating retroactively discovered dependencies seamlessly"
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "For S3, instead of re-solving the alignment at every step, we take one warm-started iteration of the batch solver per event \u2014 about a millisecond per step \u2014 and run the solver to convergence only before acting on an intervention (Sec. 4.3).",
+      "claim_summary": "Amortized warm-started conditional gradient enables ~1ms per-step runtime while maintaining optimization quality"
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "For S4, decisions come from per-step signals with a short grace window for new steps, never from the aggregate score (Sec. 4.5).",
+      "claim_summary": "Interventions are triggered by per-step signals with grace windows rather than aggregate scores"
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "At the end of the run, one final solve makes the monitor\u2019s output identical to the batch evaluator\u2019s \u2014 provided the dependencies discovered online match what batch extraction would find (Prop. 1).",
+      "claim_summary": "Final solve yields identical output to batch evaluation if online extracted dependencies match offline extraction"
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "All members of the currently executable antichain of R are active simultaneously, so an agent that executes independent reference steps in any topological order is never penalized for order (Prop. 2).",
+      "claim_summary": "Executing independent reference steps in any topological order does not incur penalization"
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "claim_summary": "Fast path per-event latency ranges from 0.85ms to 1.6ms on Apple M5 Max cores"
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "Per-node leakage separates cleanly \u2014 injected hallucinated steps reach \u2113 \u2265 0.66 while valid steps stay \u2264 0.24, comfortably bracketing \u03b8leak = 0.6.",
+      "claim_summary": "Per-node leakage clearly separates hallucinated steps (\u22650.66) from valid steps (\u22640.24)"
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "removing the GW term more than doubles the benign false-alarm count (29/40), to nearly the level of running no transport at all (L1-only 31/40, rule baseline 32/40).",
+      "claim_summary": "Omitting the GW quadratic structure term more than doubles false alarms on benign traces"
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "The end-of-stream discrepancy \u2014 the running fast-path diagnostic against the eventual finalization output, as defined in the remark after Prop. 1 \u2014 never exceeds 0.013 across the campaign (and is 0 after finalization); per-event runtime spans 0.2\u20131.6 ms.",
+      "claim_summary": "Fast-path running diagnostic stays within 0.013 of final converged output across synthetic campaign runs"
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "At k=8, OnTrack achieves TPR 6.6% / 23.2% / 33.3% at FPR 1% / 5% / 10%, compared to cosine 1.5% / 9.6% / 20.7% and n steps 1.0% / 5.6% / 13.6%.",
+      "claim_summary": "At step 8, OnTrack achieves higher true positive rates than baselines across low false positive regimes"
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+      "claim_summary": "Severe-flag density abort policy at 0.60 threshold yields 17.9% compute savings on unresolved traces"
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+      "claim_summary": "Abort policy achieves ~83% deployment precision given the 81% baseline failure rate on SWE-bench"
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "Table 7 shows that OnTrack score (0.979) and flags (0.977) dominate cosine (0.557) and statistically match n steps (0.978).",
+      "claim_summary": "OnTrack score (0.979 AUROC) and flags (0.977 AUROC) effectively detect cost-limit process anomalies"
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "The severe-flag density trigger (th=0.60) fires on 90% of cost-limit traces, at a median of 58.6% of the trace elapsed \u2014 i.e., with \u224841% of the eventual trajectory steps still ahead at detection.",
+      "claim_summary": "Severe-flag density trigger catches 90% of cost-limit failures with ~41% of trajectory steps remaining"
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "On a balanced sample (50 resolved, 50 unresolved), no method reliably separates outcomes (Table 8): OnTrack reaches 0.581, cosine 0.643, with widely overlapping bootstrap CIs.",
+      "claim_summary": "Neither OnTrack nor content baselines reliably predict full trajectory resolution on balanced samples"
+    },
+    {
+      "index": 23,
+      "claim_text_verbatim": "When resolved/unresolved pairs are matched within \u00b13 steps (50 pairs, mean 30.6 steps in both classes), all trajectory-level signals collapse toward chance: OnTrack score 0.526, cosine 0.540, n steps 0.500 by construction.",
+      "claim_summary": "On length-matched trace pairs, trajectory outcome prediction signals collapse toward chance performance"
+    },
+    {
+      "index": 24,
+      "claim_text_verbatim": "Empirically this is a negative result: at \u03b3eff = 0.3 the coupling quality degrades across ablations (on a held-out tool-calling corpus, mean ablation AUROC drops from 0.825 to 0.715), because observations are high-variance \u2014 correct and incorrect executions of the same step both produce textually different outputs every time, so the effect term dilutes the action/tool signal that correctly drives the alignment.",
+      "claim_summary": "Blending observation alignments into transport cost degrades coupling performance from 0.825 to 0.715 AUROC"
+    },
+    {
+      "index": 25,
+      "claim_text_verbatim": "at shipped thresholds the quadratic structure term selects a point with less than half the benign false-alarm rate of every reference-free variant (13/40 vs. 29\u201332/40 benign traces flagged; removing the frontier mask instead shifts the count by one trace)",
+      "claim_summary": "The quadratic structure term cuts benign false alarm rate in half compared to reference-free variants"
+    },
+    {
+      "index": 26,
+      "claim_text_verbatim": "Cost-limit failures are detected at 0.979 AUROC, on par with trace length post hoc but available as a calibrated trigger mid-trace.",
+      "claim_summary": "OnTrack detects cost-limit failures mid-trace at 0.979 AUROC"
+    }
+  ]
+}

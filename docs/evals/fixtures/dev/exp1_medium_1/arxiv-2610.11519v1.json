@@ -1,0 +1,130 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:36.833661+00:00",
+    "paper_id": "arxiv-2610.11519v1",
+    "filename": "2610.11519v1.pdf",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-10-12T15:43:13Z"
+    },
+    "claims_scope": [
+      32,
+      7
+    ]
+  },
+  "claims": [
+    {
+      "index": 32,
+      "label": "supported",
+      "claim_summary": "Ablating RA baselines or adding direct peak supervision reduces accuracy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "evidence_spans": [
+        {
+          "source_text": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "RA guidance naturally fades as student and teacher distributions converge.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "evidence_spans": [
+        {
+          "source_text": "(iii) |Ad(a)| \u2264\u2225\u03c8a\u22252\u2225d\u22252 \u2264 \u221a 2 (1 \u2212p(a))\u2225d\u22252, and \u22121 2 \u2264Ad(a) \u22642.",
+          "source_section": "Section 2.1 (Proposition 1)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+          "source_section": "Section 2.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P1-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P1-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-R3",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P1-S1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P1-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P1-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P1-S5",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P1-S6",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P1-S7",
+      "actual_index": 23
+    },
+    {
+      "expected_id": "P1-S8",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P1-S9",
+      "actual_index": null
+    }
+  ]
+}

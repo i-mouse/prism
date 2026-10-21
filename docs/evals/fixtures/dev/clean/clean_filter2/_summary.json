@@ -1,0 +1,24 @@
+{
+  "calls": 1,
+  "total_prompt_tokens": 8600,
+  "total_output_tokens": 3649,
+  "total_thought_tokens": 0,
+  "cost_inr": 2.01,
+  "pass2_cost_inr": 0.0,
+  "filter_cost_inr": 2.01,
+  "fallback_calls": 0,
+  "non_stop_finish_reasons": [],
+  "records": [
+    {
+      "paper_id": "arxiv-2610.10590v1",
+      "call_kind": "filter",
+      "model_used": "gemini-3.6-flash",
+      "prompt_tokens": 8600,
+      "output_tokens": 3649,
+      "thought_tokens": 0,
+      "total_tokens": 12249,
+      "finish_reason": "STOP",
+      "latency_s": 15.019334100000378
+    }
+  ]
+}

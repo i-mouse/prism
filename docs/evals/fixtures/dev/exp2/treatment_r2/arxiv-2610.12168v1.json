@@ -1,0 +1,148 @@
+{
+  "header": {
+    "paper_id": "arxiv-2610.12168v1",
+    "variant": "treatment",
+    "fewshot_fix": true,
+    "fewshot_shapes": true,
+    "prompt_hash": "da3a1ab6b587",
+    "model_name": "gemini-3.6-flash",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "replay": {
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-10-14T08:13:55Z"
+    }
+  },
+  "claims": [
+    {
+      "index": 0,
+      "claim_text_verbatim": "We introduce a self-improvement loop for reasoning models based on the following observation: Even when the difficulty of a problem exceeds the model\u2019s current solving abilities, an additionally supplied solution might enable the model to extract useful solution ideas in hindsight.",
+      "claim_summary": "Self-improvement loop uses supplied solutions to extract hindsight solution ideas."
+    },
+    {
+      "index": 1,
+      "claim_text_verbatim": "We operationalize this by jointly training the same model to exhibit the following three capabilities: predicting solution ideas from problems alone, reverse-engineering ideas from problems and known solutions, and solving problems using provided ideas.",
+      "claim_summary": "Model is jointly trained for foresight, hindsight, and problem solving using ideas."
+    },
+    {
+      "index": 2,
+      "claim_text_verbatim": "The loop alternates between reverse engineering such ideas from problems with supplied solutions and using these ideas as additional supervision for joint training of all three capabilities.",
+      "claim_summary": "Training alternates between reverse-engineering ideas and joint training on all capabilities."
+    },
+    {
+      "index": 3,
+      "claim_text_verbatim": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+      "claim_summary": "Formal method specification and Lean instantiation provided, without empirical evaluation yet."
+    },
+    {
+      "index": 4,
+      "claim_text_verbatim": "Such a reconstructed idea can then provide additional supervision for learning to develop a solution idea from the problem alone, before attempting to solve it.",
+      "claim_summary": "Reconstructed ideas provide additional supervision for predicting ideas from problems alone."
+    },
+    {
+      "index": 5,
+      "claim_text_verbatim": "The centerpiece of our method is an alternating training loop.",
+      "claim_summary": "An alternating training loop forms the centerpiece of the proposed method."
+    },
+    {
+      "index": 6,
+      "claim_text_verbatim": "Thus, the capability responsible for producing additional supervision is itself an explicit training target.",
+      "claim_summary": "The hindsight capability providing supervision is itself an explicit training target."
+    },
+    {
+      "index": 7,
+      "claim_text_verbatim": "We express solution ideas at several levels of detail, forming a hierarchy from overarching strategies to detailed plans.",
+      "claim_summary": "Solution ideas are represented as multi-level hierarchies from strategies to plans."
+    },
+    {
+      "index": 8,
+      "claim_text_verbatim": "The ideas reverse-engineered by the hindsight component are intended to provide guidance that could plausibly be followed from the problem alone, rather than merely describe the supplied solution or reflect hindsight bias.",
+      "claim_summary": "Reverse-engineered ideas aim to provide forward-usable guidance without hindsight bias."
+    },
+    {
+      "index": 9,
+      "claim_text_verbatim": "We provide an optional refinement of our method which accomplishes this in the case of verifiable problem domains, i.e., when proposed solution candidates can be procedurally verified: For each problem and reference solution, we generate several candidate hierarchies in hindsight.",
+      "claim_summary": "Optional refinement for verifiable domains generates candidate hindsight hierarchies for selection."
+    },
+    {
+      "index": 10,
+      "claim_text_verbatim": "We retain the highest-scoring hierarchy and an associated valid solution for training, provided the score meets an acceptance threshold.",
+      "claim_summary": "The highest-scoring hierarchy meeting a threshold is retained for model training."
+    },
+    {
+      "index": 11,
+      "claim_text_verbatim": "We provide a formal specification of our method for a general problem setting, together with the optional refinement for verifiable problem domains.",
+      "claim_summary": "Paper provides formal specification for general and verifiable problem settings."
+    },
+    {
+      "index": 12,
+      "claim_text_verbatim": "We also give a concrete instantiation for interactive theorem proving in the Lean theorem prover [2], where natural language proof ideas guide tactic generation during proof search.",
+      "claim_summary": "Concrete Lean instantiation guides tactic generation using natural language proof ideas."
+    },
+    {
+      "index": 13,
+      "claim_text_verbatim": "Our Lean instantiation builds on language-model-guided proof search, conditioning tactic generation on learned hierarchies of proof ideas.",
+      "claim_summary": "Lean instantiation conditions tactic generation on learned hierarchies of proof ideas."
+    },
+    {
+      "index": 14,
+      "claim_text_verbatim": "Our hierarchies are intended to describe solution ideas at different levels of granularity, providing guidance for subsequent solving.",
+      "claim_summary": "Hierarchies describe solution ideas at varied granularities to guide solving."
+    },
+    {
+      "index": 15,
+      "claim_text_verbatim": "In the case of verifiable problem domains, our method uses separate solving attempts to assess reverse-engineered hierarchies and selects training triples based on that assessment.",
+      "claim_summary": "Verifiable domain method assesses reverse-engineered hierarchies using separate solving attempts."
+    },
+    {
+      "index": 16,
+      "claim_text_verbatim": "Our method makes retrospective generation of hierarchies (i.e., rationales at several levels of detail) an explicitly trained task.",
+      "claim_summary": "Retrospective generation of multi-level hierarchies is an explicitly trained task."
+    },
+    {
+      "index": 17,
+      "claim_text_verbatim": "Each retained training triple supervises all three tasks.",
+      "claim_summary": "Retained training triples provide joint supervision across all three tasks."
+    },
+    {
+      "index": 18,
+      "claim_text_verbatim": "The training loop alternates between generating training triples by reverse engineering hierarchies and jointly training on the above three tasks.",
+      "claim_summary": "Training alternates between retrospective hierarchy generation and joint component training."
+    },
+    {
+      "index": 19,
+      "claim_text_verbatim": "This differs from the forward generation of thoughts and tactics in Lean-STaR\u2019s expert iterations, and from DeepInsight\u2019s retrospective rationale generation using a teacher model: our loop repeatedly performs retrospective hierarchy generation with the same backbone that learns to predict and use the resulting hierarchies.",
+      "claim_summary": "Method differs by iteratively updating retrospective generation using the same shared backbone."
+    },
+    {
+      "index": 20,
+      "claim_text_verbatim": "Finally, in verifiable problem domains, we additionally assess the reverse-engineered hierarchies through separate solving attempts, in which the model receives the problem and hierarchy while the reference solution is withheld.",
+      "claim_summary": "Reverse-engineered hierarchies are assessed by solving attempts with reference solutions withheld."
+    },
+    {
+      "index": 21,
+      "claim_text_verbatim": "In practice, a hierarchy z \u2208 Z for a problem x \u2208 X is intended to represent a semantically meaningful idea, plan, or approach for constructing a solution y \u2208 Y for x at different levels of granularity: From a detailed solution sketch z0 to a coarse description of the overarching idea zn.",
+      "claim_summary": "Hierarchies represent semantically meaningful solution ideas across fine and coarse granularity levels."
+    },
+    {
+      "index": 22,
+      "claim_text_verbatim": "Our central hypothesis is that reverse engineering the idea underlying a known solution is, in general, easier than discovering it from the problem alone.",
+      "claim_summary": "Core hypothesis: reverse engineering solution ideas is easier than discovering them directly."
+    },
+    {
+      "index": 23,
+      "claim_text_verbatim": "We operationalize this hypothesis through a training loop that alternates between reverse engineering ideas from known solutions (hindsight) and training the model using these ideas.",
+      "claim_summary": "Hypothesis operationalized by alternating between reverse-engineering hindsight ideas and model training."
+    },
+    {
+      "index": 24,
+      "claim_text_verbatim": "In our implementation, we seek to mitigate this risk through corresponding instructions in the language model\u2019s prompt templates.",
+      "claim_summary": "Prompt instructions are used to mitigate hindsight bias in reverse-engineered ideas."
+    },
+    {
+      "index": 25,
+      "claim_text_verbatim": "This introduces an additional training signal in the spirit of expert iteration.",
+      "claim_summary": "Scoring and filtering candidate hierarchies introduces an expert-iteration training signal."
+    }
+  ]
+}
