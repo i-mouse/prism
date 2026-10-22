@@ -82,12 +82,12 @@ Three known risks remain in the (currently flag-gated, off-by-default) clean-ext
 
 Per-paper cost today is about **INR 87-101**, measured two ways: INR ~101/paper from the 2026-10-11 baseline spend (4 papers, INR 1,250.00 -> 1,655.55; decisions.md:1706-1707), and INR ~87/paper from the full 12-paper run-1 ingestion (INR 1,048.40 / 12 papers; `docs/evals/dev_adjudication_run1.md:17`), also the base figure used in the clean-extraction cost formula (decisions.md:2670, 3011-3012). Most of that is the auditor: it sends the full paper text once per claim, about 75% of total input tokens, with thinking left at the Gemini 3.6 Flash default (decisions.md:1677).
 
-Planned fix (not yet approved or built): an evidence-first auditor — split the paper into numbered sentences, select the relevant ones per claim, judge on those only, plus a majority vote across repeats — based on patterns from RIGOURATE (arXiv 2601.04350) and CLAIM-BENCH. Marks and budget would be written before any run. (decisions.md:2904-2910)
+Planned fix (not yet designed): a 2026-10-22 diagnostic found the auditor has the evidence but does not check the claim's full scope; the next design forces a full-scope check and uses explicit caching to cut the full-paper-per-claim cost. Marks and budget are written before any run. (decisions.md, 'Auditor phase diagnostic (INR 0) - 2026-10-22')
 
 ## Roadmap
 
 Next 3 steps, in order (decisions.md, "K1 diagnostics and filter status - 2026-10-20"):
-1. Auditor phase — design and pre-register the evidence-first, numbered-sentence auditor plus majority vote, with marks and budget written first; targets the 10 auditor misses and per-paper cost directly.
+1. Auditor phase - design a structural full-scope check plus explicit caching, with marks and budget written first; targets the 10 auditor misses and per-paper cost.
 2. Re-test pass-2 / sentence-level extraction end to end with the new auditor; the parked K7 filter fix (validate neighbour ids, never resolve "same" against a dropped neighbour) stays parked until then.
 3. Claim-scope decision (headline claims only vs whole-paper) and a new sealed set, then one sealed run for the release number.
 

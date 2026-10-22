@@ -1,8 +1,8 @@
-# PRISM STATUS — 2026-10-21 (single source for new chats)
+# PRISM STATUS — 2026-10-22 (single source for new chats)
 
 ## Current state
 
-Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Next: auditor phase.
+Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Auditor phase: diagnosis done 2026-10-22 (INR 0) - root cause is a missing full-scope check, not PDF reading; design not started (decisions.md, 'Auditor phase diagnostic (INR 0) - 2026-10-22').
 
 ## Scoreboard
 
@@ -61,6 +61,22 @@ Exploratory-only note: Experiment 3's c1/c6 recall result (8/13 both runs) was A
 
 (decisions.md, "K1 diagnostics and filter status (exploratory) - 2026-10-20", lines 3026-3045.)
 
+## Auditor diagnostic (2026-10-22)
+
+- Root cause of A1: the auditor does not test the claim's full scope (quantifiers,
+  counts, coverage of models/tasks/settings) against what the paper reports. It
+  accepts the first supporting evidence and the paper's own summary framing (e.g.
+  bold averages over per-cell losses).
+- Not the main cause: PDF reading, retrieval or missing evidence.
+- Cannot fix the 6 unanimous misses: higher thinking alone, majority voting,
+  sentence selection.
+- The 2026-10-19 candidate (numbered sentences + majority vote) is dropped as the
+  A1 fix. Voting stays a candidate for stability only.
+- A prompt-only checklist already failed (B5.1); the scope check is expected to
+  need a structural change.
+
+Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
+
 ## Known risks (code-sourced, `docs/premerge_review_2026-10-20.md` section 3)
 
 All three risks below are inside code currently gated off by default (`extractor_pass2_clean` / `extractor_second_pass`), so they carry no live-pipeline risk today — but should be fixed before either flag is turned on for real traffic.
@@ -86,6 +102,10 @@ All three risks below are inside code currently gated off by default (`extractor
 - COT-M08: pairing doubtful, automatic carry-over not hand-adjudicated (decisions.md:1607).
 - COT-M01: false rejection may already be fixed by Stage-1 normalisation — UNVERIFIED, frozen fixtures predate it (decisions.md:1543).
 - PR-1 draft #115 (few-shot loader fix): still unmerged as of its last logged status (decisions.md:2065); duplicates logic now shipped behind `extractor_fewshot_fix`, default off.
+- Restate the release bar ('mean of 3 runs' is stale)
+- Full-pipeline token usage is not logged in production
+- Grounding and eval matcher send temperature=0 (Google advises 1.0 for Gemini 3) - parked
+- dev_eval.json scoring-note wording: P5-R2 row letters, P6-R2 Figure 3 count - labels unchanged
 
 ## Working rules
 
