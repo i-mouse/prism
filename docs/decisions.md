@@ -3118,3 +3118,111 @@ bar ("mean of 3 runs" is stale).
 **Answer-key notes (labels unchanged, per the rubric rule):** P5-R2 scoring-note
 row letters (g/h) differ from the raw text (h/d); count 15 holds. P6-R2 note says
 Figure 3 shows 8 models; raw text shows 4; Table 10 count 11 holds.
+
+
+## Auditor redesign agreed: caching + scope check, marks and caps - 2026-10-22
+**Context:** Follows "Auditor phase diagnostic (INR 0) - 2026-10-22". Two
+free read-only checks were run first (evidence:
+docs/evals/auditor_rd/verification_2026-10-22.md,
+docs/evals/auditor_rd/free_checks_2026-10-22.md). No LLM calls, INR 0.
+**Findings that shaped the design:**
+- Auditor free text (1 replay sample per row) for the 6 always-missed
+  rows: 4 never mention the breaking evidence (P4-R2, P3-R2, P5-R2,
+  P6-R2); 2 quote it as support and still say supported (P4-R1 "11 of
+  12", P11-R2 "under the Pro->Qwen setting"); 0 argue it away. The cause
+  is a missing full-scope check and trust in the paper's own counts, not
+  a looser standard and not table reading.
+- The diagnostic's NEVER/EXCUSED tags were set from structured fields
+  (label, grounding_status), not from the auditor's free text.
+- Blind scope-item check on the 18 frozen claims ("mostly blind": the
+  prompt named the 6 always-missed rows): items reach the breaking
+  evidence for 7/10 misses (6/6 always-missed); P5-R1 partly; P7-R1
+  (plural "trajectories") and P8-R2 ("use and disuse") not covered.
+- Exposure (word list, lower bound): 63 of 88 S rows and 206 of 362
+  run-1 claims (about 57%) contain scope words.
+- Cost: pricing.py uses gemini-3.6-flash USD 0.75 in / 3.75 out per 1M
+  (current list price; it doubles from 2027-01-01), INR_PER_USD 100.
+  Run 1 averages about 30 claims per paper. Earlier per-paper INR
+  estimates in chat are not reliable; cost is measured, not estimated.
+- Logging gaps: the auditor call logs no usage at all;
+  cached_content_token_count is never read; grounding (litellm) cost is
+  not instrumented; replay_audit.py has no --max-inr and needs Postgres.
+- google-genai 1.64.0 has explicit caching (client.caches) and Batch; it
+  has no service_tier (Flex).
+**Decision - design (built behind new flags, default off):**
+1. Explicit context caching: system prompt + paper text cached once per
+   paper; each claim's audit references the cache. Prompt order stays
+   paper -> claim.
+2. Scope lister: a small call on every claim, claim text only (no
+   paper), low thinking. Lists the claim's scope items in its own words,
+   including counts, quantifiers (all/every/consistent/across), named
+   sets of models/tasks/settings/positions, plurals, and "X and Y" /
+   "either/or" pairs. No items -> normal path only.
+3. Scope checker: one call per claim that has items, using the cached
+   paper, low thinking. For each item it lists every value or entry the
+   paper reports, then gives matches / contradicted (quote the value) /
+   not reported.
+4. Combine in code: "contradicted" lowers the verdict to
+   partially_supported only if its quoted value passes the existing
+   grounding Stage-1 match against the paper text; "not reported" never
+   lowers; nothing ever raises a verdict. The normal auditor, structurer
+   and grounding are unchanged. Auditor thinking level stays unset; same
+   model (gemini-3.6-flash).
+Rejected for now: counter-evidence pass (high false-rejection risk),
+voting (noise only), code checker on tables, structured tables as the
+main fix (helper only, if checker reads columns wrongly), model change.
+**Build order (one commit per step, implementation branch):**
+logging fixes -> replay_audit.py fixes (--max-inr, paper text from
+saved text files instead of Postgres) -> caching -> lister + checker.
+Free checks before any paid run: unit tests; flag-off prompt hash stays
+cb3272cce551; prompt-leak check passes; --estimate uses measured tokens.
+**Paid stages (marks fixed now, before any output):**
+- Stage A0 (caching only): the 18 frozen claims, 1 run. PASS = cached
+  tokens on all but at most 1 audit call per paper AND audit cost per
+  claim at least 40% below Exp 1 unset-thinking cost AND refusal hits on
+  the 18 claims within 5-8. Cap INR 60.
+- Stage A1 (caching + lister + checker): the 18 frozen claims x 3
+  repeats. A miss row is fixed if PS/NS in >= 2 of 3 repeats. A real hit
+  (P2-R5, P6-R1, P8-R1, P10-R1, P10-R2, P10-R3, P12-R2) is lost if S in
+  >= 2 of 3. PASS = fixed >= 5 of 10 (including >= 4 of the 6
+  always-missed) AND lost <= 1 AND every lowered verdict carries a
+  grounded quote. Cap INR 200.
+- Stage B (false rejections): S rows with scope words, matched to run-1
+  claims in docs/evals/dev_match_map.json (adjudicated before the run).
+  1 run. Any matched S row lowered to PS/NS counts as a false
+  rejection. PASS = new false rejections <= 4 (total <= 8/88). Cap INR
+  250.
+- Total cap INR 560. Sealed reserve INR 300 untouched. Stop any run at
+  1.3x its --estimate. A run stopped by a cap is void. No prompt edits,
+  threshold changes or re-runs to rescue a failed mark. Each stage's
+  marks and cap are re-confirmed in a dated entry and committed before
+  its first paid call; tag the commit before each paid stage.
+**Release bar restated (replaces "mean of 3 runs"):** dev: one full
+12-paper run reaches >= 22/31 refusal-family rows with false rejections
+<= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats).
+Release number: one sealed-set run only, never dev or golden numbers.
+**Later, own entries:** K4 - replace the hard-coded 87
+(eval/score_clean.py:50) with the new configuration's measured INR per
+paper before re-testing pass 2; INR reported at run-date price and at
+2027 price. Then pass 2 end to end, claim-scope decision, new sealed set,
+one sealed run.
+
+## Corrections - 2026-10-22
+- "Clean-attempt claims, auditor phase candidate - 2026-10-19": the
+  RIGOURATE "multi-model majority vote" and CLAIM-BENCH "decomposed
+  prompting raises recall" attributions are UNVERIFIED. Checked
+  2026-10-22: RIGOURATE (arXiv 2601.04350, ACL Findings 2026) retrieves
+  evidence from the paper body and scores overstatement; eight LLMs were
+  used to annotate its dataset. CLAIM-BENCH (IJCNLP-AACL 2025) compares
+  single-pass, three-pass and one-by-one prompting. Neither is cited as
+  support for voting or recall here.
+- The "~75% of input tokens = auditor" figure is superseded: measured
+  partial shares are about 90-96%; no full-pipeline measurement exists.
+- Draft dev false rejections: 4/88 (the weak P5 match was resolved as
+  not a match, docs/evals/dev_adjudication_run1.md:135).
+- Clean attempt K1: found 5/13 in clean_r1 and 6/13 in clean_r2 (an
+  earlier chat table showing 6 in both runs was wrong).
+- P5-R1: the auditor's free text in PS samples does state the
+  single-pair, coding-only limit; the diagnostic's "causal link
+  unconfirmed" came from structured fields only.
+

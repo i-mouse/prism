@@ -5,7 +5,7 @@ Prism extracts empirical claims from a research paper and audits whether each cl
 ## Status — 2026-10-21
 
 - **Runs locally only.** The hosted Azure demo was decommissioned 2026-09-28 (subscription cancellation initiated same day, not yet confirmed complete) to stop uncapped container spend. There is no live URL. Run it with [Quick Start](#quick-start-local-dev) below.
-- **Release bar not yet met.** The release floor is a 70% refusal rate on the dev set (12 papers), mean of 3 runs (stretch 80%, false-rejection cap 10%). The current single-run dev baseline is 26% (8/31). Of the 23 missed refusal rows, 10 are auditor misses (claim extracted, wrongly judged supported) and 13 are extraction misses — both stages need work (auditor-only ceiling 18/31, extraction-only ceiling 21/31; neither alone reaches the floor).
+- **Release bar not yet met.** Release bar (replaces "mean of 3 runs"): dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats). Release number: one sealed-set run only, never dev or golden numbers. The current single-run dev baseline is 26% (8/31). Of the 23 missed refusal rows, 10 are auditor misses (claim extracted, wrongly judged supported) and 13 are extraction misses — both stages need work (auditor-only ceiling 18/31, extraction-only ceiling 21/31; neither alone reaches the floor).
 - Four experiments aimed at closing that gap have been tried and rejected on pre-registered marks. Work continues on the extractor/auditor; see [Roadmap](#roadmap).
 
 ## Results
@@ -22,7 +22,7 @@ All numbers below are frozen, fixture-replayed runs — reproducible offline, no
 
 Dev false-rejection count is left blank: `docs/evals/dev_adjudication_run1.md` reports it as a draft figure (line 125 "Draft false rejections", confirmed still draft at line 135), not a final adjudicated count.
 
-**Release bar:** dev refusal rate >= 70% (mean of 3 runs) before this version ships; the eventual release number itself comes from one sealed-set run, never from dev or golden numbers (decisions.md:1636-1640).
+**Release bar (restated 2026-10-22, replaces "mean of 3 runs"):** dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats). Release number: one sealed-set run only, never dev or golden numbers (decisions.md:1636-1640, 'Auditor redesign agreed... - 2026-10-22').
 
 **Reproduce the golden numbers (fixture mode, no LLM/DB calls, environment setup required):**
 ```powershell
@@ -82,7 +82,7 @@ Three known risks remain in the (currently flag-gated, off-by-default) clean-ext
 
 Per-paper cost today is about **INR 87-101**, measured two ways: INR ~101/paper from the 2026-10-11 baseline spend (4 papers, INR 1,250.00 -> 1,655.55; decisions.md:1706-1707), and INR ~87/paper from the full 12-paper run-1 ingestion (INR 1,048.40 / 12 papers; `docs/evals/dev_adjudication_run1.md:17`), also the base figure used in the clean-extraction cost formula (decisions.md:2670, 3011-3012). Most of that is the auditor: it sends the full paper text once per claim, about 75% of total input tokens, with thinking left at the Gemini 3.6 Flash default (decisions.md:1677).
 
-Planned fix (not yet designed): a 2026-10-22 diagnostic found the auditor has the evidence but does not check the claim's full scope; the next design forces a full-scope check and uses explicit caching to cut the full-paper-per-claim cost. Marks and budget are written before any run. (decisions.md, 'Auditor phase diagnostic (INR 0) - 2026-10-22')
+Planned fix (design agreed: caching + scope check, marks and caps written first): a 2026-10-22 diagnostic found the auditor has the evidence but does not check the claim's full scope; the next design forces a full-scope check and uses explicit caching to cut the full-paper-per-claim cost. Marks and budget are written before any run. (decisions.md, 'Auditor redesign agreed... - 2026-10-22')
 
 ## Roadmap
 

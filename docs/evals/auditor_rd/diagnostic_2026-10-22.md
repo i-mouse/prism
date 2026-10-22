@@ -6,6 +6,10 @@
 > ratings mean "evidence present, numbers correct, rows clear; columns only by
 > counting positions". Conclusions are in docs/decisions.md, "Auditor phase
 > diagnostic (INR 0) - 2026-10-22".
+>
+> **Follow-up note (2026-10-22):** Tags were from structured fields; free-text
+> follow-up and design are in verification_2026-10-22.md,
+> free_checks_2026-10-22.md and decisions.md (2026-10-22 entries).
 
 # Auditor R&D — Phase 1 diagnostic audit (read-only)
 

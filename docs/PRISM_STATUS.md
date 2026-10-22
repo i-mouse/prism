@@ -2,7 +2,7 @@
 
 ## Current state
 
-Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Auditor phase: diagnosis done 2026-10-22 (INR 0) - root cause is a missing full-scope check, not PDF reading; design not started (decisions.md, 'Auditor phase diagnostic (INR 0) - 2026-10-22').
+Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Auditor phase: design agreed 2026-10-22 - explicit caching + scope lister/checker, behind flags; see decisions.md 'Auditor redesign agreed...'.
 
 ## Scoreboard
 
@@ -14,9 +14,9 @@ Refusal-family 1/2, positive hits 7/10, false rejection 0/10, coverage 12/12. (d
 
 **Dev baseline (119 rows / 12 papers, 31 refusal-family rows, single run, 2026-10-12):**
 Refusal 8/31 (26%). Of the 23 misses: 10 audit misses (claim extracted, wrongly judged supported), 13 extraction misses. Auditor-only ceiling 18/31 (below 22/31 floor); extraction-only ceiling 21/31 (68%, also below floor) — neither stage alone reaches the 70% release floor. (decisions.md:1750, 1828, 2115, 2212-2213)
-Draft false-rejection count: 4-5/88 S rows (4.5-5.7%), one caused by grounding — still marked "draft," not a final adjudicated number. (docs/evals/dev_adjudication_run1.md:125, 135)
+False rejections: 4/88 S rows (draft resolved; the weak P5 match was resolved as not a match, docs/evals/dev_adjudication_run1.md:135; decisions.md 'Corrections - 2026-10-22').
 
-**Release bar:** dev refusal >= 70% (mean of 3 runs), stretch 80%, false-rejection hard cap 10% (aim 0%). Release number comes from one sealed-set run only; dev/golden numbers are never quoted as the release number. (decisions.md:1636-1640)
+**Release bar (restated 2026-10-22, replaces "mean of 3 runs"):** dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats). Release number: one sealed-set run only, never dev or golden numbers.
 
 ## Flags and their defaults
 
@@ -77,6 +77,12 @@ Exploratory-only note: Experiment 3's c1/c6 recall result (8/13 both runs) was A
 
 Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
 
+## Next steps (build order)
+
+Build order (one commit per step, implementation branch):
+logging fixes -> replay_audit.py fixes (--max-inr, paper text from saved text files instead of Postgres) -> caching -> lister + checker.
+Free checks before any paid run: unit tests; flag-off prompt hash stays cb3272cce551; prompt-leak check passes; --estimate uses measured tokens.
+
 ## Known risks (code-sourced, `docs/premerge_review_2026-10-20.md` section 3)
 
 All three risks below are inside code currently gated off by default (`extractor_pass2_clean` / `extractor_second_pass`), so they carry no live-pipeline risk today — but should be fixed before either flag is turned on for real traffic.
@@ -102,7 +108,7 @@ All three risks below are inside code currently gated off by default (`extractor
 - COT-M08: pairing doubtful, automatic carry-over not hand-adjudicated (decisions.md:1607).
 - COT-M01: false rejection may already be fixed by Stage-1 normalisation — UNVERIFIED, frozen fixtures predate it (decisions.md:1543).
 - PR-1 draft #115 (few-shot loader fix): still unmerged as of its last logged status (decisions.md:2065); duplicates logic now shipped behind `extractor_fewshot_fix`, default off.
-- Restate the release bar ('mean of 3 runs' is stale)
+- Restate the release bar: done 2026-10-22 (replaces 'mean of 3 runs'; decisions.md)
 - Full-pipeline token usage is not logged in production
 - Grounding and eval matcher send temperature=0 (Google advises 1.0 for Gemini 3) - parked
 - dev_eval.json scoring-note wording: P5-R2 row letters, P6-R2 Figure 3 count - labels unchanged
