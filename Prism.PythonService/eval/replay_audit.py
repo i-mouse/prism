@@ -36,7 +36,9 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from eval.pricing import INR_PER_USD, USD_PER_1M_INPUT, USD_PER_1M_OUTPUT
+from eval.pricing import (
+    INR_PER_USD, USD_PER_1M_INPUT, USD_PER_1M_OUTPUT, cost_usd, cost_usd_for_model, normalise_model_name,
+)
 from extraction import engine, grounding
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse
@@ -70,6 +72,8 @@ class CallRecord:
     thought_tokens: int
     total_tokens: int
     latency_s: float
+    cached_tokens: int = 0
+    tool_use_tokens: int = 0
 
 
 @dataclass
@@ -221,11 +225,18 @@ async def _hash_check_and_load_text(paper_id: str, fixture_header: dict) -> str 
 class _Instrumentation:
     """Monkey-patches extraction.engine._generate_with_fallback for the
     duration of a `with` block, restoring the original in a finally clause
-    even if a replayed call raises. Records one CallRecord per Gemini call."""
+    even if a replayed call raises. Records one CallRecord per Gemini call.
+
+    Also sets extraction.grounding._usage_observer for the same duration, to
+    collect one usage dict per grounding (LiteLLM) response in
+    grounding_records. Kept apart from records: _load_measured_token_stats
+    pairs records even/odd as audit/structure calls."""
 
     def __init__(self):
         self.records: list[CallRecord] = []
+        self.grounding_records: list[dict] = []
         self._original = None
+        self._original_observer = None
         self._current_stage: str | None = None
         self._current_paper_id: str | None = None
         self._current_claim_index: int | None = None
@@ -250,16 +261,21 @@ class _Instrumentation:
             thought_tokens=getattr(usage, "thoughts_token_count", None) or 0,
             total_tokens=getattr(usage, "total_token_count", None) or 0,
             latency_s=latency,
+            cached_tokens=getattr(usage, "cached_content_token_count", None) or 0,
+            tool_use_tokens=getattr(usage, "tool_use_prompt_token_count", None) or 0,
         ))
         return response, used_model
 
     def __enter__(self) -> "_Instrumentation":
         self._original = engine._generate_with_fallback
+        self._original_observer = grounding._usage_observer
         engine._generate_with_fallback = self._wrapped
+        grounding._usage_observer = self.grounding_records.append
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
         engine._generate_with_fallback = self._original
+        grounding._usage_observer = self._original_observer
 
 
 async def _replay_claim(target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation) -> ClaimLLM:
@@ -300,7 +316,7 @@ def _claim_final_to_fixture_dict(claim_final, index: int) -> dict:
 
 async def _run_once(
     targets: list[ReplayTarget], level: str, repeat_index: int, dry_run: bool,
-) -> tuple[Path, list[CallRecord]]:
+) -> tuple[Path, list[CallRecord], list[dict]]:
     out_dir = OUTPUT_ROOT / f"exp1_{level}_{repeat_index}"
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
     for t in targets:
@@ -348,7 +364,7 @@ async def _run_once(
             written_papers.append(paper_id)
             print(f"[replay_audit] wrote {out_dir / f'{paper_id}.json'} ({len(claims_out)} claims)")
 
-    return out_dir, instrumentation.records
+    return out_dir, instrumentation.records, instrumentation.grounding_records
 
 
 def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> None:
@@ -367,23 +383,87 @@ def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> No
           f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
 
 
-def _print_summary(out_dir: Path, records: list[CallRecord]) -> None:
+_UNPRICED = "unpriced"
+_GEMINI_PRICED_MODEL = "gemini-3.6-flash"
+
+
+def _summarize_grounding(grounding_records: list[dict]) -> dict[str, dict]:
+    """Aggregates grounding usage dicts per served model (response.model; a
+    missing name groups as "unknown"). usd is a float, or "unpriced" when the
+    model has no rates in eval.pricing. thought_tokens is deliberately not
+    passed to the cost: LiteLLM's completion_tokens already includes
+    reasoning, so output_tokens alone is the billed output."""
+    by_model: dict[str, dict] = {}
+    for rec in grounding_records:
+        agg = by_model.setdefault(rec.get("model") or "unknown", {
+            "calls": 0, "prompt_tokens": 0, "cached_tokens": 0, "output_tokens": 0, "total_tokens": 0,
+        })
+        agg["calls"] += 1
+        for field in ("prompt_tokens", "cached_tokens", "output_tokens", "total_tokens"):
+            agg[field] += rec.get(field) or 0
+
+    for model, agg in by_model.items():
+        usd = cost_usd_for_model(
+            model, agg["prompt_tokens"], agg["output_tokens"], thought=0.0, cached=agg["cached_tokens"],
+        )
+        agg["usd"] = _UNPRICED if usd is None else round(usd, 4)
+    return by_model
+
+
+def _print_summary(out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None) -> None:
+    grounding_records = grounding_records or []
     total_prompt = sum(r.prompt_tokens for r in records)
     total_output = sum(r.output_tokens for r in records)
     total_thought = sum(r.thought_tokens for r in records)
-    cost_usd = (total_prompt / 1e6 * USD_PER_1M_INPUT) + ((total_output + total_thought) / 1e6 * USD_PER_1M_OUTPUT)
+    total_cached = sum(r.cached_tokens for r in records)
+    total_tool_use = sum(r.tool_use_tokens for r in records)
+    gemini_usd = cost_usd(total_prompt, total_output, total_thought, total_cached, total_tool_use)
+
+    # Every Gemini record is priced at gemini-3.6-flash rates; a call that fell
+    # back to another model is therefore not priced at its own rate.
+    other_gemini_models: dict[str, int] = defaultdict(int)
+    for r in records:
+        if normalise_model_name(r.model_used) != _GEMINI_PRICED_MODEL:
+            other_gemini_models[r.model_used] += 1
+
+    grounding = _summarize_grounding(grounding_records)
+    unpriced_models = sorted(m for m, agg in grounding.items() if agg["usd"] == _UNPRICED)
+    grounding_usd = sum(agg["usd"] for agg in grounding.values() if agg["usd"] != _UNPRICED)
+    total_usd = gemini_usd + grounding_usd
+
     summary = {
         "calls": len(records),
         "total_prompt_tokens": total_prompt,
         "total_output_tokens": total_output,
         "total_thought_tokens": total_thought,
-        "cost_usd": round(cost_usd, 4),
-        "cost_inr": round(cost_usd * INR_PER_USD, 2),
+        "total_cached_tokens": total_cached,
+        "total_tool_use_tokens": total_tool_use,
+        "cost_usd": round(gemini_usd, 4),
+        "cost_inr": round(gemini_usd * INR_PER_USD, 2),
+        "gemini_calls_not_priced_at_own_model_rate": dict(other_gemini_models),
+        "grounding": {"by_model": grounding, "unpriced_models": unpriced_models, "priced_cost_usd": round(grounding_usd, 4)},
+        "total_cost_usd": round(total_usd, 4),
+        "total_cost_inr": round(total_usd * INR_PER_USD, 2),
+        "total_cost_excludes_unpriced_grounding": bool(unpriced_models),
         "records": [r.__dict__ for r in records],
     }
     (out_dir / "_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"[replay_audit] {len(records)} calls, {total_prompt} prompt / {total_output} output / "
+    print(f"[replay_audit] {len(records)} Gemini calls, {total_prompt} prompt ({total_cached} cached) / {total_output} output / "
           f"{total_thought} thought tokens, ~INR {summary['cost_inr']}")
+    if other_gemini_models:
+        print(f"[replay_audit] WARNING: Gemini calls served by other models were priced at {_GEMINI_PRICED_MODEL} rates: "
+              f"{dict(other_gemini_models)}")
+    if grounding:
+        for model, agg in sorted(grounding.items()):
+            print(f"[replay_audit] grounding {model}: {agg['calls']} calls, {agg['prompt_tokens']} prompt "
+                  f"({agg['cached_tokens']} cached) / {agg['output_tokens']} output / {agg['total_tokens']} total tokens, "
+                  f"USD {agg['usd']}")
+    else:
+        print("[replay_audit] grounding: 0 LLM calls recorded")
+    if unpriced_models:
+        print(f"[replay_audit] *** UNPRICED grounding models (no rates on file): {', '.join(unpriced_models)} ***")
+    label = " (excl. unpriced grounding)" if unpriced_models else ""
+    print(f"[replay_audit] total ~INR {summary['total_cost_inr']}{label}")
 
 
 async def _main(args: argparse.Namespace) -> int:
@@ -411,9 +491,9 @@ async def _main(args: argparse.Namespace) -> int:
         return 0
 
     for repeat_index in range(1, args.repeat + 1):
-        out_dir, records = await _run_once(targets, args.level, repeat_index, args.dry_run)
+        out_dir, records, grounding_records = await _run_once(targets, args.level, repeat_index, args.dry_run)
         if not args.dry_run:
-            _print_summary(out_dir, records)
+            _print_summary(out_dir, records, grounding_records)
     return 0
 
 

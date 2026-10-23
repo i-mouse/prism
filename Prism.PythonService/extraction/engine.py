@@ -18,6 +18,7 @@ extract_claims (Prompt 2) is a sequential three-call pipeline:
 """
 import asyncio
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
@@ -38,6 +39,7 @@ from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
 
 tracer = trace.get_tracer(__name__)
+logger = logging.getLogger(__name__)
 
 AUDIT_STRUCTURE_CONCURRENCY = 5
 
@@ -103,6 +105,54 @@ async def _call_gemini(
     raise last_exception
 
 
+def _extract_usage(response: types.GenerateContentResponse) -> dict | None:
+    """Reads token counts off response.usage_metadata for logging. Missing
+    fields stay None (logged as null) so they remain distinguishable from a
+    real zero. Never raises: on any failure it logs a warning and returns None.
+
+    Counting rules (google-genai GenerateContentResponseUsageMetadata):
+    prompt_token_count includes cached_content_token_count; thoughts and
+    tool_use are separate from prompt and candidates, and
+    prompt + candidates + thoughts + tool_use == total.
+    """
+    try:
+        usage_obj = getattr(response, "usage_metadata", None)
+        if usage_obj is None:
+            return None
+        usage = {
+            "prompt_tokens": getattr(usage_obj, "prompt_token_count", None),
+            "output_tokens": getattr(usage_obj, "candidates_token_count", None),
+            "thought_tokens": getattr(usage_obj, "thoughts_token_count", None),
+            "total_tokens": getattr(usage_obj, "total_token_count", None),
+            "cached_tokens": getattr(usage_obj, "cached_content_token_count", None),
+            "tool_use_tokens": getattr(usage_obj, "tool_use_prompt_token_count", None),
+        }
+        _warn_if_usage_sum_mismatch(usage)
+        return usage
+    except Exception:
+        logger.warning("Failed to extract usage_metadata from Gemini response; logging usage as null", exc_info=True)
+        return None
+
+
+def _warn_if_usage_sum_mismatch(usage: dict) -> None:
+    """Warns (never raises) when prompt + candidates + thoughts + tool_use does
+    not equal the reported total, treating None as 0. Skipped when total is
+    None. A mismatch means the counting rules above do not hold for this
+    response, so any cost computed from it should be treated with suspicion."""
+    total = usage["total_tokens"]
+    if total is None:
+        return
+    prompt, output, thought, tool_use = (
+        usage["prompt_tokens"] or 0, usage["output_tokens"] or 0,
+        usage["thought_tokens"] or 0, usage["tool_use_tokens"] or 0,
+    )
+    if prompt + output + thought + tool_use != total:
+        logger.warning(
+            "Gemini usage sum mismatch: prompt=%s + candidates=%s + thoughts=%s + tool_use=%s != total=%s",
+            prompt, output, thought, tool_use, total,
+        )
+
+
 def _extract_usage_and_finish_reason(
     response: types.GenerateContentResponse,
 ) -> tuple[dict | None, str | None]:
@@ -112,15 +162,7 @@ def _extract_usage_and_finish_reason(
     guarded since usage_metadata/candidates can be absent or shaped
     unexpectedly depending on SDK version or a malformed response.
     """
-    usage_obj = getattr(response, "usage_metadata", None)
-    usage = None
-    if usage_obj is not None:
-        usage = {
-            "prompt_tokens": getattr(usage_obj, "prompt_token_count", None),
-            "output_tokens": getattr(usage_obj, "candidates_token_count", None),
-            "thought_tokens": getattr(usage_obj, "thoughts_token_count", None),
-            "total_tokens": getattr(usage_obj, "total_token_count", None),
-        }
+    usage = _extract_usage(response)
 
     finish_reason = None
     candidates = getattr(response, "candidates", None)
@@ -416,6 +458,7 @@ async def _call_gemini_freetext(
         client, contents, config, chat_id, model_name, fallback_model, correlation_id
     )
     raw_text = response.text
+    usage, finish_reason = _extract_usage_and_finish_reason(response)
 
     _write_structured_log(
         log_subdir=log_subdir,
@@ -425,6 +468,8 @@ async def _call_gemini_freetext(
         request_message_count=len(messages),
         response_item_count=1,
         response_raw=raw_text,
+        usage=usage,
+        finish_reason=finish_reason,
     )
 
     return raw_text
