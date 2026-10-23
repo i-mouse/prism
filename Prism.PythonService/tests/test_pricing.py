@@ -11,8 +11,20 @@ def test_known_model_has_a_price():
 
 
 def test_unknown_model_returns_none():
-    assert pricing.cost_usd_for_model("groq/openai/gpt-oss-20b", 1e6, 1e6) is None
-    assert pricing.cost_usd_for_model("gemini/gemini-3.1-flash-lite", 1e6, 1e6) is None
+    assert pricing.cost_usd_for_model("acme/mystery-model-1", 1e6, 1e6) is None
+    assert pricing.cost_usd_for_model("gemini-3.1-flash-lite-preview", 1e6, 1e6) is None
+
+
+def test_prefixed_model_names_normalise_to_priced_models():
+    assert pricing.normalise_model_name("groq/openai/gpt-oss-20b") == "gpt-oss-20b"
+    assert pricing.normalise_model_name("gemini/gemini-3.1-flash-lite") == "gemini-3.1-flash-lite"
+    # 1M prompt (400k cached) + 1M output
+    assert pricing.cost_usd_for_model("groq/openai/gpt-oss-20b", 1e6, 1e6, cached=4e5) == pytest.approx(
+        0.6 * 0.075 + 0.4 * 0.037 + 0.30
+    )
+    assert pricing.cost_usd_for_model("gemini/gemini-3.1-flash-lite", 1e6, 1e6, cached=4e5) == pytest.approx(
+        0.6 * 0.25 + 0.4 * 0.025 + 1.50
+    )
 
 
 def test_model_name_is_normalised_before_lookup():
@@ -58,9 +70,11 @@ def test_rates_cached_defaults_to_input_rate():
     assert pricing.Rates(in_usd=2.0, out_usd=8.0, cached_usd=0.2).cached_rate == 0.2
 
 
-def test_only_gemini_3_6_flash_is_in_the_rate_table():
-    assert set(pricing.RATES_BY_MODEL) == {"gemini-3.6-flash"}
+def test_rate_table_holds_only_the_verified_models():
+    assert set(pricing.RATES_BY_MODEL) == {"gemini-3.6-flash", "gemini-3.1-flash-lite", "gpt-oss-20b"}
     assert pricing.RATES_BY_MODEL["gemini-3.6-flash"] == pricing.Rates(0.75, 3.75, 0.075)
+    assert pricing.RATES_BY_MODEL["gemini-3.1-flash-lite"] == pricing.Rates(0.25, 1.50, 0.025)
+    assert pricing.RATES_BY_MODEL["gpt-oss-20b"] == pricing.Rates(0.075, 0.30, 0.037)
 
 
 def test_storage_cost_is_tokens_times_hours_times_rate():

@@ -10,35 +10,38 @@ thinking_level, never a monkey-patched settings value. The one monkey-patch
 this script performs is on extraction.engine._generate_with_fallback, for
 per-call token/latency instrumentation only, restored in a finally block.
 
-Paper text cannot be read verbatim from storage (Prism never persists it) -
-it is re-derived from the paper's local PDF and the PDF's sha256 is checked
-against file_records.content_hash before use; a paper whose local PDF does
-not match is skipped (that paper only, not the whole run).
+Paper text is read from the local cache, scratch/auditor_rd/raw_text_cache/
+<paper id without a leading "arxiv-">.txt (arxiv-2610.10590v1 ->
+2610.10590v1.txt). Only paper ids that have a run1 dev fixture can be loaded.
+A missing file aborts the run before the first paid call; there is no
+fallback to Postgres or the PDF, and this module never imports memory_db.
 
 Preflight aborts the whole run if the current prompt files do not hash to
 cb3272cce551 (frozen for the dev baseline / Experiment 1).
 
 Zero LLM calls under --estimate or --dry-run.
 
+--max-inr N caps the running cost (priced Gemini calls + grounding calls) for
+the whole invocation. When it is exceeded no further call is issued, the
+partial summary is written with status VOID_CAP_HIT and the exit code is 2.
+
 Usage:
   uv run python -m eval.replay_audit --estimate --level high --claims docs/evals/exp1_stage_a_claims.json --repeat 3
   uv run python -m eval.replay_audit --dry-run  --level high --claims docs/evals/exp1_stage_a_claims.json --repeat 3
-  uv run python -m eval.replay_audit --level high   --claims docs/evals/exp1_stage_a_claims.json --repeat 3
+  uv run python -m eval.replay_audit --level high   --claims docs/evals/exp1_stage_a_claims.json --repeat 3 --max-inr 100
   uv run python -m eval.replay_audit --level medium --claims docs/evals/exp1_stage_a_claims.json --repeat 2
   uv run python -m eval.replay_audit --level high                                   # Stage B: all 12 papers, repeat 1
 """
 import argparse
 import asyncio
-import hashlib
 import json
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from eval.pricing import (
-    INR_PER_USD, USD_PER_1M_INPUT, USD_PER_1M_OUTPUT, cost_usd, cost_usd_for_model, normalise_model_name,
-)
+from eval.legacy_paper_text import PDF_DIR, _hash_check_and_load_text  # noqa: F401 - re-exported for replay_exp3/replay_clean/replay_extract; unused here
+from eval.pricing import INR_PER_USD, USD_PER_1M_INPUT, USD_PER_1M_OUTPUT, cost_usd, cost_usd_for_model
 from extraction import engine, grounding
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse
@@ -48,16 +51,28 @@ SERVICE_ROOT = Path(__file__).parent.parent
 FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures" / "dev" / "run1"
 OUTPUT_ROOT = REPO_ROOT / "docs" / "evals" / "fixtures" / "dev"
 LOGS_DIR = SERVICE_ROOT / "logs" / "eval"
-PDF_DIR = REPO_ROOT / "docs" / "research_papers"
+RAW_TEXT_CACHE_DIR = SERVICE_ROOT / "scratch" / "auditor_rd" / "raw_text_cache"
 
 EXPECTED_PROMPT_HASH = "cb3272cce551"
 
-_RUN_SQL = """
-SELECT fr.content_hash, fr.file_name
-FROM   document_extractors de
-JOIN   file_records fr ON fr.file_id = de.file_id
-WHERE  de.id = %s;
-"""
+_ARXIV_PREFIX = "arxiv-"
+STATUS_OK = "OK"
+STATUS_VOID_CAP_HIT = "VOID_CAP_HIT"
+EXIT_CAP_HIT = 2
+
+
+class PaperTextError(Exception):
+    """A paper's cached text cannot be loaded (bad id, missing or empty file)."""
+
+
+class CapExceeded(BaseException):
+    """Raised when the running cost passes --max-inr.
+
+    A BaseException on purpose: the retry loops around the instrumented calls
+    (engine._call_gemini, grounding._call_litellm_audit and the usage observer
+    guard) all use `except Exception`, which a BaseException subclass passes
+    straight through, so a cap stop is never retried or swallowed.
+    """
 
 
 @dataclass
@@ -66,7 +81,7 @@ class CallRecord:
     paper_id: str
     claim_index: int
     thinking_level: str | None
-    model_used: str
+    model_used: str | None  # the served model name returned by _generate_with_fallback
     prompt_tokens: int
     output_tokens: int
     thought_tokens: int
@@ -189,37 +204,102 @@ def _estimate_one_claim_cost_usd(stats: dict[str, float], level: str) -> tuple[f
     return _cost(thought_low), _cost(thought_high)
 
 
-async def _hash_check_and_load_text(paper_id: str, fixture_header: dict) -> str | None:
-    from memory_db import create_db_connection_pool
+def _cache_file_name(paper_id: str) -> str:
+    """Fixture stem -> cache file name: one leading "arxiv-" is dropped, ".txt"
+    is appended (arxiv-2610.10590v1 -> 2610.10590v1.txt). A stem without the
+    prefix is used as is."""
+    stem = paper_id[len(_ARXIV_PREFIX):] if paper_id.startswith(_ARXIV_PREFIX) else paper_id
+    return f"{stem}.txt"
 
-    pool = create_db_connection_pool()
-    await pool.open()
+
+def _check_dev_paper_id(paper_id: str) -> None:
+    """Only a plain id that has a run1 dev fixture may be loaded, so a path or
+    a held-out/sealed paper id can never reach the cache lookup."""
+    if not paper_id or paper_id in {".", ".."} or "/" in paper_id or "\\" in paper_id:
+        raise PaperTextError(f"{paper_id!r} is not a plain paper id")
+    if not (FIXTURE_DIR / f"{paper_id}.json").is_file():
+        raise PaperTextError(f"{paper_id}: not a run1 dev fixture id, refusing to load its text")
+
+
+def _load_paper_text(paper_id: str) -> str:
+    _check_dev_paper_id(paper_id)
+    path = RAW_TEXT_CACHE_DIR / _cache_file_name(paper_id)
     try:
-        async with pool.connection() as conn:
-            async with conn.cursor() as cur:
-                await cur.execute(_RUN_SQL, (fixture_header["extraction_run_id"],))
-                row = await cur.fetchone()
-    finally:
-        await pool.close()
-
-    if row is None:
-        print(f"[replay_audit] {paper_id}: SKIPPED - extraction run {fixture_header['extraction_run_id']} not found in DB")
-        return None
-    content_hash, file_name = row
-
-    pdf_path = PDF_DIR / file_name
-    if not pdf_path.exists():
-        print(f"[replay_audit] {paper_id}: SKIPPED - no local PDF at {pdf_path}")
-        return None
-    actual_hash = hashlib.sha256(pdf_path.read_bytes()).hexdigest()
-    if actual_hash != content_hash:
-        print(f"[replay_audit] {paper_id}: SKIPPED - sha256 mismatch (pdf={actual_hash[:12]} db={content_hash[:12]})")
-        return None
-
-    from main import extract_pdf_text_sync
-
-    text, _ = extract_pdf_text_sync(str(pdf_path))
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        raise PaperTextError(f"{paper_id}: no cached paper text at {path}") from exc
+    except (OSError, UnicodeDecodeError) as exc:
+        raise PaperTextError(f"{paper_id}: cannot read cached paper text at {path}: {exc!r}") from exc
+    if not text.strip():
+        raise PaperTextError(f"{paper_id}: cached paper text at {path} is empty")
     return text
+
+
+def _load_paper_texts(paper_ids: list[str]) -> dict[str, str]:
+    return {paper_id: _load_paper_text(paper_id) for paper_id in paper_ids}
+
+
+def _gemini_record_cost_usd(record: CallRecord) -> tuple[float, bool]:
+    """Returns (usd, priced_at_own_model_rate). A record whose model is missing
+    or not in the rate table is priced at gemini-3.6-flash rates, which is an
+    upper bound for the cap, and reported as not priced at its own rate."""
+    usd = None
+    if record.model_used:
+        usd = cost_usd_for_model(
+            record.model_used, record.prompt_tokens, record.output_tokens,
+            record.thought_tokens, record.cached_tokens, record.tool_use_tokens,
+        )
+    if usd is not None:
+        return usd, True
+    flash_usd = cost_usd(
+        record.prompt_tokens, record.output_tokens, record.thought_tokens,
+        record.cached_tokens, record.tool_use_tokens,
+    )
+    return flash_usd, False
+
+
+def _grounding_record_cost_usd(rec: dict) -> float:
+    """USD for one grounding usage dict. thought is not passed (LiteLLM's
+    completion_tokens already includes reasoning). A model missing from the
+    rate table is charged at gemini-3.6-flash rates, an upper bound used only
+    for the running cap."""
+    prompt, output, cached = rec.get("prompt_tokens") or 0, rec.get("output_tokens") or 0, rec.get("cached_tokens") or 0
+    usd = cost_usd_for_model(rec.get("model") or "", prompt, output, thought=0.0, cached=cached)
+    return usd if usd is not None else cost_usd(prompt, output, 0.0, cached)
+
+
+class _CostGuard:
+    """Running cost for one invocation (shared by every --repeat run), and the
+    --max-inr cap. max_inr None tracks cost but never raises."""
+
+    def __init__(self, max_inr: float | None = None):
+        self.max_inr = max_inr
+        self.running_usd = 0.0
+        self.max_single_call_usd = 0.0
+        self.cap_hit = False
+
+    @property
+    def running_inr(self) -> float:
+        return self.running_usd * INR_PER_USD
+
+    @property
+    def overshoot_inr(self) -> float:
+        return max(0.0, self.running_inr - self.max_inr) if self.max_inr is not None else 0.0
+
+    @property
+    def max_single_call_inr(self) -> float:
+        return self.max_single_call_usd * INR_PER_USD
+
+    def check_before_call(self) -> None:
+        if self.cap_hit:
+            raise CapExceeded(f"cap of INR {self.max_inr} already exceeded; no further calls")
+
+    def charge(self, usd: float) -> None:
+        self.running_usd += usd
+        self.max_single_call_usd = max(self.max_single_call_usd, usd)
+        if self.max_inr is not None and self.running_inr > self.max_inr:
+            self.cap_hit = True
+            raise CapExceeded(f"running cost INR {self.running_inr:.2f} exceeded the cap of INR {self.max_inr}")
 
 
 class _Instrumentation:
@@ -230,13 +310,21 @@ class _Instrumentation:
     Also sets extraction.grounding._usage_observer for the same duration, to
     collect one usage dict per grounding (LiteLLM) response in
     grounding_records. Kept apart from records: _load_measured_token_stats
-    pairs records even/odd as audit/structure calls."""
+    pairs records even/odd as audit/structure calls.
 
-    def __init__(self):
+    With a guard, every call is charged as it completes and CapExceeded is
+    raised once the cap is passed. A pre-call check on both patched entry
+    points (and grounding._call_litellm_audit, patched only when a guard is
+    given) stops any further request after that. grounding.py and engine.py
+    themselves are untouched."""
+
+    def __init__(self, guard: _CostGuard | None = None):
+        self.guard = guard
         self.records: list[CallRecord] = []
         self.grounding_records: list[dict] = []
         self._original = None
         self._original_observer = None
+        self._original_audit_call = None
         self._current_stage: str | None = None
         self._current_paper_id: str | None = None
         self._current_claim_index: int | None = None
@@ -248,12 +336,17 @@ class _Instrumentation:
         self._current_claim_index = claim_index
         self._current_thinking_level = thinking_level
 
+    def raise_if_capped(self) -> None:
+        if self.guard is not None:
+            self.guard.check_before_call()
+
     async def _wrapped(self, client, contents, config, chat_id, model_name, fallback_model, correlation_id=None):
+        self.raise_if_capped()
         start = time.monotonic()
         response, used_model = await self._original(client, contents, config, chat_id, model_name, fallback_model, correlation_id)
         latency = time.monotonic() - start
         usage = getattr(response, "usage_metadata", None)
-        self.records.append(CallRecord(
+        record = CallRecord(
             stage=self._current_stage, paper_id=self._current_paper_id, claim_index=self._current_claim_index,
             thinking_level=self._current_thinking_level, model_used=used_model,
             prompt_tokens=getattr(usage, "prompt_token_count", None) or 0,
@@ -263,19 +356,47 @@ class _Instrumentation:
             latency_s=latency,
             cached_tokens=getattr(usage, "cached_content_token_count", None) or 0,
             tool_use_tokens=getattr(usage, "tool_use_prompt_token_count", None) or 0,
-        ))
+        )
+        self.records.append(record)
+        if self.guard is not None:
+            self.guard.charge(_gemini_record_cost_usd(record)[0])
         return response, used_model
+
+    def _observe_grounding(self, usage: dict) -> None:
+        self.grounding_records.append(usage)
+        if self.guard is not None:
+            self.guard.charge(_grounding_record_cost_usd(usage))
+
+    async def _guarded_audit_call(self, *args, **kwargs):
+        self.raise_if_capped()
+        return await self._original_audit_call(*args, **kwargs)
 
     def __enter__(self) -> "_Instrumentation":
         self._original = engine._generate_with_fallback
         self._original_observer = grounding._usage_observer
+        self._original_audit_call = grounding._call_litellm_audit
         engine._generate_with_fallback = self._wrapped
-        grounding._usage_observer = self.grounding_records.append
+        grounding._usage_observer = self._observe_grounding
+        if self.guard is not None:
+            grounding._call_litellm_audit = self._guarded_audit_call
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
         engine._generate_with_fallback = self._original
         grounding._usage_observer = self._original_observer
+        grounding._call_litellm_audit = self._original_audit_call
+
+
+async def _cancel_stray_tasks(preexisting: set[asyncio.Task]) -> None:
+    """ground_extraction's gather re-raises the first failure but leaves the
+    other span tasks running; cancel and drain them so no request is issued
+    after a cap stop."""
+    current = asyncio.current_task()
+    strays = [t for t in asyncio.all_tasks() if t is not current and t not in preexisting]
+    for task in strays:
+        task.cancel()
+    if strays:
+        await asyncio.gather(*strays, return_exceptions=True)
 
 
 async def _replay_claim(target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation) -> ClaimLLM:
@@ -316,55 +437,63 @@ def _claim_final_to_fixture_dict(claim_final, index: int) -> dict:
 
 async def _run_once(
     targets: list[ReplayTarget], level: str, repeat_index: int, dry_run: bool,
-) -> tuple[Path, list[CallRecord], list[dict]]:
+    paper_texts: dict[str, str] | None = None, guard: _CostGuard | None = None,
+) -> tuple[Path, list[CallRecord], list[dict], str]:
+    """Returns (out_dir, gemini records, grounding records, status). status is
+    STATUS_VOID_CAP_HIT when the guard's cap stopped the run; the run is then
+    void and nothing further is issued."""
     out_dir = OUTPUT_ROOT / f"exp1_{level}_{repeat_index}"
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
     for t in targets:
         by_paper[t.paper_id].append(t)
 
-    instrumentation = _Instrumentation()
-    written_papers = []
+    instrumentation = _Instrumentation(guard)
+    preexisting_tasks = asyncio.all_tasks()
+    status = STATUS_OK
 
     with instrumentation:
-        for paper_id, paper_targets in sorted(by_paper.items()):
-            run1_fixture = json.loads((FIXTURE_DIR / f"{paper_id}.json").read_text(encoding="utf-8"))
-            if dry_run:
-                print(f"[replay_audit] DRY-RUN {paper_id} repeat={repeat_index} level={level} "
-                      f"claims={[t.claim_index for t in paper_targets]}")
-                continue
+        try:
+            for paper_id, paper_targets in sorted(by_paper.items()):
+                run1_fixture = json.loads((FIXTURE_DIR / f"{paper_id}.json").read_text(encoding="utf-8"))
+                if dry_run:
+                    print(f"[replay_audit] DRY-RUN {paper_id} repeat={repeat_index} level={level} "
+                          f"claims={[t.claim_index for t in paper_targets]}")
+                    continue
 
-            paper_text = await _hash_check_and_load_text(paper_id, run1_fixture["header"])
-            if paper_text is None:
-                continue
+                paper_text = paper_texts[paper_id]
 
-            audited: list[ClaimLLM] = []
-            for target in paper_targets:
-                claim_llm = await _replay_claim(target, paper_text, level, instrumentation)
-                audited.append(claim_llm)
+                audited: list[ClaimLLM] = []
+                for target in paper_targets:
+                    instrumentation.raise_if_capped()
+                    claim_llm = await _replay_claim(target, paper_text, level, instrumentation)
+                    audited.append(claim_llm)
 
-            grounded = await grounding.ground_extraction(
-                ClaimsExtractionResponse(claims=audited), paper_text, chat_id=f"replay-{paper_id}",
-            )
+                instrumentation.raise_if_capped()
+                grounded = await grounding.ground_extraction(
+                    ClaimsExtractionResponse(claims=audited), paper_text, chat_id=f"replay-{paper_id}",
+                )
 
-            claims_out = [
-                _claim_final_to_fixture_dict(claim_final, target.claim_index)
-                for claim_final, target in zip(grounded, paper_targets)
-            ]
-            header = dict(run1_fixture["header"])
-            header["model_name"] = engine.settings.llm_claim_audit_model
-            header["replay"] = {
-                "thinking_level": level, "base_run": "run1", "repeat_index": repeat_index,
-                "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            }
-            header["claims_scope"] = [t.claim_index for t in paper_targets]
-            fixture_out = {"header": header, "claims": claims_out, "matches": run1_fixture["matches"]}
+                claims_out = [
+                    _claim_final_to_fixture_dict(claim_final, target.claim_index)
+                    for claim_final, target in zip(grounded, paper_targets)
+                ]
+                header = dict(run1_fixture["header"])
+                header["model_name"] = engine.settings.llm_claim_audit_model
+                header["replay"] = {
+                    "thinking_level": level, "base_run": "run1", "repeat_index": repeat_index,
+                    "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                }
+                header["claims_scope"] = [t.claim_index for t in paper_targets]
+                fixture_out = {"header": header, "claims": claims_out, "matches": run1_fixture["matches"]}
 
-            out_dir.mkdir(parents=True, exist_ok=True)
-            (out_dir / f"{paper_id}.json").write_text(json.dumps(fixture_out, indent=2), encoding="utf-8")
-            written_papers.append(paper_id)
-            print(f"[replay_audit] wrote {out_dir / f'{paper_id}.json'} ({len(claims_out)} claims)")
+                out_dir.mkdir(parents=True, exist_ok=True)
+                (out_dir / f"{paper_id}.json").write_text(json.dumps(fixture_out, indent=2), encoding="utf-8")
+                print(f"[replay_audit] wrote {out_dir / f'{paper_id}.json'} ({len(claims_out)} claims)")
+        except CapExceeded:
+            status = STATUS_VOID_CAP_HIT
+            await _cancel_stray_tasks(preexisting_tasks)
 
-    return out_dir, instrumentation.records, instrumentation.grounding_records
+    return out_dir, instrumentation.records, instrumentation.grounding_records, status
 
 
 def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> None:
@@ -381,6 +510,8 @@ def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> No
           f"structure prompt={stats['struct_prompt']:.0f} output={stats['struct_output']:.0f} thought={stats['struct_thought']:.0f}")
     print(f"[replay_audit] estimated cost: USD {total_low:.3f}-{total_high:.3f} "
           f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
+    print(f"[replay_audit] suggested --max-inr (1.3x estimate): {total_high * INR_PER_USD * 1.3:.1f} "
+          f"(1.3x the high end; the estimate excludes grounding calls)")
 
 
 _UNPRICED = "unpriced"
@@ -410,21 +541,27 @@ def _summarize_grounding(grounding_records: list[dict]) -> dict[str, dict]:
     return by_model
 
 
-def _print_summary(out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None) -> None:
+def _print_summary(
+    out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None,
+    status: str = STATUS_OK, guard: _CostGuard | None = None,
+) -> None:
     grounding_records = grounding_records or []
     total_prompt = sum(r.prompt_tokens for r in records)
     total_output = sum(r.output_tokens for r in records)
     total_thought = sum(r.thought_tokens for r in records)
     total_cached = sum(r.cached_tokens for r in records)
     total_tool_use = sum(r.tool_use_tokens for r in records)
-    gemini_usd = cost_usd(total_prompt, total_output, total_thought, total_cached, total_tool_use)
 
-    # Every Gemini record is priced at gemini-3.6-flash rates; a call that fell
-    # back to another model is therefore not priced at its own rate.
+    # Each Gemini record is priced by the model that served it. A record with a
+    # missing or unknown model is priced at gemini-3.6-flash rates (an upper
+    # bound) and counted here.
+    gemini_usd = 0.0
     other_gemini_models: dict[str, int] = defaultdict(int)
     for r in records:
-        if normalise_model_name(r.model_used) != _GEMINI_PRICED_MODEL:
-            other_gemini_models[r.model_used] += 1
+        usd, at_own_rate = _gemini_record_cost_usd(r)
+        gemini_usd += usd
+        if not at_own_rate:
+            other_gemini_models[r.model_used or "unknown"] += 1
 
     grounding = _summarize_grounding(grounding_records)
     unpriced_models = sorted(m for m, agg in grounding.items() if agg["usd"] == _UNPRICED)
@@ -432,6 +569,7 @@ def _print_summary(out_dir: Path, records: list[CallRecord], grounding_records: 
     total_usd = gemini_usd + grounding_usd
 
     summary = {
+        "status": status,
         "calls": len(records),
         "total_prompt_tokens": total_prompt,
         "total_output_tokens": total_output,
@@ -447,12 +585,22 @@ def _print_summary(out_dir: Path, records: list[CallRecord], grounding_records: 
         "total_cost_excludes_unpriced_grounding": bool(unpriced_models),
         "records": [r.__dict__ for r in records],
     }
+    if guard is not None and guard.max_inr is not None:
+        summary["cap"] = {
+            "max_inr": guard.max_inr,
+            "running_inr_at_stop": round(guard.running_inr, 2),
+            "overshoot_inr": round(guard.overshoot_inr, 2),
+            # Calls run one at a time, so the overshoot can never exceed the
+            # single call that crossed the cap; this is the largest call so far.
+            "max_single_call_inr": round(guard.max_single_call_inr, 2),
+        }
+    out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(f"[replay_audit] {len(records)} Gemini calls, {total_prompt} prompt ({total_cached} cached) / {total_output} output / "
           f"{total_thought} thought tokens, ~INR {summary['cost_inr']}")
     if other_gemini_models:
-        print(f"[replay_audit] WARNING: Gemini calls served by other models were priced at {_GEMINI_PRICED_MODEL} rates: "
-              f"{dict(other_gemini_models)}")
+        print(f"[replay_audit] WARNING: Gemini calls with a missing/unknown model were priced at {_GEMINI_PRICED_MODEL} "
+              f"rates (upper bound): {dict(other_gemini_models)}")
     if grounding:
         for model, agg in sorted(grounding.items()):
             print(f"[replay_audit] grounding {model}: {agg['calls']} calls, {agg['prompt_tokens']} prompt "
@@ -464,6 +612,14 @@ def _print_summary(out_dir: Path, records: list[CallRecord], grounding_records: 
         print(f"[replay_audit] *** UNPRICED grounding models (no rates on file): {', '.join(unpriced_models)} ***")
     label = " (excl. unpriced grounding)" if unpriced_models else ""
     print(f"[replay_audit] total ~INR {summary['total_cost_inr']}{label}")
+    if status == STATUS_VOID_CAP_HIT and guard is not None:
+        bar = "*" * 78
+        print(bar)
+        print(f"[replay_audit] *** {STATUS_VOID_CAP_HIT}: cost cap of INR {guard.max_inr} exceeded - THIS RUN IS VOID ***")
+        print(f"[replay_audit] *** running cost at stop INR {guard.running_inr:.2f} (overshoot INR {guard.overshoot_inr:.2f}; "
+              f"largest single call so far INR {guard.max_single_call_inr:.2f}) ***")
+        print(f"[replay_audit] *** no further calls issued; partial summary: {out_dir / '_summary.json'} ***")
+        print(bar)
 
 
 async def _main(args: argparse.Namespace) -> int:
@@ -490,11 +646,39 @@ async def _main(args: argparse.Namespace) -> int:
         _print_estimate(targets, args.level, args.repeat)
         return 0
 
+    paper_ids = sorted({t.paper_id for t in targets})
+    paper_texts: dict[str, str] = {}
+    if args.dry_run:
+        for paper_id in paper_ids:
+            path = RAW_TEXT_CACHE_DIR / _cache_file_name(paper_id)
+            print(f"[replay_audit] DRY-RUN cache {paper_id}: {'found' if path.is_file() else 'MISSING'} ({path.name})")
+    else:
+        # Load every paper's text before the first paid call, so a missing file
+        # fails the run with zero spend.
+        try:
+            paper_texts = _load_paper_texts(paper_ids)
+        except PaperTextError as exc:
+            print(f"[replay_audit] ABORT: {exc}")
+            return 1
+
+    guard = _CostGuard(getattr(args, "max_inr", None))
     for repeat_index in range(1, args.repeat + 1):
-        out_dir, records, grounding_records = await _run_once(targets, args.level, repeat_index, args.dry_run)
-        if not args.dry_run:
-            _print_summary(out_dir, records, grounding_records)
+        out_dir, records, grounding_records, status = await _run_once(
+            targets, args.level, repeat_index, args.dry_run, paper_texts, guard,
+        )
+        if args.dry_run:
+            continue
+        _print_summary(out_dir, records, grounding_records, status, guard)
+        if status != STATUS_OK:
+            return EXIT_CAP_HIT
     return 0
+
+
+def _positive_float(value: str) -> float:
+    number = float(value)
+    if number <= 0:
+        raise argparse.ArgumentTypeError(f"must be > 0, got {value}")
+    return number
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -505,6 +689,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--papers", help="comma-separated paper_id substrings to further narrow scope")
     parser.add_argument("--estimate", action="store_true", help="print a cost estimate, zero LLM calls")
     parser.add_argument("--dry-run", action="store_true", help="print what would be replayed, zero LLM calls")
+    parser.add_argument(
+        "--max-inr", type=_positive_float, default=None,
+        help="stop (status VOID_CAP_HIT, exit 2) once the running cost passes this many INR; default no cap",
+    )
     return parser
 
 

@@ -30,10 +30,17 @@ class Rates:
 # Only models with a verified price belong here - an absent model is reported
 # as "unpriced" rather than guessed. Rates copied from the official pricing
 # page; record the date.
+#
+# Checked 2026-10-23, USD per 1M tokens:
+#   gemini-3.6-flash      Google AI pricing page (valid through 2026-12-31, doubles 2027-01-01)
+#   gemini-3.1-flash-lite Google AI pricing page
+#   gpt-oss-20b           Groq docs model page (served as openai/gpt-oss-20b)
 RATES_BY_MODEL: dict[str, Rates] = {
     "gemini-3.6-flash": Rates(
         in_usd=USD_PER_1M_INPUT, out_usd=USD_PER_1M_OUTPUT, cached_usd=USD_PER_1M_CACHED_INPUT,
     ),
+    "gemini-3.1-flash-lite": Rates(in_usd=0.25, out_usd=1.50, cached_usd=0.025),
+    "gpt-oss-20b": Rates(in_usd=0.075, out_usd=0.30, cached_usd=0.037),
 }
 
 
