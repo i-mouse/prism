@@ -3050,3 +3050,179 @@ docs/evals/clean_labels/clean_attempt_score.md.
   new auditor.
 - Next: pre-merge review; PR eval/dev-baseline-run1 -> main; auditor phase.
   PRISM_STATUS.md sync deferred.
+
+## Auditor phase diagnostic (INR 0) - 2026-10-22
+**Context:** Auditor phase, discussion first. A free, read-only diagnostic was run
+before any design. Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md (CC
+plan-mode audit, direct review of the recreated raw text, human spot-check of P6-R2
+and P4-R1). No code, prompt, label, config or fixture change. No LLM/API calls.
+Spend INR 0.
+
+**Findings:**
+- Settings (google-genai 1.64.0): the product sends no thinking_level for metadata,
+  extractor, auditor or structurer. SDK ThinkingLevel values: LOW, MEDIUM, HIGH,
+  MINIMAL; the auditor flag accepts low/medium/high. Exp 1 measured thought tokens
+  per audit call: unset ~2,279, high ~3,481 (+53%), cost ~+10%. Auditor and
+  structurer send no temperature. Grounding (Flash-Lite fallback) and the eval
+  matcher send temperature=0; Google advises 1.0 for Gemini 3 models. Parked, not
+  changed.
+- Cost: auditor prompt order is system prompt -> paper -> claim; the prefix is
+  identical across claims of one paper (implicit-cache eligible). Cached share of
+  audit input across 5 identical b51 re-runs: 0% to 57% (erratic). The "~75% of
+  input tokens = auditor" figure was an unmeasured estimate; measured partial
+  shares are ~90-91% (auditor+grounding) and ~96% (auditor+structurer). No
+  production run logs full-pipeline token usage (usage is null in live logs):
+  logging gap.
+- Misses (10 dev audit misses, up to 6 samples each: run 1 + Exp 1 unset x2 +
+  high x3): 6 never caught in any sample (P4-R1, P4-R2, P3-R2, P5-R2, P6-R2,
+  P11-R2); P7-R1 evidence seen and excused 5/5; P1-R1 and P8-R2 caught only at
+  high; P5-R1 indeterminate. Auditor restatements drop scope words (P1-R1, P3-R2,
+  P7-R1); P11-R2 keeps "across the evaluated settings" but never checks table
+  coverage.
+- Hits: P1-R3 was a hit in run 1 and 0/5 in replays: run-to-run noise, not a
+  regression. About 7 real hits on the frozen 18-claim set.
+- Input text: paper_text reaches the auditor unchanged from extract_pdf_text_sync
+  (main.py:249 -> engine.py:463 -> prompt_loader.py:153-173). Recreated with the
+  same function, PyMuPDF 1.26.7, uv.lock unchanged since 2026-10-10. Across 16
+  evidence regions: evidence present in all; numbers correct; row labels clear;
+  column headers only by position (merged/split header lines, merged cells). Human
+  spot-check confirmed P6-R2 (Table 10 lists 11 models, BreastGPT-8B absent) and
+  P4-R1 (Tables 1-2: MASA loses several cells to Original; FlexPrefill-Llama MASA
+  Avg below Full Attention, -0.07). Several misses have the breaking caveat in
+  plain prose next to the table. Appendix text is read in page order; cross-page
+  order was not tested beyond the needed rows.
+- Process: the first Phase 2 validity check (chars/4 vs prompt_tokens, 15% bar)
+  was a design error (prompt_tokens include system prompt and claim; number-dense
+  text tokenizes denser). Replaced by the code trace plus a library-version check.
+  P3's audit prompt (~94.9K tokens vs ~38K expected from chars) is unexplained.
+
+**Decision (diagnosis, not a design):**
+- Root cause of A1: the auditor does not test the claim's full scope (quantifiers,
+  counts, coverage of models/tasks/settings) against what the paper reports. It
+  accepts the first supporting evidence and the paper's own summary framing (e.g.
+  bold averages over per-cell losses).
+- Not the main cause: PDF reading, retrieval or missing evidence.
+- Cannot fix the 6 unanimous misses: higher thinking alone, majority voting,
+  sentence selection.
+- The 2026-10-19 candidate (numbered sentences + majority vote) is dropped as the
+  A1 fix. Voting stays a candidate for stability only.
+- A prompt-only checklist already failed (B5.1); the scope check is expected to
+  need a structural change.
+
+**Open, for the design discussion:** how to force a full-scope check; structured
+tables (rows x columns) as a helper; explicit context caching / Batch / Flex cost;
+stability (thinking high vs voting); free checks (replay on the frozen 18-claim
+set, S-row match map), cheapest Stage A, marks and INR caps; restate the release
+bar ("mean of 3 runs" is stale).
+
+**Answer-key notes (labels unchanged, per the rubric rule):** P5-R2 scoring-note
+row letters (g/h) differ from the raw text (h/d); count 15 holds. P6-R2 note says
+Figure 3 shows 8 models; raw text shows 4; Table 10 count 11 holds.
+
+
+## Auditor redesign agreed: caching + scope check, marks and caps - 2026-10-22
+**Context:** Follows "Auditor phase diagnostic (INR 0) - 2026-10-22". Two
+free read-only checks were run first (evidence:
+docs/evals/auditor_rd/verification_2026-10-22.md,
+docs/evals/auditor_rd/free_checks_2026-10-22.md). No LLM calls, INR 0.
+**Findings that shaped the design:**
+- Auditor free text (1 replay sample per row) for the 6 always-missed
+  rows: 4 never mention the breaking evidence (P4-R2, P3-R2, P5-R2,
+  P6-R2); 2 quote it as support and still say supported (P4-R1 "11 of
+  12", P11-R2 "under the Pro->Qwen setting"); 0 argue it away. The cause
+  is a missing full-scope check and trust in the paper's own counts, not
+  a looser standard and not table reading.
+- The diagnostic's NEVER/EXCUSED tags were set from structured fields
+  (label, grounding_status), not from the auditor's free text.
+- Blind scope-item check on the 18 frozen claims ("mostly blind": the
+  prompt named the 6 always-missed rows): items reach the breaking
+  evidence for 7/10 misses (6/6 always-missed); P5-R1 partly; P7-R1
+  (plural "trajectories") and P8-R2 ("use and disuse") not covered.
+- Exposure (word list, lower bound): 63 of 88 S rows and 206 of 362
+  run-1 claims (about 57%) contain scope words.
+- Cost: pricing.py uses gemini-3.6-flash USD 0.75 in / 3.75 out per 1M
+  (current list price; it doubles from 2027-01-01), INR_PER_USD 100.
+  Run 1 averages about 30 claims per paper. Earlier per-paper INR
+  estimates in chat are not reliable; cost is measured, not estimated.
+- Logging gaps: the auditor call logs no usage at all;
+  cached_content_token_count is never read; grounding (litellm) cost is
+  not instrumented; replay_audit.py has no --max-inr and needs Postgres.
+- google-genai 1.64.0 has explicit caching (client.caches) and Batch; it
+  has no service_tier (Flex).
+**Decision - design (built behind new flags, default off):**
+1. Explicit context caching: system prompt + paper text cached once per
+   paper; each claim's audit references the cache. Prompt order stays
+   paper -> claim.
+2. Scope lister: a small call on every claim, claim text only (no
+   paper), low thinking. Lists the claim's scope items in its own words,
+   including counts, quantifiers (all/every/consistent/across), named
+   sets of models/tasks/settings/positions, plurals, and "X and Y" /
+   "either/or" pairs. No items -> normal path only.
+3. Scope checker: one call per claim that has items, using the cached
+   paper, low thinking. For each item it lists every value or entry the
+   paper reports, then gives matches / contradicted (quote the value) /
+   not reported.
+4. Combine in code: "contradicted" lowers the verdict to
+   partially_supported only if its quoted value passes the existing
+   grounding Stage-1 match against the paper text; "not reported" never
+   lowers; nothing ever raises a verdict. The normal auditor, structurer
+   and grounding are unchanged. Auditor thinking level stays unset; same
+   model (gemini-3.6-flash).
+Rejected for now: counter-evidence pass (high false-rejection risk),
+voting (noise only), code checker on tables, structured tables as the
+main fix (helper only, if checker reads columns wrongly), model change.
+**Build order (one commit per step, implementation branch):**
+logging fixes -> replay_audit.py fixes (--max-inr, paper text from
+saved text files instead of Postgres) -> caching -> lister + checker.
+Free checks before any paid run: unit tests; flag-off prompt hash stays
+cb3272cce551; prompt-leak check passes; --estimate uses measured tokens.
+**Paid stages (marks fixed now, before any output):**
+- Stage A0 (caching only): the 18 frozen claims, 1 run. PASS = cached
+  tokens on all but at most 1 audit call per paper AND audit cost per
+  claim at least 40% below Exp 1 unset-thinking cost AND refusal hits on
+  the 18 claims within 5-8. Cap INR 60.
+- Stage A1 (caching + lister + checker): the 18 frozen claims x 3
+  repeats. A miss row is fixed if PS/NS in >= 2 of 3 repeats. A real hit
+  (P2-R5, P6-R1, P8-R1, P10-R1, P10-R2, P10-R3, P12-R2) is lost if S in
+  >= 2 of 3. PASS = fixed >= 5 of 10 (including >= 4 of the 6
+  always-missed) AND lost <= 1 AND every lowered verdict carries a
+  grounded quote. Cap INR 200.
+- Stage B (false rejections): S rows with scope words, matched to run-1
+  claims in docs/evals/dev_match_map.json (adjudicated before the run).
+  1 run. Any matched S row lowered to PS/NS counts as a false
+  rejection. PASS = new false rejections <= 4 (total <= 8/88). Cap INR
+  250.
+- Total cap INR 560. Sealed reserve INR 300 untouched. Stop any run at
+  1.3x its --estimate. A run stopped by a cap is void. No prompt edits,
+  threshold changes or re-runs to rescue a failed mark. Each stage's
+  marks and cap are re-confirmed in a dated entry and committed before
+  its first paid call; tag the commit before each paid stage.
+**Release bar restated (replaces "mean of 3 runs"):** dev: one full
+12-paper run reaches >= 22/31 refusal-family rows with false rejections
+<= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats).
+Release number: one sealed-set run only, never dev or golden numbers.
+**Later, own entries:** K4 - replace the hard-coded 87
+(eval/score_clean.py:50) with the new configuration's measured INR per
+paper before re-testing pass 2; INR reported at run-date price and at
+2027 price. Then pass 2 end to end, claim-scope decision, new sealed set,
+one sealed run.
+
+## Corrections - 2026-10-22
+- "Clean-attempt claims, auditor phase candidate - 2026-10-19": the
+  RIGOURATE "multi-model majority vote" and CLAIM-BENCH "decomposed
+  prompting raises recall" attributions are UNVERIFIED. Checked
+  2026-10-22: RIGOURATE (arXiv 2601.04350, ACL Findings 2026) retrieves
+  evidence from the paper body and scores overstatement; eight LLMs were
+  used to annotate its dataset. CLAIM-BENCH (IJCNLP-AACL 2025) compares
+  single-pass, three-pass and one-by-one prompting. Neither is cited as
+  support for voting or recall here.
+- The "~75% of input tokens = auditor" figure is superseded: measured
+  partial shares are about 90-96%; no full-pipeline measurement exists.
+- Draft dev false rejections: 4/88 (the weak P5 match was resolved as
+  not a match, docs/evals/dev_adjudication_run1.md:135).
+- Clean attempt K1: found 5/13 in clean_r1 and 6/13 in clean_r2 (an
+  earlier chat table showing 6 in both runs was wrong).
+- P5-R1: the auditor's free text in PS samples does state the
+  single-pair, coding-only limit; the diagnostic's "causal link
+  unconfirmed" came from structured fields only.
+

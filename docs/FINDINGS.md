@@ -36,12 +36,14 @@
 - The auditor gets the full paper (no retrieval at audit stage). In 5 of 6 wrongly affirmed rows it verified a narrowed version of the claim.
 - It refuses correctly when the breaking dimension is named in the claim ("all three tasks"); it affirms when the dimension is only implied (which models, baselines, tasks).
 - Retrieval is not the cause; neither prompt checklists (B5.1) nor scope-first design (Exp 1) fixed it.
+- 2026-10-22 dev diagnostic: evidence was present and readable for all 10 dev audit misses; the auditor does not test the claim's full scope (quantifiers, counts, coverage). Thinking high and voting cannot fix the 6 misses that were wrong in every sample. See decisions.md, 'Auditor phase diagnostic (INR 0) - 2026-10-22'.
 
 ## 6. Cost
 - ~Rs 500 on 7 Oct live runs.
 - ~Rs 204 on Exp 1 pilot (scoped-auditor pilot; not decisions.md Experiment 1, which cost INR 411.95).
 - Experiment 2 (extractor few-shot claim-shape repair): INR 177.93.
 - Read-only agent audits cost nothing (no LLM calls).
+- The '~75% of input tokens = auditor' figure is an estimate; measured partial shares are ~90-96%. Implicit cache hits on the auditor are erratic (0-57%).
 
 ## 7. Ops summary
 - **Observability:** 7 telemetry and logging gaps found (e.g., silent claim drops, missing token logs). Plan recorded in `docs/observability-and-cost-plan.md`.
@@ -60,4 +62,4 @@
   Superseded by the 2026-10-10 release targets in decisions.md.
 - **New papers:** Done: 12 dev papers labelled (dev_eval.json, 2026-10-11). Still to do: a new sealed set, labelled before any run.
 - **Optional model test:** reordered, not cancelled — a newer-Flash-with-thinking auditor experiment remains a candidate for a later experiment slot if budget allows, behind the scoped extractor work (decisions.md:1652).
-- **Experiment 3:** pre-registered 2026-10-15, run 2026-10-15/16, REJECTED on the cost gate (INR 237.59/paper vs 130 cap; see §4). The follow-on clean-extraction attempt (2026-10-16 to 2026-10-20) was also REJECTED (see §4). The 2026-10-10 exit rule was superseded 2026-10-16 (Nitin chose to keep improving the core product first); next is the auditor phase — an evidence-first, numbered-sentence auditor plus majority vote, not yet approved or built, marks and budget to be pre-registered before any run (docs/decisions.md, "Clean-extraction attempt, supersedes 2026-10-10 exit rule - 2026-10-16"; "K1 diagnostics and filter status - 2026-10-20").
+- **Experiment 3:** pre-registered 2026-10-15, run 2026-10-15/16, REJECTED on the cost gate (INR 237.59/paper vs 130 cap; see §4). The follow-on clean-extraction attempt (2026-10-16 to 2026-10-20) was also REJECTED (see §4). The 2026-10-10 exit rule was superseded 2026-10-16 (Nitin chose to keep improving the core product first); next is the auditor phase — auditor design to force a full-scope check (structural), with explicit caching for cost; numbered sentences + vote dropped as the A1 fix (decisions.md, 2026-10-22).
