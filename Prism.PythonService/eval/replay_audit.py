@@ -25,15 +25,27 @@ Zero LLM calls under --estimate or --dry-run.
 the whole invocation. When it is exceeded no further call is issued, the
 partial summary is written with status VOID_CAP_HIT and the exit code is 2.
 
+--cache (default off) turns on explicit context caching of the system prompt +
+paper for the audit calls (extraction/context_cache.py, BETA): one cache per
+paper, created before its first claim and deleted after its last. The cap
+counts cache creation (cached tokens at the normal input rate, an ASSUMPTION)
+and storage (charged for the full TTL even if the cache is deleted early) as
+well as the cached audit calls. The run stops at the FIRST cache creation
+failure or cached-call API error: status VOID_CACHE_FAILED, summary written,
+exit code 2. With --estimate, --cache prints the cached estimate (still free:
+no network, no cache read).
+
 Usage:
   uv run python -m eval.replay_audit --estimate --level high --claims docs/evals/exp1_stage_a_claims.json --repeat 3
   uv run python -m eval.replay_audit --dry-run  --level high --claims docs/evals/exp1_stage_a_claims.json --repeat 3
   uv run python -m eval.replay_audit --level high   --claims docs/evals/exp1_stage_a_claims.json --repeat 3 --max-inr 100
   uv run python -m eval.replay_audit --level medium --claims docs/evals/exp1_stage_a_claims.json --repeat 2
+  uv run python -m eval.replay_audit --estimate --cache --level medium --claims docs/evals/exp1_stage_a_claims.json
   uv run python -m eval.replay_audit --level high                                   # Stage B: all 12 papers, repeat 1
 """
 import argparse
 import asyncio
+import contextlib
 import json
 import time
 from collections import defaultdict
@@ -41,8 +53,18 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from eval.legacy_paper_text import PDF_DIR, _hash_check_and_load_text  # noqa: F401 - re-exported for replay_exp3/replay_clean/replay_extract; unused here
-from eval.pricing import INR_PER_USD, USD_PER_1M_INPUT, USD_PER_1M_OUTPUT, cost_usd, cost_usd_for_model
+from eval.pricing import (
+    INR_PER_USD,
+    USD_PER_1M_CACHED_INPUT,
+    USD_PER_1M_INPUT,
+    USD_PER_1M_OUTPUT,
+    cache_creation_cost_usd,
+    cost_usd,
+    cost_usd_for_model,
+    storage_cost_usd,
+)
 from extraction import engine, grounding
+from extraction.context_cache import CacheFailed, ContextCacheStats, PaperCache, paper_context_cache, ttl_for_claims
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse
 
@@ -58,7 +80,13 @@ EXPECTED_PROMPT_HASH = "cb3272cce551"
 _ARXIV_PREFIX = "arxiv-"
 STATUS_OK = "OK"
 STATUS_VOID_CAP_HIT = "VOID_CAP_HIT"
+STATUS_VOID_CACHE_FAILED = "VOID_CACHE_FAILED"
 EXIT_CAP_HIT = 2
+
+# --estimate --cache: the part of an audit prompt that is NOT cached (the claim
+# turn). An ASSUMPTION - not measured; the measured audit prompt average minus
+# this is treated as the cached part.
+ASSUMED_UNCACHED_TOKENS_PER_CLAIM = 500
 
 
 class PaperTextError(Exception):
@@ -89,6 +117,49 @@ class CallRecord:
     latency_s: float
     cached_tokens: int = 0
     tool_use_tokens: int = 0
+    # True for the auditor call, False for the structurer (told apart by the
+    # structurer's response_schema); None when unknown.
+    is_audit: bool | None = None
+
+
+@dataclass
+class CachePaperRecord:
+    """One paper's cache, with its ASSUMED-rate creation cost and full-TTL storage cost."""
+    paper_id: str
+    cache_name: str
+    claims: int
+    token_count: int | None
+    tokens_assumed: bool  # token_count was missing, the measured audit-prompt average was charged instead
+    tokens_charged: float
+    ttl_s: int
+    creation_usd: float
+    storage_usd: float
+
+
+@dataclass
+class _CacheLedger:
+    """Cache bookkeeping for one --cache run: SDK-side counters (stats), one
+    CachePaperRecord per created cache, and why the run stopped, if it did."""
+    stats: ContextCacheStats
+    assumed_tokens: float
+    papers: list[CachePaperRecord] = field(default_factory=list)
+    stop_reason: str | None = None
+
+    @property
+    def overhead_usd(self) -> float:
+        return sum(p.creation_usd + p.storage_usd for p in self.papers)
+
+
+def _stop_on_cache_failure(reason: str) -> None:
+    raise CacheFailed(reason)
+
+
+def _new_cache_ledger() -> _CacheLedger:
+    """A ledger whose stats stop the run at the first cache failure."""
+    return _CacheLedger(
+        stats=ContextCacheStats(on_cache_failure=_stop_on_cache_failure),
+        assumed_tokens=_load_measured_token_stats()["audit_prompt"],
+    )
 
 
 @dataclass
@@ -179,14 +250,21 @@ def _load_measured_token_stats() -> dict[str, float]:
     }
 
 
-def _estimate_one_claim_cost_usd(stats: dict[str, float], level: str) -> tuple[float, float]:
+def _estimate_one_claim_cost_usd(
+    stats: dict[str, float], level: str, cached_audit_tokens: float = 0.0,
+) -> tuple[float, float]:
     """Returns (low, high) USD estimate for one audit+structure replay of one
     claim, using measured token averages. Only the audit call's thought
     tokens vary with thinking_level (scaled by _HIGH_THOUGHT_MULTIPLIER_RANGE
     for "high"); the structurer call never receives a thinking_config, so its
     thought tokens (the API's own default) are held at the measured medium
     average regardless of level - that assumption is unverified for "high"
-    and could itself be an underestimate."""
+    and could itself be an underestimate.
+
+    cached_audit_tokens (default 0, the uncached estimate) is the part of the
+    audit prompt billed at the cached rate; the rest of the audit prompt is
+    billed at the normal input rate. Cache creation and storage are NOT
+    included here (see _print_cache_estimate)."""
     if level == "high":
         thought_low = stats["audit_thought_medium"] * _HIGH_THOUGHT_MULTIPLIER_RANGE[0]
         thought_high = stats["audit_thought_medium"] * _HIGH_THOUGHT_MULTIPLIER_RANGE[1]
@@ -194,7 +272,10 @@ def _estimate_one_claim_cost_usd(stats: dict[str, float], level: str) -> tuple[f
         thought_low = thought_high = stats["audit_thought_medium"]
 
     def _cost(audit_thought_tokens: float) -> float:
-        input_cost = (stats["audit_prompt"] + stats["struct_prompt"]) / 1e6 * USD_PER_1M_INPUT
+        input_cost = (
+            (stats["audit_prompt"] - cached_audit_tokens + stats["struct_prompt"]) / 1e6 * USD_PER_1M_INPUT
+            + cached_audit_tokens / 1e6 * USD_PER_1M_CACHED_INPUT
+        )
         output_cost = (
             (stats["audit_output"] + audit_thought_tokens + stats["struct_output"] + stats["struct_thought"])
             / 1e6 * USD_PER_1M_OUTPUT
@@ -340,10 +421,16 @@ class _Instrumentation:
         if self.guard is not None:
             self.guard.check_before_call()
 
-    async def _wrapped(self, client, contents, config, chat_id, model_name, fallback_model, correlation_id=None):
+    async def _wrapped(
+        self, client, contents, config, chat_id, model_name, fallback_model, correlation_id=None, **fallback_kwargs,
+    ):
+        # fallback_kwargs (fallback_config / fallback_contents) are only ever
+        # passed by a cached auditor call; they are forwarded untouched.
         self.raise_if_capped()
         start = time.monotonic()
-        response, used_model = await self._original(client, contents, config, chat_id, model_name, fallback_model, correlation_id)
+        response, used_model = await self._original(
+            client, contents, config, chat_id, model_name, fallback_model, correlation_id, **fallback_kwargs,
+        )
         latency = time.monotonic() - start
         usage = getattr(response, "usage_metadata", None)
         record = CallRecord(
@@ -356,6 +443,7 @@ class _Instrumentation:
             latency_s=latency,
             cached_tokens=getattr(usage, "cached_content_token_count", None) or 0,
             tool_use_tokens=getattr(usage, "tool_use_prompt_token_count", None) or 0,
+            is_audit=getattr(config, "response_schema", None) is None,
         )
         self.records.append(record)
         if self.guard is not None:
@@ -399,7 +487,10 @@ async def _cancel_stray_tasks(preexisting: set[asyncio.Task]) -> None:
         await asyncio.gather(*strays, return_exceptions=True)
 
 
-async def _replay_claim(target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation) -> ClaimLLM:
+async def _replay_claim(
+    target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation,
+    paper_cache: PaperCache | None = None,
+) -> ClaimLLM:
     semaphore = asyncio.Semaphore(1)
     instrumentation.set_context("audit", target.paper_id, target.claim_index, level)
     claim_dict = {"claim_text_verbatim": target.claim_text_verbatim, "claim_summary": target.claim_summary}
@@ -409,9 +500,11 @@ async def _replay_claim(target: ReplayTarget, paper_text: str, level: str, instr
     # covers the audit call; the structurer call is also wrapped but reported
     # under the same context (close enough - the structurer never varies by
     # thinking_level, only the audit call's cost is Experiment 1's variable).
+    cache_kwargs = {"paper_cache": paper_cache} if paper_cache is not None else {}
     return await engine._audit_and_structure_claim(
         semaphore=semaphore, paper_text=paper_text, claim=claim_dict, chat_id=f"replay-{target.paper_id}",
         correlation_id=None, claim_number=target.claim_index + 1, total_claims=1, thinking_level=level,
+        **cache_kwargs,
     )
 
 
@@ -435,13 +528,40 @@ def _claim_final_to_fixture_dict(claim_final, index: int) -> dict:
     }
 
 
+def _record_and_charge_cache(
+    cache_ledger: _CacheLedger, guard: _CostGuard | None, paper_id: str, claims: int, paper_cache: PaperCache,
+) -> None:
+    """Books one paper's cache: creation (cached tokens at the normal input
+    rate, an ASSUMPTION) plus storage for the FULL TTL (charged even though
+    the cache is deleted early). The record is appended before the charge so
+    the summary has it even if the charge trips the cap. When the create
+    response carried no token count, the measured audit-prompt average is
+    charged instead and the record says so."""
+    assumed = paper_cache.token_count is None
+    tokens = cache_ledger.assumed_tokens if assumed else float(paper_cache.token_count)
+    record = CachePaperRecord(
+        paper_id=paper_id, cache_name=paper_cache.name, claims=claims, token_count=paper_cache.token_count,
+        tokens_assumed=assumed, tokens_charged=tokens, ttl_s=paper_cache.ttl_s,
+        creation_usd=cache_creation_cost_usd(tokens), storage_usd=storage_cost_usd(tokens, paper_cache.ttl_s / 3600),
+    )
+    cache_ledger.papers.append(record)
+    if guard is not None:
+        guard.charge(record.creation_usd + record.storage_usd)
+
+
 async def _run_once(
     targets: list[ReplayTarget], level: str, repeat_index: int, dry_run: bool,
     paper_texts: dict[str, str] | None = None, guard: _CostGuard | None = None,
+    cache_ledger: _CacheLedger | None = None,
 ) -> tuple[Path, list[CallRecord], list[dict], str]:
     """Returns (out_dir, gemini records, grounding records, status). status is
-    STATUS_VOID_CAP_HIT when the guard's cap stopped the run; the run is then
-    void and nothing further is issued."""
+    STATUS_VOID_CAP_HIT when the guard's cap stopped the run, or
+    STATUS_VOID_CACHE_FAILED when the first cache failure did (cache_ledger
+    given); the run is then void and nothing further is issued.
+
+    A cache_ledger turns context caching on: one cache per paper, created
+    before its first claim and deleted when its claim loop exits, however it
+    exits. Its creation and full-TTL storage cost is charged to the guard."""
     out_dir = OUTPUT_ROOT / f"exp1_{level}_{repeat_index}"
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
     for t in targets:
@@ -463,10 +583,23 @@ async def _run_once(
                 paper_text = paper_texts[paper_id]
 
                 audited: list[ClaimLLM] = []
-                for target in paper_targets:
-                    instrumentation.raise_if_capped()
-                    claim_llm = await _replay_claim(target, paper_text, level, instrumentation)
-                    audited.append(claim_llm)
+                cache_scope = (
+                    paper_context_cache(
+                        engine._build_client(), engine.settings.llm_claim_audit_model, paper_text,
+                        len(paper_targets), cache_ledger.stats,
+                    )
+                    if cache_ledger is not None
+                    else contextlib.nullcontext()
+                )
+                async with cache_scope as paper_cache:
+                    cache_kwargs: dict = {}
+                    if paper_cache is not None:
+                        _record_and_charge_cache(cache_ledger, guard, paper_id, len(paper_targets), paper_cache)
+                        cache_kwargs = {"paper_cache": paper_cache}
+                    for target in paper_targets:
+                        instrumentation.raise_if_capped()
+                        claim_llm = await _replay_claim(target, paper_text, level, instrumentation, **cache_kwargs)
+                        audited.append(claim_llm)
 
                 instrumentation.raise_if_capped()
                 grounded = await grounding.ground_extraction(
@@ -489,14 +622,58 @@ async def _run_once(
                 out_dir.mkdir(parents=True, exist_ok=True)
                 (out_dir / f"{paper_id}.json").write_text(json.dumps(fixture_out, indent=2), encoding="utf-8")
                 print(f"[replay_audit] wrote {out_dir / f'{paper_id}.json'} ({len(claims_out)} claims)")
-        except CapExceeded:
-            status = STATUS_VOID_CAP_HIT
+        except (CapExceeded, CacheFailed) as stop:
+            if isinstance(stop, CacheFailed):
+                status = STATUS_VOID_CACHE_FAILED
+                if cache_ledger is not None:
+                    cache_ledger.stop_reason = str(stop)
+            else:
+                status = STATUS_VOID_CAP_HIT
             await _cancel_stray_tasks(preexisting_tasks)
 
     return out_dir, instrumentation.records, instrumentation.grounding_records, status
 
 
-def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> None:
+def _print_cache_estimate(
+    targets: list[ReplayTarget], level: str, repeats: int, stats: dict[str, float],
+    uncached_total_usd: tuple[float, float],
+) -> None:
+    """The --estimate --cache section: per paper, creation + full-TTL storage
+    + each claim's audit with the cached part billed at the cached rate.
+    Free: no network, no cache read. The cached part is the measured audit
+    prompt average minus an ASSUMED uncached part per claim, so every paper
+    is treated as an average-sized paper."""
+    cached_tokens = max(0.0, stats["audit_prompt"] - ASSUMED_UNCACHED_TOKENS_PER_CLAIM)
+    claim_low, claim_high = _estimate_one_claim_cost_usd(stats, level, cached_audit_tokens=cached_tokens)
+    claims_per_paper: dict[str, int] = defaultdict(int)
+    for t in targets:
+        claims_per_paper[t.paper_id] += 1
+
+    total_low = total_high = overhead_total = 0.0
+    for n in claims_per_paper.values():
+        overhead = cache_creation_cost_usd(cached_tokens) + storage_cost_usd(cached_tokens, ttl_for_claims(n) / 3600)
+        overhead_total += overhead * repeats
+        total_low += (overhead + claim_low * n) * repeats
+        total_high += (overhead + claim_high * n) * repeats
+
+    print(f"[replay_audit] --estimate --cache: {len(claims_per_paper)} papers, claims per paper "
+          f"{dict(sorted(claims_per_paper.items()))}, TTL per paper (s) "
+          f"{ {p: ttl_for_claims(n) for p, n in sorted(claims_per_paper.items())} }")
+    print(f"[replay_audit] ASSUMPTION: {ASSUMED_UNCACHED_TOKENS_PER_CLAIM} uncached tokens per claim (the claim turn); "
+          f"the other {cached_tokens:.0f} of the measured {stats['audit_prompt']:.0f}-token audit prompt are cached "
+          f"and billed at the cached rate")
+    print("[replay_audit] ASSUMPTION: cache creation is billed at the normal input rate (not stated in the pricing docs); "
+          "storage is charged for the full TTL even if the cache is deleted early")
+    print(f"[replay_audit] cache creation + storage: USD {overhead_total:.3f} (INR {overhead_total * INR_PER_USD:.1f})")
+    print(f"[replay_audit] uncached total: USD {uncached_total_usd[0]:.3f}-{uncached_total_usd[1]:.3f} "
+          f"(INR {uncached_total_usd[0] * INR_PER_USD:.1f}-{uncached_total_usd[1] * INR_PER_USD:.1f})")
+    print(f"[replay_audit] cached total:   USD {total_low:.3f}-{total_high:.3f} "
+          f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
+    print(f"[replay_audit] suggested --max-inr with --cache (1.3x the high end): {total_high * INR_PER_USD * 1.3:.1f} "
+          f"(the estimate excludes grounding calls)")
+
+
+def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int, cache: bool = False) -> None:
     stats = _load_measured_token_stats()
     low, high = _estimate_one_claim_cost_usd(stats, level)
     total_low = low * len(targets) * repeats
@@ -512,6 +689,8 @@ def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int) -> No
           f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
     print(f"[replay_audit] suggested --max-inr (1.3x estimate): {total_high * INR_PER_USD * 1.3:.1f} "
           f"(1.3x the high end; the estimate excludes grounding calls)")
+    if cache:
+        _print_cache_estimate(targets, level, repeats, stats, (total_low, total_high))
 
 
 _UNPRICED = "unpriced"
@@ -541,9 +720,70 @@ def _summarize_grounding(grounding_records: list[dict]) -> dict[str, dict]:
     return by_model
 
 
+def _cache_summary(cache_ledger: _CacheLedger, records: list[CallRecord], total_cached: int) -> dict:
+    """The summary's "cache" block. Audit calls are the records flagged
+    is_audit; per paper it lists the audit calls that billed no cached tokens
+    (the Stage A0 mark) and audit cost per claim with and without the cache's
+    creation + storage overhead."""
+    stats = cache_ledger.stats
+    audit_records = [r for r in records if r.is_audit]
+    audit_usd = sum(_gemini_record_cost_usd(r)[0] for r in audit_records)
+    overhead_usd = cache_ledger.overhead_usd
+    n_audit = len(audit_records)
+
+    papers = []
+    for p in cache_ledger.papers:
+        paper_audits = [r for r in audit_records if r.paper_id == p.paper_id]
+        papers.append({
+            **p.__dict__,
+            "audit_calls": len(paper_audits),
+            "audit_calls_zero_cached": sum(1 for r in paper_audits if not r.cached_tokens),
+        })
+
+    def _per_claim_inr(usd: float) -> float | None:
+        return round(usd / n_audit * INR_PER_USD, 2) if n_audit else None
+
+    return {
+        "papers_cached": stats.papers_cached,
+        "creation_failures": stats.creation_failures,
+        "cached_call_api_failures": stats.cached_call_failures,
+        "cache_fallbacks": stats.cache_fallbacks,
+        "total_cached_tokens": total_cached,
+        "tokens_created_total": stats.tokens_created_total,
+        "token_count_missing": stats.token_count_missing,
+        "claims_per_paper": {p.paper_id: p.claims for p in cache_ledger.papers},
+        "creation_usd_ASSUMED_at_normal_input_rate": round(sum(p.creation_usd for p in cache_ledger.papers), 4),
+        "storage_usd_full_ttl": round(sum(p.storage_usd for p in cache_ledger.papers), 4),
+        "overhead_usd": round(overhead_usd, 4),
+        "audit_calls": n_audit,
+        "audit_calls_zero_cached": sum(1 for r in audit_records if not r.cached_tokens),
+        "audit_cost_per_claim_inr_excl_cache_overhead": _per_claim_inr(audit_usd),
+        "audit_cost_per_claim_inr_incl_cache_overhead": _per_claim_inr(audit_usd + overhead_usd),
+        "stop_reason": cache_ledger.stop_reason,
+        "papers": papers,
+    }
+
+
+def _print_cache_summary(cache: dict) -> None:
+    print(f"[replay_audit] cache: {cache['papers_cached']} papers cached, {cache['creation_failures']} creation failures, "
+          f"{cache['cached_call_api_failures']} cached-call API failures, {cache['cache_fallbacks']} cache fallbacks, "
+          f"{cache['total_cached_tokens']} cached tokens billed at the cached rate")
+    print(f"[replay_audit] cache claims per paper: {cache['claims_per_paper']}")
+    print(f"[replay_audit] cache overhead USD {cache['overhead_usd']}: creation USD "
+          f"{cache['creation_usd_ASSUMED_at_normal_input_rate']} (ASSUMPTION: billed at the normal input rate) + storage USD "
+          f"{cache['storage_usd_full_ttl']} (full TTL, charged even if deleted early)")
+    if cache["token_count_missing"]:
+        print(f"[replay_audit] ASSUMED: {cache['token_count_missing']} cache(s) returned no token count; "
+              f"the measured audit-prompt average was charged for them")
+    print(f"[replay_audit] audit calls {cache['audit_calls']}, with zero cached tokens {cache['audit_calls_zero_cached']}; "
+          f"audit cost per claim INR {cache['audit_cost_per_claim_inr_excl_cache_overhead']} excl. / "
+          f"{cache['audit_cost_per_claim_inr_incl_cache_overhead']} incl. cache creation + storage")
+
+
 def _print_summary(
     out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None,
     status: str = STATUS_OK, guard: _CostGuard | None = None,
+    cache_ledger: _CacheLedger | None = None,
 ) -> None:
     grounding_records = grounding_records or []
     total_prompt = sum(r.prompt_tokens for r in records)
@@ -566,7 +806,8 @@ def _print_summary(
     grounding = _summarize_grounding(grounding_records)
     unpriced_models = sorted(m for m, agg in grounding.items() if agg["usd"] == _UNPRICED)
     grounding_usd = sum(agg["usd"] for agg in grounding.values() if agg["usd"] != _UNPRICED)
-    total_usd = gemini_usd + grounding_usd
+    cache_usd = cache_ledger.overhead_usd if cache_ledger is not None else 0.0
+    total_usd = gemini_usd + grounding_usd + cache_usd
 
     summary = {
         "status": status,
@@ -585,6 +826,8 @@ def _print_summary(
         "total_cost_excludes_unpriced_grounding": bool(unpriced_models),
         "records": [r.__dict__ for r in records],
     }
+    if cache_ledger is not None:
+        summary["cache"] = _cache_summary(cache_ledger, records, total_cached)
     if guard is not None and guard.max_inr is not None:
         summary["cap"] = {
             "max_inr": guard.max_inr,
@@ -612,6 +855,15 @@ def _print_summary(
         print(f"[replay_audit] *** UNPRICED grounding models (no rates on file): {', '.join(unpriced_models)} ***")
     label = " (excl. unpriced grounding)" if unpriced_models else ""
     print(f"[replay_audit] total ~INR {summary['total_cost_inr']}{label}")
+    if cache_ledger is not None:
+        _print_cache_summary(summary["cache"])
+    if status == STATUS_VOID_CACHE_FAILED:
+        bar = "*" * 78
+        print(bar)
+        print(f"[replay_audit] *** {STATUS_VOID_CACHE_FAILED}: first cache failure stopped the run - THIS RUN IS VOID ***")
+        print(f"[replay_audit] *** reason: {cache_ledger.stop_reason if cache_ledger is not None else 'unknown'} ***")
+        print(f"[replay_audit] *** no further calls issued; partial summary: {out_dir / '_summary.json'} ***")
+        print(bar)
     if status == STATUS_VOID_CAP_HIT and guard is not None:
         bar = "*" * 78
         print(bar)
@@ -643,7 +895,7 @@ async def _main(args: argparse.Namespace) -> int:
         return 1
 
     if args.estimate:
-        _print_estimate(targets, args.level, args.repeat)
+        _print_estimate(targets, args.level, args.repeat, cache=getattr(args, "cache", False))
         return 0
 
     paper_ids = sorted({t.paper_id for t in targets})
@@ -662,13 +914,17 @@ async def _main(args: argparse.Namespace) -> int:
             return 1
 
     guard = _CostGuard(getattr(args, "max_inr", None))
+    use_cache = getattr(args, "cache", False) and not args.dry_run
     for repeat_index in range(1, args.repeat + 1):
+        # A fresh ledger per repeat: each repeat has its own summary.
+        cache_ledger = _new_cache_ledger() if use_cache else None
+        run_kwargs = {"cache_ledger": cache_ledger} if cache_ledger is not None else {}
         out_dir, records, grounding_records, status = await _run_once(
-            targets, args.level, repeat_index, args.dry_run, paper_texts, guard,
+            targets, args.level, repeat_index, args.dry_run, paper_texts, guard, **run_kwargs,
         )
         if args.dry_run:
             continue
-        _print_summary(out_dir, records, grounding_records, status, guard)
+        _print_summary(out_dir, records, grounding_records, status, guard, cache_ledger)
         if status != STATUS_OK:
             return EXIT_CAP_HIT
     return 0
@@ -689,6 +945,11 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--papers", help="comma-separated paper_id substrings to further narrow scope")
     parser.add_argument("--estimate", action="store_true", help="print a cost estimate, zero LLM calls")
     parser.add_argument("--dry-run", action="store_true", help="print what would be replayed, zero LLM calls")
+    parser.add_argument(
+        "--cache", action="store_true",
+        help="explicit context caching of the system prompt + paper for the audit calls (BETA, default off). "
+             "Stops the run (VOID_CACHE_FAILED, exit 2) at the first cache creation failure or cached-call API error",
+    )
     parser.add_argument(
         "--max-inr", type=_positive_float, default=None,
         help="stop (status VOID_CAP_HIT, exit 2) once the running cost passes this many INR; default no cap",

@@ -108,6 +108,14 @@ def cost_inr(
     return cost_usd(prompt_tokens, output_tokens, thought_tokens, cached_tokens, tool_use_tokens) * INR_PER_USD
 
 
+def cache_creation_cost_usd(tokens: float) -> float:
+    """USD cost of creating an explicit cache of `tokens` tokens, ASSUMED to be
+    billed at the normal input rate. The pricing docs do not state a creation
+    price; this rests on one Google community reply (checked 2026-10-23) and
+    must be labelled an assumption wherever it is reported."""
+    return tokens / 1e6 * USD_PER_1M_INPUT
+
+
 def storage_cost_usd(tokens: float, hours: float) -> float:
     """USD cost of keeping `tokens` of explicit cache alive for `hours`."""
     return tokens / 1e6 * hours * USD_PER_1M_STORAGE_PER_HOUR
