@@ -3226,3 +3226,66 @@ one sealed run.
   single-pair, coding-only limit; the diagnostic's "causal link
   unconfirmed" came from structured fields only.
 
+## Stage A0 marks and cap re-confirmed - 2026-10-24
+1. Why: caching and replay_audit are committed. The 2026-10-22 cap of
+   INR 60 predates a caching-aware estimate. At --level medium the tool
+   prints INR 64.9 cached (INR 77.6 uncached); cap = 1.3x = INR 85. The
+   estimate excludes grounding. Check: 85 + A1 200 + B 250 = 535 <= 560;
+   sealed reserve INR 300 untouched. A1 and B caps are re-confirmed in
+   their own entries after the lister and checker exist.
+2. Command (from Prism.PythonService): python -m eval.replay_audit
+   --level medium --cache --claims ..\docs\evals\exp1_stage_a_claims.json
+   --repeat 1 --max-inr 85. Level medium = the API default (engine.py
+   docstring), same as the Exp 1 medium arms.
+3. Baseline: the Exp 1 unset-thinking audit baseline:
+   - Tool-derived / measured token average baseline: INR 3.79 per audit claim (exact INR 3.7882; 37,389 prompt tokens @ $0.75/1M + 2,624 output+thought tokens @ $3.75/1M, source: Prism.PythonService/eval/replay_audit.py:214-217 and eval/pricing.py:11-15, 95-98). For reference, the tool-derived figure is INR 3.79 per audit claim.
+   - Summary fixture audit-only actual spend (docs/evals/fixtures/dev/exp1_medium_{1,2}/_summary.json): INR 3.79 per audit claim (medium_1: INR 3.7825; medium_2: INR 3.7939; pooled mean INR 3.7882).
+   - Exp 1 medium control arm total cost (audit + structurer, docs/decisions.md:1785-1786, 1824): INR 155.11 across 36 claim-replays = INR 4.31 per claim (medium_1: INR 4.34; medium_2: INR 4.27).
+   - M2 uses INR 3.79 (audit-only). The INR 4.31 figure includes the structurer and is for reference only.
+4. Marks:
+   - M1: cached tokens on all but at most 1 audit call per paper
+     (unchanged) AND the run completes without VOID_CACHE_FAILED.
+     Note: 5 of 11 papers have 1 claim, so M1 is weak there; the
+     summary reports audit calls with cached_tokens == 0 for every
+     paper.
+   - M2: audit cost per claim EXCLUDING cache setup (creation + storage)
+     at least 40% below the baseline. Reported beside it: cost per
+     claim INCLUDING setup, total setup spend, claims per paper.
+   - M3: refusal hits on the 18 claims within 5-8 (unchanged).
+   - M3 is computed with eval/score_replay.py against docs/evals/dev_match_map.json. A refusal hit is a REFUSED outcome (auditor label not_supported or partially_supported). Exp 1 medium baselines: 8, 7 and 5 hits.
+5. Why M2 excludes setup: A0 has about 1.6 claims per paper, so an
+   including-setup mark cannot pass if creation is billed, whatever
+   caching does; it would measure Google's billing, not our code. The
+   including-setup test belongs to the full dev run (about 30 claims per
+   paper). Proposed pass there: including-setup audit cost per claim at
+   least 40% below baseline; to be confirmed in that stage's entry.
+6. Outcome table for A0:
+   - M1+M2+M3 pass -> proceed to A1.
+   - VOID_CACHE_FAILED -> mechanics failure; diagnose and re-run
+     allowed.
+   - M3 fails while M1+M2 pass -> caching changed behaviour; inspect
+     the two-turn request; no A1.
+   - M2 fails while M1 passes -> cached rate not applied; inspect
+     pricing and usage; no A1.
+   - Including-setup better than excluding-setup -> impossible by
+     arithmetic; cost-code bug; stop.
+7. Definitions: VOID_CACHE_FAILED = a creation failure or cached-call
+   API error stopped the run; not a failed mark; spend counts toward the
+   stage and total caps. VOID_CAP_HIT unchanged: void, no rescue re-run.
+   A minimum-size error on a short paper also stops the run; the fix is
+   a code change in its own commit before the re-run.
+8. Assumptions replaced by measurement after A0: creation billed at the
+   normal input rate (undocumented); storage charged for the full TTL
+   (300 s floor); 500 uncached tokens per claim; thinking tokens
+   unchanged by caching; grounding excluded from the estimate (Groq is
+   on the free plan; its flash-lite fallback is billed).
+   M2 compares token-priced figures. It does not separate explicit caching from implicit cache hits that may already exist in the Exp 1 baseline. After the run, compare the AI Studio spend change with the summary total; a large gap means recalibrate the estimates.
+9. Before the run: full suite, flag-off prompt hash cb3272cce551,
+   prompt-leak check and fixture freshness (commands from .github/workflows/eval.yml:
+   `uv run python -m eval.check_prompt_leak` and
+   `uv run python -m eval.check_fixture_freshness`),
+   --estimate. Commit this entry; tag before-A0. Record AI Studio spend
+   before and after (the billing page can lag).
+10. After A0: dated results entry; replace the assumptions; re-estimate
+    A1 and B.
+
