@@ -2,7 +2,7 @@
 
 ## Current state
 
-Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Auditor phase: design agreed 2026-10-22 - explicit caching + scope lister/checker, behind flags; see decisions.md 'Auditor redesign agreed...'.
+Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Auditor phase: steps 1-3 committed on this branch; A0 passed; next = lister + checker; Stage B blocked on S-row adjudication; cache flag not wired to settings; the docs PR is merged into this branch but not on main. See decisions.md 'Auditor redesign agreed...' (2026-10-22) and 'Stage A0 results - 2026-10-26'.
 
 ## Scoreboard
 
@@ -80,7 +80,7 @@ Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
 ## Next steps (build order)
 
 Build order (one commit per step, implementation branch):
-logging fixes -> replay_audit.py fixes (--max-inr, paper text from saved text files instead of Postgres) -> caching -> lister + checker.
+logging fixes, replay_audit fixes, caching = done -> lister + checker.
 Free checks before any paid run: unit tests; flag-off prompt hash stays cb3272cce551; prompt-leak check passes; --estimate uses measured tokens.
 
 ## Known risks (code-sourced, `docs/premerge_review_2026-10-20.md` section 3)

@@ -87,7 +87,7 @@ Planned fix (design agreed: caching + scope check, marks and caps written first)
 ## Roadmap
 
 Next 3 steps, in order (decisions.md, "K1 diagnostics and filter status - 2026-10-20"):
-1. Auditor phase - design a structural full-scope check plus explicit caching, with marks and budget written first; targets the 10 auditor misses and per-paper cost.
+1. Auditor phase - auditor PR steps 1-3 built and Stage A0 passed; next is the lister + checker, then Stage A1.
 2. Re-test pass-2 / sentence-level extraction end to end with the new auditor; the parked K7 filter fix (validate neighbour ids, never resolve "same" against a dropped neighbour) stays parked until then.
 3. Claim-scope decision (headline claims only vs whole-paper) and a new sealed set, then one sealed run for the release number.
 

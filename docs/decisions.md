@@ -3289,3 +3289,13 @@ one sealed run.
 10. After A0: dated results entry; replace the assumptions; re-estimate
     A1 and B.
 
+## Stage A0 results - 2026-10-26
+- Run: replay_audit --level medium --cache --claims docs/evals/exp1_stage_a_claims.json --repeat 1 --max-inr 85; status OK.
+- M1 pass: 11 papers cached; 0 creation failures; 0 cached-call API failures; 0 cache fallbacks; 18 audit calls, 0 with zero cached tokens. Smallest cached paper 13,125 tokens and largest 94,850 (no minimum-cache-size error seen); tokens_created_total 414,204.
+- M2 pass: audit cost per claim INR 1.30 excluding setup vs baseline INR 3.79 (66% below). Tool figure including setup: INR 3.12 (about 18% below), which assumes creation was billed at the input rate. Derived from the Google SKU report (creation not billed, storage billed on actual lifetime): cost per claim including real setup is about INR 1.4, roughly 62% below baseline (approximate; mixes the planning exchange rate with Google's).
+- M3 pass: 8/31 (score_replay --mode raw); baselines exp1_medium_1 7/31, exp1_medium_2 5/31. A0 differs from baseline run 1 on P5-R1, P8-R2, P12-R2, and from run 2 on P2-R5, P6-R1, P8-R1; the two baseline runs differ on 6 rows. Note: the 4/88 false-rejection figure is a DRAFT counted from the 37 flagged run-1 claims by text similarity (dev_adjudication_run1.md:119-135), not from the 88 S rows individually.
+- Cost: tool estimate INR 64.9 (printed total INR 69.4) vs Google SKU report INR 36.86, paid by credits (net cash 0). Max single call INR 7.51 at the planning rate. SKUs: normal input 3.6-flash 51,366 tokens INR 3.70; cached input 671,788 INR 4.84; output 67,736 INR 24.38; flash-lite input 116,358 INR 2.79; flash-lite output 6,688 INR 0.96; storage 3,980 token-hours INR 0.19.
+- Findings: cache creation was NOT billed (observed once, undocumented; about 25.5K input tokens unexplained, about INR 1.8). Storage is billed on actual lifetime. Only 9 of about 53 grounding calls stayed on Groq (free-plan limit 8,000 tokens per minute); the rest fell back to gemini-3.1-flash-lite (about INR 3.9, billed). The monthly spend cap appears to count usage before credits (inferred from two readings: it rose about INR 36.7 while credits covered the same amount).
+- Not measured: the explicit-vs-implicit caching gain. Earlier months show roughly half of input tokens already cached (approximate, derived from the SKU report). Gemini 4 Argon does not support explicit caching; the module only activates for gemini-3.6-flash and the flag stays off.
+- Next: lister + checker; adjudicate the 88 S rows for Stage B (all fingerprints are null today); A1 caps set in a dated entry from a caching-aware --estimate. A0 marks are not altered.
+
