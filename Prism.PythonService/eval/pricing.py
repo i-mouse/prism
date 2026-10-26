@@ -14,6 +14,12 @@ USD_PER_1M_CACHED_INPUT = 0.075
 USD_PER_1M_STORAGE_PER_HOUR = 0.50
 INR_PER_USD = 100
 
+# A0 2026-10-24: normal-input SKU 51,366 tokens vs about 440K if creation were
+# billed; observed once, undocumented; about 25.5K tokens unexplained.
+# While False, cache_creation_cost_usd is 0.0; flipping it to True restores the
+# old maths (creation billed at the normal input rate).
+CACHE_CREATION_BILLED = False
+
 
 @dataclass(frozen=True)
 class Rates:
@@ -109,13 +115,18 @@ def cost_inr(
 
 
 def cache_creation_cost_usd(tokens: float) -> float:
-    """USD cost of creating an explicit cache of `tokens` tokens, ASSUMED to be
-    billed at the normal input rate. The pricing docs do not state a creation
-    price; this rests on one Google community reply (checked 2026-10-23) and
-    must be labelled an assumption wherever it is reported."""
+    """USD cost of creating an explicit cache of `tokens` tokens: 0.0 while
+    CACHE_CREATION_BILLED is False (observed on A0, observed once and
+    undocumented), otherwise the old assumption of the normal input rate (one
+    Google community reply, checked 2026-10-23)."""
+    if not CACHE_CREATION_BILLED:
+        return 0.0
     return tokens / 1e6 * USD_PER_1M_INPUT
 
 
 def storage_cost_usd(tokens: float, hours: float) -> float:
-    """USD cost of keeping `tokens` of explicit cache alive for `hours`."""
+    """USD cost of keeping `tokens` of explicit cache alive for `hours`. Callers
+    pass the actual lifetime (create to delete): observed on A0 (inferred from
+    one run: 3,980 token-hours, about 35 s average lifetime); Google docs still
+    say storage is billed on the TTL."""
     return tokens / 1e6 * hours * USD_PER_1M_STORAGE_PER_HOUR

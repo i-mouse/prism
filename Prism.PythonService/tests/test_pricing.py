@@ -83,6 +83,18 @@ def test_storage_cost_is_tokens_times_hours_times_rate():
     assert pricing.storage_cost_usd(0, 10) == 0.0
 
 
+def test_cache_creation_is_not_billed_while_the_flag_is_false(monkeypatch):
+    assert pricing.CACHE_CREATION_BILLED is False
+    assert pricing.cache_creation_cost_usd(1e6) == 0.0
+    monkeypatch.setattr(pricing, "CACHE_CREATION_BILLED", True)
+    assert pricing.cache_creation_cost_usd(1e6) == pytest.approx(0.75)  # flipping it restores the old maths
+    assert pricing.cache_creation_cost_usd(40_000) == pytest.approx(0.03)
+
+
+def test_inr_per_usd_stays_100():
+    assert pricing.INR_PER_USD == 100
+
+
 def test_legacy_cost_usd_and_inr_unchanged_for_three_arg_callers():
     assert pricing.cost_usd(1e6, 1e6, 1e6) == pytest.approx(0.75 + 2 * 3.75)
     assert pricing.cost_inr(1e6, 0, 0) == pytest.approx(0.75 * pricing.INR_PER_USD)

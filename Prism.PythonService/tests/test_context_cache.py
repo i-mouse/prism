@@ -314,6 +314,72 @@ def test_ttl_is_sized_to_the_claims_actually_audited(monkeypatch):
     assert caches.created[0]["config"].ttl == "1020s"
 
 
+# --- lifetime (storage billing) --------------------------------------------------
+
+def _fake_clock(monkeypatch, *ticks):
+    it = iter(ticks)
+    monkeypatch.setattr(context_cache, "time", SimpleNamespace(monotonic=lambda: next(it)))
+
+
+def test_lifetime_is_recorded_from_create_to_delete(monkeypatch):
+    _fake_clock(monkeypatch, 100.0, 135.0)
+    client, _, _, _ = _fake_client()
+    stats = ContextCacheStats()
+
+    async def body(paper_cache):
+        assert paper_cache.created_at == 100.0
+
+    _run_with_cache(client, stats, 3, body)
+
+    assert stats.lifetimes_s == {CACHE_NAME: 35.0}
+
+
+def test_lifetime_is_recorded_even_when_the_body_raises(monkeypatch):
+    _fake_clock(monkeypatch, 10.0, 12.5)
+    client, _, _, _ = _fake_client()
+    stats = ContextCacheStats()
+
+    async def body(paper_cache):
+        raise CapExceeded("stop")
+
+    with pytest.raises(CapExceeded):
+        _run_with_cache(client, stats, 3, body)
+
+    assert stats.lifetimes_s == {CACHE_NAME: 2.5}
+
+
+def test_a_failed_delete_records_the_ttl_as_the_lifetime(monkeypatch):
+    _fake_clock(monkeypatch, 100.0, 101.0)
+    client, _, _, _ = _fake_client(delete_error=_api_error(500))
+    stats = ContextCacheStats()
+
+    async def body(paper_cache):
+        return None
+
+    _run_with_cache(client, stats, 3, body)
+
+    assert stats.lifetimes_s == {CACHE_NAME: float(ttl_for_claims(3))}  # the cache lives on until it expires
+
+
+def test_no_lifetime_is_recorded_when_creation_fails():
+    client, _, _, _ = _fake_client(create_error=_api_error(400))
+    stats = ContextCacheStats()
+
+    async def body(paper_cache):
+        assert paper_cache is None
+
+    _run_with_cache(client, stats, 3, body)
+
+    assert stats.lifetimes_s == {}
+
+
+def test_paper_cache_created_at_defaults_to_zero():
+    paper_cache = PaperCache(
+        name=CACHE_NAME, model=MODEL, token_count=1, ttl_s=300, prefix_text="p", stats=ContextCacheStats(),
+    )
+    assert paper_cache.created_at == 0.0
+
+
 # --- fallback model ------------------------------------------------------------
 
 def test_fallback_model_never_receives_cached_content(monkeypatch):

@@ -1,5 +1,5 @@
-"""Tests for eval/replay_audit.py's --cache mode: cost accounting (creation,
-full-TTL storage, cached audit calls, the --max-inr cap), the stop on the first
+"""Tests for eval/replay_audit.py's --cache mode: cost accounting (creation not
+billed, storage on the actual lifetime, cached audit calls, the --max-inr cap), the stop on the first
 cache failure, and the free --estimate --cache output.
 
 No network and no real caches.create: the SDK client is a fake, and nothing
@@ -15,7 +15,7 @@ import pytest
 from google.genai import errors
 
 from eval import pricing, replay_audit
-from extraction import engine, grounding
+from extraction import context_cache, engine, grounding
 from extraction.schemas import ClaimFinal, ClaimLabel, ClaimLLM, EvidenceSpanLLM, GroundingStatus
 
 PAPER = "arxiv-9999.00001v1"
@@ -122,7 +122,38 @@ def _summary(tmp_path) -> dict:
 
 # --- cost math -------------------------------------------------------------------
 
-def test_cache_overhead_is_creation_at_input_rate_plus_full_ttl_storage_and_hits_the_guard():
+def _fake_clock(monkeypatch, *ticks):
+    """context_cache's monotonic clock returns `ticks` in order: the first is
+    taken just before caches.create, the second after the delete."""
+    it = iter(ticks)
+    monkeypatch.setattr(context_cache, "time", SimpleNamespace(monotonic=lambda: next(it)))
+
+
+def test_creation_is_not_billed_and_storage_follows_the_actual_lifetime():
+    guard = replay_audit._CostGuard()
+    ledger = replay_audit._new_cache_ledger()
+    paper_cache = SimpleNamespace(name=CACHE_NAME, token_count=TOKENS, ttl_s=2678)
+
+    replay_audit._record_and_charge_cache(ledger, guard, PAPER, 42, paper_cache)
+
+    record = ledger.papers[0]
+    assert pricing.CACHE_CREATION_BILLED is False
+    assert record.creation_usd == 0.0 and guard.running_usd == 0.0
+    assert record.storage_usd == 0.0 and record.lifetime_s is None  # not known until the cache is deleted
+    assert replay_audit._finalize_cache_storage(ledger) == 0.0  # no lifetime recorded yet
+
+    ledger.stats.lifetimes_s[CACHE_NAME] = 35.0
+    storage = TOKENS / 1e6 * (35 / 3600) * 0.50  # the actual lifetime, not the 2678 s TTL
+    assert replay_audit._finalize_cache_storage(ledger) == pytest.approx(storage)
+    assert record.lifetime_s == 35.0
+    assert record.storage_usd == pytest.approx(storage) == pytest.approx(pricing.storage_cost_usd(TOKENS, 35 / 3600))
+    assert not record.tokens_assumed
+    assert replay_audit._finalize_cache_storage(ledger) == 0.0  # booked once
+    assert ledger.overhead_usd == pytest.approx(storage)
+
+
+def test_flipping_the_flag_restores_creation_at_the_input_rate(monkeypatch):
+    monkeypatch.setattr(pricing, "CACHE_CREATION_BILLED", True)
     guard = replay_audit._CostGuard()
     ledger = replay_audit._new_cache_ledger()
     paper_cache = SimpleNamespace(name=CACHE_NAME, token_count=TOKENS, ttl_s=2678)
@@ -130,15 +161,12 @@ def test_cache_overhead_is_creation_at_input_rate_plus_full_ttl_storage_and_hits
     replay_audit._record_and_charge_cache(ledger, guard, PAPER, 42, paper_cache)
 
     creation = TOKENS / 1e6 * 0.75
-    storage = TOKENS / 1e6 * (2678 / 3600) * 0.50
-    record = ledger.papers[0]
-    assert record.creation_usd == pytest.approx(creation) == pytest.approx(pricing.cache_creation_cost_usd(TOKENS))
-    assert record.storage_usd == pytest.approx(storage) == pytest.approx(pricing.storage_cost_usd(TOKENS, 2678 / 3600))
-    assert not record.tokens_assumed
-    assert guard.running_usd == pytest.approx(creation + storage)
+    assert ledger.papers[0].creation_usd == pytest.approx(creation)
+    assert guard.running_usd == pytest.approx(creation)
 
 
-def test_missing_token_count_charges_the_measured_average_and_says_so():
+def test_missing_token_count_charges_the_measured_average_and_says_so(monkeypatch):
+    monkeypatch.setattr(pricing, "CACHE_CREATION_BILLED", True)
     guard = replay_audit._CostGuard()
     ledger = replay_audit._new_cache_ledger()
     paper_cache = SimpleNamespace(name=CACHE_NAME, token_count=None, ttl_s=300)
@@ -150,7 +178,8 @@ def test_missing_token_count_charges_the_measured_average_and_says_so():
     assert guard.running_usd > 0
 
 
-def test_cache_overhead_trips_the_cap_but_is_booked_first():
+def test_cache_overhead_trips_the_cap_but_is_booked_first(monkeypatch):
+    monkeypatch.setattr(pricing, "CACHE_CREATION_BILLED", True)
     guard = replay_audit._CostGuard(max_inr=1)  # creation alone is INR 3
     ledger = replay_audit._new_cache_ledger()
     paper_cache = SimpleNamespace(name=CACHE_NAME, token_count=TOKENS, ttl_s=300)
@@ -163,9 +192,10 @@ def test_cache_overhead_trips_the_cap_but_is_booked_first():
 
 # --- a --cache run -----------------------------------------------------------------
 
-def test_cache_run_books_creation_storage_and_cached_audit_calls(tmp_path, monkeypatch, capsys):
+def test_cache_run_books_storage_on_actual_lifetime_and_cached_audit_calls(tmp_path, monkeypatch, capsys):
     sdk = _FakeSdk()
     claims_path = _setup(tmp_path, monkeypatch, sdk, n_claims=2)
+    _fake_clock(monkeypatch, 100.0, 135.0)  # create at 100 s, delete at 135 s: a 35 s lifetime
 
     rc = asyncio.run(replay_audit._main(_args(claims_path)))
 
@@ -185,22 +215,40 @@ def test_cache_run_books_creation_storage_and_cached_audit_calls(tmp_path, monke
     assert cache["audit_calls"] == 2 and cache["audit_calls_zero_cached"] == 0
     assert cache["papers"][0]["ttl_s"] == 300 and cache["papers"][0]["audit_calls_zero_cached"] == 0
 
-    creation = TOKENS / 1e6 * 0.75
-    storage = TOKENS / 1e6 * (300 / 3600) * 0.50
-    assert cache["creation_usd_ASSUMED_at_normal_input_rate"] == pytest.approx(creation, abs=1e-4)
-    assert cache["storage_usd_full_ttl"] == pytest.approx(storage, abs=1e-4)
+    storage = TOKENS / 1e6 * (35 / 3600) * 0.50  # the 35 s lifetime, not the 300 s TTL
+    assert cache["papers"][0]["lifetime_s"] == 35.0
+    assert cache["papers"][0]["storage_usd"] == pytest.approx(storage)
+    assert cache["creation_billed"] is False and cache["creation_usd"] == 0.0
+    assert cache["storage_usd_actual_lifetime"] == pytest.approx(storage, abs=1e-4)
     # audit calls: 500 uncached at the input rate + 39,500 cached at the cached rate
     per_call = 500 / 1e6 * 0.75 + 39_500 / 1e6 * 0.075
     assert summary["cost_usd"] == pytest.approx(2 * per_call, abs=1e-4)
-    assert summary["total_cost_usd"] == pytest.approx(2 * per_call + creation + storage, abs=1e-4)
+    assert summary["total_cost_usd"] == pytest.approx(2 * per_call + storage, abs=1e-4)
     assert cache["audit_cost_per_claim_inr_incl_cache_overhead"] > cache["audit_cost_per_claim_inr_excl_cache_overhead"]
 
     out = capsys.readouterr().out
-    assert "ASSUMPTION" in out and "full TTL" in out
-    assert "guaranteed" not in out.lower()
+    assert "creation: not billed (observed on A0)" in out
+    assert "actual lifetime" in out and "Google docs still say storage is billed on the TTL" in out
+    assert "full TTL" not in out and "guaranteed" not in out.lower()
 
 
-def test_cap_counts_cache_creation_and_storage(tmp_path, monkeypatch, capsys):
+def test_storage_over_the_actual_lifetime_counts_against_the_cap(tmp_path, monkeypatch, capsys):
+    sdk = _FakeSdk()
+    claims_path = _setup(tmp_path, monkeypatch, sdk, n_claims=2)
+    _fake_clock(monkeypatch, 0.0, 36_000.0)  # 10 h: storage USD 0.20 = INR 20, over the INR 5 cap
+
+    rc = asyncio.run(replay_audit._main(_args(claims_path, max_inr=5)))
+
+    assert rc == replay_audit.EXIT_CAP_HIT
+    assert len(sdk.calls) == 2 and sdk.deleted == [CACHE_NAME]  # the audits ran; only the storage tripped the cap
+    summary = _summary(tmp_path)
+    assert summary["status"] == "VOID_CAP_HIT"
+    assert summary["cache"]["papers"][0]["lifetime_s"] == 36_000.0
+    assert summary["cache"]["storage_usd_actual_lifetime"] == pytest.approx(0.20, abs=1e-3)
+
+
+def test_cap_counts_cache_creation_when_it_is_billed(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(pricing, "CACHE_CREATION_BILLED", True)
     sdk = _FakeSdk()
     claims_path = _setup(tmp_path, monkeypatch, sdk, n_claims=2)
 
@@ -281,7 +329,12 @@ def test_estimate_cache_prints_assumptions_cached_vs_uncached_and_a_suggested_ca
 
     out = capsys.readouterr().out
     assert "ASSUMPTION: 500 uncached tokens per claim" in out
-    assert "ASSUMPTION: cache creation is billed at the normal input rate" in out
+    assert "creation: not billed (observed on A0)" in out
+    assert "UPPER BOUND" in out and "claims x 51 s" in out
+    assert "billed at the normal input rate" not in out
+    overhead = re.search(r"cache creation \+ storage \(upper bound\): USD ([\d.]+)", out)
+    cached_tokens = replay_audit._load_measured_token_stats()["audit_prompt"] - replay_audit.ASSUMED_UNCACHED_TOKENS_PER_CLAIM
+    assert float(overhead.group(1)) == pytest.approx(pricing.storage_cost_usd(cached_tokens, 30 * 51 / 3600), abs=6e-4)
     assert f"{PAPER}': 30" in out  # claims per paper
     assert f"{PAPER}': {replay_audit.ttl_for_claims(30)}" in out  # TTL for 30 claims
     uncached = re.search(r"\] uncached total: USD ([\d.]+)-([\d.]+)", out)

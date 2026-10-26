@@ -30,8 +30,9 @@ turn the first failure into a stop (see CacheFailed).
 """
 import logging
 import math
+import time
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import AsyncIterator, Callable
 
 from google import genai
@@ -47,8 +48,11 @@ CACHEABLE_MODEL = "gemini-3.6-flash"
 # TTL = claims x slowest observed per-claim time x margin, clamped. Measured on
 # dev replays (docs/evals/fixtures/dev/exp1_*): slowest audit call 37.7 s
 # (exp1_high_2), slowest structure call 13.1 s; 37.7 + 13.1 = 50.8 -> 51 s.
-# Storage is billed on the TTL, not on the actual lifetime, so the TTL is
-# sized to each paper's own claim count rather than fixed.
+# Google docs say storage is billed on the TTL, but A0 observed it billed on
+# the actual lifetime (inferred from one run: 3,980 token-hours, about 35 s
+# average lifetime). The TTL stays sized to each paper's own claim count rather
+# than fixed, as the expiry backstop; the actual lifetime is recorded in
+# ContextCacheStats.lifetimes_s.
 PER_CLAIM_SECONDS = 51
 TTL_MARGIN = 1.25
 MIN_TTL_S = 300
@@ -80,6 +84,10 @@ class ContextCacheStats:
     cache_fallbacks: int = 0
     tokens_created_total: int = 0
     token_count_missing: int = 0
+    # Cache name -> seconds from just before create to the delete attempt
+    # returning (monotonic clock); the TTL when the delete failed, since the
+    # cache then lives on until it expires.
+    lifetimes_s: dict[str, float] = field(default_factory=dict)
     on_cache_failure: Callable[[str], None] | None = None
 
     def report_failure(self, reason: str) -> None:
@@ -98,6 +106,7 @@ class PaperCache:
     prefix_text: str
     stats: ContextCacheStats
     active: bool = True
+    created_at: float = 0.0  # time.monotonic() just before caches.create
 
 
 def ttl_for_claims(n_claims: int) -> int:
@@ -136,6 +145,7 @@ async def _create(
     client: genai.Client, model: str, paper_text: str, n_claims: int, stats: ContextCacheStats,
 ) -> PaperCache | None:
     ttl_s = ttl_for_claims(n_claims)
+    created_at = time.monotonic()
     try:
         system_prompt, prefix = _split_probe(paper_text)
         created = await client.aio.caches.create(
@@ -171,16 +181,19 @@ async def _create(
                 created.name, token_count, ttl_s, n_claims, model)
     return PaperCache(
         name=created.name, model=model, token_count=token_count, ttl_s=ttl_s, prefix_text=prefix, stats=stats,
+        created_at=created_at,
     )
 
 
-async def _delete(client: genai.Client, paper_cache: PaperCache) -> None:
-    """Housekeeping only: storage is billed on the TTL whether or not this
-    succeeds, and an undeleted cache expires on its own."""
+async def _delete(client: genai.Client, paper_cache: PaperCache) -> bool:
+    """Housekeeping: an undeleted cache expires on its own at the TTL. Returns
+    whether the delete succeeded; the caller records the lifetime."""
     try:
         await client.aio.caches.delete(name=paper_cache.name)
     except Exception as exc:
         logger.warning("context cache delete failed (name=%s): %r", paper_cache.name, exc, exc_info=True)
+        return False
+    return True
 
 
 @asynccontextmanager
@@ -203,4 +216,6 @@ async def paper_context_cache(
         yield paper_cache
     finally:
         if paper_cache is not None:
-            await _delete(client, paper_cache)
+            deleted = await _delete(client, paper_cache)
+            lifetime_s = time.monotonic() - paper_cache.created_at
+            stats.lifetimes_s[paper_cache.name] = lifetime_s if deleted else float(paper_cache.ttl_s)

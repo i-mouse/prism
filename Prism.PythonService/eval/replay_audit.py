@@ -28,9 +28,12 @@ partial summary is written with status VOID_CAP_HIT and the exit code is 2.
 --cache (default off) turns on explicit context caching of the system prompt +
 paper for the audit calls (extraction/context_cache.py, BETA): one cache per
 paper, created before its first claim and deleted after its last. The cap
-counts cache creation (cached tokens at the normal input rate, an ASSUMPTION)
-and storage (charged for the full TTL even if the cache is deleted early) as
-well as the cached audit calls. The run stops at the FIRST cache creation
+counts cache creation (0.0 while eval.pricing.CACHE_CREATION_BILLED is False:
+observed once on A0, undocumented) and storage (cached tokens x the actual
+lifetime, create to delete, on a monotonic clock: observed on A0, inferred from
+one run: 3,980 token-hours, about 35 s average lifetime; Google docs still say
+storage is billed on the TTL) as well as the cached audit calls. Storage is
+only known once the cache is deleted, so it is charged then. The run stops at the FIRST cache creation
 failure or cached-call API error: status VOID_CACHE_FAILED, summary written,
 exit code 2. With --estimate, --cache prints the cached estimate (still free:
 no network, no cache read).
@@ -52,6 +55,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from eval import pricing
 from eval.legacy_paper_text import PDF_DIR, _hash_check_and_load_text  # noqa: F401 - re-exported for replay_exp3/replay_clean/replay_extract; unused here
 from eval.pricing import (
     INR_PER_USD,
@@ -64,7 +68,14 @@ from eval.pricing import (
     storage_cost_usd,
 )
 from extraction import engine, grounding
-from extraction.context_cache import CacheFailed, ContextCacheStats, PaperCache, paper_context_cache, ttl_for_claims
+from extraction.context_cache import (
+    PER_CLAIM_SECONDS,
+    CacheFailed,
+    ContextCacheStats,
+    PaperCache,
+    paper_context_cache,
+    ttl_for_claims,
+)
 from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse
 
@@ -87,6 +98,17 @@ EXIT_CAP_HIT = 2
 # turn). An ASSUMPTION - not measured; the measured audit prompt average minus
 # this is treated as the cached part.
 ASSUMED_UNCACHED_TOKENS_PER_CLAIM = 500
+
+_STORAGE_NOTE = (
+    "observed on A0 (inferred from one run: 3,980 token-hours, about 35 s average lifetime); "
+    "Google docs still say storage is billed on the TTL"
+)
+
+
+def _creation_note() -> str:
+    if pricing.CACHE_CREATION_BILLED:
+        return "creation: ASSUMPTION: billed at the normal input rate (not stated in the pricing docs)"
+    return "creation: not billed (observed on A0)"
 
 
 class PaperTextError(Exception):
@@ -124,7 +146,9 @@ class CallRecord:
 
 @dataclass
 class CachePaperRecord:
-    """One paper's cache, with its ASSUMED-rate creation cost and full-TTL storage cost."""
+    """One paper's cache, with its creation cost (0.0 while creation is not billed) and
+    its storage cost over the actual lifetime. storage_usd and lifetime_s are filled
+    in once the cache is deleted (_finalize_cache_storage)."""
     paper_id: str
     cache_name: str
     claims: int
@@ -133,7 +157,8 @@ class CachePaperRecord:
     tokens_charged: float
     ttl_s: int
     creation_usd: float
-    storage_usd: float
+    storage_usd: float = 0.0
+    lifetime_s: float | None = None
 
 
 @dataclass
@@ -531,22 +556,40 @@ def _claim_final_to_fixture_dict(claim_final, index: int) -> dict:
 def _record_and_charge_cache(
     cache_ledger: _CacheLedger, guard: _CostGuard | None, paper_id: str, claims: int, paper_cache: PaperCache,
 ) -> None:
-    """Books one paper's cache: creation (cached tokens at the normal input
-    rate, an ASSUMPTION) plus storage for the FULL TTL (charged even though
-    the cache is deleted early). The record is appended before the charge so
-    the summary has it even if the charge trips the cap. When the create
-    response carried no token count, the measured audit-prompt average is
-    charged instead and the record says so."""
+    """Books one paper's cache at creation: the creation cost (0.0 while
+    pricing.CACHE_CREATION_BILLED is False). Storage is booked later, once the
+    lifetime is known (_finalize_cache_storage). The record is appended before
+    the charge so the summary has it even if the charge trips the cap. When the
+    create response carried no token count, the measured audit-prompt average
+    is charged instead and the record says so."""
     assumed = paper_cache.token_count is None
     tokens = cache_ledger.assumed_tokens if assumed else float(paper_cache.token_count)
     record = CachePaperRecord(
         paper_id=paper_id, cache_name=paper_cache.name, claims=claims, token_count=paper_cache.token_count,
         tokens_assumed=assumed, tokens_charged=tokens, ttl_s=paper_cache.ttl_s,
-        creation_usd=cache_creation_cost_usd(tokens), storage_usd=storage_cost_usd(tokens, paper_cache.ttl_s / 3600),
+        creation_usd=cache_creation_cost_usd(tokens),
     )
     cache_ledger.papers.append(record)
     if guard is not None:
-        guard.charge(record.creation_usd + record.storage_usd)
+        guard.charge(record.creation_usd)
+
+
+def _finalize_cache_storage(cache_ledger: _CacheLedger | None) -> float:
+    """Books storage (tokens x actual lifetime, as recorded in the ledger's
+    ContextCacheStats once the cache is deleted) on every record that has none
+    yet, and returns the USD newly booked. Does not touch the guard, so it is
+    safe in a finally clause."""
+    if cache_ledger is None:
+        return 0.0
+    booked = 0.0
+    for record in cache_ledger.papers:
+        lifetime_s = cache_ledger.stats.lifetimes_s.get(record.cache_name)
+        if record.lifetime_s is not None or lifetime_s is None:
+            continue
+        record.lifetime_s = lifetime_s
+        record.storage_usd = storage_cost_usd(record.tokens_charged, lifetime_s / 3600)
+        booked += record.storage_usd
+    return booked
 
 
 async def _run_once(
@@ -561,7 +604,8 @@ async def _run_once(
 
     A cache_ledger turns context caching on: one cache per paper, created
     before its first claim and deleted when its claim loop exits, however it
-    exits. Its creation and full-TTL storage cost is charged to the guard."""
+    exits. Its creation cost is charged to the guard when the cache is created
+    and its storage cost (actual lifetime) once the cache is deleted."""
     out_dir = OUTPUT_ROOT / f"exp1_{level}_{repeat_index}"
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
     for t in targets:
@@ -591,15 +635,22 @@ async def _run_once(
                     if cache_ledger is not None
                     else contextlib.nullcontext()
                 )
-                async with cache_scope as paper_cache:
-                    cache_kwargs: dict = {}
-                    if paper_cache is not None:
-                        _record_and_charge_cache(cache_ledger, guard, paper_id, len(paper_targets), paper_cache)
-                        cache_kwargs = {"paper_cache": paper_cache}
-                    for target in paper_targets:
-                        instrumentation.raise_if_capped()
-                        claim_llm = await _replay_claim(target, paper_text, level, instrumentation, **cache_kwargs)
-                        audited.append(claim_llm)
+                storage_usd = 0.0
+                try:
+                    async with cache_scope as paper_cache:
+                        cache_kwargs: dict = {}
+                        if paper_cache is not None:
+                            _record_and_charge_cache(cache_ledger, guard, paper_id, len(paper_targets), paper_cache)
+                            cache_kwargs = {"paper_cache": paper_cache}
+                        for target in paper_targets:
+                            instrumentation.raise_if_capped()
+                            claim_llm = await _replay_claim(target, paper_text, level, instrumentation, **cache_kwargs)
+                            audited.append(claim_llm)
+                finally:
+                    # The cache is deleted by now, whichever way the block exited.
+                    storage_usd = _finalize_cache_storage(cache_ledger)
+                if guard is not None and storage_usd:
+                    guard.charge(storage_usd)
 
                 instrumentation.raise_if_capped()
                 grounded = await grounding.ground_extraction(
@@ -638,8 +689,10 @@ def _print_cache_estimate(
     targets: list[ReplayTarget], level: str, repeats: int, stats: dict[str, float],
     uncached_total_usd: tuple[float, float],
 ) -> None:
-    """The --estimate --cache section: per paper, creation + full-TTL storage
-    + each claim's audit with the cached part billed at the cached rate.
+    """The --estimate --cache section: per paper, creation (0.0 while not
+    billed) + storage for claims x PER_CLAIM_SECONDS (an upper bound on the
+    actual lifetime) + each claim's audit with the cached part billed at the
+    cached rate.
     Free: no network, no cache read. The cached part is the measured audit
     prompt average minus an ASSUMED uncached part per claim, so every paper
     is treated as an average-sized paper."""
@@ -651,7 +704,7 @@ def _print_cache_estimate(
 
     total_low = total_high = overhead_total = 0.0
     for n in claims_per_paper.values():
-        overhead = cache_creation_cost_usd(cached_tokens) + storage_cost_usd(cached_tokens, ttl_for_claims(n) / 3600)
+        overhead = cache_creation_cost_usd(cached_tokens) + storage_cost_usd(cached_tokens, n * PER_CLAIM_SECONDS / 3600)
         overhead_total += overhead * repeats
         total_low += (overhead + claim_low * n) * repeats
         total_high += (overhead + claim_high * n) * repeats
@@ -662,9 +715,10 @@ def _print_cache_estimate(
     print(f"[replay_audit] ASSUMPTION: {ASSUMED_UNCACHED_TOKENS_PER_CLAIM} uncached tokens per claim (the claim turn); "
           f"the other {cached_tokens:.0f} of the measured {stats['audit_prompt']:.0f}-token audit prompt are cached "
           f"and billed at the cached rate")
-    print("[replay_audit] ASSUMPTION: cache creation is billed at the normal input rate (not stated in the pricing docs); "
-          "storage is charged for the full TTL even if the cache is deleted early")
-    print(f"[replay_audit] cache creation + storage: USD {overhead_total:.3f} (INR {overhead_total * INR_PER_USD:.1f})")
+    print(f"[replay_audit] {_creation_note()}")
+    print(f"[replay_audit] storage: cached tokens x claims x {PER_CLAIM_SECONDS} s per paper, an UPPER BOUND on the actual "
+          f"lifetime; {_STORAGE_NOTE}")
+    print(f"[replay_audit] cache creation + storage (upper bound): USD {overhead_total:.3f} (INR {overhead_total * INR_PER_USD:.1f})")
     print(f"[replay_audit] uncached total: USD {uncached_total_usd[0]:.3f}-{uncached_total_usd[1]:.3f} "
           f"(INR {uncached_total_usd[0] * INR_PER_USD:.1f}-{uncached_total_usd[1] * INR_PER_USD:.1f})")
     print(f"[replay_audit] cached total:   USD {total_low:.3f}-{total_high:.3f} "
@@ -752,8 +806,9 @@ def _cache_summary(cache_ledger: _CacheLedger, records: list[CallRecord], total_
         "tokens_created_total": stats.tokens_created_total,
         "token_count_missing": stats.token_count_missing,
         "claims_per_paper": {p.paper_id: p.claims for p in cache_ledger.papers},
-        "creation_usd_ASSUMED_at_normal_input_rate": round(sum(p.creation_usd for p in cache_ledger.papers), 4),
-        "storage_usd_full_ttl": round(sum(p.storage_usd for p in cache_ledger.papers), 4),
+        "creation_billed": pricing.CACHE_CREATION_BILLED,
+        "creation_usd": round(sum(p.creation_usd for p in cache_ledger.papers), 4),
+        "storage_usd_actual_lifetime": round(sum(p.storage_usd for p in cache_ledger.papers), 4),
         "overhead_usd": round(overhead_usd, 4),
         "audit_calls": n_audit,
         "audit_calls_zero_cached": sum(1 for r in audit_records if not r.cached_tokens),
@@ -769,9 +824,8 @@ def _print_cache_summary(cache: dict) -> None:
           f"{cache['cached_call_api_failures']} cached-call API failures, {cache['cache_fallbacks']} cache fallbacks, "
           f"{cache['total_cached_tokens']} cached tokens billed at the cached rate")
     print(f"[replay_audit] cache claims per paper: {cache['claims_per_paper']}")
-    print(f"[replay_audit] cache overhead USD {cache['overhead_usd']}: creation USD "
-          f"{cache['creation_usd_ASSUMED_at_normal_input_rate']} (ASSUMPTION: billed at the normal input rate) + storage USD "
-          f"{cache['storage_usd_full_ttl']} (full TTL, charged even if deleted early)")
+    print(f"[replay_audit] cache overhead USD {cache['overhead_usd']}: {_creation_note()} (USD {cache['creation_usd']}) "
+          f"+ storage USD {cache['storage_usd_actual_lifetime']} (actual lifetime, create to delete; {_STORAGE_NOTE})")
     if cache["token_count_missing"]:
         print(f"[replay_audit] ASSUMED: {cache['token_count_missing']} cache(s) returned no token count; "
               f"the measured audit-prompt average was charged for them")
