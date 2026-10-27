@@ -3299,3 +3299,39 @@ one sealed run.
 - Not measured: the explicit-vs-implicit caching gain. Earlier months show roughly half of input tokens already cached (approximate, derived from the SKU report). Gemini 4 Argon does not support explicit caching; the module only activates for gemini-3.6-flash and the flag stays off.
 - Next: lister + checker; adjudicate the 88 S rows for Stage B (all fingerprints are null today); A1 caps set in a dated entry from a caching-aware --estimate. A0 marks are not altered.
 
+## S-row match map written; cost-tool fix recorded - 2026-10-27
+
+**Cost-tool fix (committed earlier on this branch).** `--estimate` now charges explicit-cache
+creation at zero and storage by actual lifetime, per A0 observations. For the 18 Stage A claims,
+`--estimate --cache --level medium` gives INR 33.2 cached vs 77.6 uncached; Google billed INR 33.11
+for the same Gemini calls. Suggested cap for that claim set: INR 43.2.
+
+**S-row matching.**
+- Gemini and ChatGPT matched the 88 dev S rows blind to run-1 claims (0-based indexes, no
+  verdicts shown). All calibration rows passed for both: P1-S5=17, P8-S7=26, P9-S4=2, P10-S2=19,
+  P5-S3=NO_MATCH.
+- Sort: 58 agreed match (both high), 9 agreed NO_MATCH (both high), P5-S3 calibration,
+  2 disagreements (P1-S1, P4-S8), 18 low-confidence. Nitin decided the 20.
+- S-row match rule: subset. A claim matches if it says nothing the row (sentence or gloss) does
+  not already say. A narrower, hedged or one-part claim is fine; a new number, result or condition
+  is NO_MATCH.
+- This mirrors the R-row rule ("same claim, other sentence" = match; "safe half only" = no match).
+  R rows need the overreaching part. S rows are fully supported, so a narrower claim that adds
+  nothing is a fair match.
+- Result: 67 matches, 21 NO_MATCH (extraction misses).
+  - Written to docs/evals/dev_match_map.json by eval/apply_s_row_decisions.py.
+  - R rows and metadata are byte-identical, and fingerprints recompute.
+  - 582 tests pass; the flag-off hash cb3272cce551 is unchanged.
+- Similarity check (token_sort_ratio against the row sentence): 61 pairs at 90+, 2 at 60-89,
+  4 under 60 (P3-S1, P11-S8, P1-S6, P4-S8). All 4 were reviewed against sentence and gloss and
+  kept. No NO_MATCH row has a claim scoring 90+ (highest 54.6).
+- Scorer guard (dd18e43): resolve_adjudicated_rows returns R rows by default; score_replay
+  output on dev/run1 is byte-identical before and after.
+- Audit trail in docs/evals/auditor_rd/: blind inputs part1-3, both judge answers, decisions file.
+
+**Open before Stage B / A1 (both free).**
+- Baseline false rejections: 4/88 is still a draft. Re-derive it from the filled map before the
+  Stage B marks are confirmed.
+- score_replay on dev/run1 prints "0/13 refusal hits (scored 13/31)", not the documented 8/31.
+  Not investigated. Confirm score_replay gives the expected numbers on a replay folder before A1,
+  since A1 is scored with it.
