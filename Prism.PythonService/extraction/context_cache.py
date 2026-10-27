@@ -143,8 +143,9 @@ def cached_audit_contents(claim_text: str) -> list[types.Content]:
 
 async def _create(
     client: genai.Client, model: str, paper_text: str, n_claims: int, stats: ContextCacheStats,
+    ttl_s: int | None = None,
 ) -> PaperCache | None:
-    ttl_s = ttl_for_claims(n_claims)
+    ttl_s = ttl_s if ttl_s is not None else ttl_for_claims(n_claims)
     created_at = time.monotonic()
     try:
         system_prompt, prefix = _split_probe(paper_text)
@@ -199,11 +200,16 @@ async def _delete(client: genai.Client, paper_cache: PaperCache) -> bool:
 @asynccontextmanager
 async def paper_context_cache(
     client: genai.Client, model: str, paper_text: str, n_claims: int, stats: ContextCacheStats,
+    ttl_s: int | None = None,
 ) -> AsyncIterator[PaperCache | None]:
     """Creates one cache for a paper, yields it (or None when the model is not
     cacheable, there are no claims, or creation failed), and deletes it on
     exit. The delete runs for any exit, including a BaseException such as
     CapExceeded or CacheFailed, and never raises itself.
+
+    ttl_s: None (default) sizes the TTL from n_claims (ttl_for_claims). An int
+    is used as the TTL in seconds as given; the scope check passes MAX_TTL_S,
+    because its lister and checker calls lengthen each claim's time in the loop.
 
     Create the cache before the paper's first claim audit and open this
     around the whole claim loop: one create per paper, so claims running
@@ -211,7 +217,7 @@ async def paper_context_cache(
     """
     paper_cache = None
     if n_claims > 0 and _is_cacheable_model(model):
-        paper_cache = await _create(client, model, paper_text, n_claims, stats)
+        paper_cache = await _create(client, model, paper_text, n_claims, stats, ttl_s)
     try:
         yield paper_cache
     finally:

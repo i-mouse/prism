@@ -228,6 +228,8 @@ async def _generate_with_fallback(
     correlation_id: str | None = None,
     fallback_config: types.GenerateContentConfig | None = None,
     fallback_contents: list[types.Content] | None = None,
+    allow_fallback: bool = True,
+    call_kind: str | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
     """Calls Gemini on model_name with retry/backoff, falling back to
     fallback_model for one final attempt if the primary model's retries are
@@ -246,6 +248,16 @@ async def _generate_with_fallback(
     fallback_config + fallback_contents, so the fallback model never receives
     cached_content (a cache belongs to one model). Defaults to reusing
     contents.
+
+    allow_fallback=False removes ONLY the switch to fallback_model: the
+    primary model's retries and backoff run exactly as before, and when they
+    are exhausted the primary model's last error is raised. The scope lister
+    and checker use it so a scope call is never served by a different model.
+    Defaults to True, unchanged for every existing caller.
+
+    call_kind is a tag for observers (eval/replay_audit.py's instrumentation
+    reads it to label the call "lister" or "checker"). It has no effect on
+    the call. Defaults to None.
     """
     fallback_config = fallback_config if fallback_config is not None else config
     fallback_contents = fallback_contents if fallback_contents is not None else contents
@@ -253,7 +265,7 @@ async def _generate_with_fallback(
         response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
         return response, model_name
     except Exception as primary_exc:
-        if not _is_retryable(primary_exc):
+        if not _is_retryable(primary_exc) or not allow_fallback:
             raise
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")

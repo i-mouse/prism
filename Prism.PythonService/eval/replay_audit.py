@@ -45,6 +45,23 @@ Usage:
   uv run python -m eval.replay_audit --level medium --claims docs/evals/exp1_stage_a_claims.json --repeat 2
   uv run python -m eval.replay_audit --estimate --cache --level medium --claims docs/evals/exp1_stage_a_claims.json
   uv run python -m eval.replay_audit --level high                                   # Stage B: all 12 papers, repeat 1
+
+--scope-check (default off, requires --cache; any other combination is a
+ValueError) adds the scope lister and scope checker (extraction/scope_check.py,
+extraction/scope_combine.py): per claim, inside the paper's claim loop and while
+its cache is alive, audit -> structure -> lister -> checker (only if the lister
+found items), sequential; after the loop, grounding, then the combine step, which
+may lower a "supported" label to "partially_supported". The lister and checker
+never see the auditor's verdict, reasoning or quotes, and the audit, structure and
+grounding inputs are the same as without the flag. The cache TTL is 3600 s (the
+clamp maximum) because the extra calls lengthen each claim; storage is still
+charged on the actual lifetime. Lister and checker calls are priced, counted in
+the summary and against --max-inr like the audit calls. With the flag on, the
+output goes to exp1_{level}_scope_{n} (never over the exp1_{level}_{n} baselines),
+each claim carries the scope trace fields (auditor_label, label, scope_lowered,
+scope_item, scope_item_kind, scope_quote, scope_items), the replay header records
+the flag-on prompt hash, and _summary.json has a "scope_check" block. With the flag
+off none of that exists and the output is byte-identical to before the flag.
 """
 import argparse
 import asyncio
@@ -52,7 +69,7 @@ import contextlib
 import json
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from eval import pricing
@@ -67,8 +84,9 @@ from eval.pricing import (
     cost_usd_for_model,
     storage_cost_usd,
 )
-from extraction import engine, grounding
+from extraction import engine, grounding, scope_check, scope_combine
 from extraction.context_cache import (
+    MAX_TTL_S,
     PER_CLAIM_SECONDS,
     CacheFailed,
     ContextCacheStats,
@@ -99,6 +117,17 @@ EXIT_CAP_HIT = 2
 # this is treated as the cached part.
 ASSUMED_UNCACHED_TOKENS_PER_CLAIM = 500
 
+# --estimate --scope-check: no lister or checker run has been measured at scale
+# (docs/decisions.md 2026-10-27 probe: one request, thoughts not reported), so
+# every figure below is an ASSUMPTION and is printed as one.
+ASSUMED_LISTER_INPUT_TOKENS = 700  # scope_list_system.md + the claim
+ASSUMED_LISTER_OUTPUT_TOKENS = 150
+ASSUMED_LISTER_THOUGHT_TOKENS = 200
+ASSUMED_CHECKER_UNCACHED_TOKENS = 900  # scope_check_user.md + the claim + its items
+ASSUMED_CHECKER_OUTPUT_TOKENS = 700  # verbatim quotes per item
+ASSUMED_CHECKER_THOUGHT_TOKENS = 800
+ASSUMED_SCOPE_SECONDS_PER_CLAIM = 25  # lister + checker latency added to the cache's lifetime
+
 _STORAGE_NOTE = (
     "observed on A0 (inferred from one run: 3,980 token-hours, about 35 s average lifetime); "
     "Google docs still say storage is billed on the TTL"
@@ -127,7 +156,7 @@ class CapExceeded(BaseException):
 
 @dataclass
 class CallRecord:
-    stage: str  # "audit" or "structure"
+    stage: str  # "audit" or "structure"; "lister" / "checker" for the scope calls (their call_kind tag)
     paper_id: str
     claim_index: int
     thinking_level: str | None
@@ -140,7 +169,8 @@ class CallRecord:
     cached_tokens: int = 0
     tool_use_tokens: int = 0
     # True for the auditor call, False for the structurer (told apart by the
-    # structurer's response_schema); None when unknown.
+    # structurer's response_schema) and for a call tagged with another kind;
+    # None when unknown.
     is_audit: bool | None = None
 
 
@@ -173,6 +203,22 @@ class _CacheLedger:
     @property
     def overhead_usd(self) -> float:
         return sum(p.creation_usd + p.storage_usd for p in self.papers)
+
+
+@dataclass
+class _ScopeLedger:
+    """Scope-check bookkeeping for one --scope-check run: the counters and the
+    flag-on prompt hash recorded in the replay header."""
+    stats: scope_check.ScopeStats
+    prompt_hash: str
+
+
+def _validate_scope_flags(scope_check_on: bool, cache: bool) -> None:
+    if scope_check_on and not cache:
+        raise ValueError(
+            "scope_check=True requires cache=True (--scope-check needs --cache): the scope checker reads the "
+            "paper from the context cache and has no other copy of it"
+        )
 
 
 def _stop_on_cache_failure(reason: str) -> None:
@@ -452,6 +498,9 @@ class _Instrumentation:
         # fallback_kwargs (fallback_config / fallback_contents) are only ever
         # passed by a cached auditor call; they are forwarded untouched.
         self.raise_if_capped()
+        # call_kind (a tag only the scope lister/checker pass) is forwarded
+        # untouched with the rest; without it, today's rules apply.
+        call_kind = fallback_kwargs.get("call_kind")
         start = time.monotonic()
         response, used_model = await self._original(
             client, contents, config, chat_id, model_name, fallback_model, correlation_id, **fallback_kwargs,
@@ -459,7 +508,7 @@ class _Instrumentation:
         latency = time.monotonic() - start
         usage = getattr(response, "usage_metadata", None)
         record = CallRecord(
-            stage=self._current_stage, paper_id=self._current_paper_id, claim_index=self._current_claim_index,
+            stage=call_kind or self._current_stage, paper_id=self._current_paper_id, claim_index=self._current_claim_index,
             thinking_level=self._current_thinking_level, model_used=used_model,
             prompt_tokens=getattr(usage, "prompt_token_count", None) or 0,
             output_tokens=getattr(usage, "candidates_token_count", None) or 0,
@@ -468,7 +517,10 @@ class _Instrumentation:
             latency_s=latency,
             cached_tokens=getattr(usage, "cached_content_token_count", None) or 0,
             tool_use_tokens=getattr(usage, "tool_use_prompt_token_count", None) or 0,
-            is_audit=getattr(config, "response_schema", None) is None,
+            is_audit=(
+                call_kind == "audit" if call_kind is not None
+                else getattr(config, "response_schema", None) is None
+            ),
         )
         self.records.append(record)
         if self.guard is not None:
@@ -595,7 +647,7 @@ def _finalize_cache_storage(cache_ledger: _CacheLedger | None) -> float:
 async def _run_once(
     targets: list[ReplayTarget], level: str, repeat_index: int, dry_run: bool,
     paper_texts: dict[str, str] | None = None, guard: _CostGuard | None = None,
-    cache_ledger: _CacheLedger | None = None,
+    cache_ledger: _CacheLedger | None = None, scope_ledger: _ScopeLedger | None = None,
 ) -> tuple[Path, list[CallRecord], list[dict], str]:
     """Returns (out_dir, gemini records, grounding records, status). status is
     STATUS_VOID_CAP_HIT when the guard's cap stopped the run, or
@@ -605,8 +657,16 @@ async def _run_once(
     A cache_ledger turns context caching on: one cache per paper, created
     before its first claim and deleted when its claim loop exits, however it
     exits. Its creation cost is charged to the guard when the cache is created
-    and its storage cost (actual lifetime) once the cache is deleted."""
-    out_dir = OUTPUT_ROOT / f"exp1_{level}_{repeat_index}"
+    and its storage cost (actual lifetime) once the cache is deleted.
+
+    A scope_ledger (requires cache_ledger, else ValueError) turns the scope check
+    on: per claim, inside the cache scope, lister -> checker follow the audit and
+    structure calls; after grounding, the combine step runs last. The cache TTL is
+    MAX_TTL_S. Output goes to exp1_{level}_scope_{n}."""
+    _validate_scope_flags(scope_ledger is not None, cache_ledger is not None)
+    out_dir = OUTPUT_ROOT / (
+        f"exp1_{level}_{repeat_index}" if scope_ledger is None else f"exp1_{level}_scope_{repeat_index}"
+    )
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
     for t in targets:
         by_paper[t.paper_id].append(t)
@@ -627,10 +687,12 @@ async def _run_once(
                 paper_text = paper_texts[paper_id]
 
                 audited: list[ClaimLLM] = []
+                scope_results: list[scope_check.ClaimScope] = []
+                ttl_kwargs = {"ttl_s": MAX_TTL_S} if scope_ledger is not None else {}
                 cache_scope = (
                     paper_context_cache(
                         engine._build_client(), engine.settings.llm_claim_audit_model, paper_text,
-                        len(paper_targets), cache_ledger.stats,
+                        len(paper_targets), cache_ledger.stats, **ttl_kwargs,
                     )
                     if cache_ledger is not None
                     else contextlib.nullcontext()
@@ -646,6 +708,13 @@ async def _run_once(
                             instrumentation.raise_if_capped()
                             claim_llm = await _replay_claim(target, paper_text, level, instrumentation, **cache_kwargs)
                             audited.append(claim_llm)
+                            if scope_ledger is not None:
+                                # Lister + checker see the claim text and the cache, never claim_llm.
+                                instrumentation.raise_if_capped()
+                                scope_results.append(await scope_check.scope_for_claim(
+                                    paper_cache, target.claim_text_verbatim, f"replay-{paper_id}", scope_ledger.stats,
+                                    claim_ref=f"{paper_id}#{target.claim_index}",
+                                ))
                 finally:
                     # The cache is deleted by now, whichever way the block exited.
                     storage_usd = _finalize_cache_storage(cache_ledger)
@@ -661,12 +730,22 @@ async def _run_once(
                     _claim_final_to_fixture_dict(claim_final, target.claim_index)
                     for claim_final, target in zip(grounded, paper_targets)
                 ]
+                if scope_ledger is not None:
+                    # Last step, paper level: the scope result may lower a "supported" label.
+                    for claim_dict, claim_final, target, scope in zip(claims_out, grounded, paper_targets, scope_results):
+                        trace = scope_combine.combine_scope(
+                            claim_final.label.value, scope, paper_text, scope_ledger.stats,
+                            claim_ref=f"{paper_id}#{target.claim_index}",
+                        )
+                        claim_dict.update(trace.to_fields())
                 header = dict(run1_fixture["header"])
                 header["model_name"] = engine.settings.llm_claim_audit_model
                 header["replay"] = {
                     "thinking_level": level, "base_run": "run1", "repeat_index": repeat_index,
                     "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 }
+                if scope_ledger is not None:
+                    header["replay"]["scope_check_prompt_hash"] = scope_ledger.prompt_hash
                 header["claims_scope"] = [t.claim_index for t in paper_targets]
                 fixture_out = {"header": header, "claims": claims_out, "matches": run1_fixture["matches"]}
 
@@ -687,12 +766,12 @@ async def _run_once(
 
 def _print_cache_estimate(
     targets: list[ReplayTarget], level: str, repeats: int, stats: dict[str, float],
-    uncached_total_usd: tuple[float, float],
-) -> None:
+    uncached_total_usd: tuple[float, float], ttl_s: int | None = None,
+) -> tuple[float, float]:
     """The --estimate --cache section: per paper, creation (0.0 while not
     billed) + storage for claims x PER_CLAIM_SECONDS (an upper bound on the
     actual lifetime) + each claim's audit with the cached part billed at the
-    cached rate.
+    cached rate. Returns the (low, high) cached total in USD.
     Free: no network, no cache read. The cached part is the measured audit
     prompt average minus an ASSUMED uncached part per claim, so every paper
     is treated as an average-sized paper."""
@@ -711,7 +790,7 @@ def _print_cache_estimate(
 
     print(f"[replay_audit] --estimate --cache: {len(claims_per_paper)} papers, claims per paper "
           f"{dict(sorted(claims_per_paper.items()))}, TTL per paper (s) "
-          f"{ {p: ttl_for_claims(n) for p, n in sorted(claims_per_paper.items())} }")
+          f"{ {p: (ttl_s if ttl_s is not None else ttl_for_claims(n)) for p, n in sorted(claims_per_paper.items())} }")
     print(f"[replay_audit] ASSUMPTION: {ASSUMED_UNCACHED_TOKENS_PER_CLAIM} uncached tokens per claim (the claim turn); "
           f"the other {cached_tokens:.0f} of the measured {stats['audit_prompt']:.0f}-token audit prompt are cached "
           f"and billed at the cached rate")
@@ -725,9 +804,55 @@ def _print_cache_estimate(
           f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
     print(f"[replay_audit] suggested --max-inr with --cache (1.3x the high end): {total_high * INR_PER_USD * 1.3:.1f} "
           f"(the estimate excludes grounding calls)")
+    return total_low, total_high
 
 
-def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int, cache: bool = False) -> None:
+def _print_scope_estimate(
+    targets: list[ReplayTarget], repeats: int, stats: dict[str, float], cached_total_usd: tuple[float, float],
+) -> None:
+    """The --estimate --scope-check section, added on top of the --cache estimate.
+    No lister or checker run has been measured at scale (the 2026-10-27 probe was
+    one request, thoughts not reported), so every figure below that is not from
+    the audit averages is printed as an ASSUMPTION. Free: no network.
+
+    Per claim-replay: one lister call (uncached, no paper) and one checker call
+    (cached part billed at the cached rate) - the checker is assumed to run for
+    every claim, the upper bound. Extra storage: the TTL is MAX_TTL_S but storage
+    follows the actual lifetime, which the extra calls lengthen by
+    ASSUMED_SCOPE_SECONDS_PER_CLAIM per claim (upper-bound style, like the cache
+    estimate)."""
+    cached_tokens = max(0.0, stats["audit_prompt"] - ASSUMED_UNCACHED_TOKENS_PER_CLAIM)
+    lister_usd = cost_usd(ASSUMED_LISTER_INPUT_TOKENS, ASSUMED_LISTER_OUTPUT_TOKENS, ASSUMED_LISTER_THOUGHT_TOKENS)
+    checker_usd = cost_usd(
+        cached_tokens + ASSUMED_CHECKER_UNCACHED_TOKENS, ASSUMED_CHECKER_OUTPUT_TOKENS,
+        ASSUMED_CHECKER_THOUGHT_TOKENS, cached_tokens=cached_tokens,
+    )
+    claim_replays = len(targets) * repeats
+    calls_usd = (lister_usd + checker_usd) * claim_replays
+    storage_usd = storage_cost_usd(cached_tokens, claim_replays * ASSUMED_SCOPE_SECONDS_PER_CLAIM / 3600)
+    scope_usd = calls_usd + storage_usd
+    total_low, total_high = cached_total_usd[0] + scope_usd, cached_total_usd[1] + scope_usd
+
+    print(f"[replay_audit] --estimate --scope-check: cache TTL {MAX_TTL_S} s per paper (the clamp maximum; storage is "
+          f"still charged on the actual lifetime)")
+    print(f"[replay_audit] ASSUMPTION (lister, uncached, thinking low): {ASSUMED_LISTER_INPUT_TOKENS} input / "
+          f"{ASSUMED_LISTER_OUTPUT_TOKENS} output / {ASSUMED_LISTER_THOUGHT_TOKENS} thought tokens per claim")
+    print(f"[replay_audit] ASSUMPTION (checker, cached, thinking low, run for every claim = upper bound): "
+          f"{cached_tokens:.0f} cached (the audit estimate's cached part) + {ASSUMED_CHECKER_UNCACHED_TOKENS} uncached input / "
+          f"{ASSUMED_CHECKER_OUTPUT_TOKENS} output / {ASSUMED_CHECKER_THOUGHT_TOKENS} thought tokens per claim")
+    print(f"[replay_audit] ASSUMPTION: the lister + checker add {ASSUMED_SCOPE_SECONDS_PER_CLAIM} s per claim to the cache's lifetime")
+    print(f"[replay_audit] scope calls: lister USD {lister_usd * claim_replays:.3f} + checker USD {checker_usd * claim_replays:.3f} "
+          f"+ extra storage USD {storage_usd:.3f} = USD {scope_usd:.3f} (INR {scope_usd * INR_PER_USD:.1f})")
+    print(f"[replay_audit] cached total + scope check: USD {total_low:.3f}-{total_high:.3f} "
+          f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
+    print(f"[replay_audit] suggested --max-inr with --cache --scope-check (1.3x the high end): "
+          f"{total_high * INR_PER_USD * 1.3:.1f} (the estimate excludes grounding calls)")
+
+
+def _print_estimate(
+    targets: list[ReplayTarget], level: str, repeats: int, cache: bool = False, scope_check: bool = False,
+) -> None:
+    _validate_scope_flags(scope_check, cache)
     stats = _load_measured_token_stats()
     low, high = _estimate_one_claim_cost_usd(stats, level)
     total_low = low * len(targets) * repeats
@@ -744,7 +869,11 @@ def _print_estimate(targets: list[ReplayTarget], level: str, repeats: int, cache
     print(f"[replay_audit] suggested --max-inr (1.3x estimate): {total_high * INR_PER_USD * 1.3:.1f} "
           f"(1.3x the high end; the estimate excludes grounding calls)")
     if cache:
-        _print_cache_estimate(targets, level, repeats, stats, (total_low, total_high))
+        cached_total = _print_cache_estimate(
+            targets, level, repeats, stats, (total_low, total_high), ttl_s=MAX_TTL_S if scope_check else None,
+        )
+        if scope_check:
+            _print_scope_estimate(targets, repeats, stats, cached_total)
 
 
 _UNPRICED = "unpriced"
@@ -834,10 +963,39 @@ def _print_cache_summary(cache: dict) -> None:
           f"{cache['audit_cost_per_claim_inr_incl_cache_overhead']} incl. cache creation + storage")
 
 
+def _scope_summary(scope_ledger: _ScopeLedger, records: list[CallRecord]) -> dict:
+    """The summary's "scope_check" block: the combine counters, and usage + cost
+    (cached tokens included) of the two scope calls, priced like the audit calls."""
+    by_call: dict[str, dict] = {}
+    for kind in (scope_check.LISTER_CALL_KIND, scope_check.CHECKER_CALL_KIND):
+        kind_records = [r for r in records if r.stage == kind]
+        by_call[kind] = {
+            "calls": len(kind_records),
+            "prompt_tokens": sum(r.prompt_tokens for r in kind_records),
+            "cached_tokens": sum(r.cached_tokens for r in kind_records),
+            "output_tokens": sum(r.output_tokens for r in kind_records),
+            "thought_tokens": sum(r.thought_tokens for r in kind_records),
+            "cost_usd": round(sum(_gemini_record_cost_usd(r)[0] for r in kind_records), 4),
+        }
+    return {"prompt_hash": scope_ledger.prompt_hash, **asdict(scope_ledger.stats), "by_call": by_call}
+
+
+def _print_scope_summary(block: dict) -> None:
+    counts = {k: v for k, v in block.items() if k not in ("prompt_hash", "by_call")}
+    print(f"[replay_audit] scope check (prompt hash {block['prompt_hash']}): {counts}")
+    for kind, usage in block["by_call"].items():
+        print(f"[replay_audit] scope {kind}: {usage['calls']} calls, {usage['prompt_tokens']} prompt "
+              f"({usage['cached_tokens']} cached) / {usage['output_tokens']} output / {usage['thought_tokens']} thought "
+              f"tokens, USD {usage['cost_usd']}")
+    if block["lister_failures"] or block["checker_failures"]:
+        print(f"[replay_audit] *** SCOPE CHECK FAILURES: {block['lister_failures']} lister, {block['checker_failures']} "
+              f"checker; those claims' verdicts were left unchanged ***")
+
+
 def _print_summary(
     out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None,
     status: str = STATUS_OK, guard: _CostGuard | None = None,
-    cache_ledger: _CacheLedger | None = None,
+    cache_ledger: _CacheLedger | None = None, scope_ledger: _ScopeLedger | None = None,
 ) -> None:
     grounding_records = grounding_records or []
     total_prompt = sum(r.prompt_tokens for r in records)
@@ -882,6 +1040,8 @@ def _print_summary(
     }
     if cache_ledger is not None:
         summary["cache"] = _cache_summary(cache_ledger, records, total_cached)
+    if scope_ledger is not None:
+        summary["scope_check"] = _scope_summary(scope_ledger, records)
     if guard is not None and guard.max_inr is not None:
         summary["cap"] = {
             "max_inr": guard.max_inr,
@@ -911,6 +1071,8 @@ def _print_summary(
     print(f"[replay_audit] total ~INR {summary['total_cost_inr']}{label}")
     if cache_ledger is not None:
         _print_cache_summary(summary["cache"])
+    if scope_ledger is not None:
+        _print_scope_summary(summary["scope_check"])
     if status == STATUS_VOID_CACHE_FAILED:
         bar = "*" * 78
         print(bar)
@@ -937,10 +1099,16 @@ async def _main(args: argparse.Namespace) -> int:
     for key in ("OTEL_EXPORTER_OTLP_ENDPOINT", "APPLICATIONINSIGHTS_CONNECTION_STRING"):
         os.environ.pop(key, None)
 
+    scope_check_on = getattr(args, "scope_check", False)
+    _validate_scope_flags(scope_check_on, getattr(args, "cache", False))
+
     prompt_hash = get_prompt_version()
     if prompt_hash != EXPECTED_PROMPT_HASH:
         print(f"[replay_audit] ABORT: prompt hash {prompt_hash} != expected {EXPECTED_PROMPT_HASH}")
         return 1
+    # The flag-on hash (base prompts + scope prompts + scope schemas + marker) is
+    # recorded in the replay header; the base hash above must still be the frozen one.
+    scope_prompt_hash = get_prompt_version(scope_check=True) if scope_check_on else None
 
     claims_path = Path(args.claims) if args.claims else None
     targets = _load_targets(claims_path, args.papers)
@@ -949,7 +1117,10 @@ async def _main(args: argparse.Namespace) -> int:
         return 1
 
     if args.estimate:
-        _print_estimate(targets, args.level, args.repeat, cache=getattr(args, "cache", False))
+        estimate_kwargs = {"scope_check": True} if scope_check_on else {}
+        _print_estimate(targets, args.level, args.repeat, cache=getattr(args, "cache", False), **estimate_kwargs)
+        if scope_check_on:
+            print(f"[replay_audit] scope-check prompt hash (recorded in the replay header): {scope_prompt_hash}")
         return 0
 
     paper_ids = sorted({t.paper_id for t in targets})
@@ -973,12 +1144,17 @@ async def _main(args: argparse.Namespace) -> int:
         # A fresh ledger per repeat: each repeat has its own summary.
         cache_ledger = _new_cache_ledger() if use_cache else None
         run_kwargs = {"cache_ledger": cache_ledger} if cache_ledger is not None else {}
+        scope_ledger = None
+        if scope_check_on and not args.dry_run:
+            scope_ledger = _ScopeLedger(stats=scope_check.ScopeStats(), prompt_hash=scope_prompt_hash)
+            run_kwargs["scope_ledger"] = scope_ledger
         out_dir, records, grounding_records, status = await _run_once(
             targets, args.level, repeat_index, args.dry_run, paper_texts, guard, **run_kwargs,
         )
         if args.dry_run:
             continue
-        _print_summary(out_dir, records, grounding_records, status, guard, cache_ledger)
+        summary_kwargs = {"scope_ledger": scope_ledger} if scope_ledger is not None else {}
+        _print_summary(out_dir, records, grounding_records, status, guard, cache_ledger, **summary_kwargs)
         if status != STATUS_OK:
             return EXIT_CAP_HIT
     return 0
@@ -1003,6 +1179,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--cache", action="store_true",
         help="explicit context caching of the system prompt + paper for the audit calls (BETA, default off). "
              "Stops the run (VOID_CACHE_FAILED, exit 2) at the first cache creation failure or cached-call API error",
+    )
+    parser.add_argument(
+        "--scope-check", action="store_true",
+        help="add the scope lister + checker and the combine step (default off; requires --cache, else ValueError). "
+             "Cache TTL becomes 3600 s; output goes to exp1_{level}_scope_{n}",
     )
     parser.add_argument(
         "--max-inr", type=_positive_float, default=None,
