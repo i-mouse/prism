@@ -3356,3 +3356,12 @@ kind (audit/structure/lister/checker) for cost logging; with scope_check
 on, the cache TTL is the 3600 s maximum (storage is billed on actual
 lifetime); Nitin runs eval.check_prompt_leak himself (it reads the
 held-out file).
+
+## Cache + schema + low-thinking probe: PASS - 2026-10-27
+- Run: eval.probe_cache_schema on arxiv-2610.10590v1, gemini-3.6-flash, 1 request.
+- Pass: no API error; response.parsed is ProbeOut; finish_reason STOP;
+  cached_content_token_count 13125 of prompt 13145.
+- thoughts_token_count reported None at thinking_level=low (short task).
+- Cost: INR 0.21 (call 0.16 + storage upper bound 0.05; creation not billed).
+  Counts toward the stage total; sealed reserve INR 300 untouched.
+- Step 4 build proceeds with the 2026-10-27 spec additions.
