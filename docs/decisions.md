@@ -3335,3 +3335,24 @@ for the same Gemini calls. Suggested cap for that claim set: INR 43.2.
 - score_replay on dev/run1 prints "0/13 refusal hits (scored 13/31)", not the documented 8/31.
   Not investigated. Confirm score_replay gives the expected numbers on a replay folder before A1,
   since A1 is scored with it.
+
+## Cache + schema + low-thinking probe - 2026-10-27
+**Why:** step-4 discovery found the cached auditor call never sends
+response_schema with cached_content, and thinking_level=low has never been
+sent with a cache. The scope checker needs all three in one request.
+**What:** one paid call (eval/probe_cache_schema.py) on one dev paper:
+create cache, one cached request with response_schema +
+thinking_level=low, delete cache. No retries, no fallback.
+**Cap:** INR 5. Counts toward the stage total cap; sealed reserve INR 300
+untouched.
+**Pass:** no API error AND response parses into the schema AND
+cached_content_token_count > 0.
+**Fail:** record the exact error; no re-run before a dated entry; step 4
+spec is revised in chat, not in code.
+**Step-4 spec additions agreed 2026-10-27 (from discovery):** combine runs
+at paper level after grounding; lister/checker get an opt-out of the
+cross-model fallback (default unchanged); every call is tagged with its
+kind (audit/structure/lister/checker) for cost logging; with scope_check
+on, the cache TTL is the 3600 s maximum (storage is billed on actual
+lifetime); Nitin runs eval.check_prompt_leak himself (it reads the
+held-out file).
