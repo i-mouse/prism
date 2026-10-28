@@ -3463,3 +3463,46 @@ named the rows, so it was not fully blind).
    release bar needs extraction work (option C, only after A or B).
 5. No fixes, prompt edits or paid runs during the diagnosis.
 **Money:** INR 0. A1 cost stays INR 136.16 (tool); AI Studio "after" still open.
+
+## A1 diagnosis results: Ship-honest (decisions.md option B) - 2026-10-28
+**Evidence:** docs/evals/auditor_rd/a1_diagnosis_2026-10-28.md (read-only,
+INR 0). 30 cells (10 miss rows x 3 repeats). Phase 1 reproduced:
+contradicted 9/5/4, guard_failed 0/0/2, lowered 6/3/2; score_a1 per-row
+marks match.
+**Reading rule applied (as pre-registered):** most common code in the 5
+unfixed rows (>= 2 of 3 repeats) is R in 3 of 5 (P5-R2, P4-R2, P6-R2);
+S1 in 1 (P11-R2); P3-R2 mixed. 3 < 4 -> no single clear cause ->
+Ship-honest (decisions.md option B). Option A not taken. No paid run.
+**Findings (facts):**
+- Lister is not the break: an item named the breaking element in 13 of 15
+  unfixed-row cells.
+- Checker reading (R) is the main break: 9 of 15 unfixed-row cells;
+  reported[] held prose/caption summaries, not the breaking table rows.
+  The checker repeats the auditor's habit (summary over table cells).
+- S1: P11-R2 r1/r2 quoted the breaking caption and still returned matches.
+- Instability: lowered 6 -> 3 -> 2 = 3 checker flips (P3-R2, P5-R2, P1-R1),
+  1 auditor label change (P10-R3), 1 guard block (P3-R2 r3). Lister variance did not
+  cause the drop (lister misses exist elsewhere: L1 in 2 cells).
+- 3 of 10 lowered cells used off-target or caption-only evidence
+  (P3-R2 r1, P5-R2 r1, P4-R1 r3).
+**Eval note (labels unchanged):** claim 11291#1 matches both P5-R2
+(refusal) and P5-S1 (S row); its r1 lowering touched P5-S1. Record for
+the rubric work; no relabel.
+**Ceiling reminder:** auditor-only ceiling 18/31 < 22/31 dev bar.
+**Auditor v2 (reviewed, not decided here):** R&D report
+docs/evals/auditor_rd/auditor_v2_rd_report_2026-10-28.md (frozen copy,
+reviewed by ChatGPT, Gemini, DeepSeek, Perplexity) recommends D6+D7:
+tables extracted once into a side store (raw PyMuPDF stays the reader),
+LLM maps claim to cells via a strict check form, code checks, 3-run
+agreement, Needs review, same-paper cache. It needs its own dated entry
+with T1/T2 marks before any test. Ship-honest stands unless T1 and T2
+both pass.
+**Next (build order):** 1) write the ship rule (precision-first gates)
+before any new result; 2) Auditor v2 entry with T1/T2 marks, committed
+and tagged; 3) free T1 (table fidelity) then T2 (code-check ceiling) on
+dev PDFs only. Fail -> Ship-honest + negative-results write-up. Pass ->
+separate dated entry for paid T3 (cap, --estimate, stop at 1.3x).
+Moving caching (A0 passed) to main stays a separate decision.
+**Process note:** a mistyped plan-mode shell command created an empty
+/tmp/_x outside the repo; plan mode does not block all shell writes, so
+each command stays "Allow once" with review.

@@ -80,7 +80,7 @@ Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
 ## Next steps (build order)
 
 Step 4 (scope lister + checker, flag --scope-check, default off, replay only) built and committed; step 5 checks done (scorer verified: 8/31, 7/31, 5/31, 8/31; S-row false-rejection baseline 4/88 effective); Stage A1 FAILED on A1-fixed (scope fixed 3 of 10, always-missed 1 of 6); Stage B not run.
-Next: free diagnosis of the 5 unfixed always-missed rows, then a decision (one more targeted experiment only if one clear cause, otherwise ship with honest numbers).
+A1 diagnosis done 2026-10-28 (INR 0): main break = checker reads summaries, not table rows (R, 3 of 5 rows); no single clear cause -> Ship-honest (decisions.md option B). See decisions.md "A1 diagnosis results: Ship-honest (decisions.md option B) - 2026-10-28". Next: write the ship rule, then the Auditor v2 entry with T1/T2 marks.
 
 ## Known risks (code-sourced, `docs/premerge_review_2026-10-20.md` section 3)
 
