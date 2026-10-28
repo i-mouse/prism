@@ -3045,7 +3045,7 @@ docs/evals/clean_labels/clean_attempt_score.md.
 - Pass-2-recovered claims (about 5-6 of 13) were never audited: their end-to-end value
   is unmeasured.
 - Reading: both prompts miss about 7 of 13 hard rows; cause is the copy-from-window
-  method. Order: auditor first (better and cheaper; a weak auditor wastes extraction
+method. Order: auditor first (better and cheaper; a weak auditor wastes extraction
   gains), then pass 2 or a numbered-sentence extraction, measured end to end with the
   new auditor.
 - Next: pre-merge review; PR eval/dev-baseline-run1 -> main; auditor phase.
@@ -3365,3 +3365,46 @@ held-out file).
 - Cost: INR 0.21 (call 0.16 + storage upper bound 0.05; creation not billed).
   Counts toward the stage total; sealed reserve INR 300 untouched.
 - Step 4 build proceeds with the 2026-10-27 spec additions.
+
+## Stage A1 marks and cap re-confirmed - 2026-10-28
+1. Why: lister + checker built behind --scope-check (default off, replay
+   only); step-5 free checks done. Probe PASS (2026-10-27, INR 0.21).
+2. Command (from Prism.PythonService): python -m eval.replay_audit
+   --level medium --cache --scope-check --claims
+   ..\docs\evals\exp1_stage_a_claims.json --repeat 3 --max-inr 207.
+   Cap = 1.3x --estimate (INR 159.2 incl. scope calls; lister/checker
+   figures are assumptions until measured). Caps: A0 85 (real 36.86) +
+   probe 5 (real 0.21) + A1 207 + B 250 = 547 <= 560. Sealed reserve
+   INR 300 untouched.
+3. Marks (unchanged from 2026-10-22), scored by eval.score_a1 on the 3
+   flag-on folders (exp1_medium_scope_1..3), RAW final label:
+   - fixed >= 5 of 10 miss rows (PS/NS in >= 2 of 3), incl. >= 4 of the 6
+     always-missed (P3-R2, P4-R1, P4-R2, P5-R2, P6-R2, P11-R2);
+   - lost <= 1 of 7 real hits (S in >= 2 of 3);
+   - every scope-lowered verdict has a scope_quote with guard passed.
+   PASS = all three.
+4. Void rules: VOID_CAP_HIT (void, no rescue re-run); VOID_CACHE_FAILED
+   (mechanics; diagnose, re-run allowed after a dated entry); NEW
+   VOID_SCOPE_MECHANICS: lister_failures + checker_failures > 3 across
+   the 3 repeats (mechanics; same rule as cache). score_a1 INVALID = no
+   result; fix the input, not the marks. Spend in a void run counts.
+5. Step-4 build notes: call-kind tag on the two new calls only (narrows
+   "every call is tagged", 2026-10-27); optional ttl_s on
+   paper_context_cache (3600 s with --scope-check); checker on an unusable
+   cache = counted failure, verdict unchanged, replay void as today;
+   flag-on output in exp1_{level}_scope_{n}.
+6. Stage B definition (fixed now, used for baseline and run):
+   false rejection = matched S row whose EFFECTIVE status is PS/NS
+   (missing -> not_supported, else label; row_details). Baseline on run 1
+   with the filled map: 4/88 (P1-S5 via grounding, P8-S7, P9-S4, P10-S2);
+   67 matched, 21 NO_MATCH. Stage B PASS keeps new <= 4 (total <= 8/88).
+   Diagnostics, report-only: RAW count and scope_lowered rows. Stage B
+   scope, scorer and cap get their own entry after A1.
+7. Outcomes: A1 PASS -> Stage B entry. A1 FAIL -> flags stay off; no prompt
+   edits, threshold changes or re-runs to rescue; design reopens only per
+   the 2026-10-22 rule.
+8. Before the run: full tests, flag-off hash cb3272cce551, leak check
+   (Nitin), --estimate re-run, AI Studio spend page checked with headroom
+   >= 207. Commit this entry; tag before-A1. After the run: copy the three
+   scope folders to Prism.PythonService/scratch/, then remove them from
+   the repo tree; record AI Studio spend before and after.
