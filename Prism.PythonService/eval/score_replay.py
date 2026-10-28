@@ -234,6 +234,10 @@ def main() -> None:
 
     print(f"mode={args.mode}")
     for fixture_dir, (outcomes, _) in zip(args.fixture_dirs, results):
+        missing = [row_id for row_id, o in outcomes.items() if o == "FIXTURE_MISSING"]
+        if missing:
+            print(f"{fixture_dir}: WARNING: {len(missing)} adjudicated rows have no fixture (FIXTURE_MISSING): "
+                  f"{', '.join(missing)}. Check --fixture-dir.")
         scored = [o for o in outcomes.values() if o not in ("OUT_OF_SCOPE", "FIXTURE_MISSING")]
         hits = sum(1 for o in scored if o == "REFUSED")
         print(f"{fixture_dir}: {hits}/{len(scored)} refusal hits (scored {len(scored)}/{len(rows)} adjudicated rows)")
