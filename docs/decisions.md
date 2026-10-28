@@ -3431,3 +3431,35 @@ held-out file).
   marks). Next: free, read-only diagnosis of the saved traces
   (Prism.PythonService/scratch/a1_output_2026-10-28) for the 5 unfixed
   always-missed rows, before any new design.
+
+## A1 diagnosis plan and reading rule - 2026-10-28
+**Context:** Follows "Stage A1 results: FAIL - 2026-10-28". Free, read-only
+diagnosis (Claude Code, plan mode, no LLM calls, INR 0). Written BEFORE any
+diagnosis result is seen.
+**Scope:** all 10 dev auditor-miss rows x 3 A1 repeats = 30 cells:
+- unfixed always-missed: P3-R2, P5-R2, P4-R2, P6-R2, P11-R2
+- fixed by scope: P4-R1, P7-R1, P1-R1
+- flipped by the auditor, not scope: P5-R1, P8-R2
+Inputs: Prism.PythonService/scratch/a1_output_2026-10-28, logs/scope_list,
+logs/scope_check; paper truth only from docs/evals/auditor_rd/*_2026-10-22.md.
+**Method:** one failure code per cell, first break wins: A (auditor already
+PS/NS), L1 (no lister item), L2 (item vague/merged/wrong kind), R (checker read
+wrong value/row/column), S1 (breaking value seen, status matches), S2
+(not_reported while evidence exists), S3 (matches by trusting the paper's own
+count/summary), G (guard blocked quote), OK (lowered), X (other). Must reproduce
+contradicted 9/5/4 and lowered 6/3/2 from traces, else stop. Instability split
+into lister variance / checker flip / guard / auditor label / bookkeeping.
+Lister output compared with the 10-22 scope-item check (that check's prompt
+named the rows, so it was not fully blind).
+**Reading rule (fixed now):**
+1. One clear cause = the same code in >= 4 of the 5 unfixed always-missed rows,
+   in >= 2 of 3 repeats. Only then may option A (one more targeted experiment)
+   be proposed, in its own dated entry with marks + cap, committed and tagged
+   before any spend.
+2. Otherwise -> option B (ship with honest numbers).
+3. Any later fix targets a failure type, not a row, and must also be judged on
+   S-row false rejections (baseline 4/88 effective).
+4. Reminder: the auditor-only ceiling is 18/31, below the 22/31 dev bar; the
+   release bar needs extraction work (option C, only after A or B).
+5. No fixes, prompt edits or paid runs during the diagnosis.
+**Money:** INR 0. A1 cost stays INR 136.16 (tool); AI Studio "after" still open.
