@@ -87,7 +87,7 @@ Planned fix (design agreed: caching + scope check, marks and caps written first)
 ## Roadmap
 
 Next 3 steps, in order (decisions.md, "K1 diagnostics and filter status - 2026-10-20"):
-1. Auditor phase - auditor PR steps 1-3 built and Stage A0 passed; next is the lister + checker, then Stage A1.
+1. Auditor phase - step 4 (scope lister + checker, flag --scope-check, default off, replay only) built and committed; step 5 checks done (scorer verified: 8/31, 7/31, 5/31, 8/31; S-row false-rejection baseline 4/88 effective); Stage A1 FAILED on A1-fixed (scope fixed 3 of 10, always-missed 1 of 6); Stage B not run; next = free diagnosis of the 5 unfixed always-missed rows, then a decision (one more targeted experiment only if one clear cause, otherwise ship with honest numbers).
 2. Re-test pass-2 / sentence-level extraction end to end with the new auditor; the parked K7 filter fix (validate neighbour ids, never resolve "same" against a dropped neighbour) stays parked until then.
 3. Claim-scope decision (headline claims only vs whole-paper) and a new sealed set, then one sealed run for the release number.
 

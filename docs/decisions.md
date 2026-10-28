@@ -3408,3 +3408,26 @@ held-out file).
    >= 207. Commit this entry; tag before-A1. After the run: copy the three
    scope folders to Prism.PythonService/scratch/, then remove them from
    the repo tree; record AI Studio spend before and after.
+
+## Stage A1 results: FAIL - 2026-10-28
+- Run: replay_audit --level medium --cache --scope-check --repeat 3
+  --max-inr 207; completed, valid (lister/checker failures 0 in all repeats;
+  cache 0 creation / 0 cached-call failures). Groq grounding hit its
+  free-plan limits; flash-lite fallback served it (as on A0).
+- Marks (eval.score_a1, RAW final label): A1-fixed FAIL - 5/10 miss rows
+  PS/NS in >= 2 of 3, but always-missed 1/6 (need >= 4). A1-lost PASS -
+  1/7 (P6-R1, auditor flip; scope cannot raise a verdict). A1-quote PASS -
+  0 violations.
+- Fixed by scope: P4-R1 (3/3), P7-R1 (3/3), P1-R1 (2/3) = 3 of 10.
+  Counted as fixed but from the auditor itself (not scope): P5-R1, P8-R2.
+  Not fixed: P3-R2 (scope 1/3), P5-R2 (scope 1/3), P4-R2, P6-R2, P11-R2 (0/3).
+- Scope per repeat: claims_with_items 14/15/15; contradicted 9/5/4;
+  guard_failed 0/0/2; lowered 6/3/2. Unstable across identical repeats.
+- Cost (tool): INR 43.61 + 46.35 + 46.2 = 136.16. AI Studio: 3,271.32 before,
+  [Nitin to fill] after.
+- Decision (per "Stage A1 marks and cap re-confirmed - 2026-10-28", point 7):
+  flags stay off; no prompt edits, threshold changes or re-runs. Stage B not
+  run. The 2026-10-22 design may be reopened (a paid stage failed its
+  marks). Next: free, read-only diagnosis of the saved traces
+  (Prism.PythonService/scratch/a1_output_2026-10-28) for the 5 unfixed
+  always-missed rows, before any new design.
