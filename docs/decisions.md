@@ -3506,3 +3506,36 @@ Moving caching (A0 passed) to main stays a separate decision.
 **Process note:** a mistyped plan-mode shell command created an empty
 /tmp/_x outside the repo; plan mode does not block all shell writes, so
 each command stays "Allow once" with review.
+
+## Auditor no-regression rule - 2026-10-28
+**Context:** Ship-honest (decisions.md option B) stays the fallback. Goal of
+the auditor phase: fix as many of the 10 auditor misses as possible, in
+stages, keeping every real gain. Extraction (13 misses) is a separate, later
+phase. The release bar (dev >= 22/31, false rejections <= 8/88) is not
+changed here; its restatement is deferred to the end of the auditor phase
+(auditor-only ceiling 18/31).
+**Rule (written before any new result).** An auditor change is KEPT only if
+all of these hold, measured over 3 identical runs:
+1. Gain: at least one more of the 10 auditor misses is fixed in >= 2 of 3
+   runs, compared with the current kept floor.
+2. No lost catches: each of today's 8 caught refusal rows stays caught in
+   >= 2 of 3 runs.
+3. False rejections: no worse than the flag-off baseline measured the same
+   way (3 runs, same rows), and never above 8/88.
+4. Golden >= 5/16 and positives >= 11/21 in >= 2 of 3 runs.
+5. Grounding-negative: any FAIL blocks the change.
+6. Not overfit: before the run, the change names the failure TYPE it targets
+   (e.g. R = checker reads summaries, not table rows). No code or prompt edit
+   names or special-cases an eval row.
+If any check fails, the change is REVERTED and the previous kept version
+stays the floor. A kept change becomes the new floor; the next change must
+beat it.
+**Cost:** checks 2-4 need paid runs, including a 3-run flag-off baseline.
+Each paid measurement stage still needs its own dated entry with marks + cap,
+committed and tagged first; stop at 1.3x --estimate; a capped run is void.
+Free tests (T1, T2) come first.
+**Closed:** held-out and sealed sets stay closed; the release number comes
+only from one sealed-set run at the end.
+**Next:** Auditor v2 entry (D6+D7, per
+docs/evals/auditor_rd/auditor_v2_rd_report_2026-10-28.md) with T1/T2 marks,
+committed + tagged; then free T1 and T2.
