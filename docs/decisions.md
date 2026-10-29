@@ -3742,3 +3742,88 @@ not claims wider than their own evidence (Prism's scope).
   130 gate. Measured in T3.
 - Coverage gap -> PS is the riskiest new rule (it is what reaches P11-R2);
   T2 mark 3 tests it on S rows.
+
+## Auditor v2 T1 result, Ship-honest removed, new order (T2-R first) - 2026-10-29
+**T1 result (recorded as written; not re-scored):** FAIL, no winner.
+Results: docs/evals/auditor_rd/t1_results_2026-10-28.md. INR 0.
+- Both extractors stable (12/12 papers byte-identical across two runs).
+- pymupdf4llm (code inside pymupdf 2.0): 5/8 gate tables usable, 13/21
+  breaking cells. Docling 2.144.0 (CPU): 5/8 usable, 14/21 breaking.
+- Causes: P4 T1 (both) and P4 T2 (pymupdf4llm): a framework label that
+  spans several rows is attached to one row only, so the MASA rows cannot
+  be told apart (real extraction failure). P4 T9 (both): the pin key
+  column says "Norm alpha", the PDF says "Norm α" (pin gap: the pre-run
+  label check did not cover key-column header labels); Docling also gives
+  "Normα". P11 T3 (Docling): caption text "KDmethods" (space lost).
+- No pin suspects. With the P4 T9 pin gap fixed, neither extractor
+  reaches 7/8 under the pre-registered matching. A whitespace-insensitive
+  rule (not pre-registered) might lift Docling; it is not applied, as that
+  would rescue a failed mark. No pin, rule or setting is changed.
+- What T1 tested: off-the-shelf extractors reading 8 known tables. What it
+  did not test: whether code checks fix the auditor misses.
+- Lessons: a pre-run label check must cover every label the scorer
+  matches (including key-column headers); whitespace handling must be
+  fixed before the run; both extractors lose row-group spans, a common
+  layout in ML papers.
+
+**Decision 1 - Ship-honest removed as an end state:** Prism does not
+release with the current auditor. This supersedes the Ship-honest
+(decisions.md option B) fallback in the A1 diagnosis results entry
+(2026-10-28) and the first bullet of "What the results lead to" in the
+Auditor v2 entry (2026-10-28). The T1 negative-results write-up is
+replaced by the T1 results file plus this entry. Release bar unchanged
+(dev >= 22/31, false rejections <= 8/88; auditor-only ceiling 18/31, so
+the extraction phase is still needed after the auditor phase).
+
+**Decision 2 - New order:** answer "does a code check fix the misses with
+perfect tables?" (T2-R) before "can we extract perfect tables?" (T1b).
+Extraction work is wasted if the code check cannot fix the misses.
+- Reference tables come from each paper's arXiv LaTeX source (exact cells
+  and row/column spans; LaTeX source is standard exact ground truth in
+  table-extraction benchmarks), never from extractor output.
+- This is not a rescue: the T1 verdict stands, T2-R asks a different
+  question, and its marks are fixed here before any run.
+
+**Step P - probe (free, facts only, no marks):** fetch the arXiv source of
+the 12 dev papers (and golden papers if on arXiv; never held-out or
+sealed) into Prism.PythonService/scratch/ (git-ignored). Report per paper:
+source available y/n; each of the 8 gate tables and the tables T2-R needs
+found in the LaTeX by caption number y/n; tables using multirow/
+multicolumn (count, all tables); parse problems (custom macros, \input
+files, images instead of tabular). No LLM, no eval run.
+
+**T2-R - code-check ceiling on reference tables (free):**
+- Same design, rule allowlist, row classes, form fields, merge order,
+  S-row selection rule, Needs-review scoring and marks 1-5 as T2 in the
+  Auditor v2 entry (2026-10-28). Only the table input changes: reference
+  tables built from LaTeX instead of the T1 winner's tables.
+- Reference-table check before forms are written: every T1 pin value
+  (t1_pins_2026-10-28.json) in a table T2-R uses must equal the same
+  cell in the reference table (value after the shared cell parser; row
+  and column by meaning, glyph or spacing differences in labels do not
+  count). Any mismatch -> STOP; resolve from the PDF page through the
+  blind dual-label route before any form is written. The pins file is
+  not edited.
+- Mark 2 (faithful) reads pins by value and row/column meaning in the
+  reference table, so label glyph differences (alpha vs α) do not count.
+- Reference tables, forms and the S-row list are committed and tagged
+  before the first code run. No edits after it.
+
+**What T2-R leads to (neither branch is a release):**
+- PASS -> a separate dated entry for the extraction track (T1b), marks
+  and cap before any run: a larger table-fidelity set built from LaTeX
+  (all tables in dev and golden papers, not only the 8 known, so no fix is
+  tuned to known tables); candidate fixes chosen by failure type (LaTeX
+  source directly for arXiv papers; row-span repair on extractor output;
+  a vision-model table read, paid). Using LaTeX in the product is a scope
+  change and is not decided here.
+- FAIL -> the table path is not the fix for these misses. A separate
+  dated entry designs the next auditor route.
+- Non-table misses (P5-R1 figure; P7-R1, P8-R2 prose) get their own track
+  after the table track; they are not part of T2-R.
+
+**Scope fence:** INR 0, no LLM or paid calls in Step P or T2-R. Network
+for Step P: arxiv.org source downloads only. Held-out, sealed,
+raw_text_cache/, LABEL_RUBRIC.md, exp3_targets.json and .env stay closed.
+Money unchanged: auditor stage 173.23 of 560 spent; sealed reserve 300
+untouched.
