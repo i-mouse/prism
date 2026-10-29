@@ -1,0 +1,1781 @@
+{
+  "version": 1,
+  "name": "t1_pins_2026-10-28",
+  "source": "docs/evals/auditor_rd/diagnostic_2026-10-22.md, section Phase 2.5 (source_line = line of that file; [n] = raw-text line it quotes)",
+  "rules_ref": "docs/decisions.md 'Auditor v2 (D6+D7): design, T1/T2 marks and Needs-review scoring - 2026-10-28'",
+  "key_uncertain_note": "key_uncertain pins are reported, never gated.",
+  "papers": {
+    "P1": "2610.11519v1",
+    "P2": "2610.11132v1",
+    "P3": "2610.11135v1",
+    "P4": "2610.10871v1",
+    "P5": "2610.11291v1",
+    "P6": "2610.11312v1",
+    "P7": "2610.10590v1",
+    "P8": "2610.12124v1",
+    "P9": "2610.12375v1",
+    "P10": "2610.12176v1",
+    "P11": "2610.12114v1",
+    "P12": "2610.12168v1"
+  },
+  "tables": [
+    {
+      "table_id": "P1-T4",
+      "paper": "P1",
+      "paper_id": "2610.11519v1",
+      "caption_number": 4,
+      "role": "gate"
+    },
+    {
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "paper_id": "2610.11135v1",
+      "caption_number": 9,
+      "role": "gate"
+    },
+    {
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "paper_id": "2610.10871v1",
+      "caption_number": 1,
+      "role": "gate"
+    },
+    {
+      "table_id": "P4-T2",
+      "paper": "P4",
+      "paper_id": "2610.10871v1",
+      "caption_number": 2,
+      "role": "gate"
+    },
+    {
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "paper_id": "2610.10871v1",
+      "caption_number": 9,
+      "role": "gate"
+    },
+    {
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "paper_id": "2610.11291v1",
+      "caption_number": 3,
+      "role": "gate"
+    },
+    {
+      "table_id": "P6-T10",
+      "paper": "P6",
+      "paper_id": "2610.11312v1",
+      "caption_number": 10,
+      "role": "gate"
+    },
+    {
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "paper_id": "2610.12114v1",
+      "caption_number": 3,
+      "role": "gate"
+    },
+    {
+      "table_id": "P7-T2",
+      "paper": "P7",
+      "paper_id": "2610.10590v1",
+      "caption_number": 2,
+      "role": "info"
+    },
+    {
+      "table_id": "P8-T10",
+      "paper": "P8",
+      "paper_id": "2610.12124v1",
+      "caption_number": 10,
+      "role": "info"
+    },
+    {
+      "table_id": "P10-T8",
+      "paper": "P10",
+      "paper_id": "2610.12176v1",
+      "caption_number": 8,
+      "role": "info"
+    }
+  ],
+  "pdf_glyph_fix": [
+    {
+      "pin_id": "P1-T4-01",
+      "old": "deltamacro Avg@8",
+      "new": "∆macro Avg@8"
+    },
+    {
+      "pin_id": "P1-T4-02",
+      "old": "deltamacro Avg@8",
+      "new": "∆macro Avg@8"
+    },
+    {
+      "pin_id": "P1-T4-02",
+      "old": "lambda=5",
+      "new": "λ=5"
+    },
+    {
+      "pin_id": "P1-T4-03",
+      "old": "deltamacro Pass@8",
+      "new": "∆macro Pass@8"
+    },
+    {
+      "pin_id": "P4-T1-08",
+      "old": "deltaFull",
+      "new": "∆Full"
+    }
+  ],
+  "pins": [
+    {
+      "id": "P1-T4-01",
+      "table_id": "P1-T4",
+      "paper": "P1",
+      "table": 4,
+      "kind": "cell",
+      "row_key_path": [
+        "∆macro Avg@8"
+      ],
+      "column_key_path": [
+        "Sampled OPD",
+        "no weight"
+      ],
+      "key_columns": null,
+      "value": "+0.30",
+      "sd": null,
+      "unit": "points",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "973, 987-988 [849]",
+      "note": "",
+      "pdf_glyph_fix": [
+        {
+          "old": "deltamacro Avg@8",
+          "new": "∆macro Avg@8"
+        }
+      ]
+    },
+    {
+      "id": "P1-T4-02",
+      "table_id": "P1-T4",
+      "paper": "P1",
+      "table": 4,
+      "kind": "cell",
+      "row_key_path": [
+        "∆macro Avg@8"
+      ],
+      "column_key_path": [
+        "REINFORCE++",
+        "λ=5"
+      ],
+      "key_columns": null,
+      "value": "-0.38",
+      "sd": null,
+      "unit": "points",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "974 [850]",
+      "note": "2nd of 7 values; diagnostic states only the 1st column",
+      "pdf_glyph_fix": [
+        {
+          "old": "deltamacro Avg@8",
+          "new": "∆macro Avg@8"
+        },
+        {
+          "old": "lambda=5",
+          "new": "λ=5"
+        }
+      ]
+    },
+    {
+      "id": "P1-T4-03",
+      "table_id": "P1-T4",
+      "paper": "P1",
+      "table": 4,
+      "kind": "cell",
+      "row_key_path": [
+        "∆macro Pass@8"
+      ],
+      "column_key_path": [
+        "Sampled OPD",
+        "no weight"
+      ],
+      "key_columns": null,
+      "value": "+0.64",
+      "sd": null,
+      "unit": "points",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "977 [857]",
+      "note": "1st value of the Pass@8 row; column not stated",
+      "pdf_glyph_fix": [
+        {
+          "old": "deltamacro Pass@8",
+          "new": "∆macro Pass@8"
+        }
+      ]
+    },
+    {
+      "id": "P3-T9-01",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "A09"
+      ],
+      "key_columns": null,
+      "value": ".709",
+      "sd": ".059",
+      "unit": "AUC",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1021 [2138], 1045-1047",
+      "note": ""
+    },
+    {
+      "id": "P3-T9-02",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "Best deep KT+"
+      ],
+      "column_key_path": [
+        "A09"
+      ],
+      "key_columns": null,
+      "value": ".749",
+      "sd": ".049",
+      "unit": "AUC",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1033 [2156]",
+      "note": ""
+    },
+    {
+      "id": "P3-T9-03",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "Jev0-shot (N=0)"
+      ],
+      "column_key_path": [
+        "A09"
+      ],
+      "key_columns": null,
+      "value": ".689",
+      "sd": ".103",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1030 [2147]",
+      "note": ""
+    },
+    {
+      "id": "P3-T9-04",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "NIPS34"
+      ],
+      "key_columns": null,
+      "value": ".644",
+      "sd": ".047",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1022 [2139]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-05",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "XES3G5M"
+      ],
+      "key_columns": null,
+      "value": ".512",
+      "sd": ".057",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1023 [2140], 1043-1045",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-06",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "DBE"
+      ],
+      "key_columns": null,
+      "value": "-",
+      "sd": null,
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1024 [2141]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-07",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "Alg05"
+      ],
+      "key_columns": null,
+      "value": ".799",
+      "sd": ".022",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1025 [2142]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-08",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "Junyi"
+      ],
+      "key_columns": null,
+      "value": ".517",
+      "sd": ".024",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1026 [2143]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-09",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "A17"
+      ],
+      "key_columns": null,
+      "value": ".660",
+      "sd": ".066",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1027 [2144]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-10",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "JevKT"
+      ],
+      "column_key_path": [
+        "Mean"
+      ],
+      "key_columns": null,
+      "value": ".640",
+      "sd": null,
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1028 [2145]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-11",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "Best deep KT+"
+      ],
+      "column_key_path": [
+        "NIPS34"
+      ],
+      "key_columns": null,
+      "value": ".558",
+      "sd": ".056",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1034 [2157]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-12",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "Best deep KT+"
+      ],
+      "column_key_path": [
+        "XES3G5M"
+      ],
+      "key_columns": null,
+      "value": ".542",
+      "sd": ".049",
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1035 [2158]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P3-T9-13",
+      "table_id": "P3-T9",
+      "paper": "P3",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "Position 1",
+        "Best deep KT+"
+      ],
+      "column_key_path": [
+        "Mean"
+      ],
+      "key_columns": null,
+      "value": ".607",
+      "sd": null,
+      "unit": "AUC",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1037 [2163]",
+      "note": "column attributed by position only (diagnostic: PARTLY)"
+    },
+    {
+      "id": "P4-T1-01",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "64K"
+      ],
+      "key_columns": null,
+      "value": "81.57",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1094-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-02",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "4K"
+      ],
+      "key_columns": null,
+      "value": "97.93",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1093-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-03",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "8K"
+      ],
+      "key_columns": null,
+      "value": "91.29",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1093-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-04",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "16K"
+      ],
+      "key_columns": null,
+      "value": "88.50",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1093-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-05",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "32K"
+      ],
+      "key_columns": null,
+      "value": "85.45",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1093-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-06",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "128K"
+      ],
+      "key_columns": null,
+      "value": "78.88",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1093-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-07",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": null,
+      "value": "87.27",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1089 [520], 1093-1095",
+      "note": ""
+    },
+    {
+      "id": "P4-T1-08",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "∆Full"
+      ],
+      "key_columns": null,
+      "value": "+2.87",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1090 [521]",
+      "note": "own line after the 7 values; column not stated",
+      "pdf_glyph_fix": [
+        {
+          "old": "deltaFull",
+          "new": "∆Full"
+        }
+      ]
+    },
+    {
+      "id": "P4-T1-09",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "4K"
+      ],
+      "key_columns": null,
+      "value": "97.7",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T1-10",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "8K"
+      ],
+      "key_columns": null,
+      "value": "91.2",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T1-11",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "16K"
+      ],
+      "key_columns": null,
+      "value": "88.5",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T1-12",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "32K"
+      ],
+      "key_columns": null,
+      "value": "85.0",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T1-13",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "64K"
+      ],
+      "key_columns": null,
+      "value": "82.3",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T1-14",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "128K"
+      ],
+      "key_columns": null,
+      "value": "77.6",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T1-15",
+      "table_id": "P4-T1",
+      "paper": "P4",
+      "table": 1,
+      "kind": "cell",
+      "row_key_path": [
+        "Original"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": null,
+      "value": "87.0",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1086 [511]",
+      "note": "framework that owns this Original row is not stated"
+    },
+    {
+      "id": "P4-T2-01",
+      "table_id": "P4-T2",
+      "paper": "P4",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "En.Sum"
+      ],
+      "key_columns": null,
+      "value": "19.73",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1112 [596], 1119-1121",
+      "note": ""
+    },
+    {
+      "id": "P4-T2-02",
+      "table_id": "P4-T2",
+      "paper": "P4",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "En.QA"
+      ],
+      "key_columns": null,
+      "value": "12.15",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1113 [597]",
+      "note": ""
+    },
+    {
+      "id": "P4-T2-03",
+      "table_id": "P4-T2",
+      "paper": "P4",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "MInfer",
+        "MASA"
+      ],
+      "column_key_path": [
+        "En.MC"
+      ],
+      "key_columns": null,
+      "value": "66.81",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1114 [598]",
+      "note": "diagnostic maps only the first two values to columns"
+    },
+    {
+      "id": "P4-T9-01",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "MInference",
+        "-",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "87.13",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1175 [1977]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-02",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "MInference",
+        "90",
+        "0.6"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "87.27",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1180 [1987]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-03",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "SeerAttention",
+        "-",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "87.88",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1185 [1997]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-04",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "SeerAttention",
+        "85",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "87.76",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1190 [2007]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-05",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "SeerAttention",
+        "90",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "88.09",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1195 [2017]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-06",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "SeerAttention",
+        "95",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "87.79",
+      "sd": null,
+      "unit": "score",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1200 [2027]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-07",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "FlexPrefill-Llama",
+        "90",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "89.26",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1205 [2037]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-08",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "FlexPrefill-Llama",
+        "95",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "89.22",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1210 [2047]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-09",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "FlexPrefill-Llama",
+        "97.5",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "89.94",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1215 [2057]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-10",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "FlexPrefill-Qwen",
+        "-",
+        "-"
+      ],
+      "column_key_path": [
+        "Avg."
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "72.16",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1220 [2067]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-11",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "cell",
+      "row_key_path": [
+        "MInference",
+        "-",
+        "-"
+      ],
+      "column_key_path": [
+        "4K"
+      ],
+      "key_columns": [
+        "Setting",
+        "Clip p",
+        "Norm alpha"
+      ],
+      "value": "97.66",
+      "sd": null,
+      "unit": "score",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1173 [1971]",
+      "note": ""
+    },
+    {
+      "id": "P4-T9-S1",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "row_absent",
+      "description": "no row Setting=FlexPrefill-Llama, Clip p='-', Norm alpha='-'",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1229-1233",
+      "match": {
+        "Setting": "FlexPrefill-Llama",
+        "Clip p": "-",
+        "Norm alpha": "-"
+      }
+    },
+    {
+      "id": "P4-T9-S2",
+      "table_id": "P4-T9",
+      "paper": "P4",
+      "table": 9,
+      "kind": "row_exists",
+      "description": "row FlexPrefill-Qwen / - / - exists",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1231-1232, 1216",
+      "match": {
+        "Setting": "FlexPrefill-Qwen",
+        "Clip p": "-",
+        "Norm alpha": "-"
+      }
+    },
+    {
+      "id": "P5-T3-S1",
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "table": 3,
+      "kind": "row_count",
+      "description": "exactly 17 data rows",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1298, 1304",
+      "count": 17
+    },
+    {
+      "id": "P5-T3-S2",
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "table": 3,
+      "kind": "col_contains_count",
+      "description": "exactly 2 rows whose Student cell contains '(SFT)'",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1311-1314",
+      "column": "Student",
+      "contains": "(SFT)",
+      "count": 2
+    },
+    {
+      "id": "P5-T3-S3",
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "table": 3,
+      "kind": "row_exists",
+      "description": "Student='Qwen3-1.7B (SFT)' + Teacher='Qwen3-4B-Instruct-2507' (letter h, informational)",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1313-1315",
+      "match": {
+        "Student": "Qwen3-1.7B (SFT)",
+        "Teacher": "Qwen3-4B-Instruct-2507"
+      }
+    },
+    {
+      "id": "P5-T3-S4",
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "table": 3,
+      "kind": "row_exists",
+      "description": "Student='Qwen3-4B (SFT)' + Teacher='Qwen3-30B-A3B-Instruct-2507' (letter d, informational)",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1314-1316",
+      "match": {
+        "Student": "Qwen3-4B (SFT)",
+        "Teacher": "Qwen3-30B-A3B-Instruct-2507"
+      }
+    },
+    {
+      "id": "P5-T3-S5",
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "table": 3,
+      "kind": "row_exists",
+      "description": "Student='Qwen3-1.7B' + Teacher='Qwen3-4B-Instruct-2507' (non-SFT twin of S3, letter p)",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1316-1317",
+      "match": {
+        "Student": "Qwen3-1.7B",
+        "Teacher": "Qwen3-4B-Instruct-2507"
+      }
+    },
+    {
+      "id": "P5-T3-S6",
+      "table_id": "P5-T3",
+      "paper": "P5",
+      "table": 3,
+      "kind": "row_exists",
+      "description": "Student='Qwen3-4B' + Teacher='Qwen3-30B-A3B-Instruct-2507' (non-SFT twin of S4, letter c)",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1317-1318",
+      "match": {
+        "Student": "Qwen3-4B",
+        "Teacher": "Qwen3-30B-A3B-Instruct-2507"
+      }
+    },
+    {
+      "id": "P6-T10-01",
+      "table_id": "P6-T10",
+      "paper": "P6",
+      "table": 10,
+      "kind": "cell",
+      "row_key_path": [
+        "Medical VLMs",
+        "Lingshu-32B"
+      ],
+      "column_key_path": [
+        "Detection"
+      ],
+      "key_columns": null,
+      "value": "44.5 / 53.3",
+      "sd": null,
+      "unit": "% (mIoU / Acc@IoU0.5)",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1375-1377 [2459-2466]",
+      "note": ""
+    },
+    {
+      "id": "P6-T10-S1",
+      "table_id": "P6-T10",
+      "paper": "P6",
+      "table": 10,
+      "kind": "row_count",
+      "description": "exactly 11 model rows",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1382",
+      "count": 11
+    },
+    {
+      "id": "P6-T10-S2",
+      "table_id": "P6-T10",
+      "paper": "P6",
+      "table": 10,
+      "kind": "name_set",
+      "description": "each of the 8 printed model names present exactly once",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1361-1376",
+      "names": [
+        "InternVL3-8B",
+        "Qwen3-VL-8B-I",
+        "Qwen3-VL-32B",
+        "MedGemma-4B",
+        "Lingshu-7B",
+        "Hulu-Med-7B",
+        "QoQ-Med-7B+",
+        "Lingshu-32B"
+      ]
+    },
+    {
+      "id": "P6-T10-S3",
+      "table_id": "P6-T10",
+      "paper": "P6",
+      "table": 10,
+      "kind": "label_absent",
+      "description": "no row label contains 'BreastGPT'",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1384-1385",
+      "contains": "BreastGPT"
+    },
+    {
+      "id": "P6-T10-S4",
+      "table_id": "P6-T10",
+      "paper": "P6",
+      "table": 10,
+      "kind": "group_counts",
+      "description": "General-purpose VLMs = 6 rows, Medical VLMs = 5 rows",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1382-1383",
+      "groups": {
+        "General-purpose VLMs": 6,
+        "Medical VLMs": 5
+      }
+    },
+    {
+      "id": "P11-T3-01",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "cell",
+      "row_key_path": [
+        "Student"
+      ],
+      "column_key_path": [
+        "Omni-MATH-2",
+        "Acc."
+      ],
+      "key_columns": null,
+      "value": "34.3",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1494, 1509 [721]",
+      "note": ""
+    },
+    {
+      "id": "P11-T3-02",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "cell",
+      "row_key_path": [
+        "Student"
+      ],
+      "column_key_path": [
+        "KernelBench",
+        "Acc."
+      ],
+      "key_columns": null,
+      "value": "9.2",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1495 [722]",
+      "note": ""
+    },
+    {
+      "id": "P11-T3-03",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "cell",
+      "row_key_path": [
+        "Student"
+      ],
+      "column_key_path": [
+        "KernelBench",
+        "Fast1"
+      ],
+      "key_columns": null,
+      "value": "12",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1496 [723]",
+      "note": ""
+    },
+    {
+      "id": "P11-T3-04",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "cell",
+      "row_key_path": [
+        "UTT (Ours)"
+      ],
+      "column_key_path": [
+        "Omni-MATH-2",
+        "Acc."
+      ],
+      "key_columns": null,
+      "value": "62.4",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1500 [741]",
+      "note": ""
+    },
+    {
+      "id": "P11-T3-05",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "cell",
+      "row_key_path": [
+        "UTT (Ours)"
+      ],
+      "column_key_path": [
+        "KernelBench",
+        "Acc."
+      ],
+      "key_columns": null,
+      "value": "50.0",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1501 [742]",
+      "note": ""
+    },
+    {
+      "id": "P11-T3-06",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "cell",
+      "row_key_path": [
+        "UTT (Ours)"
+      ],
+      "column_key_path": [
+        "KernelBench",
+        "Fast1"
+      ],
+      "key_columns": null,
+      "value": "32",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1502 [743]",
+      "note": ""
+    },
+    {
+      "id": "P11-T3-S1",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "caption",
+      "description": "caption states the Pro->Qwen scope",
+      "breaking": true,
+      "key_uncertain": false,
+      "source_line": "1486, 1510-1511",
+      "fragments": [
+        "Comparison with KD methods under the Pro",
+        "Qwen setting"
+      ]
+    },
+    {
+      "id": "P11-T3-S2",
+      "table_id": "P11-T3",
+      "paper": "P11",
+      "table": 3,
+      "kind": "row_exists",
+      "description": "row 'SeqKD (Kim & Rush, 2016)' exists",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1497",
+      "row_key_path": [
+        "SeqKD (Kim & Rush, 2016)"
+      ]
+    },
+    {
+      "id": "P7-T2-01",
+      "table_id": "P7-T2",
+      "paper": "P7",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "Supported browser journeys"
+      ],
+      "column_key_path": [
+        "Retained"
+      ],
+      "key_columns": null,
+      "value": "12/12",
+      "sd": null,
+      "unit": "journeys",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1412",
+      "note": ""
+    },
+    {
+      "id": "P7-T2-02",
+      "table_id": "P7-T2",
+      "paper": "P7",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "Supported browser journeys"
+      ],
+      "column_key_path": [
+        "Method"
+      ],
+      "key_columns": null,
+      "value": "12/12",
+      "sd": null,
+      "unit": "journeys",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1413",
+      "note": ""
+    },
+    {
+      "id": "P7-T2-03",
+      "table_id": "P7-T2",
+      "paper": "P7",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "Final and peak prompt tokens"
+      ],
+      "column_key_path": [
+        "Retained"
+      ],
+      "key_columns": null,
+      "value": "265,965",
+      "sd": null,
+      "unit": "tokens",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1415, 1418-1419",
+      "note": ""
+    },
+    {
+      "id": "P7-T2-04",
+      "table_id": "P7-T2",
+      "paper": "P7",
+      "table": 2,
+      "kind": "cell",
+      "row_key_path": [
+        "Final and peak prompt tokens"
+      ],
+      "column_key_path": [
+        "Method"
+      ],
+      "key_columns": null,
+      "value": "283,105",
+      "sd": null,
+      "unit": "tokens",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1416",
+      "note": ""
+    },
+    {
+      "id": "P8-T10-01",
+      "table_id": "P8-T10",
+      "paper": "P8",
+      "table": 10,
+      "kind": "cell",
+      "row_key_path": [
+        "No detected use"
+      ],
+      "column_key_path": [
+        "Unchanged"
+      ],
+      "key_columns": null,
+      "value": "95.8",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1458, 1469-1470",
+      "note": ""
+    },
+    {
+      "id": "P8-T10-02",
+      "table_id": "P8-T10",
+      "paper": "P8",
+      "table": 10,
+      "kind": "cell",
+      "row_key_path": [
+        "No detected use"
+      ],
+      "column_key_path": [
+        "Supplemented"
+      ],
+      "key_columns": null,
+      "value": "0.9",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1459-1462",
+      "note": ""
+    },
+    {
+      "id": "P8-T10-03",
+      "table_id": "P8-T10",
+      "paper": "P8",
+      "table": 10,
+      "kind": "cell",
+      "row_key_path": [
+        "No detected use"
+      ],
+      "column_key_path": [
+        "Updated"
+      ],
+      "key_columns": null,
+      "value": "0.1",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1459-1462",
+      "note": ""
+    },
+    {
+      "id": "P8-T10-04",
+      "table_id": "P8-T10",
+      "paper": "P8",
+      "table": 10,
+      "kind": "cell",
+      "row_key_path": [
+        "No detected use"
+      ],
+      "column_key_path": [
+        "Rewritten"
+      ],
+      "key_columns": null,
+      "value": "3.1",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1459-1462",
+      "note": ""
+    },
+    {
+      "id": "P8-T10-05",
+      "table_id": "P8-T10",
+      "paper": "P8",
+      "table": 10,
+      "kind": "cell",
+      "row_key_path": [
+        "No detected use"
+      ],
+      "column_key_path": [
+        "Dropped"
+      ],
+      "key_columns": null,
+      "value": "0.1",
+      "sd": null,
+      "unit": "%",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1459-1462",
+      "note": ""
+    },
+    {
+      "id": "P10-T8-01",
+      "table_id": "P10-T8",
+      "paper": "P10",
+      "table": 8,
+      "kind": "row_exists",
+      "description": "row 'M +' exists",
+      "breaking": false,
+      "key_uncertain": false,
+      "source_line": "1523",
+      "row_key_path": [
+        "M +"
+      ]
+    },
+    {
+      "id": "P10-T8-02",
+      "table_id": "P10-T8",
+      "paper": "P10",
+      "table": 8,
+      "kind": "row_contains",
+      "description": "row 'M +' contains 119, 17.22, 28.82, 68.3, 73.3, 48.3 (columns not stated)",
+      "breaking": false,
+      "key_uncertain": true,
+      "source_line": "1524-1529",
+      "row_key_path": [
+        "M +"
+      ],
+      "values": [
+        "119",
+        "17.22",
+        "28.82",
+        "68.3",
+        "73.3",
+        "48.3"
+      ]
+    }
+  ]
+}
