@@ -412,6 +412,25 @@ def test_fetch_second_transient_error_gives_up(tmp_path):
     assert len(calls) == 2 and rec["status"] == "failed"
 
 
+def test_redirect_to_arxiv_hosts_allowed_other_hosts_refused_and_recorded(tmp_path):
+    h = lp._ArxivRedirect()
+    req = urllib.request.Request("https://arxiv.org/e-print/x")
+    for ok in ("https://arxiv.org/e-print/y", "https://export.arxiv.org/e-print/y", "https://cdn.arxiv.org/z"):
+        assert h.redirect_request(req, io.BytesIO(b""), 302, "Found", {}, ok).full_url == ok
+    for bad in ("https://evilarxiv.org/x", "https://arxiv.org.evil.com/x", "https://example.com/x"):
+        with pytest.raises(urllib.error.HTTPError):
+            h.redirect_request(req, io.BytesIO(b""), 302, "Found", {}, bad)
+
+    def opener(r, timeout=None):  # the real opener raises this when a redirect is refused
+        return h.redirect_request(r, io.BytesIO(b""), 302, "Found", {}, "https://example.com/x")
+
+    clk = Clock()
+    rec = lp.fetch_all([ID1], tmp_path, opener, clk.sleep, clk.now)[0]
+    assert rec["status"] == "failed" and rec["http_status"] == 302
+    assert "redirect outside arxiv.org refused" in rec["error"] and "example.com" in rec["error"]
+    assert 60.0 not in clk.sleeps
+
+
 def test_redirect_outside_arxiv_is_refused():
     h = lp._ArxivRedirect()
     req = urllib.request.Request("https://arxiv.org/e-print/x")
@@ -438,9 +457,11 @@ def _mm(dev, shared=None, skip=()):
         for r in p["expected_matrix"]:
             if r["id"] in skip:
                 continue
-            rows[r["id"]] = {"persisted_claim_id": f"c-{r['id']}", "confirmed_no_match": False}
+            # real dev map shape: persisted_claim_id null, claim_fingerprint names the matched run-1 claim
+            rows[r["id"]] = {"persisted_claim_id": None, "claim_fingerprint": f"c-{r['id']}",
+                             "confirmed_no_match": False}
     for rid, cid in (shared or {}).items():
-        rows[rid]["persisted_claim_id"] = cid
+        rows[rid]["claim_fingerprint"] = cid
     return {"rows": rows}
 
 
@@ -458,7 +479,7 @@ def test_select_s_rows_tiny_dev_set():
         ("2610.11135v1", [_row("P3-S1", claim="works for both", notes="Table 9"), _row("P3-S2")]),
     )
     mm = _mm(dev, shared={"P1-R1": "c-P1-S3"})
-    mm["rows"]["P3-S2"] = {"persisted_claim_id": None, "confirmed_no_match": True}  # fails (a)
+    mm["rows"]["P3-S2"] = {"persisted_claim_id": None, "claim_fingerprint": None, "confirmed_no_match": True}  # fails (a)
     out = lp.select_s_rows(dev, mm)
 
     ids = [r["row_id"] for r in out["selected"]]

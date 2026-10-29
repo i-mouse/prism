@@ -709,7 +709,9 @@ class _ArxivRedirect(urllib.request.HTTPRedirectHandler):
         u = urllib.parse.urlparse(newurl)
         host = u.hostname or ""
         if u.scheme != "https" or not (host == "arxiv.org" or host.endswith(".arxiv.org")):
-            raise urllib.error.HTTPError(newurl, code, "redirect outside arxiv.org refused", headers, fp)
+            raise urllib.error.HTTPError(
+                newurl, code, f"redirect outside arxiv.org refused (host: {host or newurl})", headers, fp
+            )
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
@@ -750,7 +752,7 @@ def download(url: str, opener, throttle: Throttle, sleep=time.sleep, ua: str = U
         except _TooLarge as e:
             return {"ok": False, "http_status": None, "error": str(e)}
         except urllib.error.HTTPError as e:
-            last = f"HTTP {e.code}"
+            last = f"HTTP {e.code}: {e.reason}"
             if e.code == 429 or 500 <= e.code < 600:
                 continue
             return {"ok": False, "http_status": e.code, "error": last}
@@ -980,10 +982,15 @@ def select_s_rows(dev_eval: dict, match_map: dict) -> dict:
             rows.append({"paper_id": paper.get("paper_id"), **r})
     mm = match_map.get("rows", {})
 
+    def claim_id(row_id):
+        # the map names a matched run-1 claim by claim_fingerprint (persisted_claim_id is null in dev)
+        e = mm.get(row_id) or {}
+        return None if e.get("confirmed_no_match") else (e.get("claim_fingerprint") or e.get("persisted_claim_id"))
+
     by_claim: dict = {}
     for r in rows:
         if r.get("expected_label") != "supported":
-            cid = (mm.get(r["id"]) or {}).get("persisted_claim_id")
+            cid = claim_id(r["id"])
             if cid:
                 by_claim.setdefault(cid, []).append(r["id"])
 
@@ -991,9 +998,8 @@ def select_s_rows(dev_eval: dict, match_map: dict) -> dict:
     for r in rows:
         if r.get("expected_label") != "supported":
             continue
-        entry = mm.get(r["id"]) or {}
-        cid = entry.get("persisted_claim_id")
-        a = bool(cid) and not entry.get("confirmed_no_match")
+        cid = claim_id(r["id"])
+        a = bool(cid)
         cited = extract_table_refs(str(r.get("scoring_notes") or ""))
         for t in extract_table_refs(_evidence_text(r)):
             if t not in cited:
@@ -1005,7 +1011,7 @@ def select_s_rows(dev_eval: dict, match_map: dict) -> dict:
         d = not shared
         infos.append({
             "row_id": r["id"], "paper": f"P{paper_number(r['id'])}", "paper_id": r.get("paper_id"),
-            "expected_label": r.get("expected_label"), "persisted_claim_id": cid,
+            "expected_label": r.get("expected_label"), "claim_fingerprint": cid,
             "tables_cited": cited,
             "tables_in_why_this_case": extract_table_refs(str(r.get("why_this_case") or "")),
             "scope_words": words, "shared_with_refusal_rows": shared,
