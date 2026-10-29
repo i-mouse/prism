@@ -3539,3 +3539,206 @@ only from one sealed-set run at the end.
 **Next:** Auditor v2 entry (D6+D7, per
 docs/evals/auditor_rd/auditor_v2_rd_report_2026-10-28.md) with T1/T2 marks,
 committed + tagged; then free T1 and T2.
+
+## Auditor v2 (D6+D7): design, T1/T2 marks and Needs-review scoring - 2026-10-28
+**Status:** written before any T1/T2 run. Design source:
+docs/evals/auditor_rd/auditor_v2_rd_report_2026-10-28.md (stays "reviewed,
+NOT decided"). This entry decides only the free tests and how their results
+are read. Ship-honest (decisions.md option B) stays the fallback.
+**Supersedes (append-only):** step 1 of "A1 diagnosis results: Ship-honest
+(decisions.md option B) - 2026-10-28" Next ("write the ship rule first") is
+superseded by "Auditor no-regression rule - 2026-10-28": the release bar is
+not restated now. This entry does not change the bar.
+
+**Design (what v2 is):**
+- Tables are extracted once per paper by ONE local extractor into a side
+  table store (cells, row keys, column keys, caption, footnotes, page,
+  extractor name + version + settings, PDF sha256). Raw PyMuPDF text stays
+  the reader for extraction and prose audit (2026-10-14 decision unchanged).
+- v2 is ADDITIVE. Today's auditor still runs on every claim, unchanged. The
+  table path runs only on routed claims and can only LOWER the final label.
+  It never raises a label and never overrides a refusal.
+- Mapper (LLM, T3 onward only) reads the claim plus one full table (row
+  labels, caption, footnotes) and fills a strict check form. Code runs the
+  form. The LLM never counts, compares or writes code.
+- Check form fields: table id; row keys; excluded rows, each with a reason;
+  claimed group (the members the claim covers, and where they are listed);
+  column keys; rule; rule params (op, constant, polarity, tolerance, k,
+  unit); caveat refs (caption, footnote or sentence that limits the claim).
+  A claim may have one form per table; results combine as below.
+- Rule allowlist (fixed now; no rule is added after seeing T1/T2 data):
+  all_cmp (every selected cell vs a constant); beats_baseline (method cell
+  vs baseline cell per selected column or row, with polarity and
+  tolerance); best_in_column; count_rows (optional distinct_on key columns,
+  no extra text normalisation); count_satisfying (k of n cells meet a
+  comparison). A claim no rule can express gets no form and stays on the
+  prose path.
+- Code result per form: contradicted, holds, or cannot_check (missing cell,
+  unparsable cell, missing comparator row). Claim result, in this order:
+  any contradicted -> PS; any cannot_check -> Needs review; a claimed-group
+  member with no row in the table -> PS (scope wider than evidence);
+  caveat refs present -> Needs review; else holds.
+- Merge order (fixed): code result, then can-only-lower, then Needs review.
+  Needs review only replaces a final Supported.
+- Cell parser: plain code, unit-tested on a fixed format list (+-/± SD,
+  leading-dot decimals, unicode minus, thousands commas, %, * † ‡ and bold
+  markers, "-" / "—" / N/A / OOM as missing, "x / y" pairs). Tests pass
+  before any T1 score is read.
+- Key labels match after NFKC, casefold and whitespace collapse. A
+  marker-insensitive fallback (drop trailing * † ‡ + markers) is used only
+  when it gives a unique match in that table; ambiguous = no match.
+- T3 stability: 3 mapping runs agree only on the same canonical form (same
+  table, row/column keys, rule, params). Different cells with the same
+  verdict = disagreement -> Needs review. Agreement is not proof; T3
+  reports accuracy among unanimous forms separately.
+- Router and same-paper brief cache: defined and marked in the T3 entry.
+  Cache key when built: file sha256 + extractor name/version/settings +
+  table schema version + mapper prompt hash + model + checker version.
+- Flags default off. No prompt file and no schemas.py change in T1/T2;
+  flag-off hash stays cb3272cce551.
+
+**Scope fence for T1/T2:** INR 0, no LLM or API calls, dev PDFs only (the 12
+in docs/research_papers/). Scripts may open those PDFs; agents read script
+output only. Held-out, sealed, raw_text_cache/, LABEL_RUBRIC.md,
+exp3_targets.json and .env stay closed. Extractors run in an isolated env
+under Prism.PythonService/scratch/; the product venv and its PyMuPDF are not
+touched. One-time model weight downloads are the only network use.
+
+**Row classes (provisional; frozen in the T2 forms file before any T2 code
+run; any change logged with its reason):**
+- T (table rule): breaking evidence is table cells or a table's row set and
+  one allowlisted rule states the failure: P1-R1 (P1 Table 4), P3-R2 (P3
+  Table 9), P4-R1 (P4 Tables 1-2), P4-R2 (P4 Table 9), P5-R2 (P5 Table 3),
+  P6-R2 (P6 Table 10).
+- C (scope/caveat on a table): a caption or footnote limits a table's
+  scope, or claimed members are absent from the table: P11-R2 (P11 Table 3
+  caption).
+- F (figure data): P5-R1 (Fig. 11; curve data not in text). No form.
+- P (prose): P7-R1 (one pair, §7), P8-R2 (App. A.6 causal caveat). No form.
+- F and P rows count as not fixed by the table path.
+- Diagnostic flags: P5-R2 forms key on student/teacher cell content, never
+  row letters (raw text d/h vs scoring_notes g/h; letters reported only).
+  P6-R2's form uses Table 10's row set only; the Fig. 3 clause (raw text 4
+  models, scoring_notes 8) is left out; label unchanged; noted for rubric
+  work. P5-R1 is class F.
+- Expected before any run (not a mark): generic count rules cannot see
+  P5-R2's semantic duplicate (SFT rows). No row-specific normalisation will
+  be added to reach it.
+
+**T1 - table fidelity (free):**
+- Extractors: pymupdf4llm and Docling, newest stable at install (last seen
+  2026-10-28: pymupdf4llm 1.28.2, docling 2.130.0). Exact versions of both,
+  docling-ibm-models, PyMuPDF in the T1 env, Python and OS are recorded from
+  importlib.metadata before the first run.
+- Settings (fixed before the first run, never changed after it): library
+  defaults, plus OCR off and the most structured table output each library
+  offers (Docling: TableFormer ACCURATE, cell objects with header flags;
+  pymupdf4llm: layout on, table output that keeps spans). Exact calls are
+  recorded before the first run.
+- Gate tables (8, from the T and C rows): P1 T4, P3 T9, P4 T1, P4 T2, P4 T9,
+  P5 T3, P6 T10, P11 T3. P7 T2, P8 T10, P10 T8 are scored for information.
+- Pins: docs/evals/auditor_rd/t1_pins_2026-10-28.json, built only from cells
+  whose value, row and column are stated in diagnostic_2026-10-22.md (Phase
+  2.5), plus its structural facts (row counts, model-name sets, absent
+  rows). Each pin: table, row key path, column key path, value, unit,
+  breaking y/n. Cells whose column is attributed by position only, or whose
+  block owner is not stated, are key_uncertain and not gated. Pins are
+  committed and tagged before any extractor runs.
+- Cell correct: inside the table whose caption number matches the pin, a
+  cell with the pinned value (compared after the shared parser) AND the
+  pinned row key path AND column key path, taken from the extractor's own
+  header / row-header / key-column structure. The scorer never counts
+  positions. SD parts are reported, not gated.
+- Table usable: exactly one extracted table matches the caption number;
+  every breaking cell correct; every structural pin correct; >= 90% of the
+  other gated cells correct.
+- Stable: each extractor runs twice on the same PDFs; the normalised table
+  output must be identical. Any difference fails that extractor.
+- PASS: at least one extractor, alone, is stable and has >= 7 of 8 gate
+  tables usable. No must-agree rule, no per-table mixing of tools.
+- Winner (feeds T2 and later): most usable gate tables; tie -> more correct
+  breaking cells; tie -> pymupdf4llm (same PyMuPDF family, no ML download).
+- Pin suspects: a gated cell where both extractors agree with each other and
+  both disagree with the pin. Resolved only from the PDF page through the
+  usual blind dual-label route (ChatGPT + Gemini, Nitin decides
+  disagreements). A pin changes only where the page contradicts it; old and
+  new pins and both scores are recorded. No other pin change.
+
+**T2 - code-check ceiling (free; runs only if T1 passes):**
+- Input: the T1 winner's normalised tables, committed with the T1 results.
+- Miss rows: one or more forms per T or C row. Forms are written through
+  the dual-label route from the PDF page and claim text (not from T1
+  output), cross-checked in Claude chat; Nitin decides disagreements. Each
+  form records the cell values it expects (diagnosis only; code reads the
+  extractor tables).
+- S rows (selection rule, applied by script before any form is written):
+  dev S rows that (a) match a run-1 claim in docs/evals/dev_match_map.json,
+  (b) cite a Table in their scoring_notes or evidence fields, (c) contain a
+  scope word from {all, every, each, consistent*, across, always,
+  outperform*, best, both, any}, (d) do not share their matched claim with
+  a refusal row (shared ones are reported apart). Sort by row id; take the
+  first per paper in paper order, then fill by row id to 10. Fewer than 8 ->
+  drop (c) and fill by row id to 8. A selected row that gets no form is
+  replaced by the next row in the same order, before any code run.
+- Forms and the S-row list are committed and tagged before the first T2
+  code run. No edits after it. A form bug is a T2 miss, not a re-run.
+- Final per row: code result merged with the run-1 auditor label
+  (can-only-lower; Needs review only replaces Supported).
+- Marks (all required):
+  1. Gain: final PS/NS on >= 4 of the 10 misses AND >= 3 of the 5 hard rows
+     (P3-R2, P4-R2, P5-R2, P6-R2, P11-R2). Basis: the A1 LLM checker fixed
+     3 of 10; a perfect-mapping ceiling that cannot beat that by one row
+     leaves no room for a real mapper's losses. 3 of 5 = the hard rows whose
+     failure is table reading (code R).
+  2. Faithful: a miss row counts in mark 1 only if its contradicting cells
+     include >= 1 pinned breaking cell or pinned structural fact.
+  3. S rows: 0 of the selected S rows lowered.
+  4. Needs review: <= 2 of the selected S rows.
+  5. Parser unit tests pass; two code runs give identical output.
+- Reported, not gated: counts by class and by rule; expected-vs-extracted
+  cell differences.
+
+**Needs review scoring (T2, T3 and every later kept-change check):**
+- Never a catch. A refusal row ending Needs review is not caught (own
+  bucket, no credit, stays in the denominator).
+- 10 misses: a miss ending Needs review is not fixed.
+- 8 catches: a caught row ending Needs review is a lost catch.
+- False rejections: Needs review on an S row is not a false rejection; it
+  counts toward the ceiling.
+- Positives (golden 21, dev S): Needs review is not a positive hit.
+- Ceiling, added to the no-regression rule's checks (which are otherwise
+  unchanged): Needs review on dev S rows <= 8/88 in >= 2 of 3 runs, and
+  <= 10% of all audited claims in every run. Over the ceiling -> not kept.
+- Every run reports Needs-review rate and flip rate next to recall and
+  false rejections.
+
+**What the results lead to:**
+- T1 FAIL, or T1 PASS then T2 FAIL -> stop v2. Ship-honest (decisions.md
+  option B) plus a negative-results write-up in docs/evals/auditor_rd/. No
+  third extractor, no settings change, no vision tie-breaker, no form edit,
+  no re-run to rescue a mark.
+- Both PASS -> a separate dated T3 entry before any paid call: LLM mapper on
+  the frozen 18-claim set x3, router rule, agreement rule, a 3-run flag-off
+  baseline for the no-regression checks, --estimate, cap, stop at 1.3x,
+  capped run void; committed and tagged. A T2 pass shows a ceiling only
+  (forms written knowing the answers; 5 hard rows), not that v2 works.
+- Money: auditor stage 173.23 of 560 spent; 386.77 left (includes the
+  unused Stage B 250); sealed reserve 300 untouched. T3 must show its
+  estimate fits, or narrow its scope, before any call.
+
+**Prior art (checked 2026-10-29):** v2 follows the research pattern for
+table claims (SciTab; ProgramFC and TART: LLM plans, tools/code compute;
+2026 planner/executor checkers with cell-level traces). Deployed paper
+error checkers (Black Spatula, YesNoError, GPT-5 correctness checker, AAAI
+2026 AI review) use a strong LLM, several passes and human review, report
+about 10% false alarms and miss many errors. They target objective errors,
+not claims wider than their own evidence (Prism's scope).
+
+**Known limits (written now):**
+- Auditor-only ceiling 18/31 < 22/31 bar; v2 cannot reach the bar alone.
+- v2 does not keep A1's prose fix: P7-R1 (class P) returns to missed.
+- Additive design adds tokens (mapping x3 per routed claim) and does not
+  lower cost per paper; INR 87 -> about 174 at 2027 prices stays above the
+  130 gate. Measured in T3.
+- Coverage gap -> PS is the riskiest new rule (it is what reaches P11-R2);
+  T2 mark 3 tests it on S rows.
