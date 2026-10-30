@@ -9,7 +9,6 @@ Claim (verbatim):
 
 ### Table 9
 
-Caption: P2 (new learners), every cell. AUC by the position of the target in a new learner's sequence with N=8 training learners (Jev0-shot uses none), mean±SD over 5 seeds (Jev0-shot: learner-bootstrap SD of its single run); same predictions as P1. Position 1 has only 41–50 targets per dataset, so its AUC is noisy; – = one class only. †Best of 28 pyKT models, chosen on the whole (N,dataset) cell. Best in bold, second best underlined.
 
 ## Row key paths
 - row 2: Position 1 > JevKT
@@ -51,7 +50,6 @@ Claim (verbatim):
 
 ### Table 2
 
-Caption: Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight. Qwen3-1.7B-Base with REINFORCE++; three-seed macro means in %. The weight is λ, γx, γ raw, or α as marked, with 10 the reference weight; per-seed values and sample SD are in Table .
 
 ## Row key paths
 - row 2: Full RA (λ)
@@ -79,7 +77,6 @@ Claim (verbatim):
 
 ### Table 9
 
-Caption: Full RULER probe ablation. Clip p denotes norm clipping at percentile p, and Norm α denotes soft norm balancing. The case p=– and α=– is raw MASA without norm control. Bold Avg. marks the best MASA variant within each setting.
 
 ## Row key paths
 - row 1: MInference
@@ -116,7 +113,6 @@ Claim (verbatim):
 
 ### Table 10
 
-Caption: Evaluation performance on ISIC 2018. Choice tasks report Accuracy / Macro-F1 (%), while detection reports mIoU / Acc@IoU0.5 (%). Best results for each metric are shown in bold.
 
 ## Row key paths
 - row 3: General-purpose VLMs > InternVL3-8B
@@ -150,7 +146,6 @@ Claim (verbatim):
 
 ### Table 1
 
-Caption: RULER results under matched sparse-attention settings. Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule; Full Attention is the reference. ΔFull is the signed Avg. difference from Full Attention. Higher is better. Bold marks the better Avg. between Original and MASA.
 
 ## Row key paths
 - row 1: MInfer > Full Attention
@@ -181,7 +176,6 @@ Caption: RULER results under matched sparse-attention settings. Within each fram
 
 ### Table 2
 
-Caption: InfiniteBench results under matched sparse-attention settings. Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule; Full Attention is the reference. ΔFull is the signed Avg. difference from Full Attention. Higher is better. Bold marks the better Avg. between Original and MASA.
 
 ## Row key paths
 - row 1: MInfer > Full Attention
@@ -220,7 +214,6 @@ Claim (verbatim):
 
 ### Table 4
 
-Caption: The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier. Change in three-seed macro score when the branch is added, Qwen3-1.7B-Base, in points. The weight λ multiplies the branch's teacher part and, with RA, also the sampled guidance. Absolute, benchmark, and per-seed scores are in Appendix .
 
 ## Row key paths
 - row 3: Δ macro Avg@8
@@ -245,7 +238,7 @@ Claim (verbatim):
 
 ### Table 3
 
-Caption: Comparison with KD methods under the Pro→Qwen setting.
+Table 3's caption names its setting: Pro→Qwen.
 
 ## Row key paths
 - row 2: Student
@@ -270,7 +263,6 @@ Claim (verbatim):
 
 ### Table 10
 
-Caption: Macro differences among runs. Differences of three-seed macro means from Tables , , and , in percentage points. Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01.
 
 ## Row key paths
 - row 1: 1.7B > RA+REINFORCE++ - REINFORCE++
