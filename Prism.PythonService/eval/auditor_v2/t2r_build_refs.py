@@ -43,18 +43,24 @@ OK_STATUSES = ("strict", "relaxed", "ambiguous-consistent")
 
 # ----------------------------------------------------------------- relaxed label compare
 
+_DASHES = "‐‑‒–—―−"  # hyphens, en/em dash, minus sign -> "-"
+
+
 def relax_label(s) -> str:
-    """Fixed relaxed compare: NFKC, casefold, Greek (alpha, lambda, delta incl. the PDF's
-    INCREMENT sign) to ASCII words, all whitespace removed."""
-    s = unicodedata.normalize("NFKC", s if isinstance(s, str) else "").casefold()
+    """Fixed relaxed compare: citations removed (rule amendment 5), NFKC, casefold, Greek (alpha,
+    lambda, delta incl. the PDF's INCREMENT sign) to ASCII words, -/en dash/em dash/minus treated
+    as one character (rule amendment 2), all whitespace removed."""
+    s = lt.strip_citations(s if isinstance(s, str) else "")
+    s = unicodedata.normalize("NFKC", s).casefold()
     s = "".join(lt._WORD_OF_CHAR.get(ch, ch) for ch in s)
+    s = "".join("-" if ch in _DASHES else ch for ch in s)
     return re.sub(r"\s+", "", s)
 
 
 def relaxed_table(table: dict) -> dict:
     out = copy.deepcopy(table)
     for c in out["cells"]:
-        if parse_cell(c["text"]).kind == "text":
+        if parse_cell(c["text"]).kind in ("text", "missing"):
             c["text"] = relax_label(c["text"])
     return out
 
@@ -127,8 +133,22 @@ def check_pin(table: dict, pin: dict) -> dict:
             "reason": res2["reason"] or res["reason"]}
 
 
-def check_table_pins(table: dict, pins: list) -> dict:
-    results = [check_pin(table, p) for p in pins]
+def check_table_pins(table, pins: list) -> dict:
+    """`table` is one schema table or a list of sub-tables (T<n>a, T<n>b). With sub-tables a pin
+    takes the first sub-table where it passes, else the result on the first sub-table."""
+    tables = table if isinstance(table, list) else [table]
+    results = []
+    for p in pins:
+        best = None
+        for k, t in enumerate(tables):
+            r = check_pin(t, p)
+            if len(tables) > 1:
+                r["part"] = chr(ord("a") + k)
+            if r["status"] in OK_STATUSES:
+                best = r
+                break
+            best = best or r
+        results.append(best)
 
     def frac(sel):
         chosen = [r for r in results if sel(r)]
@@ -304,18 +324,21 @@ class Builder:
         res = {"paper_id": paper_id, "number": number, "status": ident["status"],
                "identified": ident["status"] == "identified", "matches": ident["matches"],
                "pdf_caption_start": (caps[0][:80] if caps else None), "n_pdf_captions": len(caps),
-               "source_problems": list(pt_src.problems), "table": None}
+               "source_problems": list(pt_src.problems), "table": None, "parts": []}
         if not res["identified"]:
             return res
         idx = ident["index"]
-        parsed = pt_src.parse(idx)
         t = pt_src.get(idx)
         res["latex_index"] = idx
         res["latex_caption_start"] = (t["caption_plain"] or "")[:80]
-        res["parsed"] = parsed
-        res["table"] = lt.to_schema(parsed, t["caption_plain"] or "", number, idx, meta={
-            "paper_id": paper_id, "latex_table_index": idx, "latex_caption_start": res["latex_caption_start"],
-            "pdf_caption_start": res["pdf_caption_start"]})
+        for pt in pt_src.parse_parts(idx):
+            schema = lt.to_schema(pt, t["caption_plain"] or "", number, idx, meta={
+                "paper_id": paper_id, "latex_table_index": idx,
+                "latex_caption_start": res["latex_caption_start"],
+                "pdf_caption_start": res["pdf_caption_start"]})
+            res["parts"].append({"suffix": pt.part, "parsed": pt, "table": schema})
+        res["parsed"] = res["parts"][0]["parsed"]
+        res["table"] = res["parts"][0]["table"]
         return res
 
     def ok(self, paper_label: str, number: int):
@@ -337,18 +360,36 @@ def _md_table(header: list, rows: list) -> str:
     return "\n".join(lines)
 
 
-def render_ref_md(res: dict) -> str:
-    t = res["table"]
+def render_ref_md(res: dict, part: Optional[dict] = None) -> str:
+    part = part or res["parts"][0]
+    t = part["table"]
     keys_r = "\n".join(f"- row {k['row']}: {' > '.join(k['path'])}" for k in t["row_keys"])
     keys_c = "\n".join(f"- col {k['col']}: {' > '.join(k['path'])}" for k in t["col_keys"])
     return "\n".join([
-        f"# {res['paper_id']} Table {res['number']} (reference from LaTeX)", "",
+        f"# {res['paper_id']} Table {res['number']}{part['suffix']} (reference from LaTeX)", "",
         f"Caption: {t['caption_text']}", "",
         f"LaTeX table index {res['latex_index']}; {t['n_rows']} rows x {t['n_cols']} cols; "
         f"header rows {t['latex_meta']['header_rows']}; multirow {t['latex_meta']['n_multirow']}, "
         f"multicolumn {t['latex_meta']['n_multicolumn']}. Check against the PDF page.", "",
         "Flags: H = column-header row, S = section row, R = data row. `^` = covered by a row span above, `<` = covered by a column span.", "",
         lt.render_grid_md(t), "", "## Row key paths", keys_r or "(none)", "", "## Column key paths", keys_c or "(none)", ""])
+
+
+PARSER_FIXES = [
+    "1. `\\href{url}{text}` now yields `text` (P5 T3 cells).",
+    "3. A table environment with more than one tabular is parsed as sub-tables T<n>a, T<n>b, ... in source order; "
+    "each is its own ref file. A pin on such a table takes the first sub-table where it passes.",
+    "4. `\\makebox`, `\\framebox`, `\\raisebox` keep their content; `\\put(x,y){c}` keeps c; picture environments are "
+    "dropped and flagged \"drawing removed\".",
+]
+RULE_AMENDMENTS = [
+    "2. Relaxed label compare also treats `-`, en dash, em dash and minus sign as one character "
+    "(decisions.md 2026-10-29: glyph differences in labels do not count). LaTeX `--` is still rendered as an en dash "
+    "in cell text. Lone-dash cells (missing values) are relaxed too.",
+    "5. Citation-blind matching for caption identification and for the relaxed label compare, on both sides: "
+    "parenthetical groups that contain a year 1900-2099 (optional letter), e.g. `(Hsieh et al., 2024)`, and numeric "
+    "brackets such as `[12]` or `[3,4]` are removed (LaTeX `\\cite*` was already dropped). Uniqueness is still required.",
+]
 
 
 def build_report(state: dict) -> str:
@@ -359,23 +400,27 @@ def build_report(state: dict) -> str:
     L += ["", "## Tables", ""]
     rows = []
     for res in state["tables"]:
-        p = res.get("parsed")
-        t = res["table"]
         pc = state["pin_checks"].get((res["paper_id"], res["number"]))
-        rows.append([
-            res["paper_id"], res["number"], "y" if res["identified"] else f"n ({res['status']})",
-            res["pdf_caption_start"] or "-",
-            f"{t['n_rows']}x{t['n_cols']}" if t else "-",
-            len(t["latex_meta"]["header_rows"]) if t else "-",
-            f"{p.n_multirow}/{p.n_multicolumn}" if p else "-",
-            ", ".join("\\" + m for m in p.unknown_macros) or "-" if p else "-",
-            "; ".join(p.problems) or "-" if p else "-",
-            f"{pc['cell'][0]}/{pc['cell'][1]}" if pc else "-",
-            f"{pc['structural'][0]}/{pc['structural'][1]}" if pc else "-",
-            f"{pc['uncertain'][0]}/{pc['uncertain'][1]}" if pc else "-",
-            len(pc["relaxed"]) if pc else "-"])
+        parts = res.get("parts") or [None]
+        for part in parts:
+            p = part["parsed"] if part else None
+            t = part["table"] if part else None
+            rows.append([
+                res["paper_id"], f"{res['number']}{part['suffix'] if part else ''}",
+                "y" if res["identified"] else f"n ({res['status']})",
+                res["pdf_caption_start"] or "-",
+                f"{t['n_rows']}x{t['n_cols']}" if t else "-",
+                len(t["latex_meta"]["header_rows"]) if t else "-",
+                f"{p.n_multirow}/{p.n_multicolumn}" if p else "-",
+                ", ".join("\\" + m for m in p.unknown_macros) or "-" if p else "-",
+                ", ".join(p.flags) or "-" if p else "-",
+                "; ".join(p.problems) or "-" if p else "-",
+                f"{pc['cell'][0]}/{pc['cell'][1]}" if pc else "-",
+                f"{pc['structural'][0]}/{pc['structural'][1]}" if pc else "-",
+                f"{pc['uncertain'][0]}/{pc['uncertain'][1]}" if pc else "-",
+                len(pc["relaxed"]) if pc else "-"])
     L += [_md_table(["paper", "table", "identified", "PDF caption start (<=80)", "rows x cols", "header rows",
-                     "multirow/multicolumn", "unknown macros", "parse problems", "pins cell x/y (certain)",
+                     "multirow/multicolumn", "unknown macros", "flags", "parse problems", "pins cell x/y (certain)",
                      "structural x/y", "uncertain x/y", "relaxed"], rows), ""]
 
     L += ["## Pin check (gate tables)", ""]
@@ -406,7 +451,8 @@ def build_report(state: dict) -> str:
                   + " per entry rule"), ""]
     else:
         L += ["(not computed)", ""]
-    L += ["## Parser fixes after run 1", "", "(none)", ""]
+    L += ["## Parser fixes after run 1", ""] + PARSER_FIXES + [""]
+    L += ["## Rule amendments after run 1 (approved by Nitin)", ""] + RULE_AMENDMENTS + [""]
     if state["stop_grids"]:
         L += ["## Grids of failing gate tables", ""]
         for title, grid in state["stop_grids"]:
@@ -415,6 +461,10 @@ def build_report(state: dict) -> str:
 
 
 # ----------------------------------------------------------------- main
+
+def _safe(s) -> str:
+    return str(s).encode("ascii", "replace").decode("ascii")
+
 
 def run(out_files: bool = True) -> dict:
     pins = lp.load_pins()
@@ -452,7 +502,7 @@ def run(out_files: bool = True) -> dict:
 
     for paper_id, number in targets:
         res = builder.table(paper_id, number)
-        print(f"{paper_id} T{number}: {res['status']}; PDF caption start: {(res['pdf_caption_start'] or '-')[:80]}")
+        print(_safe(f"{paper_id} T{number}: {res['status']}; PDF caption start: {(res['pdf_caption_start'] or '-')[:80]}"))
 
     pin_checks: dict = {}
     stop_grids: list = []
@@ -464,21 +514,24 @@ def run(out_files: bool = True) -> dict:
         if not res["identified"]:
             stop.append(f"gate table {tid} unidentified ({res['status']})")
             continue
-        pc = check_table_pins(res["table"], pins["pins_by_table"].get(tid, []))
+        pc = check_table_pins([p["table"] for p in res["parts"]], pins["pins_by_table"].get(tid, []))
         pin_checks[key] = pc
         if pc["mismatches"]:
             stop.append(f"gate table {tid}: {len(pc['mismatches'])} pin(s) not matched: "
                         + ", ".join(r["id"] for r in pc["mismatches"]))
-            stop_grids.append((f"{tid} (pins failed)", lt.render_grid_md(res["table"])))
+            for p in res["parts"]:
+                stop_grids.append((f"{tid}{p['suffix']} (pins failed)", lt.render_grid_md(p["table"])))
 
     resolution = resolve_s_rows(s_rows, pool, builder.ok)
     # tables a replacement row needs are built on demand by builder.ok; collect everything built
     built = [builder.table(*k) for k in sorted(builder._tables, key=lambda k: (k[0], k[1]))]
     for res in built:
-        p = res.get("parsed")
-        if p is not None and p.problems:
-            stop.append(f"parse problems in {res['paper_id']} T{res['number']}: " + "; ".join(p.problems))
-            stop_grids.append((f"{res['paper_id']} T{res['number']} (parse problems)", lt.render_grid_md(res["table"])))
+        for part in res.get("parts", []):
+            p = part["parsed"]
+            if p.problems:
+                name = f"{res['paper_id']} T{res['number']}{part['suffix']}"
+                stop.append(f"parse problems in {name}: " + "; ".join(p.problems))
+                stop_grids.append((f"{name} (parse problems)", lt.render_grid_md(part["table"])))
 
     run_state = "OK" if not stop else "STOPPED"
     state = {"run_state": run_state, "stop_reasons": stop, "tables": built, "pin_checks": pin_checks,
@@ -489,18 +542,20 @@ def run(out_files: bool = True) -> dict:
         print("wrote", REPORT_FILE)
         if not stop:
             OUT_DIR.mkdir(parents=True, exist_ok=True)
+            n_files = 0
             for res in built:
-                if res["identified"]:
-                    base = f"{res['paper_id']}_T{res['number']}"
-                    lp.dump_json(OUT_DIR / f"{base}.json", res["table"])
-                    (OUT_DIR / f"{base}.md").write_text(render_ref_md(res), encoding="utf-8")
+                for part in res.get("parts", []):
+                    base = f"{res['paper_id']}_T{res['number']}{part['suffix']}"
+                    lp.dump_json(OUT_DIR / f"{base}.json", part["table"])
+                    (OUT_DIR / f"{base}.md").write_text(render_ref_md(res, part), encoding="utf-8")
+                    n_files += 1
             out = copy.deepcopy(s_rows)
             out["resolution"] = {**resolution, "order_check": {"ok": order_ok, "reproduced": reproduced, "expected": expected}}
             lp.dump_json(S_ROWS_OUT, out)
-            print("wrote", S_ROWS_OUT, "and", sum(1 for r in built if r["identified"]), "reference tables")
+            print("wrote", S_ROWS_OUT, "and", n_files, "reference tables")
     print("run state:", run_state)
     for r in stop:
-        print("STOP:", r[:200])
+        print(_safe("STOP: " + r[:200]))
     return state
 
 

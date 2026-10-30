@@ -98,15 +98,36 @@ _PT_KEEP = [
     ("textsubscript", 1, 0), ("textcircled", 1, 0), ("makecell", 1, 0), ("shortstack", 1, 0),
     ("rotatebox", 2, 1), ("scalebox", 2, 1), ("resizebox", 3, 2), ("textcolor", 2, 1),
     ("colorbox", 2, 1), ("parbox", 2, 1), ("raisebox", 2, 1),
+    ("href", 2, 1),  # parser fix 1 after run 1: \href{url}{text} -> text
 ]
 _DING = {"51": "✓", "55": "✗"}
 _PH = {"&": "\u0001", "%": "\u0002", "_": "\u0003", "$": "\u0004", "#": "\u0005", "{": "\u0006", "}": "\u0007"}
 _CW_RE = re.compile(r"\\([A-Za-z@]+)\*?")
 
 
-def plain_text(s: str, unknown: Optional[set] = None) -> str:
+_PICTURE_RE = re.compile(r"\\begin\s*\{picture\}.*?\\end\s*\{picture\}", re.S)
+_BOX_RE = re.compile(r"\\(?:make|frame)box\*?(?:\s*\([^)]*\))?(?:\s*\[[^\]]*\]){0,2}")
+_PUT_RE = re.compile(r"\\put\s*\([^)]*\)")
+DRAWING_FLAG = "drawing removed"
+
+
+def drop_pictures(s: str, flags: Optional[set] = None) -> str:
+    """Parser fix 4 after run 1: picture environments are dropped and flagged."""
+    if _PICTURE_RE.search(s):
+        if flags is not None:
+            flags.add(DRAWING_FLAG)
+        s = _PICTURE_RE.sub(" ", s)
+    return s
+
+
+def plain_text(s: str, unknown: Optional[set] = None, flags: Optional[set] = None) -> str:
     """Plain-text view of a cell or caption. Unknown control words stay as \\name and are
-    added to `unknown`. Sub/superscript operators are flattened (no semantics guessed)."""
+    added to `unknown`. Sub/superscript operators are flattened (no semantics guessed).
+    \\makebox / \\framebox / \\raisebox keep their content, \\put(x,y){c} keeps c, picture
+    environments are dropped (flag "drawing removed")."""
+    s = drop_pictures(s, flags)
+    s = _BOX_RE.sub("", s)
+    s = _PUT_RE.sub("", s)
     s = re.sub(r"\\begin\s*\{[^{}]*\}(?:\[[^\]]*\])?|\\end\s*\{[^{}]*\}", " ", s)
     s = s.replace("\\\\", " ")
     for ch, ph in _PH.items():
@@ -145,8 +166,23 @@ def plain_text(s: str, unknown: Optional[set] = None) -> str:
 
 # ----------------------------------------------------------------- caption identification
 
-def normalise_caption(plain: str) -> str:
-    """Shared PDF / LaTeX normalisation: NFKC, casefold, Greek to ASCII words, letters and digits only."""
+_CITE_YEAR_RE = re.compile(r"\([^()]*\b(?:19|20)\d{2}[a-z]?\b[^()]*\)")
+_CITE_NUM_RE = re.compile(r"\[\s*\d+(?:\s*[,–—-]\s*\d+)*\s*\]")
+
+
+def strip_citations(s: str) -> str:
+    """Rule amendment 5 after run 1: citation-blind text. Removes parenthetical groups that contain
+    a 4-digit year (1900-2099, optional letter), e.g. "(Hsieh et al., 2024)", and numeric brackets
+    such as [12] or [3,4]. (LaTeX \\cite* is already dropped by plain_text.)"""
+    s = _CITE_YEAR_RE.sub(" ", s or "")
+    return _CITE_NUM_RE.sub(" ", s)
+
+
+def normalise_caption(plain: str, strip_cites: bool = True) -> str:
+    """Shared PDF / LaTeX normalisation: citations removed, NFKC, casefold, Greek to ASCII words,
+    letters and digits only."""
+    if strip_cites:
+        plain = strip_citations(plain)
     s = unicodedata.normalize("NFKC", plain or "").casefold()
     s = "".join(_WORD_OF_CHAR.get(ch, ch) for ch in s)
     return "".join(ch for ch in s if ch.isalnum())
@@ -436,33 +472,43 @@ def apply_longtable_markers(content: str) -> str:
     return "\n".join(keep)
 
 
-def extract_tabular(s: str, env: str, problems: list) -> Optional[str]:
-    """Content of the outermost tabular-family environment of a table body (nested ones flattened)."""
-    m = _TAB_TOKEN.search(s)
-    while m and m.group(1) == "end":
-        m = _TAB_TOKEN.search(s, m.end())
-    if m is None:
+def extract_tabulars(s: str, env: str, problems: list) -> list:
+    """Contents of the top-level tabular-family environments of a table body, in source order
+    (nested ones are flattened into their cell). Parser fix 3 after run 1: a table environment
+    with several tabulars yields several contents (sub-tables a, b, ...)."""
+    out, i = [], 0
+    while True:
+        m = _TAB_TOKEN.search(s, i)
+        while m and m.group(1) == "end":
+            m = _TAB_TOKEN.search(s, m.end())
+        if m is None:
+            break
+        parsed = lp._read_args(s, m.end(), lp._TABULAR_ARGS[m.group(2)])
+        if parsed is None:
+            problems.append("tabular column spec not readable")
+            break
+        start = parsed[1]
+        end = _match_end(s, start)
+        if end is None:
+            problems.append("tabular without matching end")
+            break
+        content = _flatten_nested(s[start:end.start()], problems)
+        if m.group(2).startswith("longtable"):
+            content = apply_longtable_markers(content)
+        out.append(content)
+        i = end.end()
+    if not out:
         if env.lower().startswith("longtable"):
             parsed = lp._read_args(s, 0, 1)
-            return apply_longtable_markers(s[parsed[1]:] if parsed else s)
+            return [apply_longtable_markers(s[parsed[1]:] if parsed else s)]
         problems.append("no tabular environment in table body")
-        return None
-    parsed = lp._read_args(s, m.end(), lp._TABULAR_ARGS[m.group(2)])
-    if parsed is None:
-        problems.append("tabular column spec not readable")
-        return None
-    start = parsed[1]
-    end = _match_end(s, start)
-    if end is None:
-        problems.append("tabular without matching end")
-        return None
-    later = [t for t in _TAB_TOKEN.finditer(s, end.end()) if t.group(1) == "begin"]
-    if later:
-        problems.append(f"{len(later) + 1} tabular environments in one table body (first used)")
-    content = _flatten_nested(s[start:end.start()], problems)
-    if m.group(2).startswith("longtable"):
-        content = apply_longtable_markers(content)
-    return content
+    return out
+
+
+def extract_tabular(s: str, env: str, problems: list) -> Optional[str]:
+    """First tabular content (kept for single-tabular callers)."""
+    out = extract_tabulars(s, env, problems)
+    return out[0] if out else None
 
 
 # ----------------------------------------------------------------- rows, cells, rules
@@ -660,6 +706,9 @@ class ParsedTable:
     n_multirow: int = 0
     n_multicolumn: int = 0
     env: str = ""
+    flags: list = field(default_factory=list)
+    part: str = ""  # "" for a single tabular, "a", "b", ... for sub-tables
+    n_tabulars: int = 1
 
 
 def _apply_multirows(rows: list, problems: list) -> None:
@@ -706,7 +755,7 @@ def _apply_multirows(rows: list, problems: list) -> None:
         rows[r] = sorted((c for c in rows[r] if id(c) not in removed), key=lambda c: c.col)
 
 
-def parse_tabular_content(content: str, unknown: set, problems: list) -> ParsedTable:
+def parse_tabular_content(content: str, unknown: set, problems: list, flags: Optional[set] = None) -> ParsedTable:
     pt = ParsedTable()
     rows: list = []
     rules_above: list = []
@@ -719,7 +768,7 @@ def parse_tabular_content(content: str, unknown: set, problems: list) -> ParsedT
         for raw in split_cells(text):
             inner, cs, rs, n_mc, n_mr = peel_cell(raw, problems)
             cells.append(Cell(row=len(rows), col=col, row_span=rs, col_span=cs,
-                              text=plain_text(inner, unknown), n_multicolumn=n_mc, n_multirow=n_mr))
+                              text=plain_text(inner, unknown, flags), n_multicolumn=n_mc, n_multirow=n_mr))
             col += cs
         if all(not c.text and c.row_span == 1 and c.n_multirow == 0 for c in cells):
             continue  # spacer / trailing chunk; its rules carry to the next kept row
@@ -782,12 +831,13 @@ def parse_tabular_content(content: str, unknown: set, problems: list) -> ParsedT
     return pt
 
 
-def parse_table_body(body: str, env: str = "table", defs: Optional[dict] = None, pos: int = 10 ** 9,
-                     base: Optional[Path] = None) -> ParsedTable:
-    """Parse one LaTeX table body (the text between \\begin{table} and \\end{table})."""
+def parse_table_parts(body: str, env: str = "table", defs: Optional[dict] = None, pos: int = 10 ** 9,
+                      base: Optional[Path] = None) -> list:
+    """Parse one LaTeX table body (the text between \\begin{table} and \\end{table}). One
+    ParsedTable per tabular in source order; with more than one, parts are labelled a, b, ..."""
     problems: list = []
-    unknown: set = set()
     used: set = set()
+    flags: set = set()
     defs = defs or {}
     s = lp.remove_captions(body)
     s = expand_macros(s, defs, pos, problems, used)
@@ -796,16 +846,31 @@ def parse_table_body(body: str, env: str = "table", defs: Optional[dict] = None,
         if not n:
             break
         s = expand_macros(s, defs, pos, problems, used)
-    content = extract_tabular(s, env, problems)
-    if content is None:
-        pt = ParsedTable(problems=problems, env=env)
-        return pt
-    pt = parse_tabular_content(content, unknown, problems)
-    pt.problems = problems
-    pt.unknown_macros = sorted(unknown)
-    pt.macros_expanded = sorted(used)
-    pt.env = env
-    return pt
+    s = drop_pictures(s, flags)
+    contents = extract_tabulars(s, env, problems)
+    if not contents:
+        return [ParsedTable(problems=problems, env=env, flags=sorted(flags))]
+    parts = []
+    for k, content in enumerate(contents):
+        part_problems = list(problems)
+        unknown: set = set()
+        part_flags = set(flags)
+        pt = parse_tabular_content(content, unknown, part_problems, part_flags)
+        pt.problems = part_problems
+        pt.unknown_macros = sorted(unknown)
+        pt.macros_expanded = sorted(used)
+        pt.env = env
+        pt.flags = sorted(part_flags)
+        pt.n_tabulars = len(contents)
+        pt.part = chr(ord("a") + k) if len(contents) > 1 else ""
+        parts.append(pt)
+    return parts
+
+
+def parse_table_body(body: str, env: str = "table", defs: Optional[dict] = None, pos: int = 10 ** 9,
+                     base: Optional[Path] = None) -> ParsedTable:
+    """First tabular of the table body (see parse_table_parts for all of them)."""
+    return parse_table_parts(body, env, defs, pos, base)[0]
 
 
 def caption_to_plain(caption_src: Optional[str], defs: dict, pos: int, unknown: Optional[set] = None) -> Optional[str]:
@@ -835,6 +900,7 @@ def to_schema(pt: ParsedTable, caption_text: str, caption_number: int, table_ind
         "env": pt.env, "header_rows": pt.header_rows, "n_multirow": pt.n_multirow,
         "n_multicolumn": pt.n_multicolumn, "macros_expanded": pt.macros_expanded,
         "unknown_macros": pt.unknown_macros, "problems": pt.problems,
+        "flags": pt.flags, "part": pt.part, "n_tabulars": pt.n_tabulars,
         "footnotes_note": "footnotes are not extracted from LaTeX",
         **(meta or {}),
     }
@@ -907,5 +973,8 @@ class PaperTables:
         return next(t for t in self.tables if t["index"] == index)
 
     def parse(self, index: int) -> ParsedTable:
+        return self.parse_parts(index)[0]
+
+    def parse_parts(self, index: int) -> list:
         t = self.get(index)
-        return parse_table_body(t["body"], t["env"], self.defs, t["pos"], self.src_dir)
+        return parse_table_parts(t["body"], t["env"], self.defs, t["pos"], self.src_dir)

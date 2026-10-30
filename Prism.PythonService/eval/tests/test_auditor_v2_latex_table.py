@@ -459,6 +459,103 @@ def test_builder_identifies_by_caption_not_by_number(tmp_path):
     assert b.table(pid, 9)["table"] is None
 
 
+# ----------------------------------------------------------------- fixes after run 1 (approved by Nitin)
+
+def test_fix1_href_keeps_link_text():
+    pt = parse(tab(r"H & V \\ \midrule \href{https://huggingface.co/Qwen/Qwen3-1.7B}{Qwen3-1.7B} (SFT) & 1 \\", "ll"))
+    assert texts(pt)[1] == ["Qwen3-1.7B (SFT)", "1"]
+    assert "href" not in pt.unknown_macros
+
+
+def test_fix2_dash_glyphs_are_one_character_in_the_relaxed_compare():
+    assert len({br.relax_label(x) for x in ("-", "–", "—", "−")}) == 1
+    t = _schema(tab(r"Setting & Clip p & Norm $\alpha$ & Avg. \\ \midrule MInf & -- & -- & 87.13 \\ "
+                    r"Seer & 90 & -- & 88.09 \\", "llll"))
+    assert [c["text"] for c in t["cells"] if c["row"] == 1][1] == "–"  # LaTeX -- stays an en dash
+    base = {"table_id": "T", "key_columns": ["Setting", "Clip p", "Norm alpha"], "breaking": False,
+            "key_uncertain": False}
+    cell_pin = {**base, "id": "c", "kind": "cell", "row_key_path": ["MInf", "-", "-"],
+                "column_key_path": ["Avg."], "value": "87.13"}
+    exists = {"id": "e", "table_id": "T", "kind": "row_exists", "breaking": False, "key_uncertain": False,
+              "match": {"Setting": "Seer", "Clip p": "90", "Norm alpha": "-"}}
+    absent_but_present = {"id": "a", "table_id": "T", "kind": "row_absent", "breaking": True,
+                          "key_uncertain": False, "match": {"Setting": "MInf", "Clip p": "-", "Norm alpha": "-"}}
+    assert br.check_pin(t, cell_pin)["status"] == "relaxed"
+    assert br.check_pin(t, exists)["status"] == "relaxed"
+    assert br.check_pin(t, absent_but_present)["status"] == "mismatch"  # no vacuous pass
+
+
+def test_fix3_two_tabulars_become_sub_tables_in_source_order():
+    body = (r"\centering " + tab(r"Name & V \\ \midrule y & 5 \\", "ll") + r" \par "
+            + tab(r"Name & V \\ \midrule x & 7 \\", "ll"))
+    parts = lt.parse_table_parts(body)
+    assert [p.part for p in parts] == ["a", "b"] and all(p.n_tabulars == 2 for p in parts)
+    assert texts(parts[0])[1] == ["y", "5"] and texts(parts[1])[1] == ["x", "7"]
+    assert lt.to_schema(parts[1], "cap", 3)["latex_meta"]["part"] == "b"
+    single = lt.parse_table_parts(tab(r"A & B \\", "ll"))
+    assert len(single) == 1 and single[0].part == ""
+    pin = {"id": "p", "table_id": "T", "kind": "cell", "row_key_path": ["x"], "column_key_path": ["V"],
+           "key_columns": None, "value": "7", "breaking": True, "key_uncertain": False}
+    res = br.check_table_pins([lt.to_schema(p, "cap", 3) for p in parts], [pin])
+    assert res["results"][0]["status"] == "strict" and res["results"][0]["part"] == "b"
+    assert res["cell"] == [1, 1]
+
+
+def test_fix4_boxes_put_and_picture():
+    pt = parse(tab(r"\makebox[2cm][c]{ab} & \framebox{fr} & \raisebox{1pt}{rb} & \put(1,2){c} & "
+                   r"\begin{picture}(10,10)\put(0,0){z}\end{picture} & 1", "llllll"))
+    assert [c.text for c in pt.cells] == ["ab", "fr", "rb", "c", "", "1"]
+    assert pt.flags == ["drawing removed"]
+    assert parse(tab(r"a & 1", "ll")).flags == []
+
+
+def test_fix5_strip_citations_rules():
+    assert lt.strip_citations("RULER (Hsieh et al., 2024) results").split() == ["RULER", "results"]
+    assert lt.strip_citations("LongBench (Bai et al., 2024b) x [12] y [3,4] z [1-3]").split() == [
+        "LongBench", "x", "y", "z"]
+    assert lt.strip_citations("(n=150 per class) [a] (see text)") == "(n=150 per class) [a] (see text)"
+
+
+def test_fix5_caption_identification_is_citation_blind_and_still_unique(tmp_path):
+    src = tmp_path / "2610.00002v1" / "src"
+    src.mkdir(parents=True)
+    (src / "main.tex").write_text(r"""\documentclass{article}
+\begin{document}
+\begin{table}
+\caption{RULER~\citep{hsieh2024ruler} results under matched sparse-attention settings. Within each framework.}
+\begin{tabular}{lc} a & 1 \\ \end{tabular}
+\end{table}
+\begin{table}
+\caption{InfiniteBench~\citep{zhang2024bench} results under matched sparse-attention settings. Within each.}
+\begin{tabular}{lc} b & 2 \\ \end{tabular}
+\end{table}
+\begin{table}
+\caption{InfiniteBench (Zhang et al., 2024) results under matched sparse-attention settings. Other table.}
+\begin{tabular}{lc} c & 3 \\ \end{tabular}
+\end{table}
+\end{document}
+""", encoding="utf-8")
+    pid = "2610.00002v1"
+    reader = lambda path, n: {1: ["RULER (Hsieh et al., 2024) results under matched sparse-attention settings. With"],  # noqa: E731
+                              2: ["InfiniteBench (Zhang et al., 2024) results under matched sparse-attention settin"]}[n]
+    b = br.Builder(pdf_dir=tmp_path, src_root=tmp_path, reader=reader)
+    assert b.table(pid, 1)["identified"] and b.table(pid, 1)["latex_index"] == 1
+    assert b.table(pid, 2)["status"] == "latex-ambiguous"  # two LaTeX captions collapse to the same text
+
+
+def test_fix5_relaxed_label_compare_drops_citations_on_both_sides():
+    assert br.relax_label("SeqKD (Kim & Rush, 2016)") == br.relax_label("SeqKD")
+    t = _schema(tab(r"Method & Acc \\ \midrule SeqKD\citep{kim2016} & 53.5 \\ M (2023) & 1.0 \\ M (2024) & 2.0 \\",
+                    "ll"))
+    base = {"table_id": "T", "breaking": False, "key_uncertain": False}
+    ok = {**base, "id": "s", "kind": "row_exists", "row_key_path": ["SeqKD (Kim & Rush, 2016)"]}
+    amb = {**base, "id": "m", "kind": "row_exists", "row_key_path": ["M (2025)"]}
+    exact = {**base, "id": "x", "kind": "row_exists", "row_key_path": ["M (2023)"]}
+    assert br.check_pin(t, exact)["status"] == "strict"  # an exact label is never made ambiguous
+    assert br.check_pin(t, ok)["status"] == "relaxed"
+    assert br.check_pin(t, amb)["status"] == "mismatch"  # uniqueness still required
+
+
 def test_schema_and_grid_render(tmp_path):
     t = _schema(tab(r"H & I & J \\ \midrule \multirow{2}{*}{G} & \multicolumn{2}{c}{w} \\ & 1 & 2 \\"))
     assert t["schema_version"] == 1 and t["row_keys"] and t["col_keys"]
