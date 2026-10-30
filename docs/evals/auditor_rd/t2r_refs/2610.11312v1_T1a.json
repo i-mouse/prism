@@ -1,0 +1,621 @@
+{
+  "caption_number": 1,
+  "caption_text": "Task-space construction and evidence-mapping results. Task-Space Precision (P), Recall (R), and F1 measure agreement with researcher review; EMA measures agreement of supporting annotation fields (%).",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 2,
+      "text": "Model"
+    },
+    {
+      "col": 1,
+      "col_span": 6,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Task-Space Review"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Evidence"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "TP"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "FP"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "FN"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "P↑"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "R↑"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "F1↑"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "EMA↑"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "DeepSeek-V4-Flash"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "19"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "8"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "2"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "70.4"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "90.5"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "79.2"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "Qwen3.5-9B"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "19"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "8"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "2"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "70.4"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "90.5"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "79.2"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "MedGemma-27B"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "20"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "9"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "1"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "69.0"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "95.2"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "80.0"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "DeepSeek-V4-Flash + T0"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "20"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "6"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "1"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "76.9"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "95.2"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "85.1"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "MedBenchAgent"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "20"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "3"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "1"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "87.0"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "95.2"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "90.9"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "100.0"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": [
+        "Model"
+      ]
+    },
+    {
+      "col": 1,
+      "path": [
+        "Task-Space Review",
+        "TP"
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "Task-Space Review",
+        "FP"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "Task-Space Review",
+        "FN"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "Task-Space Review",
+        "P↑"
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "Task-Space Review",
+        "R↑"
+      ]
+    },
+    {
+      "col": 6,
+      "path": [
+        "Task-Space Review",
+        "F1↑"
+      ]
+    },
+    {
+      "col": 7,
+      "path": [
+        "Evidence",
+        "EMA↑"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table*",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0,
+      1
+    ],
+    "latex_caption_start": "Task-space construction and evidence-mapping results. Task-Space Precision (P), ",
+    "latex_table_index": 1,
+    "macros_expanded": [],
+    "n_multicolumn": 2,
+    "n_multirow": 1,
+    "n_tabulars": 2,
+    "paper_id": "2610.11312v1",
+    "part": "a",
+    "pdf_caption_start": "Task-space construction and evidence-mapping results. Task-Space Precision (P), ",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 8,
+  "n_rows": 7,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "DeepSeek-V4-Flash"
+      ],
+      "row": 2
+    },
+    {
+      "path": [
+        "Qwen3.5-9B"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "MedGemma-27B"
+      ],
+      "row": 4
+    },
+    {
+      "path": [
+        "DeepSeek-V4-Flash + T0"
+      ],
+      "row": 5
+    },
+    {
+      "path": [
+        "MedBenchAgent"
+      ],
+      "row": 6
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 1
+}

@@ -1,0 +1,595 @@
+{
+  "caption_number": 2,
+  "caption_text": "Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight. Qwen3-1.7B-Base with REINFORCE++; three-seed macro means in %. The weight is λ, γx, γ raw, or α as marked, with 10 the reference weight; per-seed values and sample SD are in Table .",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 2,
+      "text": "Variant (weight)"
+    },
+    {
+      "col": 1,
+      "col_span": 3,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Macro Avg@8 at weight"
+    },
+    {
+      "col": 4,
+      "col_span": 3,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Macro Pass@8 at weight"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "5"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "10"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "20"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "5"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "10"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "20"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "Full RA (λ)"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "28.84"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "29.25"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "29.29"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "44.94"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "45.20"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "45.29"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "w/o student value baseline (γx)"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "26.96"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "27.16"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "26.53"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "41.93"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "41.62"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "40.76"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "w/o response centering (λ)"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "28.37"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "28.71"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "28.66"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "44.46"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "44.74"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "44.67"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "Raw residual (w/o both, γ raw)"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "27.48"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "27.52"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "26.96"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "42.63"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "42.43"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "40.96"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "Direct L2 loss (α)"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "27.83"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "28.02"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "27.71"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "43.39"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "43.44"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "42.96"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "Verifier only (REINFORCE++)"
+    },
+    {
+      "col": 1,
+      "col_span": 3,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "25.67"
+    },
+    {
+      "col": 4,
+      "col_span": 3,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "39.44"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": [
+        "Variant (weight)"
+      ]
+    },
+    {
+      "col": 1,
+      "path": [
+        "Macro Avg@8 at weight",
+        "5"
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "Macro Avg@8 at weight",
+        "10"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "Macro Avg@8 at weight",
+        "20"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "Macro Pass@8 at weight",
+        "5"
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "Macro Pass@8 at weight",
+        "10"
+      ]
+    },
+    {
+      "col": 6,
+      "path": [
+        "Macro Pass@8 at weight",
+        "20"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0,
+      1
+    ],
+    "latex_caption_start": "Every residual variant improves on verifier-only training at every tested weight",
+    "latex_table_index": 2,
+    "macros_expanded": [
+      "RA",
+      "tablerowshade",
+      "tabletwoheadlabel",
+      "tabletwoheadshade"
+    ],
+    "n_multicolumn": 4,
+    "n_multirow": 1,
+    "n_tabulars": 1,
+    "paper_id": "2610.11519v1",
+    "part": "",
+    "pdf_caption_start": "Every residual variant improves on verifier-only training at every tested weight",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 7,
+  "n_rows": 8,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "Full RA (λ)"
+      ],
+      "row": 2
+    },
+    {
+      "path": [
+        "w/o student value baseline (γx)"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "w/o response centering (λ)"
+      ],
+      "row": 4
+    },
+    {
+      "path": [
+        "Raw residual (w/o both, γ raw)"
+      ],
+      "row": 5
+    },
+    {
+      "path": [
+        "Direct L2 loss (α)"
+      ],
+      "row": 6
+    },
+    {
+      "path": [
+        "Verifier only (REINFORCE++)"
+      ],
+      "row": 7
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 2
+}

@@ -1,0 +1,401 @@
+{
+  "caption_number": 3,
+  "caption_text": "Comparison with KD methods under the Pro→Qwen setting.",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 2,
+      "text": "Method"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Omni-MATH-2"
+    },
+    {
+      "col": 2,
+      "col_span": 2,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "KernelBench"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Acc."
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Acc."
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Fast1"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "Student"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "34.3"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "9.2"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "12"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "SeqKD"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "53.5"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "18.8"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "18"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "Fine-tune-CoT"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "39.5"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "41.8"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "28"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "RSR"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "51.5"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "22.6"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "19"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "LUFFY"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "55.2"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "11.4"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "13"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "UTT (Ours)"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "62.4"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "50.0"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "32"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": [
+        "Method"
+      ]
+    },
+    {
+      "col": 1,
+      "path": [
+        "Omni-MATH-2",
+        "Acc."
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "KernelBench",
+        "Acc."
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "KernelBench",
+        "Fast1"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0,
+      1
+    ],
+    "latex_caption_start": "Comparison with KD methods under the Pro→Qwen setting.",
+    "latex_table_index": 3,
+    "macros_expanded": [
+      "arraystretch"
+    ],
+    "n_multicolumn": 1,
+    "n_multirow": 1,
+    "n_tabulars": 1,
+    "paper_id": "2610.12114v1",
+    "part": "",
+    "pdf_caption_start": "Comparison with KD methods under the Pro→Qwen setting.",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 4,
+  "n_rows": 8,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "Student"
+      ],
+      "row": 2
+    },
+    {
+      "path": [
+        "SeqKD"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "Fine-tune-CoT"
+      ],
+      "row": 4
+    },
+    {
+      "path": [
+        "RSR"
+      ],
+      "row": 5
+    },
+    {
+      "path": [
+        "LUFFY"
+      ],
+      "row": 6
+    },
+    {
+      "path": [
+        "UTT (Ours)"
+      ],
+      "row": 7
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 3
+}

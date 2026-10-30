@@ -1,0 +1,336 @@
+{
+  "caption_number": 3,
+  "caption_text": "LongBench results under matched sparse-attention settings. Within SeerAttention, Original and MASA differ only in the sparse-unit ranking rule; Full Attention is the reference. ΔFull is the signed Avg. difference from Full Attention. Higher is better. Bold marks the better Avg. and its ΔFull.",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Variant"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "0–4K"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "4–8K"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "8K+"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Avg."
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "ΔFull"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Full Attention"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "55.32"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "53.98"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "52.90"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "54.07"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "0"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "Original"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "55.43"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "54.49"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "52.69"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "54.20"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "+0.13"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "MASA"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "55.45"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "54.48"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "53.16"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "54.37"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "+0.30"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": [
+        "Variant"
+      ]
+    },
+    {
+      "col": 1,
+      "path": [
+        "0–4K"
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "4–8K"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "8K+"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "Avg."
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "ΔFull"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "wraptable",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0
+    ],
+    "latex_caption_start": "LongBench results under matched sparse-attention settings. Within SeerAttention,",
+    "latex_table_index": 3,
+    "macros_expanded": [
+      "arraystretch",
+      "best",
+      "masa",
+      "masacell",
+      "tbldpos",
+      "tbldzero"
+    ],
+    "n_multicolumn": 0,
+    "n_multirow": 0,
+    "n_tabulars": 1,
+    "paper_id": "2610.10871v1",
+    "part": "",
+    "pdf_caption_start": "LongBench (Bai et al., 2024b) results under matched sparse-attention settings.",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 6,
+  "n_rows": 4,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "Full Attention"
+      ],
+      "row": 1
+    },
+    {
+      "path": [
+        "Original"
+      ],
+      "row": 2
+    },
+    {
+      "path": [
+        "MASA"
+      ],
+      "row": 3
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 3
+}

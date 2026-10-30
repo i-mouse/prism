@@ -1,0 +1,325 @@
+{
+  "counts": {
+    "a": 67,
+    "a_b": 58,
+    "a_b_c": 29,
+    "a_b_c_d": 28,
+    "criterion_c_relaxed": false,
+    "s_rows": 88,
+    "selected": 10
+  },
+  "resolution": {
+    "order_check": {
+      "expected": [
+        "P1-S1",
+        "P2-S2",
+        "P3-S1",
+        "P4-S1",
+        "P5-S4",
+        "P6-S1",
+        "P7-S2",
+        "P8-S6",
+        "P9-S4",
+        "P11-S8"
+      ],
+      "ok": true,
+      "reproduced": [
+        "P1-S1",
+        "P2-S2",
+        "P3-S1",
+        "P4-S1",
+        "P5-S4",
+        "P6-S1",
+        "P7-S2",
+        "P8-S6",
+        "P9-S4",
+        "P11-S8"
+      ]
+    },
+    "replacements": [
+      {
+        "new": "P1-S2",
+        "old": "P1-S1",
+        "reason": "P1 T1: pdf-ambiguous"
+      },
+      {
+        "new": "P1-S3",
+        "old": "P7-S2",
+        "reason": "P7 T1: latex-none"
+      },
+      {
+        "new": "P1-S6",
+        "old": "P11-S8",
+        "reason": "P11 T5: latex-ambiguous"
+      }
+    ],
+    "selected_final": [
+      "P1-S2",
+      "P2-S2",
+      "P3-S1",
+      "P4-S1",
+      "P5-S4",
+      "P6-S1",
+      "P1-S3",
+      "P8-S6",
+      "P9-S4",
+      "P1-S6"
+    ],
+    "skipped_candidates": [
+      {
+        "reason": "P1 T1: pdf-ambiguous",
+        "row": "P1-S4"
+      }
+    ],
+    "unidentified_tables": [
+      {
+        "paper": "P1",
+        "reason": "pdf-ambiguous",
+        "table": 1
+      },
+      {
+        "paper": "P7",
+        "reason": "latex-none",
+        "table": 1
+      },
+      {
+        "paper": "P11",
+        "reason": "latex-ambiguous",
+        "table": 5
+      }
+    ]
+  },
+  "selected": [
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "cf8f4d731387c0f96528fed3aafb99a5380e11aa4210c3a9628b1c745028dc42",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P1",
+      "paper_id": "arxiv-2610.11519v1",
+      "row_id": "P1-S1",
+      "scope_words": [
+        "across",
+        "all",
+        "both"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "1"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "52056086ab9bd926bf7e7c399277357701163cb6b793c5d77f40260103d84738",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P2",
+      "paper_id": "arxiv-2610.11132v1",
+      "row_id": "P2-S2",
+      "scope_words": [
+        "across"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "1"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "ba90619a16abda80f0890d77d53464470f92bc3feaaecca323bf2d22a0bc3fa0",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P3",
+      "paper_id": "arxiv-2610.11135v1",
+      "row_id": "P3-S1",
+      "scope_words": [
+        "any"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "1"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "b89ffb05ef27a02985c09f4ba66c08cf9aed73ee0e6a2ebcadedde4224ea33c3",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P4",
+      "paper_id": "arxiv-2610.10871v1",
+      "row_id": "P4-S1",
+      "scope_words": [
+        "across",
+        "all",
+        "both"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "1",
+        "2",
+        "3"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "404d1f85e2f5cc6b4ba94c98a8d07d9ff81e11122bb9147df97b01b663d2b5e6",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P5",
+      "paper_id": "arxiv-2610.11291v1",
+      "row_id": "P5-S4",
+      "scope_words": [
+        "across"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "3"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "09a6580431521091af20b4163d71c2cfec2462dba775a283395febc245df055f",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P6",
+      "paper_id": "arxiv-2610.11312v1",
+      "row_id": "P6-S1",
+      "scope_words": [
+        "outperforming"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "1"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "b5c1d8ceec8a4ca8aa69781f75fec411d3f87778cad910dd7998fdb5b2251c8a",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P7",
+      "paper_id": "arxiv-2610.10590v1",
+      "row_id": "P7-S2",
+      "scope_words": [
+        "both"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "1"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "1d795f33b78ac3dfd0c5a3647dce10e91c11328875974794f3d9b63ac885f462",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P8",
+      "paper_id": "arxiv-2610.12124v1",
+      "row_id": "P8-S6",
+      "scope_words": [
+        "both"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "2"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "5667fb1079b1e32b8224a1b8d9e4383db9368a6616bb334448bcad09ff5e3f10",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P9",
+      "paper_id": "arxiv-2610.12375v1",
+      "row_id": "P9-S4",
+      "scope_words": [
+        "every"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "6"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    },
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "e9e3898283c298075d4fffcde6c4752e2850dc99bed538720c864acbff21b072",
+      "d": true,
+      "expected_label": "supported",
+      "paper": "P11",
+      "paper_id": "arxiv-2610.12114v1",
+      "row_id": "P11-S8",
+      "scope_words": [
+        "every"
+      ],
+      "shared_with_refusal_rows": [],
+      "tables_cited": [
+        "5"
+      ],
+      "tables_in_why_this_case": [],
+      "via": "first-per-paper"
+    }
+  ],
+  "shared_claim_rows": [
+    {
+      "a": true,
+      "b": true,
+      "c": true,
+      "claim_fingerprint": "c93dd29064bdab10984b6aa360421ffdbef4a5b7015fd6503245de439092041f",
+      "d": false,
+      "expected_label": "supported",
+      "paper": "P5",
+      "paper_id": "arxiv-2610.11291v1",
+      "row_id": "P5-S1",
+      "scope_words": [
+        "across",
+        "outperforms"
+      ],
+      "shared_with_refusal_rows": [
+        "P5-R2"
+      ],
+      "tables_cited": [
+        "1",
+        "3"
+      ],
+      "tables_in_why_this_case": []
+    }
+  ]
+}

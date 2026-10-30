@@ -1,0 +1,2953 @@
+{
+  "caption_number": 1,
+  "caption_text": "Cold-start AUC (P1) of Jev against the best deep KT and the best LLM-based KT baseline with N training learners (mean over 5 seeds). Without training data, Jev0-shot is above LLM-based KT on all seven datasets and above deep KT trained on 8 learners on average; JevKT stays ahead of deep KT up to N=64 on average. Wins: datasets on which Jev beats every baseline in its block. †Best of 28 pyKT models, selected on test. ‡LOKT, the strongest LLM-based KT baseline. ∘N=0 value repeated (no answer options). §Reported by LLM-KT on its own split; not ranked. All models: Appendix . Best in bold, second best underlined.",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "N"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Method"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "ASSIST09"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "NIPS34"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "XES3G5M"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "DBE-KT22"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Alg05"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Junyi"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "ASSIST17"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Avg"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Wins"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 3,
+      "text": "0"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".715"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".662"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".699"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".688"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".656"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".671"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".608"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ".671"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "Jev0-shot"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".738"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".691"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".725"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".742"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".698"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".700"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".648"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ".706"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "7/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 3,
+      "text": "8"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".700"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".653"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".689"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".793"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".711"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".652"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".624"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ".689"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".707"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".662"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".699"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ".672"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".735"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".707"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".720"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".821"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".734"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".701"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".638"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": ".722"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "7/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 3,
+      "text": "16"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".706"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".696"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".706"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".808"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".718"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".691"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".626"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ".707"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".707"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".663"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".701"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ".672"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".737"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".734"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".720"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".834"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".738"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".704"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".646"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": ".730"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "7/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 3,
+      "text": "32"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".724"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".732"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".708"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".816"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".744"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".697"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".639"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ".723"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 10,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".707"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".660"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".701"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ".672"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".737"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".752"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".728"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".838"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".751"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".709"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".656"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": ".739"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "7/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 3,
+      "text": "64"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".734"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".750"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".720"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".846"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".777"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".704"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".668"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ".743"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 13,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".703"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".660"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".699"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ".671"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".745"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".762"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".739"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".838"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".762"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".715"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".667"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": ".747"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "4/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 3,
+      "text": "128"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".739"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".768"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".739"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".852"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".792"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".708"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".692"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ".756"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".704"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".658"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".697"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ".670"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".745"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".764"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".747"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".837"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".774"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".727"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".680"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": ".753"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "3/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 3,
+      "text": "256"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".746"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".774"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".757"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".852"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".808"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".723"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".705"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ".766"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".706"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".659"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".692"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ".670"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 20,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".746"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".769"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".752"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".838"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".779"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".738"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".687"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": ".758"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 21,
+      "row_span": 1,
+      "text": "1/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 3,
+      "text": "all"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "Best deep KT†"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".794"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".789"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".791"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".862"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".814"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".794"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".743"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ".798"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "Best LLM-based KT‡"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".705"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".666"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".699∘"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".700"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".656∘"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".671∘"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".608∘"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ".672"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": "JevKT"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".780"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".774"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".758"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".829"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".780"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".771"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".701"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": ".770"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 24,
+      "row_span": 1,
+      "text": "0/7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "LLM-KT (reported)"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": ".887§"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "–"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": ""
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": [
+        "N"
+      ]
+    },
+    {
+      "col": 1,
+      "path": [
+        "Method"
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "ASSIST09"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "NIPS34"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "XES3G5M"
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "DBE-KT22"
+      ]
+    },
+    {
+      "col": 6,
+      "path": [
+        "Alg05"
+      ]
+    },
+    {
+      "col": 7,
+      "path": [
+        "Junyi"
+      ]
+    },
+    {
+      "col": 8,
+      "path": [
+        "ASSIST17"
+      ]
+    },
+    {
+      "col": 9,
+      "path": [
+        "Avg"
+      ]
+    },
+    {
+      "col": 10,
+      "path": [
+        "Wins"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table*",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0
+    ],
+    "latex_caption_start": "Cold-start AUC (P1) of Jev against the best deep KT and the best LLM-based KT ba",
+    "latex_table_index": 1,
+    "macros_expanded": [
+      "JevZ"
+    ],
+    "n_multicolumn": 0,
+    "n_multirow": 8,
+    "n_tabulars": 1,
+    "paper_id": "2610.11135v1",
+    "part": "",
+    "pdf_caption_start": "Cold-start AUC (P1) of Jev against the best deep KT and the best LLM-based KT ba",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 11,
+  "n_rows": 26,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "0"
+      ],
+      "row": 1
+    },
+    {
+      "path": [
+        "0"
+      ],
+      "row": 2
+    },
+    {
+      "path": [
+        "0"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "8"
+      ],
+      "row": 4
+    },
+    {
+      "path": [
+        "8"
+      ],
+      "row": 5
+    },
+    {
+      "path": [
+        "8"
+      ],
+      "row": 6
+    },
+    {
+      "path": [
+        "16"
+      ],
+      "row": 7
+    },
+    {
+      "path": [
+        "16"
+      ],
+      "row": 8
+    },
+    {
+      "path": [
+        "16"
+      ],
+      "row": 9
+    },
+    {
+      "path": [
+        "32"
+      ],
+      "row": 10
+    },
+    {
+      "path": [
+        "32"
+      ],
+      "row": 11
+    },
+    {
+      "path": [
+        "32"
+      ],
+      "row": 12
+    },
+    {
+      "path": [
+        "64"
+      ],
+      "row": 13
+    },
+    {
+      "path": [
+        "64"
+      ],
+      "row": 14
+    },
+    {
+      "path": [
+        "64"
+      ],
+      "row": 15
+    },
+    {
+      "path": [
+        "128"
+      ],
+      "row": 16
+    },
+    {
+      "path": [
+        "128"
+      ],
+      "row": 17
+    },
+    {
+      "path": [
+        "128"
+      ],
+      "row": 18
+    },
+    {
+      "path": [
+        "256"
+      ],
+      "row": 19
+    },
+    {
+      "path": [
+        "256"
+      ],
+      "row": 20
+    },
+    {
+      "path": [
+        "256"
+      ],
+      "row": 21
+    },
+    {
+      "path": [
+        "all"
+      ],
+      "row": 22
+    },
+    {
+      "path": [
+        "all"
+      ],
+      "row": 23
+    },
+    {
+      "path": [
+        "all"
+      ],
+      "row": 24
+    },
+    {
+      "path": [
+        "LLM-KT (reported)"
+      ],
+      "row": 25
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 1
+}

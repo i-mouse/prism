@@ -556,6 +556,24 @@ def test_fix5_relaxed_label_compare_drops_citations_on_both_sides():
     assert br.check_pin(t, amb)["status"] == "mismatch"  # uniqueness still required
 
 
+def test_pin_resolution_checks_page_value_and_leaves_pin_unchanged():
+    t = _schema(tab(r"Method & A17 & Mean \\ \midrule Best deep KT & .607 & .605 \\", "lcc"))
+    pin = {"id": "P3-T9-13", "table_id": "T", "kind": "cell", "row_key_path": ["Best deep KT"],
+           "column_key_path": ["Mean"], "key_columns": None, "value": ".607", "breaking": False,
+           "key_uncertain": True}
+    assert br.check_pin(t, pin)["status"] == "mismatch"
+    res = {"P3-T9-13": {"pin_id": "P3-T9-13", "page_value": ".605", "cause": "column attributed by position",
+                        "resolver": "Nitin"}}
+    out = br.check_table_pins(t, [pin], res)
+    r = out["results"][0]
+    assert r["status"] == "resolved" and r["pinned_value"] == ".607" and r["page_value"] == ".605"
+    assert out["cell"] == [0, 0] and out["uncertain"] == [1, 1] and out["mismatches"] == []
+    assert pin["value"] == ".607"  # the pin dict is not edited
+    wrong = {"P3-T9-13": {**res["P3-T9-13"], "page_value": ".999"}}
+    assert br.check_table_pins(t, [pin], wrong)["results"][0]["status"] == "mismatch"
+    assert br.check_table_pins(t, [pin])["results"][0]["status"] == "mismatch"  # no resolution, no change
+
+
 def test_schema_and_grid_render(tmp_path):
     t = _schema(tab(r"H & I & J \\ \midrule \multirow{2}{*}{G} & \multicolumn{2}{c}{w} \\ & 1 & 2 \\"))
     assert t["schema_version"] == 1 and t["row_keys"] and t["col_keys"]

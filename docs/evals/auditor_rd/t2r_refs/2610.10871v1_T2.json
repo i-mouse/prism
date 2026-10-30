@@ -1,0 +1,1593 @@
+{
+  "caption_number": 2,
+  "caption_text": "InfiniteBench results under matched sparse-attention settings. Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule; Full Attention is the reference. ΔFull is the signed Avg. difference from Full Attention. Higher is better. Bold marks the better Avg. between Original and MASA.",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Variant"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "En.Sum"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "En.QA"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "En.MC"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "En.Dia"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Zh.QA"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Code Debug"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Math Find"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Retr. PassKey"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Retr. Number"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Retr. KV"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Avg."
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "ΔFull"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 3,
+      "text": "MInfer"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Full Attention"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "20.2"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "12.4"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "67.3"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "6.0"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "12.9"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "22.1"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "26.6"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "14.4"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "38.2"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "0"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "Original"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "20.5"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "12.9"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "65.9"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "7.5"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "12.5"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "22.3"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "33.1"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "100.0"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "12.8"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "38.8"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "+0.6"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "MASA"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "19.73"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "12.15"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "66.81"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "8.50"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "12.28"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "22.84"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "33.43"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "100.00"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "100.00"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "16.20"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "39.20"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "+1.00"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 6,
+      "text": "FlexPrefill"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 3,
+      "text": "Llama"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "Full Attention"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "31.91"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "25.92"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "69.43"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "21.50"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "31.95"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "16.75"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "24.29"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "99.15"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "99.66"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "60.00"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "48.06"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "0"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "Original"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "31.82"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "24.82"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "69.43"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "19.50"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "35.46"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "16.75"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "31.14"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "98.64"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "99.83"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "44.00"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "47.14"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 5,
+      "row_span": 1,
+      "text": "-0.92"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "MASA"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "32.10"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "26.25"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "66.81"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "19.50"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "33.66"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "20.05"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "29.14"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "98.31"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "99.66"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "54.40"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "47.99"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "-0.07"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 3,
+      "text": "Qwen"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "Full Attention"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "4.65"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "5.57"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "34.50"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "9.00"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "11.27"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "24.87"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "24.57"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "95.42"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "75.42"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "0.00"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "29.53"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "0"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "Original"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "14.27"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "6.55"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "34.06"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "13.50"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "11.51"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "20.81"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "30.86"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "96.95"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "72.20"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "0.00"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "30.07"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "+0.54"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "MASA"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "15.55"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "6.38"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "32.31"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "16.50"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "13.09"
+    },
+    {
+      "col": 8,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "21.07"
+    },
+    {
+      "col": 9,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "30.29"
+    },
+    {
+      "col": 10,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "94.41"
+    },
+    {
+      "col": 11,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "74.58"
+    },
+    {
+      "col": 12,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "0.00"
+    },
+    {
+      "col": 13,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "30.42"
+    },
+    {
+      "col": 14,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 9,
+      "row_span": 1,
+      "text": "+0.89"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": []
+    },
+    {
+      "col": 1,
+      "path": []
+    },
+    {
+      "col": 2,
+      "path": [
+        "Variant"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "En.Sum"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "En.QA"
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "En.MC"
+      ]
+    },
+    {
+      "col": 6,
+      "path": [
+        "En.Dia"
+      ]
+    },
+    {
+      "col": 7,
+      "path": [
+        "Zh.QA"
+      ]
+    },
+    {
+      "col": 8,
+      "path": [
+        "Code Debug"
+      ]
+    },
+    {
+      "col": 9,
+      "path": [
+        "Math Find"
+      ]
+    },
+    {
+      "col": 10,
+      "path": [
+        "Retr. PassKey"
+      ]
+    },
+    {
+      "col": 11,
+      "path": [
+        "Retr. Number"
+      ]
+    },
+    {
+      "col": 12,
+      "path": [
+        "Retr. KV"
+      ]
+    },
+    {
+      "col": 13,
+      "path": [
+        "Avg."
+      ]
+    },
+    {
+      "col": 14,
+      "path": [
+        "ΔFull"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table*",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0
+    ],
+    "latex_caption_start": "InfiniteBench results under matched sparse-attention settings. Within each frame",
+    "latex_table_index": 2,
+    "macros_expanded": [
+      "arraystretch",
+      "avgcell",
+      "best",
+      "masa",
+      "masacell",
+      "resultbackbonelabel",
+      "resultdeltaneg",
+      "resultdeltapos",
+      "resultdeltazero",
+      "resultfirstsep",
+      "resultframeworklabel",
+      "resultframeworksep"
+    ],
+    "n_multicolumn": 0,
+    "n_multirow": 4,
+    "n_tabulars": 1,
+    "paper_id": "2610.10871v1",
+    "part": "",
+    "pdf_caption_start": "InfiniteBench (Zhang et al., 2024) results under matched sparse-attention settin",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 15,
+  "n_rows": 10,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "MInfer",
+        "Full Attention"
+      ],
+      "row": 1
+    },
+    {
+      "path": [
+        "MInfer",
+        "Original"
+      ],
+      "row": 2
+    },
+    {
+      "path": [
+        "MInfer",
+        "MASA"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "FlexPrefill",
+        "Llama",
+        "Full Attention"
+      ],
+      "row": 4
+    },
+    {
+      "path": [
+        "FlexPrefill",
+        "Llama",
+        "Original"
+      ],
+      "row": 5
+    },
+    {
+      "path": [
+        "FlexPrefill",
+        "Llama",
+        "MASA"
+      ],
+      "row": 6
+    },
+    {
+      "path": [
+        "FlexPrefill",
+        "Qwen",
+        "Full Attention"
+      ],
+      "row": 7
+    },
+    {
+      "path": [
+        "FlexPrefill",
+        "Qwen",
+        "Original"
+      ],
+      "row": 8
+    },
+    {
+      "path": [
+        "FlexPrefill",
+        "Qwen",
+        "MASA"
+      ],
+      "row": 9
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 2
+}

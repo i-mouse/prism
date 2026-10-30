@@ -1,0 +1,1377 @@
+{
+  "caption_number": 1,
+  "caption_text": "SFT-as-context successfully mitigates the forgetting of general capabilities and maintains high fine-tuned capabilities compared to SFT across all benchmarks. Higher is better except for NutriBench macro MAE, where lower is better. For IFEval, we report prompt-level strict accuracy (PSA). † denotes joint-capability settings, where the same queries require both fine-tuned and general capabilities. The performance recovery rate (R) is defined in Equation and reported as a percentage. The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition. Best results are bolded and second-best results are underlined.",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Benchmark"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Metric"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Parent"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "SFT"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "SFT-as-Context"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "R (↑)"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 1,
+      "row_span": 1,
+      "text": "Mathematics"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 2,
+      "row_span": 1,
+      "text": "Fine-Tuned Capabilities"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "AIME 2024"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "Accuracy"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "11.3"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "56.0"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "53.8"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "95.0"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "MathIF†"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "Math Correctness"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "40.6"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "65.0"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "64.0"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "95.9"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 5,
+      "row_span": 1,
+      "text": "General Capabilities"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "IFEval"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "PSA"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "71.3"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "52.7"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "69.8"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 6,
+      "row_span": 1,
+      "text": "91.6"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "MathIF†"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "Hard IF"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "50.1"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "21.3"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "45.8"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 7,
+      "row_span": 1,
+      "text": "85.1"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "MGSM"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "Answer-Prefix Accuracy"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "90.6"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "50.2"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "87.5"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 8,
+      "row_span": 1,
+      "text": "92.2"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 9,
+      "row_span": 1,
+      "text": "Coding"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 10,
+      "row_span": 1,
+      "text": "Fine-Tuned Capabilities"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "LiveCodeBench"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "Pass@1"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "20.1"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "55.5"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "53.4"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 11,
+      "row_span": 1,
+      "text": "94.1"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "LiveCodeBenchIF†"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "Pass@1"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "17.3"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "53.8"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "51.2"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 12,
+      "row_span": 1,
+      "text": "92.9"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 13,
+      "row_span": 1,
+      "text": "General Capabilities"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "IFEval"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "PSA"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "75.0"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "45.1"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "74.8"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 14,
+      "row_span": 1,
+      "text": "99.4"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "LiveCodeBenchIF†"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "Exactly 3 Comment Lines"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "31.5"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "19.1"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "31.1"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 15,
+      "row_span": 1,
+      "text": "96.6"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "SQuAD2.0"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "Correctness"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "86.1"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "62.5"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "83.3"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 16,
+      "row_span": 1,
+      "text": "88.3"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "FQuAD2.0"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "Correctness"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "81.0"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "66.2"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "78.2"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 17,
+      "row_span": 1,
+      "text": "81.3"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "CoQA"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "Correctness"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "95.9"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "62.2"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "93.1"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 18,
+      "row_span": 1,
+      "text": "91.7"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "ACPBench"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "Overall Accuracy"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "77.0"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "65.9"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "78.8"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 19,
+      "row_span": 1,
+      "text": "116.2"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 20,
+      "row_span": 1,
+      "text": "Nutrition"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 21,
+      "row_span": 1,
+      "text": "Fine-Tuned Capabilities"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "NutriBench-English"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "Macro MAE ↓"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "35.3"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "16.4"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "18.4"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 22,
+      "row_span": 1,
+      "text": "89.2"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "NutriBench-Non-English†"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "Macro MAE ↓"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "85.6"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "59.6"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "63.6"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 23,
+      "row_span": 1,
+      "text": "84.6"
+    },
+    {
+      "col": 0,
+      "col_span": 6,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": true,
+      "row": 24,
+      "row_span": 1,
+      "text": "General Capabilities"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "NutriBench-Non-English†"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "Language Consistency"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "77.3"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "1.9"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "73.7"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 25,
+      "row_span": 1,
+      "text": "95.2"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 26,
+      "row_span": 1,
+      "text": "NutriBench-Non-Food"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 26,
+      "row_span": 1,
+      "text": "Acknowledge Non-Food"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 26,
+      "row_span": 1,
+      "text": "98.8"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 26,
+      "row_span": 1,
+      "text": "22.6"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 26,
+      "row_span": 1,
+      "text": "98.0"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 26,
+      "row_span": 1,
+      "text": "98.9"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": [
+        "Benchmark"
+      ]
+    },
+    {
+      "col": 1,
+      "path": [
+        "Metric"
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "Parent"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "SFT"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "SFT-as-Context"
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "R (↑)"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table*",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0
+    ],
+    "latex_caption_start": "SFT-as-context successfully mitigates the forgetting of general capabilities and",
+    "latex_table_index": 1,
+    "macros_expanded": [],
+    "n_multicolumn": 9,
+    "n_multirow": 0,
+    "n_tabulars": 1,
+    "paper_id": "2610.11132v1",
+    "part": "",
+    "pdf_caption_start": "SFT-as-context successfully mitigates the forgetting of general capabilities and",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 6,
+  "n_rows": 27,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "Fine-Tuned Capabilities",
+        "AIME 2024",
+        "Accuracy"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "Fine-Tuned Capabilities",
+        "MathIF†",
+        "Math Correctness"
+      ],
+      "row": 4
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "IFEval",
+        "PSA"
+      ],
+      "row": 6
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "MathIF†",
+        "Hard IF"
+      ],
+      "row": 7
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "MGSM",
+        "Answer-Prefix Accuracy"
+      ],
+      "row": 8
+    },
+    {
+      "path": [
+        "Fine-Tuned Capabilities",
+        "LiveCodeBench",
+        "Pass@1"
+      ],
+      "row": 11
+    },
+    {
+      "path": [
+        "Fine-Tuned Capabilities",
+        "LiveCodeBenchIF†",
+        "Pass@1"
+      ],
+      "row": 12
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "IFEval",
+        "PSA"
+      ],
+      "row": 14
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "LiveCodeBenchIF†",
+        "Exactly 3 Comment Lines"
+      ],
+      "row": 15
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "SQuAD2.0",
+        "Correctness"
+      ],
+      "row": 16
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "FQuAD2.0",
+        "Correctness"
+      ],
+      "row": 17
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "CoQA",
+        "Correctness"
+      ],
+      "row": 18
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "ACPBench",
+        "Overall Accuracy"
+      ],
+      "row": 19
+    },
+    {
+      "path": [
+        "Fine-Tuned Capabilities",
+        "NutriBench-English",
+        "Macro MAE ↓"
+      ],
+      "row": 22
+    },
+    {
+      "path": [
+        "Fine-Tuned Capabilities",
+        "NutriBench-Non-English†",
+        "Macro MAE ↓"
+      ],
+      "row": 23
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "NutriBench-Non-English†",
+        "Language Consistency"
+      ],
+      "row": 25
+    },
+    {
+      "path": [
+        "General Capabilities",
+        "NutriBench-Non-Food",
+        "Acknowledge Non-Food"
+      ],
+      "row": 26
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 1
+}

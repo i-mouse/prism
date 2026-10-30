@@ -38,7 +38,15 @@ REPORT_FILE = AUD_DIR / "t2r_refs_report_2026-10-29.md"
 S_ROWS_IN = lp.DEFAULT_ROOT / "s_rows.json"
 S_ROWS_OUT = AUD_DIR / "t2r_s_rows_2026-10-29.json"
 FALLBACK_ROW = "P1-S2"
-OK_STATUSES = ("strict", "relaxed", "ambiguous-consistent")
+RESOLUTIONS_FILE = AUD_DIR / "t2r_pin_resolutions_2026-10-30.json"
+OK_STATUSES = ("strict", "relaxed", "ambiguous-consistent", "resolved")
+
+
+def load_resolutions(path: Path = RESOLUTIONS_FILE) -> dict:
+    """{pin_id: entry} from the pin-resolutions file (the pins file itself is never edited)."""
+    if not Path(path).exists():
+        return {}
+    return {e["pin_id"]: e for e in lp.load_json(path)["resolutions"]}
 
 
 # ----------------------------------------------------------------- relaxed label compare
@@ -133,15 +141,26 @@ def check_pin(table: dict, pin: dict) -> dict:
             "reason": res2["reason"] or res["reason"]}
 
 
-def check_table_pins(table, pins: list) -> dict:
+def check_table_pins(table, pins: list, resolutions: Optional[dict] = None) -> dict:
     """`table` is one schema table or a list of sub-tables (T<n>a, T<n>b). With sub-tables a pin
-    takes the first sub-table where it passes, else the result on the first sub-table."""
+    takes the first sub-table where it passes, else the result on the first sub-table. A pin listed
+    in `resolutions` is checked against its page_value and reported as "resolved"."""
     tables = table if isinstance(table, list) else [table]
+    resolutions = resolutions or {}
     results = []
     for p in pins:
         best = None
+        res_entry = resolutions.get(p["id"])
         for k, t in enumerate(tables):
-            r = check_pin(t, p)
+            if res_entry is not None:
+                r = check_pin(t, {**p, "value": res_entry["page_value"]})
+                r["pinned_value"] = p.get("value")
+                r["page_value"] = res_entry["page_value"]
+                if r["status"] in ("strict", "relaxed", "ambiguous-consistent"):
+                    r["status"] = "resolved"
+                    r["resolution"] = res_entry["cause"] + "; " + res_entry["resolver"]
+            else:
+                r = check_pin(t, p)
             if len(tables) > 1:
                 r["part"] = chr(ord("a") + k)
             if r["status"] in OK_STATUSES:
@@ -160,6 +179,7 @@ def check_table_pins(table, pins: list) -> dict:
         "structural": frac(lambda r: r["kind"] != "cell"),
         "uncertain": frac(lambda r: r["key_uncertain"]),
         "relaxed": [r for r in results if r["status"] == "relaxed"],
+        "resolved": [r for r in results if r["status"] == "resolved"],
         "mismatches": [r for r in results if r["status"] == "mismatch"],
     }
 
@@ -429,6 +449,11 @@ def build_report(state: dict) -> str:
         prow = [[r["id"], r["kind"], "uncertain" if r["key_uncertain"] else ("breaking" if r["breaking"] else "-"),
                  r["status"], r.get("got") or "-", r.get("reason") or "-"] for r in pc["results"]]
         L += [_md_table(["pin", "kind", "class", "status", "got", "reason"], prow), ""]
+        if pc.get("resolved"):
+            L += ["Pins resolved from the PDF page (pins file unchanged):", ""]
+            L += [f"- {r['id']}: pinned {r['pinned_value']}, page {r['page_value']} -> got {r.get('got')}; {r['resolution']}"
+                  for r in pc["resolved"]]
+            L.append("")
         if pc["relaxed"]:
             L += ["Pins that needed the relaxed label compare:", ""]
             L += [f"- {r['id']}: labels {r.get('pin_labels')}; strict: {r['strict_reason'] or r.get('strict_got')}" for r in pc["relaxed"]]
@@ -514,7 +539,8 @@ def run(out_files: bool = True) -> dict:
         if not res["identified"]:
             stop.append(f"gate table {tid} unidentified ({res['status']})")
             continue
-        pc = check_table_pins([p["table"] for p in res["parts"]], pins["pins_by_table"].get(tid, []))
+        pc = check_table_pins([p["table"] for p in res["parts"]], pins["pins_by_table"].get(tid, []),
+                              load_resolutions())
         pin_checks[key] = pc
         if pc["mismatches"]:
             stop.append(f"gate table {tid}: {len(pc['mismatches'])} pin(s) not matched: "

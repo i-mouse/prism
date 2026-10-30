@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "t2r_pin_resolutions_2026-10-30",
+  "note": "The pins file t1_pins_2026-10-28.json is not edited. The builder checks a listed pin against page_value and marks it resolved.",
+  "resolutions": [
+    {
+      "pin_id": "P3-T9-13",
+      "table_id": "P3-T9",
+      "pinned_value": ".607",
+      "pinned_column": "Mean",
+      "page_value": ".605",
+      "page_column": "Mean",
+      "note_page": ".607 is the A17 value of the same row",
+      "cause": "diagnostic column attributed by position (key_uncertain)",
+      "resolver": "Nitin, direct PDF page read, 2026-10-30",
+      "method": "single unambiguous cell; read directly instead of the dual-label route"
+    }
+  ]
+}
