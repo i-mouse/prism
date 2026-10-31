@@ -13,10 +13,11 @@ label field (ActualClaim.label). If it does not reproduce, the scorer STOPs and 
 Marks (decisions.md T2, applied to the T2-R reference tables):
   1 Gain: final PS/NS on >= 4 of the 10 misses AND >= 3 of the 5 hard rows (Needs review = not fixed; misses
     with no form = not fixed).
-  2 Faithful: a miss counts only if (a) its contradicting cells include a pinned breaking cell (same method as
-    t2r_build_refs: relaxed glyph compare, pin resolutions applied), or (b) for an "absent" PS its table has a
-    breaking structural or caption pin. Mark 2 is read as: marks 1's two thresholds still hold when only
-    faithful misses count. (Mark 1 is the same count without the faithfulness filter.)
+  2 Faithful (OFFICIAL = decisions.md wording): a miss counts only if its contradicting evidence includes a
+    pinned breaking cell (same method as t2r_build_refs: relaxed glyph compare, pin resolutions applied) OR a
+    pinned breaking structural/caption fact (an "absent" PS whose table has one; a contradicted count_rows on a
+    table with one). Mark 2 is read as: mark 1's two thresholds still hold when only faithful misses count.
+    The cells-only count is reported as "variant (not official)". Mark 1 is the same count without the filter.
   3 S rows: 0 of the 10 selected S rows lowered by the CODE result.
   4 Needs review: <= 2 of the 10 selected S rows set by the CODE result.
   5 New unit tests pass, and two full runs give byte-identical output.
@@ -194,8 +195,11 @@ def faithfulness(item: dict, pins: Pins) -> dict:
                             out["b_structural_pins"].append({"absent_member": member, "pin": pin["id"],
                                                              "table_ref": ref, "pin_fact": _describe_pin(pin),
                                                              "pin_status": status})
-    out["faithful"] = bool(out["a_cell_pin_matches"] or out["b_structural_pins"])
-    out["faithful_structural_variant"] = bool(out["faithful"] or out["structural_pins_for_count_rows"])
+    # OFFICIAL (decisions.md): pinned breaking cell OR pinned breaking structural/caption fact (incl. absent rule)
+    out["faithful"] = bool(out["a_cell_pin_matches"] or out["b_structural_pins"]
+                           or out["structural_pins_for_count_rows"])
+    # variant (not official): pinned breaking cells only
+    out["faithful_cells_only"] = bool(out["a_cell_pin_matches"])
     return out
 
 
@@ -230,8 +234,8 @@ def score(check: dict) -> dict:
             rec["fixed"] = final in LOWERED
             rec["faithfulness"] = faithfulness(it, pins) if it["code_result"] == ck.CODE_PS else None
             rec["counted_faithful"] = bool(rec["fixed"] and rec["faithfulness"] and rec["faithfulness"]["faithful"])
-            rec["counted_faithful_structural_variant"] = bool(
-                rec["fixed"] and rec["faithfulness"] and rec["faithfulness"]["faithful_structural_variant"])
+            rec["counted_cells_only_variant"] = bool(
+                rec["fixed"] and rec["faithfulness"] and rec["faithfulness"]["faithful_cells_only"])
         items.append(rec)
     by_row = {i["row_id"]: i for i in items}
 
@@ -247,7 +251,7 @@ def score(check: dict) -> dict:
             "final_label": rec["final_label"] if rec else run1,
             "fixed": bool(rec and rec["fixed"]),
             "counted_faithful": bool(rec and rec["counted_faithful"]),
-            "counted_faithful_structural_variant": bool(rec and rec["counted_faithful_structural_variant"]),
+            "counted_cells_only_variant": bool(rec and rec["counted_cells_only_variant"]),
         })
 
     def gain(field):
@@ -256,7 +260,7 @@ def score(check: dict) -> dict:
         return {"misses": n, "hard": hard, "pass": n >= 4 and hard >= 3}
 
     m1, m2 = gain("fixed"), gain("counted_faithful")
-    m2_variant = gain("counted_faithful_structural_variant")
+    m2_variant = gain("counted_cells_only_variant")
 
     s_items = [i for i in items if i["set"] == "S"]
     already = [i for i in s_items if i["run1_label"] not in (ck.SUPPORTED, None)]
@@ -276,7 +280,7 @@ def score(check: dict) -> dict:
             {"id": i["id"], "row_id": i["row_id"], "run1_label": i["run1_label"], "code_result": i["code_result"],
              "final_label": i["final_label"]} for i in already]},
         "marks": {"1": m1, "2": {**m2, "reading": "marks 1 thresholds with only faithful misses counted",
-                                 "structural_variant": m2_variant},
+                                 "cells_only_variant_not_official": m2_variant},
                   "3": m3, "4": m4},
         "overall_without_mark_5": bool(m1["pass"] and m2["pass"] and m3["pass"] and m4["pass"]),
     }
@@ -314,17 +318,19 @@ def render_md(res: dict) -> str:
           f"| 1 Gain | {_mark(mk['1']['pass'])} | final PS/NS on {mk['1']['misses']} of 10 misses (need >= 4); "
           f"{mk['1']['hard']} of 5 hard rows (need >= 3) |",
           f"| 2 Faithful | {_mark(mk['2']['pass'])} | faithful misses only: {mk['2']['misses']} of 10 (>= 4); "
-          f"{mk['2']['hard']} of 5 hard (>= 3). With structural pins also accepted for count_rows: "
-          f"{mk['2']['structural_variant']['misses']} / {mk['2']['structural_variant']['hard']} "
-          f"({_mark(mk['2']['structural_variant']['pass'])}) |",
+          f"{mk['2']['hard']} of 5 hard (>= 3). Variant (not official), pinned breaking cells only: "
+          f"{mk['2']['cells_only_variant_not_official']['misses']} / {mk['2']['cells_only_variant_not_official']['hard']} "
+          f"({_mark(mk['2']['cells_only_variant_not_official']['pass'])}) |",
           f"| 3 S rows lowered by code | {_mark(mk['3']['pass'])} | {mk['3']['code_lowered']} of 10 (need 0) {mk['3']['ids']} |",
           f"| 4 S rows set to Needs review by code | {_mark(mk['4']['pass'])} | {mk['4']['code_needs_review']} of 10 (need <= 2) {mk['4']['ids']} |",
           f"| 5 Tests and identical runs | {_mark(mk['5']['pass'])} | pytest exit code {mk['5']['pytest_exit_code']}; "
           f"check files identical {mk['5']['check_identical']}; score outputs identical {mk['5']['core_identical']}; "
           f"sha256 check {mk['5']['check_sha256']}, score {mk['5']['core_sha256']} |", "",
-          "Mark 2 is read as: mark 1's two thresholds when only faithful misses count (a miss is faithful if (a) a "
-          "contradicting cell is a pinned breaking cell, or (b) it is an absent-member PS whose table has a breaking "
-          "structural or caption pin). Mark 1 is the same count without that filter.", ""]
+          "Mark 2 (official, decisions.md wording) is read as: mark 1's two thresholds when only faithful misses "
+          "count. A miss is faithful if its contradicting evidence includes a pinned breaking cell, or a pinned breaking "
+          "structural/caption fact (an absent-member PS whose table has such a pin; a contradicted count_rows on a "
+          "table with such a pin). The cells-only count is information only, labelled variant (not official). "
+          "Mark 1 is the same count without the filter.", ""]
     L += ["## Baseline (reproduced before scoring)", "",
           f"- Refusal rows {b['refusal_rows']}; caught {b['caught_effective']} (effective) / {b['caught_raw']} (raw); "
           f"extraction misses (no claim) {len(b['extraction_misses'])}; wrongly affirmed (the 10 misses) {b['misses']}.",
