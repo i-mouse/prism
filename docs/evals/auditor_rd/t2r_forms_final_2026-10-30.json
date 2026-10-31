@@ -1,0 +1,2249 @@
+[
+  {
+    "id": "C01",
+    "paper": "2610.11135v1",
+    "forms": [
+      {
+        "table_ref": "2610.11135v1_T9",
+        "rule": "beats_baseline",
+        "reading": "narrow",
+        "rows": [
+          "Position 1 > JevKT",
+          "Position 1 > Best deep KT†",
+          "Positions 2–5 > JevKT",
+          "Positions 2–5 > Best deep KT†",
+          "Positions 6–10 > JevKT",
+          "Positions 6–10 > Best deep KT†",
+          "Positions 11–15 > JevKT",
+          "Positions 11–15 > Best deep KT†",
+          "Positions 16–30 > JevKT",
+          "Positions 16–30 > Best deep KT†",
+          "Positions 31–49 > JevKT",
+          "Positions 31–49 > Best deep KT†"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Mean"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "Position 1 > JevKT",
+              "baseline": "Position 1 > Best deep KT†"
+            },
+            {
+              "method": "Positions 2–5 > JevKT",
+              "baseline": "Positions 2–5 > Best deep KT†"
+            },
+            {
+              "method": "Positions 6–10 > JevKT",
+              "baseline": "Positions 6–10 > Best deep KT†"
+            },
+            {
+              "method": "Positions 11–15 > JevKT",
+              "baseline": "Positions 11–15 > Best deep KT†"
+            },
+            {
+              "method": "Positions 16–30 > JevKT",
+              "baseline": "Positions 16–30 > Best deep KT†"
+            },
+            {
+              "method": "Positions 31–49 > JevKT",
+              "baseline": "Positions 31–49 > Best deep KT†"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Position 1 > Jev0-shot (N=0)",
+          "Positions 2–5 > Jev0-shot (N=0)",
+          "Positions 6–10 > Jev0-shot (N=0)",
+          "Positions 11–15 > Jev0-shot (N=0)",
+          "Positions 16–30 > Jev0-shot (N=0)",
+          "Positions 31–49 > Jev0-shot (N=0)"
+        ],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "For new learners, the advantage holds from their first interactions.",
+        "status": "covered"
+      },
+      {
+        "member": "On unseen items with all learners logged, deep KT remains ahead.",
+        "status": "other_table: Table 10"
+      }
+    ],
+    "caveat_refs": [
+      "Table 9 caption: Position 1 has only 41–50 targets per dataset, so its AUC is noisy"
+    ],
+    "no_rule_reason": "",
+    "source_note": "Narrow Mean form agreed by both judges (ChatGPT pack_2610.11135v1_chatgpt.txt, Gemini 2610.11135v1_gemini.json); 6 Position blocks, JevKT vs Best deep KT, strict, higher. Member 'unseen items, all learners logged (P3)' lives in Table 10."
+  },
+  {
+    "id": "C02",
+    "paper": "2610.11519v1",
+    "forms": [
+      {
+        "table_ref": "2610.11519v1_T2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "Full RA (λ)",
+          "Verifier only (REINFORCE++)",
+          "w/o student value baseline (γx)",
+          "w/o response centering (λ)",
+          "Raw residual (w/o both, γ raw)"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro Avg@8 at weight > 5",
+          "Macro Avg@8 at weight > 10",
+          "Macro Avg@8 at weight > 20",
+          "Macro Pass@8 at weight > 5",
+          "Macro Pass@8 at weight > 10",
+          "Macro Pass@8 at weight > 20"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "Full RA (λ)",
+              "baseline": "Verifier only (REINFORCE++)"
+            },
+            {
+              "method": "w/o student value baseline (γx)",
+              "baseline": "Verifier only (REINFORCE++)"
+            },
+            {
+              "method": "w/o response centering (λ)",
+              "baseline": "Verifier only (REINFORCE++)"
+            },
+            {
+              "method": "Raw residual (w/o both, γ raw)",
+              "baseline": "Verifier only (REINFORCE++)"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Direct L2 loss (α)"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.11519v1_T2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "Full RA (λ)",
+          "w/o student value baseline (γx)",
+          "w/o response centering (λ)",
+          "Raw residual (w/o both, γ raw)",
+          "Direct L2 loss (α)",
+          "Verifier only (REINFORCE++)"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro Avg@8 at weight > 5",
+          "Macro Avg@8 at weight > 10",
+          "Macro Avg@8 at weight > 20",
+          "Macro Pass@8 at weight > 5",
+          "Macro Pass@8 at weight > 10",
+          "Macro Pass@8 at weight > 20"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "Full RA (λ)",
+              "baseline": "w/o student value baseline (γx)"
+            },
+            {
+              "method": "Full RA (λ)",
+              "baseline": "w/o response centering (λ)"
+            },
+            {
+              "method": "Full RA (λ)",
+              "baseline": "Raw residual (w/o both, γ raw)"
+            },
+            {
+              "method": "Full RA (λ)",
+              "baseline": "Direct L2 loss (α)"
+            },
+            {
+              "method": "Full RA (λ)",
+              "baseline": "Verifier only (REINFORCE++)"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": false
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Full RA versus verifier-only training at every tested weight",
+        "status": "covered"
+      },
+      {
+        "member": "Without student value baseline versus verifier-only training at every tested weight",
+        "status": "covered"
+      },
+      {
+        "member": "Without response centering versus verifier-only training at every tested weight",
+        "status": "covered"
+      },
+      {
+        "member": "Raw residual without both operations versus verifier-only training at every tested weight",
+        "status": "covered"
+      },
+      {
+        "member": "Full RA versus every control at every matched weight",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT round-2 forms (A) and (B) from pack_2610.11519v1_chatgpt.txt. Verifier only row is a column-spanning cell (cs=3) and must resolve at every weight column."
+  },
+  {
+    "id": "C03",
+    "paper": "2610.12124v1",
+    "forms": [
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "Hippocam"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "ACE"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [
+          "HiAgent"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [
+          "mem0"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [
+          "A-Mem"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [
+          "Letta"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12124v1_T2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [
+          "ReasoningBank"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Plain"
+        ],
+        "partial": false
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Hippocam",
+        "status": "covered"
+      },
+      {
+        "member": "ACE",
+        "status": "covered"
+      },
+      {
+        "member": "HiAgent",
+        "status": "covered"
+      },
+      {
+        "member": "mem0",
+        "status": "covered"
+      },
+      {
+        "member": "A-Mem",
+        "status": "covered"
+      },
+      {
+        "member": "Letta",
+        "status": "covered"
+      },
+      {
+        "member": "ReasoningBank",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT round-2 encoding accepted (logically equivalent to the Gemini re-run form). count_satisfying = at least k=1 of the 2 Δ stream cells <= 0. Plain has no Δ values."
+  },
+  {
+    "id": "C04",
+    "paper": "2610.10871v1",
+    "forms": [
+      {
+        "table_ref": "2610.10871v1_T9",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [
+          {
+            "Setting": "SeerAttention",
+            "Clip p": "–",
+            "Norm α": "–"
+          },
+          {
+            "Setting": "SeerAttention",
+            "Clip p": "85",
+            "Norm α": "–"
+          },
+          {
+            "Setting": "SeerAttention",
+            "Clip p": "90",
+            "Norm α": "–"
+          },
+          {
+            "Setting": "SeerAttention",
+            "Clip p": "95",
+            "Norm α": "–"
+          }
+        ],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [
+            {
+              "method": {
+                "Setting": "SeerAttention",
+                "Clip p": "85",
+                "Norm α": "–"
+              },
+              "baseline": {
+                "Setting": "SeerAttention",
+                "Clip p": "–",
+                "Norm α": "–"
+              }
+            },
+            {
+              "method": {
+                "Setting": "SeerAttention",
+                "Clip p": "90",
+                "Norm α": "–"
+              },
+              "baseline": {
+                "Setting": "SeerAttention",
+                "Clip p": "–",
+                "Norm α": "–"
+              }
+            },
+            {
+              "method": {
+                "Setting": "SeerAttention",
+                "Clip p": "95",
+                "Norm α": "–"
+              },
+              "baseline": {
+                "Setting": "SeerAttention",
+                "Clip p": "–",
+                "Norm α": "–"
+              }
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "MInference",
+          "FlexPrefill-Llama",
+          "FlexPrefill-Qwen"
+        ],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Norm clipping versus raw MASA for SeerAttention",
+        "status": "covered"
+      },
+      {
+        "member": "Norm clipping versus raw MASA for FlexPrefill-Llama",
+        "status": "absent"
+      },
+      {
+        "member": "Soft norm balancing versus raw MASA for FlexPrefill-Qwen on RULER (α=1.0)",
+        "status": "covered"
+      },
+      {
+        "member": "Soft norm balancing for additional FlexPrefill settings on InfiniteBench",
+        "status": "other_table: Table 10"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT round-2 count_satisfying form (k=1 of 3 Clip p comparisons vs raw MASA row, Avg., strict, higher). Excluded rows are setting-group labels (several rows each)."
+  },
+  {
+    "id": "C05",
+    "paper": "2610.11312v1",
+    "forms": [],
+    "claimed_group": [
+      {
+        "member": "InternVL3-8B",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen2.5-VL-7B",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-VL-8B-I",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-VL-8B-T†",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen2.5-VL-32B",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-VL-32B",
+        "status": "covered"
+      },
+      {
+        "member": "MedGemma-4B",
+        "status": "covered"
+      },
+      {
+        "member": "Lingshu-7B",
+        "status": "covered"
+      },
+      {
+        "member": "Hulu-Med-7B",
+        "status": "covered"
+      },
+      {
+        "member": "QoQ-Med-7B†",
+        "status": "covered"
+      },
+      {
+        "member": "BreastGPT-8B",
+        "status": "other_table: Table 3"
+      },
+      {
+        "member": "Lingshu-32B",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "Portability and variation claims are qualitative.",
+    "source_note": "No form: wording judges read 'twelve VLMs' as the main evaluation (Table 3), not Table 10."
+  },
+  {
+    "id": "C06",
+    "paper": "2610.10871v1",
+    "forms": [
+      {
+        "table_ref": "2610.10871v1_T1",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "MInfer > MASA",
+          "MInfer > Original",
+          "SeerAttn > MASA",
+          "SeerAttn > Original",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Llama > Original",
+          "FlexPrefill > Qwen > MASA",
+          "FlexPrefill > Qwen > Original"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "4K",
+          "8K",
+          "16K",
+          "32K",
+          "64K",
+          "128K",
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "SeerAttn > MASA",
+              "baseline": "SeerAttn > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "SeerAttn > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.10871v1_T2",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "MInfer > MASA",
+          "MInfer > Original",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Llama > Original",
+          "FlexPrefill > Qwen > MASA",
+          "FlexPrefill > Qwen > Original"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "En.Sum",
+          "En.QA",
+          "En.MC",
+          "En.Dia",
+          "Zh.QA",
+          "Code Debug",
+          "Math Find",
+          "Retr. PassKey",
+          "Retr. Number",
+          "Retr. KV",
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Matched average gains on RULER across MInference, SeerAttention, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Matched average gains on InfiniteBench across MInference, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Negligible latency overhead across the sparse methods",
+        "status": "other_table: Figure 2"
+      },
+      {
+        "member": "Matched average gains on LongBench for SeerAttention",
+        "status": "other_table: Table 3"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "Reading (b) every column (Nitin; wording judges split ChatGPT b / Gemini a). Forms from ChatGPT 2610.10871v1_chatgpt.txt with columns widened from Avg. to every score column; ΔFull excluded."
+  },
+  {
+    "id": "C07",
+    "paper": "2610.11312v1",
+    "forms": [
+      {
+        "table_ref": "2610.11312v1_T1a",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "MedBenchAgent"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Task-Space Review > F1↑"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 90.9,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11312v1_T1a",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MedBenchAgent",
+          "DeepSeek-V4-Flash",
+          "Qwen3.5-9B",
+          "MedGemma-27B",
+          "DeepSeek-V4-Flash + T0"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Task-Space Review > F1↑"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MedBenchAgent",
+              "baseline": "DeepSeek-V4-Flash"
+            },
+            {
+              "method": "MedBenchAgent",
+              "baseline": "Qwen3.5-9B"
+            },
+            {
+              "method": "MedBenchAgent",
+              "baseline": "MedGemma-27B"
+            },
+            {
+              "method": "MedBenchAgent",
+              "baseline": "DeepSeek-V4-Flash + T0"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11312v1_T1a",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "DeepSeek-V4-Flash",
+          "Qwen3.5-9B",
+          "MedGemma-27B"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Task-Space Review > F1↑"
+        ],
+        "params": {
+          "op": ">=",
+          "constant": 79.2,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11312v1_T1a",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "DeepSeek-V4-Flash",
+          "Qwen3.5-9B",
+          "MedGemma-27B"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Task-Space Review > F1↑"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 80.0,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11312v1_T1a",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "DeepSeek-V4-Flash + T0"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Task-Space Review > F1↑"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 85.1,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11312v1_T1b",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "All criteria"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Pass"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 994,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11312v1_T1b",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "All criteria"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Fail"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 6,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "MedBenchAgent",
+        "status": "covered"
+      },
+      {
+        "member": "DeepSeek-V4-Flash",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3.5-9B",
+        "status": "covered"
+      },
+      {
+        "member": "MedGemma-27B",
+        "status": "covered"
+      },
+      {
+        "member": "DeepSeek-V4-Flash + T0",
+        "status": "covered"
+      },
+      {
+        "member": "All criteria",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT forms (pack_2610.11312v1_chatgpt.txt; Gemini lacks the Fail cell), partial: 'correctly identified tasks' not encodable. T1b is the PDF's Table 2."
+  },
+  {
+    "id": "C08",
+    "paper": "2610.12375v1",
+    "forms": [
+      {
+        "table_ref": "2610.12375v1_T6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Cost saved"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 18,
+          "polarity": null,
+          "tolerance": 1,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.12375v1_T6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Prec. (dep.)"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 83,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": false
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Compute saved on agents heading to failure (approximately 18%)",
+        "status": "covered"
+      },
+      {
+        "member": "Proportion of interrupted runs actually heading to failure (83%; five out of every six aborts)",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [
+      "Section 6.3: 0.60 is an illustrative threshold selected for exposition after the sweep"
+    ],
+    "no_rule_reason": "",
+    "source_note": "Both judges agree (ChatGPT pack_2610.12375v1_chatgpt.txt; Gemini re-run gemini_2610.12375v1_medium.json)."
+  },
+  {
+    "id": "C09",
+    "paper": "2610.11291v1",
+    "forms": [
+      {
+        "table_ref": "2610.11291v1_T3",
+        "rule": "count_rows",
+        "reading": "only",
+        "rows": [
+          "n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "p > Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "o > Qwen3-14B > Qwen3-235B-A22B-Thinking > T > 16K",
+          "b > Qwen3-1.7B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "f > Qwen3-4B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "c > Qwen3-1.7B > Qwen3-235B-A22B-Instruct-2507 > NT > 4K",
+          "g > Qwen3-1.7B (SFT) > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "h > Qwen3-4B (SFT) > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "d > Qwen3-1.7B > Qwen3-4B > NT > 4K",
+          "m > R1-Distill-7B > DeepCoder-14B > T > 16K",
+          "e > Qwen3-1.7B > Qwen3-8B > NT > 4K",
+          "j > R1-Distill-1.5B > Polaris-7B > T > 16K",
+          "q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K",
+          "l > R1-Distill-7B > Light-R1-14B > T > 16K",
+          "k > R1-Distill-7B > Polaris-7B > T > 16K",
+          "i > R1-Distill-1.5B > JustRL-1.5B > T > 16K"
+        ],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": "==",
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 17,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11291v1_T3",
+        "rule": "count_rows",
+        "reading": "only",
+        "rows": [
+          "n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "p > Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "o > Qwen3-14B > Qwen3-235B-A22B-Thinking > T > 16K",
+          "b > Qwen3-1.7B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "f > Qwen3-4B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "c > Qwen3-1.7B > Qwen3-235B-A22B-Instruct-2507 > NT > 4K",
+          "g > Qwen3-1.7B (SFT) > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "h > Qwen3-4B (SFT) > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "d > Qwen3-1.7B > Qwen3-4B > NT > 4K",
+          "m > R1-Distill-7B > DeepCoder-14B > T > 16K",
+          "e > Qwen3-1.7B > Qwen3-8B > NT > 4K",
+          "j > R1-Distill-1.5B > Polaris-7B > T > 16K",
+          "q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K",
+          "l > R1-Distill-7B > Light-R1-14B > T > 16K",
+          "k > R1-Distill-7B > Polaris-7B > T > 16K",
+          "i > R1-Distill-1.5B > JustRL-1.5B > T > 16K"
+        ],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": "==",
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 2,
+          "distinct_on": [
+            "Mode"
+          ]
+        },
+        "excluded_rows": [],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "n: Qwen3-1.7B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "a: Qwen3-1.7B <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "p: Qwen3-4B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "o: Qwen3-14B <- Qwen3-235B-A22B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "b: Qwen3-1.7B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "f: Qwen3-4B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "c: Qwen3-1.7B <- Qwen3-235B-A22B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "g: Qwen3-1.7B (SFT) <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "h: Qwen3-4B (SFT) <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "d: Qwen3-1.7B <- Qwen3-4B",
+        "status": "covered"
+      },
+      {
+        "member": "m: R1-Distill-7B <- DeepCoder-14B",
+        "status": "covered"
+      },
+      {
+        "member": "e: Qwen3-1.7B <- Qwen3-8B",
+        "status": "covered"
+      },
+      {
+        "member": "j: R1-Distill-1.5B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "q: Cascade-2-30B-A3B <- Cascade-2-Math-Expert",
+        "status": "covered"
+      },
+      {
+        "member": "l: R1-Distill-7B <- Light-R1-14B",
+        "status": "covered"
+      },
+      {
+        "member": "k: R1-Distill-7B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "i: R1-Distill-1.5B <- JustRL-1.5B",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "Gemini forms (pack_2610.11291v1_chatgpt.txt is not valid JSON, curly quotes; not parsed). 'most commonly used' is not a claimed-group member. distinct_on resolves via leaf header."
+  },
+  {
+    "id": "C10",
+    "paper": "2610.11135v1",
+    "forms": [
+      {
+        "table_ref": "2610.11135v1_T1",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [
+          {
+            "N": "0",
+            "Method": "Jev0-shot"
+          }
+        ],
+        "columns": [
+          "Avg"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 0.706,
+          "polarity": null,
+          "tolerance": 0.0005,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": false
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Jev0-shot without any data from the target platform, mean AUC .706.",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "Both judges; selector {N: 0, Method: Jev0-shot} because row key 0 is not unique."
+  },
+  {
+    "id": "C12",
+    "paper": "2610.11291v1",
+    "forms": [
+      {
+        "table_ref": "2610.11291v1_T3",
+        "rule": "count_rows",
+        "reading": "only",
+        "rows": [
+          "n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "p > Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "o > Qwen3-14B > Qwen3-235B-A22B-Thinking > T > 16K",
+          "b > Qwen3-1.7B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "f > Qwen3-4B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "c > Qwen3-1.7B > Qwen3-235B-A22B-Instruct-2507 > NT > 4K",
+          "g > Qwen3-1.7B (SFT) > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "h > Qwen3-4B (SFT) > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "d > Qwen3-1.7B > Qwen3-4B > NT > 4K",
+          "m > R1-Distill-7B > DeepCoder-14B > T > 16K",
+          "e > Qwen3-1.7B > Qwen3-8B > NT > 4K",
+          "j > R1-Distill-1.5B > Polaris-7B > T > 16K",
+          "q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K",
+          "l > R1-Distill-7B > Light-R1-14B > T > 16K",
+          "k > R1-Distill-7B > Polaris-7B > T > 16K",
+          "i > R1-Distill-1.5B > JustRL-1.5B > T > 16K"
+        ],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": "==",
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 17,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "n: Qwen3-1.7B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "a: Qwen3-1.7B <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "p: Qwen3-4B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "o: Qwen3-14B <- Qwen3-235B-A22B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "b: Qwen3-1.7B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "f: Qwen3-4B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "c: Qwen3-1.7B <- Qwen3-235B-A22B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "g: Qwen3-1.7B (SFT) <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "h: Qwen3-4B (SFT) <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "d: Qwen3-1.7B <- Qwen3-4B",
+        "status": "covered"
+      },
+      {
+        "member": "m: R1-Distill-7B <- DeepCoder-14B",
+        "status": "covered"
+      },
+      {
+        "member": "e: Qwen3-1.7B <- Qwen3-8B",
+        "status": "covered"
+      },
+      {
+        "member": "j: R1-Distill-1.5B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "q: Cascade-2-30B-A3B <- Cascade-2-Math-Expert",
+        "status": "covered"
+      },
+      {
+        "member": "l: R1-Distill-7B <- Light-R1-14B",
+        "status": "covered"
+      },
+      {
+        "member": "k: R1-Distill-7B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "i: R1-Distill-1.5B <- JustRL-1.5B",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "Gemini form; correlation part of the claim is not encodable."
+  },
+  {
+    "id": "C13",
+    "paper": "2610.11519v1",
+    "forms": [
+      {
+        "table_ref": "2610.11519v1_T4",
+        "rule": "all_cmp",
+        "reading": "broad",
+        "rows": [
+          "Δ macro Avg@8",
+          "Δ macro Pass@8"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Effect of the teacher-peak branch > Sampled OPD > no weight",
+          "Effect of the teacher-peak branch > REINFORCE++ > λ=5",
+          "Effect of the teacher-peak branch > REINFORCE++ > λ=10",
+          "Effect of the teacher-peak branch > REINFORCE++ > λ=20",
+          "Effect of the teacher-peak branch > RA+REINFORCE++ > λ=5",
+          "Effect of the teacher-peak branch > RA+REINFORCE++ > λ=10",
+          "Effect of the teacher-peak branch > RA+REINFORCE++ > λ=20"
+        ],
+        "params": {
+          "op": "<",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11519v1_T2",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "Full RA (λ)",
+          "w/o student value baseline (γx)",
+          "w/o response centering (λ)"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro Avg@8 at weight > 5",
+          "Macro Avg@8 at weight > 10",
+          "Macro Avg@8 at weight > 20",
+          "Macro Pass@8 at weight > 5",
+          "Macro Pass@8 at weight > 10",
+          "Macro Pass@8 at weight > 20"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "Full RA (λ)",
+              "baseline": "w/o student value baseline (γx)"
+            },
+            {
+              "method": "Full RA (λ)",
+              "baseline": "w/o response centering (λ)"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Raw residual (w/o both, γ raw)",
+          "Direct L2 loss (α)",
+          "Verifier only (REINFORCE++)"
+        ],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Removing the student value baseline",
+        "status": "covered"
+      },
+      {
+        "member": "Removing response centering",
+        "status": "covered"
+      },
+      {
+        "member": "Replacing the probability residual with the log ratio",
+        "status": "other_table: Table 3"
+      },
+      {
+        "member": "Adding direct supervision of the teacher's top token with sampled OPD",
+        "status": "covered"
+      },
+      {
+        "member": "Adding direct supervision of the teacher's top token with REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "Adding direct supervision of the teacher's top token with RA+REINFORCE++",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [
+      "Table 4 caption: slightly helps sampled OPD but lowers both students trained with the verifier"
+    ],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT forms; wording judges (both): all methods, so all 7 columns of Table 4. Member 'log ratio' is in Table 3."
+  },
+  {
+    "id": "C14",
+    "paper": "2610.12114v1",
+    "forms": [
+      {
+        "table_ref": "2610.12114v1_T3",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "UTT (Ours)",
+          "SeqKD",
+          "Fine-tune-CoT",
+          "RSR",
+          "LUFFY"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Omni-MATH-2 > Acc.",
+          "KernelBench > Acc.",
+          "KernelBench > Fast1"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "UTT (Ours)",
+              "baseline": "SeqKD"
+            },
+            {
+              "method": "UTT (Ours)",
+              "baseline": "Fine-tune-CoT"
+            },
+            {
+              "method": "UTT (Ours)",
+              "baseline": "RSR"
+            },
+            {
+              "method": "UTT (Ours)",
+              "baseline": "LUFFY"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Student"
+        ],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "One-shot",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "Few-shot",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "Teacher summary",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "APE",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "MIPROv2 (instruction only)",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "MIPROv2 (Opsahl-Ong et al., 2024)",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "GEPA",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "SeqKD",
+        "status": "covered"
+      },
+      {
+        "member": "Fine-tune-CoT",
+        "status": "covered"
+      },
+      {
+        "member": "RSR",
+        "status": "covered"
+      },
+      {
+        "member": "LUFFY",
+        "status": "covered"
+      },
+      {
+        "member": "Knowledge-distillation methods in evaluated settings other than Pro→Qwen",
+        "status": "absent"
+      }
+    ],
+    "caveat_refs": [
+      "Table 3 caption: Comparison with KD methods under the Pro→Qwen setting"
+    ],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT form (2610.12114v1_chatgpt.txt). Other KD settings checked by Nitin in Tables 3 and 6: absent."
+  },
+  {
+    "id": "C15",
+    "paper": "2610.11519v1",
+    "forms": [
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - OPD"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Avg@8",
+          "Δ Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - GRPO",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+GRPO - RA+GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Avg@8"
+        ],
+        "params": {
+          "op": ">=",
+          "constant": 1.0,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+GRPO - RA+GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Avg@8"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 1.5,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": false
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "RA+REINFORCE++ versus teacher-only OPD for the 1.7B and 4B students, across macro Avg@8 and Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "RA+GRPO versus teacher-only OPD for the 1.7B and 4B students, across macro Avg@8 and Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "Co-RA+REINFORCE++ versus RA+REINFORCE++ for the 1.7B and 4B students, macro Avg@8",
+        "status": "covered"
+      },
+      {
+        "member": "Co-RA+GRPO versus RA+GRPO for the 1.7B and 4B students, macro Avg@8",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT forms (reading a: the two RA combinations vs Co-RA are separate groups). Excluded = all other T10 rows."
+  },
+  {
+    "id": "C16",
+    "paper": "2610.10871v1",
+    "forms": [
+      {
+        "table_ref": "2610.10871v1_T1",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MInfer > MASA",
+          "MInfer > Original",
+          "SeerAttn > MASA",
+          "SeerAttn > Original",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Llama > Original",
+          "FlexPrefill > Qwen > MASA",
+          "FlexPrefill > Qwen > Original"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "SeerAttn > MASA",
+              "baseline": "SeerAttn > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "SeerAttn > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.10871v1_T2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MInfer > MASA",
+          "MInfer > Original",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Llama > Original",
+          "FlexPrefill > Qwen > MASA",
+          "FlexPrefill > Qwen > Original"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "partial": false
+      },
+      {
+        "table_ref": "2610.10871v1_T3",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MASA",
+          "Original"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MASA",
+              "baseline": "Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "Full Attention"
+        ],
+        "partial": false
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Matched average gains on RULER across MInference, SeerAttention, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Matched average gains on InfiniteBench across MInference, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Matched average gains on LongBench for SeerAttention",
+        "status": "covered"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT forms (2610.10871v1_chatgpt.txt): 4 + 3 + 1 matched Original vs MASA pairs on Avg."
+  },
+  {
+    "id": "C17",
+    "paper": "2610.11519v1",
+    "forms": [
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Avg@8",
+          "Δ Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Avg@8"
+        ],
+        "params": {
+          "op": ">=",
+          "constant": 1.7,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Avg@8"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 3.6,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Pass@8"
+        ],
+        "params": {
+          "op": ">=",
+          "constant": 3.9,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": true
+      },
+      {
+        "table_ref": "2610.11519v1_T10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Δ Pass@8"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 6.3,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "All 24 benchmark-level comparisons: two student sizes × two algorithms × three benchmarks × two metrics",
+        "status": "other_table: Table 1"
+      },
+      {
+        "member": "1.7B RA+REINFORCE++ versus REINFORCE++ macro Avg@8 and Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "1.7B RA+GRPO versus GRPO macro Avg@8 and Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "4B RA+REINFORCE++ versus REINFORCE++ macro Avg@8 and Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "4B RA+GRPO versus GRPO macro Avg@8 and Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-1.7B-Base and Qwen3-4B-Base students with Qwen3-8B teacher",
+        "status": "other_table: Table 1"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "ChatGPT bound forms; the '> 0' form is added per decision (ChatGPT had only the bounds). '24 benchmark-level comparisons' lives in Table 1."
+  },
+  {
+    "id": "C18",
+    "paper": "2610.11519v1",
+    "forms": [
+      {
+        "table_ref": "2610.11519v1_T30",
+        "rule": "beats_baseline",
+        "reading": "narrow",
+        "rows": [
+          "Frozen q0",
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Avg@8",
+          "Macro > Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "Frozen q0",
+              "baseline": "Adapter, 1.7B + REINFORCE++"
+            },
+            {
+              "method": "Frozen q0",
+              "baseline": "Adapter, 1.7B + GRPO"
+            },
+            {
+              "method": "Frozen q0",
+              "baseline": "Adapter, 4B + REINFORCE++"
+            },
+            {
+              "method": "Frozen q0",
+              "baseline": "Adapter, 4B + GRPO"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "excluded_rows": [],
+        "partial": true
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Frozen Qwen3-8B teacher (q0)",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 1.7B + REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 1.7B + GRPO",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 4B + REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 4B + GRPO",
+        "status": "covered"
+      },
+      {
+        "member": "REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "GRPO",
+        "status": "covered"
+      },
+      {
+        "member": "Macro Avg@8",
+        "status": "covered"
+      },
+      {
+        "member": "Macro Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-1.7B-Base student improvement under Co-RA",
+        "status": "other_table: Table 1"
+      },
+      {
+        "member": "Qwen3-4B-Base student improvement under Co-RA",
+        "status": "other_table: Table 1"
+      }
+    ],
+    "caveat_refs": [],
+    "no_rule_reason": "",
+    "source_note": "Both judges (chatgpt_C18.json; gemini_C18.json truncated, forms only). Frozen teacher is the method (claim: adapted teachers score below it). Gap range 0.8–2.3 / 0.7–3.5 not encodable."
+  }
+]
