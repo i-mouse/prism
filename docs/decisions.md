@@ -3901,3 +3901,41 @@ caveat may justify Partially Supported (test later).
 
 **Money:** T2-R is INR 0 (no LLM calls). Unchanged: auditor stage 173.23
 of 560 spent; sealed reserve 300 untouched.
+
+## T2-R result: FAIL (4/10 misses, 2/5 hard, 0 false rejections) - 2026-10-31
+**Result (applied mechanically, not re-read):** docs/evals/auditor_rd/
+t2r_results_2026-10-31.md. INR 0. Run-1 baseline reproduced first (8/31).
+- Mark 1 Gain: 4 of 10 misses fixed (need 4) - met; hard rows 2 of 5
+  (need 3) - not met. FAIL.
+- Mark 2 Faithful (official: pinned breaking cell or structural fact):
+  4/10, 2/5 hard. FAIL. Cells-only variant (information): 2/10, 0 hard.
+- Mark 3: 0 of 10 S rows lowered by code. PASS.
+- Mark 4: 2 of 10 S rows set to Needs review by code (C17, C18; limit 2).
+  PASS.
+- Mark 5: 43 tests pass; two runs byte-identical. PASS.
+- With code checks the dev count would move 8 -> 12 of 31 with 0 false
+  rejections, but T2-R is FAIL by its pre-registered marks. No rescue.
+
+**Per miss:** fixed - P1-R1 (number breaks claim), P4-R1 (numbers break
+claim), P4-R2 (claimed comparison absent from the whole paper), P11-R2
+(KD compared only under Pro->Qwen). Not fixed - P3-R2 (Mean reading
+holds; other-table member + caveat -> Needs review), P5-R2 (counts hold;
+the problem is a semantic duplicate), P6-R2 (no form: "twelve VLMs"
+refers to the main evaluation), P5-R1 (figure), P7-R1 and P8-R2 (prose).
+
+**What it means:** code checks on correct tables are precise but narrow.
+The hardest misses are about what a claim means and covers (two
+readings, hidden duplicates, scope, small print), not about table
+reading. Per the 2026-10-29 entry, T2-R FAIL means the table path alone
+is not the fix for these misses; T1b (PDF table extraction) and T3 (LLM
+mapper) are not started.
+
+**Next:** a new dated entry designs the next auditor route after an
+analysis of all 10 misses (why 4 were fixed, why 6 were not), grouped by
+failure type with fix and cost per group. Candidates: claim-meaning
+auditing, the 13 extraction misses, and code checks as a precision
+add-on (each needs its own pre-registered test). No release with the
+current auditor (2026-10-29) still holds.
+
+**Money:** unchanged. Auditor stage 173.23 of 560 spent; sealed reserve
+300 untouched.
