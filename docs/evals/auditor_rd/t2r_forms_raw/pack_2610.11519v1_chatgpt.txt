@@ -1,0 +1,568 @@
+[
+  {
+    "id": "C02",
+    "table_check": [
+      {
+        "table": "Table 2",
+        "rows_pdf": 8,
+        "cols_pdf": 7,
+        "rows_grid": 8,
+        "cols_grid": 7,
+        "differences": [
+          {
+            "cell": "Raw residual (w/o both, γ raw) / Variant (weight)",
+            "grid": "Raw residual (w/o both, γ raw)",
+            "pdf": "Raw residual (w/o both, γraw)"
+          }
+        ],
+        "last_row_quote": "Verifier only (REINFORCE++) 25.67 39.44"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "Full RA (λ)",
+          "w/o student value baseline (γx)",
+          "w/o response centering (λ)",
+          "Raw residual (w/o both, γ raw)"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro Avg@8 at weight > 5",
+          "Macro Avg@8 at weight > 10",
+          "Macro Avg@8 at weight > 20",
+          "Macro Pass@8 at weight > 5",
+          "Macro Pass@8 at weight > 10",
+          "Macro Pass@8 at weight > 20"
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["Full RA (λ)", "Verifier only (REINFORCE++)"],
+            ["w/o student value baseline (γx)", "Verifier only (REINFORCE++)"],
+            ["w/o response centering (λ)", "Verifier only (REINFORCE++)"],
+            ["Raw residual (w/o both, γ raw)", "Verifier only (REINFORCE++)"]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "Direct L2 loss (α) — not identified as a residual variant in the claim's wording."
+        ],
+        "caveat_refs": [
+          {
+            "location": "Table 2 caption, PDF page 7",
+            "quote": "Qwen3-1.7B-Base with REINFORCE++; three-seed macro means in %."
+          }
+        ]
+      },
+      {
+        "table": "Table 2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": ["Full RA (λ)"],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro Avg@8 at weight > 5",
+          "Macro Avg@8 at weight > 10",
+          "Macro Avg@8 at weight > 20",
+          "Macro Pass@8 at weight > 5",
+          "Macro Pass@8 at weight > 10",
+          "Macro Pass@8 at weight > 20"
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["Full RA (λ)", "w/o student value baseline (γx)"],
+            ["Full RA (λ)", "w/o response centering (λ)"],
+            ["Full RA (λ)", "Raw residual (w/o both, γ raw)"],
+            ["Full RA (λ)", "Direct L2 loss (α)"],
+            ["Full RA (λ)", "Verifier only (REINFORCE++)"]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Table 2 caption, PDF page 7",
+            "quote": "Qwen3-1.7B-Base with REINFORCE++; three-seed macro means in %."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "Full RA versus verifier-only training at every tested weight", "status": "covered"},
+      {"member": "Without student value baseline versus verifier-only training at every tested weight", "status": "covered"},
+      {"member": "Without response centering versus verifier-only training at every tested weight", "status": "covered"},
+      {"member": "Raw residual without both operations versus verifier-only training at every tested weight", "status": "covered"},
+      {"member": "Full RA versus every control at every matched weight", "status": "covered"}
+    ],
+    "no_rule_reason": "",
+    "notes": "The first clause covers the residual variants, while Direct L2 loss is included as a control in the second clause. The verifier-only values are displayed once and span the three weight columns for each metric. No exact ties are present."
+  },
+  {
+    "id": "C13",
+    "table_check": [
+      {
+        "table": "Table 4",
+        "rows_pdf": 5,
+        "cols_pdf": 8,
+        "rows_grid": 5,
+        "cols_grid": 8,
+        "differences": [
+          {"cell": "Δ macro Avg@8 / (empty column key)", "grid": "Δ macro Avg@8", "pdf": "∆ macro Avg@8"},
+          {"cell": "Δ macro Avg@8 / Effect of the teacher-peak branch > REINFORCE++ > λ=5", "grid": "-0.38", "pdf": "−0.38"},
+          {"cell": "Δ macro Avg@8 / Effect of the teacher-peak branch > REINFORCE++ > λ=10", "grid": "-0.88", "pdf": "−0.88"},
+          {"cell": "Δ macro Avg@8 / Effect of the teacher-peak branch > REINFORCE++ > λ=20", "grid": "-1.76", "pdf": "−1.76"},
+          {"cell": "Δ macro Avg@8 / Effect of the teacher-peak branch > RA+REINFORCE++ > λ=5", "grid": "-2.05", "pdf": "−2.05"},
+          {"cell": "Δ macro Avg@8 / Effect of the teacher-peak branch > RA+REINFORCE++ > λ=10", "grid": "-2.07", "pdf": "−2.07"},
+          {"cell": "Δ macro Avg@8 / Effect of the teacher-peak branch > RA+REINFORCE++ > λ=20", "grid": "-2.16", "pdf": "−2.16"},
+          {"cell": "Δ macro Pass@8 / (empty column key)", "grid": "Δ macro Pass@8", "pdf": "∆ macro Pass@8"},
+          {"cell": "Δ macro Pass@8 / Effect of the teacher-peak branch > REINFORCE++ > λ=5", "grid": "-0.46", "pdf": "−0.46"},
+          {"cell": "Δ macro Pass@8 / Effect of the teacher-peak branch > REINFORCE++ > λ=10", "grid": "-0.86", "pdf": "−0.86"},
+          {"cell": "Δ macro Pass@8 / Effect of the teacher-peak branch > REINFORCE++ > λ=20", "grid": "-2.11", "pdf": "−2.11"},
+          {"cell": "Δ macro Pass@8 / Effect of the teacher-peak branch > RA+REINFORCE++ > λ=5", "grid": "-3.91", "pdf": "−3.91"},
+          {"cell": "Δ macro Pass@8 / Effect of the teacher-peak branch > RA+REINFORCE++ > λ=10", "grid": "-3.41", "pdf": "−3.41"},
+          {"cell": "Δ macro Pass@8 / Effect of the teacher-peak branch > RA+REINFORCE++ > λ=20", "grid": "-3.89", "pdf": "−3.89"}
+        ],
+        "last_row_quote": "∆ macro Pass@8 +0.64 −0.46 −0.86 −2.11 −3.91 −3.41 −3.89"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": ["Full RA (λ)"],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro Avg@8 at weight > 5",
+          "Macro Avg@8 at weight > 10",
+          "Macro Avg@8 at weight > 20",
+          "Macro Pass@8 at weight > 5",
+          "Macro Pass@8 at weight > 10",
+          "Macro Pass@8 at weight > 20"
+        ],
+        "params": {
+          "op": null, "constant": null, "polarity": "higher", "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["Full RA (λ)", "w/o student value baseline (γx)"],
+            ["Full RA (λ)", "w/o response centering (λ)"]
+          ],
+          "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Raw residual (w/o both, γ raw)",
+          "Direct L2 loss (α)",
+          "Verifier only (REINFORCE++)"
+        ],
+        "caveat_refs": [
+          {"location": "Table 2 caption, PDF page 7", "quote": "Qwen3-1.7B-Base with REINFORCE++; three-seed macro means in %."}
+        ]
+      },
+      {
+        "table": "Table 3 (not included in pack)",
+        "rule": "none",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null, "constant": null, "polarity": null, "tolerance": 0,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 4",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["Δ macro Avg@8", "Δ macro Pass@8"],
+        "rows_by_columns": [],
+        "columns": [
+          "Effect of the teacher-peak branch > Sampled OPD > no weight",
+          "Effect of the teacher-peak branch > REINFORCE++ > λ=5",
+          "Effect of the teacher-peak branch > REINFORCE++ > λ=10",
+          "Effect of the teacher-peak branch > REINFORCE++ > λ=20",
+          "Effect of the teacher-peak branch > RA+REINFORCE++ > λ=5",
+          "Effect of the teacher-peak branch > RA+REINFORCE++ > λ=10",
+          "Effect of the teacher-peak branch > RA+REINFORCE++ > λ=20"
+        ],
+        "params": {
+          "op": "<", "constant": 0, "polarity": null, "tolerance": 0,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {"location": "Table 4 caption, PDF page 8", "quote": "The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier."}
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "Removing the student value baseline", "status": "covered"},
+      {"member": "Removing response centering", "status": "covered"},
+      {"member": "Replacing the probability residual with the log ratio", "status": "other_table: Table 3"},
+      {"member": "Adding direct supervision of the teacher's top token with sampled OPD", "status": "covered"},
+      {"member": "Adding direct supervision of the teacher's top token with REINFORCE++", "status": "covered"},
+      {"member": "Adding direct supervision of the teacher's top token with RA+REINFORCE++", "status": "covered"}
+    ],
+    "no_rule_reason": "The log-ratio comparison is in Table 3, which is not included in the pack. The Table 4 form includes every displayed base method because the claim does not specify a narrower method scope.",
+    "notes": "The scope of 'performance' is represented by both macro Avg@8 and macro Pass@8. The claim does not restrict direct teacher-top-token supervision to verifier-trained methods. Table 4 includes Sampled OPD, REINFORCE++, and RA+REINFORCE++. No exact ties are present."
+  },
+  {
+    "id": "C15",
+    "table_check": [
+      {
+        "table": "Table 10",
+        "rows_pdf": 18,
+        "cols_pdf": 4,
+        "rows_grid": 18,
+        "cols_grid": 4,
+        "differences": [
+          {"cell": "header / Δ Avg@8", "grid": "Δ Avg@8", "pdf": "∆ Avg@8"},
+          {"cell": "header / Δ Pass@8", "grid": "Δ Pass@8", "pdf": "∆ Pass@8"},
+          {"cell": "1.7B > RA+REINFORCE++ - REINFORCE++ / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - REINFORCE++", "pdf": "RA+REINFORCE++ − REINFORCE++"},
+          {"cell": "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++ / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - RA+REINFORCE++", "pdf": "Co-RA+REINFORCE++ − RA+REINFORCE++"},
+          {"cell": "1.7B > RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - OPD", "pdf": "RA+REINFORCE++ − OPD"},
+          {"cell": "1.7B > Co-RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - OPD", "pdf": "Co-RA+REINFORCE++ − OPD"},
+          {"cell": "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++ / Comparison (macro, pp)", "grid": "RA+REINFORCE++ with branch - RA+REINFORCE++", "pdf": "RA+REINFORCE++ with branch − RA+REINFORCE++"},
+          {"cell": "1.7B > RA+GRPO - GRPO / Comparison (macro, pp)", "grid": "RA+GRPO - GRPO", "pdf": "RA+GRPO − GRPO"},
+          {"cell": "1.7B > Co-RA+GRPO - RA+GRPO / Comparison (macro, pp)", "grid": "Co-RA+GRPO - RA+GRPO", "pdf": "Co-RA+GRPO − RA+GRPO"},
+          {"cell": "1.7B > RA+GRPO - OPD / Comparison (macro, pp)", "grid": "RA+GRPO - OPD", "pdf": "RA+GRPO − OPD"},
+          {"cell": "1.7B > Co-RA+GRPO - OPD / Comparison (macro, pp)", "grid": "Co-RA+GRPO - OPD", "pdf": "Co-RA+GRPO − OPD"},
+          {"cell": "4B > RA+REINFORCE++ - REINFORCE++ / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - REINFORCE++", "pdf": "RA+REINFORCE++ − REINFORCE++"},
+          {"cell": "4B > Co-RA+REINFORCE++ - RA+REINFORCE++ / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - RA+REINFORCE++", "pdf": "Co-RA+REINFORCE++ − RA+REINFORCE++"},
+          {"cell": "4B > RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - OPD", "pdf": "RA+REINFORCE++ − OPD"},
+          {"cell": "4B > Co-RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - OPD", "pdf": "Co-RA+REINFORCE++ − OPD"},
+          {"cell": "4B > RA+GRPO - GRPO / Comparison (macro, pp)", "grid": "RA+GRPO - GRPO", "pdf": "RA+GRPO − GRPO"},
+          {"cell": "4B > Co-RA+GRPO - RA+GRPO / Comparison (macro, pp)", "grid": "Co-RA+GRPO - RA+GRPO", "pdf": "Co-RA+GRPO − RA+GRPO"},
+          {"cell": "4B > RA+GRPO - OPD / Comparison (macro, pp)", "grid": "RA+GRPO - OPD", "pdf": "RA+GRPO − OPD"},
+          {"cell": "4B > Co-RA+GRPO - OPD / Comparison (macro, pp)", "grid": "Co-RA+GRPO - OPD", "pdf": "Co-RA+GRPO − OPD"}
+        ],
+        "last_row_quote": "4B Co-RA+GRPO − OPD +3.99 +3.82"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - OPD"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Avg@8", "Δ Pass@8"],
+        "params": {
+          "op": ">", "constant": 0, "polarity": null, "tolerance": 0,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+GRPO - RA+GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Avg@8"],
+        "params": {
+          "op": ">=", "constant": 1.0, "polarity": null, "tolerance": 0.05,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+GRPO - RA+GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Avg@8"],
+        "params": {
+          "op": "<=", "constant": 1.5, "polarity": null, "tolerance": 0.05,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "1.7B > RA+GRPO - OPD",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+REINFORCE++ - OPD",
+          "4B > RA+GRPO - GRPO",
+          "4B > RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "RA+REINFORCE++ versus teacher-only OPD for the 1.7B and 4B students, across macro Avg@8 and Pass@8", "status": "covered"},
+      {"member": "RA+GRPO versus teacher-only OPD for the 1.7B and 4B students, across macro Avg@8 and Pass@8", "status": "covered"},
+      {"member": "Co-RA+REINFORCE++ versus RA+REINFORCE++ for the 1.7B and 4B students, macro Avg@8", "status": "covered"},
+      {"member": "Co-RA+GRPO versus RA+GRPO for the 1.7B and 4B students, macro Avg@8", "status": "covered"}
+    ],
+    "no_rule_reason": "",
+    "notes": "Both combinations are read as RA+REINFORCE++ and RA+GRPO. The Co-RA range is read across both student sizes and both underlying algorithms. The range forms apply only to Avg@8, as stated. No exact ties are present."
+  },
+  {
+    "id": "C17",
+    "table_check": [
+      {
+        "table": "Table 10",
+        "rows_pdf": 18,
+        "cols_pdf": 4,
+        "rows_grid": 18,
+        "cols_grid": 4,
+        "differences": [
+          {"cell": "header / Δ Avg@8", "grid": "Δ Avg@8", "pdf": "∆ Avg@8"},
+          {"cell": "header / Δ Pass@8", "grid": "Δ Pass@8", "pdf": "∆ Pass@8"},
+          {"cell": "1.7B > RA+REINFORCE++ - REINFORCE++ / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - REINFORCE++", "pdf": "RA+REINFORCE++ − REINFORCE++"},
+          {"cell": "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++ / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - RA+REINFORCE++", "pdf": "Co-RA+REINFORCE++ − RA+REINFORCE++"},
+          {"cell": "1.7B > RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - OPD", "pdf": "RA+REINFORCE++ − OPD"},
+          {"cell": "1.7B > Co-RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - OPD", "pdf": "Co-RA+REINFORCE++ − OPD"},
+          {"cell": "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++ / Comparison (macro, pp)", "grid": "RA+REINFORCE++ with branch - RA+REINFORCE++", "pdf": "RA+REINFORCE++ with branch − RA+REINFORCE++"},
+          {"cell": "1.7B > RA+GRPO - GRPO / Comparison (macro, pp)", "grid": "RA+GRPO - GRPO", "pdf": "RA+GRPO − GRPO"},
+          {"cell": "1.7B > Co-RA+GRPO - RA+GRPO / Comparison (macro, pp)", "grid": "Co-RA+GRPO - RA+GRPO", "pdf": "Co-RA+GRPO − RA+GRPO"},
+          {"cell": "1.7B > RA+GRPO - OPD / Comparison (macro, pp)", "grid": "RA+GRPO - OPD", "pdf": "RA+GRPO − OPD"},
+          {"cell": "1.7B > Co-RA+GRPO - OPD / Comparison (macro, pp)", "grid": "Co-RA+GRPO - OPD", "pdf": "Co-RA+GRPO − OPD"},
+          {"cell": "4B > RA+REINFORCE++ - REINFORCE++ / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - REINFORCE++", "pdf": "RA+REINFORCE++ − REINFORCE++"},
+          {"cell": "4B > Co-RA+REINFORCE++ - RA+REINFORCE++ / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - RA+REINFORCE++", "pdf": "Co-RA+REINFORCE++ − RA+REINFORCE++"},
+          {"cell": "4B > RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "RA+REINFORCE++ - OPD", "pdf": "RA+REINFORCE++ − OPD"},
+          {"cell": "4B > Co-RA+REINFORCE++ - OPD / Comparison (macro, pp)", "grid": "Co-RA+REINFORCE++ - OPD", "pdf": "Co-RA+REINFORCE++ − OPD"},
+          {"cell": "4B > RA+GRPO - GRPO / Comparison (macro, pp)", "grid": "RA+GRPO - GRPO", "pdf": "RA+GRPO − GRPO"},
+          {"cell": "4B > Co-RA+GRPO - RA+GRPO / Comparison (macro, pp)", "grid": "Co-RA+GRPO - RA+GRPO", "pdf": "Co-RA+GRPO − RA+GRPO"},
+          {"cell": "4B > RA+GRPO - OPD / Comparison (macro, pp)", "grid": "RA+GRPO - OPD", "pdf": "RA+GRPO − OPD"},
+          {"cell": "4B > Co-RA+GRPO - OPD / Comparison (macro, pp)", "grid": "Co-RA+GRPO - OPD", "pdf": "Co-RA+GRPO − OPD"}
+        ],
+        "last_row_quote": "4B Co-RA+GRPO − OPD +3.99 +3.82"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 10",
+        "rule": "none",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null, "constant": null, "polarity": null, "tolerance": 0,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "The 24 benchmark-level comparisons are not represented by the macro-only rows in Table 10."
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Differences of three-seed macro means from Tables 1, 19, and 4, in percentage points."}
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Avg@8"],
+        "params": {
+          "op": ">=", "constant": 1.7, "polarity": null, "tolerance": 0.05,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Avg@8"],
+        "params": {
+          "op": "<=", "constant": 3.6, "polarity": null, "tolerance": 0.05,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Pass@8"],
+        "params": {
+          "op": ">=", "constant": 3.9, "polarity": null, "tolerance": 0.05,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "1.7B > RA+REINFORCE++ - REINFORCE++",
+          "1.7B > RA+GRPO - GRPO",
+          "4B > RA+REINFORCE++ - REINFORCE++",
+          "4B > RA+GRPO - GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Δ Pass@8"],
+        "params": {
+          "op": "<=", "constant": 6.3, "polarity": null, "tolerance": 0.05,
+          "k": null, "pairs": [], "count": null, "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "1.7B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "1.7B > Co-RA+REINFORCE++ - OPD",
+          "1.7B > RA+REINFORCE++ with branch - RA+REINFORCE++",
+          "1.7B > Co-RA+GRPO - RA+GRPO",
+          "1.7B > Co-RA+GRPO - OPD",
+          "4B > Co-RA+REINFORCE++ - RA+REINFORCE++",
+          "4B > Co-RA+REINFORCE++ - OPD",
+          "4B > Co-RA+GRPO - RA+GRPO",
+          "4B > Co-RA+GRPO - OPD"
+        ],
+        "caveat_refs": [
+          {"location": "Table 10 caption, PDF page 22", "quote": "Each mean and difference is computed from raw counts before rounding; subtracting the displayed macro columns can differ by 0.01."}
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "All 24 benchmark-level comparisons: two student sizes × two algorithms × three benchmarks × two metrics", "status": "other_table: Table 1"},
+      {"member": "1.7B RA+REINFORCE++ versus REINFORCE++ macro Avg@8 and Pass@8", "status": "covered"},
+      {"member": "1.7B RA+GRPO versus GRPO macro Avg@8 and Pass@8", "status": "covered"},
+      {"member": "4B RA+REINFORCE++ versus REINFORCE++ macro Avg@8 and Pass@8", "status": "covered"},
+      {"member": "4B RA+GRPO versus GRPO macro Avg@8 and Pass@8", "status": "covered"},
+      {"member": "Qwen3-1.7B-Base and Qwen3-4B-Base students with Qwen3-8B teacher", "status": "other_table: Table 1"}
+    ],
+    "no_rule_reason": "The pack contains Table 10 macro differences, not the benchmark-level cells for the 24 comparisons. Those comparisons require Table 1, which is outside the pack.",
+    "notes": "The four Table 10 rows compare RA with its underlying sequence-advantage algorithm, across both student sizes and both algorithms. The four range forms cover only macro differences. Co-RA rows and the teacher-peak-branch row are excluded because the claim specifies RA. The Table 10 caption identifies these as macro differences derived from Tables 1, 19, and 4. No exact ties are present."
+  }
+]

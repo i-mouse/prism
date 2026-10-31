@@ -3827,3 +3827,77 @@ for Step P: arxiv.org source downloads only. Held-out, sealed,
 raw_text_cache/, LABEL_RUBRIC.md, exp3_targets.json and .env stay closed.
 Money unchanged: auditor stage 173.23 of 560 spent; sealed reserve 300
 untouched.
+
+## T2-R inputs: form policies, adjudication, findings - 2026-10-30
+**Status:** written before any T2-R code check runs. Governs the forms
+file docs/evals/auditor_rd/t2r_forms_final_2026-10-30.json (assembled
+after this entry and validated against the reference tables).
+
+**Inputs built (committed):** Step P LaTeX probe
+(stepP_latex_probe_2026-10-29.md); reference tables from LaTeX
+(t2r_refs/, t2r_refs_report_2026-10-29.md, t2r_refs_addendum_2026-10-30.md);
+pin resolution P3-T9-13 (.607 -> .605, from the PDF page); S rows
+(t2r_s_rows_2026-10-29.json; replacements P1-S1 -> P1-S2, P7-S2 -> P1-S3,
+P11-S8 -> P1-S6; P2-S2 (C11, no rule fits) -> P1-S8 (C18)); blind pack
+and key.
+
+**How the forms were written:** 17 items (7 miss rows of class T/C, 10 S
+rows), blind (no labels, no row ids). Two independent judges per paper:
+ChatGPT (Thinking, temporary chat) and Gemini (Argon, medium thinking),
+one PDF and one pack per chat. Round 1 (all papers in one chat) was
+discarded as overloaded. Wording questions were answered by both judges
+from the claim text only (no numbers); a split was decided by Nitin from
+the wording only.
+
+**Form policies:** A) a form per NECESSARY part of a claim; "partial"
+if the forms do not cover the whole claim; never a narrower reading.
+B) several forms per table allowed. C) a range x-y = two checks (>= x,
+<= y); tolerance half a unit of the claim's last digit, one unit for
+"~"/"about". D) rows by exact key path or by column values. E) claimed
+members: covered / other table / absent from the whole paper; only
+listable members (models, methods, datasets, settings, benchmarks).
+F) comparisons strict unless the claim allows equality. G) ambiguous
+scope -> both readings; judges decide from wording; split -> Nitin;
+unresolved -> the weaker reading.
+
+**How code uses a form (first match wins):** a number contradicts the
+claim -> PS; a needed cell is missing or unreadable -> Needs review; a
+claimed member is absent from the whole paper -> PS; a member is only
+in another table, an exact tie on a strict comparison, or a kept caveat
+-> Needs review; else holds. Merge with the run-1 auditor label:
+can-only-lower; Needs review only replaces Supported. Partial forms
+that hold change nothing.
+
+**Caveats:** count only if both judges cite the same sentence in round 2
+and it limits the claim's scope. Kept: C01, C08, C13, C14.
+
+**Marks 3 and 4 (clarified before any run):** they count S rows whose
+CODE result lowers the label or sets Needs review. S rows already
+lowered by the run-1 auditor are reported separately. Marks 1-5 and
+Needs-review scoring are otherwise unchanged.
+
+**Decisions by Nitin:** C06 reading = every column (wording only); C14
+knowledge-distillation comparison in other settings = absent (Tables 3,
+6 are Pro->Qwen only); C04 raw FlexPrefill-Llama comparison = absent
+(Tables 4, 9, 10); C03 ChatGPT encoding accepted (same logic as the
+claim); caveat rule strict.
+
+**Deviations (recorded, not hidden):** P3 pin fixed by a direct page read,
+not the two-judge route; final Gemini answers used medium thinking, two
+Flash-Lite answers were replaced; the adjudicator (Claude) could infer
+which items were misses, so readings were set by blind wording judges
+and Nitin; Nitin saw table values only for existence checks (C04, C14),
+not before deciding C06; rule tension kept as written: "other table" ->
+Needs review, while partial forms that hold -> no change.
+
+**Findings:** already in v2: the table reader handles links, dashes,
+citations, drawings and sub-tables; rows by column values; rounding
+tolerance; ties -> Needs review. Not in v2 yet (later, each with its own
+pre-registered test): PDF tools lose row groups (fix PDF table reading,
+T1b); claims needing arithmetic (differences, averages, correlation)
+cannot be checked (C11 had no form); wording that can be read two ways
+changes the verdict (product idea: show both readings); a scope-limiting
+caveat may justify Partially Supported (test later).
+
+**Money:** T2-R is INR 0 (no LLM calls). Unchanged: auditor stage 173.23
+of 560 spent; sealed reserve 300 untouched.

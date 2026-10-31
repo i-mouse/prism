@@ -1,0 +1,220 @@
+[ { “id”: “C09”, “table_check”: [ { “table”: “Table 3”, “rows_pdf”: 19,
+“cols_pdf”: 8, “rows_grid”: 19, “cols_grid”: 8, “differences”: [ {
+“cell”: “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K /
+Gain > Last-step”, “grid”: “-0.1”, “pdf”: “−0.1” }, { “cell”: “l >
+R1-Distill-7B > Light-R1-14B > T > 16K / Gain > Last-step”, “grid”:
+“-1.7”, “pdf”: “−1.7” }, { “cell”: “l > R1-Distill-7B > Light-R1-14B >
+T > 16K / Gain > AUC”, “grid”: “-0.30”, “pdf”: “−0.30” }, { “cell”: “k >
+R1-Distill-7B > Polaris-7B > T > 16K / Gain > Last-step”, “grid”:
+“-2.6”, “pdf”: “−2.6” }, { “cell”: “k > R1-Distill-7B > Polaris-7B > T >
+16K / Gain > AUC”, “grid”: “-0.68”, “pdf”: “−0.68” }, { “cell”: “i >
+R1-Distill-1.5B > JustRL-1.5B > T > 16K / Gain > AUC”, “grid”: “-1.36”,
+“pdf”: “−1.36” } ], “last_row_quote”: “i R1-Distill-1.5B JustRL-1.5B T
+16K 79.7 +1.4 −1.36” } ], “forms”: [ { “table”: “Table 3”, “rule”:
+“count_rows”, “reading”: “only”, “rows”: [ “n > Qwen3-1.7B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “a > Qwen3-1.7B >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [], “params”: { “op”: “==”,
+“constant”: null, “polarity”: null, “tolerance”: 0, “k”: null, “pairs”:
+[], “count”: 17, “distinct_on”: [] }, “partial”: true, “excluded_rows”:
+[], “caveat_refs”: [ { “location”: “PDF p. 13, Table 3 caption”,
+“quote”: “All 17 teacher–student pairs, sorted by AUC gain of Semi-OPD
+over OPD.” }, { “location”: “PDF p. 13, Table 3 caption”, “quote”: “†
+Evaluated with a 40,960-token response limit; all other pairs use
+32,768.” } ] }, { “table”: “Table 3”, “rule”: “count_rows”, “reading”:
+“only”, “rows”: [ “n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K”,
+“a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [ “Mode” ], “params”: { “op”: “==”,
+“constant”: null, “polarity”: null, “tolerance”: 0, “k”: null, “pairs”:
+[], “count”: 2, “distinct_on”: [ “Mode” ] }, “partial”: true,
+“excluded_rows”: [], “caveat_refs”: [ { “location”: “PDF p. 13, Table 3
+caption”, “quote”: “Mode: T = thinking / long chain-of-thought, NT =
+non-thinking.” } ] }, { “table”: “Table 3”, “rule”: “none”, “reading”:
+“only”, “rows”: [ “n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K”,
+“a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [ “Student”, “Teacher” ], “params”: {
+“op”: null, “constant”: null, “polarity”: null, “tolerance”: 0, “k”:
+null, “pairs”: [], “count”: null, “distinct_on”: [] }, “partial”: true,
+“excluded_rows”: [], “caveat_refs”: [ { “location”: “PDF p. 13, Table 3
+caption”, “quote”: “Model names link to the exact Hugging Face
+checkpoints used.” } ] }, { “table”: “Table 3”, “rule”: “none”,
+“reading”: “only”, “rows”: [ “n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking >
+T > 16K”, “a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K”, “p >
+Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [ “Student”, “Teacher” ], “params”: {
+“op”: null, “constant”: null, “polarity”: null, “tolerance”: 0, “k”:
+null, “pairs”: [], “count”: null, “distinct_on”: [] }, “partial”: true,
+“excluded_rows”: [], “caveat_refs”: [] }, { “table”: “Table 3”, “rule”:
+“none”, “reading”: “only”, “rows”: [ “n > Qwen3-1.7B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “a > Qwen3-1.7B >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [ “Student”, “Teacher” ], “params”: {
+“op”: null, “constant”: null, “polarity”: null, “tolerance”: 0, “k”:
+null, “pairs”: [], “count”: null, “distinct_on”: [] }, “partial”: true,
+“excluded_rows”: [], “caveat_refs”: [] } ], “claimed_group”: [ {
+“member”: “17 teacher–student pairs”, “status”: “covered” }, { “member”:
+“1.5B–235B parameter span”, “status”: “covered” }, { “member”: “three
+model families”, “status”: “covered” }, { “member”: “thinking and
+non-thinking modes”, “status”: “covered” }, { “member”: “most commonly
+used student–teacher pairs in the OPD literature”, “status”: “absent” }
+], “no_rule_reason”: “Table 3 has no numeric parameter-count field or
+explicit family field; parameter sizes and family identities are
+embedded in model-name labels. No permitted rule can test those aspects
+as structured values. The table also contains no literature-frequency
+evidence for the phrase ‘most commonly used’.”, “notes”: “Row counts
+include both header rows: 17 data rows plus 2 header rows. The six
+listed cell differences are typographical minus-sign differences (ASCII
+hyphen in the grid versus mathematical minus in the PDF).” }, { “id”:
+“C12”, “table_check”: [ { “table”: “Table 3”, “rows_pdf”: 19,
+“cols_pdf”: 8, “rows_grid”: 19, “cols_grid”: 8, “differences”: [ {
+“cell”: “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K /
+Gain > Last-step”, “grid”: “-0.1”, “pdf”: “−0.1” }, { “cell”: “l >
+R1-Distill-7B > Light-R1-14B > T > 16K / Gain > Last-step”, “grid”:
+“-1.7”, “pdf”: “−1.7” }, { “cell”: “l > R1-Distill-7B > Light-R1-14B >
+T > 16K / Gain > AUC”, “grid”: “-0.30”, “pdf”: “−0.30” }, { “cell”: “k >
+R1-Distill-7B > Polaris-7B > T > 16K / Gain > Last-step”, “grid”:
+“-2.6”, “pdf”: “−2.6” }, { “cell”: “k > R1-Distill-7B > Polaris-7B > T >
+16K / Gain > AUC”, “grid”: “-0.68”, “pdf”: “−0.68” }, { “cell”: “i >
+R1-Distill-1.5B > JustRL-1.5B > T > 16K / Gain > AUC”, “grid”: “-1.36”,
+“pdf”: “−1.36” } ], “last_row_quote”: “i R1-Distill-1.5B JustRL-1.5B T
+16K 79.7 +1.4 −1.36” } ], “forms”: [ { “table”: “Table 3”, “rule”:
+“count_rows”, “reading”: “only”, “rows”: [ “n > Qwen3-1.7B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “a > Qwen3-1.7B >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [], “params”: { “op”: “==”,
+“constant”: null, “polarity”: null, “tolerance”: 0, “k”: null, “pairs”:
+[], “count”: 17, “distinct_on”: [] }, “partial”: true, “excluded_rows”:
+[], “caveat_refs”: [ { “location”: “PDF p. 13, Table 3 caption”,
+“quote”: “All 17 teacher–student pairs, sorted by AUC gain of Semi-OPD
+over OPD.” } ] }, { “table”: “Table 3”, “rule”: “none”, “reading”:
+“only”, “rows”: [ “n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K”,
+“a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [ “Init. > Overlap”, “Gain > AUC” ],
+“params”: { “op”: null, “constant”: null, “polarity”: null, “tolerance”:
+0, “k”: null, “pairs”: [], “count”: null, “distinct_on”: [] },
+“partial”: true, “excluded_rows”: [], “caveat_refs”: [ { “location”:
+“PDF p. 13, Table 3 caption”, “quote”: “Overlap: top-64 overlap between
+the initial student and the teacher, in %.” }, { “location”: “PDF p. 13,
+Table 3 caption”, “quote”: “AUC: signed area between the two accuracy
+curves over the steps both methods evaluated” }, { “location”: “PDF
+p. 2, Figure 2 caption”, “quote”: “Accuracy gain is the area between the
+Semi-OPD and OPD accuracy curves divided by their shared training
+horizon.” } ] }, { “table”: “Table 3”, “rule”: “none”, “reading”:
+“only”, “rows”: [ “n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K”,
+“a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K”, “p > Qwen3-4B >
+Qwen3-30B-A3B-Thinking > T > 16K”, “o > Qwen3-14B >
+Qwen3-235B-A22B-Thinking > T > 16K”, “b > Qwen3-1.7B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “f > Qwen3-4B >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “c > Qwen3-1.7B >
+Qwen3-235B-A22B-Instruct-2507 > NT > 4K”, “g > Qwen3-1.7B (SFT) >
+Qwen3-4B-Instruct-2507 > NT > 4K”, “h > Qwen3-4B (SFT) >
+Qwen3-30B-A3B-Instruct-2507 > NT > 4K”, “d > Qwen3-1.7B > Qwen3-4B >
+NT > 4K”, “m > R1-Distill-7B > DeepCoder-14B > T > 16K”, “e >
+Qwen3-1.7B > Qwen3-8B > NT > 4K”, “j > R1-Distill-1.5B > Polaris-7B >
+T > 16K”, “q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K”,
+“l > R1-Distill-7B > Light-R1-14B > T > 16K”, “k > R1-Distill-7B >
+Polaris-7B > T > 16K”, “i > R1-Distill-1.5B > JustRL-1.5B > T > 16K” ],
+“rows_by_columns”: [], “columns”: [ “Init. > Overlap”, “Gain > AUC” ],
+“params”: { “op”: null, “constant”: null, “polarity”: null, “tolerance”:
+0, “k”: null, “pairs”: [], “count”: null, “distinct_on”: [] },
+“partial”: true, “excluded_rows”: [], “caveat_refs”: [ { “location”:
+“PDF p. 13, Table 3 caption”, “quote”: “Overlap: top-64 overlap between
+the initial student and the teacher, in %.” }, { “location”: “PDF p. 13,
+Table 3 caption”, “quote”: “AUC: signed area between the two accuracy
+curves over the steps both methods evaluated” } ] } ], “claimed_group”:
+[ { “member”: “17 teacher–student pair observations”, “status”:
+“covered” }, { “member”: “initial top-64 overlap ratios”, “status”:
+“covered” }, { “member”: “Semi-OPD gain over OPD (AUC)”, “status”:
+“covered” }, { “member”: “relationship between overlap and Semi-OPD
+gain”, “status”: “covered” } ], “no_rule_reason”: “The permitted rules
+do not include correlation or trend analysis; checking Pearson’s r would
+require calculating it. Table 3 has no numeric cutoff for ‘high overlap’
+and no field explicitly representing whether OPD is ‘needed’.”, “notes”:
+“The stated scope is the 17 evaluated pairs. ‘Tend to benefit
+substantially more’ describes an overall trend, not a strict inequality
+that must hold for every pair. ‘High overlap’ has no stated numerical
+cutoff. Figure 2a presents the correlation, but none of the permitted
+forms encodes that statistic.” }]

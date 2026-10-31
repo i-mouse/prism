@@ -1,0 +1,298 @@
+[
+  {
+    "id": "C18",
+    "table_check": [
+      {
+        "table": "Table 30",
+        "rows_pdf": 7,
+        "cols_pdf": 9,
+        "rows_grid": 7,
+        "cols_grid": 9,
+        "differences": [],
+        "last_row_quote": "Adapter, 4B + GRPO | 82.90 | 94.40 | 24.44 | 40.00 | 21.53 | 40.00 | 42.96±0.80 | 58.13±2.32"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 30",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "Frozen q0",
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Avg@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["Frozen q0", "Adapter, 1.7B + REINFORCE++"],
+            ["Frozen q0", "Adapter, 1.7B + GRPO"],
+            ["Frozen q0", "Adapter, 4B + REINFORCE++"],
+            ["Frozen q0", "Adapter, 4B + GRPO"]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Frozen q0 (comparison baseline, not an adapted teacher)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "PDF page 37, Table 30 caption",
+            "quote": "The frozen row repeats Table 29, where ± is the SD across three evaluation runs."
+          },
+          {
+            "location": "PDF page 37, Table 30 caption",
+            "quote": "in the adapted rows ± is the sample SD across the three seeds' adapters."
+          },
+          {
+            "location": "PDF page 37, Appendix D.9",
+            "quote": "each adapted row averages the three adapters of the run's three training seeds, evaluated once each"
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "Frozen q0",
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["Frozen q0", "Adapter, 1.7B + REINFORCE++"],
+            ["Frozen q0", "Adapter, 1.7B + GRPO"],
+            ["Frozen q0", "Adapter, 4B + REINFORCE++"],
+            ["Frozen q0", "Adapter, 4B + GRPO"]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Frozen q0 (comparison baseline, not an adapted teacher)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "PDF page 37, Table 30 caption",
+            "quote": "The frozen row repeats Table 29, where ± is the SD across three evaluation runs."
+          },
+          {
+            "location": "PDF page 37, Table 30 caption",
+            "quote": "in the adapted rows ± is the sample SD across the three seeds' adapters."
+          },
+          {
+            "location": "PDF page 37, Appendix D.9",
+            "quote": "Every adapted teacher scores below the frozen teacher"
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "none",
+        "reading": "only",
+        "rows": [
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Avg@8"
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Frozen q0 (comparison baseline, not an adapted teacher)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "PDF page 37, Table 30 caption",
+            "quote": "the frozen row repeats Table 29"
+          },
+          {
+            "location": "PDF page 37, Appendix D.9",
+            "quote": "by 0.8–2.3 macro Avg@8 and 0.7–3.5 Pass@8 points"
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "none",
+        "reading": "only",
+        "rows": [
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Pass@8"
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Frozen q0 (comparison baseline, not an adapted teacher)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "PDF page 37, Table 30 caption",
+            "quote": "in the adapted rows ± is the sample SD across the three seeds' adapters."
+          },
+          {
+            "location": "PDF page 37, Appendix D.9",
+            "quote": "Every adapted teacher scores below the frozen teacher"
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "none",
+        "reading": "narrow",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 6, Section 3",
+            "quote": "Co-RA adds 1.03–1.45 macro Avg@8 points to the four RA runs"
+          },
+          {
+            "location": "PDF page 6, Table 1 discussion",
+            "quote": "Avg@8 rises in all twelve benchmark means."
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "none",
+        "reading": "broad",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 6, Section 3",
+            "quote": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six"
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Frozen Qwen3-8B teacher (q0)",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 1.7B + REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 1.7B + GRPO",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 4B + REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-8B Co-RA adapter: 4B + GRPO",
+        "status": "covered"
+      },
+      {
+        "member": "REINFORCE++",
+        "status": "covered"
+      },
+      {
+        "member": "GRPO",
+        "status": "covered"
+      },
+      {
+        "member": "Macro Avg@8",
+        "status": "covered"
+      },
+      {
+        "member": "Macro Pass@8",
+        "status": "covered"
+      },
+      {
+        "member": "Qwen3-1.7B-Base student improvement under Co-RA",
+        "status": "other_table: Table 1"
+      },
+      {
+        "member": "Qwen3-4B-Base student improvement under Co-RA",
+        "status": "other_table: Table 1"
+      }
+    ],
+    "no_rule_reason": "Table 30 contains raw scores, not calculated row-to-baseline differences. The permitted rules can encode the strict direction of the comparison but cannot encode the claimed point-gap intervals as comparisons between paired cells. The student-improvement component requires student outcome rows from Table 1, which is not included in the pack's reference grid.",
+    "notes": "The teacher comparison explicitly uses Macro Avg@8 and Macro Pass@8, not individual benchmark readings. The student-improvement phrase has two possible readings: narrow means improved accuracy (macro Avg@8); broad means improvement in both accuracy and coverage (macro Avg@8 and Pass@8). The paper's discussion on PDF page 6 specifies improvement in Avg@8 but reports mixed Pass@8 changes. The corresponding student comparisons are in Table 1, not Table 30. No comparison results or numerical differences have been calculated here."
+  }
+]

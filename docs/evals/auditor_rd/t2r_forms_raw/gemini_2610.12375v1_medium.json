@@ -1,0 +1,82 @@
+[
+  {
+    "id": "C08",
+    "table_check": [
+      {
+        "table": "Table 6",
+        "rows_pdf": 5,
+        "cols_pdf": 5,
+        "rows_grid": 5,
+        "cols_grid": 5,
+        "differences": [],
+        "last_row_quote": "0.70 20.7% 19.3% 15.6% 82%"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Cost saved"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 18,
+          "polarity": null,
+          "tolerance": 1,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          "Table 6 caption: Precision is reported at the corpus base rate (81% of traces unresolved), which is the deployment-relevant figure",
+          "Sec. 6.3, p. 12: 0.60 is an illustrative threshold selected for exposition after the sweep — not a recommended deployment setting"
+        ]
+      },
+      {
+        "table": "Table 6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Prec. (dep.)"
+        ],
+        "params": {
+          "op": "==",
+          "constant": 83,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          "Table 6 caption: Precision is reported at the corpus base rate (81% of traces unresolved), which is the deployment-relevant figure",
+          "Sec. 6.3, p. 12: 0.60 is an illustrative threshold selected for exposition after the sweep — not a recommended deployment setting"
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "abort policy (threshold 0.60)",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "The abstract claim refers to the highlighted operating point at threshold 0.60 in Table 6 (bolded in the PDF and identified in Section 6.3 as the illustrative threshold yielding 17.9% cost savings and 83% deployment-adjusted precision, where 5 out of 6 = 83.3% restates the 83% precision figure)."
+  }
+]

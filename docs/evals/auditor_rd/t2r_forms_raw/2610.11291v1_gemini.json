@@ -1,0 +1,309 @@
+[
+  {
+    "id": "C09",
+    "table_check": [
+      {
+        "table": "Table 3",
+        "rows_pdf": 19,
+        "cols_pdf": 8,
+        "rows_grid": 19,
+        "cols_grid": 8,
+        "differences": [],
+        "last_row_quote": "i R1-Distill-1.5B JustRL-1.5B T 16K 79.7 +1.4 -1.36"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 3",
+        "rule": "count_rows",
+        "reading": "only",
+        "rows": [
+          "n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "p > Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "o > Qwen3-14B > Qwen3-235B-A22B-Thinking > T > 16K",
+          "b > Qwen3-1.7B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "f > Qwen3-4B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "c > Qwen3-1.7B > Qwen3-235B-A22B-Instruct-2507 > NT > 4K",
+          "g > Qwen3-1.7B (SFT) > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "h > Qwen3-4B (SFT) > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "d > Qwen3-1.7B > Qwen3-4B > NT > 4K",
+          "m > R1-Distill-7B > DeepCoder-14B > T > 16K",
+          "e > Qwen3-1.7B > Qwen3-8B > NT > 4K",
+          "j > R1-Distill-1.5B > Polaris-7B > T > 16K",
+          "q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K",
+          "l > R1-Distill-7B > Light-R1-14B > T > 16K",
+          "k > R1-Distill-7B > Polaris-7B > T > 16K",
+          "i > R1-Distill-1.5B > JustRL-1.5B > T > 16K"
+        ],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": "==",
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 17,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 3",
+        "rule": "count_rows",
+        "reading": "only",
+        "rows": [
+          "n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "p > Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "o > Qwen3-14B > Qwen3-235B-A22B-Thinking > T > 16K",
+          "b > Qwen3-1.7B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "f > Qwen3-4B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "c > Qwen3-1.7B > Qwen3-235B-A22B-Instruct-2507 > NT > 4K",
+          "g > Qwen3-1.7B (SFT) > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "h > Qwen3-4B (SFT) > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "d > Qwen3-1.7B > Qwen3-4B > NT > 4K",
+          "m > R1-Distill-7B > DeepCoder-14B > T > 16K",
+          "e > Qwen3-1.7B > Qwen3-8B > NT > 4K",
+          "j > R1-Distill-1.5B > Polaris-7B > T > 16K",
+          "q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K",
+          "l > R1-Distill-7B > Light-R1-14B > T > 16K",
+          "k > R1-Distill-7B > Polaris-7B > T > 16K",
+          "i > R1-Distill-1.5B > JustRL-1.5B > T > 16K"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Mode"
+        ],
+        "params": {
+          "op": "==",
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 2,
+          "distinct_on": [
+            "Mode"
+          ]
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Table 3 caption",
+            "quote": "Mode: T = thinking / long chain-of-thought, NT = non-thinking."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "n: Qwen3-1.7B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "a: Qwen3-1.7B <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "p: Qwen3-4B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "o: Qwen3-14B <- Qwen3-235B-A22B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "b: Qwen3-1.7B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "f: Qwen3-4B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "c: Qwen3-1.7B <- Qwen3-235B-A22B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "g: Qwen3-1.7B (SFT) <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "h: Qwen3-4B (SFT) <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "d: Qwen3-1.7B <- Qwen3-4B",
+        "status": "covered"
+      },
+      {
+        "member": "m: R1-Distill-7B <- DeepCoder-14B",
+        "status": "covered"
+      },
+      {
+        "member": "e: Qwen3-1.7B <- Qwen3-8B",
+        "status": "covered"
+      },
+      {
+        "member": "j: R1-Distill-1.5B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "q: Cascade-2-30B-A3B <- Cascade-2-Math-Expert",
+        "status": "covered"
+      },
+      {
+        "member": "l: R1-Distill-7B <- Light-R1-14B",
+        "status": "covered"
+      },
+      {
+        "member": "k: R1-Distill-7B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "i: R1-Distill-1.5B <- JustRL-1.5B",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "The forms verify the 17 teacher-student pairs and both modes (T and NT). Parameter sizes (1.5B to 235B) and the three model families (Qwen3, DeepSeek-R1-Distill-Qwen, and Nemotron-Cascade-2) are embedded inside the model name strings in the Student and Teacher columns rather than separate numeric/family columns, and 'covering the most commonly used student-teacher pairs in the OPD literature' is a qualitative statement, so the forms are marked partial: true."
+  },
+  {
+    "id": "C12",
+    "table_check": [
+      {
+        "table": "Table 3",
+        "rows_pdf": 19,
+        "cols_pdf": 8,
+        "rows_grid": 19,
+        "cols_grid": 8,
+        "differences": [],
+        "last_row_quote": "i R1-Distill-1.5B JustRL-1.5B T 16K 79.7 +1.4 -1.36"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 3",
+        "rule": "count_rows",
+        "reading": "only",
+        "rows": [
+          "n > Qwen3-1.7B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "a > Qwen3-1.7B > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "p > Qwen3-4B > Qwen3-30B-A3B-Thinking > T > 16K",
+          "o > Qwen3-14B > Qwen3-235B-A22B-Thinking > T > 16K",
+          "b > Qwen3-1.7B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "f > Qwen3-4B > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "c > Qwen3-1.7B > Qwen3-235B-A22B-Instruct-2507 > NT > 4K",
+          "g > Qwen3-1.7B (SFT) > Qwen3-4B-Instruct-2507 > NT > 4K",
+          "h > Qwen3-4B (SFT) > Qwen3-30B-A3B-Instruct-2507 > NT > 4K",
+          "d > Qwen3-1.7B > Qwen3-4B > NT > 4K",
+          "m > R1-Distill-7B > DeepCoder-14B > T > 16K",
+          "e > Qwen3-1.7B > Qwen3-8B > NT > 4K",
+          "j > R1-Distill-1.5B > Polaris-7B > T > 16K",
+          "q > Cascade-2-30B-A3B > Cascade-2-Math-Expert† > T > 16K",
+          "l > R1-Distill-7B > Light-R1-14B > T > 16K",
+          "k > R1-Distill-7B > Polaris-7B > T > 16K",
+          "i > R1-Distill-1.5B > JustRL-1.5B > T > 16K"
+        ],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": "==",
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 17,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Section 3, p. 6",
+            "quote": "between Semi-OPD’s gain over OPD, measured as the area between their learning curves normalized by their shared training horizon"
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "n: Qwen3-1.7B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "a: Qwen3-1.7B <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "p: Qwen3-4B <- Qwen3-30B-A3B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "o: Qwen3-14B <- Qwen3-235B-A22B-Thinking",
+        "status": "covered"
+      },
+      {
+        "member": "b: Qwen3-1.7B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "f: Qwen3-4B <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "c: Qwen3-1.7B <- Qwen3-235B-A22B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "g: Qwen3-1.7B (SFT) <- Qwen3-4B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "h: Qwen3-4B (SFT) <- Qwen3-30B-A3B-Instruct-2507",
+        "status": "covered"
+      },
+      {
+        "member": "d: Qwen3-1.7B <- Qwen3-4B",
+        "status": "covered"
+      },
+      {
+        "member": "m: R1-Distill-7B <- DeepCoder-14B",
+        "status": "covered"
+      },
+      {
+        "member": "e: Qwen3-1.7B <- Qwen3-8B",
+        "status": "covered"
+      },
+      {
+        "member": "j: R1-Distill-1.5B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "q: Cascade-2-30B-A3B <- Cascade-2-Math-Expert",
+        "status": "covered"
+      },
+      {
+        "member": "l: R1-Distill-7B <- Light-R1-14B",
+        "status": "covered"
+      },
+      {
+        "member": "k: R1-Distill-7B <- Polaris-7B",
+        "status": "covered"
+      },
+      {
+        "member": "i: R1-Distill-1.5B <- JustRL-1.5B",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "The count_rows form checks the 'across 17 pairs' part of the claim. Computing Pearson's correlation coefficient (r = -0.73) between 'Init. > Overlap' and 'Gain > AUC' and verifying the qualitative trend descriptions ('tend to benefit substantially more', 'only needed for pairs with high overlap ratios') are not supported by the allowed primitive rules, so partial is set to true."
+  }
+]

@@ -1,0 +1,218 @@
+[
+  {
+    "id": "C03",
+    "table_check": [
+      {
+        "table": "Table 2: Cross-domain knowledge generalization and integration",
+        "rows_pdf": 10,
+        "cols_pdf": 7,
+        "rows_grid": 10,
+        "cols_grid": 7,
+        "differences": [],
+        "last_row_quote": "Hippocam | 78.9 | 55.9→75.1 | +19.2 | 61.8 | 53.9→59.9 | +6.0"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["Hippocam"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["ACE"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": ["HiAgent"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": ["mem0"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": ["A-Mem"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": ["Letta"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      },
+      {
+        "table": "Table 2",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": ["ReasoningBank"],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": "<=",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": []
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Hippocam",
+        "status": "covered"
+      },
+      {
+        "member": "ACE",
+        "status": "covered"
+      },
+      {
+        "member": "HiAgent",
+        "status": "covered"
+      },
+      {
+        "member": "mem0",
+        "status": "covered"
+      },
+      {
+        "member": "A-Mem",
+        "status": "covered"
+      },
+      {
+        "member": "Letta",
+        "status": "covered"
+      },
+      {
+        "member": "ReasoningBank",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "All 70 grid cells, including both header rows and all data rows, match the PDF Table 2. No differences found. Positive gains are evaluated using the two Δstream columns, not the Fresh → After values independently. HiAgent has +0.1 and -5.8; mem0 has -28.1 and +0.0; A-Mem has -8.0 and +0.0; Letta has -4.8 and -9.9; ReasoningBank has -11.2 and -2.1. Exact zero ties occur for mem0 and A-Mem on HotpotQA → FEVER (+0.0). Both also have unchanged Fresh → After FEVER scores. The count_satisfying forms require at least one non-positive transition for each remaining method."
+  }
+]

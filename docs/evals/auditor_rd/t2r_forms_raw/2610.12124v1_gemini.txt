@@ -1,0 +1,81 @@
+[
+  {
+    "id": "C03",
+    "table_check": [
+      {
+        "table": "Table 2",
+        "rows_pdf": 10,
+        "cols_pdf": 7,
+        "rows_grid": 10,
+        "cols_grid": 7,
+        "differences": [],
+        "last_row_quote": "Hippocam 78.9 55.9→75.1 +19.2 61.8 53.9→59.9 +6.0"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "ACE",
+          "Hippocam"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld → ScienceWorld > Δ stream",
+          "HotpotQA → FEVER > Δ stream"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": []
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Plain",
+        "status": "covered"
+      },
+      {
+        "member": "HiAgent",
+        "status": "covered"
+      },
+      {
+        "member": "mem0",
+        "status": "covered"
+      },
+      {
+        "member": "A-Mem",
+        "status": "covered"
+      },
+      {
+        "member": "Letta",
+        "status": "covered"
+      },
+      {
+        "member": "ReasoningBank",
+        "status": "covered"
+      },
+      {
+        "member": "ACE",
+        "status": "covered"
+      },
+      {
+        "member": "Hippocam",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "Claim specifies that only Hippocam and ACE achieve positive gains on both domain transitions, while remaining methods show mixed, unchanged, or reduced performance."
+  }
+]

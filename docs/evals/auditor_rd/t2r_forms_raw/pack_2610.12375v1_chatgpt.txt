@@ -1,0 +1,102 @@
+[
+  {
+    "id": "C08",
+    "table_check": [
+      {
+        "table": "Table 6",
+        "rows_pdf": 5,
+        "cols_pdf": 5,
+        "rows_grid": 5,
+        "cols_grid": 5,
+        "differences": [],
+        "last_row_quote": "0.70 | 20.7% | 19.3% | 15.6% | 82%"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Cost saved"
+        ],
+        "params": {
+          "op": "=",
+          "constant": 18,
+          "polarity": null,
+          "tolerance": 1,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 12, Section 6.3, Abort policy",
+            "quote": "0.60 is an illustrative threshold selected for exposition after the sweep — not a recommended deployment setting"
+          },
+          {
+            "location": "PDF page 12, Section 6.3, Abort policy",
+            "quote": "false-stop rate varies (13–21%) and should be validated on deployment traffic"
+          }
+        ]
+      },
+      {
+        "table": "Table 6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Prec. (dep.)"
+        ],
+        "params": {
+          "op": "=",
+          "constant": 83,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 12, Table 6 caption",
+            "quote": "Precision is reported at the corpus base rate (81% of traces unresolved)"
+          },
+          {
+            "location": "PDF page 12, Section 6.3, Abort policy",
+            "quote": "five of six aborted runs would indeed have failed"
+          },
+          {
+            "location": "PDF page 12, Section 6.3, Abort policy",
+            "quote": "0.60 is an illustrative threshold selected for exposition after the sweep — not a recommended deployment setting"
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Compute saved on agents heading to failure (approximately 18%)",
+        "status": "covered"
+      },
+      {
+        "member": "Proportion of interrupted runs actually heading to failure (83%; five out of every six aborts)",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "Both numerical parts map to the same Table 6 row at threshold 0.60: Cost saved = 17.9% and Prec. (dep.) = 83%. The 5-out-of-6 wording corresponds to the deployment precision. The paper identifies 0.60 as an illustrative threshold selected for exposition, not a threshold selected on held-out data or a deployment recommendation. Precision uses the corpus base rate of 81% unresolved traces, not the balanced sample's approximately 50% precision."
+  }
+]
