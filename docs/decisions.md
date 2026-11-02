@@ -3939,3 +3939,46 @@ current auditor (2026-10-29) still holds.
 
 **Money:** unchanged. Auditor stage 173.23 of 560 spent; sealed reserve
 300 untouched.
+
+
+## Record: T2-R wording correction and two input notes - 2026-10-31
+**Status:** record only. No mark, number, label, form or verdict changes.
+T2-R stays FAIL. Flags stay off. No release with the current auditor.
+
+**1. Wording correction (does not amend the entry above, which is
+append-only).** The phrase "0 false rejections" in the T2-R result entry
+and in the 2026-10-31 handoff is read as: 0 of the 10 selected S rows were
+LOWERED by code (mark 3). Two of them (C17 = P1-S2, C18 = P1-S8) were set
+to Needs review by code (mark 4, limit 2, met at the limit). Per the
+Needs-review scoring rule (2026-10-28), Needs review on an S row is not a
+false rejection but counts toward the ceiling. Both are P1, and the 10 S
+rows were selected as table-backed rows, so they are not a random sample
+of the 88 S rows; no S-row rate is inferred from them.
+
+**2. The 8 -> 12 of 31 figure is a ceiling.** It was produced with
+hand-written check forms over LaTeX reference tables, with no LLM mapper
+and no PDF table extraction. It is not a pipeline result and is not quoted
+as a Prism score anywhere.
+
+**3. Input note, one-file assembly (adds to the deviations recorded
+2026-10-30).** Three items were assembled from a single judge's file
+rather than two: C09 (P5-R2, a hard row) and C12 (P5-S4) used the Gemini
+forms because the ChatGPT file was malformed; C18 (P1-S8) used the ChatGPT
+file because the Gemini file was truncated (3 complete forms salvageable).
+The adjudication file's per-item line for C18 reads "Both judges" and
+overstates this. Recorded, not corrected: forms are frozen under tag
+t2r-inputs-frozen and nothing was edited. Effect: P5-R2's "holds" result,
+which contributed to the hard-row shortfall, rests on one judge's form.
+
+**4. Input note, mark 2 "faithful" interpretation.** The pre-registered
+wording (Auditor v2, 2026-10-28) is: a miss counts only if "its
+contradicting cells include >= 1 pinned breaking cell or pinned structural
+fact". C04 and C14 had no contradicting cells at all; their PS came from an
+absent claimed-group member. At scoring time these were counted faithful
+via the absent-member pin, read as a pinned structural fact. The
+cells-only reading gives 2/10 and 0/5 hard. Both readings FAIL, so this
+interpretation rescued nothing; it is recorded so the wording is fixed
+before any later test reuses mark 2.
+
+**Money:** INR 0. Unchanged: auditor stage 173.23 of 560 spent, 386.77
+left (includes the unused Stage B 250); sealed reserve 300 untouched.

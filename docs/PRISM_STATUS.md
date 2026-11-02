@@ -1,8 +1,8 @@
-# PRISM STATUS — 2026-10-22 (single source for new chats)
+# PRISM STATUS — 2026-10-31 (single source for new chats)
 
 ## Current state
 
-Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor. Four experiments aimed at closing the gap have been tried and rejected. Auditor phase: step 4 (scope lister + checker, flag --scope-check, default off, replay only) built and committed; step 5 checks done (scorer verified: 8/31, 7/31, 5/31, 8/31; S-row false-rejection baseline 4/88 effective); Stage A1 FAILED on A1-fixed (scope fixed 3 of 10, always-missed 1 of 6); Stage B not run; next = free diagnosis of the 5 unfixed always-missed rows, then a decision (one more targeted experiment only if one clear cause, otherwise ship with honest numbers). See decisions.md 'Stage A1 results: FAIL - 2026-10-28'.
+Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete (decisions.md:38-42). PR #122 (dev eval baseline + extraction experiments, all flags off, + eval tooling) merged to main 2026-10-21 (git log, commit 4be1cc4). All new flags default off; the shipping extraction path is pass 1 only. Work branch auditor/caching-scope-check pushed 2026-10-31, not merged. Not released: the dev refusal rate (26%, single run) is well below the 70% release floor, and there is no release with the current auditor (decisions.md 2026-10-29; Ship-honest removed). Auditor phase so far: Stage A1 FAILED; A1 diagnosis 2026-10-28 found no single clear cause; the auditor no-regression rule was set 2026-10-28; Auditor v2 (tables to code checks) was pre-registered 2026-10-28; T1 FAILED 2026-10-29; T2-R FAILED 2026-10-31. Next: analyze the 10 auditor misses, group by failure type, pre-register the next auditor route. Extraction (13 misses) is a separate later phase.
 
 ## Scoreboard
 
@@ -16,7 +16,7 @@ Refusal-family 1/2, positive hits 7/10, false rejection 0/10, coverage 12/12. (d
 Refusal 8/31 (26%). Of the 23 misses: 10 audit misses (claim extracted, wrongly judged supported), 13 extraction misses. Auditor-only ceiling 18/31 (below 22/31 floor); extraction-only ceiling 21/31 (68%, also below floor) — neither stage alone reaches the 70% release floor. (decisions.md:1750, 1828, 2115, 2212-2213)
 False rejections: 4/88 S rows (draft resolved; the weak P5 match was resolved as not a match, docs/evals/dev_adjudication_run1.md:135; decisions.md 'Corrections - 2026-10-22').
 
-**Release bar (restated 2026-10-22, replaces "mean of 3 runs"):** dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats). Release number: one sealed-set run only, never dev or golden numbers.
+**Release bar (restated 2026-10-22, replaces "mean of 3 runs"):** dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and the fixes are stable under the auditor no-regression rule (decisions.md 2026-10-28), which replaced Stage A1 as the stability check. Release number: one sealed-set run only, never dev or golden numbers.
 
 ## Flags and their defaults
 
@@ -80,7 +80,7 @@ Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
 ## Next steps (build order)
 
 Step 4 (scope lister + checker, flag --scope-check, default off, replay only) built and committed; step 5 checks done (scorer verified: 8/31, 7/31, 5/31, 8/31; S-row false-rejection baseline 4/88 effective); Stage A1 FAILED on A1-fixed (scope fixed 3 of 10, always-missed 1 of 6); Stage B not run.
-A1 diagnosis done 2026-10-28 (INR 0): main break = checker reads summaries, not table rows (R, 3 of 5 rows); no single clear cause -> Ship-honest (decisions.md option B) as fallback. Auditor no-regression rule set 2026-10-28 (decisions.md): keep a change only if it adds stable fixes and no other score drops. Auditor v2 entry committed (decisions.md, tag auditor-v2-t1t2-marks): D6+D7 design, T1/T2 marks, Needs-review scoring. T1 done 2026-10-29: FAIL (both extractors stable, 5/8 tables each; row-group spans lost). Ship-honest removed; no release with the current auditor. Step P done; LaTeX reference tables built; T2-R done 2026-10-31: FAIL (4/10 misses fixed, 2/5 hard, 0 false rejections; decisions.md). Next: analyze the 10 misses, group by failure type, pre-register the next auditor route.
+A1 diagnosis done 2026-10-28 (INR 0): main break = checker reads summaries, not table rows (R, 3 of 5 rows); no single clear cause. (Ship-honest was the fallback at that date; it was removed 2026-10-29 - see below.) Auditor no-regression rule set 2026-10-28 (decisions.md): keep a change only if it adds stable fixes and no other score drops. Auditor v2 entry committed (decisions.md, tag auditor-v2-t1t2-marks): D6+D7 design, T1/T2 marks, Needs-review scoring. T1 done 2026-10-29: FAIL (both extractors stable, 5/8 tables each; row-group spans lost). Ship-honest removed; no release with the current auditor. Step P done; LaTeX reference tables built; T2-R done 2026-10-31: FAIL (4/10 misses fixed, 2/5 hard; 0 S rows lowered by code, 2 of 10 set Needs review; decisions.md). The 8 -> 12 of 31 figure from T2-R is a ceiling measured with hand-written forms on LaTeX reference tables, not a pipeline result, and is never quoted as a Prism score. Next: analyze the 10 misses, group by failure type, pre-register the next auditor route.
 
 ## Known risks (code-sourced, `docs/premerge_review_2026-10-20.md` section 3)
 
@@ -97,6 +97,8 @@ All three risks below are inside code currently gated off by default (`extractor
 - Spent: Exp 1 INR 411.95; Exp 2 INR 177.93; Exp 3 INR 185.79 (decisions.md:1807-1831, "Experiment 2 - Stage A result", 2529-2605).
 - Clean-extraction attempt: separate cap INR 350, spent INR 311.04 (decisions.md:2621, 3017).
 - Sealed reserve: INR 300, untouched throughout (decisions.md:1825).
+- Auditor stage: INR 560 budget, 173.23 spent, 386.77 left — that remainder already includes the unused Stage B cap of 250, so the two are not added together (decisions.md, Auditor v2 entry 2026-10-28).
+- T1, Step P and T2-R all cost INR 0 (no LLM calls).
 - The 2026-10-10 hard-exit rule (8 counted experiments or push cap, then one sealed run) was superseded 2026-10-16: Nitin chose to keep improving the core product (extractor, then auditor) before taking the exit decision (decisions.md:2618-2619).
 - Gemini project monthly cap: INR 3,232 of 3,600 used as of 2026-10-21 (AI Studio dashboard, per Nitin); resets 1 Nov (PST). Paid runs wait for the reset or a logged cap change.
 
