@@ -3982,3 +3982,47 @@ before any later test reuses mark 2.
 
 **Money:** INR 0. Unchanged: auditor stage 173.23 of 560 spent, 386.77
 left (includes the unused Stage B 250); sealed reserve 300 untouched.
+
+## 10-miss analysis: failure types and scope - 2026-11-02
+**Status:** analysis only, INR 0. No code, prompt, label, mark, form or
+flag changes. T2-R stays FAIL. No release with the current auditor.
+**Sources:** docs/evals/auditor_rd/t2r_results_2026-10-31.md,
+t2r_adjudication_2026-10-30.md, a1_diagnosis_2026-10-28.md; this file's
+Experiment 1 entries (2026-10-12) and Stage A1 entries (2026-10-28).
+
+**The 10 dev auditor misses, by failure type:**
+- A, table number breaks the claim: P1-R1, P4-R1. T2-R: fixed by code.
+- B, claim wider than the cited table: P4-R2, P11-R2 (fixed by code
+  only because absence across the whole paper was proven by Nitin's hand
+  checks); P3-R2 (Needs review: the breaking member is in another table).
+- C, claim meaning: P5-R2 (count holds; the problem is a semantic
+  duplicate), P6-R2 (no form; qualitative scope).
+- D, prose caveat elsewhere in the paper: P7-R1, P8-R2.
+- E, figure-only evidence: P5-R1.
+
+**Findings:**
+- In T2-R the auditor label did not change on any row. Code with
+  hand-written forms did the lowering. Without hand checks, the
+  pipeline-realistic gain from the table path is about 2 (P1-R1, P4-R1).
+  In A1 the LLM checker failed P4-R2 and P11-R2 (codes R and S1).
+- Stability group, 5 rows (P1-R1, P4-R1, P5-R1, P7-R1, P8-R2): each was
+  PS in >= 2 of 3 repeats under some earlier LLM setup (Experiment 1 high
+  thinking or A1 scope check). The problem is consistency.
+- Ability group, 5 rows (P3-R2, P4-R2, P5-R2, P6-R2, P11-R2): no LLM run
+  has made any of them PS in >= 2 of 3 repeats.
+- P5-R2: its extracted claim (11291#1) also matches S row P5-S1, so
+  lowering it adds a false rejection by construction. It cannot be fixed
+  by the auditor under the no-regression rule.
+- P5-R1: the evidence is figure-only; the auditor input is text.
+
+**Decision - scope for the next auditor route:**
+- Parked: P5-R2 (moves to the extraction phase) and P5-R1 (figure
+  reading, not in this phase). Labels unchanged. Both still count in the
+  31-row denominator.
+- Remaining auditor targets: 8 rows (P1-R1, P4-R1, P7-R1, P8-R2,
+  P3-R2, P4-R2, P11-R2, P6-R2).
+- Next: a free, read-only cost estimate of a full 3-run no-regression
+  check, before any route is chosen or pre-registered.
+
+**Money:** INR 0. Unchanged: auditor stage 173.23 of 560 spent, 386.77
+left; sealed reserve 300 untouched.
