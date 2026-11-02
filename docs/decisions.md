@@ -4026,3 +4026,57 @@ Experiment 1 entries (2026-10-12) and Stage A1 entries (2026-10-28).
 
 **Money:** INR 0. Unchanged: auditor stage 173.23 of 560 spent, 386.77
 left; sealed reserve 300 untouched.
+
+## Funding source and model plan for the next auditor tests - 2026-11-02
+**Status:** decision record, INR 0. No code, prompt, label, mark, form or
+flag changes. No release with the current auditor.
+
+**Funding facts (Cloud Billing, read by Nitin on 2026-11-02):**
+- GCP Free Credit: INR 28,693.88, unused, expires 2026-11-26. Google
+  states this credit cannot pay for Gemini Developer API (AI Studio)
+  costs; it can pay for Gemini models called through Vertex AI.
+- Google Developer Program monthly credit (Google AI Pro): about INR
+  955-960 per grant, around the 13th of each month. INR 160.94 left.
+  It has covered INR 6,531.71 of Gemini API usage so far.
+- Prepay balance: INR 341.81.
+- This year: Gemini API usage INR 7,513.22 at list price; INR 981.51
+  net of credits. All spend is Gemini API, project PRISM.
+- Billing account confirmed as a paid account (Cloud Billing overview,
+  2026-11-02).
+
+**Decisions:**
+1. Paid eval and experiment runs move to Vertex AI (same Gemini model
+   ids), billed to the GCP Free Credit, until it is used up or
+   2026-11-26. The product and everyday development stay on the AI
+   Studio API key.
+2. Spend is still counted at list price. --estimate, the 1.3x stop and
+   void rules are unchanged. Each new test's pre-registration sets its
+   own list-price cap; the auditor-stage INR 560 total no longer limits
+   tests funded by the free credit. Free credit is not a reason for runs
+   beyond a pre-registered plan.
+3. Auditor model candidate: gemini-3.8-flash (same introductory price
+   as gemini-3.6-flash through 2026-12-31). Extractor, structurer,
+   matcher and grounding models stay unchanged in this phase. The
+   product changes a model only after the change passes the auditor
+   no-regression rule (2026-10-28).
+4. Auditor thinking level (medium vs high) on gemini-3.8-flash is
+   decided by a pre-registered screen, not chosen now.
+5. gemini-4-argon is not used now (paid only; about 2.7x Flash prices
+   through 2026-11-30, then about 5x). It may be considered later only
+   for a narrow step that gemini-3.8-flash fails.
+6. Batch API is not built for now; context caching stays.
+
+**Before the first paid Vertex AI run:** enable the Vertex AI API in
+the PRISM project; confirm gemini-3.8-flash is listed with enough quota;
+run one smoke test; confirm its cost lands on the GCP Free Credit.
+
+**Known deviation:** the dev run-1 baseline ran on the AI Studio
+endpoint; new runs use Vertex AI with the same model ids. Not expected
+to change outputs; not verified.
+
+**Cost note:** Gemini Flash prices double on 2027-01-01 (about INR 87
+-> 174 per paper, above the INR 130 gate). The release-bar restatement
+at the end of the auditor phase must cover the cost gate too.
+
+**Money:** INR 0. Unchanged: auditor stage 173.23 of 560 spent (list
+price); sealed reserve 300 untouched.
