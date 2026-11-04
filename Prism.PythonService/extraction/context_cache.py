@@ -42,8 +42,11 @@ from extraction.prompt_loader import build_gemini_messages_for_audit
 
 logger = logging.getLogger(__name__)
 
-# Only this model uses explicit caching; any other audit model runs uncached.
+# Only these models use explicit caching; any other audit model runs uncached.
+# CACHEABLE_MODEL is the product's model; gemini-3.8-flash is added for the eval
+# scripts' --auditor-model / probe --model (unverified on Vertex until a real run).
 CACHEABLE_MODEL = "gemini-3.6-flash"
+CACHEABLE_MODELS = frozenset({CACHEABLE_MODEL, "gemini-3.8-flash"})
 
 # TTL = claims x slowest observed per-claim time x margin, clamped. Measured on
 # dev replays (docs/evals/fixtures/dev/exp1_*): slowest audit call 37.7 s
@@ -114,7 +117,7 @@ def ttl_for_claims(n_claims: int) -> int:
 
 
 def _is_cacheable_model(model: str) -> bool:
-    return model.lower().rsplit("/", 1)[-1] == CACHEABLE_MODEL
+    return model.lower().rsplit("/", 1)[-1] in CACHEABLE_MODELS
 
 
 def _split_probe(paper_text: str) -> tuple[str, str]:

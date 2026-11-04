@@ -24,9 +24,15 @@ API_ERROR, PARSE_FAILED or NO_CACHED_TOKENS.
 --estimate prints the expected INR from token counts and exits (no network).
 A real run refuses to send when that estimate is above MAX_INR (5).
 
+--model (default CACHEABLE_MODEL) picks the model of the cache and the request; it must be cacheable and priced
+(eval/pricing.py), else the probe stops before any request. --backend {aistudio,vertex} (default aistudio),
+--vertex-project (required with vertex) and --vertex-location (default global) send the cache create/use/delete and
+the request to Vertex AI (Application Default Credentials). With the options unset nothing changes.
+
 Usage (from Prism.PythonService):
   & ".\\.venv\\Scripts\\python.exe" -m eval.probe_cache_schema --estimate
   & ".\\.venv\\Scripts\\python.exe" -m eval.probe_cache_schema
+  & ".\\.venv\\Scripts\\python.exe" -m eval.probe_cache_schema --backend vertex --vertex-project <id> --model gemini-3.8-flash
 """
 import argparse
 import asyncio
@@ -36,10 +42,17 @@ from dataclasses import dataclass, field
 from google.genai import errors, types
 from pydantic import BaseModel
 
+from eval import backend_options, pricing
 from eval.pricing import INR_PER_USD, cache_creation_cost_usd, cost_usd_for_model, storage_cost_usd
 from eval.replay_audit import PaperTextError, _load_paper_text
 from extraction import engine
-from extraction.context_cache import CACHEABLE_MODEL, ContextCacheStats, cached_audit_contents, paper_context_cache
+from extraction.context_cache import (
+    CACHEABLE_MODEL,
+    CACHEABLE_MODELS,
+    ContextCacheStats,
+    cached_audit_contents,
+    paper_context_cache,
+)
 
 PAPER_ID = "arxiv-2610.10590v1"
 MODEL = CACHEABLE_MODEL
@@ -100,20 +113,20 @@ def build_probe_config(cache_name: str) -> types.GenerateContentConfig:
     )
 
 
-def _storage_inr(tokens: float) -> float:
+def _storage_inr(tokens: float, model: str = MODEL) -> float:
     """Upper bound: cached tokens x the full 300 s TTL. Storage is billed on
     the actual lifetime (A0), which is shorter."""
-    return storage_cost_usd(tokens, TTL_S / 3600) * INR_PER_USD
+    return storage_cost_usd(tokens, TTL_S / 3600, model=model) * INR_PER_USD
 
 
-def estimate_inr() -> dict[str, float]:
+def estimate_inr(model: str = MODEL) -> dict[str, float]:
     """Expected INR from token counts. No network."""
     prompt = MEASURED_CACHED_TOKENS + ASSUMED_UNCACHED_TOKENS
     call_usd = cost_usd_for_model(
-        MODEL, prompt, ASSUMED_OUTPUT_PLUS_THOUGHT_TOKENS, thought=0.0, cached=MEASURED_CACHED_TOKENS,
+        model, prompt, ASSUMED_OUTPUT_PLUS_THOUGHT_TOKENS, thought=0.0, cached=MEASURED_CACHED_TOKENS,
     )
     call_inr = call_usd * INR_PER_USD
-    storage_inr = _storage_inr(MEASURED_CACHED_TOKENS)
+    storage_inr = _storage_inr(MEASURED_CACHED_TOKENS, model)
     creation_inr = cache_creation_cost_usd(MEASURED_CACHED_TOKENS) * INR_PER_USD
     return {
         "call_inr": call_inr, "storage_inr": storage_inr, "creation_inr": creation_inr,
@@ -121,9 +134,9 @@ def estimate_inr() -> dict[str, float]:
     }
 
 
-def _print_estimate() -> float:
-    est = estimate_inr()
-    print(f"[probe] --estimate for {PAPER_ID} on {MODEL}, one request, no network")
+def _print_estimate(model: str = MODEL) -> float:
+    est = estimate_inr(model)
+    print(f"[probe] --estimate for {PAPER_ID} on {model}, one request, no network")
     print(f"[probe] measured: {MEASURED_CACHED_TOKENS} cached tokens (A0 summary, smallest cached paper)")
     print(f"[probe] ASSUMPTION: {ASSUMED_UNCACHED_TOKENS} uncached prompt tokens (the user turn)")
     print(f"[probe] ASSUMPTION: {ASSUMED_OUTPUT_PLUS_THOUGHT_TOKENS} output + thought tokens (generous; thinking is LOW)")
@@ -141,13 +154,14 @@ def _describe_error(exc: BaseException) -> str:
     return f"{type(exc).__name__}: {exc!r}"
 
 
-async def run(client, paper_text: str) -> ProbeResult:
+async def run(client, paper_text: str, model: str = MODEL) -> ProbeResult:
     """Creates the cache, sends exactly one request, deletes the cache (the
-    context manager's finally). Never retries, never falls back."""
+    context manager's finally). Never retries, never falls back. model (default
+    CACHEABLE_MODEL) is used for the cache and the request."""
     result = ProbeResult()
     stats = ContextCacheStats(on_cache_failure=result.cache_errors.append)  # records the failure, does not raise
 
-    async with paper_context_cache(client, MODEL, paper_text, N_CLAIMS, stats) as paper_cache:
+    async with paper_context_cache(client, model, paper_text, N_CLAIMS, stats) as paper_cache:
         if paper_cache is None:
             result.fail_reason = FAIL_CACHE_NOT_CREATED
             result.error = "; ".join(result.cache_errors) or "paper_context_cache yielded no cache"
@@ -158,7 +172,7 @@ async def run(client, paper_text: str) -> ProbeResult:
         try:
             result.requests_sent = 1
             response = await client.aio.models.generate_content(
-                model=MODEL, contents=cached_audit_contents(PROBE_PROMPT), config=build_probe_config(paper_cache.name),
+                model=model, contents=cached_audit_contents(PROBE_PROMPT), config=build_probe_config(paper_cache.name),
             )
         except Exception as exc:
             result.fail_reason = FAIL_API_ERROR
@@ -181,12 +195,12 @@ async def run(client, paper_text: str) -> ProbeResult:
     # The cache is deleted by now, whichever way the block above exited.
     result.lifetime_s = next(iter(stats.lifetimes_s.values()), None)
     cache_tokens = float(result.cache_tokens if result.cache_tokens is not None else MEASURED_CACHED_TOKENS)
-    result.storage_inr = _storage_inr(cache_tokens)
+    result.storage_inr = _storage_inr(cache_tokens, model)
     result.creation_inr = cache_creation_cost_usd(cache_tokens) * INR_PER_USD
     if result.usage:
         u = result.usage
         result.call_inr = (cost_usd_for_model(
-            MODEL, u.get("prompt_tokens") or 0, u.get("output_tokens") or 0, u.get("thought_tokens") or 0,
+            model, u.get("prompt_tokens") or 0, u.get("output_tokens") or 0, u.get("thought_tokens") or 0,
             u.get("cached_tokens") or 0, u.get("tool_use_tokens") or 0,
         ) or 0.0) * INR_PER_USD
     return result
@@ -210,8 +224,29 @@ def _print_result(result: ProbeResult) -> None:
     print(f"[probe] TOTAL: INR {result.total_inr:.4f}")
 
 
+def _preflight(args: argparse.Namespace):
+    """Checks --model and the backend options before any request. Returns (backend, model).
+    Raises ValueError (including pricing.UnpricedModelError) naming the problem."""
+    model = getattr(args, "model", None) or MODEL
+    backend = backend_options.backend_from_args(args)
+    if pricing.normalise_model_name(model) not in CACHEABLE_MODELS:
+        raise ValueError(f"--model {model}: not a cacheable model (cacheable: {sorted(CACHEABLE_MODELS)})")
+    pricing.rates_for_model(model)
+    pricing.storage_rate_for_model(model)
+    return backend, model
+
+
 async def _main(args: argparse.Namespace) -> int:
-    expected = _print_estimate()
+    try:
+        backend, model = _preflight(args)
+    except ValueError as exc:
+        print(f"[probe] ABORT: {exc}; nothing sent")
+        return 1
+    if backend.name != "aistudio" or model != MODEL:
+        config = backend_options.run_config(backend, model, {}, "low")
+        config["probe_model"] = config.pop("auditor_model")
+        print(f"[probe] run config: {config}")
+    expected = _print_estimate(model)
     if args.estimate:
         return 0
     if expected > MAX_INR:
@@ -222,7 +257,8 @@ async def _main(args: argparse.Namespace) -> int:
     except PaperTextError as exc:
         print(f"[probe] FAIL: {FAIL_CACHE_NOT_CREATED}: {exc}; nothing sent")
         return 1
-    result = await run(engine._build_client(), paper_text)
+    with backend_options.active_backend(backend):
+        result = await run(engine._build_client(), paper_text, model)
     _print_result(result)
     return 0 if result.ok else 1
 
@@ -230,6 +266,11 @@ async def _main(args: argparse.Namespace) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--estimate", action="store_true", help="print the expected INR and exit; no network")
+    parser.add_argument(
+        "--model", default=CACHEABLE_MODEL,
+        help=f"model of the cache and the request (default {CACHEABLE_MODEL}); must be cacheable and priced",
+    )
+    backend_options.add_backend_args(parser)
     args = parser.parse_args()
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())

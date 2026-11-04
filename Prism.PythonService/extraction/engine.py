@@ -30,6 +30,7 @@ from opentelemetry import trace
 from pydantic import BaseModel
 
 from config import settings
+from extraction import llm_backend
 from extraction.context_cache import (
     ContextCacheStats,
     PaperCache,
@@ -215,7 +216,7 @@ def _write_structured_log(
 
 
 def _build_client() -> genai.Client:
-    return genai.Client(api_key=settings.ai_api_key)
+    return llm_backend.build_genai_client(settings.ai_api_key)
 
 
 async def _generate_with_fallback(
@@ -581,6 +582,7 @@ async def _audit_and_structure_claim(
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
     thinking_level: str | None = None,
     paper_cache: PaperCache | None = None,
+    audit_model: str | None = None,
 ) -> ClaimLLM:
     """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
 
@@ -596,6 +598,10 @@ async def _audit_and_structure_claim(
     the audit call as well; the structure call never uses it. It is passed
     on only when set, so with no cache the audit call is invoked exactly as
     before.
+
+    audit_model (default None = settings.llm_claim_audit_model) overrides the
+    model of the audit call only (eval/replay_audit.py --auditor-model); the
+    structure call and both fallback models are unchanged.
     """
     claim_text_verbatim = claim["claim_text_verbatim"]
     claim_summary = claim["claim_summary"]
@@ -611,7 +617,7 @@ async def _audit_and_structure_claim(
                 chat_id=chat_id,
                 correlation_id=correlation_id,
                 log_subdir="audit",
-                model_name=settings.llm_claim_audit_model,
+                model_name=audit_model or settings.llm_claim_audit_model,
                 fallback_model=settings.llm_claim_audit_fallback_model,
                 thinking_level=thinking_level,
                 **cache_kwargs,

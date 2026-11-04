@@ -45,6 +45,17 @@ Usage:
   uv run python -m eval.replay_audit --level medium --claims docs/evals/exp1_stage_a_claims.json --repeat 2
   uv run python -m eval.replay_audit --estimate --cache --level medium --claims docs/evals/exp1_stage_a_claims.json
   uv run python -m eval.replay_audit --level high                                   # Stage B: all 12 papers, repeat 1
+  uv run python -m eval.replay_audit --level medium --claims ... --backend vertex --vertex-project <id> --auditor-model gemini-3.8-flash
+
+--backend {aistudio,vertex} (default aistudio), --vertex-project (required with vertex, no default) and
+--vertex-location (default global) send EVERY Gemini call of the process to Vertex AI (Application Default
+Credentials): auditor, structurer, cache create/use/delete, scope lister/checker, and the Gemini routes of the
+LiteLLM grounding calls (a groq/ primary is not a Gemini call and is left as it is). --auditor-model (default: the
+configured auditor model) changes the model of the audit call and of the --cache cache only. With both options unset
+nothing changes: same requests, same files, same folders. With either set, the run goes to its own folder
+(exp1_{level}_{model}[-vertex][_scope]_{n}, never an existing one), every claim records audit_model_served, and
+_summary.json has a "run_config" block. Every Google model the run can call must have a price in eval/pricing.py
+or the run stops before the first request; "minimal" thinking with gemini-3.8-flash is refused.
 
 --scope-check (default off, requires --cache; any other combination is a
 ValueError) adds the scope lister and scope checker (extraction/scope_check.py,
@@ -72,7 +83,7 @@ from collections import defaultdict
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from eval import pricing
+from eval import backend_options, pricing
 from eval.legacy_paper_text import PDF_DIR, _hash_check_and_load_text  # noqa: F401 - re-exported for replay_exp3/replay_clean/replay_extract; unused here
 from eval.pricing import (
     INR_PER_USD,
@@ -84,7 +95,7 @@ from eval.pricing import (
     cost_usd_for_model,
     storage_cost_usd,
 )
-from extraction import engine, grounding, scope_check, scope_combine
+from extraction import engine, grounding, llm_backend, scope_check, scope_combine
 from extraction.context_cache import (
     MAX_TTL_S,
     PER_CLAIM_SECONDS,
@@ -213,6 +224,30 @@ class _ScopeLedger:
     prompt_hash: str
 
 
+@dataclass
+class _RunOptions:
+    """The eval-only backend / auditor-model options of one invocation. With both at their
+    default (AI Studio, no --auditor-model) a run uses none of this: the output folders,
+    files, summary and request bytes are the ones from before the options existed.
+
+    auditor_model None = engine.settings.llm_claim_audit_model. tag is the folder-name part
+    of a non-default run; run_config is the block written to its _summary.json."""
+    backend: backend_options.Backend
+    auditor_model: str | None = None
+    tag: str | None = None
+    run_config: dict | None = None
+
+    @property
+    def non_default(self) -> bool:
+        return self.tag is not None
+
+    def out_dir(self, level: str, repeat_index: int, scope: bool) -> Path:
+        scope_part = "_scope" if scope else ""
+        if self.tag is None:
+            return OUTPUT_ROOT / f"exp1_{level}{scope_part}_{repeat_index}"
+        return OUTPUT_ROOT / f"exp1_{level}_{self.tag}{scope_part}_{repeat_index}"
+
+
 def _validate_scope_flags(scope_check_on: bool, cache: bool) -> None:
     if scope_check_on and not cache:
         raise ValueError(
@@ -321,8 +356,19 @@ def _load_measured_token_stats() -> dict[str, float]:
     }
 
 
+def _estimate_rates(model: str | None) -> tuple[float, float, float]:
+    """(input, output, cached) USD per 1M for the estimate. None = the module's
+    gemini-3.6-flash constants (today's estimate); a model name must be priced
+    (pricing.UnpricedModelError otherwise)."""
+    if model is None:
+        return USD_PER_1M_INPUT, USD_PER_1M_OUTPUT, USD_PER_1M_CACHED_INPUT
+    rates = pricing.rates_for_model(model)
+    return rates.in_usd, rates.out_usd, rates.cached_rate
+
+
 def _estimate_one_claim_cost_usd(
     stats: dict[str, float], level: str, cached_audit_tokens: float = 0.0,
+    audit_model: str | None = None, struct_model: str | None = None,
 ) -> tuple[float, float]:
     """Returns (low, high) USD estimate for one audit+structure replay of one
     claim, using measured token averages. Only the audit call's thought
@@ -335,21 +381,38 @@ def _estimate_one_claim_cost_usd(
     cached_audit_tokens (default 0, the uncached estimate) is the part of the
     audit prompt billed at the cached rate; the rest of the audit prompt is
     billed at the normal input rate. Cache creation and storage are NOT
-    included here (see _print_cache_estimate)."""
+    included here (see _print_cache_estimate).
+
+    audit_model / struct_model (default None = the gemini-3.6-flash constants,
+    today's numbers) price the audit tokens and the structure tokens at each
+    call's own model."""
     if level == "high":
         thought_low = stats["audit_thought_medium"] * _HIGH_THOUGHT_MULTIPLIER_RANGE[0]
         thought_high = stats["audit_thought_medium"] * _HIGH_THOUGHT_MULTIPLIER_RANGE[1]
     else:
         thought_low = thought_high = stats["audit_thought_medium"]
 
+    audit_in, audit_out, audit_cached = _estimate_rates(audit_model)
+    struct_in, struct_out, _ = _estimate_rates(struct_model)
+
     def _cost(audit_thought_tokens: float) -> float:
+        if (audit_in, audit_out) == (struct_in, struct_out):
+            input_cost = (
+                (stats["audit_prompt"] - cached_audit_tokens + stats["struct_prompt"]) / 1e6 * audit_in
+                + cached_audit_tokens / 1e6 * audit_cached
+            )
+            output_cost = (
+                (stats["audit_output"] + audit_thought_tokens + stats["struct_output"] + stats["struct_thought"])
+                / 1e6 * audit_out
+            )
+            return input_cost + output_cost
         input_cost = (
-            (stats["audit_prompt"] - cached_audit_tokens + stats["struct_prompt"]) / 1e6 * USD_PER_1M_INPUT
-            + cached_audit_tokens / 1e6 * USD_PER_1M_CACHED_INPUT
+            (stats["audit_prompt"] - cached_audit_tokens) / 1e6 * audit_in + cached_audit_tokens / 1e6 * audit_cached
+            + stats["struct_prompt"] / 1e6 * struct_in
         )
         output_cost = (
-            (stats["audit_output"] + audit_thought_tokens + stats["struct_output"] + stats["struct_thought"])
-            / 1e6 * USD_PER_1M_OUTPUT
+            (stats["audit_output"] + audit_thought_tokens) / 1e6 * audit_out
+            + (stats["struct_output"] + stats["struct_thought"]) / 1e6 * struct_out
         )
         return input_cost + output_cost
 
@@ -566,7 +629,7 @@ async def _cancel_stray_tasks(preexisting: set[asyncio.Task]) -> None:
 
 async def _replay_claim(
     target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation,
-    paper_cache: PaperCache | None = None,
+    paper_cache: PaperCache | None = None, audit_model: str | None = None,
 ) -> ClaimLLM:
     semaphore = asyncio.Semaphore(1)
     instrumentation.set_context("audit", target.paper_id, target.claim_index, level)
@@ -578,6 +641,9 @@ async def _replay_claim(
     # under the same context (close enough - the structurer never varies by
     # thinking_level, only the audit call's cost is Experiment 1's variable).
     cache_kwargs = {"paper_cache": paper_cache} if paper_cache is not None else {}
+    # Passed on only when --auditor-model is set, so the default call is unchanged.
+    if audit_model is not None:
+        cache_kwargs["audit_model"] = audit_model
     return await engine._audit_and_structure_claim(
         semaphore=semaphore, paper_text=paper_text, claim=claim_dict, chat_id=f"replay-{target.paper_id}",
         correlation_id=None, claim_number=target.claim_index + 1, total_claims=1, thinking_level=level,
@@ -626,11 +692,12 @@ def _record_and_charge_cache(
         guard.charge(record.creation_usd)
 
 
-def _finalize_cache_storage(cache_ledger: _CacheLedger | None) -> float:
+def _finalize_cache_storage(cache_ledger: _CacheLedger | None, model: str | None = None) -> float:
     """Books storage (tokens x actual lifetime, as recorded in the ledger's
     ContextCacheStats once the cache is deleted) on every record that has none
     yet, and returns the USD newly booked. Does not touch the guard, so it is
-    safe in a finally clause."""
+    safe in a finally clause. model (the auditor model of a non-default run)
+    selects that model's storage rate; None is today's rate."""
     if cache_ledger is None:
         return 0.0
     booked = 0.0
@@ -639,7 +706,7 @@ def _finalize_cache_storage(cache_ledger: _CacheLedger | None) -> float:
         if record.lifetime_s is not None or lifetime_s is None:
             continue
         record.lifetime_s = lifetime_s
-        record.storage_usd = storage_cost_usd(record.tokens_charged, lifetime_s / 3600)
+        record.storage_usd = storage_cost_usd(record.tokens_charged, lifetime_s / 3600, model=model)
         booked += record.storage_usd
     return booked
 
@@ -648,6 +715,7 @@ async def _run_once(
     targets: list[ReplayTarget], level: str, repeat_index: int, dry_run: bool,
     paper_texts: dict[str, str] | None = None, guard: _CostGuard | None = None,
     cache_ledger: _CacheLedger | None = None, scope_ledger: _ScopeLedger | None = None,
+    run_options: _RunOptions | None = None,
 ) -> tuple[Path, list[CallRecord], list[dict], str]:
     """Returns (out_dir, gemini records, grounding records, status). status is
     STATUS_VOID_CAP_HIT when the guard's cap stopped the run, or
@@ -662,11 +730,17 @@ async def _run_once(
     A scope_ledger (requires cache_ledger, else ValueError) turns the scope check
     on: per claim, inside the cache scope, lister -> checker follow the audit and
     structure calls; after grounding, the combine step runs last. The cache TTL is
-    MAX_TTL_S. Output goes to exp1_{level}_scope_{n}."""
+    MAX_TTL_S. Output goes to exp1_{level}_scope_{n}.
+
+    run_options (None = a default run) carries --auditor-model: the audit call and
+    the cache then use that model, a non-default run writes to its own
+    exp1_{level}_{tag}[_scope]_{n} folder, and each claim records the model that
+    actually served its audit call (audit_model_served)."""
     _validate_scope_flags(scope_ledger is not None, cache_ledger is not None)
-    out_dir = OUTPUT_ROOT / (
-        f"exp1_{level}_{repeat_index}" if scope_ledger is None else f"exp1_{level}_scope_{repeat_index}"
-    )
+    run_options = run_options or _RunOptions(backend=llm_backend.AISTUDIO)
+    out_dir = run_options.out_dir(level, repeat_index, scope_ledger is not None)
+    audit_model = run_options.auditor_model
+    cache_model = audit_model or engine.settings.llm_claim_audit_model
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
     for t in targets:
         by_paper[t.paper_id].append(t)
@@ -687,11 +761,12 @@ async def _run_once(
                 paper_text = paper_texts[paper_id]
 
                 audited: list[ClaimLLM] = []
+                audit_models_served: list[str | None] = []
                 scope_results: list[scope_check.ClaimScope] = []
                 ttl_kwargs = {"ttl_s": MAX_TTL_S} if scope_ledger is not None else {}
                 cache_scope = (
                     paper_context_cache(
-                        engine._build_client(), engine.settings.llm_claim_audit_model, paper_text,
+                        engine._build_client(), cache_model, paper_text,
                         len(paper_targets), cache_ledger.stats, **ttl_kwargs,
                     )
                     if cache_ledger is not None
@@ -706,8 +781,16 @@ async def _run_once(
                             cache_kwargs = {"paper_cache": paper_cache}
                         for target in paper_targets:
                             instrumentation.raise_if_capped()
-                            claim_llm = await _replay_claim(target, paper_text, level, instrumentation, **cache_kwargs)
+                            # audit_model is passed only when --auditor-model is set (default call unchanged).
+                            audit_kwargs = {"audit_model": audit_model} if audit_model is not None else {}
+                            claim_llm = await _replay_claim(
+                                target, paper_text, level, instrumentation, **cache_kwargs, **audit_kwargs,
+                            )
                             audited.append(claim_llm)
+                            audit_models_served.append(next((
+                                r.model_used for r in reversed(instrumentation.records)
+                                if r.is_audit and r.paper_id == paper_id and r.claim_index == target.claim_index
+                            ), None))
                             if scope_ledger is not None:
                                 # Lister + checker see the claim text and the cache, never claim_llm.
                                 instrumentation.raise_if_capped()
@@ -717,7 +800,7 @@ async def _run_once(
                                 ))
                 finally:
                     # The cache is deleted by now, whichever way the block exited.
-                    storage_usd = _finalize_cache_storage(cache_ledger)
+                    storage_usd = _finalize_cache_storage(cache_ledger, model=audit_model)
                 if guard is not None and storage_usd:
                     guard.charge(storage_usd)
 
@@ -730,6 +813,11 @@ async def _run_once(
                     _claim_final_to_fixture_dict(claim_final, target.claim_index)
                     for claim_final, target in zip(grounded, paper_targets)
                 ]
+                if run_options.non_default:
+                    # The model that actually served each audit call (the fallback model after a primary
+                    # failure). Default runs do not carry the field, so their files are unchanged.
+                    for claim_dict, served in zip(claims_out, audit_models_served):
+                        claim_dict["audit_model_served"] = served
                 if scope_ledger is not None:
                     # Last step, paper level: the scope result may lower a "supported" label.
                     for claim_dict, claim_final, target, scope in zip(claims_out, grounded, paper_targets, scope_results):
@@ -739,7 +827,7 @@ async def _run_once(
                         )
                         claim_dict.update(trace.to_fields())
                 header = dict(run1_fixture["header"])
-                header["model_name"] = engine.settings.llm_claim_audit_model
+                header["model_name"] = cache_model
                 header["replay"] = {
                     "thinking_level": level, "base_run": "run1", "repeat_index": repeat_index,
                     "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -767,6 +855,7 @@ async def _run_once(
 def _print_cache_estimate(
     targets: list[ReplayTarget], level: str, repeats: int, stats: dict[str, float],
     uncached_total_usd: tuple[float, float], ttl_s: int | None = None,
+    audit_model: str | None = None, struct_model: str | None = None,
 ) -> tuple[float, float]:
     """The --estimate --cache section: per paper, creation (0.0 while not
     billed) + storage for claims x PER_CLAIM_SECONDS (an upper bound on the
@@ -776,14 +865,18 @@ def _print_cache_estimate(
     prompt average minus an ASSUMED uncached part per claim, so every paper
     is treated as an average-sized paper."""
     cached_tokens = max(0.0, stats["audit_prompt"] - ASSUMED_UNCACHED_TOKENS_PER_CLAIM)
-    claim_low, claim_high = _estimate_one_claim_cost_usd(stats, level, cached_audit_tokens=cached_tokens)
+    claim_low, claim_high = _estimate_one_claim_cost_usd(
+        stats, level, cached_audit_tokens=cached_tokens, audit_model=audit_model, struct_model=struct_model,
+    )
     claims_per_paper: dict[str, int] = defaultdict(int)
     for t in targets:
         claims_per_paper[t.paper_id] += 1
 
     total_low = total_high = overhead_total = 0.0
     for n in claims_per_paper.values():
-        overhead = cache_creation_cost_usd(cached_tokens) + storage_cost_usd(cached_tokens, n * PER_CLAIM_SECONDS / 3600)
+        overhead = cache_creation_cost_usd(cached_tokens) + storage_cost_usd(
+            cached_tokens, n * PER_CLAIM_SECONDS / 3600, model=audit_model,
+        )
         overhead_total += overhead * repeats
         total_low += (overhead + claim_low * n) * repeats
         total_high += (overhead + claim_high * n) * repeats
@@ -851,10 +944,19 @@ def _print_scope_estimate(
 
 def _print_estimate(
     targets: list[ReplayTarget], level: str, repeats: int, cache: bool = False, scope_check: bool = False,
+    audit_model: str | None = None, struct_model: str | None = None,
 ) -> None:
+    """audit_model / struct_model: None (default) prices every token at the
+    gemini-3.6-flash constants, as before. When --auditor-model is set both are
+    given: audit tokens are priced at the auditor model, structure tokens at the
+    structurer's model (pricing.UnpricedModelError for a model with no price)."""
     _validate_scope_flags(scope_check, cache)
     stats = _load_measured_token_stats()
-    low, high = _estimate_one_claim_cost_usd(stats, level)
+    low, high = _estimate_one_claim_cost_usd(stats, level, audit_model=audit_model, struct_model=struct_model)
+    if audit_model is not None:
+        print(f"[replay_audit] --estimate: audit calls priced at {audit_model}, structure calls at {struct_model}; "
+              f"ASSUMPTION: the token averages below were measured on the configured models, "
+              f"{audit_model}'s thinking and output tokens may differ")
     total_low = low * len(targets) * repeats
     total_high = high * len(targets) * repeats
 
@@ -871,6 +973,7 @@ def _print_estimate(
     if cache:
         cached_total = _print_cache_estimate(
             targets, level, repeats, stats, (total_low, total_high), ttl_s=MAX_TTL_S if scope_check else None,
+            audit_model=audit_model, struct_model=struct_model,
         )
         if scope_check:
             _print_scope_estimate(targets, repeats, stats, cached_total)
@@ -996,6 +1099,7 @@ def _print_summary(
     out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None,
     status: str = STATUS_OK, guard: _CostGuard | None = None,
     cache_ledger: _CacheLedger | None = None, scope_ledger: _ScopeLedger | None = None,
+    run_options: _RunOptions | None = None,
 ) -> None:
     grounding_records = grounding_records or []
     total_prompt = sum(r.prompt_tokens for r in records)
@@ -1051,6 +1155,8 @@ def _print_summary(
             # single call that crossed the cap; this is the largest call so far.
             "max_single_call_inr": round(guard.max_single_call_inr, 2),
         }
+    if run_options is not None and run_options.non_default:
+        summary["run_config"] = run_options.run_config
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(f"[replay_audit] {len(records)} Gemini calls, {total_prompt} prompt ({total_cached} cached) / {total_output} output / "
@@ -1073,6 +1179,8 @@ def _print_summary(
         _print_cache_summary(summary["cache"])
     if scope_ledger is not None:
         _print_scope_summary(summary["scope_check"])
+    if "run_config" in summary:
+        print(f"[replay_audit] run config: {summary['run_config']}")
     if status == STATUS_VOID_CACHE_FAILED:
         bar = "*" * 78
         print(bar)
@@ -1088,6 +1196,50 @@ def _print_summary(
               f"largest single call so far INR {guard.max_single_call_inr:.2f}) ***")
         print(f"[replay_audit] *** no further calls issued; partial summary: {out_dir / '_summary.json'} ***")
         print(bar)
+
+
+def _prepare_run_options(args: argparse.Namespace, scope_check_on: bool) -> _RunOptions:
+    """Reads --backend / --vertex-project / --vertex-location / --auditor-model and checks
+    them before any request. Raises ValueError (bad option combination, thinking level the
+    model rejects, a Google model with no price) or backend_options.BackendRoutingError (a
+    Gemini route that cannot be sent to the backend). Both options at their default returns
+    a default _RunOptions and checks nothing beyond the thinking level."""
+    backend = backend_options.backend_from_args(args)
+    auditor_model = getattr(args, "auditor_model", None)
+    structurer_model = engine.settings.llm_claim_audit_model
+    effective_auditor = auditor_model or structurer_model
+    backend_options.validate_thinking(effective_auditor, getattr(args, "level", None))
+    if backend.name == llm_backend.BACKEND_AISTUDIO and auditor_model is None:
+        return _RunOptions(backend=backend)
+
+    if (
+        scope_check_on and auditor_model is not None
+        and pricing.normalise_model_name(auditor_model) != pricing.normalise_model_name(scope_check.SCOPE_MODEL)
+    ):
+        raise ValueError(
+            f"--scope-check cannot be combined with --auditor-model {auditor_model}: the scope lister and checker "
+            f"stay on {scope_check.SCOPE_MODEL}, and the checker reads the paper from a cache created with that model"
+        )
+    other_models = {
+        "structurer": structurer_model,
+        "audit_fallback": engine.settings.llm_claim_audit_fallback_model,
+        "grounding_primary": engine.settings.llm_grounding_model,
+        "grounding_fallback": engine.settings.llm_grounding_fallback_model,
+    }
+    if scope_check_on:
+        other_models["scope_lister"] = scope_check.SCOPE_MODEL
+        other_models["scope_checker"] = scope_check.SCOPE_MODEL
+    backend_options.require_priced({"auditor": effective_auditor, **other_models})
+    if getattr(args, "cache", False):
+        pricing.storage_rate_for_model(effective_auditor)
+    backend_options.check_grounding_routes(
+        backend, engine.settings.llm_grounding_model, engine.settings.llm_grounding_fallback_model,
+    )
+    return _RunOptions(
+        backend=backend, auditor_model=auditor_model,
+        tag=backend_options.output_slug(auditor_model, backend, structurer_model),
+        run_config=backend_options.run_config(backend, effective_auditor, other_models, getattr(args, "level", None)),
+    )
 
 
 async def _main(args: argparse.Namespace) -> int:
@@ -1110,18 +1262,50 @@ async def _main(args: argparse.Namespace) -> int:
     # recorded in the replay header; the base hash above must still be the frozen one.
     scope_prompt_hash = get_prompt_version(scope_check=True) if scope_check_on else None
 
+    # --backend / --vertex-project / --auditor-model: every check here runs before any request.
+    try:
+        run_options = _prepare_run_options(args, scope_check_on)
+    except (ValueError, backend_options.BackendRoutingError) as exc:
+        print(f"[replay_audit] ABORT: {exc}")
+        return 1
+
+    # Under --backend vertex every genai client and every Gemini LiteLLM route goes to Vertex for
+    # the whole run; under the default AI Studio backend neither context changes anything.
+    with backend_options.active_backend(run_options.backend), backend_options.routed_litellm(run_options.backend):
+        return await _run_replay(args, scope_check_on, scope_prompt_hash, run_options)
+
+
+async def _run_replay(
+    args: argparse.Namespace, scope_check_on: bool, scope_prompt_hash: str | None, run_options: _RunOptions,
+) -> int:
     claims_path = Path(args.claims) if args.claims else None
     targets = _load_targets(claims_path, args.papers)
     if not targets:
         print("[replay_audit] ABORT: no claims selected")
         return 1
 
+    if run_options.non_default:
+        print(f"[replay_audit] run config: {run_options.run_config}")
+
     if args.estimate:
         estimate_kwargs = {"scope_check": True} if scope_check_on else {}
+        if run_options.auditor_model is not None:
+            estimate_kwargs["audit_model"] = run_options.auditor_model
+            estimate_kwargs["struct_model"] = engine.settings.llm_claim_audit_model
         _print_estimate(targets, args.level, args.repeat, cache=getattr(args, "cache", False), **estimate_kwargs)
         if scope_check_on:
             print(f"[replay_audit] scope-check prompt hash (recorded in the replay header): {scope_prompt_hash}")
         return 0
+
+    if run_options.non_default and not args.dry_run:
+        # A non-default run never overwrites an existing folder (the baselines included).
+        existing = [
+            str(run_options.out_dir(args.level, n, scope_check_on)) for n in range(1, args.repeat + 1)
+            if run_options.out_dir(args.level, n, scope_check_on).exists()
+        ]
+        if existing:
+            print(f"[replay_audit] ABORT: output folder(s) already exist, refusing to overwrite: {existing}")
+            return 1
 
     paper_ids = sorted({t.paper_id for t in targets})
     paper_texts: dict[str, str] = {}
@@ -1148,12 +1332,16 @@ async def _main(args: argparse.Namespace) -> int:
         if scope_check_on and not args.dry_run:
             scope_ledger = _ScopeLedger(stats=scope_check.ScopeStats(), prompt_hash=scope_prompt_hash)
             run_kwargs["scope_ledger"] = scope_ledger
+        if run_options.non_default:
+            run_kwargs["run_options"] = run_options
         out_dir, records, grounding_records, status = await _run_once(
             targets, args.level, repeat_index, args.dry_run, paper_texts, guard, **run_kwargs,
         )
         if args.dry_run:
             continue
         summary_kwargs = {"scope_ledger": scope_ledger} if scope_ledger is not None else {}
+        if run_options.non_default:
+            summary_kwargs["run_options"] = run_options
         _print_summary(out_dir, records, grounding_records, status, guard, cache_ledger, **summary_kwargs)
         if status != STATUS_OK:
             return EXIT_CAP_HIT
@@ -1189,6 +1377,13 @@ def _build_parser() -> argparse.ArgumentParser:
         "--max-inr", type=_positive_float, default=None,
         help="stop (status VOID_CAP_HIT, exit 2) once the running cost passes this many INR; default no cap",
     )
+    parser.add_argument(
+        "--auditor-model", default=None,
+        help="model of the auditor call ONLY (default: the configured llm_claim_audit_model). The structurer, the "
+             "fallback models and every other call keep their configured models; with --cache the cache is created "
+             "with this model. Not valid with --scope-check. Output goes to exp1_{level}_{model}[-vertex]_{n}",
+    )
+    backend_options.add_backend_args(parser)
     return parser
 
 

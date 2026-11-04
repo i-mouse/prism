@@ -41,19 +41,57 @@ class Rates:
 #   gemini-3.6-flash      Google AI pricing page (valid through 2026-12-31, doubles 2027-01-01)
 #   gemini-3.1-flash-lite Google AI pricing page
 #   gpt-oss-20b           Groq docs model page (served as openai/gpt-oss-20b)
+#   gemini-3.8-flash      NOT checked on Google's official Vertex pricing page. Third-party
+#                         sources agree (LiteLLM Day-0 blog, pi.dev model page): 50% promotion
+#                         through 2026-12-31 (in 0.75 / out 3.75 / cache read 0.075), from
+#                         2027-01-01 in 1.50 / out 7.50 / cache read 0.15 (comment only, like
+#                         3.6: the table is not date-aware). Confirm on Google's official
+#                         Vertex pricing page before relying.
 RATES_BY_MODEL: dict[str, Rates] = {
     "gemini-3.6-flash": Rates(
         in_usd=USD_PER_1M_INPUT, out_usd=USD_PER_1M_OUTPUT, cached_usd=USD_PER_1M_CACHED_INPUT,
     ),
     "gemini-3.1-flash-lite": Rates(in_usd=0.25, out_usd=1.50, cached_usd=0.025),
     "gpt-oss-20b": Rates(in_usd=0.075, out_usd=0.30, cached_usd=0.037),
+    "gemini-3.8-flash": Rates(in_usd=0.75, out_usd=3.75, cached_usd=0.075),
 }
+
+# Explicit-cache storage, USD per 1M tokens per hour, for the models that can be cached.
+# gemini-3.8-flash: 0.50 through 2026-12-31 (1.00 from 2027-01-01, comment only); third-party
+# pricing sources agree; confirm on Google's official Vertex pricing page before relying.
+# A model absent here has no known storage rate: storage_cost_usd(model=...) raises.
+STORAGE_USD_PER_1M_PER_HOUR_BY_MODEL: dict[str, float] = {
+    "gemini-3.6-flash": USD_PER_1M_STORAGE_PER_HOUR,
+    "gemini-3.8-flash": 0.50,
+}
+
+
+class UnpricedModelError(ValueError):
+    """A model the run can call has no entry in RATES_BY_MODEL (never priced by default)."""
 
 
 def normalise_model_name(model: str) -> str:
     """Lowercases and keeps the part after the last "/", so
     "groq/openai/gpt-oss-20b" and "gpt-oss-20b" share one key."""
     return model.lower().rsplit("/", 1)[-1]
+
+
+def rates_for_model(model: str) -> Rates:
+    """The model's Rates, or UnpricedModelError: no default price, no zero."""
+    rates = RATES_BY_MODEL.get(normalise_model_name(model))
+    if rates is None:
+        raise UnpricedModelError(
+            f"no price on file for model {model!r} in eval/pricing.py RATES_BY_MODEL; add a verified price first"
+        )
+    return rates
+
+
+def strict_cost_usd_for_model(
+    model: str, prompt: float, output: float, thought: float = 0.0, cached: float = 0.0, tool_use: float = 0.0,
+) -> float:
+    """cost_usd_for_model, but an unknown model raises UnpricedModelError."""
+    rates = rates_for_model(model)
+    return _cost(rates.in_usd, rates.out_usd, rates.cached_rate, prompt, output, thought, cached, tool_use)
 
 
 def cost_usd_for_model(
@@ -124,9 +162,22 @@ def cache_creation_cost_usd(tokens: float) -> float:
     return tokens / 1e6 * USD_PER_1M_INPUT
 
 
-def storage_cost_usd(tokens: float, hours: float) -> float:
+def storage_rate_for_model(model: str) -> float:
+    """USD per 1M tokens per hour of cache storage for `model`, or UnpricedModelError."""
+    rate = STORAGE_USD_PER_1M_PER_HOUR_BY_MODEL.get(normalise_model_name(model))
+    if rate is None:
+        raise UnpricedModelError(
+            f"no cache storage price on file for model {model!r} in eval/pricing.py "
+            f"STORAGE_USD_PER_1M_PER_HOUR_BY_MODEL"
+        )
+    return rate
+
+
+def storage_cost_usd(tokens: float, hours: float, model: str | None = None) -> float:
     """USD cost of keeping `tokens` of explicit cache alive for `hours`. Callers
     pass the actual lifetime (create to delete): observed on A0 (inferred from
     one run: 3,980 token-hours, about 35 s average lifetime); Google docs still
-    say storage is billed on the TTL."""
-    return tokens / 1e6 * hours * USD_PER_1M_STORAGE_PER_HOUR
+    say storage is billed on the TTL. model None (the default) uses the
+    gemini-3.6-flash rate exactly as before; a model uses its own rate."""
+    rate = USD_PER_1M_STORAGE_PER_HOUR if model is None else storage_rate_for_model(model)
+    return tokens / 1e6 * hours * rate

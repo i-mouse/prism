@@ -70,11 +70,50 @@ def test_rates_cached_defaults_to_input_rate():
     assert pricing.Rates(in_usd=2.0, out_usd=8.0, cached_usd=0.2).cached_rate == 0.2
 
 
-def test_rate_table_holds_only_the_verified_models():
-    assert set(pricing.RATES_BY_MODEL) == {"gemini-3.6-flash", "gemini-3.1-flash-lite", "gpt-oss-20b"}
+def test_rate_table_holds_only_the_priced_models():
+    assert set(pricing.RATES_BY_MODEL) == {
+        "gemini-3.6-flash", "gemini-3.1-flash-lite", "gpt-oss-20b", "gemini-3.8-flash",
+    }
     assert pricing.RATES_BY_MODEL["gemini-3.6-flash"] == pricing.Rates(0.75, 3.75, 0.075)
     assert pricing.RATES_BY_MODEL["gemini-3.1-flash-lite"] == pricing.Rates(0.25, 1.50, 0.025)
     assert pricing.RATES_BY_MODEL["gpt-oss-20b"] == pricing.Rates(0.075, 0.30, 0.037)
+    # through 2026-12-31 (50% promotion); 1.50 / 7.50 / 0.15 from 2027-01-01 is a code comment only
+    assert pricing.RATES_BY_MODEL["gemini-3.8-flash"] == pricing.Rates(0.75, 3.75, 0.075)
+
+
+def test_gemini_38_flash_cost_uses_its_own_rates():
+    # 600k uncached input + 400k cached + 1M output + 1M thought
+    cost = pricing.cost_usd_for_model("gemini/gemini-3.8-flash", 1e6, 1e6, thought=1e6, cached=4e5)
+    assert cost == pytest.approx(0.6 * 0.75 + 0.4 * 0.075 + 2 * 3.75)
+
+
+def test_rates_for_model_raises_for_an_unknown_model_and_normalises_names():
+    assert pricing.rates_for_model("vertex_ai/GEMINI-3.8-flash") == pricing.Rates(0.75, 3.75, 0.075)
+    for model in ("acme/mystery-model-1", "gemini-3.8-flash-preview", ""):
+        with pytest.raises(pricing.UnpricedModelError, match="no price on file"):
+            pricing.rates_for_model(model)
+    with pytest.raises(pricing.UnpricedModelError):
+        pricing.strict_cost_usd_for_model("acme/mystery-model-1", 1e6, 1e6)
+    assert pricing.strict_cost_usd_for_model("gemini-3.6-flash", 1e6, 1e6) == pytest.approx(4.50)
+
+
+def test_unpriced_model_error_is_a_value_error():
+    assert issubclass(pricing.UnpricedModelError, ValueError)
+
+
+def test_storage_rate_per_model():
+    assert pricing.storage_rate_for_model("gemini-3.6-flash") == 0.50
+    assert pricing.storage_rate_for_model("gemini-3.8-flash") == 0.50  # 1.00 from 2027-01-01 is a code comment only
+    assert pricing.storage_cost_usd(2e6, 3, model="gemini-3.8-flash") == pytest.approx(3.00)
+    # no model: today's rate, unchanged
+    assert pricing.storage_cost_usd(2e6, 3) == pytest.approx(3.00)
+
+
+def test_storage_rate_for_a_model_without_one_raises():
+    with pytest.raises(pricing.UnpricedModelError, match="no cache storage price"):
+        pricing.storage_rate_for_model("gemini-3.1-flash-lite")
+    with pytest.raises(pricing.UnpricedModelError):
+        pricing.storage_cost_usd(1e6, 1, model="acme/mystery-model-1")
 
 
 def test_storage_cost_is_tokens_times_hours_times_rate():
