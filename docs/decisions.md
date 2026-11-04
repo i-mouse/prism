@@ -4080,3 +4080,26 @@ at the end of the auditor phase must cover the cost gate too.
 
 **Money:** INR 0. Unchanged: auditor stage 173.23 of 560 spent (list
 price); sealed reserve 300 untouched.
+
+## Vertex smoke test, attempt 1: FAIL (mechanics) - 2026-11-04
+- Run: `python -m eval.probe_cache_schema --backend vertex --vertex-project
+  gen-lang-client-0520352487 --model gemini-3.8-flash` (thinking low), branch
+  eval/vertex-auditor-option, tagged smoke-vertex-38-2026-11-04 before the run. Pushing
+  the tag to GitHub failed with HTTP 500; the tag exists locally and is pushed later.
+- Result: CACHE_NOT_CREATED. 403 PERMISSION_DENIED, permission
+  aiplatform.endpoints.predict on projects/gen-lang-client-0520352487/locations/global/
+  publishers/google/models/gemini-3.8-flash. Requests sent: 0. Cost: INR 0.
+- Free checks: project number 865299102745 = gen-lang-client-0520352487. ADC account =
+  initin.net@gmail.com, which holds roles/owner. Model card: gemini-3.8-flash GA, no
+  enable step. Policy Troubleshooter: the denied principal was the Vertex AI service
+  agent service-865299102745@gcp-sa-aiplatform.iam.gserviceaccount.com; its current
+  access state shows the permission granted.
+- Cause (INFERRED, NOT VERIFIED): first-use provisioning delay of the Vertex AI service
+  agent, right after the API was enabled.
+- Also seen: after printing FAIL, the probe's result printer raises a TypeError on the
+  cache-failure path (storage cost is None). Reporting only; fix later.
+- Smoke test form (recorded deviation): the 2026-11-02 entry approves "one smoke test";
+  it is run as eval.probe_cache_schema on gemini-3.8-flash (cache create + one request +
+  delete) because that is the path the screen uses.
+- Decision: one re-run of the same command under the 2026-11-02 approval (cap INR 5). If
+  it fails again, stop; no further run without a new dated entry.
