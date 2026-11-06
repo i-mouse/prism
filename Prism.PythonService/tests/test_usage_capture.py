@@ -10,6 +10,7 @@ import asyncio
 import json
 from types import SimpleNamespace
 
+import pytest
 from google.genai import types as genai_types
 
 from extraction import engine
@@ -95,6 +96,43 @@ def test_call_gemini_structured_return_value_unaffected_by_usage_capture(monkeyp
     logged = json.loads(log_files[0].read_text(encoding="utf-8"))
     assert logged["finish_reason"] == "STOP"
     assert logged["usage"]["total_tokens"] == 30
+
+
+_CONTROL_CHAR_PAYLOAD = {
+    "claim_text_verbatim": "a@@b@@c", "claim_summary": "y", "label": "supported",
+    "evidence_spans": [{"source_text": "q", "source_section": "s"}],
+}
+# json.dumps would escape control characters, so splice the raw ones in afterwards.
+_WITH_CONTROL_CHARS = json.dumps(_CONTROL_CHAR_PAYLOAD).replace("@@b@@", "\x10b\x11")
+
+
+@pytest.mark.parametrize("raw_text, expected_claim_text", [
+    (_WITH_CONTROL_CHARS, "a\x10b\x11c"),
+    ('{"claim_text_verbatim": "x"', None),  # truly malformed: missing closing brace
+])
+def test_call_gemini_structured_fallback_parse_tolerates_control_characters(monkeypatch, tmp_path, raw_text, expected_claim_text):
+    monkeypatch.setattr(engine, "LOGS_DIR", tmp_path)
+
+    async def fake_generate_with_fallback(client, contents, config, chat_id, model_name, fallback_model, correlation_id=None, fallback_config=None):
+        return _fake_response(raw_text, parsed=None), model_name
+
+    monkeypatch.setattr(engine, "_generate_with_fallback", fake_generate_with_fallback)
+    monkeypatch.setattr(engine, "_build_client", lambda: object())
+
+    def call():
+        return asyncio.run(engine._call_gemini_structured(
+            messages=[{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}],
+            response_schema=ClaimLLM, chat_id="chat-1", correlation_id=None,
+            log_subdir="structure", model_name="m", fallback_model="fb",
+        ))
+
+    if expected_claim_text is None:
+        with pytest.raises(ValueError, match="neither parsed"):
+            call()
+    else:
+        result = call()
+        assert isinstance(result, ClaimLLM)
+        assert result.claim_text_verbatim == expected_claim_text  # characters preserved exactly
 
 
 def test_thinking_level_applies_to_primary_only_not_fallback(monkeypatch, tmp_path):

@@ -346,7 +346,7 @@ async def _call_gemini_structured(
     parsed = response.parsed
     if parsed is None:
         try:
-            parsed = response_schema.model_validate(json.loads(raw_text))
+            parsed = response_schema.model_validate(json.loads(raw_text, strict=False))
         except (json.JSONDecodeError, ValueError) as parse_exc:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} malformed response, raw={raw_text!r}")
             _write_structured_log(

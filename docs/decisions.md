@@ -4223,3 +4223,57 @@ Deviations from 2026-11-02
 If a winner: Claude Code adds golden replay support; then the full 3-run
 no-regression check (106 claims) is pre-registered and run before
 2026-11-26 (GCP credit expiry).
+
+## Screen attempt 1: arm 2 void (structurer JSON crash), fix, re-run of arms 2 and 3 - 2026-11-06
+
+What happened
+- Arm 1 (gemini-3.6-flash, medium) completed all 3 repeats:
+  exp1_medium_gemini-3.6-flash-vertex_1, _2, _3. Not scored yet.
+- Arm 2 (gemini-3.8-flash, medium) crashed in repeat 2 on paper
+  arxiv-2610.11519v1. The 3.8 auditor quoted PDF math text containing
+  raw control characters (\x10, \x11). The structurer
+  (gemini-3.6-flash) put them unescaped inside a JSON string. The SDK
+  parse returned None, the fallback json.loads (strict by default)
+  rejected them, and the ValueError ended the run.
+- Under V2 arm 2 is void (incomplete). Its partial folders
+  (exp1_medium_gemini-3.8-flash-vertex_1, _2) were moved out of the
+  repo, kept locally, and are never scored. Arm 3 was not started.
+
+Fix (code, not prompt)
+- extraction/engine.py:349: json.loads(raw_text) ->
+  json.loads(raw_text, strict=False). No characters are stripped:
+  grounding checks quotes against paper text that contains the same
+  characters. Truly malformed JSON still raises the same ValueError.
+- Regression test: one parametrized test (2 cases) in
+  tests/test_usage_capture.py. Full suite 1006 passed (was 1004).
+- Prompt hash unchanged (cb3272cce551): engine.py is not an input to
+  prompt_version.py.
+
+Why arm 1 is kept
+- json.loads with strict=False accepts every input that strict=True
+  accepts and returns the identical result. Arm 1 completed with no
+  parse failure, so the fix does not change any arm 1 output.
+- The same-day rule stands: arms 2 and 3 run on 2026-11-06. If either
+  cannot run today, arm 1 is re-run on the day they run, so all three
+  arms come from one day.
+
+Re-run
+- Arm 2 is re-run from scratch and arm 3 is run, on the fixed code.
+  Commands, caps, scoring, pass marks, void rules and stop rule are
+  exactly those of the 2026-11-06 pre-registration. Nothing else
+  changes.
+
+Not changed now
+- Other strict json.loads calls on raw LLM output: extraction/engine.py
+  :419 (extractor), extraction/scope_check.py:125, eval/matcher.py:190.
+  None is on this screen's path. The matcher is used by the full
+  106-claim check and is handled before that check is pre-registered.
+
+Records
+- Groq daily token limit (200,000 tokens per day) was hit during arms
+  1 and 2, so most grounding was served by its fallback
+  (gemini-3.1-flash-lite). Grounding never changes audit labels, so
+  scoring is unaffected. Grounding cost stays uncounted.
+- Tag mistake: screen-vertex-38-2026-11-06 was first pushed on b9e1600
+  (before the pre-registration commit), then deleted and recreated on
+  b62e6af before any paid run.
