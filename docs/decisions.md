@@ -4103,3 +4103,123 @@ price); sealed reserve 300 untouched.
   delete) because that is the path the screen uses.
 - Decision: one re-run of the same command under the 2026-11-02 approval (cap INR 5). If
   it fails again, stop; no further run without a new dated entry.
+
+## Vertex smoke attempt 2 result, billing check, housekeeping - 2026-11-06
+
+- Smoke attempt 2 (covered by the 2026-11-02 funding entry; attempt 1
+  entry committed in dee9068): PASS. gemini-3.8-flash on Vertex AI,
+  location global: 13,124 cached tokens read, response schema parsed,
+  finish reason STOP, thinking level low accepted. Probe counted
+  INR 0.24 at list price.
+- Billing check 2026-11-05: GCP Free Credit INR 28,693.88 -> 28,692.77
+  (INR 1.11 charged across both attempts). Developer Program credit
+  INR 160.94 unchanged. AI Studio prepay INR 341.81 unchanged. Eval spend
+  lands on the GCP credit as intended.
+- Finding: Vertex AI bills explicit context-cache creation (charged under
+  the normal input SKU, about cache tokens plus uncached tokens).
+  eval/pricing.py assumes creation is not billed
+  (CACHE_CREATION_BILLED = False, from AI Studio). Not fixed now. Any
+  future Vertex run that uses --cache must fix this first or record it as
+  a deviation. The console live-cost view shows standard (pre-promo)
+  prices; the credit is charged at the introductory price.
+- Tag smoke-vertex-38-2026-11-04 is on GitHub.
+- Closed: the old score_replay "0/13" result came from a wrong relative
+  --fixture-dir, not a scoring bug. All eval commands use absolute paths.
+- Deviation (agent access): while building eval/score_screen.py, Claude
+  Code saw dev labels for P1-R3 in grep match lines from
+  docs/dev_labels/paper1_residual_advantage_DRAFT.md,
+  docs/premerge_review_2026-10-20.md and
+  docs/evals/dev_adjudication_run1.md. No forbidden file was opened
+  (LABEL_RUBRIC.md, held-out, sealed, raw_text_cache, exp3_targets.json,
+  .env). No prompt or auditor work followed. P1-R3 is excluded from all
+  screen totals. Later Claude Code prompts limit grep to eval/ and source
+  folders.
+
+## Pre-registration: gemini-3.8-flash auditor screen on Vertex AI - 2026-11-06
+
+Purpose: decide (1) whether gemini-3.8-flash earns the full 3-run
+no-regression check (106 claims), and (2) which thinking level (medium or
+high) goes into it. The screen is a filter, not a Prism result. Its
+numbers are never quoted as a Prism score.
+
+Fixed setup (all arms)
+- Claims: docs/evals/exp1_stage_a_claims.json - 18 claims, 11 papers:
+  the 10 auditor misses, 7 real hits, and P1-R3 (excluded from totals).
+- --repeat 3: 54 claim-replays, 108 Gemini calls per arm.
+- --backend vertex, --vertex-project gen-lang-client-0520352487,
+  location global.
+- No --cache, no --scope-check, all experiment flags off, flag-off
+  prompt hash cb3272cce551.
+- Only the auditor model and thinking level change. The same in every
+  arm: structurer gemini-3.6-flash; audit fallback gemini-3.1-flash-lite;
+  grounding primary groq/openai/gpt-oss-20b; grounding fallback
+  gemini-3.1-flash-lite; google-genai 1.64.0; litellm 1.98.0. Each
+  arm's run_config must show these models and versions (a provider
+  route prefix such as gemini/ or vertex_ai/ may differ).
+- A model swap is a general change, not targeted at a named row
+  (2026-10-28 rule).
+
+Arms (all three on the same day, in this order)
+
+| Arm | Auditor | Thinking | Estimate (INR) | Cap --max-inr |
+|---|---|---|---|---|
+| 1 control | gemini-3.6-flash | medium | 232.7 | 302.5 |
+| 2 | gemini-3.8-flash | medium | 232.7 | 302.5 |
+| 3 | gemini-3.8-flash | high | 278.8-371.1 | 482.4 |
+
+Total cap INR 1,287.4. Estimates from replay_audit --estimate on
+2026-11-06 at list price (introductory USD 0.75 in / 3.75 out per 1M
+tokens through 2026-12-31, confirmed on Google's Vertex pricing page),
+INR 100 per USD, token averages from the 3.6 medium runs
+exp1_medium_1 and exp1_medium_2. Arm 3 thinking tokens are an assumed
+2x-4x of 3.6 medium; its cap is 1.3x the top of that range. Grounding
+calls (Groq and its fallback) are not counted (unchanged practice).
+
+Commands (run from Prism.PythonService)
+
+    uv run python -m eval.replay_audit --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 302.5 --claims "H:\Work projects\Prism\docs\evals\exp1_stage_a_claims.json"
+
+    uv run python -m eval.replay_audit --level medium --auditor-model gemini-3.8-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 302.5 --claims "H:\Work projects\Prism\docs\evals\exp1_stage_a_claims.json"
+
+    uv run python -m eval.replay_audit --level high --auditor-model gemini-3.8-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 482.4 --claims "H:\Work projects\Prism\docs\evals\exp1_stage_a_claims.json"
+
+Scoring
+- eval/score_screen.py per arm (exactly 3 folders), 2-of-3 vote per
+  claim, absolute paths, --json-out outside the repo.
+- Targets fixed: out of 8 (the 10 misses minus parked P5-R1 and P5-R2).
+- Real hits lost: out of 7.
+- Needs review on a miss row is not a fix (2026-10-28 rule).
+
+Pass marks (a 3.8 arm passes only if all hold)
+- W1: targets fixed >= arm 1 targets fixed + 1.
+- W2: real hits lost = 0.
+- W3: the arm is not void.
+- Pick: if both 3.8 arms pass, the one with more targets fixed goes
+  forward. High goes forward only if it fixes at least 1 more target
+  than medium; otherwise medium.
+
+Void rules
+- V1: an arm stops at its cap -> that arm is void.
+- V2: score_screen reports INVALID for an arm -> that arm is void.
+- V3: score_screen reports any audit served by the fallback model in an
+  arm -> that arm is void.
+- V4: arm 1 is void -> the whole screen is void.
+- A void arm or screen gives no result. Any re-run needs its own new
+  dated entry.
+
+Stop rule
+- No 3.8 arm passes -> no full 106-claim check. The auditor phase closes
+  with this result recorded, and work moves to the extraction phase.
+  No prompt changes, no extra thinking levels, no extra runs, no rescue.
+
+Deviations from 2026-11-02
+- No caching (2026-11-02 said "caching stays"): Vertex bills cache
+  creation, papers average about 1.6 screen claims each so savings are
+  small, and uncached runs keep the estimate accurate for the 1.3x stop.
+  No cost-fix code needed.
+- Arm 1 runs on Vertex on the same day. Earlier 3.6 numbers came from
+  AI Studio, so 3.8 is compared only with arm 1.
+
+If a winner: Claude Code adds golden replay support; then the full 3-run
+no-regression check (106 claims) is pre-registered and run before
+2026-11-26 (GCP credit expiry).
