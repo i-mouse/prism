@@ -46,6 +46,8 @@ Usage:
   uv run python -m eval.replay_audit --estimate --cache --level medium --claims docs/evals/exp1_stage_a_claims.json
   uv run python -m eval.replay_audit --level high                                   # Stage B: all 12 papers, repeat 1
   uv run python -m eval.replay_audit --level medium --claims ... --backend vertex --vertex-project <id> --auditor-model gemini-3.8-flash
+  uv run python -m eval.replay_audit --level high --claims ... --backend vertex --vertex-project <id> --auditor-model gemini-3.8-flash --repeat-index 2   # only folder _2
+  uv run python -m eval.replay_audit --set golden --level high --claims docs/evals/exp1_golden_claims.json --backend vertex --vertex-project <id> --auditor-model gemini-3.8-flash
 
 --backend {aistudio,vertex} (default aistudio), --vertex-project (required with vertex, no default) and
 --vertex-location (default global) send EVERY Gemini call of the process to Vertex AI (Application Default
@@ -85,6 +87,7 @@ from pathlib import Path
 
 from eval import backend_options, pricing
 from eval.legacy_paper_text import PDF_DIR, _hash_check_and_load_text  # noqa: F401 - re-exported for replay_exp3/replay_clean/replay_extract; unused here
+from eval.matrix_loader import load_matrix
 from eval.pricing import (
     INR_PER_USD,
     USD_PER_1M_CACHED_INPUT,
@@ -114,6 +117,15 @@ FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures" / "dev" / "run1"
 OUTPUT_ROOT = REPO_ROOT / "docs" / "evals" / "fixtures" / "dev"
 LOGS_DIR = SERVICE_ROOT / "logs" / "eval"
 RAW_TEXT_CACHE_DIR = SERVICE_ROOT / "scratch" / "auditor_rd" / "raw_text_cache"
+
+# --set golden: the golden matrix's papers (frozen claims + frozen matches in GOLDEN_FIXTURE_DIR), their
+# paper text (eval/build_golden_text_cache.py), and a separate output root.
+SET_DEV = "dev"
+SET_GOLDEN = "golden"
+GOLDEN_FIXTURE_DIR = REPO_ROOT / "docs" / "evals" / "fixtures"
+GOLDEN_MATRIX_PATH = REPO_ROOT / "docs" / "evals" / "matrix_eval.json"
+GOLDEN_OUTPUT_ROOT = REPO_ROOT / "docs" / "evals" / "golden_replay"
+GOLDEN_TEXT_CACHE_DIR = SERVICE_ROOT / "scratch" / "auditor_rd" / "golden_text_cache"
 
 EXPECTED_PROMPT_HASH = "cb3272cce551"
 
@@ -224,6 +236,64 @@ class _ScopeLedger:
     prompt_hash: str
 
 
+@dataclass(frozen=True)
+class _Dataset:
+    """The paper set of one invocation. The dev set is not a _Dataset: while none is active the accessors
+    below return the module's FIXTURE_DIR / RAW_TEXT_CACHE_DIR / OUTPUT_ROOT as they are at call time, so a
+    default run is exactly what it was before --set existed. allowed_ids is the only list of paper ids the
+    set may load - never a listing of its fixture folder, which may hold files of other sets."""
+    name: str
+    fixture_dir: Path
+    text_dir: Path
+    output_root: Path
+    allowed_ids: frozenset[str]
+
+
+_ACTIVE_DATASET: _Dataset | None = None
+
+
+@contextlib.contextmanager
+def active_dataset(dataset: _Dataset | None):
+    """Makes `dataset` the one the loaders read, and restores the previous one (None = dev)."""
+    global _ACTIVE_DATASET
+    previous, _ACTIVE_DATASET = _ACTIVE_DATASET, dataset
+    try:
+        yield dataset
+    finally:
+        _ACTIVE_DATASET = previous
+
+
+def _fixture_dir() -> Path:
+    return _ACTIVE_DATASET.fixture_dir if _ACTIVE_DATASET is not None else FIXTURE_DIR
+
+
+def _text_dir() -> Path:
+    return _ACTIVE_DATASET.text_dir if _ACTIVE_DATASET is not None else RAW_TEXT_CACHE_DIR
+
+
+def _output_root() -> Path:
+    return _ACTIVE_DATASET.output_root if _ACTIVE_DATASET is not None else OUTPUT_ROOT
+
+
+def _golden_dataset() -> _Dataset:
+    """The golden set: exactly the papers of the golden matrix (matrix_loader.load_matrix)."""
+    matrix = load_matrix(GOLDEN_MATRIX_PATH)
+    return _Dataset(
+        name=SET_GOLDEN, fixture_dir=GOLDEN_FIXTURE_DIR, text_dir=GOLDEN_TEXT_CACHE_DIR,
+        output_root=GOLDEN_OUTPUT_ROOT, allowed_ids=frozenset(paper.paper_id for paper in matrix.papers),
+    )
+
+
+def _dataset_from_args(args: argparse.Namespace) -> _Dataset | None:
+    """None for the dev set (nothing is swapped, the default path is untouched)."""
+    name = getattr(args, "dataset", SET_DEV)
+    if name == SET_DEV:
+        return None
+    if name == SET_GOLDEN:
+        return _golden_dataset()
+    raise ValueError(f"unknown --set {name!r}")
+
+
 @dataclass
 class _RunOptions:
     """The eval-only backend / auditor-model options of one invocation. With both at their
@@ -244,8 +314,8 @@ class _RunOptions:
     def out_dir(self, level: str, repeat_index: int, scope: bool) -> Path:
         scope_part = "_scope" if scope else ""
         if self.tag is None:
-            return OUTPUT_ROOT / f"exp1_{level}{scope_part}_{repeat_index}"
-        return OUTPUT_ROOT / f"exp1_{level}_{self.tag}{scope_part}_{repeat_index}"
+            return _output_root() / f"exp1_{level}{scope_part}_{repeat_index}"
+        return _output_root() / f"exp1_{level}_{self.tag}{scope_part}_{repeat_index}"
 
 
 def _validate_scope_flags(scope_check_on: bool, cache: bool) -> None:
@@ -280,6 +350,20 @@ def _load_claims_file(path: Path) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _read_fixture(paper_id: str) -> dict:
+    """The active set's stored fixture of one paper. Under --set golden its shape is checked (a dict with
+    header, claims and matches, as dump_fixture writes them), so a legacy bare-array fixture stops the run
+    before any request; the dev set reads the file as it always did."""
+    fixture = json.loads((_fixture_dir() / f"{paper_id}.json").read_text(encoding="utf-8"))
+    if _ACTIVE_DATASET is not None:
+        missing = [key for key in ("header", "claims", "matches") if not isinstance(fixture, dict) or key not in fixture]
+        if missing:
+            raise PaperTextError(
+                f"{paper_id}: {_ACTIVE_DATASET.name} fixture lacks {', '.join(missing)} (a legacy fixture? regenerate it)"
+            )
+    return fixture
+
+
 def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[ReplayTarget]:
     targets: list[ReplayTarget] = []
     if claims_path is not None:
@@ -288,16 +372,27 @@ def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[R
         for entry in entries:
             by_paper[entry["paper_id"]].append(entry["claim_index"])
         paper_ids = sorted(by_paper)
+        if _ACTIVE_DATASET is not None:
+            # Every id is checked before any fixture is read.
+            for paper_id in paper_ids:
+                _check_paper_id(paper_id)
     else:
-        paper_ids = sorted(p.stem for p in FIXTURE_DIR.glob("*.json"))
+        if _ACTIVE_DATASET is not None:
+            paper_ids = sorted(_ACTIVE_DATASET.allowed_ids)
+        else:
+            paper_ids = sorted(p.stem for p in FIXTURE_DIR.glob("*.json"))
         by_paper = None
 
     if papers_filter:
         wanted = {s.strip() for s in papers_filter.split(",")}
         paper_ids = [p for p in paper_ids if any(w in p for w in wanted)]
 
+    if _ACTIVE_DATASET is not None:
+        for paper_id in paper_ids:
+            _check_paper_id(paper_id)
+
     for paper_id in paper_ids:
-        fixture = json.loads((FIXTURE_DIR / f"{paper_id}.json").read_text(encoding="utf-8"))
+        fixture = _read_fixture(paper_id)
         claims_by_index = {c["index"]: c for c in fixture["claims"]}
         indices = by_paper[paper_id] if by_paper is not None else sorted(claims_by_index)
         for idx in indices:
@@ -436,9 +531,24 @@ def _check_dev_paper_id(paper_id: str) -> None:
         raise PaperTextError(f"{paper_id}: not a run1 dev fixture id, refusing to load its text")
 
 
+def _check_paper_id(paper_id: str) -> None:
+    """The id check of the active set. Dev (no active set): _check_dev_paper_id, as ever. A named set: a
+    plain id that is one of the set's allowed ids and has a fixture file there - so neither a path nor any
+    other set's paper (held-out and sealed ones included) can reach the text lookup or a fixture read."""
+    if _ACTIVE_DATASET is None:
+        _check_dev_paper_id(paper_id)
+        return
+    if not paper_id or paper_id in {".", ".."} or "/" in paper_id or "\\" in paper_id:
+        raise PaperTextError(f"{paper_id!r} is not a plain paper id")
+    if paper_id not in _ACTIVE_DATASET.allowed_ids:
+        raise PaperTextError(f"{paper_id}: not a paper of the {_ACTIVE_DATASET.name} set, refusing to load it")
+    if not (_ACTIVE_DATASET.fixture_dir / f"{paper_id}.json").is_file():
+        raise PaperTextError(f"{paper_id}: no {_ACTIVE_DATASET.name} fixture file in {_ACTIVE_DATASET.fixture_dir}")
+
+
 def _load_paper_text(paper_id: str) -> str:
-    _check_dev_paper_id(paper_id)
-    path = RAW_TEXT_CACHE_DIR / _cache_file_name(paper_id)
+    _check_paper_id(paper_id)
+    path = _text_dir() / _cache_file_name(paper_id)
     try:
         text = path.read_text(encoding="utf-8")
     except FileNotFoundError as exc:
@@ -752,7 +862,7 @@ async def _run_once(
     with instrumentation:
         try:
             for paper_id, paper_targets in sorted(by_paper.items()):
-                run1_fixture = json.loads((FIXTURE_DIR / f"{paper_id}.json").read_text(encoding="utf-8"))
+                run1_fixture = json.loads((_fixture_dir() / f"{paper_id}.json").read_text(encoding="utf-8"))
                 if dry_run:
                     print(f"[replay_audit] DRY-RUN {paper_id} repeat={repeat_index} level={level} "
                           f"claims={[t.claim_index for t in paper_targets]}")
@@ -834,6 +944,8 @@ async def _run_once(
                 }
                 if scope_ledger is not None:
                     header["replay"]["scope_check_prompt_hash"] = scope_ledger.prompt_hash
+                if _ACTIVE_DATASET is not None:
+                    header["replay"]["set"] = _ACTIVE_DATASET.name  # a named set marks its files; dev files do not change
                 header["claims_scope"] = [t.claim_index for t in paper_targets]
                 fixture_out = {"header": header, "claims": claims_out, "matches": run1_fixture["matches"]}
 
@@ -1254,6 +1366,10 @@ async def _main(args: argparse.Namespace) -> int:
     scope_check_on = getattr(args, "scope_check", False)
     _validate_scope_flags(scope_check_on, getattr(args, "cache", False))
 
+    if getattr(args, "repeat_index", None) is not None and getattr(args, "repeat", 1) > 1:
+        print("[replay_audit] ABORT: --repeat-index runs exactly one repeat; it cannot be combined with --repeat > 1")
+        return 1
+
     prompt_hash = get_prompt_version()
     if prompt_hash != EXPECTED_PROMPT_HASH:
         print(f"[replay_audit] ABORT: prompt hash {prompt_hash} != expected {EXPECTED_PROMPT_HASH}")
@@ -1269,17 +1385,37 @@ async def _main(args: argparse.Namespace) -> int:
         print(f"[replay_audit] ABORT: {exc}")
         return 1
 
+    # --set golden: the golden matrix's papers and its own text / output folders. Dev (the default) is None.
+    try:
+        dataset = _dataset_from_args(args)
+    except (ValueError, OSError) as exc:
+        print(f"[replay_audit] ABORT: cannot load the {getattr(args, 'dataset', SET_DEV)} set: {exc}")
+        return 1
+
     # Under --backend vertex every genai client and every Gemini LiteLLM route goes to Vertex for
     # the whole run; under the default AI Studio backend neither context changes anything.
-    with backend_options.active_backend(run_options.backend), backend_options.routed_litellm(run_options.backend):
+    with backend_options.active_backend(run_options.backend), backend_options.routed_litellm(run_options.backend), \
+            active_dataset(dataset):
         return await _run_replay(args, scope_check_on, scope_prompt_hash, run_options)
+
+
+def _repeat_indices(args: argparse.Namespace) -> list[int]:
+    """The repeat numbers this invocation runs: [K] under --repeat-index K, else 1..--repeat (as before)."""
+    repeat_index = getattr(args, "repeat_index", None)
+    if repeat_index is not None:
+        return [repeat_index]
+    return list(range(1, args.repeat + 1))
 
 
 async def _run_replay(
     args: argparse.Namespace, scope_check_on: bool, scope_prompt_hash: str | None, run_options: _RunOptions,
 ) -> int:
     claims_path = Path(args.claims) if args.claims else None
-    targets = _load_targets(claims_path, args.papers)
+    try:
+        targets = _load_targets(claims_path, args.papers)
+    except PaperTextError as exc:  # only a named set raises it here; the dev set behaves as before
+        print(f"[replay_audit] ABORT: {exc}")
+        return 1
     if not targets:
         print("[replay_audit] ABORT: no claims selected")
         return 1
@@ -1300,7 +1436,7 @@ async def _run_replay(
     if run_options.non_default and not args.dry_run:
         # A non-default run never overwrites an existing folder (the baselines included).
         existing = [
-            str(run_options.out_dir(args.level, n, scope_check_on)) for n in range(1, args.repeat + 1)
+            str(run_options.out_dir(args.level, n, scope_check_on)) for n in _repeat_indices(args)
             if run_options.out_dir(args.level, n, scope_check_on).exists()
         ]
         if existing:
@@ -1311,7 +1447,7 @@ async def _run_replay(
     paper_texts: dict[str, str] = {}
     if args.dry_run:
         for paper_id in paper_ids:
-            path = RAW_TEXT_CACHE_DIR / _cache_file_name(paper_id)
+            path = _text_dir() / _cache_file_name(paper_id)
             print(f"[replay_audit] DRY-RUN cache {paper_id}: {'found' if path.is_file() else 'MISSING'} ({path.name})")
     else:
         # Load every paper's text before the first paid call, so a missing file
@@ -1324,7 +1460,7 @@ async def _run_replay(
 
     guard = _CostGuard(getattr(args, "max_inr", None))
     use_cache = getattr(args, "cache", False) and not args.dry_run
-    for repeat_index in range(1, args.repeat + 1):
+    for repeat_index in _repeat_indices(args):
         # A fresh ledger per repeat: each repeat has its own summary.
         cache_ledger = _new_cache_ledger() if use_cache else None
         run_kwargs = {"cache_ledger": cache_ledger} if cache_ledger is not None else {}
@@ -1359,7 +1495,18 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--level", required=True, choices=["low", "medium", "high"])
     parser.add_argument("--claims", help="JSON file of [{paper_id, claim_index}, ...] (omit for all 12 papers/362 claims)")
+    parser.add_argument(
+        "--set", dest="dataset", choices=[SET_DEV, SET_GOLDEN], default=SET_DEV,
+        help="which papers: dev (default, the run1 dev fixtures and raw_text_cache - nothing changes) or golden "
+             "(the golden matrix's papers: fixtures in docs/evals/fixtures, text in scratch/auditor_rd/golden_text_cache, "
+             "output under docs/evals/golden_replay)",
+    )
     parser.add_argument("--repeat", type=int, default=1)
+    parser.add_argument(
+        "--repeat-index", type=int, choices=[1, 2, 3], default=None,
+        help="run only repeat K (folder _K) and write only that folder, so a crashed repeat can be re-run alone. "
+             "Cannot be combined with --repeat > 1. The existing-folder guard of a non-default run still applies",
+    )
     parser.add_argument("--papers", help="comma-separated paper_id substrings to further narrow scope")
     parser.add_argument("--estimate", action="store_true", help="print a cost estimate, zero LLM calls")
     parser.add_argument("--dry-run", action="store_true", help="print what would be replayed, zero LLM calls")
