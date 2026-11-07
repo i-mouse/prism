@@ -4277,3 +4277,63 @@ Records
 - Tag mistake: screen-vertex-38-2026-11-06 was first pushed on b9e1600
   (before the pre-registration commit), then deleted and recreated on
   b62e6af before any paid run.
+
+## Screen attempt 2: void (V3 -> V4), robustness note, decision to take gemini-3.8-flash high to the full check - 2026-11-07
+
+What happened
+- Arm 1 (kept, exp1_medium_gemini-3.6-flash-vertex_1 to _3), arm 2
+  (exp1_medium_gemini-3.8-flash-vertex_1 to _3) and arm 3
+  (exp1_high_gemini-3.8-flash-vertex_1 to _3) all ran on 2026-11-06.
+  Arms 2 and 3 ran on the fixed code (bc2f575). All arms completed, none
+  reached its cap, and score_screen returned VALID for all three. Arm 2
+  and 3 outputs were committed unscored before scoring.
+- score_screen reported 2 audits in arm 1 folder _3 (P4-R2, P1-R1)
+  served by a model other than the auditor. Checked on 2026-11-07: both
+  were served by gemini-3.1-flash-lite, the audit fallback, which serves
+  only after retries on the primary are exhausted.
+- V3: arm 1 is void. V4: the whole screen is void. No pass is claimed.
+
+Void numbers (recorded for transparency; never quoted as a result or a
+Prism score)
+
+| Arm | Misses caught /10 | Targets fixed /8 | Real hits lost /7 | Fallback-served audits |
+|---|---|---|---|---|
+| 1 gemini-3.6-flash medium | 0 | 0 | 2 | 2 (void) |
+| 2 gemini-3.8-flash medium | 3 | 2 | 0 | 0 |
+| 3 gemini-3.8-flash high | 6 | 5 | 0 | 0 |
+
+Robustness note (analysis, not a rescue)
+- Both fallback-served audits are arm 1 miss rows labelled supported in
+  all 3 folders. Counted as caught, as missed, or removed, P4-R2 and
+  P1-R1 reach at most 1 of 3 votes, so arm 1 stays at 0 targets fixed.
+  Arms 2 and 3 have no fallback-served audits. The fallback could not
+  change the outcome of W1 or W2.
+- This note does not turn the void into a pass. The screen stays void.
+
+Decision (Nitin, 2026-11-07)
+- The screen is not re-run. Re-running arm 1 alone adds no information,
+  since its likely outcome is already known. Reusing arms 2 and 3 with a
+  new arm 1 would revive void data. Re-running all three would spend
+  another day on a filter whose outcome the note above shows is clear,
+  while the real gate is downstream.
+- gemini-3.8-flash at high thinking goes to the full 3-run no-regression
+  check (106 claims, 2026-10-28 rule). Medium is not taken forward. The
+  basis is this decision, not a screen pass.
+- The full check is the gate. The product switches only if it passes.
+  Its marks, caps and void rules are pre-registered before it runs.
+- Cost note for that pre-registration: on the last repeat of each arm
+  (18 claims, including grounding), 3.8 high cost about INR 116 versus
+  about INR 72 for 3.8 medium (about 1.6x). The full check must include
+  the cost gate.
+
+Lesson (rule design)
+- V3 ("any fallback-served audit voids the arm") was too fragile: 2 of
+  162 audits voided the whole screen. Future pre-registrations count a
+  fallback-served audit as the worst case for the candidate, and void
+  only above a stated count.
+
+Next
+- Claude Code: discovery and plan for the full check (golden replay
+  support, and the strict json.loads in eval/matcher.py:190, the same
+  fix as extraction/engine.py:349). Then --estimate, pre-registration,
+  and the run before 2026-11-26 (GCP credit expiry).
