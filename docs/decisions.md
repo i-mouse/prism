@@ -4337,3 +4337,144 @@ Next
   support, and the strict json.loads in eval/matcher.py:190, the same
   fix as extraction/engine.py:349). Then --estimate, pre-registration,
   and the run before 2026-11-26 (GCP credit expiry).
+
+## Pre-registration: full 3-run no-regression check, gemini-3.8-flash medium and high vs gemini-3.6-flash, Vertex - 2026-11-08
+
+Purpose
+- Decide whether a gemini-3.8-flash auditor (medium or high thinking) is
+  kept, under the 2026-10-28 auditor no-regression rule plus the cost
+  gate.
+- Amends 2026-11-07 ("Medium is not taken forward"): medium is added
+  because 3.8 high is likely over the cost gate (rough estimate about
+  INR 155 per paper versus 130) while medium is close to cost-neutral.
+  Nitin's decision, made before any full-check run.
+
+Set
+- Dev: docs/evals/exp1_full_check_claims.json, 84 claims (18
+  refusal-row claims + 67 matched S rows; 1 shared:
+  arxiv-2610.11291v1 claim #1 = P5-R2 and P5-S1). The 21 NO_MATCH S
+  rows stay in the /88 denominator as not false rejections.
+- Golden: docs/evals/exp1_golden_claims.json, 22 claims (every
+  frozen-matched golden row). The other 15 golden rows have no claim
+  and an auditor change cannot affect them.
+- 84 + 22 = 106, which matches the figure used on 2026-11-02 and
+  2026-11-07.
+- Golden text (scratch/auditor_rd/golden_text_cache, built
+  2026-11-07): each fixture's run id resolved via
+  document_extractors.latest_run_id to file_records sha256; PDF chosen
+  by sha; a two-way Stage-1 guard with the production scorer
+  (threshold 88) reproduced all 236 frozen spans (reflexion 89, cot 59,
+  react 88) with normalize=True.
+- The 9 screen folders (exp1_*-vertex_*) were moved with git mv to
+  docs/evals/fixtures/dev/screen_2026-11-06/ so the full-check dev runs
+  can use the same folder names. Their content is unchanged.
+
+Arms (all: --backend vertex, location global, --repeat 3, no --cache,
+no --scope-check, flag-off prompt hash cb3272cce551, structurer
+gemini-3.6-flash, audit fallback gemini-3.1-flash-lite)
+
+| Arm | Auditor | Thinking | Dev cap --max-inr | Golden cap --max-inr |
+|---|---|---|---|---|
+| B baseline | gemini-3.6-flash | medium | 1411.5 | 369.7 |
+| C1 | gemini-3.8-flash | medium | 1411.5 | 369.7 |
+| C2 | gemini-3.8-flash | high | 2251.3 | 589.6 |
+
+- Estimates (replay_audit --estimate, 2026-11-08, list = introductory
+  prices, INR 100 per USD): dev 1085.8 / 1085.8 / 1301.1-1731.8;
+  golden 284.4 / 284.4 / 340.8-453.6. Each cap is 1.3x the top
+  estimate. Total cap INR 6,403.3. Grounding calls are not counted.
+
+Grounding (deviation, applies to all arms)
+- Every terminal sets LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite
+  before running, so grounding primary and fallback are both
+  gemini-3.1-flash-lite in all arms. Checked on 2026-11-08: run_config
+  shows grounding_primary gemini/gemini-3.1-flash-lite.
+- Reason: Groq's free daily limit (200,000 tokens) covers only a small
+  share of the roughly 2,600 grounding calls, so the grounding model
+  would differ by arm and by time. Grounding cost stays uncounted.
+- Known limit: the golden gates in M4 were set on runs grounded mainly
+  by Groq. Grounding by gemini-3.1-flash-lite may shift golden outcomes
+  for all arms. Accepted; the gates are not changed.
+
+Launch (all six runs start on the same calendar day; 4 terminals, each
+in Prism.PythonService with the grounding variable set)
+- T1: B dev, then B golden.
+- T2: C1 dev, then C1 golden.
+- T3: C2 dev.
+- T4: C2 golden.
+
+Commands
+
+    $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite"
+
+    uv run python -m eval.replay_audit --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 1411.5 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+
+    uv run python -m eval.replay_audit --set golden --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 369.7 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+
+    uv run python -m eval.replay_audit --level medium --auditor-model gemini-3.8-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 1411.5 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+
+    uv run python -m eval.replay_audit --set golden --level medium --auditor-model gemini-3.8-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 369.7 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+
+    uv run python -m eval.replay_audit --level high --auditor-model gemini-3.8-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 2251.3 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+
+    uv run python -m eval.replay_audit --set golden --level high --auditor-model gemini-3.8-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 589.6 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+
+Scoring
+- eval/score_full_check.py, run twice (C1 vs B, C2 vs B), each with
+  the arm's 3 dev and 3 golden folders, --json-out outside the repo.
+  Every row-level measure is a per-row 2-of-3 vote.
+
+Pass marks (a candidate passes only if all hold, on worst-case totals)
+- M1 Fixes: of the 8 targets (10 misses minus parked P5-R1 and
+  P5-R2), candidate fixed >= baseline fixed + 1 (RAW label). Parked rows
+  reported only.
+- M2 Catches: candidate loses 0 of the 7 real hits (RAW). P1-R3 is
+  reported only, in no total (Nitin approved 2026-11-07: documented
+  run-to-run noise, supported in all 9 screen folders).
+- M3 False rejections (EFFECTIVE status): candidate <= baseline and
+  <= 8/88.
+- M4 Golden: candidate refusal-family >= 5/16 and positive hits
+  >= 11/21.
+- M5 Grounding-negative: no golden negative row is refused by the
+  baseline vote and wrongly affirmed by the candidate vote.
+- M6 Needs review: 0 (no code check runs in an auditor-only replay);
+  the 2026-10-28 ceilings are met by construction.
+- M7 Cost gate: projected cost per paper = 87 + (C - Bc) x 30.17, where
+  C and Bc are the mean, over each arm's 3 dev folders, of audit INR
+  per claim reported by score_full_check, and 30.17 = 362 claims / 12
+  papers (run 1). Must be <= INR 130.
+- M8 The arm is not void.
+
+Pick rule
+- Both candidates pass every mark: the one with more targets fixed;
+  on a tie, C1 (medium).
+- Only one passes: that one.
+- C2 passes M1-M6 and M8 but fails only M7: recorded as "quality gain,
+  over budget"; not adopted. If C1 passes everything, C1 is kept.
+- Neither passes: no auditor change; the auditor phase closes and the
+  extraction phase is next.
+- A pass allows the product auditor switch to that model and level.
+  The release-bar restatement (including the cost gate) comes at the
+  end of the auditor phase and is never applied to this run.
+
+Fallback-served audits
+- Scored per claim as the worst case for a candidate and the best case
+  for the baseline (score_full_check D9).
+
+Void rules
+- V1: a run (arm x set) that stops at its cap is void.
+- V2: score_full_check reports INVALID -> that comparison is void.
+- V3: more than 16 fallback-served audits in an arm (dev + golden, all
+  3 repeats; 5% of 318) -> that arm is void.
+- V4: the baseline arm is void -> the whole check is void.
+- V5 Crash: a repeat K that stops without _summary.json may be re-run
+  once, on the same day, after its partial folder is moved out of the
+  repo, using the same command with "--repeat 3" replaced by
+  "--repeat-index K" and --max-inr set to one third of that run's cap.
+  A second crash of that arm -> that arm is void.
+- A void arm gives no result. Any re-run of a void check needs a new
+  dated entry.
+
+No rescue
+- No prompt, threshold or rule change after any run starts. No extra
+  runs. Results are recorded as they fall.
