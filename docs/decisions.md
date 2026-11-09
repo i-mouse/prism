@@ -4548,3 +4548,20 @@ Next
 - The Prism report (docs/PRISM_REPORT.md) and the pipeline diagram.
 - Then the next auditor or extraction approach, pre-registered on its
   own.
+
+## Billing check: screen and full-check spend on the GCP Free Credit - 2026-11-09
+
+- GCP Free Credit balance: INR 28,692.77 on 2026-11-05 (after the
+  smoke tests) -> INR 27,849.91 on 2026-11-07 -> INR 23,738.43 on
+  2026-11-09 at 15:37 IST. The credit expires 2026-11-26.
+- Screen (both attempts, including the void arm 2 attempt): INR 842.86
+  billed.
+- Full no-regression check (6 runs): INR 4,111.48 billed, under the
+  total cap of INR 6,403.3. The scorer counted INR 3,542.75 for audit
+  calls only (INR 100 per USD); the difference includes structurer and
+  grounding calls, which the scorer does not count.
+- Total eval spend on the GCP credit since 2026-11-02: INR 4,955.45
+  (INR 28,693.88 -> 23,738.43).
+- Google Developer Program credit unchanged at INR 160.94: no eval
+  spend reached AI Studio.
+- Billing can lag by up to a day; figures are as of the time shown.
