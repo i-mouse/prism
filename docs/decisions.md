@@ -4478,3 +4478,73 @@ Void rules
 No rescue
 - No prompt, threshold or rule change after any run starts. No extra
   runs. Results are recorded as they fall.
+
+## Full no-regression check result: FAIL for both 3.8 candidates; no auditor change - 2026-11-09
+
+Run facts
+- Pre-registration 2026-11-08 (tag fullcheck-38-2026-11-08, commit
+  49bae11). All 6 runs started on 2026-11-08 and finished with a
+  _summary.json; none stopped at its cap; no crash. Outputs were
+  committed unscored before scoring.
+- Grounding was gemini-3.1-flash-lite in every arm (run_config
+  confirmed by the scorer).
+- Fallback-served audits: baseline 0, C1 0, C2 1 (dev folder _3, outcome
+  unchanged). No arm is void.
+
+Result (score_full_check, worst-case candidate vs best-case baseline)
+
+| Mark | B 3.6 medium | C1 3.8 medium | C2 3.8 high |
+|---|---|---|---|
+| M1 targets fixed /8 | 0 | 2 (P4-R2, P8-R2) PASS | 4 (P4-R1, P4-R2, P7-R1, P8-R2) PASS |
+| M2 real hits lost /7 | 1 (P6-R1) | 0 PASS | 0 PASS |
+| M3 false rejections /88 | 1 (P4-S4) | 4 (P1-S3, P2-S7, P9-S4, P11-S2) FAIL | 7 (P1-S3, P1-S8, P8-S7, P9-S4, P10-S2, P12-S4, P12-S5) FAIL |
+| M4 golden refusal-family /16; positive hits /21 | 6; 13 | 7; 12 PASS | 9; 10 FAIL |
+| M5 grounding-negative | - | PASS | PASS |
+| M6 Needs review | 0 | 0 | 0 |
+| M7 cost per paper (INR, limit 130) | - | 104.0 PASS | 194.4 FAIL |
+| M8 not void | yes | yes | yes |
+| Overall | - | FAIL (M3) | FAIL (M3, M4, M7) |
+
+- M7 arithmetic: mean dev audit INR per claim, B 2.4075, C1 2.9710,
+  C2 5.9688. C1: 87 + 0.5635 x 30.17 = 104.0. C2: 87 + 3.5613 x 30.17
+  = 194.4.
+
+Decision (pick rule, mechanical)
+- Neither candidate passes. No auditor change: the product auditor
+  stays gemini-3.6-flash. Under the 2026-11-08 pick rule this closes
+  the 2026-10-28 auditor plan (model swap as the fix).
+- The product's recorded scores are unchanged by this check (run 1:
+  8/31 refusal rows caught, false rejections 4/88, golden 5/16,
+  positives 11/21).
+
+Nitin's decision (2026-11-09)
+- Auditor and extraction work continue. No new hand labelling. The next
+  approach is chosen after the Prism report and is pre-registered on
+  its own.
+
+What this shows (analysis, not a rescue)
+- Both 3.8 arms fix more misses but also reject more supported claims;
+  more thinking widens both effects (C2: 4 fixes, 7 false rejections,
+  golden positives 10/21). The gain came with more strictness, not
+  better judgement. C2 used about 9,100 thought tokens per dev claim
+  versus about 1,870 for the baseline.
+- M3 used the fresh baseline (1/88), as pre-registered (2026-11-07
+  ruling 2), not run 1's 4/88. Not re-scored.
+- P1-S3 and P9-S4 are false rejections in both 3.8 arms. A label check
+  under the label rubric may be done later; it cannot change this
+  result.
+- The golden gates ran with gemini-3.1-flash-lite grounding (known
+  limit, pre-registered).
+- Ideas recorded, not decided: a graded severity score with a cut-off
+  (instead of three fixed labels), and agreement between two auditors
+  before flagging a claim.
+
+Spend
+- Audit calls counted by score_full_check: INR 3,542.75 across all 18
+  folders (INR 100 per USD; structurer and grounding calls extra). The
+  billed amount is recorded after the next GCP credit check.
+
+Next
+- The Prism report (docs/PRISM_REPORT.md) and the pipeline diagram.
+- Then the next auditor or extraction approach, pre-registered on its
+  own.
