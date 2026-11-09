@@ -1,0 +1,274 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.8-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:21:45.818342+00:00",
+    "paper_id": "arxiv-2610.11291v1",
+    "filename": "2610.11291v1.pdf",
+    "extraction_run_id": "ce761dd0-6291-4e3d-81c2-387d40d90ea8",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-11-08T12:26:29Z"
+    },
+    "claims_scope": [
+      1,
+      16,
+      18,
+      19,
+      20,
+      21,
+      33
+    ]
+  },
+  "claims": [
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "Semi-OPD beats OPD on 14/17 pairs with up to 13.6% accuracy gain",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Across 17 teacher\u2013student pairs ranging from 1.5B to 235B parameters, Semi-OPD outperforms OPD in 14 cases, with up to +13.6% accuracy and 11.4\u00d7 training speedup.",
+      "evidence_spans": [
+        {
+          "source_text": "We observe that Semi-OPD outperforms OPD on 14 of 17 pairs with improvements of up to \u223c13% over OPD at the last step, and the largest gains are generally achieved on pairs with lower initial overlap.",
+          "source_section": "Section 2.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Standard OPDS 35.8 25.5 23.3 20.1 26.2",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Semi-OPD (ours) 50.3 38.9 41.8 28.0 39.8",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "OPD 56.8 11.4\u00d7",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Semi-OPD remains within 0.1-2.6% accuracy of OPD on high-overlap pairs",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On the remaining three pairs, Semi-OPD still achieves comparable performance, with gaps of 0.1\u20132.6%.",
+      "evidence_spans": [
+        {
+          "source_text": "We observe that Semi-OPD outperforms OPD on 14 of 17 pairs with improvements of up to \u223c13% over OPD at the last step, and the largest gains are generally achieved on pairs with lower initial overlap.",
+          "source_section": "Section 2.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Last-step: Semi-OPD minus OPD at the last step both methods evaluated.",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "Semi-OPD outperforms all baselines in accuracy and efficiency on low-overlap non-thinking pairs",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We observe that (1) on the Qwen3-1.7B (non-thinking) and Qwen3-4B (non-thinking) students, which have low teacher\u2013student overlap ratios, Semi-OPD outperforms all other baselines in accuracy while also being the most efficient, e.g., achieving +7.1% and +8.8% higher accuracy with 35\u00d7 and 19.5\u00d7 less training time than Relay-OPD on the two pairs, respectively, according to Fig. 1 and Tab. 4.",
+      "evidence_spans": [
+        {
+          "source_text": "Relay-OPD [13]S\n42.7\n32.8\n30.5\n24.7\n32.7\nSemi-OPD (ours)\n50.3\n38.9\n41.8\n28.0\n39.8",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Relay-OPD [13]\n61.1\n48.1\n52.5\n32.8\n48.6\nSemi-OPD (ours)\n66.4\n63.1\n62.9\n37.4\n57.4",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Relay-OPD\n173.3\n34.7\u00d7\nOPD\n56.8\n11.4\u00d7\nFastOPD\n11.7\n2.3\u00d7\nSemi-OPD\n5.0\n\u2013",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Relay-OPD\n604.4\n19.5\u00d7\nOPD\n199.1\n6.4\u00d7\nFastOPD\n77.3\n2.5\u00d7\nSemi-OPD\n31.0\n\u2013",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "On high-overlap pairs, Semi-OPD matches top baselines while cutting training time substantially",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "(2) On the Nemotron-Cascade-2 pair, which has a high overlap ratio of approximately 89%, our Semi-OPD remains competitive with other OPD baselines and falls only slightly behind the best baseline by 0.7% accuracy, while reducing the training time by 2.2x as compared to FastOPD and 4.5x compared to OPD.",
+      "evidence_spans": [
+        {
+          "source_text": "NM-Cascade-2-30B-A3B \u2190NM-Cascade-2-Math-Expert Initial overlap ratio: 89.3%",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "2.2\u00d7 vs FastOPD",
+          "source_section": "Figure 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4.5\u00d7 vs OPD",
+          "source_section": "Figure 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 20,
+      "label": "partially_supported",
+      "claim_summary": "Semi-OPD achieves up to 11.4x speedup over OPD and 2.7x over FastOPD",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The overall accuracy\u2013training-efficiency trade-off is shown in Fig. 1, where Semi-OPD achieves up to an 11.4\u00d7 speedup over standard OPD and a 2.7\u00d7 speedup over the fastest baseline, FastOPD.",
+      "evidence_spans": [
+        {
+          "source_text": "FastOPD 169.8 2.7\u00d7",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "OPD 56.8 11.4\u00d7",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "\u2020Semi-OPD uses 4K training rollouts on these pairs and OPD uses 16K; on the other two pairs both use 16K. Training rollout caps are listed in Table 3.",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "In Table 1, however, OPD is trained with a 16K rollout limit for all pairs to clearly distinguish with Fast OPD.",
+          "source_section": "Appendix A",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "Semi-OPD accuracy gain strongly anti-correlates with initial teacher-student overlap",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The two quantities are strongly correlated (Pearson\u2019s \ud835\udc5f= \u22120.73 across 17 pairs): pairs with lower initial overlap ratios tend to benefit substantially more from Semi-OPD, while OPD is only needed for pairs with high overlap ratios.",
+      "evidence_spans": [
+        {
+          "source_text": "Accuracy gain vs. initial top-64 overlap across 17 pairs ranging from 1.5B to 235B, spanning thinking and non-thinking modes and multiple model families, with a Pearson correlation of \ud835\udc5f= \u22120.73. Accuracy gain is the area between the Semi-OPD and OPD accuracy curves divided by their shared training horizon, averaged over AIME 24/25/26 and HMMT Feb 26.",
+          "source_section": "Figure 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 3 | All 17 teacher\u2013student pairs, sorted by AUC gain of Semi-OPD over OPD. Model names link to the exact Hugging Face checkpoints used. Mode: T = thinking / long chain-of-thought, NT = non-thinking. Cap: maximum response length of training rollouts, shared by both Semi-OPD and OPD. Overlap: top-64 overlap between the initial student and the teacher, in %. Last-step: Semi-OPD minus OPD at the last step both methods evaluated. AUC: signed area between the two accuracy curves over the steps both methods evaluated, divided by the length of that span. Gains are avg@32 points on the four-benchmark mean.",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 33,
+      "label": "partially_supported",
+      "claim_summary": "Distillation gains transfer beyond training domains to broader reasoning tasks",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This suggests that the gains are not limited to fitting the math training distribution but transfer to broader reasoning tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "As shown in Fig. 11, models distilled only on math-heavy datasets [26] also improve on HumanEval and HumanEval+, with Semi-OPD remaining ahead of OPD.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Figure 11 | Transfer to coding. Code performance of models distilled on math only (Qwen3-1.7B \u2190 Qwen3-4B-Instruct-2507).",
+          "source_section": "Figure 11",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P5-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P5-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P5-R3",
+      "actual_index": 27
+    },
+    {
+      "expected_id": "P5-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P5-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P5-S3",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P5-S4",
+      "actual_index": 21
+    },
+    {
+      "expected_id": "P5-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P5-S6",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "P5-S7",
+      "actual_index": 20
+    }
+  ]
+}

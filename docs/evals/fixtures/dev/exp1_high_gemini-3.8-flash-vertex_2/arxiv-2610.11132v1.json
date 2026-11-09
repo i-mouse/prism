@@ -1,0 +1,230 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.8-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:08.108000+00:00",
+    "paper_id": "arxiv-2610.11132v1",
+    "filename": "2610.11132v1.pdf",
+    "extraction_run_id": "18fea726-4814-47d3-a60f-94a01faee4d8",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-11-08T12:09:51Z"
+    },
+    "claims_scope": [
+      2,
+      9,
+      22,
+      24,
+      25
+    ]
+  },
+  "claims": [
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "SFT-as-context performs closely to SFT models on fine-tuned benchmarks and parents on general benchmarks",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context remains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and 2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE on NutriBench-English, while staying within 2.2 percentage points of the parent models on general capabilities on average.",
+      "evidence_spans": [
+        {
+          "source_text": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8\nfor coding, and 3 for nutrition.",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "AIME 2024\nAccuracy\n11.3\n56.0\n53.8\n95.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "LiveCodeBench\nPass@1\n20.1\n55.5\n53.4\n94.1",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "NutriBench-English\nMacro MAE \u2193\n35.3\n16.4\n18.4\n89.2",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "SFT-as-context achieves 95.0% and 94.1% recovery of fine-tuning gains on AIME 2024 and LiveCodeBench",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Using SFT checkpoints collected from Hugging Face, SFT-as-context achieves 95.0% and 94.1% recovery rates of the fine-tuning gains on AIME 2024 and LiveCodeBench (Jain et al., 2025), respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "all of which are popular models from Hugging Face",
+          "source_section": "Section 2.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "AIME 2024",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "95.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "LiveCodeBench",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "94.1",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Open-source SFT context consistently lowers NutriBench MAE for proprietary models beyond standalone baseline",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As shown in Table 2, using responses from open-source SFT models as context consistently improves the performance of a strong proprietary model on NutriBench-English, achieving lower MAE than either model alone.",
+      "evidence_spans": [
+        {
+          "source_text": "providing responses from a fine-tuned Qwen3-4B as context to Gemini 3.5 Flash reduces\nmacro MAE from 17.44 to 14.08 on NutriBench-English, outperforming either model alone.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On NutriBench-English, using the context from Qwen3-4B\nachieves the best macro MAE. Best results are bolded and second-best results are underlined.",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 24,
+      "label": "partially_supported",
+      "claim_summary": "SFT-as-context surpasses oracle routing in joint capability success rates",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "evidence_spans": [
+        {
+          "source_text": "The only exception where the improvement is negative is OlympicCoder-7B.",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "Average (8 pairs)\n21.1\n15.1\n27.2\n30.7\n+3.5",
+          "source_section": "Table 7",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Average (8 pairs)\n6.4\n15.2\n18.7\n20.7\n+2.0",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 25,
+      "label": "supported",
+      "claim_summary": "Second-pass generation adds at most 13.0% token overhead for math and coding models",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 10 shows that, for all math and coding model pairs, the second pass incurs only modest overhead relative to the typically long responses generated by the SFT model in the first pass.",
+          "source_section": "Appendix I",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Ratio is the number of SFT-as-context response tokens divided by the number of SFT response tokens, reported as percentages.",
+          "source_section": "Table 10",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "IFEval 7,469 972 13.0",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P2-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R5",
+      "actual_index": 24
+    },
+    {
+      "expected_id": "P2-S2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S3",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P2-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S7",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P2-S8",
+      "actual_index": 25
+    }
+  ]
+}

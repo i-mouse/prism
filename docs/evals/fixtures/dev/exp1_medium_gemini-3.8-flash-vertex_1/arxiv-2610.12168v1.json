@@ -1,0 +1,178 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.8-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:38.397508+00:00",
+    "paper_id": "arxiv-2610.12168v1",
+    "filename": "2610.12168v1.pdf",
+    "extraction_run_id": "9c1e741a-fd70-4ebf-ad6d-4c628088b55a",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-11-08T10:40:55Z"
+    },
+    "claims_scope": [
+      0,
+      3,
+      5,
+      15
+    ]
+  },
+  "claims": [
+    {
+      "index": 0,
+      "label": "not_supported",
+      "claim_summary": "Introduces a self-improvement loop extracting solution ideas in hindsight from supplied solutions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We introduce a self-improvement loop for reasoning models based on the following observation: Even when the difficulty of a problem exceeds the model\u2019s current solving abilities, an additionally supplied solution might enable the model to extract useful solution ideas in hindsight.",
+      "evidence_spans": [
+        {
+          "source_text": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "This version of the manuscript reports no empirical evaluation.",
+          "source_section": "Use of AI tools",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "Nevertheless, it is a priori not clear that solution ideas derived in hindsight are suitable targets for foresight prediction. This highlights the need for a thorough experimental evaluation of the proposed method.",
+          "source_section": "Section 6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "Provides formal method specifications and a Lean theorem prover instantiation without empirical evaluation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+      "evidence_spans": [
+        {
+          "source_text": "Building on the key ideas introduced in Section 1, we now give a formal description of our method.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "To instantiate our method in the special case of interactive theorem proving (see Section 3.1), we provide concrete realizations of the abstract concepts introduced in Section 4. We use Lean and the verifier-guided choice for ConstructTriple from Section 4.6, as summarized in Algorithm 2.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Future work should experimentally evaluate the proposed method. The evaluation should cover both the Lean instantiation and the version without a verifier, and include comparisons with standard supervised fine-tuning under comparable data and computational budgets, as well as thorough ablation studies.",
+          "source_section": "Section 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 5,
+      "label": "not_supported",
+      "claim_summary": "Employs a shared backbone network with role-specific prompt templates across all components.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "All three components share a backbone network; for example, when their inputs and outputs can be represented as text, we may use a shared language model with role-specific prompt templates.",
+      "evidence_spans": [
+        {
+          "source_text": "We give a formal specification of our method and a concrete instantiation for interactive theorem proving in the Lean theorem prover; empirical evaluation remains future work.",
+          "source_section": "Abstract",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "This version of the manuscript reports no empirical evaluation.",
+          "source_section": "Use of AI tools",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Algorithm 2 guarantees that all retained training triples contain valid solver-discovered solutions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Consequently, every triple returned by Algorithm 2 contains a valid solution discovered by the solver under the triple\u2019s hierarchy.",
+      "evidence_spans": [
+        {
+          "source_text": "If none of these N runs succeeds, we set (Utility, DiscoveredSolution)(x, y, z; \u03b8) \u2190(0, y).",
+          "source_section": "Section 5.3",
+          "grounding_status": "Fail",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "With these choices, a hierarchy for which no solver run succeeds has Utility zero and hence a non-positive Score in the context of Algorithm 2. While the fallback y for DiscoveredSolution makes the joint procedure well-defined in this case, Algorithm 2 will not return the corresponding triple, since the hierarchy\u2019s Score lies below the positive acceptance threshold \u03b4.",
+          "source_section": "Section 5.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "if Score(i\u22c6) \u2265\u03b4 then return (x, \u02dcy(i\u22c6), \u02dcz(i\u22c6))",
+          "source_section": "Algorithm 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P12-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-R2",
+      "actual_index": 0
+    },
+    {
+      "expected_id": "P12-S1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P12-S2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S4",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P12-S5",
+      "actual_index": 5
+    },
+    {
+      "expected_id": "P12-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S7",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P12-S8",
+      "actual_index": null
+    }
+  ]
+}

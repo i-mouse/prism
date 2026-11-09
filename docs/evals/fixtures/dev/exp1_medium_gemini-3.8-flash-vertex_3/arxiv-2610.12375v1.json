@@ -1,0 +1,188 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.8-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:09.041433+00:00",
+    "paper_id": "arxiv-2610.12375v1",
+    "filename": "2610.12375v1.pdf",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-08T12:28:07Z"
+    },
+    "claims_scope": [
+      1,
+      2,
+      11,
+      14,
+      16
+    ]
+  },
+  "claims": [
+    {
+      "index": 1,
+      "label": "supported",
+      "claim_summary": "OnTrack outperforms content similarity approaches by +0.057 AUROC at step 8.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Evaluating based on the first 8 steps, the proposed method ranked the failing trajectories below succeeding ones better than content similarity-based approaches (+0.057 AUROC).",
+      "evidence_spans": [
+        {
+          "source_text": "8 .631 .628 .574 .613 .576 +.057 [.033, .080]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On 2,294 SWE-agent trajectories, OnTrack provides early-trajectory discrimination that outperforms cosine similarity where it matters most \u2014 the first ten steps (+0.057 AUROC at k=8 under the primary held-out protocol, instance-level bootstrap 95% CI [+0.033, +0.080], excluding zero through k=10)",
+          "source_section": "Section 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 2,
+      "label": "partially_supported",
+      "claim_summary": "An abort policy saves ~18% compute with 83% precision on failing runs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Additionally, by deploying an abort policy on top of it, we save \u223c18% of the compute that would have been burned on agents heading to failure, and 83% of runs that were interrupted were actually heading to failure (5 out of every 6 aborts were correct).",
+      "evidence_spans": [
+        {
+          "source_text": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings on the unresolved population.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Because the corpus base rate is heavily skewed toward failure (81% unresolved), the balanced-sample false-stop rates translate to \u224883% precision in deployment: five of six aborted runs would indeed have failed.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "One protocol disclosure: the full threshold sweep is reported, and 0.60 is an illustrative threshold selected for exposition after the sweep \u2014 not a recommended deployment setting, since it was not chosen on held-out data.",
+          "source_section": "Section 6.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "The fast path executes in 0.85 ms median per step for typical lengths.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+      "evidence_spans": [
+        {
+          "source_text": "Measured on an Apple M5 Max core, the fast path runs at p50 0.85 ms / p95 1.6 ms per event at t=m=40, K=3 (p50 0.5 / p95 0.7 ms at t=m=20; p50 1.6 / p95 3.9 ms at t=80); the escalated solve matches the batch-solve runtime (\u224830 ms) and is invoked only ahead of interventions.",
+          "source_section": "Section 5 (Complexity)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At K=3 references, m=40, t \u226440, the fast path measures p50 0.85 ms / p95 1.6 ms per event (Apple M5 Max core).",
+          "source_section": "Section 6.1 (Controlled fault injection)",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Randomized testing shows high fault recall with zero false interventions on benign runs.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+      "evidence_spans": [
+        {
+          "source_text": "Beyond the eight unit scenarios, a randomized campaign (40 random-DAG tasks \u00d7 7 conditions, seeded) yields: loop recall 100% at detection latency 0; hallucination recall 100% at latency 2 (the grace window); causal-inversion recall 94.1% at latency 0 via the premature-step check; and 0 false interventions over 200 benign runs that include valid reorderings, retries, and parallel exploration (a one-sided 95% upper bound of 1.5% on the false-intervention rate).",
+          "source_section": "Section 6.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "OnTrack demonstrates a statistically significant ranking advantage over cosine similarity for steps <=10.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "First, the \u2206CI excludes zero at k \u226410, and the advantage is gone by k=15, where cosine catches up (.633 vs. .635): the claim is an early-trajectory advantage, precisely the regime an in-flight monitor operates in.",
+      "evidence_spans": [
+        {
+          "source_text": "5 .612 .595 .552 .622 .574 +.060 [.037, .083]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "8 .631 .628 .574 .613 .576 +.057 [.033, .080]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "10 .622 .614 .589 .598 .552 +.033 [.007, .057]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "15 .635 .626 .633 .580 .551 +.002 [\u2212.022, .027]",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P9-R1",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P9-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P9-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P9-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P9-S4",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "P9-S6",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P9-S7",
+      "actual_index": 11
+    },
+    {
+      "expected_id": "P9-S8",
+      "actual_index": null
+    }
+  ]
+}

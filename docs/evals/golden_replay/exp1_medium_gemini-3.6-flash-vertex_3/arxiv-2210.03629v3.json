@@ -1,0 +1,332 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "match_map:cb3272cce551",
+    "generated_at": "2026-10-07T10:02:46.597210+00:00",
+    "paper_id": "arxiv-2210.03629v3",
+    "filename": "react.pdf",
+    "extraction_run_id": "b66b3e0f-60ce-4879-acf3-e20d1c63c42c",
+    "matcher_gold_pass_rate": 0.9333333333333333,
+    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00",
+    "matcher_gold_note": "matcher_gold_pass_rate and matcher_gold_verified_at carried over, not re-measured: copied on 2026-10-07 from the archived fixture header (archive/2026-10-07_pre-cb3272cce551) because matcher_fingerprint is unchanged. This fixture's matches come from the human match map, not the matcher.",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-08T12:17:16Z",
+      "set": "golden"
+    },
+    "claims_scope": [
+      1,
+      2,
+      16,
+      18,
+      19,
+      21,
+      28,
+      29,
+      32
+    ]
+  },
+  "claims": [
+    {
+      "index": 1,
+      "label": "partially_supported",
+      "claim_summary": "ReAct outperforms state-of-the-art baselines while offering better interpretability and trustworthiness.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We apply our approach, named ReAct, to a diverse set of language and decision making tasks and demonstrate its effectiveness over state-of-the-art baselines in addition to improved human interpretability and trustworthiness.",
+      "evidence_spans": [
+        {
+          "source_text": "On ALFWorld and WebShop, two or even one-shot ReAct prompting is able to outperform imitation or reinforcement learning methods trained with 103 \u223c105 task instances, with an absolute improvement of 34% and 10% in success rates respectively.",
+          "source_section": "Section 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Supervised SoTAb 67.5 89.5",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "As all prompting methods are still significantly far from domain-specific state-of-the-art approaches (Table 1), we believe finetuning with more human-written data might be a better way to unleash the power of ReAct.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 2,
+      "label": "partially_supported",
+      "claim_summary": "ReAct reduces hallucination and error propagation on QA and fact verification.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Concretely, on question answering (HotpotQA) and fact veri\ufb01cation (Fever), ReAct overcomes prevalent issues of hallucination and error propagation in chain-of-thought reasoning by interacting with a simple Wikipedia API, and generating human-like task-solving trajectories that are more interpretable than baselines without reasoning traces.",
+      "evidence_spans": [
+        {
+          "source_text": "Concretely, on question answering (HotpotQA) and fact veri\ufb01cation (Fever), ReAct overcomes prevalent issues of hallucination and error propagation in chain-of-thought reasoning by interacting with a simple Wikipedia API, and generating human-like task-solving trajectories that are more interpretable than baselines without reasoning traces.",
+          "source_section": "Abstract",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "While interleaving reasoning, action and observation steps improves ReAct\u2019s groundedness and trustworthiness, such a structural constraint also reduces its flexibility in formulating reasoning steps, leading to more reasoning error rate than CoT.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Reasoning error | Wrong reasoning trace (including failing to recover from repetitive steps) | 47% | 16%",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 16,
+      "label": "partially_supported",
+      "claim_summary": "ReAct beats Act on HotpotQA and Fever, proving reasoning guides action effectively.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "We note that ReAct is better than Act on both tasks, demonstrating the value of reasoning to guide acting, especially for synthesizing the \ufb01nal answer, as shown in Figure 1 (1c-d).",
+      "evidence_spans": [
+        {
+          "source_text": "Act 25.7 58.9",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct 27.4 60.9",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "With PaLM-8/62B, prompting ReAct performs worst among four methods due to the dif\ufb01culty to learn both reasoning and acting from in-context examples.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "ReAct beats CoT on Fever but slightly trails CoT on HotpotQA.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On the other hand, ReAct outperforms CoT on Fever (60.9 vs. 56.3) and slightly lags behind CoT on HotpotQA (27.4 vs. 29.4).",
+      "evidence_spans": [
+        {
+          "source_text": "CoT (Wei et al., 2022) 29.4 56.3",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct 27.4 60.9",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "ReAct reduces false positive hallucinations to 6% compared to CoT's 14%.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hallucination is a serious problem for CoT, resulting in much higher false positive rate than ReAct (14% vs. 6%) in success mode, and make up its major failure mode (56%).",
+      "evidence_spans": [
+        {
+          "source_text": "To better understand the behavioral difference between ReAct and CoT on HotpotQA, we randomly sampled 50 trajectories with correct and incorrect answers (judged by EM) from ReAct and CoT respectively (thus 200 examples in total), and manually labeled their success and failure modes in Table 2.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "False positive | Hallucinated reasoning trace or facts | 6% | 14%",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hallucination | Hallucinated reasoning trace or facts | 0% | 56%",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "ReAct combined with CoT-SC reaches 21-sample CoT-SC performance with 3-5 samples.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "While two ReAct + CoT-SC methods are advantageous at one task each, they both signi\ufb01cantly and consistently outperform CoT-SC across different number of samples, reaching CoT-SC performance with 21 samples using merely 3-5 samples.",
+      "evidence_spans": [
+        {
+          "source_text": "CoT-SC (Wang et al., 2022a) 33.4 60.4",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Furthermore, Figure 2 shows how different methods perform with respect to the number of CoT-SC samples used. While two ReAct + CoT-SC methods are advantageous at one task each, they both signi\ufb01cantly and consistently outperform CoT-SC across different number of samples, reaching CoT-SC performance with 21 samples using merely 3-5 samples.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 28,
+      "label": "supported",
+      "claim_summary": "Sparse reasoning gives ReAct a 10% absolute gain over prior state-of-the-art on WebShop.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With additional sparse reasoning, ReAct achieves signi\ufb01cantly better performance, with an absolute 10% improvement over the previous best success rate.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct 66.6 40.0",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Act 62.3 30.1",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "IL 59.9 29.1",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 29,
+      "label": "supported",
+      "claim_summary": "ReAct outperforms Inner Monologue prompting on ALFWorld with 71% vs 53% success.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As can be seen in Table 3, ReAct substantially outperforms IM-style prompting (ReAct-IM) (71 vs. 53 overall success rate), with consistent advantages on \ufb01ve out of six tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "ReAct (best of 6) 92 58 96 86 78 41 71",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReAct-IM (best of 6) 62 68 87 57 39 33 53",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 32,
+      "label": "partially_supported",
+      "claim_summary": "ReAct prompting is effective across various large language models and task domains.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This indicates ReAct prompting is effective across different large language models on different tasks.",
+      "evidence_spans": [
+        {
+          "source_text": "As shown in Table 5, GPT-3 (text-davinci-002, greedy decoding) consistently outperforms PaLM-540B on HotpotQA and ALFWorld, possibly because it is finetuned with human instruction following.",
+          "source_section": "Appendix A.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "With PaLM-8/62B, prompting ReAct performs worst among four methods due to the difficulty to learn both reasoning and acting from in-context examples.",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "REACT-M01",
+      "actual_index": 28
+    },
+    {
+      "expected_id": "REACT-M02",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "REACT-M03",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "REACT-M05",
+      "actual_index": 29
+    },
+    {
+      "expected_id": "REACT-M06",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M07",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M08",
+      "actual_index": 18
+    },
+    {
+      "expected_id": "REACT-M09",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M10",
+      "actual_index": 21
+    },
+    {
+      "expected_id": "REACT-M11",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "REACT-M12",
+      "actual_index": null
+    },
+    {
+      "expected_id": "REACT-M13",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "REACT-M14",
+      "actual_index": 32
+    }
+  ]
+}
