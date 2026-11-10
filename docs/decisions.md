@@ -4578,3 +4578,9 @@ Next
 - Branches that are not merged are kept as tags before deletion: `archive/docs-label-rubric`, `archive/pr1-fewshot-loader` (PR #115 closed), `archive/dev-baseline-run1`. The local `eval/heldout-paper` branch stays local and is never pushed.
 **Alternatives:** Scrub the held-out files from git history (rejected: history rewrite on a public repo, and the paper is already near-burnt). Squash merge (rejected: a merge commit keeps the commit hashes cited in this log in main's history).
 **Consequences:** Main is the single place a reader needs. Deferred: licence check of committed arXiv PDFs; cleanup of `scratch/` folders.
+
+
+## Correction: merge to main was a squash merge - 2026-11-10
+- The "Report, hero diagram, docs refresh and merge to main - 2026-11-10" entry said eval/vertex-auditor-option would be merged with a merge commit. It was squash-merged into one commit on main.
+- Consequence: individual commit hashes cited in this log (for example 49bae11, b62e6af, bc2f575) are not in main's history. They stay reachable through tags: the experiment tags already recorded in this log, and archive/vertex-auditor-option-history at the branch tip, which also contains auditor/caching-scope-check and docs/auditor-diagnostic-2026-10-22.
+- Archive tags created before deleting branches: archive/vertex-auditor-option-history, archive/docs-label-rubric, archive/pr1-fewshot-loader (PR #115 closed), archive/dev-baseline-run1.
