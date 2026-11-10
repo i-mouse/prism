@@ -1,10 +1,13 @@
 # Prism - Engineering Report
 Nitin Yadav - 2026-11-09
-<!-- hero diagram: added in a later step -->
-*Every fact in this report is traced to its source entry in
-docs/report/PRISM_FACTS.md and docs/decisions.md.*
 
-## 1. Summary
+![Prism pipeline: current path vs approaches tried](diagrams/prism_hero.drawio.svg)
+
+*Green: current path. Red: failed or rejected. Amber: replaced by a better version, or parked. Details and reasons per stage: [Parse](#32-parse) · [Chunk](#33-chunk) · [Embed](#34-embed) · [Index](#35-index) · [Extract](#36-extract) · [Audit](#37-audit-including-structurer) · [Ground](#38-ground) · [Persist](#39-persist)*
+
+*Every fact in this report is traced to its source entry in docs/report/PRISM_FACTS.md and docs/decisions.md.*
+
+## 1. Summary 
 
 - Prism reads one research paper, pulls out its claims, and checks each
   claim against the evidence in that same paper. It does a reviewer's
@@ -33,6 +36,7 @@ docs/report/PRISM_FACTS.md and docs/decisions.md.*
   the pipeline diagram, then one new approach, pre-registered on its own.
 
 ### Key terms
+
 - **Refusal-family row:** a test claim whose correct verdict is
   partially_supported or not_supported. Prism catches it if it labels
   the claim that way, or if grounding rejects the claim's quotes.
