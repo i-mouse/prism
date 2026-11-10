@@ -1,0 +1,205 @@
+[
+  {
+    "id": "C11",
+    "table_check": [
+      {
+        "table": "Table 1",
+        "rows_pdf": 27,
+        "cols_pdf": 6,
+        "rows_grid": 27,
+        "cols_grid": 6,
+        "differences": [],
+        "last_row_quote": "NutriBench-Non-Food | Acknowledge Non-Food | 98.8 | 22.6 | 98.0 | 98.9"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 1",
+        "rule": "none",
+        "reading": "only",
+        "rows": [
+          "Fine-Tuned Capabilities > AIME 2024 > Accuracy",
+          "Fine-Tuned Capabilities > MathIF† > Math Correctness",
+          "Fine-Tuned Capabilities > LiveCodeBench > Pass@1",
+          "Fine-Tuned Capabilities > LiveCodeBenchIF† > Pass@1",
+          "Fine-Tuned Capabilities > NutriBench-English > Macro MAE ↓",
+          "Fine-Tuned Capabilities > NutriBench-Non-English† > Macro MAE ↓"
+        ],
+        "rows_by_columns": [],
+        "columns": ["SFT", "SFT-as-Context"],
+        "params": {"op": null, "constant": null, "polarity": null, "tolerance": 0, "k": null, "pairs": [], "count": null, "distinct_on": []},
+        "partial": true,
+        "excluded_rows": [
+          "General Capabilities > IFEval > PSA — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > MathIF† > Hard IF — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > MGSM > Answer-Prefix Accuracy — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > IFEval > PSA (Math: Parent=71.3, SFT=52.7, SFT-as-Context=69.8) — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > IFEval > PSA (Coding: Parent=75.0, SFT=45.1, SFT-as-Context=74.8) — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > LiveCodeBenchIF† > Exactly 3 Comment Lines — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > SQuAD2.0 > Correctness — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > FQuAD2.0 > Correctness — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > CoQA > Correctness — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > ACPBench > Overall Accuracy — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > NutriBench-Non-English† > Language Consistency — excluded by claim wording \"fine-tuned capabilities\"",
+          "General Capabilities > NutriBench-Non-Food > Acknowledge Non-Food — excluded by claim wording \"fine-tuned capabilities\""
+        ],
+        "caveat_refs": [
+          {"location": "PDF p.4, Table 1 caption", "quote": "Higher is better except for NutriBench macro MAE, where lower is better."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "† denotes joint-capability settings, where the same queries require both fine-tuned and general capabilities."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition."}
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "none",
+        "reading": "only",
+        "rows": ["Fine-Tuned Capabilities > AIME 2024 > Accuracy"],
+        "rows_by_columns": [],
+        "columns": ["SFT", "SFT-as-Context"],
+        "params": {"op": null, "constant": 2.2, "polarity": null, "tolerance": 0.05, "k": null, "pairs": [], "count": null, "distinct_on": []},
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {"location": "PDF p.4, Table 1 caption", "quote": "Higher is better except for NutriBench macro MAE, where lower is better."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition."}
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "none",
+        "reading": "only",
+        "rows": ["Fine-Tuned Capabilities > LiveCodeBench > Pass@1"],
+        "rows_by_columns": [],
+        "columns": ["SFT", "SFT-as-Context"],
+        "params": {"op": null, "constant": 2.1, "polarity": null, "tolerance": 0.05, "k": null, "pairs": [], "count": null, "distinct_on": []},
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {"location": "PDF p.4, Table 1 caption", "quote": "Higher is better except for NutriBench macro MAE, where lower is better."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition."}
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "none",
+        "reading": "only",
+        "rows": ["Fine-Tuned Capabilities > NutriBench-English > Macro MAE ↓"],
+        "rows_by_columns": [],
+        "columns": ["SFT", "SFT-as-Context"],
+        "params": {"op": null, "constant": 2.0, "polarity": null, "tolerance": 0.05, "k": null, "pairs": [], "count": null, "distinct_on": []},
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {"location": "PDF p.4, Table 1 caption", "quote": "Higher is better except for NutriBench macro MAE, where lower is better."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition."}
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "none",
+        "reading": "narrow",
+        "rows": [
+          "General Capabilities > MathIF† > Hard IF",
+          "General Capabilities > MGSM > Answer-Prefix Accuracy",
+          "General Capabilities > LiveCodeBenchIF† > Exactly 3 Comment Lines",
+          "General Capabilities > SQuAD2.0 > Correctness",
+          "General Capabilities > FQuAD2.0 > Correctness",
+          "General Capabilities > CoQA > Correctness",
+          "General Capabilities > ACPBench > Overall Accuracy",
+          "General Capabilities > NutriBench-Non-English† > Language Consistency",
+          "General Capabilities > NutriBench-Non-Food > Acknowledge Non-Food"
+        ],
+        "rows_by_columns": [
+          {"row": "General Capabilities > IFEval > PSA", "column_values": {"Parent": "71.3", "SFT": "52.7", "SFT-as-Context": "69.8", "R (↑)": "91.6"}},
+          {"row": "General Capabilities > IFEval > PSA", "column_values": {"Parent": "75.0", "SFT": "45.1", "SFT-as-Context": "74.8", "R (↑)": "99.4"}}
+        ],
+        "columns": ["Parent", "SFT-as-Context"],
+        "params": {"op": null, "constant": 2.2, "polarity": null, "tolerance": 0.05, "k": null, "pairs": [], "count": null, "distinct_on": []},
+        "partial": true,
+        "excluded_rows": [
+          "Fine-Tuned Capabilities > AIME 2024 > Accuracy — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > MathIF† > Math Correctness — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > LiveCodeBench > Pass@1 — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > LiveCodeBenchIF† > Pass@1 — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > NutriBench-English > Macro MAE ↓ — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > NutriBench-Non-English† > Macro MAE ↓ — excluded by claim wording \"general capabilities\""
+        ],
+        "caveat_refs": [
+          {"location": "PDF p.4, Table 1 caption", "quote": "† denotes joint-capability settings, where the same queries require both fine-tuned and general capabilities."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition."}
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "none",
+        "reading": "broad",
+        "rows": [
+          "General Capabilities > MathIF† > Hard IF",
+          "General Capabilities > MGSM > Answer-Prefix Accuracy",
+          "General Capabilities > LiveCodeBenchIF† > Exactly 3 Comment Lines",
+          "General Capabilities > SQuAD2.0 > Correctness",
+          "General Capabilities > FQuAD2.0 > Correctness",
+          "General Capabilities > CoQA > Correctness",
+          "General Capabilities > ACPBench > Overall Accuracy",
+          "General Capabilities > NutriBench-Non-English† > Language Consistency",
+          "General Capabilities > NutriBench-Non-Food > Acknowledge Non-Food"
+        ],
+        "rows_by_columns": [
+          {"row": "General Capabilities > IFEval > PSA", "column_values": {"Parent": "71.3", "SFT": "52.7", "SFT-as-Context": "69.8", "R (↑)": "91.6"}},
+          {"row": "General Capabilities > IFEval > PSA", "column_values": {"Parent": "75.0", "SFT": "45.1", "SFT-as-Context": "74.8", "R (↑)": "99.4"}}
+        ],
+        "columns": ["Parent", "SFT-as-Context"],
+        "params": {"op": null, "constant": 2.2, "polarity": null, "tolerance": 0.05, "k": null, "pairs": [], "count": null, "distinct_on": []},
+        "partial": true,
+        "excluded_rows": [
+          "Fine-Tuned Capabilities > AIME 2024 > Accuracy — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > MathIF† > Math Correctness — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > LiveCodeBench > Pass@1 — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > LiveCodeBenchIF† > Pass@1 — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > NutriBench-English > Macro MAE ↓ — excluded by claim wording \"general capabilities\"",
+          "Fine-Tuned Capabilities > NutriBench-Non-English† > Macro MAE ↓ — excluded by claim wording \"general capabilities\""
+        ],
+        "caveat_refs": [
+          {"location": "PDF p.4, Table 1 caption", "quote": "† denotes joint-capability settings, where the same queries require both fine-tuned and general capabilities."},
+          {"location": "PDF p.4, Table 1 caption", "quote": "The metric results are averaged over 8 parent-SFT model pairs for mathematics, 8 for coding, and 3 for nutrition."}
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "Qwen2.5-1.5B-Instruct / OpenThinker3-1.5B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-7B-Instruct / OpenThinker2-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-7B-Instruct / OpenThinker3-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-7B-Instruct / Bespoke-Stratos-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-7B-Instruct / DistilQwen-ThoughtX-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-32B-Instruct / s1.1-32B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-32B-Instruct / LIMO", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-32B-Instruct / OpenThinker2-32B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-Coder-7B-Instruct / OlympicCoder-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-7B-Instruct / OpenCodeReasoning-Nemotron-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-7B-Instruct / OpenCodeReasoning-Nemotron-1.1-7B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-14B-Instruct / OpenCodeReasoning-Nemotron-14B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-14B-Instruct / OpenCodeReasoning-Nemotron-1.1-14B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-Coder-32B-Instruct / OlympicCoder-32B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-32B-Instruct / OpenCodeReasoning-Nemotron-32B", "status": "other_table: Table 4"},
+      {"member": "Qwen2.5-32B-Instruct / OpenCodeReasoning-Nemotron-1.1-32B", "status": "other_table: Table 4"},
+      {"member": "Gemma-4-E4B-it / Ours (Appendix A.3)", "status": "other_table: Table 4"},
+      {"member": "Qwen3-4B / Ours (Appendix A.3)", "status": "other_table: Table 4"},
+      {"member": "Qwen3-8B / Ours (Appendix A.3)", "status": "other_table: Table 4"},
+      {"member": "AIME 2024", "status": "covered"},
+      {"member": "MathIF", "status": "covered"},
+      {"member": "IFEval", "status": "covered"},
+      {"member": "MGSM", "status": "covered"},
+      {"member": "LiveCodeBench", "status": "covered"},
+      {"member": "LiveCodeBenchIF", "status": "covered"},
+      {"member": "SQuAD2.0", "status": "covered"},
+      {"member": "FQuAD2.0", "status": "covered"},
+      {"member": "CoQA", "status": "covered"},
+      {"member": "ACPBench", "status": "covered"},
+      {"member": "NutriBench (English, Non-English, and Non-Food)", "status": "covered"},
+      {"member": "Fine-tuned capability comparison: SFT-as-Context against SFT", "status": "covered"},
+      {"member": "General capability comparison: SFT-as-Context against Parent", "status": "covered"}
+    ],
+    "no_rule_reason": "The permitted rules cannot express an absolute difference between two column cells or an average of paired differences. all_cmp compares individual cells with a constant, while beats_baseline checks directional superiority only. The three stated SFT-versus-SFT-as-Context gaps and the Parent-versus-SFT-as-Context general-capability gap therefore require rule none. The broader fine-tuned-capability closeness statement also lacks a numerical threshold for every included row.",
+    "notes": "Table row counts include the header and section rows. The phrase \"within 2.2 percentage points of the parent models on general capabilities on average\" has two readings: narrow means each general-capability benchmark-level result, averaged over its model pairs, is within the bound; broad means the average gap across the general-capability benchmarks is within the bound. Both are represented separately. Table 1 contains per-benchmark results averaged over 8 mathematics, 8 coding, and 3 nutrition model pairs; it does not expose all 19 individual pair-level score cells. The duplicate General Capabilities > IFEval > PSA row keys are distinguished using their column values. The † rows are retained in their respective fine-tuned or general-capability sections."
+  }
+]

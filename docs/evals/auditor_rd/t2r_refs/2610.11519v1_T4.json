@@ -1,0 +1,412 @@
+{
+  "caption_number": 4,
+  "caption_text": "The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier. Change in three-seed macro score when the branch is added, Qwen3-1.7B-Base, in points. The weight λ multiplies the branch's teacher part and, with RA, also the sampled guidance. Absolute, benchmark, and per-seed scores are in Appendix .",
+  "cells": [
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 7,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 0,
+      "row_span": 1,
+      "text": "Effect of the teacher-peak branch"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "Sampled OPD"
+    },
+    {
+      "col": 2,
+      "col_span": 3,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "REINFORCE++"
+    },
+    {
+      "col": 5,
+      "col_span": 3,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 1,
+      "row_span": 1,
+      "text": "RA+REINFORCE++"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": ""
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "no weight"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "λ=5"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "λ=10"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "λ=20"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "λ=5"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "λ=10"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": true,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 2,
+      "row_span": 1,
+      "text": "λ=20"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "Δ macro Avg@8"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "+0.30"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "-0.38"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "-0.88"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "-1.76"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "-2.05"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "-2.07"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 3,
+      "row_span": 1,
+      "text": "-2.16"
+    },
+    {
+      "col": 0,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": true,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "Δ macro Pass@8"
+    },
+    {
+      "col": 1,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "+0.64"
+    },
+    {
+      "col": 2,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "-0.46"
+    },
+    {
+      "col": 3,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "-0.86"
+    },
+    {
+      "col": 4,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "-2.11"
+    },
+    {
+      "col": 5,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "-3.91"
+    },
+    {
+      "col": 6,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "-3.41"
+    },
+    {
+      "col": 7,
+      "col_span": 1,
+      "is_column_header": false,
+      "is_row_header": false,
+      "is_section_row": false,
+      "row": 4,
+      "row_span": 1,
+      "text": "-3.89"
+    }
+  ],
+  "col_keys": [
+    {
+      "col": 0,
+      "path": []
+    },
+    {
+      "col": 1,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "Sampled OPD",
+        "no weight"
+      ]
+    },
+    {
+      "col": 2,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "REINFORCE++",
+        "λ=5"
+      ]
+    },
+    {
+      "col": 3,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "REINFORCE++",
+        "λ=10"
+      ]
+    },
+    {
+      "col": 4,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "REINFORCE++",
+        "λ=20"
+      ]
+    },
+    {
+      "col": 5,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "RA+REINFORCE++",
+        "λ=5"
+      ]
+    },
+    {
+      "col": 6,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "RA+REINFORCE++",
+        "λ=10"
+      ]
+    },
+    {
+      "col": 7,
+      "path": [
+        "Effect of the teacher-peak branch",
+        "RA+REINFORCE++",
+        "λ=20"
+      ]
+    }
+  ],
+  "footnotes": [],
+  "latex_meta": {
+    "env": "table",
+    "flags": [],
+    "footnotes_note": "footnotes are not extracted from LaTeX",
+    "header_rows": [
+      0,
+      1,
+      2
+    ],
+    "latex_caption_start": "The same teacher-peak branch slightly helps sampled OPD but lowers both students",
+    "latex_table_index": 4,
+    "macros_expanded": [
+      "RA",
+      "arraystretch"
+    ],
+    "n_multicolumn": 9,
+    "n_multirow": 0,
+    "n_tabulars": 1,
+    "paper_id": "2610.11519v1",
+    "part": "",
+    "pdf_caption_start": "The same teacher-peak branch slightly helps sampled OPD but lowers both students",
+    "problems": [],
+    "unknown_macros": []
+  },
+  "n_cols": 8,
+  "n_rows": 5,
+  "page": null,
+  "row_keys": [
+    {
+      "path": [
+        "Δ macro Avg@8"
+      ],
+      "row": 3
+    },
+    {
+      "path": [
+        "Δ macro Pass@8"
+      ],
+      "row": 4
+    }
+  ],
+  "schema_version": 1,
+  "table_index": 4
+}

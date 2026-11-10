@@ -1,0 +1,109 @@
+[
+  {
+    "id": "C14",
+    "table_check": [
+      {
+        "table": "Table 3",
+        "rows_pdf": 8,
+        "cols_pdf": 4,
+        "rows_grid": 8,
+        "cols_grid": 4,
+        "differences": [],
+        "last_row_quote": "UTT (Ours) 62.4 50.0 32"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 3",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "SeqKD",
+          "Fine-tune-CoT",
+          "RSR",
+          "LUFFY",
+          "UTT (Ours)"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Omni-MATH-2 > Acc.",
+          "KernelBench > Acc.",
+          "KernelBench > Fast1"
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["UTT (Ours)", "SeqKD"],
+            ["UTT (Ours)", "Fine-tune-CoT"],
+            ["UTT (Ours)", "RSR"],
+            ["UTT (Ours)", "LUFFY"]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Student — baseline, not a parameter-updating knowledge distillation method."
+        ],
+        "caveat_refs": [
+          {
+            "location": "PDF page 9, Table 3 caption",
+            "quote": "Comparison with KD methods under the Pro→Qwen setting."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "One-shot",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "Few-shot",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "Teacher summary",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "APE",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "MIPROv2 (instruction only)",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "MIPROv2 (Opsahl-Ong et al., 2024)",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "GEPA",
+        "status": "other_table: Table 2"
+      },
+      {
+        "member": "SeqKD",
+        "status": "covered"
+      },
+      {
+        "member": "Fine-tune-CoT",
+        "status": "covered"
+      },
+      {
+        "member": "RSR",
+        "status": "covered"
+      },
+      {
+        "member": "LUFFY",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "The prompt-engineering portion cannot be encoded using this pack because its comparison is in Table 2, for which no reference grid or row and column key paths are supplied.",
+    "notes": "Table 3 covers only the Pro→Qwen setting, not all evaluated settings. The prompt-engineering comparison is in Table 2. No exact ties were noticed among the compared method values in Table 3."
+  }
+]

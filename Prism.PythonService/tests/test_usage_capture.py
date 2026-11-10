@@ -10,6 +10,7 @@ import asyncio
 import json
 from types import SimpleNamespace
 
+import pytest
 from google.genai import types as genai_types
 
 from extraction import engine
@@ -30,7 +31,10 @@ def _fake_response(text: str, prompt_tokens=10, output_tokens=20, thought_tokens
 def test_extract_usage_and_finish_reason_reads_expected_fields():
     response = _fake_response("{}", prompt_tokens=5, output_tokens=7, thought_tokens=1, total_tokens=13, finish_reason="STOP")
     usage, finish_reason = engine._extract_usage_and_finish_reason(response)
-    assert usage == {"prompt_tokens": 5, "output_tokens": 7, "thought_tokens": 1, "total_tokens": 13}
+    assert usage == {
+        "prompt_tokens": 5, "output_tokens": 7, "thought_tokens": 1, "total_tokens": 13,
+        "cached_tokens": None, "tool_use_tokens": None,
+    }
     assert finish_reason == "STOP"
 
 
@@ -92,6 +96,43 @@ def test_call_gemini_structured_return_value_unaffected_by_usage_capture(monkeyp
     logged = json.loads(log_files[0].read_text(encoding="utf-8"))
     assert logged["finish_reason"] == "STOP"
     assert logged["usage"]["total_tokens"] == 30
+
+
+_CONTROL_CHAR_PAYLOAD = {
+    "claim_text_verbatim": "a@@b@@c", "claim_summary": "y", "label": "supported",
+    "evidence_spans": [{"source_text": "q", "source_section": "s"}],
+}
+# json.dumps would escape control characters, so splice the raw ones in afterwards.
+_WITH_CONTROL_CHARS = json.dumps(_CONTROL_CHAR_PAYLOAD).replace("@@b@@", "\x10b\x11")
+
+
+@pytest.mark.parametrize("raw_text, expected_claim_text", [
+    (_WITH_CONTROL_CHARS, "a\x10b\x11c"),
+    ('{"claim_text_verbatim": "x"', None),  # truly malformed: missing closing brace
+])
+def test_call_gemini_structured_fallback_parse_tolerates_control_characters(monkeypatch, tmp_path, raw_text, expected_claim_text):
+    monkeypatch.setattr(engine, "LOGS_DIR", tmp_path)
+
+    async def fake_generate_with_fallback(client, contents, config, chat_id, model_name, fallback_model, correlation_id=None, fallback_config=None):
+        return _fake_response(raw_text, parsed=None), model_name
+
+    monkeypatch.setattr(engine, "_generate_with_fallback", fake_generate_with_fallback)
+    monkeypatch.setattr(engine, "_build_client", lambda: object())
+
+    def call():
+        return asyncio.run(engine._call_gemini_structured(
+            messages=[{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}],
+            response_schema=ClaimLLM, chat_id="chat-1", correlation_id=None,
+            log_subdir="structure", model_name="m", fallback_model="fb",
+        ))
+
+    if expected_claim_text is None:
+        with pytest.raises(ValueError, match="neither parsed"):
+            call()
+    else:
+        result = call()
+        assert isinstance(result, ClaimLLM)
+        assert result.claim_text_verbatim == expected_claim_text  # characters preserved exactly
 
 
 def test_thinking_level_applies_to_primary_only_not_fallback(monkeypatch, tmp_path):
@@ -182,3 +223,108 @@ def test_call_gemini_structured_logs_sentence_count_for_pass2_schema(monkeypatch
     assert len(log_files) == 1
     logged = json.loads(log_files[0].read_text(encoding="utf-8"))
     assert logged["response_item_count"] == 3
+
+
+def _usage_response(**fields):
+    """Fake response whose usage_metadata carries exactly the given fields
+    (anything omitted is absent, so getattr falls through to None)."""
+    return SimpleNamespace(text="x", usage_metadata=SimpleNamespace(**fields), candidates=[])
+
+
+def test_extract_usage_reads_cached_and_tool_use_tokens():
+    response = _usage_response(
+        prompt_token_count=100, cached_content_token_count=60, candidates_token_count=10,
+        thoughts_token_count=5, tool_use_prompt_token_count=3, total_token_count=118,
+    )
+    usage, _ = engine._extract_usage_and_finish_reason(response)
+    assert usage["cached_tokens"] == 60
+    assert usage["tool_use_tokens"] == 3
+    assert usage["thought_tokens"] == 5
+    assert usage["prompt_tokens"] == 100  # prompt still includes cached; no subtraction in the log
+
+
+def test_extract_usage_keeps_missing_fields_null_not_zero():
+    response = _usage_response(prompt_token_count=10, candidates_token_count=2, total_token_count=12)
+    usage, _ = engine._extract_usage_and_finish_reason(response)
+    assert usage["cached_tokens"] is None
+    assert usage["tool_use_tokens"] is None
+    assert usage["thought_tokens"] is None
+
+
+def test_usage_sum_matching_total_logs_no_warning(caplog):
+    response = _usage_response(
+        prompt_token_count=100, cached_content_token_count=60, candidates_token_count=10,
+        thoughts_token_count=5, tool_use_prompt_token_count=3, total_token_count=118,
+    )
+    with caplog.at_level("WARNING", logger="extraction.engine"):
+        engine._extract_usage_and_finish_reason(response)
+    assert caplog.records == []
+
+
+def test_usage_sum_mismatch_logs_one_warning_with_all_five_numbers(caplog):
+    response = _usage_response(
+        prompt_token_count=100, candidates_token_count=10, thoughts_token_count=5,
+        tool_use_prompt_token_count=3, total_token_count=999,
+    )
+    with caplog.at_level("WARNING", logger="extraction.engine"):
+        usage, _ = engine._extract_usage_and_finish_reason(response)
+    assert len(caplog.records) == 1
+    message = caplog.records[0].getMessage()
+    for number in ("100", "10", "5", "3", "999"):
+        assert number in message
+    assert usage["total_tokens"] == 999  # result unchanged
+
+
+def test_usage_sum_check_skipped_when_total_is_none(caplog):
+    response = _usage_response(prompt_token_count=100, candidates_token_count=10)
+    with caplog.at_level("WARNING", logger="extraction.engine"):
+        engine._extract_usage_and_finish_reason(response)
+    assert caplog.records == []
+
+
+def test_usage_sum_treats_none_as_zero(caplog):
+    response = _usage_response(prompt_token_count=10, candidates_token_count=2, total_token_count=12)
+    with caplog.at_level("WARNING", logger="extraction.engine"):
+        engine._extract_usage_and_finish_reason(response)
+    assert caplog.records == []
+
+
+def test_usage_extraction_failure_logs_warning_and_returns_none(caplog):
+    class Exploding:
+        @property
+        def usage_metadata(self):
+            raise RuntimeError("boom")
+
+    with caplog.at_level("WARNING", logger="extraction.engine"):
+        usage, finish_reason = engine._extract_usage_and_finish_reason(Exploding())
+    assert usage is None
+    assert finish_reason is None
+    assert len(caplog.records) == 1
+
+
+def test_call_gemini_freetext_logs_usage(monkeypatch, tmp_path):
+    monkeypatch.setattr(engine, "LOGS_DIR", tmp_path)
+
+    async def fake_generate_with_fallback(client, contents, config, chat_id, model_name, fallback_model, correlation_id=None):
+        response = _usage_response(
+            prompt_token_count=40, cached_content_token_count=30, candidates_token_count=5,
+            thoughts_token_count=2, total_token_count=47,
+        )
+        response.text = "VERDICT: supported"
+        response.candidates = [SimpleNamespace(finish_reason=SimpleNamespace(value="STOP"))]
+        return response, model_name
+
+    monkeypatch.setattr(engine, "_generate_with_fallback", fake_generate_with_fallback)
+    monkeypatch.setattr(engine, "_build_client", lambda: object())
+
+    result = asyncio.run(engine._call_gemini_freetext(
+        messages=[{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"}],
+        chat_id="chat-1", correlation_id=None, log_subdir="audit", model_name="m", fallback_model="fb",
+    ))
+
+    assert result == "VERDICT: supported"  # return value unaffected
+    logged = json.loads(next((tmp_path / "audit").glob("*.json")).read_text(encoding="utf-8"))
+    assert logged["usage"]["cached_tokens"] == 30
+    assert logged["usage"]["prompt_tokens"] == 40
+    assert logged["usage"]["tool_use_tokens"] is None
+    assert logged["finish_reason"] == "STOP"

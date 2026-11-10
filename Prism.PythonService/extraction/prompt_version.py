@@ -64,12 +64,28 @@ CLEAN_PASS2_PROMPT_FILENAMES = (
     "extract_claims_pass2_clean_system.md",
 )
 
+# Scope check (docs/decisions.md, "Auditor redesign agreed: caching + scope
+# check, marks and caps - 2026-10-22"; step-4 additions 2026-10-27) - the
+# lister's system prompt, the checker's user-turn template and the schema module
+# that defines both response_schemas.
+# Hashed only when scope_check is on, after every other block; none of these
+# files exists in the flag-off pipeline's rendering, so their bytes must not
+# affect the flag-off hash. Mirrors the pass-2 block.
+SCOPE_CHECK_PROMPT_FILENAMES = (
+    "scope_list_system.md",
+    "scope_check_user.md",
+)
+SCOPE_CHECK_EXTRA_FILES = (
+    Path(__file__).parent / "scope_schemas.py",
+)
+
 
 def get_prompt_version(
     fewshot_fix: bool | None = None,
     fewshot_shapes: bool | None = None,
     extractor_second_pass: bool | None = None,
     extractor_pass2_clean: bool | None = None,
+    scope_check: bool = False,
 ) -> str:
     """Returns a 12-character SHA-256 hash of the current prompt files.
 
@@ -112,6 +128,12 @@ def get_prompt_version(
     SECOND_PASS_PROMPT_FILENAMES' bytes (after the fewshot_fix/fewshot_shapes
     markers, if any) and its own literal marker is appended - the old
     second-pass-only hash is intentionally unreachable in that combination.
+
+    scope_check: the scope lister + checker (replay only for now). An explicit
+    parameter, default False, never read from settings. Off leaves the hash
+    exactly as it is (none of SCOPE_CHECK_PROMPT_FILENAMES / SCOPE_CHECK_EXTRA_FILES
+    is read, no marker appended). On appends those files' bytes after every other
+    block, then its own literal marker.
     """
     if fewshot_fix is None:
         fewshot_fix = settings.extractor_fewshot_fix
@@ -154,5 +176,13 @@ def get_prompt_version(
                 raise FileNotFoundError(f"Prompt file not found at {path}")
             combined += path.read_bytes()
         combined += b"\x00extractor_second_pass=1"
+
+    if scope_check:
+        scope_paths = [PROMPTS_DIR / filename for filename in SCOPE_CHECK_PROMPT_FILENAMES] + list(SCOPE_CHECK_EXTRA_FILES)
+        for path in scope_paths:
+            if not path.exists():
+                raise FileNotFoundError(f"Prompt file not found at {path}")
+            combined += path.read_bytes()
+        combined += b"\x00scope_check=1"
 
     return hashlib.sha256(combined).hexdigest()[:12]

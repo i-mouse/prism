@@ -1,0 +1,156 @@
+[
+  {
+    "row_ids": [
+      "COT-M01"
+    ],
+    "paper_id": "arxiv-2201.11903v6",
+    "claim_index": 2
+  },
+  {
+    "row_ids": [
+      "COT-M02"
+    ],
+    "paper_id": "arxiv-2201.11903v6",
+    "claim_index": 6
+  },
+  {
+    "row_ids": [
+      "COT-M05"
+    ],
+    "paper_id": "arxiv-2201.11903v6",
+    "claim_index": 9
+  },
+  {
+    "row_ids": [
+      "COT-M03"
+    ],
+    "paper_id": "arxiv-2201.11903v6",
+    "claim_index": 14
+  },
+  {
+    "row_ids": [
+      "COT-M04"
+    ],
+    "paper_id": "arxiv-2201.11903v6",
+    "claim_index": 16
+  },
+  {
+    "row_ids": [
+      "COT-M08"
+    ],
+    "paper_id": "arxiv-2201.11903v6",
+    "claim_index": 22
+  },
+  {
+    "row_ids": [
+      "REACT-M13"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 1
+  },
+  {
+    "row_ids": [
+      "REACT-M11"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 2
+  },
+  {
+    "row_ids": [
+      "REACT-M03"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 16
+  },
+  {
+    "row_ids": [
+      "REACT-M08"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 18
+  },
+  {
+    "row_ids": [
+      "REACT-M02"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 19
+  },
+  {
+    "row_ids": [
+      "REACT-M10"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 21
+  },
+  {
+    "row_ids": [
+      "REACT-M01"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 28
+  },
+  {
+    "row_ids": [
+      "REACT-M05"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 29
+  },
+  {
+    "row_ids": [
+      "REACT-M14"
+    ],
+    "paper_id": "arxiv-2210.03629v3",
+    "claim_index": 32
+  },
+  {
+    "row_ids": [
+      "REFLEX-M13"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 0
+  },
+  {
+    "row_ids": [
+      "REFLEX-M01"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 3
+  },
+  {
+    "row_ids": [
+      "REFLEX-M12"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 7
+  },
+  {
+    "row_ids": [
+      "REFLEX-M08"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 8
+  },
+  {
+    "row_ids": [
+      "REFLEX-M02"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 9
+  },
+  {
+    "row_ids": [
+      "REFLEX-M09"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 17
+  },
+  {
+    "row_ids": [
+      "REFLEX-M05"
+    ],
+    "paper_id": "arxiv-2303.11366v4",
+    "claim_index": 26
+  }
+]

@@ -1,0 +1,206 @@
+[
+  {
+    "id": "C18",
+    "table_check": [
+      {
+        "table": "Table 30",
+        "rows_pdf": 7,
+        "cols_pdf": 9,
+        "rows_grid": 7,
+        "cols_grid": 9,
+        "differences": [],
+        "last_row_quote": "Adapter, 4B + GRPO 82.90 94.40 24.44 40.00 21.53 40.00 42.96±0.80 58.13±2.32"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 30",
+        "rule": "beats_baseline",
+        "reading": "narrow",
+        "rows": [
+          "Frozen q0",
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Avg@8",
+          "Macro > Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            [
+              "Frozen q0",
+              "Adapter, 1.7B + REINFORCE++"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 1.7B + GRPO"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 4B + REINFORCE++"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 4B + GRPO"
+            ]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Table 30 caption, p. 37",
+            "quote": "in the adapted rows ± is the sample SD across the three seeds' adapters."
+          },
+          {
+            "location": "Appendix D.9, p. 37",
+            "quote": "each adapted row averages the three adapters of the run's three training seeds, evaluated once each"
+          },
+          {
+            "location": "Section 3, p. 6",
+            "quote": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10)."
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "Frozen q0",
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Macro > Avg@8",
+          "MATH-500 > Pass@8",
+          "AIME24 > Pass@8",
+          "AIME25 > Pass@8",
+          "Macro > Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            [
+              "Frozen q0",
+              "Adapter, 1.7B + REINFORCE++"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 1.7B + GRPO"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 4B + REINFORCE++"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 4B + GRPO"
+            ]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Table 30 caption, p. 37",
+            "quote": "in the adapted rows ± is the sample SD across the three seeds' adapters."
+          },
+          {
+            "location": "Appendix D.9, p. 37",
+            "quote": "each adapted row averages the three adapters of the run's three training seeds, evaluated once each"
+          },
+          {
+            "location": "Section 3, p. 6",
+            "quote": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10)."
+          }
+        ]
+      },
+      {
+        "table": "Table 30",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "Frozen q0",
+          "Adapter, 1.7B + REINFORCE++",
+          "Adapter, 1.7B + GRPO",
+          "Adapter, 4B + REINFORCE++",
+          "Adapter, 4B + GRPO"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "MATH-500 > Avg@8",
+          "MATH-500 > Pass@8",
+          "AIME24 > Avg@8",
+          "AIME24 > Pass@8",
+          "AIME25 > Avg@8",
+          "AIME25 > Pass@8",
+          "Macro > Avg@8",
+          "Macro > Pass@8"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            [
+              "Frozen q0",
+              "Adapter, 1.7B + REINFORCE++"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 1.7B + GRPO"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 4B + REINFORCE++"
+            ],
+            [
+              "Frozen q0",
+              "Adapter, 4B + GRPO"
+            ]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Table 30 caption, p. 37",
+            "quote": "in the adapted rows ± is the sample SD across the three seeds' adapters."
+          },
+          {
+            "location": "Appendix D.9, p. 37",
+            "quote": "each adapted row averages the three adapters of the run's three training seeds, evaluated once each"
+          },
+          {
+            "location": "Section 3, p. 6",
+            "quote": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10)."
+          }
+        ]
+      }
+    ],
+    "claimed_group

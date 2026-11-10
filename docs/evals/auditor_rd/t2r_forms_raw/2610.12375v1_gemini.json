@@ -1,0 +1,82 @@
+[
+  {
+    "id": "C08",
+    "table_check": [
+      {
+        "table": "Table 6",
+        "rows_pdf": 5,
+        "cols_pdf": 5,
+        "rows_grid": 5,
+        "cols_grid": 5,
+        "differences": [],
+        "last_row_quote": "0.70 20.7% 19.3% 15.6% 82%"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Cost saved"
+        ],
+        "params": {
+          "op": "approx",
+          "constant": 18,
+          "polarity": null,
+          "tolerance": 1,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "Page 12, section text",
+            "quote": "At threshold 0.60 (Table 6), 23.3% of unresolved traces are stopped early at a 20.7% false-stop rate, yielding 17.9% cost savings"
+          }
+        ]
+      },
+      {
+        "table": "Table 6",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "0.20",
+          "0.60"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Prec. (dep.)"
+        ],
+        "params": {
+          "op": "eq",
+          "constant": 83,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": []
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Abort policy",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "Claim evaluates cost savings (~18%) and deployment precision (83%) from Table 6."
+  }
+]

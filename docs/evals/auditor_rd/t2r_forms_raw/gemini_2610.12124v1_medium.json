@@ -1,0 +1,104 @@
+[
+  {
+    "id": "C03",
+    "table_check": [
+      {
+        "table": "Table 2",
+        "rows_pdf": 10,
+        "cols_pdf": 7,
+        "rows_grid": 10,
+        "cols_grid": 7,
+        "differences": [],
+        "last_row_quote": "Hippocam 78.9 55.9 \u2192 75.1 +19.2 61.8 53.9 \u2192 59.9 +6.0"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [
+          "ACE",
+          "Hippocam"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "ALFWorld \u2192 ScienceWorld > \u0394 stream",
+          "HotpotQA \u2192 FEVER > \u0394 stream"
+        ],
+        "params": {
+          "op": ">",
+          "constant": 0,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Plain (unreported '\u2014' in \u0394 stream; excluded from 'the remaining methods' with sequential transitions)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "Table 2 caption, p. 7",
+            "quote": "\u0394stream reports After minus Fresh in percentage points (pp)."
+          },
+          {
+            "location": "Section A.2, p. 15",
+            "quote": "Under an alternative answer extraction, Hippocam's sequential improvement decreases from six to two percentage points."
+          },
+          {
+            "location": "Section A.2, p. 15",
+            "quote": "Sequential differences use paired task identifiers; mem0 and ReasoningBank have narrower matched ScienceWorld coverage than the other methods."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Hippocam",
+        "status": "covered"
+      },
+      {
+        "member": "ACE",
+        "status": "covered"
+      },
+      {
+        "member": "HiAgent",
+        "status": "covered"
+      },
+      {
+        "member": "mem0",
+        "status": "covered"
+      },
+      {
+        "member": "A-Mem",
+        "status": "covered"
+      },
+      {
+        "member": "Letta",
+        "status": "covered"
+      },
+      {
+        "member": "ReasoningBank",
+        "status": "covered"
+      },
+      {
+        "member": "Plain",
+        "status": "covered"
+      },
+      {
+        "member": "ALFWorld \u2192 ScienceWorld",
+        "status": "covered"
+      },
+      {
+        "member": "HotpotQA \u2192 FEVER",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "The positive-gain requirement for Hippocam and ACE on both domain transitions is encoded with all_cmp (> 0 on both \u0394 stream columns). The second part of the claim ('Only Hippocam and ACE... while the remaining methods show mixed, unchanged, or reduced performance') is a row-wise disjunctive condition across the two \u0394 stream columns for HiAgent, mem0, A-Mem, Letta, and ReasoningBank (that each method does not achieve > 0 on both columns, exhibiting mixed, 0.0, or < 0 changes), which cannot be expressed by the primitive rules without encoding a narrower cell-level condition than stated; therefore partial is set to true. Exact ties in Table 2: mem0 and A-Mem tie at +0.0 on HotpotQA \u2192 FEVER > \u0394 stream; on HotpotQA \u2192 FEVER > Frozen, HiAgent and Hippocam tie at 61.8, mem0 and Letta tie at 59.9, and A-Mem and ReasoningBank tie at 55.8."
+  }
+]

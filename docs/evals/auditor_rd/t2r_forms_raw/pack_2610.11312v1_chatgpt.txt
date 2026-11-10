@@ -1,0 +1,413 @@
+[
+  {
+    "id": "C05",
+    "table_check": [
+      {
+        "table": "Table 10 (PDF page 21)",
+        "rows_pdf": 15,
+        "cols_pdf": 8,
+        "rows_grid": 15,
+        "cols_grid": 8,
+        "differences": [],
+        "last_row_quote": "Lingshu-32B | 24.6 / 16.8 | 71.9 / 60.3 | 75.7 / 53.5 | 44.1 / 33.9 | 72.4 / 69.2 | 57.4 / 44.8 | 44.5 / 53.3"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 10",
+        "rule": "count_rows",
+        "reading": "narrow",
+        "rows": [
+          "General-purpose VLMs > InternVL3-8B",
+          "General-purpose VLMs > Qwen2.5-VL-7B",
+          "General-purpose VLMs > Qwen3-VL-8B-I",
+          "General-purpose VLMs > Qwen3-VL-8B-T†",
+          "General-purpose VLMs > Qwen2.5-VL-32B",
+          "General-purpose VLMs > Qwen3-VL-32B",
+          "Medical VLMs > MedGemma-4B",
+          "Medical VLMs > Lingshu-7B",
+          "Medical VLMs > Hulu-Med-7B",
+          "Medical VLMs > QoQ-Med-7B†",
+          "Medical VLMs > Lingshu-32B"
+        ],
+        "rows_by_columns": [],
+        "columns": ["Model"],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": 12,
+          "distinct_on": ["Model"]
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 21, Table 10 caption",
+            "quote": "Evaluation performance on ISIC 2018."
+          }
+        ]
+      },
+      {
+        "table": "Table 3 (outside pack)",
+        "rule": "none",
+        "reading": "broad",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Section 5.1, Evaluation",
+            "quote": "We evaluate twelve VLMs spanning general-purpose and medical-domain model families."
+          }
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "none",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 20, Appendix C.3",
+            "quote": "These results demonstrate application of MedBenchAgent to the ISIC annotation schema."
+          }
+        ]
+      },
+      {
+        "table": "Table 10",
+        "rule": "none",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 20, Appendix C.3",
+            "quote": "No single checkpoint exhibits uniformly strong performance across diagnosis, dermoscopic attributes, and lesion localization."
+          },
+          {
+            "location": "PDF page 21, Table 10 caption",
+            "quote": "Choice tasks report Accuracy / Macro-F1 (%), while detection reports mIoU / Acc@IoU0.5 (%)."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "InternVL3-8B", "status": "covered"},
+      {"member": "Qwen2.5-VL-7B", "status": "covered"},
+      {"member": "Qwen3-VL-8B-I", "status": "covered"},
+      {"member": "Qwen3-VL-8B-T†", "status": "covered"},
+      {"member": "Qwen2.5-VL-32B", "status": "covered"},
+      {"member": "Qwen3-VL-32B", "status": "covered"},
+      {"member": "MedGemma-4B", "status": "covered"},
+      {"member": "Lingshu-7B", "status": "covered"},
+      {"member": "Hulu-Med-7B", "status": "covered"},
+      {"member": "QoQ-Med-7B†", "status": "covered"},
+      {"member": "BreastGPT-8B", "status": "other_table: Table 3"},
+      {"member": "Lingshu-32B", "status": "covered"}
+    ],
+    "no_rule_reason": "The scope of 'twelve VLMs' is ambiguous. Under the narrow reading, Table 10 would need twelve distinct model rows; under the broad reading, the twelve-model evaluation is represented in the main evaluation, including BreastGPT-8B in Table 3, which is outside this pack. Table 10 contains eleven model rows. The permitted rules cannot directly test qualitative cross-domain portability or the claim that task- and setting-specific variation is obscured by aggregate scores. Table 10 provides task-level metric pairs for one specialized setting, not a cross-setting or aggregate-score comparison.",
+    "notes": "Table 10 has eleven model rows, whereas the main evaluation in Table 3 contains twelve, including BreastGPT-8B. Exact ties in the first metric (Accuracy) occur for Neg. net.: InternVL3-8B and MedGemma-4B (45.3); Pigment net.: Qwen2.5-VL-7B and Qwen3-VL-8B-I (59.5); and InternVL3-8B, Qwen2.5-VL-32B, and Lingshu-32B (72.4)."
+  },
+  {
+    "id": "C07",
+    "table_check": [
+      {
+        "table": "Table 1 (pack: Table 1, part a; PDF page 7)",
+        "rows_pdf": 7,
+        "cols_pdf": 8,
+        "rows_grid": 7,
+        "cols_grid": 8,
+        "differences": [],
+        "last_row_quote": "MedBenchAgent | 20 | 3 | 1 | 87.0 | 95.2 | 90.9 | 100.0"
+      },
+      {
+        "table": "Table 2 (pack: Table 1, part b; PDF page 7)",
+        "rows_pdf": 6,
+        "cols_pdf": 4,
+        "rows_grid": 6,
+        "cols_grid": 4,
+        "differences": [],
+        "last_row_quote": "All criteria | 994 | 6 | 99.4%"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 1",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["MedBenchAgent"],
+        "rows_by_columns": [],
+        "columns": ["Task-Space Review > F1↑"],
+        "params": {
+          "op": "=",
+          "constant": 90.9,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Table 1 caption",
+            "quote": "Task-Space Precision (P), Recall (R), and F1 measure agreement with researcher review."
+          }
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["DeepSeek-V4-Flash", "Qwen3.5-9B", "MedGemma-27B"],
+        "rows_by_columns": [],
+        "columns": ["Task-Space Review > F1↑"],
+        "params": {
+          "op": ">=",
+          "constant": 79.2,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Section 5.2, Task-space construction",
+            "quote": "The direct baselines use MedGemma-27B, Qwen3.5-9B, and DeepSeek-V4-Flash."
+          }
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["DeepSeek-V4-Flash", "Qwen3.5-9B", "MedGemma-27B"],
+        "rows_by_columns": [],
+        "columns": ["Task-Space Review > F1↑"],
+        "params": {
+          "op": "<=",
+          "constant": 80.0,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Section 5.2, Task-space construction",
+            "quote": "The direct baselines use MedGemma-27B, Qwen3.5-9B, and DeepSeek-V4-Flash."
+          }
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["DeepSeek-V4-Flash + T0"],
+        "rows_by_columns": [],
+        "columns": ["Task-Space Review > F1↑"],
+        "params": {
+          "op": "=",
+          "constant": 85.1,
+          "polarity": null,
+          "tolerance": 0.05,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Section 5.2, Task-space construction",
+            "quote": "Providing T0 improves direct DeepSeek-V4-Flash induction to 85.1% F1."
+          }
+        ]
+      },
+      {
+        "table": "Table 1",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": ["MedBenchAgent"],
+        "rows_by_columns": [],
+        "columns": ["Task-Space Review > F1↑"],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            ["MedBenchAgent", "DeepSeek-V4-Flash"],
+            ["MedBenchAgent", "Qwen3.5-9B"],
+            ["MedBenchAgent", "MedGemma-27B"],
+            ["MedBenchAgent", "DeepSeek-V4-Flash + T0"]
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Section 5.2, Task-space construction",
+            "quote": "The direct baselines use MedGemma-27B, Qwen3.5-9B, and DeepSeek-V4-Flash."
+          },
+          {
+            "location": "PDF page 7, Section 5.2, Task-space construction",
+            "quote": "Providing T0 improves direct DeepSeek-V4-Flash induction to 85.1% F1."
+          }
+        ]
+      },
+      {
+        "table": "Table 2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["All criteria"],
+        "rows_by_columns": [],
+        "columns": ["Pass"],
+        "params": {
+          "op": "=",
+          "constant": 994,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Table 2 caption",
+            "quote": "Pass rates are computed over 1,000 items sampled uniformly from the finalized benchmark."
+          },
+          {
+            "location": "PDF page 7, Section 5.2, Human audit of finalized items",
+            "quote": "An item passes only when all four criteria are satisfied."
+          }
+        ]
+      },
+      {
+        "table": "Table 2",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": ["All criteria"],
+        "rows_by_columns": [],
+        "columns": ["Fail"],
+        "params": {
+          "op": "=",
+          "constant": 6,
+          "polarity": null,
+          "tolerance": 0.5,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 7, Table 2 caption",
+            "quote": "Pass rates are computed over 1,000 items sampled uniformly from the finalized benchmark."
+          }
+        ]
+      },
+      {
+        "table": "Table 2",
+        "rule": "none",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          {
+            "location": "PDF page 1, Abstract",
+            "quote": "994 of 1,000 sampled items from correctly identified tasks pass human audit."
+          },
+          {
+            "location": "PDF page 7, Table 2 caption",
+            "quote": "Pass rates are computed over 1,000 items sampled uniformly from the finalized benchmark."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {"member": "MedBenchAgent", "status": "covered"},
+      {"member": "DeepSeek-V4-Flash", "status": "covered"},
+      {"member": "Qwen3.5-9B", "status": "covered"},
+      {"member": "MedGemma-27B", "status": "covered"},
+      {"member": "DeepSeek-V4-Flash + T0", "status": "covered"}
+    ],
+    "no_rule_reason": "The qualifier 'from correctly identified tasks' is not represented by a row or column in Table 2. The table reports aggregate pass and fail counts for the sampled finalized items, without a breakdown by task-identification correctness. The numerical F1 comparisons and audit counts have forms; this qualifier cannot be independently encoded from the packed grids.",
+    "notes": "The pack's Table 1, part b caption is incorrect: its grid matches the PDF's Table 2, whose actual caption is 'Human consistency audit of finalized items.' In Table 1, DeepSeek-V4-Flash and Qwen3.5-9B tie exactly in all seven reported fields. All five methods tie at EMA 100.0. In Table 2, Reference groundedness and Unambiguity tie exactly (1,000 pass, 0 fail, 100.0%); Evaluation integrity and All criteria also tie exactly (994 pass, 6 fail, 99.4%)."
+  }
+]

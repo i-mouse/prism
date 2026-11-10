@@ -1,0 +1,147 @@
+{
+  "items": {
+    "C01": {
+      "row_class": "T",
+      "row_id": "P3-R2",
+      "set": "R",
+      "tables": [
+        "Table 9"
+      ]
+    },
+    "C02": {
+      "row_class": "S",
+      "row_id": "P1-S6",
+      "set": "S",
+      "tables": [
+        "Table 2"
+      ]
+    },
+    "C03": {
+      "row_class": "S",
+      "row_id": "P8-S6",
+      "set": "S",
+      "tables": [
+        "Table 2"
+      ]
+    },
+    "C04": {
+      "row_class": "T",
+      "row_id": "P4-R2",
+      "set": "R",
+      "tables": [
+        "Table 9"
+      ]
+    },
+    "C05": {
+      "row_class": "T",
+      "row_id": "P6-R2",
+      "set": "R",
+      "tables": [
+        "Table 10"
+      ]
+    },
+    "C06": {
+      "row_class": "T",
+      "row_id": "P4-R1",
+      "set": "R",
+      "tables": [
+        "Table 1",
+        "Table 2"
+      ]
+    },
+    "C07": {
+      "row_class": "S",
+      "row_id": "P6-S1",
+      "set": "S",
+      "tables": [
+        "Table 1, part a",
+        "Table 1, part b"
+      ]
+    },
+    "C08": {
+      "row_class": "S",
+      "row_id": "P9-S4",
+      "set": "S",
+      "tables": [
+        "Table 6"
+      ]
+    },
+    "C09": {
+      "row_class": "T",
+      "row_id": "P5-R2",
+      "set": "R",
+      "tables": [
+        "Table 3"
+      ]
+    },
+    "C10": {
+      "row_class": "S",
+      "row_id": "P3-S1",
+      "set": "S",
+      "tables": [
+        "Table 1"
+      ]
+    },
+    "C11": {
+      "row_class": "S",
+      "row_id": "P2-S2",
+      "set": "S",
+      "tables": [
+        "Table 1"
+      ]
+    },
+    "C12": {
+      "row_class": "S",
+      "row_id": "P5-S4",
+      "set": "S",
+      "tables": [
+        "Table 3"
+      ]
+    },
+    "C13": {
+      "row_class": "T",
+      "row_id": "P1-R1",
+      "set": "R",
+      "tables": [
+        "Table 4"
+      ]
+    },
+    "C14": {
+      "row_class": "C",
+      "row_id": "P11-R2",
+      "set": "R",
+      "tables": [
+        "Table 3"
+      ]
+    },
+    "C15": {
+      "row_class": "S",
+      "row_id": "P1-S3",
+      "set": "S",
+      "tables": [
+        "Table 10"
+      ]
+    },
+    "C16": {
+      "row_class": "S",
+      "row_id": "P4-S1",
+      "set": "S",
+      "tables": [
+        "Table 1",
+        "Table 2",
+        "Table 3"
+      ]
+    },
+    "C17": {
+      "row_class": "S",
+      "row_id": "P1-S2",
+      "set": "S",
+      "tables": [
+        "Table 10"
+      ]
+    }
+  },
+  "note": "NOT for labellers. Maps neutral ids to dev rows.",
+  "seed": 20261030,
+  "shuffle": "random.Random(seed).shuffle over MISS_ROWS order then selected_final order"
+}

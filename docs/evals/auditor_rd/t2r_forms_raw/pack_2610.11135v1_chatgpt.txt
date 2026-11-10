@@ -1,0 +1,243 @@
+[
+  {
+    "id": "C01",
+    "table_check": [
+      {
+        "table": "Table 9",
+        "rows_pdf": 25,
+        "cols_pdf": 9,
+        "rows_grid": 25,
+        "cols_grid": 9,
+        "differences": [],
+        "last_row_quote": "Best deep KT† | A09: .710±.021 | NIPS34: .646±.030 | XES3G5M: .726±.066 | DBE: .782±.012 | Alg05: .731±.009 | Junyi: .676±.027 | A17: .621±.008 | Mean: .699"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 9",
+        "rule": "beats_baseline",
+        "reading": "narrow",
+        "rows": [
+          "Position 1 > JevKT",
+          "Position 1 > Best deep KT†",
+          "Positions 2–5 > JevKT",
+          "Positions 2–5 > Best deep KT†",
+          "Positions 6–10 > JevKT",
+          "Positions 6–10 > Best deep KT†",
+          "Positions 11–15 > JevKT",
+          "Positions 11–15 > Best deep KT†",
+          "Positions 16–30 > JevKT",
+          "Positions 16–30 > Best deep KT†",
+          "Positions 31–49 > JevKT",
+          "Positions 31–49 > Best deep KT†"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Mean"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method_row": "Position 1 > JevKT",
+              "baseline_row": "Position 1 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 2–5 > JevKT",
+              "baseline_row": "Positions 2–5 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 6–10 > JevKT",
+              "baseline_row": "Positions 6–10 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 11–15 > JevKT",
+              "baseline_row": "Positions 11–15 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 16–30 > JevKT",
+              "baseline_row": "Positions 16–30 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 31–49 > JevKT",
+              "baseline_row": "Positions 31–49 > Best deep KT†"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Position 1 > Jev0-shot (N=0)",
+          "Positions 2–5 > Jev0-shot (N=0)",
+          "Positions 6–10 > Jev0-shot (N=0)",
+          "Positions 11–15 > Jev0-shot (N=0)",
+          "Positions 16–30 > Jev0-shot (N=0)",
+          "Positions 31–49 > Jev0-shot (N=0)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "Table 9 caption, PDF page 15",
+            "quote": "Position 1 has only 41–50 targets per dataset, so its AUC is noisy; – = one class only."
+          }
+        ]
+      },
+      {
+        "table": "Table 9",
+        "rule": "beats_baseline",
+        "reading": "broad",
+        "rows": [
+          "Position 1 > JevKT",
+          "Position 1 > Best deep KT†",
+          "Positions 2–5 > JevKT",
+          "Positions 2–5 > Best deep KT†",
+          "Positions 6–10 > JevKT",
+          "Positions 6–10 > Best deep KT†",
+          "Positions 11–15 > JevKT",
+          "Positions 11–15 > Best deep KT†",
+          "Positions 16–30 > JevKT",
+          "Positions 16–30 > Best deep KT†",
+          "Positions 31–49 > JevKT",
+          "Positions 31–49 > Best deep KT†"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "A09",
+          "NIPS34",
+          "XES3G5M",
+          "DBE",
+          "Alg05",
+          "Junyi",
+          "A17"
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method_row": "Position 1 > JevKT",
+              "baseline_row": "Position 1 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 2–5 > JevKT",
+              "baseline_row": "Positions 2–5 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 6–10 > JevKT",
+              "baseline_row": "Positions 6–10 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 11–15 > JevKT",
+              "baseline_row": "Positions 11–15 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 16–30 > JevKT",
+              "baseline_row": "Positions 16–30 > Best deep KT†"
+            },
+            {
+              "method_row": "Positions 31–49 > JevKT",
+              "baseline_row": "Positions 31–49 > Best deep KT†"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "Position 1 > Jev0-shot (N=0)",
+          "Positions 2–5 > Jev0-shot (N=0)",
+          "Positions 6–10 > Jev0-shot (N=0)",
+          "Positions 11–15 > Jev0-shot (N=0)",
+          "Positions 16–30 > Jev0-shot (N=0)",
+          "Positions 31–49 > Jev0-shot (N=0)"
+        ],
+        "caveat_refs": [
+          {
+            "location": "Table 9 caption, PDF page 15",
+            "quote": "Position 1 has only 41–50 targets per dataset, so its AUC is noisy; – = one class only."
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "For new learners, the advantage holds from their first interactions.",
+        "status": "covered"
+      },
+      {
+        "member": "On unseen items with all learners logged, deep KT remains ahead.",
+        "status": "other_table: Table 10"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "Scope is ambiguous: narrow means comparison using the Mean column; broad means comparison separately for each dataset. Exact tie: Positions 11–15, DBE: JevKT and Best deep KT both have AUC .773. Position 1 has a missing DBE comparison (one class only) and the caption explicitly warns that its AUC is noisy. Counts include the header and six section rows. Table 9 contains 18 data rows."
+  },
+  {
+    "id": "C10",
+    "table_check": [
+      {
+        "table": "Table 1",
+        "rows_pdf": 26,
+        "cols_pdf": 11,
+        "rows_grid": 26,
+        "cols_grid": 11,
+        "differences": [],
+        "last_row_quote": "N: [blank] | Method: LLM-KT (reported) | ASSIST09: .887§ | NIPS34: – | XES3G5M: – | DBE-KT22: – | Alg05: – | Junyi: – | ASSIST17: – | Avg: – | Wins: [blank]"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 1",
+        "rule": "all_cmp",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [
+          {
+            "row_key": "0",
+            "column_key": "Method",
+            "value": "Jev0-shot"
+          }
+        ],
+        "columns": [
+          "Avg"
+        ],
+        "params": {
+          "op": "=",
+          "constant": 0.706,
+          "polarity": null,
+          "tolerance": 0.0005,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "N=0, Best deep KT†: not the claim's Jev0-shot row.",
+          "N=0, Best LLM-based KT‡: not the claim's Jev0-shot row."
+        ],
+        "caveat_refs": [
+          {
+            "location": "Table 1 caption, PDF page 4",
+            "quote": "mean over 5 seeds"
+          }
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Jev0-shot without any data from the target platform, mean AUC .706.",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "The N=0 row key is shared by three method rows, so Method = Jev0-shot is required to identify the correct row. Counts include the header row."
+  }
+]

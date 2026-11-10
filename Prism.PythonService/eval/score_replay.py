@@ -59,7 +59,23 @@ class AdjudicatedRow:
     expected_row: ExpectedRow
 
 
-def resolve_adjudicated_rows(dev_eval_path: Path, match_map_path: Path, run1_fixture_dir: Path) -> list[AdjudicatedRow]:
+ROW_TYPES = ("R", "S", "all")
+
+
+def _is_refusal_row(row: ExpectedRow) -> bool:
+    """Same definition of a golden-negative (refusal) row as eval/types.py."""
+    return row.grounding_negative or row.expected_label == "not_supported"
+
+
+def resolve_adjudicated_rows(
+    dev_eval_path: Path, match_map_path: Path, run1_fixture_dir: Path, *, row_type: str = "R"
+) -> list[AdjudicatedRow]:
+    """Adjudicated rows from the match map. row_type picks which golden rows
+    come back: "R" (default) refusal rows only, "S" supported rows only, "all"
+    both. The default keeps every pre-existing caller on refusal rows even
+    once the map's S rows are filled in."""
+    if row_type not in ROW_TYPES:
+        raise ValueError(f"row_type must be one of {ROW_TYPES}, got {row_type!r}")
     matrix = load_matrix(dev_eval_path)
     golden_ids = {row.id for paper in matrix.papers for row in paper.expected_rows}
     match_map = load_match_map(match_map_path, golden_ids)
@@ -76,6 +92,8 @@ def resolve_adjudicated_rows(dev_eval_path: Path, match_map_path: Path, run1_fix
     resolved = []
     for paper in matrix.papers:
         for row in paper.expected_rows:
+            if row_type != "all" and _is_refusal_row(row) != (row_type == "R"):
+                continue
             map_row = match_map.rows.get(row.id)
             if map_row is None or not map_row.is_adjudicated:
                 continue
@@ -216,6 +234,10 @@ def main() -> None:
 
     print(f"mode={args.mode}")
     for fixture_dir, (outcomes, _) in zip(args.fixture_dirs, results):
+        missing = [row_id for row_id, o in outcomes.items() if o == "FIXTURE_MISSING"]
+        if missing:
+            print(f"{fixture_dir}: WARNING: {len(missing)} adjudicated rows have no fixture (FIXTURE_MISSING): "
+                  f"{', '.join(missing)}. Check --fixture-dir.")
         scored = [o for o in outcomes.values() if o not in ("OUT_OF_SCOPE", "FIXTURE_MISSING")]
         hits = sum(1 for o in scored if o == "REFUSED")
         print(f"{fixture_dir}: {hits}/{len(scored)} refusal hits (scored {len(scored)}/{len(rows)} adjudicated rows)")

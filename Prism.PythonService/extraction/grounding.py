@@ -11,6 +11,7 @@ No DB writes, no worker integration - this module only grounds and logs.
 import asyncio
 import functools
 import json
+import logging
 import re
 import unicodedata
 from datetime import datetime, timezone
@@ -35,6 +36,14 @@ from extraction.schemas import (
 )
 
 litellm.enable_json_schema_validation = True
+
+logger = logging.getLogger(__name__)
+
+# Optional per-call usage sink, set by eval/replay_audit.py's _Instrumentation
+# for the duration of a replay and None otherwise. Called with the dict from
+# _extract_litellm_usage for every audit response that arrives (primary or
+# LiteLLM fallback - both return through the same acompletion call site).
+_usage_observer: Callable[[dict], None] | None = None
 
 AUDIT_MAX_OUTPUT_TOKENS = 512
 
@@ -145,6 +154,51 @@ def _is_retryable(exc: Exception) -> bool:
     )
 
 
+def _extract_litellm_usage(response: object) -> dict | None:
+    """Reads token counts off a LiteLLM response for logging, using the same
+    key names as engine._extract_usage. Missing fields stay None. Never raises:
+    on any failure it logs a warning and returns None.
+
+    LiteLLM counting rules (installed Gemini transformation): prompt_tokens
+    includes cached tokens, and completion_tokens already includes reasoning
+    tokens. thought_tokens (completion_tokens_details.reasoning_tokens) is
+    therefore informational only - it is a sub-count of output_tokens and must
+    never be added to output when computing cost.
+    """
+    try:
+        usage_obj = getattr(response, "usage", None)
+        if usage_obj is None:
+            return None
+        prompt_details = getattr(usage_obj, "prompt_tokens_details", None)
+        completion_details = getattr(usage_obj, "completion_tokens_details", None)
+        return {
+            "prompt_tokens": getattr(usage_obj, "prompt_tokens", None),
+            "output_tokens": getattr(usage_obj, "completion_tokens", None),
+            "thought_tokens": getattr(completion_details, "reasoning_tokens", None),
+            "total_tokens": getattr(usage_obj, "total_tokens", None),
+            "cached_tokens": getattr(prompt_details, "cached_tokens", None),
+            "model": getattr(response, "model", None),
+        }
+    except Exception:
+        logger.warning("Failed to extract usage from LiteLLM response; recording usage as null", exc_info=True)
+        return None
+
+
+def _report_usage(response: object) -> None:
+    """Extracts usage and hands it to _usage_observer. Nothing in here can
+    raise into the grounding call: observer failures are logged and dropped."""
+    observer = _usage_observer
+    if observer is None:
+        return
+    usage = _extract_litellm_usage(response)
+    if usage is None:
+        return
+    try:
+        observer(usage)
+    except Exception:
+        logger.warning("Grounding usage observer raised; ignoring", exc_info=True)
+
+
 async def _call_litellm_audit(
     messages: list[dict],
     audit_model: str,
@@ -170,6 +224,7 @@ async def _call_litellm_audit(
                 response_format=SpanAuditVerdict,
                 fallbacks=[{"model": fallback_model, "api_key": gemini_api_key}],
             )
+            _report_usage(response)
             content = response.choices[0].message.content
             return SpanAuditVerdict.model_validate_json(content)
         except Exception as exc:

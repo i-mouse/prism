@@ -1,0 +1,24 @@
+[project]
+name = "t1env"
+version = "0.0.0"
+description = "Isolated environment for Auditor v2 T1 table-fidelity test (not product code)"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "docling",
+    "pymupdf4llm",
+    # pymupdf4llm 2.0 on PyPI is an empty shim; the 4llm code lives in pymupdf 2.x
+    "pymupdf>=2.0",
+    # direct so that [tool.uv.sources] below applies (CPU-only build)
+    "torch",
+    "torchvision",
+]
+
+# CPU-only torch (recorded deviation: chosen for a clean stability test and a smaller download)
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

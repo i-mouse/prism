@@ -1,0 +1,47 @@
+{
+  "hf_home": "H:\\Work projects\\Prism\\Prism.PythonService\\scratch\\auditor_v2\\t1env\\models",
+  "machine": "AMD64",
+  "note": "pymupdf4llm 2.0 on PyPI is an empty shim; the 4llm code ships inside pymupdf 2.0 (tested as pymupdf 2.0, not 1.28.x).",
+  "packages": {
+    "docling": "2.144.0",
+    "docling-core": "2.105.0",
+    "docling-ibm-models": "4.0.4",
+    "docling-parse": "7.24.1",
+    "docling-slim": "2.144.0",
+    "onnxruntime": "1.31.1",
+    "pymupdf": "2.0",
+    "pymupdf-layout": "2.0",
+    "pymupdf4llm": "2.0",
+    "torch": "2.15.0+cpu",
+    "torchvision": "0.29.2+cpu"
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "product_reader": "PyMuPDF 1.26.7 (product venv, unchanged, not used by T1)",
+  "python": "3.13.14 (main, Jul 18 2026, 17:10:39) [MSC v.1944 64 bit (AMD64)]",
+  "recorded_at_utc": "2026-10-29T08:12:40Z",
+  "settings": {
+    "docling": {
+      "accelerator": "cpu (fixed; recorded setting, not a quality setting)",
+      "call": "converter.convert(str(pdf)).document",
+      "converter": "DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=<above>)})",
+      "num_threads": "library default (4)",
+      "ocr": "off",
+      "pipeline_options": "PdfPipelineOptions(do_ocr=False, do_table_structure=True, table_structure_options=TableStructureOptions(do_cell_matching=True, mode=TableFormerMode.ACCURATE), accelerator_options=AcceleratorOptions(device=AcceleratorDevice.CPU))",
+      "table_model": "TableFormer V1, ACCURATE (library default mode)",
+      "tables": "doc.tables -> TableItem.data.table_cells; caption_text(doc); footnotes[*].resolve(doc).text; prov[0].page_no",
+      "torch_build": "CPU-only (download.pytorch.org/whl/cpu)"
+    },
+    "pymupdf4llm": {
+      "call": "pymupdf4llm.to_json(str(pdf), table_output='html', use_ocr=False)",
+      "caption_rule": "nearest 'Table N'/'Tab. N' + one of : . | text box above/below on same page, horizontal overlap, tie -> above",
+      "footnote_rule": "boxclass footnote on same page, table.y1-2 <= y0 <= table.y1+60, horizontal overlap",
+      "layout": "on (pymupdf4llm imports pymupdf.layout by default; use_layout(True))",
+      "ocr": "off (use_ocr=False)",
+      "tables": "box.table['html_tables'][*]['html'] parsed for rowspan/colspan; own header (<th>) tagging"
+    }
+  },
+  "tools": {
+    "docling": "docling 2.144.0 (docling-core 2.105.0; docling-ibm-models 4.0.4; docling-parse 7.24.1; torch 2.15.0+cpu)",
+    "pymupdf4llm": "pymupdf4llm (code inside pymupdf 2.0; pymupdf4llm 2.0 shim; pymupdf-layout 2.0; onnxruntime 1.31.1)"
+  }
+}

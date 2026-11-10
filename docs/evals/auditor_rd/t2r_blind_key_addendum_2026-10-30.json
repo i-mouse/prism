@@ -1,0 +1,14 @@
+{
+  "note": "NOT for labellers. Addendum: C11 got no check form; C18 replaces it.",
+  "items": {
+    "C18": {
+      "row_id": "P1-S8",
+      "set": "S",
+      "row_class": "S",
+      "tables": [
+        "Table 30"
+      ],
+      "replaces": "C11"
+    }
+  }
+}

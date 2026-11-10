@@ -1,0 +1,1328 @@
+{
+  "baseline": {
+    "caught_effective": 8,
+    "caught_raw": 8,
+    "extraction_misses": [
+      "P1-R2",
+      "P2-R1",
+      "P2-R3",
+      "P2-R4",
+      "P3-R1",
+      "P4-R3",
+      "P5-R3",
+      "P7-R2",
+      "P8-R3",
+      "P9-R1",
+      "P11-R1",
+      "P11-R3",
+      "P12-R1"
+    ],
+    "label_field": "ActualClaim.label (fixture claim['label']) via eval.score_replay.score_directory",
+    "misses": [
+      "P1-R1",
+      "P3-R2",
+      "P4-R1",
+      "P4-R2",
+      "P5-R1",
+      "P5-R2",
+      "P6-R2",
+      "P7-R1",
+      "P8-R2",
+      "P11-R2"
+    ],
+    "ok": true,
+    "refusal_rows": 31
+  },
+  "check_forms_sha256": "7d95ba6ba507ffb1665dcb42e4aa3c660092b4383082101e4ce672f52943be12",
+  "check_ref_sha256": {
+    "2610.10871v1_T1": "05ae72913017e24c6833f8f42c0b1ab5d2d2901fb55dec5da17a30df314fb18a",
+    "2610.10871v1_T2": "275444a753992bcd073f0cfd02c3979e76894c4d28b70a8e46944fd73c99cbc4",
+    "2610.10871v1_T3": "fadea05777ed0ceb27472098f2d69a99c4d43fdf8662cca8bfddeb4dd4339058",
+    "2610.10871v1_T9": "1b3f69f148fafebc0b9452eea73e04ac5bdda088baa5f7f3ceae19cb0d39b1e4",
+    "2610.11135v1_T1": "cdefbbd2ca28393378b422d1d7cbbeda63ceedb19140be6c616530003238a1b6",
+    "2610.11135v1_T9": "489082b5ee6a4ca1432b3fd89f200bce472f9ab8a0a1dfdf9d6ef4dee20bda08",
+    "2610.11291v1_T3": "9b38a510689540ee8ef6921c3876ba446923c7c8d6e93aab51955d7e1dcf3334",
+    "2610.11312v1_T1a": "4220a5418c1b4548b1b970164386fff8537b3b672ae01cc7bb235a9a00b338ae",
+    "2610.11312v1_T1b": "b484e2ac2c8eed697501265f4906eebd4f579e9b73e2582ab6784be1e5bdd267",
+    "2610.11519v1_T10": "684c5829fc45c57c669e1a03cb6eb5f8e94a9e89952a1807989f4cb5fcb134fe",
+    "2610.11519v1_T2": "978257e1bfc5144bd1af0b80dc8544ae0acf798d8d05ee5d76fb156f1c4aab90",
+    "2610.11519v1_T30": "56e6b9f146a2ec7c3487ac0b6f144f6f4e2a3b83d180c7735fa57d5768a78ea5",
+    "2610.11519v1_T4": "b8fdd7d7921e891418c7423e4bbdba0dd4fa9fe8374d89e7b0d9b90bd23f84d0",
+    "2610.12114v1_T3": "dae6eda05dfd530fcc84dddf961340f5ec65339badb5792ab2bbca134b888b3e",
+    "2610.12124v1_T2": "23bc03323c0a2c0a0906c8b548affb314d7c9b2bf931b5001d5366eec8ea4bf9",
+    "2610.12375v1_T6": "c584b6c76e86b92d255921e3d4c303ff86f4052138380399b560094e51b5ffb5"
+  },
+  "items": [
+    {
+      "absent_members": [],
+      "caveat_refs": [
+        "Table 9 caption: Position 1 has only 41–50 targets per dataset, so its AUC is noisy"
+      ],
+      "code_result": "Needs review",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "decided_by": "member in another table; caveat",
+      "expected_label": "partially_supported",
+      "faithfulness": null,
+      "final_label": "needs_review",
+      "fixed": false,
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "narrow",
+          "reason": "6 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.11135v1_T9"
+        }
+      ],
+      "hard": true,
+      "id": "C01",
+      "other_table_members": [
+        {
+          "member": "On unseen items with all learners logged, deep KT remains ahead.",
+          "status": "other_table: Table 10"
+        }
+      ],
+      "row_id": "P3-R2",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "24 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.11519v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "30 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.11519v1_T2"
+        }
+      ],
+      "hard": false,
+      "id": "C02",
+      "other_table_members": [],
+      "row_id": "P1-S6",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "2 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.12124v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "2 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.12124v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "1 of 2 satisfy (need 1)",
+          "result": "holds",
+          "rule": "count_satisfying",
+          "table_ref": "2610.12124v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "2 of 2 satisfy (need 1)",
+          "result": "holds",
+          "rule": "count_satisfying",
+          "table_ref": "2610.12124v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "2 of 2 satisfy (need 1)",
+          "result": "holds",
+          "rule": "count_satisfying",
+          "table_ref": "2610.12124v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "2 of 2 satisfy (need 1)",
+          "result": "holds",
+          "rule": "count_satisfying",
+          "table_ref": "2610.12124v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "2 of 2 satisfy (need 1)",
+          "result": "holds",
+          "rule": "count_satisfying",
+          "table_ref": "2610.12124v1_T2"
+        }
+      ],
+      "hard": false,
+      "id": "C03",
+      "other_table_members": [],
+      "row_id": "P8-S6",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [
+        "Norm clipping versus raw MASA for FlexPrefill-Llama"
+      ],
+      "caveat_refs": [],
+      "code_result": "PS",
+      "counted_cells_only_variant": false,
+      "counted_faithful": true,
+      "decided_by": "a claimed_group member is absent",
+      "expected_label": "partially_supported",
+      "faithfulness": {
+        "a_cell_pin_matches": [],
+        "b_structural_pins": [
+          {
+            "absent_member": "Norm clipping versus raw MASA for FlexPrefill-Llama",
+            "pin": "P4-T9-S1",
+            "pin_fact": "row_absent {\"match\": {\"Clip p\": \"-\", \"Norm alpha\": \"-\", \"Setting\": \"FlexPrefill-Llama\"}}",
+            "pin_status": "relaxed",
+            "table_ref": "2610.10871v1_T9"
+          }
+        ],
+        "faithful": true,
+        "faithful_cells_only": false,
+        "faithful_structural_variant": false,
+        "structural_pins_for_count_rows": []
+      },
+      "final_label": "partially_supported",
+      "fixed": true,
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "1 of 3 satisfy (need 1)",
+          "result": "holds",
+          "rule": "count_satisfying",
+          "table_ref": "2610.10871v1_T9"
+        }
+      ],
+      "hard": true,
+      "id": "C04",
+      "other_table_members": [
+        {
+          "member": "Soft norm balancing for additional FlexPrefill settings on InfiniteBench",
+          "status": "other_table: Table 10"
+        }
+      ],
+      "row_id": "P4-R2",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "no_code_result",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "decided_by": "no forms",
+      "expected_label": "partially_supported",
+      "faithfulness": null,
+      "final_label": "supported",
+      "fixed": false,
+      "forms": [],
+      "hard": true,
+      "id": "C05",
+      "other_table_members": [
+        {
+          "member": "BreastGPT-8B",
+          "status": "other_table: Table 3"
+        }
+      ],
+      "row_id": "P6-R2",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "PS",
+      "counted_cells_only_variant": true,
+      "counted_faithful": true,
+      "decided_by": "a form is contradicted",
+      "expected_label": "partially_supported",
+      "faithfulness": {
+        "a_cell_pin_matches": [
+          {
+            "column": 7,
+            "pin": "P4-T1-01",
+            "pin_status": "strict",
+            "row": 3,
+            "table_ref": "2610.10871v1_T1",
+            "value": "81.57"
+          },
+          {
+            "column": 3,
+            "pin": "P4-T2-01",
+            "pin_status": "strict",
+            "row": 3,
+            "table_ref": "2610.10871v1_T2",
+            "value": "19.73"
+          },
+          {
+            "column": 4,
+            "pin": "P4-T2-02",
+            "pin_status": "strict",
+            "row": 3,
+            "table_ref": "2610.10871v1_T2",
+            "value": "12.15"
+          }
+        ],
+        "b_structural_pins": [],
+        "faithful": true,
+        "faithful_cells_only": true,
+        "faithful_structural_variant": false,
+        "structural_pins_for_count_rows": []
+      },
+      "final_label": "partially_supported",
+      "fixed": true,
+      "forms": [
+        {
+          "breaking_cells": [
+            {
+              "column_index": 7,
+              "column_key": "64K",
+              "row_index": 3,
+              "row_key": "MInfer > MASA",
+              "table": "2610.10871v1_T1",
+              "value": "81.57"
+            },
+            {
+              "column_index": 7,
+              "column_key": "64K",
+              "row_index": 2,
+              "row_key": "MInfer > Original",
+              "table": "2610.10871v1_T1",
+              "value": "82.3"
+            },
+            {
+              "column_index": 4,
+              "column_key": "8K",
+              "row_index": 12,
+              "row_key": "FlexPrefill > Qwen > MASA",
+              "table": "2610.10871v1_T1",
+              "value": "88.94"
+            },
+            {
+              "column_index": 4,
+              "column_key": "8K",
+              "row_index": 11,
+              "row_key": "FlexPrefill > Qwen > Original",
+              "table": "2610.10871v1_T1",
+              "value": "89.91"
+            }
+          ],
+          "partial": true,
+          "reading": "broad",
+          "reason": "2 of 28 comparisons break the claim",
+          "result": "contradicted",
+          "rule": "beats_baseline",
+          "table_ref": "2610.10871v1_T1"
+        },
+        {
+          "breaking_cells": [
+            {
+              "column_index": 3,
+              "column_key": "En.Sum",
+              "row_index": 3,
+              "row_key": "MInfer > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "19.73"
+            },
+            {
+              "column_index": 3,
+              "column_key": "En.Sum",
+              "row_index": 2,
+              "row_key": "MInfer > Original",
+              "table": "2610.10871v1_T2",
+              "value": "20.5"
+            },
+            {
+              "column_index": 4,
+              "column_key": "En.QA",
+              "row_index": 3,
+              "row_key": "MInfer > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "12.15"
+            },
+            {
+              "column_index": 4,
+              "column_key": "En.QA",
+              "row_index": 2,
+              "row_key": "MInfer > Original",
+              "table": "2610.10871v1_T2",
+              "value": "12.9"
+            },
+            {
+              "column_index": 7,
+              "column_key": "Zh.QA",
+              "row_index": 3,
+              "row_key": "MInfer > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "12.28"
+            },
+            {
+              "column_index": 7,
+              "column_key": "Zh.QA",
+              "row_index": 2,
+              "row_key": "MInfer > Original",
+              "table": "2610.10871v1_T2",
+              "value": "12.5"
+            },
+            {
+              "column_index": 5,
+              "column_key": "En.MC",
+              "row_index": 6,
+              "row_key": "FlexPrefill > Llama > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "66.81"
+            },
+            {
+              "column_index": 5,
+              "column_key": "En.MC",
+              "row_index": 5,
+              "row_key": "FlexPrefill > Llama > Original",
+              "table": "2610.10871v1_T2",
+              "value": "69.43"
+            },
+            {
+              "column_index": 7,
+              "column_key": "Zh.QA",
+              "row_index": 6,
+              "row_key": "FlexPrefill > Llama > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "33.66"
+            },
+            {
+              "column_index": 7,
+              "column_key": "Zh.QA",
+              "row_index": 5,
+              "row_key": "FlexPrefill > Llama > Original",
+              "table": "2610.10871v1_T2",
+              "value": "35.46"
+            },
+            {
+              "column_index": 9,
+              "column_key": "Math Find",
+              "row_index": 6,
+              "row_key": "FlexPrefill > Llama > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "29.14"
+            },
+            {
+              "column_index": 9,
+              "column_key": "Math Find",
+              "row_index": 5,
+              "row_key": "FlexPrefill > Llama > Original",
+              "table": "2610.10871v1_T2",
+              "value": "31.14"
+            },
+            {
+              "column_index": 10,
+              "column_key": "Retr. PassKey",
+              "row_index": 6,
+              "row_key": "FlexPrefill > Llama > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "98.31"
+            },
+            {
+              "column_index": 10,
+              "column_key": "Retr. PassKey",
+              "row_index": 5,
+              "row_key": "FlexPrefill > Llama > Original",
+              "table": "2610.10871v1_T2",
+              "value": "98.64"
+            },
+            {
+              "column_index": 11,
+              "column_key": "Retr. Number",
+              "row_index": 6,
+              "row_key": "FlexPrefill > Llama > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "99.66"
+            },
+            {
+              "column_index": 11,
+              "column_key": "Retr. Number",
+              "row_index": 5,
+              "row_key": "FlexPrefill > Llama > Original",
+              "table": "2610.10871v1_T2",
+              "value": "99.83"
+            },
+            {
+              "column_index": 4,
+              "column_key": "En.QA",
+              "row_index": 9,
+              "row_key": "FlexPrefill > Qwen > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "6.38"
+            },
+            {
+              "column_index": 4,
+              "column_key": "En.QA",
+              "row_index": 8,
+              "row_key": "FlexPrefill > Qwen > Original",
+              "table": "2610.10871v1_T2",
+              "value": "6.55"
+            },
+            {
+              "column_index": 5,
+              "column_key": "En.MC",
+              "row_index": 9,
+              "row_key": "FlexPrefill > Qwen > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "32.31"
+            },
+            {
+              "column_index": 5,
+              "column_key": "En.MC",
+              "row_index": 8,
+              "row_key": "FlexPrefill > Qwen > Original",
+              "table": "2610.10871v1_T2",
+              "value": "34.06"
+            },
+            {
+              "column_index": 9,
+              "column_key": "Math Find",
+              "row_index": 9,
+              "row_key": "FlexPrefill > Qwen > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "30.29"
+            },
+            {
+              "column_index": 9,
+              "column_key": "Math Find",
+              "row_index": 8,
+              "row_key": "FlexPrefill > Qwen > Original",
+              "table": "2610.10871v1_T2",
+              "value": "30.86"
+            },
+            {
+              "column_index": 10,
+              "column_key": "Retr. PassKey",
+              "row_index": 9,
+              "row_key": "FlexPrefill > Qwen > MASA",
+              "table": "2610.10871v1_T2",
+              "value": "94.41"
+            },
+            {
+              "column_index": 10,
+              "column_key": "Retr. PassKey",
+              "row_index": 8,
+              "row_key": "FlexPrefill > Qwen > Original",
+              "table": "2610.10871v1_T2",
+              "value": "96.95"
+            }
+          ],
+          "partial": true,
+          "reading": "broad",
+          "reason": "12 of 33 comparisons break the claim",
+          "result": "contradicted",
+          "rule": "beats_baseline",
+          "table_ref": "2610.10871v1_T2"
+        }
+      ],
+      "hard": false,
+      "id": "C06",
+      "other_table_members": [
+        {
+          "member": "Negligible latency overhead across the sparse methods",
+          "status": "other_table: Figure 2"
+        },
+        {
+          "member": "Matched average gains on LongBench for SeerAttention",
+          "status": "other_table: Table 3"
+        }
+      ],
+      "row_id": "P4-R1",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11312v1_T1a"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.11312v1_T1a"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "3 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11312v1_T1a"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "3 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11312v1_T1a"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11312v1_T1a"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11312v1_T1b"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11312v1_T1b"
+        }
+      ],
+      "hard": false,
+      "id": "C07",
+      "other_table_members": [],
+      "row_id": "P6-S1",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [
+        "Section 6.3: 0.60 is an illustrative threshold selected for exposition after the sweep"
+      ],
+      "code_result": "Needs review",
+      "decided_by": "caveat",
+      "expected_label": "supported",
+      "final_label": "partially_supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.12375v1_T6"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.12375v1_T6"
+        }
+      ],
+      "hard": false,
+      "id": "C08",
+      "other_table_members": [],
+      "row_id": "P9-S4",
+      "run1_label": "partially_supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "decided_by": "all forms hold",
+      "expected_label": "partially_supported",
+      "faithfulness": null,
+      "final_label": "supported",
+      "fixed": false,
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "counted 17 (claimed 17, op ==)",
+          "result": "holds",
+          "rule": "count_rows",
+          "table_ref": "2610.11291v1_T3"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "counted 2 (claimed 2, op ==)",
+          "result": "holds",
+          "rule": "count_rows",
+          "table_ref": "2610.11291v1_T3"
+        }
+      ],
+      "hard": true,
+      "id": "C09",
+      "other_table_members": [],
+      "row_id": "P5-R2",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11135v1_T1"
+        }
+      ],
+      "hard": false,
+      "id": "C10",
+      "other_table_members": [],
+      "row_id": "P3-S1",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "counted 17 (claimed 17, op ==)",
+          "result": "holds",
+          "rule": "count_rows",
+          "table_ref": "2610.11291v1_T3"
+        }
+      ],
+      "hard": false,
+      "id": "C12",
+      "other_table_members": [],
+      "row_id": "P5-S4",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [
+        "Table 4 caption: slightly helps sampled OPD but lowers both students trained with the verifier"
+      ],
+      "code_result": "PS",
+      "counted_cells_only_variant": true,
+      "counted_faithful": true,
+      "decided_by": "a form is contradicted",
+      "expected_label": "partially_supported",
+      "faithfulness": {
+        "a_cell_pin_matches": [
+          {
+            "column": 1,
+            "pin": "P1-T4-01",
+            "pin_status": "relaxed",
+            "row": 3,
+            "table_ref": "2610.11519v1_T4",
+            "value": "+0.30"
+          }
+        ],
+        "b_structural_pins": [],
+        "faithful": true,
+        "faithful_cells_only": true,
+        "faithful_structural_variant": false,
+        "structural_pins_for_count_rows": []
+      },
+      "final_label": "partially_supported",
+      "fixed": true,
+      "forms": [
+        {
+          "breaking_cells": [
+            {
+              "column_index": 1,
+              "column_key": "Effect of the teacher-peak branch > Sampled OPD > no weight",
+              "row_index": 3,
+              "row_key": "Δ macro Avg@8",
+              "table": "2610.11519v1_T4",
+              "value": "+0.30"
+            },
+            {
+              "column_index": 1,
+              "column_key": "Effect of the teacher-peak branch > Sampled OPD > no weight",
+              "row_index": 4,
+              "row_key": "Δ macro Pass@8",
+              "table": "2610.11519v1_T4",
+              "value": "+0.64"
+            }
+          ],
+          "partial": true,
+          "reading": "broad",
+          "reason": "2 of 14 comparisons break the claim",
+          "result": "contradicted",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T4"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "broad",
+          "reason": "12 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.11519v1_T2"
+        }
+      ],
+      "hard": false,
+      "id": "C13",
+      "other_table_members": [
+        {
+          "member": "Replacing the probability residual with the log ratio",
+          "status": "other_table: Table 3"
+        }
+      ],
+      "row_id": "P1-R1",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [
+        "Knowledge-distillation methods in evaluated settings other than Pro→Qwen"
+      ],
+      "caveat_refs": [
+        "Table 3 caption: Comparison with KD methods under the Pro→Qwen setting"
+      ],
+      "code_result": "PS",
+      "counted_cells_only_variant": false,
+      "counted_faithful": true,
+      "decided_by": "a claimed_group member is absent",
+      "expected_label": "partially_supported",
+      "faithfulness": {
+        "a_cell_pin_matches": [],
+        "b_structural_pins": [
+          {
+            "absent_member": "Knowledge-distillation methods in evaluated settings other than Pro→Qwen",
+            "pin": "P11-T3-S1",
+            "pin_fact": "caption {}",
+            "pin_status": "strict",
+            "table_ref": "2610.12114v1_T3"
+          }
+        ],
+        "faithful": true,
+        "faithful_cells_only": false,
+        "faithful_structural_variant": false,
+        "structural_pins_for_count_rows": []
+      },
+      "final_label": "partially_supported",
+      "fixed": true,
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "broad",
+          "reason": "12 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.12114v1_T3"
+        }
+      ],
+      "hard": true,
+      "id": "C14",
+      "other_table_members": [
+        {
+          "member": "One-shot",
+          "status": "other_table: Table 2"
+        },
+        {
+          "member": "Few-shot",
+          "status": "other_table: Table 2"
+        },
+        {
+          "member": "Teacher summary",
+          "status": "other_table: Table 2"
+        },
+        {
+          "member": "APE",
+          "status": "other_table: Table 2"
+        },
+        {
+          "member": "MIPROv2 (instruction only)",
+          "status": "other_table: Table 2"
+        },
+        {
+          "member": "MIPROv2 (Opsahl-Ong et al., 2024)",
+          "status": "other_table: Table 2"
+        },
+        {
+          "member": "GEPA",
+          "status": "other_table: Table 2"
+        }
+      ],
+      "row_id": "P11-R2",
+      "run1_label": "supported",
+      "set": "R",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "8 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        }
+      ],
+      "hard": false,
+      "id": "C15",
+      "other_table_members": [],
+      "row_id": "P1-S3",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "holds",
+      "decided_by": "all forms hold",
+      "expected_label": "supported",
+      "final_label": "supported",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.10871v1_T1"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "3 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.10871v1_T2"
+        },
+        {
+          "breaking_cells": [],
+          "partial": false,
+          "reading": "only",
+          "reason": "1 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.10871v1_T3"
+        }
+      ],
+      "hard": false,
+      "id": "C16",
+      "other_table_members": [],
+      "row_id": "P4-S1",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "Needs review",
+      "decided_by": "member in another table",
+      "expected_label": "supported",
+      "final_label": "needs_review",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "8 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        },
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "only",
+          "reason": "4 comparisons hold",
+          "result": "holds",
+          "rule": "all_cmp",
+          "table_ref": "2610.11519v1_T10"
+        }
+      ],
+      "hard": false,
+      "id": "C17",
+      "other_table_members": [
+        {
+          "member": "All 24 benchmark-level comparisons: two student sizes × two algorithms × three benchmarks × two metrics",
+          "status": "other_table: Table 1"
+        },
+        {
+          "member": "Qwen3-1.7B-Base and Qwen3-4B-Base students with Qwen3-8B teacher",
+          "status": "other_table: Table 1"
+        }
+      ],
+      "row_id": "P1-S2",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    },
+    {
+      "absent_members": [],
+      "caveat_refs": [],
+      "code_result": "Needs review",
+      "decided_by": "member in another table",
+      "expected_label": "supported",
+      "final_label": "needs_review",
+      "forms": [
+        {
+          "breaking_cells": [],
+          "partial": true,
+          "reading": "narrow",
+          "reason": "8 comparisons hold",
+          "result": "holds",
+          "rule": "beats_baseline",
+          "table_ref": "2610.11519v1_T30"
+        }
+      ],
+      "hard": false,
+      "id": "C18",
+      "other_table_members": [
+        {
+          "member": "Qwen3-1.7B-Base student improvement under Co-RA",
+          "status": "other_table: Table 1"
+        },
+        {
+          "member": "Qwen3-4B-Base student improvement under Co-RA",
+          "status": "other_table: Table 1"
+        }
+      ],
+      "row_id": "P1-S8",
+      "run1_label": "supported",
+      "set": "S",
+      "ties": 0
+    }
+  ],
+  "marks": {
+    "1": {
+      "hard": 2,
+      "misses": 4,
+      "pass": false
+    },
+    "2": {
+      "cells_only_variant_not_official": {
+        "hard": 0,
+        "misses": 2,
+        "pass": false
+      },
+      "hard": 2,
+      "misses": 4,
+      "pass": false,
+      "reading": "marks 1 thresholds with only faithful misses counted"
+    },
+    "3": {
+      "code_lowered": 0,
+      "ids": [],
+      "pass": true
+    },
+    "4": {
+      "code_needs_review": 2,
+      "ids": [
+        "C17",
+        "C18"
+      ],
+      "pass": true
+    },
+    "5": {
+      "check_identical": true,
+      "check_sha256": "8f8924ed01d0a6e117ce9c416ed81aff489ff5a06f255d2dfa54745cfa92667e",
+      "core_identical": true,
+      "core_sha256": "f6b2887f0c59f255b029448135f76c0b50add7c3e2fd0c1840b9548b00ff5283",
+      "pass": true,
+      "pytest_exit_code": 0
+    }
+  },
+  "misses": [
+    {
+      "code_result": "PS",
+      "counted_cells_only_variant": true,
+      "counted_faithful": true,
+      "final_label": "partially_supported",
+      "fixed": true,
+      "hard": false,
+      "has_form": true,
+      "item": "C13",
+      "row_id": "P1-R1",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "Needs review",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "final_label": "needs_review",
+      "fixed": false,
+      "hard": true,
+      "has_form": true,
+      "item": "C01",
+      "row_id": "P3-R2",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "PS",
+      "counted_cells_only_variant": true,
+      "counted_faithful": true,
+      "final_label": "partially_supported",
+      "fixed": true,
+      "hard": false,
+      "has_form": true,
+      "item": "C06",
+      "row_id": "P4-R1",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "PS",
+      "counted_cells_only_variant": false,
+      "counted_faithful": true,
+      "final_label": "partially_supported",
+      "fixed": true,
+      "hard": true,
+      "has_form": true,
+      "item": "C04",
+      "row_id": "P4-R2",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "no_code_result",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "final_label": "supported",
+      "fixed": false,
+      "hard": false,
+      "has_form": false,
+      "item": null,
+      "row_id": "P5-R1",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "holds",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "final_label": "supported",
+      "fixed": false,
+      "hard": true,
+      "has_form": true,
+      "item": "C09",
+      "row_id": "P5-R2",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "no_code_result",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "final_label": "supported",
+      "fixed": false,
+      "hard": true,
+      "has_form": false,
+      "item": "C05",
+      "row_id": "P6-R2",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "no_code_result",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "final_label": "supported",
+      "fixed": false,
+      "hard": false,
+      "has_form": false,
+      "item": null,
+      "row_id": "P7-R1",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "no_code_result",
+      "counted_cells_only_variant": false,
+      "counted_faithful": false,
+      "final_label": "supported",
+      "fixed": false,
+      "hard": false,
+      "has_form": false,
+      "item": null,
+      "row_id": "P8-R2",
+      "run1_label": "supported"
+    },
+    {
+      "code_result": "PS",
+      "counted_cells_only_variant": false,
+      "counted_faithful": true,
+      "final_label": "partially_supported",
+      "fixed": true,
+      "hard": true,
+      "has_form": true,
+      "item": "C14",
+      "row_id": "P11-R2",
+      "run1_label": "supported"
+    }
+  ],
+  "overall": "FAIL",
+  "overall_without_mark_5": false,
+  "s_rows": {
+    "already_lowered_by_run1": [
+      {
+        "code_result": "Needs review",
+        "final_label": "partially_supported",
+        "id": "C08",
+        "row_id": "P9-S4",
+        "run1_label": "partially_supported"
+      }
+    ],
+    "no_run1_label": [],
+    "selected": 10
+  },
+  "stopped": false
+}

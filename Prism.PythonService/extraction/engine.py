@@ -17,7 +17,9 @@ extract_claims (Prompt 2) is a sequential three-call pipeline:
     claims pipeline that uses response_schema.
 """
 import asyncio
+import contextlib
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
@@ -28,6 +30,14 @@ from opentelemetry import trace
 from pydantic import BaseModel
 
 from config import settings
+from extraction import llm_backend
+from extraction.context_cache import (
+    ContextCacheStats,
+    PaperCache,
+    cached_audit_contents,
+    paper_context_cache,
+    split_audit_user_message,
+)
 from extraction.prompt_loader import (
     build_gemini_messages_for_audit,
     build_gemini_messages_for_extractor,
@@ -38,6 +48,7 @@ from extraction.prompt_version import get_prompt_version
 from extraction.schemas import ClaimLLM, ClaimsExtractionResponse, MetadataExtractionResponse
 
 tracer = trace.get_tracer(__name__)
+logger = logging.getLogger(__name__)
 
 AUDIT_STRUCTURE_CONCURRENCY = 5
 
@@ -103,6 +114,54 @@ async def _call_gemini(
     raise last_exception
 
 
+def _extract_usage(response: types.GenerateContentResponse) -> dict | None:
+    """Reads token counts off response.usage_metadata for logging. Missing
+    fields stay None (logged as null) so they remain distinguishable from a
+    real zero. Never raises: on any failure it logs a warning and returns None.
+
+    Counting rules (google-genai GenerateContentResponseUsageMetadata):
+    prompt_token_count includes cached_content_token_count; thoughts and
+    tool_use are separate from prompt and candidates, and
+    prompt + candidates + thoughts + tool_use == total.
+    """
+    try:
+        usage_obj = getattr(response, "usage_metadata", None)
+        if usage_obj is None:
+            return None
+        usage = {
+            "prompt_tokens": getattr(usage_obj, "prompt_token_count", None),
+            "output_tokens": getattr(usage_obj, "candidates_token_count", None),
+            "thought_tokens": getattr(usage_obj, "thoughts_token_count", None),
+            "total_tokens": getattr(usage_obj, "total_token_count", None),
+            "cached_tokens": getattr(usage_obj, "cached_content_token_count", None),
+            "tool_use_tokens": getattr(usage_obj, "tool_use_prompt_token_count", None),
+        }
+        _warn_if_usage_sum_mismatch(usage)
+        return usage
+    except Exception:
+        logger.warning("Failed to extract usage_metadata from Gemini response; logging usage as null", exc_info=True)
+        return None
+
+
+def _warn_if_usage_sum_mismatch(usage: dict) -> None:
+    """Warns (never raises) when prompt + candidates + thoughts + tool_use does
+    not equal the reported total, treating None as 0. Skipped when total is
+    None. A mismatch means the counting rules above do not hold for this
+    response, so any cost computed from it should be treated with suspicion."""
+    total = usage["total_tokens"]
+    if total is None:
+        return
+    prompt, output, thought, tool_use = (
+        usage["prompt_tokens"] or 0, usage["output_tokens"] or 0,
+        usage["thought_tokens"] or 0, usage["tool_use_tokens"] or 0,
+    )
+    if prompt + output + thought + tool_use != total:
+        logger.warning(
+            "Gemini usage sum mismatch: prompt=%s + candidates=%s + thoughts=%s + tool_use=%s != total=%s",
+            prompt, output, thought, tool_use, total,
+        )
+
+
 def _extract_usage_and_finish_reason(
     response: types.GenerateContentResponse,
 ) -> tuple[dict | None, str | None]:
@@ -112,15 +171,7 @@ def _extract_usage_and_finish_reason(
     guarded since usage_metadata/candidates can be absent or shaped
     unexpectedly depending on SDK version or a malformed response.
     """
-    usage_obj = getattr(response, "usage_metadata", None)
-    usage = None
-    if usage_obj is not None:
-        usage = {
-            "prompt_tokens": getattr(usage_obj, "prompt_token_count", None),
-            "output_tokens": getattr(usage_obj, "candidates_token_count", None),
-            "thought_tokens": getattr(usage_obj, "thoughts_token_count", None),
-            "total_tokens": getattr(usage_obj, "total_token_count", None),
-        }
+    usage = _extract_usage(response)
 
     finish_reason = None
     candidates = getattr(response, "candidates", None)
@@ -165,7 +216,7 @@ def _write_structured_log(
 
 
 def _build_client() -> genai.Client:
-    return genai.Client(api_key=settings.ai_api_key)
+    return llm_backend.build_genai_client(settings.ai_api_key)
 
 
 async def _generate_with_fallback(
@@ -177,6 +228,9 @@ async def _generate_with_fallback(
     fallback_model: str,
     correlation_id: str | None = None,
     fallback_config: types.GenerateContentConfig | None = None,
+    fallback_contents: list[types.Content] | None = None,
+    allow_fallback: bool = True,
+    call_kind: str | None = None,
 ) -> tuple[types.GenerateContentResponse, str]:
     """Calls Gemini on model_name with retry/backoff, falling back to
     fallback_model for one final attempt if the primary model's retries are
@@ -189,17 +243,34 @@ async def _generate_with_fallback(
     never reaches the fallback model (Experiment 3 amendment 1: thinking
     overrides are a primary-model-only knob). Defaults to reusing config,
     unchanged from before this parameter existed.
+
+    fallback_contents, when given, is used for the fallback attempt instead
+    of contents. A cached auditor call passes the full uncached request as
+    fallback_config + fallback_contents, so the fallback model never receives
+    cached_content (a cache belongs to one model). Defaults to reusing
+    contents.
+
+    allow_fallback=False removes ONLY the switch to fallback_model: the
+    primary model's retries and backoff run exactly as before, and when they
+    are exhausted the primary model's last error is raised. The scope lister
+    and checker use it so a scope call is never served by a different model.
+    Defaults to True, unchanged for every existing caller.
+
+    call_kind is a tag for observers (eval/replay_audit.py's instrumentation
+    reads it to label the call "lister" or "checker"). It has no effect on
+    the call. Defaults to None.
     """
     fallback_config = fallback_config if fallback_config is not None else config
+    fallback_contents = fallback_contents if fallback_contents is not None else contents
     try:
         response = await _call_gemini(client, model_name, contents, config, chat_id, correlation_id)
         return response, model_name
     except Exception as primary_exc:
-        if not _is_retryable(primary_exc):
+        if not _is_retryable(primary_exc) or not allow_fallback:
             raise
         try:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} falling back to model={fallback_model}")
-            response = await client.aio.models.generate_content(model=fallback_model, contents=contents, config=fallback_config)
+            response = await client.aio.models.generate_content(model=fallback_model, contents=fallback_contents, config=fallback_config)
             return response, fallback_model
         except Exception as fallback_exc:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} fallback model={fallback_model} failed: {fallback_exc!r}")
@@ -275,7 +346,7 @@ async def _call_gemini_structured(
     parsed = response.parsed
     if parsed is None:
         try:
-            parsed = response_schema.model_validate(json.loads(raw_text))
+            parsed = response_schema.model_validate(json.loads(raw_text, strict=False))
         except (json.JSONDecodeError, ValueError) as parse_exc:
             print(f"[extraction] chat_id={chat_id} correlation_id={correlation_id} malformed response, raw={raw_text!r}")
             _write_structured_log(
@@ -377,6 +448,63 @@ async def _call_gemini_json(
     return parsed
 
 
+async def _generate_cached_audit(
+    client: genai.Client,
+    paper_cache: PaperCache,
+    messages: list[dict],
+    contents: list[types.Content],
+    config: types.GenerateContentConfig,
+    chat_id: str,
+    model_name: str,
+    fallback_model: str,
+    correlation_id: str | None,
+) -> tuple[types.GenerateContentResponse, str]:
+    """One auditor request that references paper_cache instead of resending
+    the system prompt and paper. contents/config are today's full uncached
+    request, used for the fallback model and for the uncached retry.
+
+    The cached request carries only cached_content, the claim turn and the
+    thinking_config - never system_instruction, tools or tool_config (Gemini
+    rejects those alongside cached_content). The fallback model never
+    receives cached_content: _generate_with_fallback is given the full
+    uncached request as its fallback_config/fallback_contents.
+
+    A non-retryable APIError on the cached call switches the cache off for
+    the rest of the paper and retries that one call uncached, once. 429/5xx
+    keep _generate_with_fallback's own retry and fallback.
+    """
+    stats = paper_cache.stats
+    claim_text = None
+    user_messages = [m for m in messages if m["role"] == "user"]
+    if paper_cache.active and paper_cache.model == model_name and len(user_messages) == 1:
+        claim_text = split_audit_user_message(paper_cache, user_messages[0]["content"])
+    if claim_text is None:
+        stats.cache_fallbacks += 1
+        return await _generate_with_fallback(client, contents, config, chat_id, model_name, fallback_model, correlation_id)
+
+    cached_config = types.GenerateContentConfig(
+        cached_content=paper_cache.name, thinking_config=config.thinking_config,
+    )
+    try:
+        return await _generate_with_fallback(
+            client, cached_audit_contents(claim_text), cached_config, chat_id, model_name, fallback_model,
+            correlation_id, fallback_config=config, fallback_contents=contents,
+        )
+    except errors.APIError as exc:
+        if _is_retryable(exc):
+            raise
+        paper_cache.active = False
+        stats.cached_call_failures += 1
+        stats.cache_fallbacks += 1
+        reason = (
+            f"cached audit call failed (cache={paper_cache.name}, status={exc.code}, message={exc.message!r}): "
+            f"{exc!r}"
+        )
+        logger.error("%s; cache switched off for this paper, retrying this call uncached once", reason)
+        stats.report_failure(reason)
+        return await _generate_with_fallback(client, contents, config, chat_id, model_name, fallback_model, correlation_id)
+
+
 async def _call_gemini_freetext(
     messages: list[dict],
     chat_id: str,
@@ -385,6 +513,7 @@ async def _call_gemini_freetext(
     model_name: str,
     fallback_model: str,
     thinking_level: str | None = None,
+    paper_cache: PaperCache | None = None,
 ) -> str:
     """Calls Gemini for plain free-text output - no JSON mode, no schema.
 
@@ -398,6 +527,10 @@ async def _call_gemini_freetext(
     medium on 3.6-flash). Passed explicitly by the caller (settings-driven in
     the live service, CLI-driven in eval/replay_audit.py) - never read from
     global settings in this function.
+
+    paper_cache is None by default, which leaves the request exactly as it
+    was before explicit caching existed. When it is an active cache for this
+    model, the request references it (see _generate_cached_audit).
     """
     client = _build_client()
     system_prompt = _extract_system_prompt(messages)
@@ -412,10 +545,16 @@ async def _call_gemini_freetext(
         ),
     )
 
-    response, used_model = await _generate_with_fallback(
-        client, contents, config, chat_id, model_name, fallback_model, correlation_id
-    )
+    if paper_cache is not None:
+        response, used_model = await _generate_cached_audit(
+            client, paper_cache, messages, contents, config, chat_id, model_name, fallback_model, correlation_id,
+        )
+    else:
+        response, used_model = await _generate_with_fallback(
+            client, contents, config, chat_id, model_name, fallback_model, correlation_id
+        )
     raw_text = response.text
+    usage, finish_reason = _extract_usage_and_finish_reason(response)
 
     _write_structured_log(
         log_subdir=log_subdir,
@@ -425,6 +564,8 @@ async def _call_gemini_freetext(
         request_message_count=len(messages),
         response_item_count=1,
         response_raw=raw_text,
+        usage=usage,
+        finish_reason=finish_reason,
     )
 
     return raw_text
@@ -440,6 +581,8 @@ async def _audit_and_structure_claim(
     total_claims: int,
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
     thinking_level: str | None = None,
+    paper_cache: PaperCache | None = None,
+    audit_model: str | None = None,
 ) -> ClaimLLM:
     """Runs Call #3 (audit) then Call #4 (structure) for one claim, in sequence.
 
@@ -450,9 +593,19 @@ async def _audit_and_structure_claim(
 
     thinking_level reaches only the audit call (Call #3) below, never the
     structure call (Call #4) - Experiment 1 varies the auditor alone.
+
+    paper_cache (the paper's explicit context cache, or None) reaches only
+    the audit call as well; the structure call never uses it. It is passed
+    on only when set, so with no cache the audit call is invoked exactly as
+    before.
+
+    audit_model (default None = settings.llm_claim_audit_model) overrides the
+    model of the audit call only (eval/replay_audit.py --auditor-model); the
+    structure call and both fallback models are unchanged.
     """
     claim_text_verbatim = claim["claim_text_verbatim"]
     claim_summary = claim["claim_summary"]
+    cache_kwargs = {"paper_cache": paper_cache} if paper_cache is not None else {}
 
     async with semaphore:
         with tracer.start_as_current_span("auditor") as span:
@@ -464,9 +617,10 @@ async def _audit_and_structure_claim(
                 chat_id=chat_id,
                 correlation_id=correlation_id,
                 log_subdir="audit",
-                model_name=settings.llm_claim_audit_model,
+                model_name=audit_model or settings.llm_claim_audit_model,
                 fallback_model=settings.llm_claim_audit_fallback_model,
                 thinking_level=thinking_level,
+                **cache_kwargs,
             )
 
         with tracer.start_as_current_span("structurer") as span:
@@ -493,6 +647,7 @@ async def extract_claims(
     on_detail: Optional[Callable[[str], Awaitable[None]]] = None,
     on_audit_start: Optional[Callable[[], Awaitable[None]]] = None,
     on_audit_detail: Optional[Callable[[str], Awaitable[None]]] = None,
+    context_cache: bool = False,
 ) -> ClaimsExtractionResponse:
     """Extracts structured claims from paper_text via a sequential three-call pipeline.
 
@@ -501,6 +656,13 @@ async def extract_claims(
     out across claims with a bounded semaphore. A claim whose audit or
     structure call fails is logged and dropped rather than failing the
     whole extraction - downstream grounding handles missing claims correctly.
+
+    context_cache (default False) turns on explicit context caching of the
+    system prompt + paper for the audit calls: one cache is created before
+    the claim fan-out and deleted after it (extraction/context_cache.py,
+    BETA). It is an explicit parameter, not a config.py setting; wiring it to
+    a settings field is a later follow-up. With it False nothing cache-related
+    runs.
     """
     with tracer.start_as_current_span("extractor") as span:
         span.set_attribute("correlation_id", correlation_id or "")
@@ -584,17 +746,32 @@ async def extract_claims(
             await _report_claim_done()
 
     semaphore = asyncio.Semaphore(AUDIT_STRUCTURE_CONCURRENCY)
-    results = await asyncio.gather(
-        *(
-            _audit_wrapper(
-                semaphore, paper_text, claim, chat_id, correlation_id,
-                claim_number=i + 1, total_claims=total_claims, on_detail=None,
-                thinking_level=settings.auditor_thinking_level,
-            )
-            for i, claim in enumerate(claims)
-        ),
-        return_exceptions=True,
+    cache_stats = ContextCacheStats()
+    cache_scope = (
+        paper_context_cache(_build_client(), settings.llm_claim_audit_model, paper_text, total_claims, cache_stats)
+        if context_cache
+        else contextlib.nullcontext()
     )
+    async with cache_scope as paper_cache:
+        cache_kwargs = {"paper_cache": paper_cache} if paper_cache is not None else {}
+        results = await asyncio.gather(
+            *(
+                _audit_wrapper(
+                    semaphore, paper_text, claim, chat_id, correlation_id,
+                    claim_number=i + 1, total_claims=total_claims, on_detail=None,
+                    thinking_level=settings.auditor_thinking_level,
+                    **cache_kwargs,
+                )
+                for i, claim in enumerate(claims)
+            ),
+            return_exceptions=True,
+        )
+    if context_cache:
+        logger.info(
+            "context cache: chat_id=%s papers_cached=%d creation_failures=%d cached_call_failures=%d cache_fallbacks=%d",
+            chat_id, cache_stats.papers_cached, cache_stats.creation_failures,
+            cache_stats.cached_call_failures, cache_stats.cache_fallbacks,
+        )
 
     structured_claims: list[ClaimLLM] = []
     for claim, result in zip(claims, results):

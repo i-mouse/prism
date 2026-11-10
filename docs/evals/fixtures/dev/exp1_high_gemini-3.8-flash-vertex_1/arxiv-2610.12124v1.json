@@ -1,0 +1,320 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.8-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:56.041576+00:00",
+    "paper_id": "arxiv-2610.12124v1",
+    "filename": "2610.12124v1.pdf",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-11-08T11:16:39Z"
+    },
+    "claims_scope": [
+      6,
+      7,
+      9,
+      10,
+      14,
+      15,
+      16,
+      26,
+      27
+    ]
+  },
+  "claims": [
+    {
+      "index": 6,
+      "label": "partially_supported",
+      "claim_summary": "Unused details recede naturally without explicit importance scores or decay rules.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Experience that remains unused continues to recede in detail through recursive consolidation, without separately assigned importance scores or time-based forgetting rules.",
+      "evidence_spans": [
+        {
+          "source_text": "These thresholds control when context is consolidated, rather than assigning importance or decay scores to individual memories.",
+          "source_section": "Appendix A",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Within this run, reusable knowledge persists as the details of individual episodes recede.",
+          "source_section": "Appendix A.7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Most items without detected use remain unchanged (95.8%), so these adjacent-consolidation statistics do not establish general fading of unused knowledge.",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 7,
+      "label": "partially_supported",
+      "claim_summary": "Use and disuse dynamics unify memory recall with continuous learning and capability expansion.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam combines this breadth with stronger overall performance, leading or tying on seven of the eight measures. Memory, knowledge development, and learning arise from the same use-and-disuse cycle over its interaction history, demonstrating the broad applicability of a unified mechanism rather than separate capability-specific mechanisms.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%. Access to underlying evidence therefore improves reasoning beyond what the consolidated context alone supports.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "These associations connect subsequent knowledge changes to intervening work and feedback, without establishing that use alone causes the changes. Most items without detected use remain unchanged (95.8%), so these adjacent-consolidation statistics do not establish general fading of unused knowledge.",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 81.9% mean progress on ScienceWorld, outperforming most baselines.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods.",
+      "evidence_spans": [
+        {
+          "source_text": "We compare Hippocam with mem0, A-Mem, Letta, ReasoningBank, ACE, and HiAgent (Chhikara et al., 2025; Xu et al., 2025; Packer et al., 2023; Ouyang et al., 2026; Zhang et al., 2026; Hu et al., 2025) across interactive and memory-intensive tasks.",
+          "source_section": "Section 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Table 1: Task performance (%) on ALFWorld,",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Memory-oriented methods support more than recall, with A-Mem performing strongly on ScienceWorld (87.2%) and Letta on StreamBench (81.3%).",
+          "source_section": "Section 4.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "By contrast, ACE excels on ScienceWorld (91.9%) but, like the similarly guidance-oriented ReasoningBank, struggles on LoCoMo (22.5% and 18.3%, respectively).",
+          "source_section": "Section 4.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Hippocam hits 81.7% mean accuracy on StreamBench, outperforming all competitors.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+      "evidence_spans": [
+        {
+          "source_text": "Letta 85.1 71.2 81.3",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 97.8 81.9 81.7",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 87.3 76.0 81.7 93.0 78.7 85.8",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Letta 86.0 76.7 81.3 91.7 77.3 84.5",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Hippocam reaches 78.9% frozen transfer progress on ScienceWorld, beating ACE by 16.2 points.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 2: Cross-domain knowledge generalization and integration. ScienceWorld mean progress",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 61.8% accuracy on FEVER under frozen cross-domain evaluation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+      "evidence_spans": [
+        {
+          "source_text": "Plain\n48.8\n\u2014\n\u2014\n59.3\n\u2014\n\u2014\nHiAgent\n42.7\n49.6 \u219249.7\n+0.1\n61.8",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam\n78.9\n55.9 \u219275.1\n+19.2\n61.8",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Hippocam and ACE are the only methods showing consistent positive gains across both cross-domain transitions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Only Hippocam and ACE achieve positive gains on both domain transitions, while the remaining methods show mixed, unchanged, or reduced performance.",
+      "evidence_spans": [
+        {
+          "source_text": "ACE improves ScienceWorld progress by 14.0 pp and FEVER accuracy by 2.0 pp. Hippocam achieves larger gains of 19.2 and 6.0 pp, respectively, with a narrower FEVER gap under the scoring sensitivity analysis (\u00a7 A.2).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "\u2206stream reports After minus Fresh in percentage points (pp).",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 26,
+      "label": "partially_supported",
+      "claim_summary": "Prefix consolidation maintains task efficiency while drastically shrinking working context size.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Prefix consolidation thus supports more effective subsequent work with a smaller active context.",
+      "evidence_spans": [
+        {
+          "source_text": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4). ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Context-size statistics describe the first main-agent request of each episode in the inspected ALFWorld stream, including its preceding experience-acquisition segment; they do not measure total inference tokens.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "Disabling progressive recall drops MemoryAgentBench 64k accuracy from 41.0% to 27.0%.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+      "evidence_spans": [
+        {
+          "source_text": "Recall\nMAB-64k\nAcc. \u2191\n41.0\n27.0",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The complete system and the variant answer from copies of the same post-ingestion MemoryAgentBench 64k snapshot. The variant removes the recall tool and its accompanying instructions; ingestion and stored memory are unchanged.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P8-R1",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "P8-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P8-S3",
+      "actual_index": 10
+    },
+    {
+      "expected_id": "P8-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P8-S5",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P8-S6",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P8-S7",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P8-S8",
+      "actual_index": 27
+    }
+  ]
+}

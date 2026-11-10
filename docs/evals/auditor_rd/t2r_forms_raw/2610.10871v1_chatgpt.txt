@@ -1,0 +1,566 @@
+[
+  {
+    "id": "C04",
+    "table_check": [
+      {
+        "table": "Table 9",
+        "rows_pdf": 13,
+        "cols_pdf": 10,
+        "rows_grid": 13,
+        "cols_grid": 10,
+        "differences": [],
+        "last_row_quote": "FlexPrefill-Qwen | – | 1.0 | 89.92 | 88.49 | 81.73 | 81.20 | 59.14 | 24.03 | 70.75"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 9",
+        "rule": "count_satisfying",
+        "reading": "only",
+        "rows": [
+          "SeerAttention"
+        ],
+        "rows_by_columns": [
+          {
+            "row": "SeerAttention",
+            "Clip p": "–",
+            "Norm α": "–"
+          },
+          {
+            "row": "SeerAttention",
+            "Clip p": "85",
+            "Norm α": "–"
+          },
+          {
+            "row": "SeerAttention",
+            "Clip p": "90",
+            "Norm α": "–"
+          },
+          {
+            "row": "SeerAttention",
+            "Clip p": "95",
+            "Norm α": "–"
+          }
+        ],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": 1,
+          "pairs": [
+            {
+              "method": {
+                "row": "SeerAttention",
+                "Clip p": "85",
+                "Norm α": "–"
+              },
+              "baseline": {
+                "row": "SeerAttention",
+                "Clip p": "–",
+                "Norm α": "–"
+              }
+            },
+            {
+              "method": {
+                "row": "SeerAttention",
+                "Clip p": "90",
+                "Norm α": "–"
+              },
+              "baseline": {
+                "row": "SeerAttention",
+                "Clip p": "–",
+                "Norm α": "–"
+              }
+            },
+            {
+              "method": {
+                "row": "SeerAttention",
+                "Clip p": "95",
+                "Norm α": "–"
+              },
+              "baseline": {
+                "row": "SeerAttention",
+                "Clip p": "–",
+                "Norm α": "–"
+              }
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "MInference",
+          "FlexPrefill-Llama",
+          "FlexPrefill-Qwen"
+        ],
+        "caveat_refs": [
+          "Table 9 caption, PDF p.19: The case p = – and α = – is raw MASA without norm control."
+        ]
+      },
+      {
+        "table": "Table 9",
+        "rule": "none",
+        "reading": "only",
+        "rows": [
+          "FlexPrefill-Llama"
+        ],
+        "rows_by_columns": [
+          {
+            "row": "FlexPrefill-Llama",
+            "Clip p": "90",
+            "Norm α": "–"
+          },
+          {
+            "row": "FlexPrefill-Llama",
+            "Clip p": "95",
+            "Norm α": "–"
+          },
+          {
+            "row": "FlexPrefill-Llama",
+            "Clip p": "97.5",
+            "Norm α": "–"
+          }
+        ],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "SeerAttention",
+          "FlexPrefill-Qwen",
+          "MInference"
+        ],
+        "caveat_refs": [
+          "Table 9 caption, PDF p.19: The case p = – and α = – is raw MASA without norm control."
+        ]
+      },
+      {
+        "table": "Table 9 and Table 10",
+        "rule": "none",
+        "reading": "only",
+        "rows": [
+          "FlexPrefill-Qwen"
+        ],
+        "rows_by_columns": [
+          {
+            "row": "FlexPrefill-Qwen",
+            "Clip p": "–",
+            "Norm α": "–"
+          },
+          {
+            "row": "FlexPrefill-Qwen",
+            "Clip p": "–",
+            "Norm α": "1.0"
+          }
+        ],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "MInference",
+          "SeerAttention",
+          "FlexPrefill-Llama"
+        ],
+        "caveat_refs": [
+          "Table 9 caption, PDF p.19: The case p = – and α = – is raw MASA without norm control.",
+          "PDF p.19: its effect varies across FlexPrefill configurations."
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Norm clipping versus raw MASA for SeerAttention",
+        "status": "covered"
+      },
+      {
+        "member": "Norm clipping versus raw MASA for FlexPrefill-Llama",
+        "status": "absent"
+      },
+      {
+        "member": "Soft norm balancing versus raw MASA for FlexPrefill-Qwen on RULER (α=1.0)",
+        "status": "covered"
+      },
+      {
+        "member": "Soft norm balancing for additional FlexPrefill settings on InfiniteBench",
+        "status": "other_table: Table 10"
+      }
+    ],
+    "no_rule_reason": "Table 9 contains no norm-control-free FlexPrefill-Llama row, and Table 4 also lacks a raw FlexPrefill-Llama comparator. The complete existential claim about useful soft norm balancing spans additional FlexPrefill settings in Table 10, which is outside the supplied pack. A complete necessary form for these comparisons cannot be constructed from the supplied grids.",
+    "notes": "The repeated SeerAttention and FlexPrefill row keys require Clip p and Norm α to distinguish configurations. Table 9 is on PDF page 19. No claim outcomes have been evaluated."
+  },
+  {
+    "id": "C06",
+    "table_check": [
+      {
+        "table": "Table 1",
+        "rows_pdf": 13,
+        "cols_pdf": 11,
+        "rows_grid": 13,
+        "cols_grid": 11,
+        "differences": [],
+        "last_row_quote": "FlexPrefill / Qwen / MASA | 90.88 | 88.94 | 84.85 | 82.64 | 62.79 | 22.83 | 72.16 | +3.33"
+      },
+      {
+        "table": "Table 2",
+        "rows_pdf": 10,
+        "cols_pdf": 15,
+        "rows_grid": 10,
+        "cols_grid": 15,
+        "differences": [],
+        "last_row_quote": "FlexPrefill / Qwen / MASA | 15.55 | 6.38 | 32.31 | 16.50 | 13.09 | 21.07 | 30.29 | 94.41 | 74.58 | 0.00 | 30.42 | +0.89"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 1",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MInfer > MASA",
+          "SeerAttn > MASA",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Qwen > MASA"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "SeerAttn > MASA",
+              "baseline": "SeerAttn > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "SeerAttn > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "caveat_refs": [
+          "Table 1 caption, PDF p.7: Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule.",
+          "Table 1 caption, PDF p.7: Higher is better."
+        ]
+      },
+      {
+        "table": "Table 2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MInfer > MASA",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Qwen > MASA"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "caveat_refs": [
+          "Table 2 caption, PDF p.7: Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule.",
+          "Table 2 caption, PDF p.7: Higher is better."
+        ]
+      },
+      {
+        "table": "Figure 2",
+        "rule": "none",
+        "reading": "only",
+        "rows": [],
+        "rows_by_columns": [],
+        "columns": [],
+        "params": {
+          "op": null,
+          "constant": null,
+          "polarity": null,
+          "tolerance": 0,
+          "k": null,
+          "pairs": [],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": true,
+        "excluded_rows": [],
+        "caveat_refs": [
+          "Figure 2 caption, PDF p.9: All methods use the same latency protocol."
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Matched average gains on RULER across MInference, SeerAttention, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Matched average gains on InfiniteBench across MInference, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Negligible latency overhead across the sparse methods",
+        "status": "absent"
+      }
+    ],
+    "no_rule_reason": "The negligible-latency-overhead comparison is presented graphically in Figure 2 on PDF page 9, not in a table in the supplied pack. None of the permitted table rules represents that chart comparison.",
+    "notes": "Tables 1 and 2 are on PDF page 7. Figure 2 exists on PDF page 9 and contains latency comparisons at 32K, 64K and 128K. The permitted claimed_group statuses do not provide a category for a figure outside the pack; absent is used only as a schema fallback for that member, not as a statement that Figure 2 is missing."
+  },
+  {
+    "id": "C16",
+    "table_check": [
+      {
+        "table": "Table 1",
+        "rows_pdf": 13,
+        "cols_pdf": 11,
+        "rows_grid": 13,
+        "cols_grid": 11,
+        "differences": [],
+        "last_row_quote": "FlexPrefill / Qwen / MASA | 90.88 | 88.94 | 84.85 | 82.64 | 62.79 | 22.83 | 72.16 | +3.33"
+      },
+      {
+        "table": "Table 2",
+        "rows_pdf": 10,
+        "cols_pdf": 15,
+        "rows_grid": 10,
+        "cols_grid": 15,
+        "differences": [],
+        "last_row_quote": "FlexPrefill / Qwen / MASA | 15.55 | 6.38 | 32.31 | 16.50 | 13.09 | 21.07 | 30.29 | 94.41 | 74.58 | 0.00 | 30.42 | +0.89"
+      },
+      {
+        "table": "Table 3",
+        "rows_pdf": 4,
+        "cols_pdf": 6,
+        "rows_grid": 4,
+        "cols_grid": 6,
+        "differences": [],
+        "last_row_quote": "MASA | 55.45 | 54.48 | 53.16 | 54.37 | +0.30"
+      }
+    ],
+    "forms": [
+      {
+        "table": "Table 1",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MInfer > MASA",
+          "SeerAttn > MASA",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Qwen > MASA"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "SeerAttn > MASA",
+              "baseline": "SeerAttn > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "SeerAttn > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "caveat_refs": [
+          "Table 1 caption, PDF p.7: Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule.",
+          "Table 1 caption, PDF p.7: Higher is better."
+        ]
+      },
+      {
+        "table": "Table 2",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MInfer > MASA",
+          "FlexPrefill > Llama > MASA",
+          "FlexPrefill > Qwen > MASA"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MInfer > MASA",
+              "baseline": "MInfer > Original"
+            },
+            {
+              "method": "FlexPrefill > Llama > MASA",
+              "baseline": "FlexPrefill > Llama > Original"
+            },
+            {
+              "method": "FlexPrefill > Qwen > MASA",
+              "baseline": "FlexPrefill > Qwen > Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "MInfer > Full Attention",
+          "FlexPrefill > Llama > Full Attention",
+          "FlexPrefill > Qwen > Full Attention"
+        ],
+        "caveat_refs": [
+          "Table 2 caption, PDF p.7: Within each framework, Original and MASA use the same sparse implementation and differ only in the ranking rule.",
+          "Table 2 caption, PDF p.7: Higher is better."
+        ]
+      },
+      {
+        "table": "Table 3",
+        "rule": "beats_baseline",
+        "reading": "only",
+        "rows": [
+          "MASA"
+        ],
+        "rows_by_columns": [],
+        "columns": [
+          "Avg."
+        ],
+        "params": {
+          "op": ">",
+          "constant": null,
+          "polarity": "higher",
+          "tolerance": 0,
+          "k": null,
+          "pairs": [
+            {
+              "method": "MASA",
+              "baseline": "Original"
+            }
+          ],
+          "count": null,
+          "distinct_on": []
+        },
+        "partial": false,
+        "excluded_rows": [
+          "Full Attention"
+        ],
+        "caveat_refs": [
+          "Table 3 caption, PDF p.8: Within SeerAttention, Original and MASA differ only in the sparse-unit ranking rule.",
+          "Table 3 caption, PDF p.8: Higher is better."
+        ]
+      }
+    ],
+    "claimed_group": [
+      {
+        "member": "Matched average gains on RULER across MInference, SeerAttention, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Matched average gains on InfiniteBench across MInference, FlexPrefill-Llama and FlexPrefill-Qwen",
+        "status": "covered"
+      },
+      {
+        "member": "Matched average gains on LongBench for SeerAttention",
+        "status": "covered"
+      }
+    ],
+    "no_rule_reason": "",
+    "notes": "Tables 1 and 2 are on PDF page 7; Table 3 is on PDF page 8. The eight matched average-score comparisons are represented by four pairs in Table 1, three pairs in Table 2 and one pair in Table 3. No results have been computed."
+  }
+]

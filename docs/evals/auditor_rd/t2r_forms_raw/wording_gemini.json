@@ -1,0 +1,56 @@
+[
+  {
+    "id": "C01",
+    "q": "1",
+    "answer": "a",
+    "reason": "The claim states broadly that \"For new learners the advantage holds from their first interactions\" without quantifying over individual datasets, referring to the aggregate position-bin outcome (Mean)[cite: 1]."
+  },
+  {
+    "id": "C02",
+    "q": "1",
+    "answer": "a",
+    "reason": "The claim contrasts \"Every residual variant\" with \"every control\" (\"full RA stays above every control at every matched weight\"), classifying Direct L2 loss as a non-residual control rather than a residual variant[cite: 1]."
+  },
+  {
+    "id": "C04",
+    "q": "1",
+    "answer": "a",
+    "reason": "The claim makes a general statement that \"Norm clipping is helpful\" and \"soft norm balancing is useful\" without claiming gains at every context length, referring to the overall summary (Avg.)[cite: 1]."
+  },
+  {
+    "id": "C04",
+    "q": "2",
+    "answer": "a",
+    "reason": "The claim explicitly qualifies the scope as \"in some FlexPrefill settings\" and generally states \"is helpful\" without asserting that every tested hyperparameter setting improves[cite: 1]."
+  },
+  {
+    "id": "C05",
+    "q": "1",
+    "answer": "a",
+    "reason": "The claim connects two distinct main-paper contributions—\"demonstrate portability to a specialized medical domain and evaluate twelve VLMs\"—where \"evaluate twelve VLMs\" refers to the paper's overall evaluation rather than the 11-model subset in Table 10[cite: 1]."
+  },
+  {
+    "id": "C06",
+    "q": "1",
+    "answer": "a",
+    "reason": "The claim explicitly scopes \"consistent gains\" as holding \"Across multiple sparse baselines, benchmarks, and LLM backbones\" (i.e., benchmark/backbone averages), rather than every individual length or sub-task column[cite: 1]."
+  },
+  {
+    "id": "C13",
+    "q": "1",
+    "answer": "b",
+    "reason": "The claim makes an unqualified statement that \"adding direct supervision of the teacher's top token lowers performance\" without restricting it to verifier-trained methods, thus covering all methods in the table[cite: 1]."
+  },
+  {
+    "id": "C14",
+    "q": "1",
+    "answer": "b",
+    "reason": "The plural phrase \"Across the evaluated settings, UTT also outperforms... parameter-updating knowledge distillation methods\" asserts superiority across multiple settings beyond Table 3's single Pro→Qwen setting (the claim itself names no specific settings)[cite: 1]."
+  },
+  {
+    "id": "C15",
+    "q": "1",
+    "answer": "a",
+    "reason": "The claim distinguishes \"Both combinations\" from Co-RA by stating \"Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0–1.5 Avg@8 points\"[cite: 1]."
+  }
+]

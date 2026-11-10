@@ -39,6 +39,45 @@ def test_claim_index_row_scores_fixture_missing_when_paper_file_absent(tmp_path)
     assert outcomes["P1-R1"] == "FIXTURE_MISSING"
 
 
+def _run_main(monkeypatch, capsys, rows, fixture_dir) -> str:
+    import sys
+
+    from eval import score_replay
+
+    monkeypatch.setattr(score_replay, "resolve_adjudicated_rows", lambda *a, **k: rows)
+    monkeypatch.setattr(sys, "argv", ["score_replay", "--mode", "raw", "--fixture-dir", str(fixture_dir)])
+    assert score_replay.main() is None  # no exit code, same as before the warning
+    return capsys.readouterr().out
+
+
+def test_main_warns_when_a_row_fixture_is_missing_and_keeps_the_numbers(tmp_path, monkeypatch, capsys):
+    rows = [AdjudicatedRow(row_id="P1-R1", paper_id="arxiv-missing", claim_index=3,
+                            expected_row=_expected_row("P1-R1", "partially_supported"))]
+
+    out = _run_main(monkeypatch, capsys, rows, tmp_path)
+
+    assert "WARNING: 1 adjudicated rows have no fixture (FIXTURE_MISSING): P1-R1. Check --fixture-dir." in out
+    assert f"{tmp_path}: 0/0 refusal hits (scored 0/1 adjudicated rows)" in out
+
+
+def test_main_prints_no_warning_when_every_fixture_exists(tmp_path, monkeypatch, capsys):
+    import json
+
+    (tmp_path / "paperA.json").write_text(json.dumps({
+        "header": {},
+        "claims": [{"index": 0, "label": "partially_supported", "claim_summary": "s", "missing": False,
+                    "grounding_status": None, "claim_text_verbatim": "c", "evidence_spans": []}],
+        "matches": [],
+    }), encoding="utf-8")
+    rows = [AdjudicatedRow(row_id="R1", paper_id="paperA", claim_index=0,
+                            expected_row=_expected_row("R1", "partially_supported"))]
+
+    out = _run_main(monkeypatch, capsys, rows, tmp_path)
+
+    assert "WARNING" not in out
+    assert "1/1 refusal hits (scored 1/1 adjudicated rows)" in out
+
+
 def test_raw_mode_ignores_grounding_rejection():
     """A claim with raw label 'supported' but missing=True (grounded away)
     must score WRONGLY_AFFIRMED under --mode raw (pure label check), but

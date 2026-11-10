@@ -1,0 +1,336 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.8-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:36.833661+00:00",
+    "paper_id": "arxiv-2610.11519v1",
+    "filename": "2610.11519v1.pdf",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2",
+    "replay": {
+      "thinking_level": "high",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-08T14:38:47Z"
+    },
+    "claims_scope": [
+      3,
+      4,
+      7,
+      8,
+      14,
+      16,
+      17,
+      22,
+      32
+    ]
+  },
+  "claims": [
+    {
+      "index": 3,
+      "label": "supported",
+      "claim_summary": "RA improves base algorithms in all 24 benchmark comparisons across models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means. The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "RA+REINFORCE++ \u2212REINFORCE++ +3.58 +5.76",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "RA+GRPO \u2212GRPO +1.74 +3.89",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 4,
+      "label": "partially_supported",
+      "claim_summary": "RA outperforms teacher-only OPD, and Co-RA provides additional performance gains.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The one exception is AIME25 Avg@8 at 1.7B, where OPD\u2019s 5.97 exceeds the 5.00 of RA+REINFORCE++, although both RA runs have the higher Pass@8 there.",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "RA guidance naturally fades as student and teacher distributions converge.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "evidence_spans": [
+        {
+          "source_text": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+          "source_section": "Section 2.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes.",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 8,
+      "label": "supported",
+      "claim_summary": "RA improves three-seed benchmark means in all 24 evaluated settings.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 1: Residual guidance improves both RLVR estimators on every benchmark and metric,",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+          "source_section": "Section 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Co-RA further raises macro Avg@8 across all benchmark settings.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "evidence_spans": [
+        {
+          "source_text": "1.7B Co-RA+REINFORCE++ \u2212RA+REINFORCE++ +1.45 +1.18",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "4B Co-RA+GRPO \u2212RA+GRPO +1.03 +1.09",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ RA 69.69 85.60 13.06 30.00 5.00 20.00 29.25 45.20",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "+ Co-RA 71.13 85.80 14.17 33.33 6.81 20.00 30.70 46.38",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 16,
+      "label": "partially_supported",
+      "claim_summary": "Co-RA's adapted teacher becomes a worse solver but a better guide.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "evidence_spans": [
+        {
+          "source_text": "Every adapted teacher scores below the frozen teacher, by 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with the 4B student.",
+          "source_section": "Appendix D.9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Coverage changes are mixed: Pass@8 rises in four benchmark means, is unchanged in two, and falls in six (Table 10).",
+          "source_section": "Section 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "RA's advantage over baselines expands significantly up to Pass@512.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "evidence_spans": [
+        {
+          "source_text": "the margins over the untrained student at K = 8 and K = 512 are 7.6 and 6.6 points for REINFORCE++, 9.5 and 10.2 for OPD, and 13.4 and 16.9 for RA.",
+          "source_section": "Appendix D.7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 28: Macro Pass@K up to K = 512, Qwen3-1.7B-Base with REINFORCE++. Three-seed means in %, with the increment from the previous K in gray.",
+          "source_section": "Table 28",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "RA improves performance over verifier-only training across all tested weights.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Every residual variant improves on verifier-only training at every tested weight",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "(29.29 vs. 29.25 Avg@8) but widens the seed SD from 0.25 to 1.68, as in every variant (Table 23).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    },
+    {
+      "index": 32,
+      "label": "partially_supported",
+      "claim_summary": "Ablating RA baselines or adding direct peak supervision reduces accuracy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "evidence_spans": [
+        {
+          "source_text": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "With both operations, clipped to [\u22125, 5] or not, the log ratio stays above verifier-only training at every swept weight, and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA, whereas doubling RA\u2019s own weight does not (Table 2).",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The same teacher-peak branch slightly helps sampled OPD but lowers both students trained with the verifier.",
+          "source_section": "Table 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.8-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P1-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P1-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-R3",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P1-S1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P1-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P1-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P1-S5",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P1-S6",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P1-S7",
+      "actual_index": 23
+    },
+    {
+      "expected_id": "P1-S8",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P1-S9",
+      "actual_index": null
+    }
+  ]
+}

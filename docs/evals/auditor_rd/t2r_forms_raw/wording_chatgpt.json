@@ -1,0 +1,56 @@
+[
+  {
+    "id": "C01",
+    "q": "1",
+    "answer": "a",
+    "reason": "\"For new learners the advantage holds\" summarizes the advantage without claiming it holds in every dataset."
+  },
+  {
+    "id": "C02",
+    "q": "1",
+    "answer": "a",
+    "reason": "\"Direct L2 loss\" is listed separately from the residual variants."
+  },
+  {
+    "id": "C04",
+    "q": "1",
+    "answer": "a",
+    "reason": "\"Helpful for SeerAttention and FlexPrefill-Llama\" describes an overall benefit, not improvement at every context length."
+  },
+  {
+    "id": "C04",
+    "q": "2",
+    "answer": "a",
+    "reason": "\"Useful in some FlexPrefill settings\" explicitly means at least one setting, not every setting."
+  },
+  {
+    "id": "C05",
+    "q": "1",
+    "answer": "a",
+    "reason": "\"Further demonstrate portability to a specialized medical domain\" does not explicitly tie the twelve VLMs to that medical-domain study."
+  },
+  {
+    "id": "C06",
+    "q": "1",
+    "answer": "b",
+    "reason": "\"Across multiple sparse baselines, benchmarks, and LLM backbones\" and \"consistent gains\" assert gains across settings, not merely on average."
+  },
+  {
+    "id": "C13",
+    "q": "1",
+    "answer": "b",
+    "reason": "\"Adding direct supervision of the teacher's top token lowers performance\" is unqualified and does not exclude Sampled OPD."
+  },
+  {
+    "id": "C14",
+    "q": "1",
+    "answer": "b",
+    "reason": "\"Across the evaluated settings\" asserts multiple settings, although the claim names no additional settings individually."
+  },
+  {
+    "id": "C15",
+    "q": "1",
+    "answer": "a",
+    "reason": "\"Both combinations surpass teacher-only OPD, and Co-RA adds a further\" distinguishes the two RA combinations from the Co-RA variants."
+  }
+]
