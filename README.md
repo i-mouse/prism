@@ -1,28 +1,32 @@
 # Prism
 
-Prism extracts empirical claims from a research paper and audits whether each claim is supported by evidence in that same paper. Unlike literature-discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism does a peer-reviewer's core job on one paper: checking its headline findings against its own data and text. The engineering bet is correct refusal — vetoing any assessment the paper's own text doesn't support.
+Prism checks whether a research paper's own claims are supported by the evidence in that same paper. Unlike literature-discovery tools (Elicit, Consensus, Scite) that find and summarize across papers, Prism does a peer reviewer's core job on one paper: checking its headline findings against its own data and text. The engineering bet is correct refusal: flagging any claim the paper's own text does not support.
 
-## Status — 2026-10-21
+![Prism pipeline: current path vs approaches tried](docs/diagrams/prism_hero.drawio.svg)
 
-- **Runs locally only.** The hosted Azure demo was decommissioned 2026-09-28 (subscription cancellation initiated same day, not yet confirmed complete) to stop uncapped container spend. There is no live URL. Run it with [Quick Start](#quick-start-local-dev) below.
-- **Release bar not yet met.** Release bar (replaces "mean of 3 runs"): dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats). Release number: one sealed-set run only, never dev or golden numbers. The current single-run dev baseline is 26% (8/31). Of the 23 missed refusal rows, 10 are auditor misses (claim extracted, wrongly judged supported) and 13 are extraction misses — both stages need work (auditor-only ceiling 18/31, extraction-only ceiling 21/31; neither alone reaches the floor).
-- Four experiments aimed at closing that gap have been tried and rejected on pre-registered marks. Work continues on the extractor/auditor; see [Roadmap](#roadmap).
+**Full engineering report: [docs/PRISM_REPORT.md](docs/PRISM_REPORT.md)** (pipeline, evaluation design, every test and its result, where it fails, costs).
+
+## Status - 2026-11-10
+
+- **Runs locally only** (.NET Aspire). The hosted Azure demo was decommissioned 2026-09-28 to stop uncapped container spend (subscription cancellation initiated the same day, not yet confirmed complete). There is no live URL. Run it with [Quick Start](#quick-start-local-dev) below.
+- **Release bar not met.** On the 12-paper dev set, the one full run (dev Run 1) flagged 8 of the 31 claims that their own paper does not fully support (26%), and wrongly flagged 4 of the 88 supported claims (false rejections 4/88). The release bar is one full 12-paper run with at least 22/31 flagged and at most 8/88 false rejections, with the fixes stable under the auditor no-regression rule. There is no release with the current auditor.
+- **Both stages need work.** Of the 23 misses, 13 are extraction misses (the claim was never extracted) and 10 are auditor misses (extracted, but wrongly judged supported). Auditor-only ceiling 18/31; extraction-only ceiling 21/31. Neither stage alone reaches the bar.
+- **Latest test (2026-11-08/09):** a newer auditor model (gemini-3.8-flash, medium and high thinking) caught more unsupported claims but also rejected more supported ones (4/88 and 7/88, against 1/88 for the baseline in the same check). Both failed their pre-registered marks; the auditor stays gemini-3.6-flash.
+- **Next:** one new approach, chosen after the report and pre-registered on its own. See [Next](#next).
 
 ## Results
 
-All numbers below are frozen, fixture-replayed runs — reproducible offline, no live LLM calls needed to re-score them. Source: `docs/decisions.md`.
+All numbers below are frozen, fixture-replayed runs: reproducible offline, no live LLM calls needed to re-score them. Source: `docs/decisions.md`.
 
 | Set | Date | Refusal-family | Positive hits | False rejections | Coverage |
 |---|---|---|---|---|---|
-| **Dev baseline** (internal progress number — *not the release number*; single run, n=31 refusal rows) | 2026-10-12 | 8/31 (26%) | — | - | — |
+| **Dev baseline** (internal progress number, *not the release number*; single run, n=31 refusal rows) | 2026-10-12 | 8/31 (26%) | not recorded | 4/88 | not recorded |
 | **Golden** (3 papers, 16 refusal rows / 37 total, de-leaked prompts) | 2026-10-07 | 5/16 (31%), gate 0.30 | 11/21 (floor 10) | 1/21 | 37/37 |
-| **Held-out** (1 paper, 2 refusal rows — small sample, near-burnt: used 6 times) | 2026-10-07 | 1/2 | 7/10 | 0/10 | 12/12 |
+| **Held-out** (1 paper, 2 refusal rows; small sample, near-burnt: used 6 times) | 2026-10-07 | 1/2 | 7/10 | 0/10 | 12/12 |
 
-*(decisions.md:1474-1479 for golden/held-out; decisions.md:1750, 2212 for dev refusal.)*
+*(decisions.md:1474-1479 for golden/held-out; decisions.md:1750, 2212 for dev refusal; dev false rejections: decisions.md 'Corrections - 2026-10-22', re-derived with the filled match map in 'Stage A1 marks and cap re-confirmed - 2026-10-28'.)*
 
-Dev false-rejection count is left blank: `docs/evals/dev_adjudication_run1.md` reports it as a draft figure (line 125 "Draft false rejections", confirmed still draft at line 135), not a final adjudicated count.
-
-**Release bar (restated 2026-10-22, replaces "mean of 3 runs"):** dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and Stage A1 shows the fixes stable (>= 2 of 3 repeats). Release number: one sealed-set run only, never dev or golden numbers (decisions.md:1636-1640, 'Auditor redesign agreed... - 2026-10-22').
+**Release bar (restated 2026-10-22, replaces "mean of 3 runs"):** dev: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and the fixes are stable under the auditor no-regression rule (decisions.md 2026-10-28). Release number: one sealed-set run only, never dev or golden numbers.
 
 **Reproduce the golden numbers (fixture mode, no LLM/DB calls, environment setup required):**
 ```powershell
@@ -37,59 +41,52 @@ uv run python -m eval.matrix_runner --source fixture
 
 ## How it works
 
-Upload triggers an async pipeline over RabbitMQ. A Python worker extracts empirical and positioning claims from the full text; a claim auditor (Gemini 3.6 Flash) judges each claim individually against the full paper (supported / partially supported / not supported) — the auditor sends the full paper text per claim, not a retrieved excerpt. A structurer then parses the auditor's free-text reasoning into JSON. Finally a grounding checker validates the auditor's quoted spans with fuzzy matching (RapidFuzz) plus a second LLM judge, stance-aware (supports / refutes / neutral); it can veto the auditor's label, never override it upward. Results land in Postgres (claims, audits) and Qdrant (vector store); the React UI reads them and supports paper-scoped chat.
+Upload triggers an async pipeline over RabbitMQ. A Python worker extracts empirical and positioning claims from the full text; a claim auditor (Gemini 3.6 Flash) judges each claim individually against the full paper (supported / partially supported / not supported). The auditor sends the full paper text per claim, not a retrieved excerpt. A structurer then parses the auditor's free-text reasoning into JSON. Finally a grounding checker verifies the auditor's quoted spans with fuzzy matching (RapidFuzz) plus a second LLM judge, stance-aware (supports / refutes / neutral). Grounding never changes the stored audit label: when the quotes fail, the displayed status shows the claim as not found in the paper, and the eval counts that as a catch. Results land in Postgres (claims, audits) and Qdrant (vector store); the React UI reads them and supports paper-scoped chat.
 
-```mermaid
-flowchart LR
-    U[Upload PDF] --> W[Python worker]
-    W --> E[Extractor\nGemini 3.6 Flash]
-    E --> A[Claim auditor\nGemini 3.6 Flash]
-    A --> S[Structurer\nparses audit to JSON]
-    S --> G[Grounding checker\nRapidFuzz + Groq/Gemini]
-    G --> DB[(Postgres + Qdrant)]
-    DB --> UI[React UI / chat]
-```
-
-This is what runs today, locally. The full architecture, including the decommissioned Azure design, is below.
+The diagram at the top shows this path (green) and every alternative tested at each stage (red: tested and rejected; amber: earlier version replaced, or parked). Section 3 of the [report](docs/PRISM_REPORT.md) walks through each stage.
 
 ## Architecture
 
-![Prism architecture — local stack and decommissioned Azure design](docs/diagrams/architecture.png)
+![Prism architecture: local stack and decommissioned Azure design](docs/diagrams/architecture.png)
 
-Solid boxes run today (local, .NET Aspire). The dashed grey band is the Azure deployment design, built 2026-09 and decommissioned 2026-09-28 to control cost. The pipeline diagram above shows the request flow in short.
+Solid boxes run today (local, .NET Aspire). The dashed grey band is the Azure deployment design, built 2026-09 and decommissioned 2026-09-28 to control cost.
 
 ## Evaluation method
 
 Prism's eval harness is the centerpiece, not an afterthought:
-- **Pre-registered marks.** Every experiment (model/prompt/pipeline change) is scored against pass/fail marks written down *before* the run, with a spend cap — see `docs/decisions.md`.
-- **Blind / AI-assisted labelling, human-checked.** Dev rows were hand-labelled under a written rubric before any Prism output was seen; golden rows were hand-audited against the PDFs and corrected only where the paper contradicted them (decisions.md 2026-10-01/02, 2026-10-03). For the clean-extraction attempt, two AI labellers (ChatGPT, Gemini) labelled first; a blind human spot-check disagreed on 6/10 (K6) and 4/10 (K7), which rejected the AI labels under the pre-registered rule. A follow-up diagnostic found the human reference had applied a narrower "headline claim" notion than the written definition, so — logged as a deviation before any scoring — AI-agreed labels were used and AI disagreements were scored as bounds.
+- **Pre-registered marks.** Every experiment (model/prompt/pipeline change) is scored against pass/fail marks written down *before* the run, with a spend cap; see `docs/decisions.md`.
+- **Auditor no-regression rule (2026-10-28).** An auditor change is kept only if, over 3 runs, it fixes more misses without losing any current catch, keeps false rejections at or below the baseline and never above 8/88, holds the golden gates, and targets a failure type rather than a named row.
+- **Blind / AI-assisted labelling, human-checked.** Dev rows were hand-labelled under a written rubric before any Prism output was seen; golden rows were hand-audited against the PDFs and corrected only where the paper contradicted them (decisions.md 2026-10-01/02, 2026-10-03). For the clean-extraction attempt, two AI labellers (ChatGPT, Gemini) labelled first; a blind human spot-check disagreed on 6/10 (K6) and 4/10 (K7), which rejected the AI labels under the pre-registered rule. A follow-up diagnostic found the human reference had applied a narrower "headline claim" notion than the written definition, so (logged as a deviation before any scoring) AI-agreed labels were used and AI disagreements were scored as bounds.
 - **Bounded (worst/best) scoring.** Items where the two AI labellers disagreed were scored both ways (worst case and best case); a mark passes only if both pass, fails if both fail, otherwise inconclusive (decisions.md, 2026-10-20).
-- **No rescue runs.** A failing required mark rejects the change outright — no partial credit, no re-running, no threshold edits to save a result (e.g. Experiment 3's cost gate, decisions.md:2600-2606).
+- **No rescue runs.** A failing required mark rejects the change outright: no partial credit, no re-running, no threshold edits to save a result (e.g. Experiment 3's cost gate, decisions.md:2600-2606).
 - **Scripts halt on unreproducible numbers.** If a script can't reproduce an already-logged number, it stops rather than silently drifting (eval harness design, decisions.md).
 - **Prompt-leak CI check.** Prompts are de-leaked of eval-paper text and answer-key wording, and CI enforces this stays true (decisions.md:1342).
-- **Golden vs dev vs held-out** serve different jobs: golden (37 adjudicated rows, 3 papers) is the fast regression gate; dev (119 rows, 12 papers) is where experiments are judged against the 70% release floor; held-out (1 sealed paper, small sample, already used 6 times — near-burnt for measuring further gains) is a last look before trusting a change generalizes.
+- **Golden vs dev vs held-out** serve different jobs: golden (37 adjudicated rows, 3 papers) is the fast regression gate; dev (119 rows, 12 papers) is where experiments are judged against the release bar; held-out (1 paper, small sample, already used 6 times, near-burnt for measuring further gains) is a last look before trusting a change generalizes.
 
-## What I tried and why it failed
+## What I tried
 
-- **Experiment 1 — auditor `thinking_level=high`:** fixed only 1 of 10 target rows (needed >=3). Auditor is non-deterministic run-to-run at the default setting (+/-3 rows of noise). REJECTED. ([decisions.md:1807-1831](docs/decisions.md))
-- **Experiment 2 — extractor few-shot claim-shape repair:** all 4 required marks failed; evidence leans toward (not proven) a task-design problem (one list-all-claims call), not a teaching/example problem. REJECTED. ([decisions.md](docs/decisions.md), "Experiment 2 - Stage A result - 2026-10-14")
-- **Experiment 3 — windowed pass-2 re-extraction:** rejected on the cost gate (projected INR 237.59/paper vs 130 cap); recall was measured only exploratorily afterward (AI-proposed, human-verified — not the pre-registered blind adjudication), so no recall claim is made. REJECTED. ([decisions.md:2600-2606, 2607-2616](docs/decisions.md))
-- **Clean-extraction attempt — claim-cleaning filter on top of Exp 3:** real claims came through (precision 0.81-0.95) but recall on the target rows was low (5-6/13), the filter over-dropped real claims as duplicates, and cost still exceeded the cap. REJECTED; flag stays off. ([decisions.md:3005-3018](docs/decisions.md))
+No attempt so far has closed the gap; every one ended failed, rejected, or parked. The full list with marks, results and costs is in [report section 6](docs/PRISM_REPORT.md#6-every-test-and-its-result). Highlights:
 
-Three known risks remain in the (currently flag-gated, off-by-default) clean-extraction code, documented but not fixed: a "same"-relation chain-drop that depends on upstream dedup already having run (`pass2_clean.py:267-270`), an LLM-returned neighbour id used without a membership check against the ids actually offered (`pass2_clean.py:62-66,199,268-269`), and a response format with no id field of its own — correspondence is positional `zip()`, with only a length-mismatch guard, so a same-length reordered response would go undetected (`prompt_loader.py:291-296`). None of this runs in the default pipeline. (`docs/premerge_review_2026-10-20.md` section 3)
+- **Auditor thinking level high (Experiment 1):** fixed 1 of 10 target rows (needed >= 3). Rejected.
+- **Extractor few-shot claim shapes (Experiment 2):** all 4 required marks failed. Rejected.
+- **Second extraction pass over text windows (Experiment 3):** projected INR 237.59/paper against the INR 130 cost gate. Rejected.
+- **Second pass plus duplicate filter (clean-extraction attempt):** recall on the target rows 5-6/13 and cost over the gate. Rejected.
+- **Separate scope-checking step (Stage A1):** fixed 3 of 10 misses, but only 1 of 6 always-missed rows (needed 4). Failed.
+- **Code checks on table numbers (Auditor v2, T1 and T2-R):** off-the-shelf table extractors left only 5 of 8 tables usable; on hand-built reference tables the checks fixed 4 of 10 misses but only 2 of 5 hard rows (needed 3). Failed.
+- **Newer auditor model (gemini-3.8-flash):** more catches, but more false rejections; the high-thinking arm also cost INR 194.4/paper against the INR 130 gate. Failed.
+
+The lesson so far: stricter judging catches more unsupported claims but also rejects more supported ones, and the hardest misses are about what a claim means and covers, not about reading tables.
 
 ## Cost
 
-Per-paper cost today is about **INR 87-101**, measured two ways: INR ~101/paper from the 2026-10-11 baseline spend (4 papers, INR 1,250.00 -> 1,655.55; decisions.md:1706-1707), and INR ~87/paper from the full 12-paper run-1 ingestion (INR 1,048.40 / 12 papers; `docs/evals/dev_adjudication_run1.md:17`), also the base figure used in the clean-extraction cost formula (decisions.md:2670, 3011-3012). Most of that is the auditor: it sends the full paper text once per claim, about 75% of total input tokens, with thinking left at the Gemini 3.6 Flash default (decisions.md:1677).
+Per-paper cost today is about **INR 87-101**, measured two ways: INR ~101/paper from the 2026-10-11 baseline spend (4 papers, INR 1,250.00 -> 1,655.55; decisions.md:1706-1707), and INR ~87/paper from the full 12-paper run-1 ingestion (INR 1,048.40 / 12 papers; `docs/evals/dev_adjudication_run1.md:17`). Most of that is the auditor: it sends the full paper text once per claim (measured partial share about 90-96% of input tokens; an earlier 75% figure was an estimate).
 
-Planned fix (design agreed: caching + scope check, marks and caps written first): a 2026-10-22 diagnostic found the auditor has the evidence but does not check the claim's full scope; the next design forces a full-scope check and uses explicit caching to cut the full-paper-per-claim cost. Marks and budget are written before any run. (decisions.md, 'Auditor redesign agreed... - 2026-10-22')
+Gemini Flash prices double on 2027-01-01, which takes the per-paper cost from about INR 87 to about INR 174, above the INR 130 cost gate (decisions.md, 'Funding source and model plan for the next auditor tests - 2026-11-02').
 
-## Roadmap
+## Next
 
-Next 3 steps, in order (decisions.md, "K1 diagnostics and filter status - 2026-10-20"):
-1. Auditor phase - step 4 (scope lister + checker, flag --scope-check, default off, replay only) built and committed; step 5 checks done (scorer verified: 8/31, 7/31, 5/31, 8/31; S-row false-rejection baseline 4/88 effective); Stage A1 FAILED on A1-fixed (scope fixed 3 of 10, always-missed 1 of 6); Stage B not run; next = free diagnosis of the 5 unfixed always-missed rows, then a decision (one more targeted experiment only if one clear cause, otherwise ship with honest numbers).
-2. Re-test pass-2 / sentence-level extraction end to end with the new auditor; the parked K7 filter fix (validate neighbour ids, never resolve "same" against a dropped neighbour) stays parked until then.
-3. Claim-scope decision (headline claims only vs whole-paper) and a new sealed set, then one sealed run for the release number.
+1. Choose one new auditor or extraction approach and pre-register it on its own (marks, cap, tag before the run). Ideas recorded, not decided: a graded severity score with a cut-off instead of three fixed labels; agreement between two auditors before flagging a claim.
+2. Claim-scope decision (headline claims only vs whole-paper claims) and a new sealed set, then one sealed run for the release number.
 
 ## Run locally
 
@@ -134,10 +131,12 @@ dotnet user-secrets set "Parameters:QdrantApiKey" "any-strong-string"
 
 ## Links
 
-- [Decisions Log](docs/decisions.md) — append-only record this file is synced to.
-- [PRISM Status](docs/PRISM_STATUS.md) — detailed current-state snapshot.
-- [Premerge Review (2026-10-20)](docs/premerge_review_2026-10-20.md) — code-level review, known risks.
-- [Developer Runbook](docs/RUNBOOK.md) — local dev gotchas, relaunch checklist.
+- [Engineering report](docs/PRISM_REPORT.md): the full story, every test and its result.
+- [Fact sheet](docs/report/PRISM_FACTS.md): every fact in the report, traced to its source entry.
+- [Decisions Log](docs/decisions.md): append-only record this file is synced to.
+- [PRISM Status](docs/PRISM_STATUS.md): detailed current-state snapshot.
+- [Premerge Review (2026-10-20)](docs/premerge_review_2026-10-20.md): code-level review, known risks.
+- [Developer Runbook](docs/RUNBOOK.md): local dev gotchas, relaunch checklist.
 - Eval reports: `docs/evals/dev_adjudication_run1.md`, `docs/evals/clean_labels/clean_attempt_score.md`.
 
 ## License

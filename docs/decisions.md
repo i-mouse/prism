@@ -4565,3 +4565,16 @@ Next
 - Google Developer Program credit unchanged at INR 160.94: no eval
   spend reached AI Studio.
 - Billing can lag by up to a day; figures are as of the time shown.
+
+
+## Report, hero diagram, docs refresh and merge to main - 2026-11-10
+**Context:** The auditor phase closed on 2026-11-09 (both gemini-3.8-flash candidates FAIL). All work since 2026-10-21 lived on unmerged branches, so main showed an out-of-date README and status.
+**Decision:**
+- Added `docs/report/PRISM_FACTS.md` (sourced fact sheet), `docs/PRISM_REPORT.md` (engineering report) and `docs/diagrams/prism_hero.drawio.svg` (hero diagram, embedded at the top of the report and the README). README and `docs/PRISM_STATUS.md` updated to 2026-11-10.
+- `eval/vertex-auditor-option` (which already contains `auditor/caching-scope-check` and `docs/auditor-diagnostic-2026-10-22`) is merged to main through a pull request, with a merge commit, after CI passes and a read-only pre-merge review confirms product behaviour is unchanged (auditor gemini-3.6-flash, all experiment flags off, flag-off prompt hash cb3272cce551).
+- Corrections recorded while checking the fact sheet: the de-leak showed no detectable score change (golden 6/16 -> 5/16, one extraction miss); the inflation of pre-2026-09-30 refusal numbers came from the omission-credit scorer bug (the same 14 rows re-scored 11/14 -> 5/14).
+- Held-out eval files (`heldout_eval.json`, `heldout_match_map.json`, an archive copy) and `exp3_targets.json` are already public on main from earlier merges. Left as is: the held-out paper was already near-burnt (used 6 times).
+- Rule: the future sealed set is never committed to this repository.
+- Branches that are not merged are kept as tags before deletion: `archive/docs-label-rubric`, `archive/pr1-fewshot-loader` (PR #115 closed), `archive/dev-baseline-run1`. The local `eval/heldout-paper` branch stays local and is never pushed.
+**Alternatives:** Scrub the held-out files from git history (rejected: history rewrite on a public repo, and the paper is already near-burnt). Squash merge (rejected: a merge commit keeps the commit hashes cited in this log in main's history).
+**Consequences:** Main is the single place a reader needs. Deferred: licence check of committed arXiv PDFs; cleanup of `scratch/` folders.
