@@ -4584,3 +4584,107 @@ Next
 - The "Report, hero diagram, docs refresh and merge to main - 2026-11-10" entry said eval/vertex-auditor-option would be merged with a merge commit. It was squash-merged into one commit on main.
 - Consequence: individual commit hashes cited in this log (for example 49bae11, b62e6af, bc2f575) are not in main's history. They stay reachable through tags: the experiment tags already recorded in this log, and archive/vertex-auditor-option-history at the branch tip, which also contains auditor/caching-scope-check and docs/auditor-diagnostic-2026-10-22.
 - Archive tags created before deleting branches: archive/vertex-auditor-option-history, archive/docs-label-rubric, archive/pr1-fewshot-loader (PR #115 closed), archive/dev-baseline-run1.
+
+## 6-step path after outside reviews - 2026-11-11
+
+Context
+- Four outside reviews of the Prism report (Fable 5.2 blind, Gemini,
+  ChatGPT, DeepSeek) were merged on 2026-11-11. They agree on: stop
+  model and thinking-level swaps; both stages need work; past decisions
+  sit inside run-to-run noise; the auditor trusts summary wording; no
+  release claim without a fresh test set.
+- Follows Nitin's decision of 2026-11-09 (auditor and extraction work
+  continue; no new hand labelling; the next approach is pre-registered
+  on its own).
+
+Decision (Nitin, 2026-11-11)
+- Run these 6 steps, strictly in order, before any other Prism work:
+  1. Free checks on saved data (INR 0):
+     a. for each of the 106 full-check claims, count how many of the 9
+        saved audits flagged it;
+     b. noise: compare saved no-change runs and set a tolerance T
+        (max 3);
+     c. which paper section each of the 13 extraction misses sits in
+        (Nitin runs the script; agents never open raw_text_cache or
+        exp3_targets.json);
+     d. real cost per stage from saved usage data, caching included, at
+        2027 prices.
+  2. Small paid test (about INR 100 estimate): the 7 pass-2-recovered
+     claims go to today's auditor, 3 runs. Pass 2 stays off. The result
+     sets the order in step 4 (auditor catches few -> auditor first;
+     catches most -> extractor first).
+  3. Read-only look at CLAIMCHECK and SciClaimEval: format, licence,
+     size, mapping to Prism. No runs.
+  4. One change, chosen by step 2:
+     - Auditor: the checker sees only the detailed rows or sentences
+       for each lister item and answers one narrow question; the score
+       is built from counts of failed checks.
+     - Extractor: a second small pass over abstract, introduction and
+       conclusion, sentence by sentence, yes/no "is this the paper's
+       own claim?"; joined with pass 1; dedup in code.
+  5. Outside check on a public set, only if the step 4 change passes
+     on dev.
+  6. Update PRISM_REPORT.md and PRISM_STATUS.md with the outcome, pass
+     or fail.
+- Each paid step is pre-registered on its own: a dated entry with marks
+  and a cap, committed and tagged before the run. Work happens on a new
+  branch off main.
+- The GCP Free Credit expiry (2026-11-26) sets when we run, never what
+  we pick.
+- CLAIMCHECK and SciClaimEval may serve as outside labels and a fresh
+  test set, pending the licence and fit check in step 3.
+
+Decision gate after step 6
+- Continue Prism only if a step 4 change passed and the next step is
+  clear.
+- Otherwise Prism core work stops (the report stands as the hiring
+  artifact) and work moves, in order, to: a small separate fine-tuning
+  (LoRA) learning project; MCP hands-on practice; resume and LinkedIn
+  rewrite. All three are separate from the Prism repo.
+
+Rulings Nitin must give before step 4 is pre-registered
+- (i) Does matching new claims to benchmark rows count as "new hand
+  labelling"?
+- (ii) Score direction, and how the cut-off is chosen.
+
+Step 1 reading rules (written before any step 1 output)
+- Step 1 is descriptive. It changes no recorded verdict, label, prompt,
+  flag or threshold. Outputs go to docs/evals/step1_2026-11-11/.
+- 1a: flagged = partially_supported or not_supported. Counts are
+  reported per arm (0-3) and over all 9 audits, on the RAW label and on
+  the EFFECTIVE status. Fallback-served audits are counted separately.
+  The script must first reproduce the recorded 2026-11-09 votes. No
+  cut-off is chosen from this data; any cut-off belongs to the step 4
+  pre-registration.
+- 1b: a no-change group = repeats with the same auditor model, thinking
+  level, backend, prompt hash, flags, grounding model and claims file.
+  Spread = highest minus lowest count across the repeats of one group.
+  T = the largest spread in non-void groups that use the product
+  auditor (gemini-3.6-flash, flags off), over four counts: refusal-row
+  claims flagged (RAW), S-row false rejections (EFFECTIVE), golden
+  refusal-family, golden positive hits. If the largest spread is above
+  3, T = 3 and the measured value is recorded beside it. Void runs and
+  the gemini-3.8-flash arms are reported beside, never used to set T.
+- T is measured on single runs, so it is an upper bound for 2-of-3
+  voted counts. How T enters a mark is written in each future test's
+  own pre-registration. T applies to future tests only; recorded
+  verdicts and the 2026-10-28 no-regression rule stand. Until a
+  pre-registration uses T, the earlier noise rule (a change of 2
+  refusal rows or fewer is not a win) stays.
+- 1c: buckets are fixed now: abstract, introduction, body, conclusion,
+  appendix (after the last References heading), table or figure
+  caption, not found whole. The number of the 13 in abstract +
+  introduction + conclusion is the ceiling for the step 4 extractor
+  option. Rows the script marks low-confidence are checked by Nitin
+  against the PDF.
+- 1d: each stage figure is tagged MEASURED (saved usage data),
+  ESTIMATED or NOT FOUND. Prices: run-date list price and 2027 list
+  price (gemini-3.6-flash USD 1.50 in / 7.50 out per 1M tokens, cached
+  rates doubled; re-checked 2026-11-11), INR 100 per USD. No gate is
+  applied here; the INR 130 gate is unchanged.
+
+Expectation (estimate, recorded before the work)
+- 22/31 is not expected by 2026-11-26. Realistic best case is about
+  13-15 of 31.
+
+Money: INR 0 for this entry and for step 1.
