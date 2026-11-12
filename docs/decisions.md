@@ -4724,3 +4724,95 @@ Next: step 2 pre-registration (the 7 pass-2-recovered claims ->
 today's auditor, 3 runs).
 
 Money: INR 0.
+
+## Pre-registration: step 2 - today's auditor on the 7 pass-2-recovered claims, Vertex, 3 runs - 2026-11-12
+
+Purpose
+- Step 2 of the 6-step path (2026-11-11). Sets the order in step 4:
+  auditor change first, or extractor change first.
+- No product change. Pass 2 stays off. No recorded product number
+  changes from this test.
+
+Set
+- docs/evals/exp3_pass2_7_claims.json, 7 claims, one per row:
+  P2-R3, P2-R4, P3-R1, P5-R3, P8-R3, P9-R1, P11-R3 (recovered in both
+  Exp 3 runs, 2026-10-16).
+- Built by eval/step2/build_exp3_p2_claims.py from:
+  docs/evals/exp3_b4/c1_adjudication.csv
+    SHA256 060775312C02CC4998960D0B19FF28304AC80F091C10D7CD31C850A4846035CE
+  docs/evals/exp3_b4/c1_key.json
+    SHA256 CEB11A81669CEC0CF7B365971B1DC4F8ABE64E56269E7CD56817E8A5F9D2AD7E
+  and the Exp 3 pass2_r1 / pass2_r2 *_merged.json fixtures.
+  Claims file SHA256
+    FE1D543D214B6E903C5390596102BB7089FD9A5F5E6C0D714BB84F94CD66807F
+- Pick rule: pass-2 matches only; the one present in both runs; lowest
+  candidate id if several. Picks: P2-R3 C0233, P2-R4 C0308, P3-R1 C0309,
+  P5-R3 C0816, P8-R3 C0742, P9-R1 C0671, P11-R3 C0572. No row flagged.
+- Text check (INR 0): 7/7 claims found in the cached paper text that
+  replay_audit sends (partial_ratio 100 each).
+- No new hand labelling.
+
+Known limits (stated before the run)
+- The row-to-claim matches are the Exp 3 c1 adjudication: AI-proposed,
+  human-verified, exploratory (2026-10-16). No lock.json exists, although
+  the 2026-10-16 entry says attribution was read after locking. The two
+  input hashes above pin the files used.
+- P5-R3: the matched sentence (C0816) does not read as the same claim as
+  the row text. Kept by the rule; reported both with and without it.
+- P2-R3 and P2-R4 each have a second matched claim (C0496, C0637) that is
+  not audited.
+- A pass-2 claim's summary is the copied sentence (pass 1 uses a short
+  paraphrase), so the audit input differs in shape from pass 1.
+- 7 claims give a direction, not a score. All 7 are bad claims, so the
+  test cannot measure false rejections.
+
+Config (same as full-check arm B, 2026-11-08)
+- --backend vertex, location global, auditor gemini-3.6-flash, thinking
+  medium, --repeat 3, no --cache, no --scope-check, flag-off prompt hash
+  cb3272cce551, structurer gemini-3.6-flash, audit fallback
+  gemini-3.1-flash-lite, LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite.
+- Output folders: docs/evals/fixtures/dev/
+  exp1_medium_gemini-3.6-flash-vertex-exp3p2_{1,2,3}.
+- Tooling: replay_audit inline claims + --out-tag; eval/step2/
+  vote_claims.py. New tests 72 passed; ruff clean on new files.
+
+Cost
+- Estimate (replay_audit --estimate, 2026-11-12): INR 90.5, grounding not
+  counted. Cap --max-inr 117.6 (1.3x). Paid from the GCP Free Credit.
+
+Command (Prism.PythonService, PowerShell)
+
+    $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite"
+    uv run python -m eval.replay_audit --backend vertex --vertex-project gen-lang-client-0520352487 --auditor-model gemini-3.6-flash --level medium --repeat 3 --out-tag exp3p2 --max-inr 117.6 --claims ..\docs\evals\exp3_pass2_7_claims.json
+
+Measure
+- Caught = RAW label partially_supported or not_supported in >= 2 of 3
+  runs, from eval/step2/vote_claims.py over the 3 folders.
+- EFFECTIVE vote: report only.
+
+Split rule (primary, on all 7)
+- Caught >= 5/7 -> extractor change first in step 4.
+- Caught <= 4/7 -> auditor change first in step 4.
+- Noise: refusal spread is 1 row (step 1b). 4 and 5 cannot be told apart,
+  so 4 stays with the earlier recorded order (auditor first, 2026-10-20).
+
+Report only (cannot change the split)
+- Caught without P5-R3, out of 6.
+- Appendix rows (P2-R3, P2-R4, P11-R3) and other rows (P3-R1, P5-R3,
+  P8-R3, P9-R1) separately; the step 4 extractor option cannot reach the
+  appendix rows.
+- Per-claim RAW and EFFECTIVE labels for all 3 runs.
+
+Void rules
+- V1: the run stops at its cap -> void.
+- V2: vote_claims reports INVALID -> void.
+- V3: any fallback-served audit (of 21) -> void.
+- V4 crash: a repeat K that stops without _summary.json may be re-run
+  once, the same day, after its partial folder is moved out of the repo,
+  with "--repeat 3" replaced by "--repeat-index K" and --max-inr 39.2.
+  A second crash -> void.
+- A void run gives no result. A re-run needs a new dated entry.
+
+No rescue
+- No prompt, threshold, claim or rule change after the run starts. No
+  extra runs. Outputs committed unscored before scoring.

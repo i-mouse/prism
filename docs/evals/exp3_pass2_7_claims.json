@@ -1,0 +1,93 @@
+[
+  {
+    "row_ids": [
+      "P2-R3"
+    ],
+    "paper_id": "arxiv-2610.11132v1",
+    "claim_index": 1096,
+    "claim_text_verbatim": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+    "claim_summary": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+    "candidate_id": "C0233",
+    "r1_index": 96,
+    "r2_index": 99,
+    "flag": false
+  },
+  {
+    "row_ids": [
+      "P2-R4"
+    ],
+    "paper_id": "arxiv-2610.11132v1",
+    "claim_index": 1081,
+    "claim_text_verbatim": "However, consistent with prior work (Chen et al., 2026), we find that RL post-training induces negligible forgetting of instruction-following capabilities, as measured by IFEval.",
+    "claim_summary": "However, consistent with prior work (Chen et al., 2026), we find that RL post-training induces negligible forgetting of instruction-following capabilities, as measured by IFEval.",
+    "candidate_id": "C0308",
+    "r1_index": 81,
+    "r2_index": 85,
+    "flag": false
+  },
+  {
+    "row_ids": [
+      "P3-R1"
+    ],
+    "paper_id": "arxiv-2610.11135v1",
+    "claim_index": 1056,
+    "claim_text_verbatim": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+    "claim_summary": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+    "candidate_id": "C0309",
+    "r1_index": 56,
+    "r2_index": 56,
+    "flag": false
+  },
+  {
+    "row_ids": [
+      "P5-R3"
+    ],
+    "paper_id": "arxiv-2610.11291v1",
+    "claim_index": 1048,
+    "claim_text_verbatim": "Thus, both covering all reasoning stages and maintaining on-policyness w.r.t. the teacher are important.",
+    "claim_summary": "Thus, both covering all reasoning stages and maintaining on-policyness w.r.t. the teacher are important.",
+    "candidate_id": "C0816",
+    "r1_index": 48,
+    "r2_index": 47,
+    "flag": false
+  },
+  {
+    "row_ids": [
+      "P8-R3"
+    ],
+    "paper_id": "arxiv-2610.12124v1",
+    "claim_index": 1042,
+    "claim_text_verbatim": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+    "claim_summary": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+    "candidate_id": "C0742",
+    "r1_index": 42,
+    "r2_index": 42,
+    "flag": false
+  },
+  {
+    "row_ids": [
+      "P9-R1"
+    ],
+    "paper_id": "arxiv-2610.12375v1",
+    "claim_index": 1054,
+    "claim_text_verbatim": "Third, LinUOT tracks OnTrack within 0.003–0.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full system, confirming the mask’s null ranking effect here as well.",
+    "claim_summary": "Third, LinUOT tracks OnTrack within 0.003–0.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full system, confirming the mask’s null ranking effect here as well.",
+    "candidate_id": "C0671",
+    "r1_index": 54,
+    "r2_index": 58,
+    "flag": false
+  },
+  {
+    "row_ids": [
+      "P11-R3"
+    ],
+    "paper_id": "arxiv-2610.12114v1",
+    "claim_index": 1047,
+    "claim_text_verbatim": "We observed that the training losses of the KD baselines had largely stabilized by the end of their respective update budgets.",
+    "claim_summary": "We observed that the training losses of the KD baselines had largely stabilized by the end of their respective update budgets.",
+    "candidate_id": "C0572",
+    "r1_index": 47,
+    "r2_index": 46,
+    "flag": false
+  }
+]

@@ -80,6 +80,7 @@ import argparse
 import asyncio
 import contextlib
 import json
+import re
 import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
@@ -301,11 +302,13 @@ class _RunOptions:
     files, summary and request bytes are the ones from before the options existed.
 
     auditor_model None = engine.settings.llm_claim_audit_model. tag is the folder-name part
-    of a non-default run; run_config is the block written to its _summary.json."""
+    of a non-default run (with --out-tag it ends in "-<out_tag>"); run_config is the block
+    written to its _summary.json."""
     backend: backend_options.Backend
     auditor_model: str | None = None
     tag: str | None = None
     run_config: dict | None = None
+    out_tag: str | None = None
 
     @property
     def non_default(self) -> bool:
@@ -338,12 +341,17 @@ def _new_cache_ledger() -> _CacheLedger:
     )
 
 
+INLINE_MIN_INDEX = 1000   # an inline claim's index must be above every run-1 index, so the two can never collide
+_OUT_TAG_RE = re.compile(r"[A-Za-z0-9-]+")
+
+
 @dataclass
 class ReplayTarget:
     paper_id: str
     claim_index: int
     claim_text_verbatim: str
     claim_summary: str
+    inline: bool = False   # True: text and summary came from the claims file, not from the run-1 fixture
 
 
 def _load_claims_file(path: Path) -> list[dict]:
@@ -364,13 +372,48 @@ def _read_fixture(paper_id: str) -> dict:
     return fixture
 
 
+def _inline_target(entry: dict) -> ReplayTarget | None:
+    """The target of a claims-file entry that carries its own claim_text_verbatim and claim_summary (an
+    "inline" claim, one that is not in the run-1 fixture), or None for an ordinary {paper_id, claim_index}
+    entry. Only one of the two texts, a non-string or empty text, or a claim_index below INLINE_MIN_INDEX is a
+    ValueError naming the entry."""
+    has_text, has_summary = "claim_text_verbatim" in entry, "claim_summary" in entry
+    if not has_text and not has_summary:
+        return None
+    ref = f"claims-file entry paper_id={entry.get('paper_id')!r} claim_index={entry.get('claim_index')!r}"
+    if has_text != has_summary:
+        raise ValueError(f"{ref}: an inline claim needs both claim_text_verbatim and claim_summary, got only one")
+    for key in ("claim_text_verbatim", "claim_summary"):
+        if not isinstance(entry[key], str) or not entry[key].strip():
+            raise ValueError(f"{ref}: {key} must be a non-empty string")
+    index = entry["claim_index"]
+    if isinstance(index, bool) or not isinstance(index, int) or index < INLINE_MIN_INDEX:
+        raise ValueError(f"{ref}: an inline claim needs an integer claim_index >= {INLINE_MIN_INDEX}")
+    return ReplayTarget(
+        paper_id=entry["paper_id"], claim_index=index,
+        claim_text_verbatim=entry["claim_text_verbatim"], claim_summary=entry["claim_summary"], inline=True,
+    )
+
+
 def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[ReplayTarget]:
     targets: list[ReplayTarget] = []
     if claims_path is not None:
         entries = _load_claims_file(claims_path)
-        by_paper: dict[str, list[int]] = defaultdict(list)
+        # (claim_index, inline target or None) per paper, in file order.
+        by_paper: dict[str, list[tuple[int, ReplayTarget | None]]] = defaultdict(list)
+        inline_seen = False
         for entry in entries:
-            by_paper[entry["paper_id"]].append(entry["claim_index"])
+            inline = _inline_target(entry)
+            inline_seen = inline_seen or inline is not None
+            by_paper[entry["paper_id"]].append((entry["claim_index"], inline))
+        if inline_seen:
+            # Only a file with inline claims is checked for repeats; an indexed-only file loads as it always did.
+            seen: set[tuple[str, int]] = set()
+            for paper_id, items in by_paper.items():
+                for idx, _ in items:
+                    if (paper_id, idx) in seen:
+                        raise ValueError(f"claims file lists {paper_id} claim_index {idx} more than once")
+                    seen.add((paper_id, idx))
         paper_ids = sorted(by_paper)
         if _ACTIVE_DATASET is not None:
             # Every id is checked before any fixture is read.
@@ -392,10 +435,18 @@ def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[R
             _check_paper_id(paper_id)
 
     for paper_id in paper_ids:
+        items = by_paper[paper_id] if by_paper is not None else None
+        if items is not None and all(inline is not None for _, inline in items):
+            targets.extend(inline for _, inline in items)   # no indexed entry: the run-1 fixture is not read
+            continue
         fixture = _read_fixture(paper_id)
         claims_by_index = {c["index"]: c for c in fixture["claims"]}
-        indices = by_paper[paper_id] if by_paper is not None else sorted(claims_by_index)
-        for idx in indices:
+        if items is None:
+            items = [(idx, None) for idx in sorted(claims_by_index)]
+        for idx, inline in items:
+            if inline is not None:
+                targets.append(inline)
+                continue
             claim = claims_by_index[idx]
             targets.append(ReplayTarget(
                 paper_id=paper_id, claim_index=idx,
@@ -944,6 +995,9 @@ async def _run_once(
                 }
                 if scope_ledger is not None:
                     header["replay"]["scope_check_prompt_hash"] = scope_ledger.prompt_hash
+                if any(t.inline for t in targets):
+                    # Claims given in the claims file, not in the run-1 fixture; "matches" below is still run 1's.
+                    header["replay"]["inline_claims"] = True
                 if _ACTIVE_DATASET is not None:
                     header["replay"]["set"] = _ACTIVE_DATASET.name  # a named set marks its files; dev files do not change
                 header["claims_scope"] = [t.claim_index for t in paper_targets]
@@ -1318,10 +1372,16 @@ def _prepare_run_options(args: argparse.Namespace, scope_check_on: bool) -> _Run
     a default _RunOptions and checks nothing beyond the thinking level."""
     backend = backend_options.backend_from_args(args)
     auditor_model = getattr(args, "auditor_model", None)
+    out_tag = getattr(args, "out_tag", None)
+    if out_tag is not None and not _OUT_TAG_RE.fullmatch(out_tag):
+        raise ValueError(f"--out-tag {out_tag!r}: use only letters, digits and '-'")
     structurer_model = engine.settings.llm_claim_audit_model
     effective_auditor = auditor_model or structurer_model
     backend_options.validate_thinking(effective_auditor, getattr(args, "level", None))
     if backend.name == llm_backend.BACKEND_AISTUDIO and auditor_model is None:
+        if out_tag is not None:
+            raise ValueError("--out-tag needs a non-default run (--backend vertex or --auditor-model): "
+                             "a default run's folders are not tagged")
         return _RunOptions(backend=backend)
 
     if (
@@ -1347,9 +1407,11 @@ def _prepare_run_options(args: argparse.Namespace, scope_check_on: bool) -> _Run
     backend_options.check_grounding_routes(
         backend, engine.settings.llm_grounding_model, engine.settings.llm_grounding_fallback_model,
     )
+    tag = backend_options.output_slug(auditor_model, backend, structurer_model)
+    if out_tag is not None:
+        tag = f"{tag}-{out_tag}"
     return _RunOptions(
-        backend=backend, auditor_model=auditor_model,
-        tag=backend_options.output_slug(auditor_model, backend, structurer_model),
+        backend=backend, auditor_model=auditor_model, tag=tag, out_tag=out_tag,
         run_config=backend_options.run_config(backend, effective_auditor, other_models, getattr(args, "level", None)),
     )
 
@@ -1407,13 +1469,21 @@ def _repeat_indices(args: argparse.Namespace) -> list[int]:
     return list(range(1, args.repeat + 1))
 
 
+def _existing_out_dirs(run_options: _RunOptions, args: argparse.Namespace, scope_check_on: bool) -> list[str]:
+    """The output folders of this invocation's repeats that already exist."""
+    return [
+        str(run_options.out_dir(args.level, n, scope_check_on)) for n in _repeat_indices(args)
+        if run_options.out_dir(args.level, n, scope_check_on).exists()
+    ]
+
+
 async def _run_replay(
     args: argparse.Namespace, scope_check_on: bool, scope_prompt_hash: str | None, run_options: _RunOptions,
 ) -> int:
     claims_path = Path(args.claims) if args.claims else None
     try:
         targets = _load_targets(claims_path, args.papers)
-    except PaperTextError as exc:  # only a named set raises it here; the dev set behaves as before
+    except (PaperTextError, ValueError) as exc:  # PaperTextError: a named set only; ValueError: a bad inline claim
         print(f"[replay_audit] ABORT: {exc}")
         return 1
     if not targets:
@@ -1422,6 +1492,13 @@ async def _run_replay(
 
     if run_options.non_default:
         print(f"[replay_audit] run config: {run_options.run_config}")
+
+    if args.estimate and run_options.out_tag is not None:
+        # A tagged run names its own folders up front, so --estimate also refuses when they exist.
+        existing = _existing_out_dirs(run_options, args, scope_check_on)
+        if existing:
+            print(f"[replay_audit] ABORT: output folder(s) already exist, refusing to overwrite: {existing}")
+            return 1
 
     if args.estimate:
         estimate_kwargs = {"scope_check": True} if scope_check_on else {}
@@ -1435,10 +1512,7 @@ async def _run_replay(
 
     if run_options.non_default and not args.dry_run:
         # A non-default run never overwrites an existing folder (the baselines included).
-        existing = [
-            str(run_options.out_dir(args.level, n, scope_check_on)) for n in _repeat_indices(args)
-            if run_options.out_dir(args.level, n, scope_check_on).exists()
-        ]
+        existing = _existing_out_dirs(run_options, args, scope_check_on)
         if existing:
             print(f"[replay_audit] ABORT: output folder(s) already exist, refusing to overwrite: {existing}")
             return 1
@@ -1494,7 +1568,12 @@ def _positive_float(value: str) -> float:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--level", required=True, choices=["low", "medium", "high"])
-    parser.add_argument("--claims", help="JSON file of [{paper_id, claim_index}, ...] (omit for all 12 papers/362 claims)")
+    parser.add_argument(
+        "--claims",
+        help="JSON file of [{paper_id, claim_index}, ...] (omit for all 12 papers/362 claims). An entry may also carry "
+             "claim_text_verbatim + claim_summary (an inline claim, not in the run-1 fixture): its claim_index must "
+             "then be >= 1000",
+    )
     parser.add_argument(
         "--set", dest="dataset", choices=[SET_DEV, SET_GOLDEN], default=SET_DEV,
         help="which papers: dev (default, the run1 dev fixtures and raw_text_cache - nothing changes) or golden "
@@ -1529,6 +1608,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="model of the auditor call ONLY (default: the configured llm_claim_audit_model). The structurer, the "
              "fallback models and every other call keep their configured models; with --cache the cache is created "
              "with this model. Not valid with --scope-check. Output goes to exp1_{level}_{model}[-vertex]_{n}",
+    )
+    parser.add_argument(
+        "--out-tag", default=None, metavar="TAG",
+        help="non-default runs only (--backend vertex / --auditor-model): add -TAG to the output folder names, "
+             "exp1_{level}_{model}[-vertex]-TAG_{n}, so a run never meets an earlier run's folders. Letters, digits "
+             "and '-'. With the tag, --estimate also refuses when the tagged folders exist",
     )
     backend_options.add_backend_args(parser)
     return parser
