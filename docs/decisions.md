@@ -4688,3 +4688,39 @@ Expectation (estimate, recorded before the work)
   13-15 of 31.
 
 Money: INR 0 for this entry and for step 1.
+
+## Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12
+
+Step 1 (scripts in Prism.PythonService/eval/step1/, outputs in
+docs/evals/step1_2026-11-11/; full suite 1200 passed, 3 skipped,
+1 deselected; Ruff and Pyright clean)
+- 1a: re-running the product auditor adds little. Over 3 baseline runs,
+  bad claims flagged in >= 1 run 15/27 (good 4/79); in >= 2 runs 13/27
+  (good 0/79). 7 of 8 auditor targets never flagged by the baseline;
+  P3-R2, P6-R2, P11-R2 never flagged in any of 9 audits. A score must
+  come from narrower checks, not repeats. B's one false rejection
+  (P4-S4) is grounding-only.
+- 1b: T = 3, set by baseline S-row false rejections per run [4, 1, 1].
+  Refusal-row spread 1, golden spreads 2. Recorded verdicts stand; T
+  applies to future tests only. Each future pre-registration states
+  which spread applies to each mark.
+- 1c: of the 13 extraction misses, introduction 2, conclusion 3, body
+  5, appendix 3. Nitin checked 4 rows against the PDFs (2026-11-12),
+  all confirmed. Ceiling for the abstract/introduction/conclusion
+  extractor option: 5 of 13. P3-R1's introduction holds a softer
+  sibling of the same claim (pattern E3).
+- 1d (estimated): about INR 102 per paper today, INR 196 at 2027
+  prices; with explicit caching INR 136 (Vertex) or 130 (AI Studio) at
+  2027 prices. Auditor is about 71% of cost. Metadata and embedding
+  cost not found.
+
+Cost gate (Nitin, 2026-11-12, set before any step 2 or step 4 result)
+- The per-paper cost gate for step 4 changes is raised from INR 130 to
+  INR 200 at 2027 list prices. Reason: leave room for fixes; caching
+  and cost work come later.
+- Revisit before any release.
+
+Next: step 2 pre-registration (the 7 pass-2-recovered claims ->
+today's auditor, 3 runs).
+
+Money: INR 0.

@@ -1,0 +1,116 @@
+Run-to-run noise of saved no-change groups (descriptive; no recorded verdict changes).
+
+== Groups that may set T (non-void, product auditor gemini-3.6-flash, flags off) ==
+Group: full check B dev (gemini-3.6-flash medium, Vertex)
+  void: no; may set T: yes
+  config: backend vertex, auditor gemini-3.6-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [6, 6, 7]  spread 1
+  S-row false rejections (EFFECTIVE)   per repeat [4, 1, 1]  spread 3
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 7 of 84 (8.3%)
+
+Group: full check B golden (gemini-3.6-flash medium, Vertex)
+  void: no; may set T: yes
+  config: backend vertex, auditor gemini-3.6-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     n/a
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                per repeat [7, 5, 6]  spread 2
+  golden positive hits                 per repeat [13, 13, 11]  spread 2
+  claims whose RAW label differs between repeats: 4 of 22 (18.2%)
+
+T = 3
+  set by: full check B dev (gemini-3.6-flash medium, Vertex) / S-row false rejections (EFFECTIVE) (spread 3)
+
+== Printed beside T, never used for it (void, gemini-3.8-flash, no run_config, other setting) ==
+Group: full check C1 dev (gemini-3.8-flash medium, Vertex)
+  void: no; may set T: no - gemini-3.8-flash is not the product auditor
+  config: backend vertex, auditor gemini-3.8-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [11, 10, 10]  spread 1
+  S-row false rejections (EFFECTIVE)   per repeat [5, 3, 4]  spread 2
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 3 of 84 (3.6%)
+
+Group: full check C1 golden (gemini-3.8-flash medium, Vertex)
+  void: no; may set T: no - gemini-3.8-flash is not the product auditor
+  config: backend vertex, auditor gemini-3.8-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     n/a
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                per repeat [7, 7, 7]  spread 0
+  golden positive hits                 per repeat [12, 12, 11]  spread 1
+  claims whose RAW label differs between repeats: 1 of 22 (4.5%)
+
+Group: full check C2 dev (gemini-3.8-flash high, Vertex)
+  void: no; may set T: no - gemini-3.8-flash is not the product auditor
+  config: backend vertex, auditor gemini-3.8-flash, thinking high, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [12, 11, 13]  spread 2
+  S-row false rejections (EFFECTIVE)   per repeat [9, 8, 7]  spread 2
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 5 of 84 (6.0%)
+
+Group: full check C2 golden (gemini-3.8-flash high, Vertex)
+  void: no; may set T: no - gemini-3.8-flash is not the product auditor
+  config: backend vertex, auditor gemini-3.8-flash, thinking high, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     n/a
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                per repeat [9, 9, 8]  spread 1
+  golden positive hits                 per repeat [11, 9, 10]  spread 2
+  claims whose RAW label differs between repeats: 3 of 22 (13.6%)
+
+Group: screen B (gemini-3.6-flash medium, Vertex, 18 claims)
+  void: YES - screen void: V3 voided arm 1 and V4 voids the whole screen (decisions.md 2026-11-07); may set T: no - void
+  config: backend vertex, auditor gemini-3.6-flash, thinking medium, grounding groq/openai/gpt-oss-20b / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [5, 5, 7]  spread 2
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 4 of 18 (22.2%)
+
+Group: screen C1 (gemini-3.8-flash medium, Vertex, 18 claims)
+  void: YES - screen void: V3 voided arm 1 and V4 voids the whole screen (decisions.md 2026-11-07); may set T: no - void
+  config: backend vertex, auditor gemini-3.8-flash, thinking medium, grounding groq/openai/gpt-oss-20b / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [10, 10, 10]  spread 0
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 0 of 18 (0.0%)
+
+Group: screen C2 (gemini-3.8-flash high, Vertex, 18 claims)
+  void: YES - screen void: V3 voided arm 1 and V4 voids the whole screen (decisions.md 2026-11-07); may set T: no - void
+  config: backend vertex, auditor gemini-3.8-flash, thinking high, grounding groq/openai/gpt-oss-20b / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash; prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [13, 13, 13]  spread 0
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 0 of 18 (0.0%)
+
+Group: exp1 medium (gemini-3.6-flash medium, AI Studio, 18 claims)
+  void: no; may set T: no - 2 repeats, no run_config: backend and grounding model not recorded (open question 1: default = not used)
+  config: default (no run_config); prompt hash cb3272cce551; 2 repeats
+  refusal-row claims flagged (RAW)     per repeat [7, 5]  spread 2
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 6 of 18 (33.3%)
+
+Group: exp1 high (gemini-3.6-flash high, AI Studio, 18 claims)
+  void: no; may set T: no - thinking high is not the product setting (medium) (open question 2: default = not used)
+  config: default (no run_config); prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [10, 10, 10]  spread 0
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 0 of 18 (0.0%)
+
+Group: A1 scope check (gemini-3.6-flash medium, flag ON, 18 claims)
+  void: no; may set T: no - scope-check flag is ON, so not a flags-off group
+  config: default (no run_config); prompt hash cb3272cce551; 3 repeats
+  refusal-row claims flagged (RAW)     per repeat [12, 10, 10]  spread 2
+  S-row false rejections (EFFECTIVE)   n/a
+  golden refusal-family                n/a
+  golden positive hits                 n/a
+  claims whose RAW label differs between repeats: 5 of 18 (27.8%)
+
+T is measured on single runs, so it is an upper bound for 2-of-3 voted counts. T applies to future tests only; how T enters a mark is written in each future pre-registration.

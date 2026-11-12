@@ -1,0 +1,200 @@
+Descriptive only. No cut-off is chosen from this data.
+
+Claims: 106 (dev 84, golden 22). Arms: B = gemini-3.6-flash medium, C1 = gemini-3.8-flash medium, C2 = gemini-3.8-flash high; 3 repeats each; Vertex.
+
+Self-check against the recorded 2026-11-09 votes: OK
+  B   fixed 0/8 []; real hits lost 1/7 ['P6-R1']; false rejections 1/88 ['P4-S4']; golden 6;13
+  C1  fixed 2/8 ['P4-R2', 'P8-R2']; real hits lost 0/7 []; false rejections 4/88 ['P1-S3', 'P11-S2', 'P2-S7', 'P9-S4']; golden 7;12
+  C2  fixed 4/8 ['P4-R1', 'P4-R2', 'P7-R1', 'P8-R2']; real hits lost 0/7 []; false rejections 7/88 ['P1-S3', 'P1-S8', 'P10-S2', 'P12-S4', 'P12-S5', 'P8-S7', 'P9-S4']; golden 9;10
+
+Per claim: flagged audits out of 3 per arm and out of 9 in total; RAW = final label, EFFECTIVE = not_supported if grounding rejected the claim.
+class            row ids                claim                      | RAW  B C1 C2 tot | EFF  B C1 C2 tot | fb | note
+R target         P3-R2                  arxiv-2610.11135v1#3       |      0  0  0   0 |      0  0  0   0 |  0 | 
+R target         P4-R1                  arxiv-2610.10871v1#2       |      0  1  3   4 |      0  1  3   4 |  0 | 
+R target         P4-R2                  arxiv-2610.10871v1#30      |      0  3  3   6 |      0  3  3   6 |  0 | 
+R target         P6-R2                  arxiv-2610.11312v1#3       |      0  0  0   0 |      0  0  0   0 |  0 | 
+R target         P11-R2                 arxiv-2610.12114v1#7       |      0  0  0   0 |      0  0  0   0 |  1 | 
+R target         P1-R1                  arxiv-2610.11519v1#32      |      0  0  1   1 |      0  0  1   1 |  0 | 
+R target         P7-R1                  arxiv-2610.10590v1#5       |      0  0  2   2 |      0  0  2   2 |  0 | 
+R target         P8-R2                  arxiv-2610.12124v1#7       |      1  3  3   7 |      1  3  3   7 |  0 | 
+R parked         P5-R2, P5-S1           arxiv-2610.11291v1#1       |      0  0  0   0 |      0  0  0   0 |  0 | shared claim: P5-R2 = P5-S1
+R parked         P5-R1                  arxiv-2610.11291v1#33      |      2  3  3   8 |      2  3  3   8 |  0 | 
+R real hit       P2-R5                  arxiv-2610.11132v1#24      |      2  3  3   8 |      2  3  3   8 |  0 | 
+R real hit       P6-R1                  arxiv-2610.11312v1#4       |      0  3  3   6 |      0  3  3   6 |  0 | 
+R real hit       P8-R1                  arxiv-2610.12124v1#6       |      3  3  3   9 |      3  3  3   9 |  0 | 
+R real hit       P10-R1                 arxiv-2610.12176v1#3       |      3  3  3   9 |      3  3  3   9 |  0 | 
+R real hit       P10-R2                 arxiv-2610.12176v1#4       |      3  3  3   9 |      3  3  3   9 |  0 | 
+R real hit       P10-R3                 arxiv-2610.12176v1#16      |      3  3  3   9 |      3  3  3   9 |  0 | 
+R real hit       P12-R2                 arxiv-2610.12168v1#0       |      2  3  3   8 |      2  3  3   8 |  0 | 
+P1-R3            P1-R3                  arxiv-2610.11519v1#7       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P1-S1                  arxiv-2610.11519v1#8       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P1-S2                  arxiv-2610.11519v1#3       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P1-S3                  arxiv-2610.11519v1#4       |      0  3  3   6 |      0  3  3   6 |  0 | 
+S                P1-S4                  arxiv-2610.11519v1#14      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P1-S5                  arxiv-2610.11519v1#17      |      0  0  0   0 |      1  0  0   1 |  0 | 
+S                P1-S6                  arxiv-2610.11519v1#22      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P1-S8                  arxiv-2610.11519v1#16      |      0  0  3   3 |      0  0  3   3 |  0 | 
+S                P2-S2                  arxiv-2610.11132v1#2       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P2-S3                  arxiv-2610.11132v1#9       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P2-S7                  arxiv-2610.11132v1#22      |      0  0  0   0 |      0  2  0   2 |  0 | 
+S                P2-S8                  arxiv-2610.11132v1#25      |      1  0  0   1 |      1  0  0   1 |  0 | 
+S                P3-S1                  arxiv-2610.11135v1#13      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P3-S2                  arxiv-2610.11135v1#15      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P3-S4                  arxiv-2610.11135v1#32      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P3-S5                  arxiv-2610.11135v1#37      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P3-S6                  arxiv-2610.11135v1#29      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P3-S7                  arxiv-2610.11135v1#18      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S1                  arxiv-2610.10871v1#14      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S2                  arxiv-2610.10871v1#19      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S3                  arxiv-2610.10871v1#20      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S4                  arxiv-2610.10871v1#21      |      0  0  0   0 |      2  0  0   2 |  0 | 
+S                P4-S5                  arxiv-2610.10871v1#15      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S6                  arxiv-2610.10871v1#16      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S7                  arxiv-2610.10871v1#17      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P4-S8                  arxiv-2610.10871v1#31      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P5-S2                  arxiv-2610.11291v1#16      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P5-S4                  arxiv-2610.11291v1#21      |      0  0  1   1 |      0  0  1   1 |  0 | 
+S                P5-S5                  arxiv-2610.11291v1#18      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P5-S6                  arxiv-2610.11291v1#19      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P5-S7                  arxiv-2610.11291v1#20      |      0  0  1   1 |      0  0  1   1 |  0 | 
+S                P6-S1                  arxiv-2610.11312v1#2       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P6-S2                  arxiv-2610.11312v1#15      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P6-S3                  arxiv-2610.11312v1#13      |      0  0  0   0 |      0  1  0   1 |  0 | 
+S                P6-S4                  arxiv-2610.11312v1#14      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P6-S5                  arxiv-2610.11312v1#16      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P7-S1                  arxiv-2610.10590v1#1       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P7-S2                  arxiv-2610.10590v1#2       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P7-S3                  arxiv-2610.10590v1#3       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P7-S4                  arxiv-2610.10590v1#16      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P7-S5                  arxiv-2610.10590v1#20      |      0  0  1   1 |      0  0  1   1 |  0 | 
+S                P7-S6                  arxiv-2610.10590v1#27      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P7-S8                  arxiv-2610.10590v1#34      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P8-S2                  arxiv-2610.12124v1#9       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P8-S3                  arxiv-2610.12124v1#10      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P8-S4                  arxiv-2610.12124v1#14      |      0  0  0   0 |      0  1  0   1 |  0 | 
+S                P8-S5                  arxiv-2610.12124v1#15      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P8-S6                  arxiv-2610.12124v1#16      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P8-S7                  arxiv-2610.12124v1#26      |      0  0  3   3 |      0  0  3   3 |  0 | 
+S                P8-S8                  arxiv-2610.12124v1#27      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P9-S1                  arxiv-2610.12375v1#1       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P9-S2                  arxiv-2610.12375v1#16      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P9-S4                  arxiv-2610.12375v1#2       |      1  2  3   6 |      1  2  3   6 |  0 | 
+S                P9-S6                  arxiv-2610.12375v1#14      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P9-S7                  arxiv-2610.12375v1#11      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P10-S1                 arxiv-2610.12176v1#2       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P10-S2                 arxiv-2610.12176v1#19      |      1  0  3   4 |      1  0  3   4 |  0 | 
+S                P10-S4                 arxiv-2610.12176v1#20      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P11-S1                 arxiv-2610.12114v1#6       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P11-S2                 arxiv-2610.12114v1#16      |      0  0  0   0 |      0  2  0   2 |  0 | 
+S                P11-S3                 arxiv-2610.12114v1#17      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P11-S4                 arxiv-2610.12114v1#19      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P11-S7                 arxiv-2610.12114v1#28      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P11-S8                 arxiv-2610.12114v1#11      |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P12-S1                 arxiv-2610.12168v1#3       |      0  0  0   0 |      0  0  0   0 |  0 | 
+S                P12-S4                 arxiv-2610.12168v1#15      |      0  0  3   3 |      0  0  3   3 |  0 | 
+S                P12-S5                 arxiv-2610.12168v1#5       |      0  1  3   4 |      0  1  3   4 |  0 | 
+golden negative  REFLEX-M08             arxiv-2303.11366v4#8       |      3  3  3   9 |      3  3  3   9 |  0 | 
+golden negative  REFLEX-M09             arxiv-2303.11366v4#17      |      0  0  2   2 |      0  0  2   2 |  0 | 
+golden negative  REFLEX-M12             arxiv-2303.11366v4#7       |      3  3  3   9 |      3  3  3   9 |  0 | 
+golden negative  REFLEX-M13             arxiv-2303.11366v4#0       |      0  0  3   3 |      0  0  3   3 |  0 | 
+golden negative  COT-M02                arxiv-2201.11903v6#6       |      3  3  3   9 |      3  3  3   9 |  0 | 
+golden negative  COT-M08                arxiv-2201.11903v6#22      |      1  3  3   7 |      1  3  3   7 |  0 | 
+golden negative  REACT-M11              arxiv-2210.03629v3#2       |      3  3  3   9 |      3  3  3   9 |  0 | 
+golden negative  REACT-M13              arxiv-2210.03629v3#1       |      3  3  3   9 |      3  3  3   9 |  0 | 
+golden negative  REACT-M14              arxiv-2210.03629v3#32      |      2  3  3   8 |      2  3  3   8 |  0 | 
+golden positive  REFLEX-M01             arxiv-2303.11366v4#3       |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REFLEX-M02             arxiv-2303.11366v4#9       |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REFLEX-M05             arxiv-2303.11366v4#26      |      0  0  0   0 |      1  0  0   1 |  0 | 
+golden positive  COT-M01                arxiv-2201.11903v6#2       |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  COT-M03                arxiv-2201.11903v6#14      |      0  3  3   6 |      0  3  3   6 |  0 | 
+golden positive  COT-M04                arxiv-2201.11903v6#16      |      0  1  3   4 |      0  1  3   4 |  0 | 
+golden positive  COT-M05                arxiv-2201.11903v6#9       |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REACT-M01              arxiv-2210.03629v3#28      |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REACT-M02              arxiv-2210.03629v3#19      |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REACT-M03              arxiv-2210.03629v3#16      |      1  0  2   3 |      1  0  2   3 |  0 | 
+golden positive  REACT-M05              arxiv-2210.03629v3#29      |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REACT-M08              arxiv-2210.03629v3#18      |      0  0  0   0 |      0  0  0   0 |  0 | 
+golden positive  REACT-M10              arxiv-2210.03629v3#21      |      0  0  1   1 |      0  0  1   1 |  0 | 
+fb = fallback-served audits of the 9 (audit_model_served differs from the arm's auditor). Total over all claims: 1
+
+Histogram of flag counts by class - RAW label - arm B alone (0-3 of 3 audits)
+class                 n    0    1    2    3
+R target              8    7    1    0    0
+R parked              2    1    0    1    0
+R real hit            7    1    0    2    4
+P1-R3                 1    1    0    0    0
+S                    66   63    3    0    0
+golden negative       9    2    1    1    5
+golden positive      13   12    1    0    0
+all claims          106   87    6    4    9
+
+Histogram of flag counts by class - RAW label - all 9 audits (0-9)
+class                 n    0    1    2    3    4    5    6    7    8    9
+R target              8    3    1    1    0    1    0    1    1    0    0
+R parked              2    1    0    0    0    0    0    0    0    1    0
+R real hit            7    0    0    0    0    0    0    1    0    2    4
+P1-R3                 1    1    0    0    0    0    0    0    0    0    0
+S                    66   55    4    0    3    2    0    2    0    0    0
+golden negative       9    0    0    1    1    0    0    0    1    1    5
+golden positive      13    9    1    0    1    1    0    1    0    0    0
+all claims          106   69    6    2    5    4    0    5    2    4    9
+
+Histogram of flag counts by class - EFFECTIVE status - arm B alone (0-3 of 3 audits)
+class                 n    0    1    2    3
+R target              8    7    1    0    0
+R parked              2    1    0    1    0
+R real hit            7    1    0    2    4
+P1-R3                 1    1    0    0    0
+S                    66   61    4    1    0
+golden negative       9    2    1    1    5
+golden positive      13   11    2    0    0
+all claims          106   84    8    5    9
+
+Histogram of flag counts by class - EFFECTIVE status - all 9 audits (0-9)
+class                 n    0    1    2    3    4    5    6    7    8    9
+R target              8    3    1    1    0    1    0    1    1    0    0
+R parked              2    1    0    0    0    0    0    0    0    1    0
+R real hit            7    0    0    0    0    0    0    1    0    2    4
+P1-R3                 1    1    0    0    0    0    0    0    0    0    0
+S                    66   49    7    3    3    2    0    2    0    0    0
+golden negative       9    0    0    1    1    0    0    0    1    1    5
+golden positive      13    8    2    0    1    1    0    1    0    0    0
+all claims          106   62   10    5    5    4    0    5    2    4    9
+
+Bad claims = R target, R parked, R real hit, P1-R3, golden negative (27). Good claims = S, golden positive (79).
+
+Flagged in >= k audits - RAW label - arm B alone
+  k |      bad flagged |     good flagged
+  1 |   15/27   55.6% |    4/79    5.1%
+  2 |   13/27   48.1% |    0/79    0.0%
+  3 |    9/27   33.3% |    0/79    0.0%
+
+Flagged in >= k audits - RAW label - all 9 audits
+  k |      bad flagged |     good flagged
+  1 |   22/27   81.5% |   15/79   19.0%
+  2 |   21/27   77.8% |   10/79   12.7%
+  3 |   19/27   70.4% |   10/79   12.7%
+  4 |   18/27   66.7% |    6/79    7.6%
+  5 |   17/27   63.0% |    3/79    3.8%
+  6 |   17/27   63.0% |    3/79    3.8%
+  7 |   15/27   55.6% |    0/79    0.0%
+  8 |   13/27   48.1% |    0/79    0.0%
+  9 |    9/27   33.3% |    0/79    0.0%
+
+Flagged in >= k audits - EFFECTIVE status - arm B alone
+  k |      bad flagged |     good flagged
+  1 |   15/27   55.6% |    7/79    8.9%
+  2 |   13/27   48.1% |    1/79    1.3%
+  3 |    9/27   33.3% |    0/79    0.0%
+
+Flagged in >= k audits - EFFECTIVE status - all 9 audits
+  k |      bad flagged |     good flagged
+  1 |   22/27   81.5% |   22/79   27.8%
+  2 |   21/27   77.8% |   13/79   16.5%
+  3 |   19/27   70.4% |   10/79   12.7%
+  4 |   18/27   66.7% |    6/79    7.6%
+  5 |   17/27   63.0% |    3/79    3.8%
+  6 |   17/27   63.0% |    3/79    3.8%
+  7 |   15/27   55.6% |    0/79    0.0%
+  8 |   13/27   48.1% |    0/79    0.0%
+  9 |    9/27   33.3% |    0/79    0.0%

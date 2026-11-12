@@ -1,0 +1,29 @@
+Section of the 13 dev extraction misses (raw PDF text; method fixed in eval/step1/sections.py)
+row     paper               whole score  pos% bucket                   underneath   conf nearest heading before it
+P7-R2   arxiv-2610.10590v1  yes   100.0  72.1 body                     body         high Discussion
+P2-R1   arxiv-2610.11132v1  yes   100.0  30.5 body                     body         high RELATED WORK
+P1-R2   arxiv-2610.11519v1  yes   100.0  26.6 conclusion               conclusion   high CONCLUSION
+P12-R1  arxiv-2610.12168v1  yes   100.0   1.6 introduction             introduction high Introduction
+P2-R3   arxiv-2610.11132v1  yes   100.0  91.9 appendix                 appendix     high results are underlined.
+P2-R4   arxiv-2610.11132v1  yes   100.0  74.5 appendix                 appendix     high APPENDIX
+P9-R1   arxiv-2610.12375v1  yes   100.0  71.4 body                     body         high Evaluation protocol.
+P4-R3   arxiv-2610.10871v1  yes   100.0  52.3 conclusion               conclusion   high CONCLUSION
+P3-R1   arxiv-2610.11135v1  yes   100.0  19.7 conclusion               conclusion   high Conclusion
+P5-R3   arxiv-2610.11291v1  yes   100.0  10.7 introduction             introduction high 1. Introduction
+P8-R3   arxiv-2610.12124v1  yes   100.0  21.6 body                     body         high Method
+P11-R1  arxiv-2610.12114v1  yes   100.0  21.4 body                     body         high Evaluation
+P11-R3  arxiv-2610.12114v1  yes   100.0  58.8 appendix                 appendix     high METHOD AND BASELINE CONFIGURATIONS
+
+Totals per bucket:
+  abstract                 0
+  introduction             2
+  body                     5
+  conclusion               3
+  appendix                 3
+  table or figure caption  0
+  not found whole          0
+in abstract + introduction + conclusion: 5 of 13
+(same count by the bucket underneath any caption override: 5 of 13)
+low confidence, to check against the PDF: none
+
+self-check OK: P2-R3, P2-R4 and P11-R3 are in appendix

@@ -1,0 +1,508 @@
+{
+  "t": {
+    "t": 3,
+    "measured": 3,
+    "capped": false,
+    "set_by": [
+      "full check B dev (gemini-3.6-flash medium, Vertex) / S-row false rejections (EFFECTIVE)"
+    ]
+  },
+  "t_spreads": {
+    "full check B dev (gemini-3.6-flash medium, Vertex) / refusal-row claims flagged (RAW)": 1,
+    "full check B dev (gemini-3.6-flash medium, Vertex) / S-row false rejections (EFFECTIVE)": 3,
+    "full check B golden (gemini-3.6-flash medium, Vertex) / golden refusal-family": 2,
+    "full check B golden (gemini-3.6-flash medium, Vertex) / golden positive hits": 2
+  },
+  "groups": [
+    {
+      "name": "full check B dev (gemini-3.6-flash medium, Vertex)",
+      "kind": "dev84",
+      "void": false,
+      "void_reason": "",
+      "for_t": true,
+      "beside_reason": "",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_gemini-3.6-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_gemini-3.6-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_gemini-3.6-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": [
+          6,
+          6,
+          7
+        ],
+        "s_false_rejections": [
+          4,
+          1,
+          1
+        ],
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 1,
+        "s_false_rejections": 3,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        7,
+        84
+      ],
+      "config": "backend vertex, auditor gemini-3.6-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "full check B golden (gemini-3.6-flash medium, Vertex)",
+      "kind": "golden22",
+      "void": false,
+      "void_reason": "",
+      "for_t": true,
+      "beside_reason": "",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_medium_gemini-3.6-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_medium_gemini-3.6-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_medium_gemini-3.6-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": null,
+        "s_false_rejections": null,
+        "golden_refusal_family": [
+          7,
+          5,
+          6
+        ],
+        "golden_positive_hits": [
+          13,
+          13,
+          11
+        ]
+      },
+      "spread": {
+        "refusal": null,
+        "s_false_rejections": null,
+        "golden_refusal_family": 2,
+        "golden_positive_hits": 2
+      },
+      "changed": [
+        4,
+        22
+      ],
+      "config": "backend vertex, auditor gemini-3.6-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "full check C1 dev (gemini-3.8-flash medium, Vertex)",
+      "kind": "dev84",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "gemini-3.8-flash is not the product auditor",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_gemini-3.8-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_gemini-3.8-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_gemini-3.8-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": [
+          11,
+          10,
+          10
+        ],
+        "s_false_rejections": [
+          5,
+          3,
+          4
+        ],
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 1,
+        "s_false_rejections": 2,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        3,
+        84
+      ],
+      "config": "backend vertex, auditor gemini-3.8-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "full check C1 golden (gemini-3.8-flash medium, Vertex)",
+      "kind": "golden22",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "gemini-3.8-flash is not the product auditor",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_medium_gemini-3.8-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_medium_gemini-3.8-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_medium_gemini-3.8-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": null,
+        "s_false_rejections": null,
+        "golden_refusal_family": [
+          7,
+          7,
+          7
+        ],
+        "golden_positive_hits": [
+          12,
+          12,
+          11
+        ]
+      },
+      "spread": {
+        "refusal": null,
+        "s_false_rejections": null,
+        "golden_refusal_family": 0,
+        "golden_positive_hits": 1
+      },
+      "changed": [
+        1,
+        22
+      ],
+      "config": "backend vertex, auditor gemini-3.8-flash, thinking medium, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "full check C2 dev (gemini-3.8-flash high, Vertex)",
+      "kind": "dev84",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "gemini-3.8-flash is not the product auditor",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_high_gemini-3.8-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_high_gemini-3.8-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_high_gemini-3.8-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": [
+          12,
+          11,
+          13
+        ],
+        "s_false_rejections": [
+          9,
+          8,
+          7
+        ],
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 2,
+        "s_false_rejections": 2,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        5,
+        84
+      ],
+      "config": "backend vertex, auditor gemini-3.8-flash, thinking high, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "full check C2 golden (gemini-3.8-flash high, Vertex)",
+      "kind": "golden22",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "gemini-3.8-flash is not the product auditor",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_high_gemini-3.8-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_high_gemini-3.8-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\golden_replay\\exp1_high_gemini-3.8-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": null,
+        "s_false_rejections": null,
+        "golden_refusal_family": [
+          9,
+          9,
+          8
+        ],
+        "golden_positive_hits": [
+          11,
+          9,
+          10
+        ]
+      },
+      "spread": {
+        "refusal": null,
+        "s_false_rejections": null,
+        "golden_refusal_family": 1,
+        "golden_positive_hits": 2
+      },
+      "changed": [
+        3,
+        22
+      ],
+      "config": "backend vertex, auditor gemini-3.8-flash, thinking high, grounding gemini/gemini-3.1-flash-lite / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "screen B (gemini-3.6-flash medium, Vertex, 18 claims)",
+      "kind": "r18",
+      "void": true,
+      "void_reason": "screen void: V3 voided arm 1 and V4 voids the whole screen (decisions.md 2026-11-07)",
+      "for_t": false,
+      "beside_reason": "void",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_medium_gemini-3.6-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_medium_gemini-3.6-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_medium_gemini-3.6-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": [
+          5,
+          5,
+          7
+        ],
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 2,
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        4,
+        18
+      ],
+      "config": "backend vertex, auditor gemini-3.6-flash, thinking medium, grounding groq/openai/gpt-oss-20b / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "screen C1 (gemini-3.8-flash medium, Vertex, 18 claims)",
+      "kind": "r18",
+      "void": true,
+      "void_reason": "screen void: V3 voided arm 1 and V4 voids the whole screen (decisions.md 2026-11-07)",
+      "for_t": false,
+      "beside_reason": "void",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_medium_gemini-3.8-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_medium_gemini-3.8-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_medium_gemini-3.8-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": [
+          10,
+          10,
+          10
+        ],
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 0,
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        0,
+        18
+      ],
+      "config": "backend vertex, auditor gemini-3.8-flash, thinking medium, grounding groq/openai/gpt-oss-20b / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "screen C2 (gemini-3.8-flash high, Vertex, 18 claims)",
+      "kind": "r18",
+      "void": true,
+      "void_reason": "screen void: V3 voided arm 1 and V4 voids the whole screen (decisions.md 2026-11-07)",
+      "for_t": false,
+      "beside_reason": "void",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_high_gemini-3.8-flash-vertex_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_high_gemini-3.8-flash-vertex_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\screen_2026-11-06\\exp1_high_gemini-3.8-flash-vertex_3"
+      ],
+      "counts": {
+        "refusal": [
+          13,
+          13,
+          13
+        ],
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 0,
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        0,
+        18
+      ],
+      "config": "backend vertex, auditor gemini-3.8-flash, thinking high, grounding groq/openai/gpt-oss-20b / gemini/gemini-3.1-flash-lite, structurer gemini-3.6-flash",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "exp1 medium (gemini-3.6-flash medium, AI Studio, 18 claims)",
+      "kind": "r18",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "2 repeats, no run_config: backend and grounding model not recorded (open question 1: default = not used)",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_medium_2"
+      ],
+      "counts": {
+        "refusal": [
+          7,
+          5
+        ],
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 2,
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        6,
+        18
+      ],
+      "config": "default (no run_config)",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "exp1 high (gemini-3.6-flash high, AI Studio, 18 claims)",
+      "kind": "r18",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "thinking high is not the product setting (medium) (open question 2: default = not used)",
+      "dirs": [
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_high_1",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_high_2",
+        "H:\\Work projects\\Prism\\docs\\evals\\fixtures\\dev\\exp1_high_3"
+      ],
+      "counts": {
+        "refusal": [
+          10,
+          10,
+          10
+        ],
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 0,
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        0,
+        18
+      ],
+      "config": "default (no run_config)",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    },
+    {
+      "name": "A1 scope check (gemini-3.6-flash medium, flag ON, 18 claims)",
+      "kind": "r18",
+      "void": false,
+      "void_reason": "",
+      "for_t": false,
+      "beside_reason": "scope-check flag is ON, so not a flags-off group",
+      "dirs": [
+        "H:\\Work projects\\Prism\\Prism.PythonService\\scratch\\a1_output_2026-10-28\\exp1_medium_scope_1",
+        "H:\\Work projects\\Prism\\Prism.PythonService\\scratch\\a1_output_2026-10-28\\exp1_medium_scope_2",
+        "H:\\Work projects\\Prism\\Prism.PythonService\\scratch\\a1_output_2026-10-28\\exp1_medium_scope_3"
+      ],
+      "counts": {
+        "refusal": [
+          12,
+          10,
+          10
+        ],
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "spread": {
+        "refusal": 2,
+        "s_false_rejections": null,
+        "golden_refusal_family": null,
+        "golden_positive_hits": null
+      },
+      "changed": [
+        5,
+        18
+      ],
+      "config": "default (no run_config)",
+      "prompt_hashes": [
+        "cb3272cce551"
+      ],
+      "invalid": [],
+      "skipped": null
+    }
+  ]
+}
