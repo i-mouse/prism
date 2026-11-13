@@ -1,0 +1,81 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:29.079577+00:00",
+    "paper_id": "arxiv-2610.11135v1",
+    "filename": "2610.11135v1.pdf",
+    "extraction_run_id": "fa82bf24-0a94-4c5f-8ae2-2b29843751b8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-11-12T11:41:52Z",
+      "inline_claims": true
+    },
+    "claims_scope": [
+      1056
+    ]
+  },
+  "claims": [
+    {
+      "index": 1056,
+      "label": "supported",
+      "claim_summary": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Among the readers we tested, the gain comes from the model rather than the typed format; the input recipe helps other LLMs as much as it helps Jev.",
+      "evidence_spans": [
+        {
+          "source_text": "Conversely, when the identical serialised input is read by Jev instead of Qwen3.5-9B, AUC rises in all 35 cells (7 datasets &#215; 5 conditions), e.g. from .727 to .776 with the JevKT input.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On identical targets the JevKT input adds a similar, small amount to Jev (+.016) and to DeepSeek (+.010), significant on 2/7 and 1/7 datasets, and the two gains never differ significantly; the gap between the models (.077 at N=0) is set by the model, not by the input.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P3-R1",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P3-R2",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P3-S1",
+      "actual_index": 13
+    },
+    {
+      "expected_id": "P3-S2",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P3-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P3-S5",
+      "actual_index": 37
+    },
+    {
+      "expected_id": "P3-S6",
+      "actual_index": 29
+    },
+    {
+      "expected_id": "P3-S7",
+      "actual_index": 18
+    }
+  ]
+}

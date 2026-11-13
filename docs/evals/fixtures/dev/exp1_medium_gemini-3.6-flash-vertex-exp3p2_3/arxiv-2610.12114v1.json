@@ -1,0 +1,89 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:18.980579+00:00",
+    "paper_id": "arxiv-2610.12114v1",
+    "filename": "2610.12114v1.pdf",
+    "extraction_run_id": "0dbaad7a-9e6f-4f23-a314-6c8c1a889c15",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-12T11:45:58Z",
+      "inline_claims": true
+    },
+    "claims_scope": [
+      1047
+    ]
+  },
+  "claims": [
+    {
+      "index": 1047,
+      "label": "not_supported",
+      "claim_summary": "We observed that the training losses of the KD baselines had largely stabilized by the end of their respective update budgets.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "We observed that the training losses of the KD baselines had largely stabilized by the end of their respective update budgets.",
+      "evidence_spans": [
+        {
+          "source_text": "We observed that the training losses of the KD baselines had largely stabilized by the end of their respective update budgets.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "The KD baselines perform 200 parameter updates on Omni-MATH-2 and 100 on KernelBench, with the final checkpoint used for evaluation.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P11-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-R2",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P11-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P11-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P11-S3",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P11-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S7",
+      "actual_index": 28
+    },
+    {
+      "expected_id": "P11-S8",
+      "actual_index": null
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:56.041576+00:00",
+    "paper_id": "arxiv-2610.12124v1",
+    "filename": "2610.12124v1.pdf",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-11-12T11:43:10Z",
+      "inline_claims": true
+    },
+    "claims_scope": [
+      1042
+    ]
+  },
+  "claims": [
+    {
+      "index": 1042,
+      "label": "supported",
+      "claim_summary": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+      "evidence_spans": [
+        {
+          "source_text": "These gains demonstrate more effective learning from accumulated experience than the compared methods.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On DDXPlus, Hippocam continues to improve after early fluctuations and maintains its lead, while Letta and A-Mem also improve. On ToolBench, Hippocam makes modest further gains amid fluctuations and moves ahead of Letta, whereas A-Mem shows little sustained improvement in the extended evaluation.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 6: StreamBench accuracy at two evaluation horizons.",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P8-R1",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "P8-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P8-S3",
+      "actual_index": 10
+    },
+    {
+      "expected_id": "P8-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P8-S5",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P8-S6",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P8-S7",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P8-S8",
+      "actual_index": 27
+    }
+  ]
+}
