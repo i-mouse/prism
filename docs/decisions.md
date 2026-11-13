@@ -4816,3 +4816,50 @@ Void rules
 No rescue
 - No prompt, threshold, claim or rule change after the run starts. No
   extra runs. Outputs committed unscored before scoring.
+
+  ## Step 2 result: auditor caught 2/7 pass-2-recovered claims -> auditor first in step 4 - 2026-11-13
+
+Run facts
+- Pre-registration 2026-11-12 (tag prereg-step2-2026-11-12). Run
+  2026-11-12, 17:08-17:17 IST. All 3 repeats finished; not capped
+  (about INR 74 total by the tool's own counts: 33.0 + 20.83 + 20.15,
+  grounding included; cap 117.6). Fallback-served audits 0 of 21.
+  vote_claims reported no INVALID. Not void.
+- Outputs: docs/evals/fixtures/dev/
+  exp1_medium_gemini-3.6-flash-vertex-exp3p2_{1,2,3}, committed before
+  scoring.
+
+Result (RAW, 2-of-3 vote; EFFECTIVE identical)
+
+| Row | Runs 1-3 | Caught |
+|---|---|---|
+| P2-R3 | S S S | no |
+| P2-R4 | S S S | no |
+| P3-R1 | S S S | no |
+| P5-R3 | S S S | no |
+| P8-R3 | S S S | no |
+| P9-R1 | P P P | yes |
+| P11-R3 | N N N | yes |
+
+- Caught 2/7 (supported 5, split 0).
+- Report only: without P5-R3, 2/6. Appendix rows (P2-R3, P2-R4,
+  P11-R3) 1/3; other rows (P3-R1, P5-R3, P8-R3, P9-R1) 1/4.
+- All 7 claims got the same label in all 3 runs.
+
+Decision (split rule, mechanical)
+- Caught <= 4/7 -> the auditor change comes first in step 4.
+  Same order as recorded on 2026-10-20.
+
+Reading (not a rescue)
+- Even when extraction finds these bad claims, today's auditor passes
+  5 of 7 as supported. Extraction gains on these rows would mostly be
+  lost until the auditor improves.
+- Not tested: why the auditor passes them. The pass-2 claim summary is
+  the copied sentence, which differs from pass 1's short summary. Left
+  for the step 4 design.
+- Spend from the GCP Free Credit; billed amount recorded at the next
+  credit check.
+
+Next
+- Step 3: read-only look at CLAIMCHECK and SciClaimEval (format,
+  licence, size, fit). No runs.
