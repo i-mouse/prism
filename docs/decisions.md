@@ -4863,3 +4863,36 @@ Reading (not a rescue)
 Next
 - Step 3: read-only look at CLAIMCHECK and SciClaimEval (format,
   licence, size, fit). No runs.
+
+
+## Step 3: public datasets checked (read-only, INR 0) - 2026-11-13
+**Context:** Step 3 of the 6-step path ("6-step path after outside reviews - 2026-11-11"). Read-only look at public expert-labelled sets: format, licence, size and fit with Prism. No runs, no spend. Checked by web search and Nitin's screenshots of licences, READMEs, sample records and stats tables.
+
+**Findings:**
+
+| Dataset | Licence | Size / usable part | Truth quality | Use |
+|---|---|---|---|---|
+| SciTab (github.com/XinyuanLu00/SciTab, EMNLP 2023) | MIT (verified) | 1,225 claims; JSON with table caption, columns, rows, claim, label (supports / refutes / NEI) | Expert-verified; supported claims real, refuted/NEI model-written then expert-checked | Test the narrow table checker |
+| SciClaimEval (HF alabnii/sciclaimeval-shared-task, LREC 2026) | CC BY 4.0, per-row licence field | 727 dev rows; Supported / Refuted; full paper text | Expert; Refuted rows made by editing the table/figure image, so unusable for a text reader | Supported table claims only: false-rejection test |
+| PRISMM-Bench (HF daluggas/PRISMM-Bench, ICLR 2026, 384 rows; not the older 262-row wlin21at v1) | Apache-2.0 (code repo verified; HF card states Apache-2.0) | 384 cases / 353 papers; text-usable: table-text 46 (+ table-table 19, table-caption 6, equation-text 8); figure cases unusable | Reviewer-flagged, human-verified | About 46 table-text cases: real bad claims in new papers (catch test) |
+| CLAIMCHECK (github.com/JHU-CLSP/CLAIMCHECK) | None (no LICENSE file) | 41 papers, 154 disputed claims | Low expert agreement | Backup only; local use, never committed |
+| SciVer, RIGOURATE, SPOT | - | - | SciVer needs images; RIGOURATE labelled by LLMs; SPOT mostly maths/figure errata | Cited only, not used. SPOT: best model 21% recall on whole-paper error finding (supports the narrow-checker design) |
+
+**Sample row check (PRISMM-Bench zwcRnM8lD6_0, category table-only):**
+- parts holds an image only; content_text is empty. There is no paper text to audit.
+- The claim side is the reviewer's expectation (1000-epoch results should be reported), not a sentence the paper states. The problem is missing results, not a claim wider than its evidence.
+- The row disagrees with itself: review_text says 300 epochs; description and the answer choice say 30.
+- Not settled by reading the paper: that would be new hand labelling (decision 2026-11-09).
+- Lessons: (a) rows need an automatic filter written before any run; (b) public labels can contain errors, so outside-set scores are rough checks, never ground truth; (c) PRISMM-Bench's "inconsistency" is wider than Prism's job; only rows where the paper's own text states the claim fit.
+
+**Decision:**
+- The hand-labelled dev set stays the main test. Public sets are outside checks only, used in step 5 and only if the step 4 change passes on dev. Never tune prompts, cut-offs or filters on them.
+- Use plan for step 5 (marks pre-registered then): SciTab sample for the narrow table checker; SciClaimEval Supported table claims for false rejections; PRISMM-Bench table-text cases for catches.
+- Outside data lives in a local git-ignored folder. Only row ids and scores are committed. Licences and attribution go in the report.
+- Draft PRISMM-Bench filter (final version fixed in the step 5 pre-registration): keep a row only if (1) its category is text-based (table-text first; table-table, table-caption and equation-text reported separately); (2) content_text is not empty and an automatic check finds it in the paper text; (3) the row's own fields show the claim comes from the paper's text, not a reviewer expectation (field to be confirmed in step 5). Any row that would need a person to decide something is dropped, not judged.
+- Open points for step 5: the uid prefix is assumed to be an OpenReview forum id (not verified); the PDF must be the version the reviewer saw (ICLR 2025 submission), not a revised one; content_text may be a fragment rather than a full sentence.
+- Field comparison written: docs/report/PRISM_FIELD_COMPARISON.md (published benchmark and tool results next to Prism's numbers). It feeds the step 6 report update. Its figures are checked against their sources before it is quoted.
+
+**Alternatives:** Use a public set as the main test (rejected: none matches Prism's job of real overclaims, expert agreement and text-only evidence). Resolve row errors such as 300 vs 30 by reading the paper (rejected: new hand labelling). Use CLAIMCHECK as a main outside set (rejected: no licence, low expert agreement).
+
+**Consequences:** No change to the product or to dev numbers. Rulings (i) and (ii) are still open; they are recorded in their own entry before the step 4 pre-registration. Whether to restate the release bar (dev >= 22/31) in light of the field comparison is Nitin's decision, in its own dated entry.
