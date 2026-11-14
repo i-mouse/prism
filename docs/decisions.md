@@ -4896,3 +4896,72 @@ Next
 **Alternatives:** Use a public set as the main test (rejected: none matches Prism's job of real overclaims, expert agreement and text-only evidence). Resolve row errors such as 300 vs 30 by reading the paper (rejected: new hand labelling). Use CLAIMCHECK as a main outside set (rejected: no licence, low expert agreement).
 
 **Consequences:** No change to the product or to dev numbers. Rulings (i) and (ii) are still open; they are recorded in their own entry before the step 4 pre-registration. Whether to restate the release bar (dev >= 22/31) in light of the field comparison is Nitin's decision, in its own dated entry.
+
+
+## Rulings (i) and (ii) before the step 4 pre-registration - 2026-11-14
+**Context:** The 6-step path ("6-step path after outside reviews - 2026-11-11") requires two rulings from Nitin before step 4 is pre-registered. Nitin agreed both on 2026-11-14.
+
+**Ruling (i): outside datasets are not new hand labelling.**
+- Claims from public sets (SciTab, SciClaimEval, PRISMM-Bench) are fed to the auditor as text, using each dataset's own claim text and its own expert label. Prism's extractor is skipped for these tests.
+- Rows are chosen only by a fixed filter rule written in the step 5 pre-registration, before any run.
+- No person judges, matches or corrects any row. A row that would need a person to decide something is dropped, not judged.
+- This keeps Nitin's 2026-11-09 decision (no new hand labelling).
+
+**Ruling (ii): score direction and cut-off.**
+- Score = the number of failed pieces. The step 4 checker splits a claim into pieces and answers yes or no for each piece. A higher score means more problems.
+- Cut-off, fixed from what each label means, not chosen from results, checked in this order: 0 failed pieces = supported; all pieces failed = not_supported (a one-piece claim that fails is not_supported); otherwise (at least 1 failed, not all) = partially_supported.
+- The cut-off is never tuned on the dev set or on any public set. Trying several cut-offs and keeping the best is rejected as tuning on the test.
+- A 0-1 support score (pieces backed / all pieces) may be shown in the app later. It is never used to choose the cut-off.
+- Caught stays as before: partially_supported or not_supported in at least 2 of 3 runs (RAW; EFFECTIVE reported).
+
+**Alternatives:** (i) Run the full pipeline on public papers and match claims to rows by hand (rejected: new hand labelling) or by automatic matching (rejected: silent matching errors; official numbers come only from the hand-made match map, never the live matcher, 2026-10-12). (ii) Ask the model for a number (rejected: model-stated numbers are unstable); choose the cut-off on dev (rejected: tuning on the test); choose it on a public set first (rejected: breaks the step order).
+
+**Consequences:** Step 4 can be pre-registered only if the free table-finding check passes; if it fails, no paid step 4 run (go to step 6). The step 4 pre-registration states the remaining design rules (how pieces are made, how a table is found, what counts as "could not check") before any paid run.
+
+
+## Pre-registration: table-finding check before step 4 (code only, INR 0) - 2026-11-14
+
+**Status:** written before any run. Step 1 of NEXT in claude/handoff_2026-11-14.md. Decides only this free check and how it is read; step 4 gets its own entry.
+
+**Question:** for the 5 table-number misses routed to the step 4 checker, can plain code cut the right table out of the text the auditor receives?
+
+**Targets (6 tables, 5 rows):**
+
+| Row | Table(s) needed |
+|---|---|
+| P1-R1 | P1 T4 |
+| P3-R2 | P3 T9 |
+| P4-R1 | P4 T1, P4 T2 |
+| P4-R2 | P4 T9 (failing piece = missing raw FlexPrefill-Llama row; T2-R C04, pin P4-T9-S1) |
+| P11-R2 | P11 T3 |
+
+**Input:** product text (PyMuPDF page.get_text, pages joined; the text the auditor receives), made from the 12 dev PDFs by the product's own extract function. Truth: T2-R reference tables (from arXiv LaTeX) and docs/evals/auditor_rd/t1_pins_2026-10-28.json. No pin or reference table is edited.
+
+**Finder rule (fixed now; no LLM):**
+1. Caption line = a line that starts with "Table N" followed by ":", "." or "|". Found = exactly one such line for N. Zero, or two or more = not found (no tie-break).
+2. Block = from the caption line up to (not including) the next caption line of any Table / Figure / Fig., or a "References" line, or 12,000 characters, whichever comes first.
+
+**Table usable (all required):**
+- caption found;
+- every T1 pin marked breaking for that table has its value in the block;
+- >= 90% of the reference table's distinct numeric values are in the block (90% as in T1).
+Values are compared with the shared T1/T2-R cell parser, token by token.
+
+**Row ready:** all its tables usable.
+**PASS:** >= 4 of 5 rows ready. Basis: T2-R fixed 4 of these 5 with perfect tables. With 3 or fewer reachable, the expected gain (+1 to +3) falls to 2 rows or fewer, which the noise rule (a change of 2 refusal rows or fewer is not a win) does not count.
+**FAIL:** no paid step 4 run; result recorded; go to step 6.
+
+**Reported, not gated:**
+- label coverage: reference header and row labels found in the block (NFKC, casefold, spaces removed);
+- block size in chars, and tokens as chars/4 (ESTIMATED); cap hit y/n;
+- all-tables view: for every table number mentioned in each of the 12 dev papers, caption found exactly once y/n. This guards against a rule that only fits the 6 known tables.
+
+**What it does not test:** whether the checker reads a flattened table correctly (row groups, column order); figures; papers outside dev.
+
+**Open gap for the step 4 pre-registration:** P4-R2 cannot fail by the absence rule ("name found nowhere in the paper"), because FlexPrefill-Llama and raw MASA are both named in the paper; it is caught only if the checker sees Table 9's missing row.
+
+**Run rules:** INR 0; no LLM or network calls. Unit tests use made-up strings only. Nitin runs the script. Output holds ids, counts and y/n only, never paper text. Agents read only the output file; raw_text_cache, held-out, sealed, LABEL_RUBRIC.md, exp3_targets.json and .env stay closed. The rule, cap and thresholds are frozen once this entry is tagged. A code bug found after the run counts as FAIL, not a re-run (same as the T2-R form-bug rule).
+
+**Expected (not a mark):** 4-5 of 5. Risks: a prose line that starts "Table N.", a caption printed below its table, two-column text order.
+
+**Money:** INR 0.
