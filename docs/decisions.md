@@ -4992,3 +4992,49 @@ Values are compared with the shared T1/T2-R cell parser, token by token.
 **Next:** step 4 pre-registration, in its own dated entry, committed and tagged before any paid run. It must settle: (1) the routing rule; (2) the "could not check" fallback; (3) the found-vs-caught split in the scorer printout (report only); (4) who does arithmetic, code or model; (5) how a missing-row piece such as P4-R2 can fail, since the absence rule cannot catch it. Cost gate INR 200 per paper at 2027 prices. GCP Free Credit expires 2026-11-26.
 
 **Money:** INR 0.
+
+## Pre-registration: step 4 - table checker for table claims (text only), Vertex, 3 runs - 2026-11-15
+
+**Status:** written before any step 4 code or run. Step 4 of "6-step path after outside reviews - 2026-11-11". Follows "Table-finding check result: PASS (5 of 5 rows) - 2026-11-15". Nitin agreed the rulings below on 2026-11-15.
+
+**Why this change:** failure type R (the auditor trusts summary wording and misses a breaking table cell or a claim wider than its tables; miss types A and B, 2026-11-02). Targets by type, not by row. No code or prompt names or special-cases an eval row (no-regression rule check 6).
+
+**What changes (behind a new flag, default off):**
+- Flag `table_check` (default off). Flag-off prompt hash stays cb3272cce551; product unchanged until a kept result and its own entry.
+- Text only. No page images in this step (see "Picture trigger").
+
+**Rulings (Nitin, 2026-11-15):**
+1. Routing: a claim is routed if its claim text, or any evidence span's source_section or source_text, contains "Table", spaces, then digits (same pattern as the table-finding all-tables view). The checker gets every table block the frozen finder (commit f7ca8a3) finds exactly once in that paper, joined in table-number order, each headed "=== Table N ===". If the joined blocks exceed 60,000 chars, later tables are dropped and listed; a claim citing a dropped table is not routed. A paper with no found table routes nothing. Unrouted claims: today's auditor, unchanged.
+2. Pieces and answers: the A1 scope lister (prompt unchanged, hash recorded at the round 2 tag) splits the claim into pieces. One checker call per routed claim (gemini-3.6-flash, same thinking level as the auditor) gets the claim, its pieces and the table blocks. Per piece it answers one of: backed, not_backed, no_row, not_a_table_piece. For backed and not_backed it quotes the cells used (table number, row label, column label, value).
+3. Code guard (code, not the model): for backed and not_backed, every quoted value must be found in that table's block (shared parse_cell / values_equal, token by token) and every quoted row label must be found in that block (NFKC, casefold, whitespace removed); at least one word of 3+ letters from a quoted row or column label must appear in the piece text (name check). Guard fails -> the piece is "could not check". Code does not redo comparisons.
+4. Could not check: a piece is could-not-check if the lister or checker call fails or returns invalid JSON (after one retry), the answer is not_a_table_piece, or the code guard fails. Could-not-check never counts as failed and never lowers a label.
+5. Missing row: no_row counts as failed (the model found no row in any table for the piece). This is how type B (claim wider than its tables, e.g. P4-R2, P11-R2) can fail. It replaces the earlier "name nowhere in the paper" absence rule for routed claims. Accepted risk: the value exists only in prose -> a false rejection, measured by M3.
+6. Claim result (ruling (ii), 2026-11-14): failed = not_backed or no_row. All pieces checked and all failed -> not_supported; >= 1 failed -> partially_supported; 0 failed and all checked -> supported; 0 failed and >= 1 could-not-check -> today's auditor runs on that claim (same settings as the baseline) and its label is final. The checker result replaces today's audit for routed claims; today's audit runs only in that fallback case.
+7. Arithmetic: the model compares cells; code guards quotes and counts failed pieces. This is a recorded deviation from the 2026-10-28 v2 rule ("the model never compares; code does"). Reason: T1 failed (2026-10-29), so code has no table structure to compare from flat text; v2 stopped after T2-R. Risk: the model misses one breaking cell among many (P4-R1, P1-R1); M1 measures it.
+8. Found vs caught (report only, no mark): scorer printout per refusal row, per run and voted: found (a matching claim exists) -> routed -> checker failed >= 1 piece -> caught. S rows: routed -> lowered. Also: routed claim count, pieces, answers by kind, guard failures, fallback count.
+9. Gain mark follows the 2026-10-28 no-regression rule (3 runs, 2-of-3 vote). The "<= 2 rows is not a win" noise rule applies to single-run comparisons only; it is not a mark here. The gain is reported beside T = 3 (step 1b) as inside or outside noise.
+10. Baseline: reuse arm B of "Full no-regression check result - 2026-11-09" (gemini-3.6-flash medium, Vertex, flag-off, 3 dev + 3 golden folders, grounding gemini-3.1-flash-lite). Valid only if the step 4 arm uses the same claims files and settings except the flag and caching; otherwise this entry is void and a new baseline needs its own entry.
+
+**Arm D (the only new arm):** same as baseline B (--backend vertex, location global, --level medium, --auditor-model gemini-3.6-flash, --repeat 3, structurer gemini-3.6-flash, audit fallback gemini-3.1-flash-lite, LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite) plus --table-check and explicit caching on (cost only; label-neutral per the 2026-10-27 cache probe PASS). Claims: docs/evals/exp1_full_check_claims.json (84) and docs/evals/exp1_golden_claims.json (22).
+
+**Pass marks (all required; worst-case candidate vs best-case baseline, as score_full_check):**
+- M1 Fixes: of the 8 targets, D fixed >= baseline fixed + 1 (RAW). Parked P5-R1, P5-R2 reported only.
+- M2 Catches: D loses 0 of the 7 real hits (RAW). P1-R3 reported only (2026-11-07).
+- M3 False rejections (EFFECTIVE): D <= baseline (1/88) and <= 8/88.
+- M4 Golden: refusal-family >= 5/16 and positive hits >= 11/21.
+- M5 Grounding-negative: no golden negative row refused by the baseline vote and affirmed by D.
+- M6 Needs review: the checker makes no Needs review label (could-not-check falls back); ceilings met by construction; reported.
+- M7 Cost gate: projected INR per paper at 2027 prices = 196 + (D - Bc) x 2 x 30.17 <= 200, where D and Bc are mean dev audit INR per claim (run-date list price) over each arm's 3 dev folders, counting every lister, checker and fallback-audit call in D. 196 = step 1d estimate at 2027 prices; x 2 = 2027 price doubling; 30.17 claims per paper.
+- M8 D is not void.
+
+**Void rules:** as the 2026-11-08 entry V1-V5 (cap stop, INVALID scorer, > 16 fallback-served audits, crash re-run once with --repeat-index), plus V6: lister + checker call failures after retry > 5% of routed claims across all D runs -> void. A void run gives no result; a re-run needs a new entry.
+
+**Money:** caps set in a short round 2 note, committed and tagged with the code before any paid call: per-run cap = 1.3x the --estimate; total hard ceiling for step 4 INR 3,000 (dev + golden, 3 runs). Paid runs stop at the cap; a capped run is void. Sealed reserve INR 300 untouched. Development checks use made-up tables only; no dev, golden, held-out or sealed text before the paid run.
+
+**Picture trigger (report only; decides the next entry, not this result):** after scoring, a script compares each quoted cell on the 8 target rows with the T2-R reference tables. A layout misread = a quoted value that exists in the block but sits in a different row group or column in the reference table. If >= 1 target row has a layout misread in >= 2 of 3 runs, the next change is "checker + page image", in its own pre-registered entry. Otherwise no picture work.
+
+**Expected (not a mark):** 1 to 3 targets fixed (likely P1-R1, P4-R1; P11-R2 possible; P4-R2 uncertain because Table 2 holds FlexPrefill-Llama MASA rows on another benchmark). Main risk: M3, since the baseline is 1/88.
+
+**Closed:** held-out and sealed sets, raw_text_cache, LABEL_RUBRIC.md, exp3_targets.json, .env. No rescue: no prompt, rule or threshold change after the round 2 tag; results recorded as they fall.
+
+**Next:** round 2 - Claude Code builds the flag, finder join, lister/checker call, code guard, scorer printout and tests; Nitin runs tests and --estimate; caps note; commit and tag; then the paid run.
