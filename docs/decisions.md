@@ -4965,3 +4965,16 @@ Values are compared with the shared T1/T2-R cell parser, token by token.
 **Expected (not a mark):** 4-5 of 5. Risks: a prose line that starts "Table N.", a caption printed below its table, two-column text order.
 
 **Money:** INR 0.
+
+
+## Reading notes for the table-finding check (before any run) - 2026-11-14
+**Status:** written before the script reads any paper text. Fixes how the tagged entry "Pre-registration: table-finding check before step 4 (code only, INR 0) - 2026-11-14" is read where its words leave a detail open. No mark, threshold or target changes.
+- Text source: the eval/exp3_b4.py copy of the product extract loop (_resolve_pdf with pinned PDF sha256, then _extract_pdf_text; same loop as main.py:102-115), as used in step 1c. main.py is not imported (import side effects). The 2026-10-22 trace found no change between that text and the auditor prompt.
+- Breaking pins: "has its value in the block" applies to breaking pins that have a value (cell pins). Structural breaking pins (P4-T9-S1 row_absent; P11-T3-S1 caption) have no value; they are reported, not gated (caption fragments are reported y/n; a text block cannot show a missing row). P11 T3 has no breaking cell pin, so its gate is caption found plus the 90% value test.
+- Caption line: optional leading spaces or tabs, then "Table", spaces, the number, then optional spaces, then ":", "." or "|" (P5 prints "Table 3 | ..."); case-sensitive. "Table 10:" never matches N = 1.
+- Block end: the same pattern for Table, Figure or Fig. with any number; or a line whose stripped text equals "References" (any case; a numbered "7 References" does not end a block); or the 12,000-character cap.
+- Values: the block is split on whitespace and each token goes to the shared parse_cell unchanged (no stripping of brackets or commas). A number gives its value; a pair gives both members; SD is ignored. Reference distinct values are read the same way over every reference cell. Equal means numerically equal (values_equal without SD).
+- All-tables view (report only): a mention is "Table", spaces, then digits; "Table A1" and "Table 1a" are not counted.
+- Label coverage (report only): NFKC, casefold, all whitespace removed.
+- Accepted risks, not fixed after the run: a caption printed below its table; a caption split across two lines; values glued to punctuation; chance matches of small integers.
+- This check does not judge any claim. Open gap 4 for the step 4 pre-registration: pieces that need arithmetic (comparisons across cells, margins, counts) - state whether code or the model does it. The 2026-10-28 v2 design rule was: the model never counts or compares; code does.
