@@ -1,0 +1,433 @@
+{
+  "all_tables": {
+    "2610.10590v1": {
+      "1": true,
+      "2": true,
+      "3": true
+    },
+    "2610.10871v1": {
+      "1": true,
+      "10": true,
+      "11": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.11132v1": {
+      "1": true,
+      "10": true,
+      "11": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.11135v1": {
+      "1": true,
+      "10": true,
+      "11": true,
+      "12": false,
+      "13": true,
+      "14": true,
+      "15": true,
+      "16": true,
+      "17": true,
+      "18": true,
+      "19": true,
+      "2": true,
+      "20": true,
+      "21": true,
+      "22": true,
+      "23": true,
+      "24": true,
+      "25": true,
+      "26": true,
+      "27": true,
+      "28": true,
+      "29": true,
+      "3": true,
+      "30": true,
+      "31": true,
+      "32": true,
+      "33": true,
+      "34": true,
+      "35": true,
+      "36": true,
+      "37": true,
+      "38": true,
+      "39": true,
+      "4": true,
+      "40": true,
+      "41": true,
+      "42": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.11291v1": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true
+    },
+    "2610.11312v1": {
+      "1": true,
+      "10": true,
+      "11": true,
+      "12": true,
+      "13": true,
+      "14": true,
+      "15": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.11519v1": {
+      "1": false,
+      "10": true,
+      "11": true,
+      "12": true,
+      "13": true,
+      "14": true,
+      "15": true,
+      "16": true,
+      "17": true,
+      "18": true,
+      "19": true,
+      "2": true,
+      "20": true,
+      "21": true,
+      "22": true,
+      "23": true,
+      "24": true,
+      "25": true,
+      "26": true,
+      "27": true,
+      "28": true,
+      "29": true,
+      "3": true,
+      "30": true,
+      "31": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.12114v1": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true
+    },
+    "2610.12124v1": {
+      "1": true,
+      "10": true,
+      "11": true,
+      "12": true,
+      "13": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.12168v1": {},
+    "2610.12176v1": {
+      "1": true,
+      "10": true,
+      "11": true,
+      "12": false,
+      "13": true,
+      "14": true,
+      "15": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    },
+    "2610.12375v1": {
+      "1": true,
+      "2": false,
+      "3": true,
+      "4": true,
+      "5": true,
+      "6": true,
+      "7": true,
+      "8": true,
+      "9": true
+    }
+  },
+  "all_tables_counts": {
+    "2610.10590v1": {
+      "captions_found_once": 3,
+      "mentioned": 3
+    },
+    "2610.10871v1": {
+      "captions_found_once": 11,
+      "mentioned": 11
+    },
+    "2610.11132v1": {
+      "captions_found_once": 11,
+      "mentioned": 11
+    },
+    "2610.11135v1": {
+      "captions_found_once": 41,
+      "mentioned": 42
+    },
+    "2610.11291v1": {
+      "captions_found_once": 4,
+      "mentioned": 4
+    },
+    "2610.11312v1": {
+      "captions_found_once": 15,
+      "mentioned": 15
+    },
+    "2610.11519v1": {
+      "captions_found_once": 30,
+      "mentioned": 31
+    },
+    "2610.12114v1": {
+      "captions_found_once": 8,
+      "mentioned": 8
+    },
+    "2610.12124v1": {
+      "captions_found_once": 13,
+      "mentioned": 13
+    },
+    "2610.12168v1": {
+      "captions_found_once": 0,
+      "mentioned": 0
+    },
+    "2610.12176v1": {
+      "captions_found_once": 14,
+      "mentioned": 15
+    },
+    "2610.12375v1": {
+      "captions_found_once": 8,
+      "mentioned": 9
+    }
+  },
+  "breaking_pin_ids": {
+    "P1-T4": [
+      "P1-T4-01"
+    ],
+    "P11-T3": [
+      "P11-T3-S1"
+    ],
+    "P3-T9": [
+      "P3-T9-01",
+      "P3-T9-02"
+    ],
+    "P4-T1": [
+      "P4-T1-01"
+    ],
+    "P4-T2": [
+      "P4-T2-01",
+      "P4-T2-02"
+    ],
+    "P4-T9": [
+      "P4-T9-03",
+      "P4-T9-04",
+      "P4-T9-05",
+      "P4-T9-06",
+      "P4-T9-S1"
+    ]
+  },
+  "row_tables": {
+    "P1-R1": [
+      "P1-T4"
+    ],
+    "P11-R2": [
+      "P11-T3"
+    ],
+    "P3-R2": [
+      "P3-T9"
+    ],
+    "P4-R1": [
+      "P4-T1",
+      "P4-T2"
+    ],
+    "P4-R2": [
+      "P4-T9"
+    ]
+  },
+  "rows_ready": {
+    "P1-R1": true,
+    "P11-R2": true,
+    "P3-R2": true,
+    "P4-R1": true,
+    "P4-R2": true
+  },
+  "rows_ready_count": 5,
+  "rows_total": 5,
+  "rules": {
+    "cap_chars": 12000,
+    "pass_min_rows": 4,
+    "value_min_percent": 90
+  },
+  "tables": {
+    "P1-T4": {
+      "block_chars": 6870,
+      "breaking_cell_pins": {
+        "P1-T4-01": true
+      },
+      "cap_hit": false,
+      "caption_lines": 1,
+      "caption_number": 4,
+      "est_tokens": 1717,
+      "found": true,
+      "label_matched": 8,
+      "label_pct": 80.0,
+      "label_total": 10,
+      "paper_id": "2610.11519v1",
+      "ref_distinct_total": 14,
+      "ref_matched": 14,
+      "ref_pct": 100.0,
+      "structural_breaking": {},
+      "usable": true,
+      "value_test": true
+    },
+    "P11-T3": {
+      "block_chars": 2462,
+      "breaking_cell_pins": {},
+      "cap_hit": false,
+      "caption_lines": 1,
+      "caption_number": 3,
+      "est_tokens": 615,
+      "found": true,
+      "label_matched": 11,
+      "label_pct": 100.0,
+      "label_total": 11,
+      "paper_id": "2610.12114v1",
+      "ref_distinct_total": 18,
+      "ref_matched": 18,
+      "ref_pct": 100.0,
+      "structural_breaking": {
+        "P11-T3-S1": true
+      },
+      "usable": true,
+      "value_test": true
+    },
+    "P3-T9": {
+      "block_chars": 4562,
+      "breaking_cell_pins": {
+        "P3-T9-01": true,
+        "P3-T9-02": true
+      },
+      "cap_hit": false,
+      "caption_lines": 1,
+      "caption_number": 9,
+      "est_tokens": 1140,
+      "found": true,
+      "label_matched": 18,
+      "label_pct": 100.0,
+      "label_total": 18,
+      "paper_id": "2610.11135v1",
+      "ref_distinct_total": 105,
+      "ref_matched": 105,
+      "ref_pct": 100.0,
+      "structural_breaking": {},
+      "usable": true,
+      "value_test": true
+    },
+    "P4-T1": {
+      "block_chars": 1102,
+      "breaking_cell_pins": {
+        "P4-T1-01": true
+      },
+      "cap_hit": false,
+      "caption_lines": 1,
+      "caption_number": 1,
+      "est_tokens": 275,
+      "found": true,
+      "label_matched": 16,
+      "label_pct": 94.1,
+      "label_total": 17,
+      "paper_id": "2610.10871v1",
+      "ref_distinct_total": 88,
+      "ref_matched": 88,
+      "ref_pct": 100.0,
+      "structural_breaking": {},
+      "usable": true,
+      "value_test": true
+    },
+    "P4-T2": {
+      "block_chars": 4589,
+      "breaking_cell_pins": {
+        "P4-T2-01": true,
+        "P4-T2-02": true
+      },
+      "cap_hit": false,
+      "caption_lines": 1,
+      "caption_number": 2,
+      "est_tokens": 1147,
+      "found": true,
+      "label_matched": 19,
+      "label_pct": 95.0,
+      "label_total": 20,
+      "paper_id": "2610.10871v1",
+      "ref_distinct_total": 92,
+      "ref_matched": 92,
+      "ref_pct": 100.0,
+      "structural_breaking": {},
+      "usable": true,
+      "value_test": true
+    },
+    "P4-T9": {
+      "block_chars": 1039,
+      "breaking_cell_pins": {
+        "P4-T9-03": true,
+        "P4-T9-04": true,
+        "P4-T9-05": true,
+        "P4-T9-06": true
+      },
+      "cap_hit": false,
+      "caption_lines": 1,
+      "caption_number": 9,
+      "est_tokens": 259,
+      "found": true,
+      "label_matched": 14,
+      "label_pct": 100.0,
+      "label_total": 14,
+      "paper_id": "2610.10871v1",
+      "ref_distinct_total": 82,
+      "ref_matched": 82,
+      "ref_pct": 100.0,
+      "structural_breaking": {
+        "P4-T9-S1": "not checkable"
+      },
+      "usable": true,
+      "value_test": true
+    }
+  },
+  "verdict": "PASS"
+}

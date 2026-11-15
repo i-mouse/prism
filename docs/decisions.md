@@ -4978,3 +4978,17 @@ Values are compared with the shared T1/T2-R cell parser, token by token.
 - Label coverage (report only): NFKC, casefold, all whitespace removed.
 - Accepted risks, not fixed after the run: a caption printed below its table; a caption split across two lines; values glued to punctuation; chance matches of small integers.
 - This check does not judge any claim. Open gap 4 for the step 4 pre-registration: pieces that need arithmetic (comparisons across cells, margins, counts) - state whether code or the model does it. The 2026-10-28 v2 design rule was: the model never counts or compares; code does.
+
+
+## Table-finding check result: PASS (5 of 5 rows) - 2026-11-15
+**Result (applied as written):** docs/evals/step4_tablefind_2026-11-14/4_tablefind.md and .json. INR 0. Code, tests and reading notes frozen at commit f7ca8a3, tag prereg/tablefind-notes-2026-11-14, pushed before the run. Unit tests 52 passed; preflight OK.
+- Rows ready 5 of 5 (mark >= 4): P1-R1, P3-R2, P4-R1, P4-R2, P11-R2.
+- All 6 tables: caption line found exactly once; breaking cell pins in the block 10 of 10; reference values in the block 100% in every table (P1 T4 14/14, P3 T9 105/105, P4 T1 88/88, P4 T2 92/92, P4 T9 82/82, P11 T3 18/18); no cap hit.
+- Block size 1,039 to 6,870 chars (about 260 to 1,720 tokens, ESTIMATED), against about 37K average audit prompt tokens for a whole paper (2026-10-22 diagnostic).
+- Reported only: label coverage 80-100% (lowest P1 T4, 8/10); P11-T3-S1 caption fragments in the block: yes; P4-T9-S1: not checkable. All-tables view: 158 of 162 mentioned table numbers across the 12 dev papers have exactly one caption line; the other 4 are P1 T1, P3 T12, P9 T2, P10 T12 (zero vs two lines not reported).
+
+**What it means:** given the table number, plain code cuts the whole right table out of the text the auditor reads, at a small fraction of the whole-paper size. It does not show that code can pick the table from the claim (routing), that a checker reads a flattened table correctly, or that step 4 catches more misses. The 100% value matches may include chance matches of small numbers (accepted risk).
+
+**Next:** step 4 pre-registration, in its own dated entry, committed and tagged before any paid run. It must settle: (1) the routing rule; (2) the "could not check" fallback; (3) the found-vs-caught split in the scorer printout (report only); (4) who does arithmetic, code or model; (5) how a missing-row piece such as P4-R2 can fail, since the absence rule cannot catch it. Cost gate INR 200 per paper at 2027 prices. GCP Free Credit expires 2026-11-26.
+
+**Money:** INR 0.
