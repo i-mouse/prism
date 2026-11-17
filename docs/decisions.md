@@ -5038,3 +5038,41 @@ Values are compared with the shared T1/T2-R cell parser, token by token.
 **Closed:** held-out and sealed sets, raw_text_cache, LABEL_RUBRIC.md, exp3_targets.json, .env. No rescue: no prompt, rule or threshold change after the round 2 tag; results recorded as they fall.
 
 **Next:** round 2 - Claude Code builds the flag, finder join, lister/checker call, code guard, scorer printout and tests; Nitin runs tests and --estimate; caps note; commit and tag; then the paid run.
+
+## Step 4 build, caps and readings before the paid run - 2026-11-17
+
+**Status:** written after the build and the free --estimate, before any paid step 4 call. Follows "Pre-registration: step 4 - table checker ... - 2026-11-15" (tag prereg/step4-2026-11-15). No mark, threshold or ruling changes.
+
+**Build (frozen at this entry's tag):**
+- Code: Prism.PythonService/eval/step4/ (table_check.py, table_check_calls.py, table_check_schemas.py, table_check_system.md, score_table_check.py, picture_trigger.py, smoke_checker.py); eval/replay_audit.py (--table-check, default off); eval/score_full_check.py (flagged candidate only); 5 new test files. extraction/, prompts/, schemas.py, prompt_version.py and eval/step4/tablefind.py unchanged.
+- Hashes: checker 0d9b5dfaf827 (table_check_system.md + table_check_schemas.py); lister e6acbe55cdfc (prompts/scope_list_system.md + extraction/scope_schemas.py); finder commit f7ca8a3; flag-off prompt hash cb3272cce551 (unchanged). The hashes printed by the paid run must match these; a mismatch voids the run.
+- Checks: pytest 1428 passed, 3 skipped, 1 deselected; ruff --select F clean on new files; pyright 32 errors before and after (no new errors; the 32 pre-existing ones are a later cleanup PR). Smoke: one real checker call on a made-up table gave the expected answers (backed, not_backed -> partially_supported), guard pass.
+- Checker prompt: written once. One line added before freezing: a missing cell (empty, dash, n/a) cannot back a piece; if no other printed value settles the piece, the answer is no_row (same as ruling 5).
+
+**Readings and deviations (approved by Nitin, 2026-11-16 to 2026-11-17):**
+1. Routed claims keep their frozen run-1 evidence_spans for grounding; the label comes from the checker.
+2. Code lives in eval/step4/, not the product package; moving it is a separate step.
+3. --estimate prints the fallback rate as a 0%-100% range (ASSUMPTION).
+4. Lister returns 0 pieces -> could-not-check -> today's auditor.
+5. A1-A10 of the build plan as written (routing regex = the finder's mention pattern; 60,000-char prefix cap; guard details; invalid output -> one retry; claim-result order; checker uncached; M7 excludes cache overhead, printed beside; --table-check cannot combine with --scope-check; _tablecheck folder suffix).
+6. A routed claim with no frozen spans is treated as unrouted (reason no_spans) and goes to today's auditor; it is out of the V6 denominator.
+7. M7's D counts every audit call in the folder (unrouted audits, fallback audits, lister, checker) per claim, matching the baseline definition (all audit calls).
+8. --dry-run prints no routing counts (--estimate does).
+9. The scorer's Overall includes M7 for a flagged candidate. V6 is printed separately; a V6 VOID voids the arm whatever Overall says.
+10. The picture trigger can test 5 of the 8 targets (the other 3 have no T2-R reference table and print "no reference table"). Target ids come from score_a1.MISS_ROWS minus score_screen.PARKED_ROWS.
+
+**Free --estimate (2026-11-17, --table-check --cache, 3 repeats, grounding not included):**
+- Dev: 84 claims, 60 routed, 24 unrouted (no_table_mention 19, no_found_table 4, cites_dropped_table 1). Mean checker input ~9,605 tokens (ESTIMATED). Total INR 514.8-842.2 (low = 0% fallback, high = 100%).
+- Golden: 22 claims, 17 routed, 5 unrouted (no_table_mention 5). Total INR 140.3-233.1.
+- The checker's thought and output tokens are ASSUMPTIONS (no checker call measured on real papers).
+
+**Caps (fixed now):** dev --max-inr 1094.8; golden --max-inr 303.0 (1.3x the high end). Total 1,397.8, under the INR 3,000 step 4 ceiling. A run that stops at its cap is void.
+
+**Expectation recorded before the run (not a mark):** with the baseline at INR 2.4075 audit per claim, M7 passes only if D <= about INR 2.47 per claim. From the estimate, that holds only if fewer than about one in three routed claims fall back to today's auditor. M7 may fail on cost even if M1-M5 pass. M3 (baseline 1/88) remains the main quality risk.
+
+**Run:** two terminals, same day, each in Prism.PythonService with $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite":
+- Dev: uv run python -m eval.replay_audit --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --table-check --cache --max-inr 1094.8 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+- Golden: uv run python -m eval.replay_audit --set golden --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --table-check --cache --max-inr 303.0 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+Outputs are committed unscored before scoring. Scoring: score_full_check (D vs baseline B 2026-11-08 folders), then picture_trigger.
+
+**Money:** INR 0 so far (smoke about INR 0.1 on AI Studio). Sealed reserve INR 300 untouched.
