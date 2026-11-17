@@ -1,0 +1,1010 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:08.108000+00:00",
+    "paper_id": "arxiv-2610.11132v1",
+    "filename": "2610.11132v1.pdf",
+    "extraction_run_id": "18fea726-4814-47d3-a60f-94a01faee4d8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-17T10:05:15Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      }
+    },
+    "claims_scope": [
+      2,
+      9,
+      22,
+      24,
+      25
+    ]
+  },
+  "claims": [
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "SFT-as-context performs closely to SFT models on fine-tuned benchmarks and parents on general benchmarks",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context remains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and 2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE on NutriBench-English, while staying within 2.2 percentage points of the parent models on general capabilities on average.",
+      "evidence_spans": [
+        {
+          "source_text": "Across 19 parent-SFT model pairs and 11 benchmarks, SFT-as-context remains close to the SFT models on fine-tuned capabilities, with gaps of only 2.2 and 2.1 percentage points on AIME 2024 and LiveCodeBench and 2.0 macro MAE on NutriBench-English, while staying within 2.2 percentage points of the parent models on general capabilities on average.",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "AIME 2024 Accuracy Parent 11.3 SFT 56.0 SFT-as-Context 53.8",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "LiveCodeBench Pass@1 Parent 20.1 SFT 55.5 SFT-as-Context 53.4",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "NutriBench-English Macro MAE Parent 35.3 SFT 16.4 SFT-as-Context 18.4",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Parent and SFT model pairs used in math, coding, and nutrition experiments.",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 7,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "results hold across all 19 parent-SFT model pairs",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 4,
+                "row_label": "Qwen2.5-1.5B-Instruct",
+                "column_label": "Parent Model",
+                "value": "Qwen2.5-1.5B-Instruct"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen2.5-7B-Instruct",
+                "column_label": "Parent Model",
+                "value": "Qwen2.5-7B-Instruct"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen2.5-32B-Instruct",
+                "column_label": "Parent Model",
+                "value": "Qwen2.5-32B-Instruct"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen2.5-Coder-7B-Instruct",
+                "column_label": "Parent Model",
+                "value": "Qwen2.5-Coder-7B-Instruct"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen2.5-14B-Instruct",
+                "column_label": "Parent Model",
+                "value": "Qwen2.5-14B-Instruct"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen2.5-Coder-32B-Instruct",
+                "column_label": "Parent Model",
+                "value": "Qwen2.5-Coder-32B-Instruct"
+              },
+              {
+                "table": 4,
+                "row_label": "Gemma-4-E4B-it",
+                "column_label": "Parent Model",
+                "value": "Gemma-4-E4B-it"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen3-4B",
+                "column_label": "Parent Model",
+                "value": "Qwen3-4B"
+              },
+              {
+                "table": 4,
+                "row_label": "Qwen3-8B",
+                "column_label": "Parent Model",
+                "value": "Qwen3-8B"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "results hold across all 11 evaluated benchmarks",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "Benchmark",
+                "value": "AIME 2024"
+              },
+              {
+                "table": 1,
+                "row_label": "MathIF\u2020",
+                "column_label": "Benchmark",
+                "value": "MathIF\u2020"
+              },
+              {
+                "table": 1,
+                "row_label": "IFEval",
+                "column_label": "Benchmark",
+                "value": "IFEval"
+              },
+              {
+                "table": 1,
+                "row_label": "MGSM",
+                "column_label": "Benchmark",
+                "value": "MGSM"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "Benchmark",
+                "value": "LiveCodeBench"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBenchIF\u2020",
+                "column_label": "Benchmark",
+                "value": "LiveCodeBenchIF\u2020"
+              },
+              {
+                "table": 1,
+                "row_label": "SQuAD2.0",
+                "column_label": "Benchmark",
+                "value": "SQuAD2.0"
+              },
+              {
+                "table": 1,
+                "row_label": "FQuAD2.0",
+                "column_label": "Benchmark",
+                "value": "FQuAD2.0"
+              },
+              {
+                "table": 1,
+                "row_label": "CoQA",
+                "column_label": "Benchmark",
+                "value": "CoQA"
+              },
+              {
+                "table": 1,
+                "row_label": "ACPBench",
+                "column_label": "Benchmark",
+                "value": "ACPBench"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-English",
+                "column_label": "Benchmark",
+                "value": "NutriBench-English"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "evaluated across parent-SFT model pairs and benchmarks",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "SFT-as-Context",
+                "value": "53.8"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "SFT-as-Context",
+                "value": "53.4"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "evaluations include AIME 2024, LiveCodeBench, and NutriBench-English",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "Benchmark",
+                "value": "AIME 2024"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "Benchmark",
+                "value": "LiveCodeBench"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-English",
+                "column_label": "Benchmark",
+                "value": "NutriBench-English"
+              }
+            ]
+          },
+          {
+            "piece_id": 5,
+            "text": "gaps reported across parent models",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "IFEval",
+                "column_label": "Parent",
+                "value": "71.3"
+              },
+              {
+                "table": 1,
+                "row_label": "IFEval",
+                "column_label": "SFT-as-Context",
+                "value": "69.8"
+              },
+              {
+                "table": 1,
+                "row_label": "MathIF\u2020",
+                "column_label": "Parent",
+                "value": "50.1"
+              },
+              {
+                "table": 1,
+                "row_label": "MathIF\u2020",
+                "column_label": "SFT-as-Context",
+                "value": "45.8"
+              },
+              {
+                "table": 1,
+                "row_label": "MGSM",
+                "column_label": "Parent",
+                "value": "90.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MGSM",
+                "column_label": "SFT-as-Context",
+                "value": "87.5"
+              },
+              {
+                "table": 1,
+                "row_label": "IFEval",
+                "column_label": "Parent",
+                "value": "75.0"
+              },
+              {
+                "table": 1,
+                "row_label": "IFEval",
+                "column_label": "SFT-as-Context",
+                "value": "74.8"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBenchIF\u2020",
+                "column_label": "Parent",
+                "value": "31.5"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBenchIF\u2020",
+                "column_label": "SFT-as-Context",
+                "value": "31.1"
+              },
+              {
+                "table": 1,
+                "row_label": "SQuAD2.0",
+                "column_label": "Parent",
+                "value": "86.1"
+              },
+              {
+                "table": 1,
+                "row_label": "SQuAD2.0",
+                "column_label": "SFT-as-Context",
+                "value": "83.3"
+              },
+              {
+                "table": 1,
+                "row_label": "FQuAD2.0",
+                "column_label": "Parent",
+                "value": "81.0"
+              },
+              {
+                "table": 1,
+                "row_label": "FQuAD2.0",
+                "column_label": "SFT-as-Context",
+                "value": "78.2"
+              },
+              {
+                "table": 1,
+                "row_label": "CoQA",
+                "column_label": "Parent",
+                "value": "95.9"
+              },
+              {
+                "table": 1,
+                "row_label": "CoQA",
+                "column_label": "SFT-as-Context",
+                "value": "93.1"
+              },
+              {
+                "table": 1,
+                "row_label": "ACPBench",
+                "column_label": "Parent",
+                "value": "77.0"
+              },
+              {
+                "table": 1,
+                "row_label": "ACPBench",
+                "column_label": "SFT-as-Context",
+                "value": "78.8"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-Non-English\u2020",
+                "column_label": "Parent",
+                "value": "77.3"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-Non-English\u2020",
+                "column_label": "SFT-as-Context",
+                "value": "73.7"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-Non-Food",
+                "column_label": "Parent",
+                "value": "98.8"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-Non-Food",
+                "column_label": "SFT-as-Context",
+                "value": "98.0"
+              }
+            ]
+          },
+          {
+            "piece_id": 6,
+            "text": "gaps reported across SFT models",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "SFT",
+                "value": "56.0"
+              },
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "SFT-as-Context",
+                "value": "53.8"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "SFT",
+                "value": "55.5"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "SFT-as-Context",
+                "value": "53.4"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-English",
+                "column_label": "SFT",
+                "value": "16.4"
+              },
+              {
+                "table": 1,
+                "row_label": "NutriBench-English",
+                "column_label": "SFT-as-Context",
+                "value": "18.4"
+              }
+            ]
+          },
+          {
+            "piece_id": 7,
+            "text": "performance evaluated on AIME 2024 and LiveCodeBench",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "Parent",
+                "value": "11.3"
+              },
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "SFT",
+                "value": "56.0"
+              },
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "SFT-as-Context",
+                "value": "53.8"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "Parent",
+                "value": "20.1"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "SFT",
+                "value": "55.5"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "SFT-as-Context",
+                "value": "53.4"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "label": "partially_supported",
+      "claim_summary": "SFT-as-context achieves 95.0% and 94.1% recovery of fine-tuning gains on AIME 2024 and LiveCodeBench",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Using SFT checkpoints collected from Hugging Face, SFT-as-context achieves 95.0% and 94.1% recovery rates of the fine-tuning gains on AIME 2024 and LiveCodeBench (Jain et al., 2025), respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "We evaluate 19 parent-SFT pairs, including 8 SFT models fine-tuned on English mathematical reasoning traces and 8 fine-tuned on coding tasks, all of which are popular models from Hugging Face (Appendix A.2).",
+          "source_section": "Section 2.1",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "AIME 2024 Accuracy 11.3 56.0 53.8 95.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "LiveCodeBench Pass@1 20.1 55.5 53.4 94.1",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "partially_supported",
+        "fallback_reason": null,
+        "n_pieces": 2,
+        "n_failed": 1,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "results must hold for both target evaluation datasets: AIME 2024 and LiveCodeBench",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "AIME 2024",
+                "column_label": "R (\u2191)",
+                "value": "95.0"
+              },
+              {
+                "table": 1,
+                "row_label": "LiveCodeBench",
+                "column_label": "R (\u2191)",
+                "value": "94.1"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "results must be demonstrated across SFT checkpoints collected from Hugging Face",
+            "kind": "plural",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          }
+        ]
+      }
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Open-source SFT context consistently lowers NutriBench MAE for proprietary models beyond standalone baseline",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As shown in Table 2, using responses from open-source SFT models as context consistently improves the performance of a strong proprietary model on NutriBench-English, achieving lower MAE than either model alone.",
+      "evidence_spans": [
+        {
+          "source_text": "providing responses from a fine-tuned Qwen3-4B as context to Gemini 3.5 Flash reduces macro MAE from 17.44 to 14.08 on NutriBench-English, outperforming either model alone.",
+          "source_section": "Section 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Gemini 3.5 Flash 17.44",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 4,
+        "n_failed": 0,
+        "n_could_not_check": 3,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The performance improvement must hold consistently across the evaluated settings",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemini 3.5 Flash",
+                "value": "17.44"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemma-4-E4B-it",
+                "value": "16.64"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "16.46"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-8B",
+                "value": "16.05"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemma-4-E4B-it",
+                "value": "14.13"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "14.08"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-8B",
+                "value": "14.41"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "The effect must be shown for the specific dataset NutriBench-English",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemini 3.5 Flash",
+                "value": "17.44"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "14.08"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "The method must achieve lower MAE than the open-source SFT model alone and the proprietary model alone",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemini 3.5 Flash",
+                "value": "17.44"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemma-4-E4B-it",
+                "value": "16.64"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "16.46"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-8B",
+                "value": "16.05"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemma-4-E4B-it",
+                "value": "14.13"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "14.08"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-8B",
+                "value": "14.41"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "The effect must hold for multiple open-source SFT models",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemma-4-E4B-it",
+                "value": "16.64"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "16.46"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-8B",
+                "value": "16.05"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Gemma-4-E4B-it",
+                "value": "14.13"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-4B",
+                "value": "14.08"
+              },
+              {
+                "table": 2,
+                "row_label": "Macro MAE \u2193",
+                "column_label": "Qwen3-8B",
+                "value": "14.41"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 24,
+      "label": "partially_supported",
+      "claim_summary": "SFT-as-context surpasses oracle routing in joint capability success rates",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "As shown in Tables 7 and 8, SFT-as-context outperforms even the oracle router.",
+      "evidence_spans": [
+        {
+          "source_text": "Average (8 pairs) 21.1 15.1 27.2 30.7 +3.5",
+          "source_section": "Table 7",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Average (8 pairs) 6.4 15.2 18.7 20.7 +2.0",
+          "source_section": "Table 8",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The only exception where the improvement is negative is OlympicCoder-7B.",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          7,
+          8
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The claim references two specific tables, Table 7 and Table 8",
+            "kind": "named_set",
+            "answer": "not_a_table_piece",
+            "state": "could_not_check",
+            "reason": "not_a_table_piece",
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 2,
+            "text": "The outcome is demonstrated for both Tables 7 and 8",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 7,
+                "row_label": "Average (8 pairs)",
+                "column_label": "Oracle",
+                "value": "27.2"
+              },
+              {
+                "table": 7,
+                "row_label": "Average (8 pairs)",
+                "column_label": "SFT-as-Context",
+                "value": "30.7"
+              },
+              {
+                "table": 7,
+                "row_label": "Average (8 pairs)",
+                "column_label": "Improvement",
+                "value": "+3.5"
+              },
+              {
+                "table": 8,
+                "row_label": "Average (8 pairs)",
+                "column_label": "Oracle",
+                "value": "18.7"
+              },
+              {
+                "table": 8,
+                "row_label": "Average (8 pairs)",
+                "column_label": "SFT-as-Context",
+                "value": "20.7"
+              },
+              {
+                "table": 8,
+                "row_label": "Average (8 pairs)",
+                "column_label": "Improvement",
+                "value": "+2.0"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 25,
+      "label": "partially_supported",
+      "claim_summary": "Second-pass generation adds at most 13.0% token overhead for math and coding models",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 10 shows that, for all math and coding model pairs, the second pass incurs only modest overhead relative to the typically long responses generated by the SFT model in the first pass. Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+          "source_section": "Appendix I",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "For the nutrition estimation task, however, the parent model generates relatively longer responses during the second pass, as it performs additional reasoning to compare the SFT-generated reference with its own estimate.",
+          "source_section": "Appendix I",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "zero_pieces",
+        "n_pieces": 0,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": []
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P2-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R5",
+      "actual_index": 24
+    },
+    {
+      "expected_id": "P2-S2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S3",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P2-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S7",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P2-S8",
+      "actual_index": 25
+    }
+  ]
+}

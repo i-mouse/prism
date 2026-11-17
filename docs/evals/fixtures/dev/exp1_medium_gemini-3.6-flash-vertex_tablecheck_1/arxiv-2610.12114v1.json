@@ -1,0 +1,559 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:18.980579+00:00",
+    "paper_id": "arxiv-2610.12114v1",
+    "filename": "2610.12114v1.pdf",
+    "extraction_run_id": "0dbaad7a-9e6f-4f23-a314-6c8c1a889c15",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-11-17T08:46:18Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      }
+    },
+    "claims_scope": [
+      6,
+      7,
+      11,
+      16,
+      17,
+      19,
+      28
+    ]
+  },
+  "claims": [
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "UTT boosts KernelBench accuracy, Fast1, and math accuracy over unprimed baselines.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Relative to the unprimed Student baselines, UTT improves KernelBench accuracy from 9.4% to 48.6%, Fast1 from 9% to 35%, and mathematical reasoning accuracy from 27.6% to 51.7%.",
+      "evidence_spans": [
+        {
+          "source_text": "The Primer yields substantial gains of 39.2, 26, and 24.1 percentage points over the Student baseline on KernelBench accuracy, Fast1, and Math accuracy, respectively, improving the corresponding scores from 9.4% to 48.6%, 9% to 35%, and 27.6% to 51.7%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "UTT outperforms prompt engineering and parameter-updating KD across evaluated settings.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across the evaluated settings, UTT also outperforms representative prompt engineering and parameter-updating knowledge distillation methods.",
+      "evidence_spans": [
+        {
+          "source_text": "UTT performs best across all six combinations, with consistent gains across tasks and target models.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1, respectively.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 11,
+      "label": "supported",
+      "claim_summary": "Primers improve performance for both source Students and uninvolved target Students.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Notably, the resulting Primer can improve the performance of the source Student and other Students that are not involved in creating the Primer.",
+      "evidence_spans": [
+        {
+          "source_text": "The Primer yields substantial gains of 39.2, 26, and 24.1 percentage points over the Student baseline on KernelBench accuracy, Fast1, and Math accuracy, respectively, improving the corresponding scores from 9.4% to 48.6%, 9% to 35%, and 27.6% to 51.7%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast1, and Math accuracy, respectively.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 points across metrics.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast1, and Math accuracy, respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "The Flash-derived Primer improves Qwen by 32.0, 25, and 25.8 percentage points in KernelBench accuracy, Fast1, and Math accuracy, respectively.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "41.2 (+32.0)",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the performance improvements apply across the named set of metrics: KernelBench accuracy, Fast1, and Math accuracy",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Flash",
+                "column_label": "Qwen",
+                "value": "41.2 (+32.0) 3\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Flash",
+                "column_label": "Qwen",
+                "value": "37 (+25) 3\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Flash",
+                "column_label": "Qwen",
+                "value": "60.1 (+25.8) 3\u20dd"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 points across metrics.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "The Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 percentage points on the same metrics.",
+      "evidence_spans": [
+        {
+          "source_text": "The Qwen-derived Primer improves Flash by 34.4, 21, and 16.1 percentage points on the same metrics.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "43.8 (+34.4)",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "improvements hold across the specific three metrics mentioned (Flash performance metrics)",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Flash",
+                "value": "43.8 (+34.4) 4\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Flash",
+                "value": "30 (+21) 4\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Flash",
+                "value": "43.7 (+16.1) 4\u20dd"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "improvements are measured on the exact same set of metrics for both systems",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Flash",
+                "value": "43.8 (+34.4) 4\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Qwen",
+                "value": "50.0 (+40.8) 2\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Flash",
+                "value": "30 (+21) 4\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Qwen",
+                "value": "32 (+20) 2\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Flash",
+                "value": "43.7 (+16.1) 4\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Qwen",
+                "column_label": "Qwen",
+                "value": "62.4 (+28.1) 2\u20dd"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "Opus->Flash Primer improves Flash by 38.8, 30, and 19.0 percentage points.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+      "evidence_spans": [
+        {
+          "source_text": "We then replace Pro with Opus and synthesize a new Primer for Flash. It improves Flash by 38.8, 30, and 19.0 percentage points on the three metrics, demonstrating that UTT remains effective with different Teachers.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "48.2 (+38.8) 5\u20dd",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the improvement holds for all three specified metrics",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Opus",
+                "column_label": "Flash",
+                "value": "48.2 (+38.8) 5\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Opus",
+                "column_label": "Flash",
+                "value": "39 (+30) 5\u20dd"
+              },
+              {
+                "table": 1,
+                "row_label": "Opus",
+                "column_label": "Flash",
+                "value": "46.6 (+19.0) 5\u20dd"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the effectiveness holds across different Teacher models",
+            "kind": "plural",
+            "answer": "not_a_table_piece",
+            "state": "could_not_check",
+            "reason": "not_a_table_piece",
+            "guard_reasons": [],
+            "cells": []
+          }
+        ]
+      }
+    },
+    {
+      "index": 28,
+      "label": "supported",
+      "claim_summary": "UTT beats the best parameter-updating KD baseline across all evaluated metrics.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With Student parameters fixed, UTT exceeds the strongest baseline by 7.2, 8.2, and 4 percentage points on Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1, respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 3: Comparison with KD methods under the Pro\u2192Qwen setting.",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "LUFFY (Yan et al., 2025) | 55.2 | 11.4 | 13",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Fine-tune-CoT (Ho et al., 2023) | 39.5 | 41.8 | 28",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "UTT (Ours) | 62.4 | 50.0 | 32",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          3
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "results hold across three specific metrics: Omni-MATH-2 accuracy, KernelBench accuracy, and Fast1",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "LUFFY (Yan et al., 2025)",
+                "column_label": "Acc.",
+                "value": "55.2"
+              },
+              {
+                "table": 3,
+                "row_label": "UTT (Ours)",
+                "column_label": "Acc.",
+                "value": "62.4"
+              },
+              {
+                "table": 3,
+                "row_label": "Fine-tune-CoT (Ho et al., 2023)",
+                "column_label": "Acc.",
+                "value": "41.8"
+              },
+              {
+                "table": 3,
+                "row_label": "UTT (Ours)",
+                "column_label": "Acc.",
+                "value": "50.0"
+              },
+              {
+                "table": 3,
+                "row_label": "Fine-tune-CoT (Ho et al., 2023)",
+                "column_label": "Fast1",
+                "value": "28"
+              },
+              {
+                "table": 3,
+                "row_label": "UTT (Ours)",
+                "column_label": "Fast1",
+                "value": "32"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "results are evaluated against multiple baselines",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "SeqKD (Kim & Rush, 2016)",
+                "column_label": "Acc.",
+                "value": "53.5"
+              },
+              {
+                "table": 3,
+                "row_label": "Fine-tune-CoT (Ho et al., 2023)",
+                "column_label": "Acc.",
+                "value": "39.5"
+              },
+              {
+                "table": 3,
+                "row_label": "RSR (Yang et al., 2026)",
+                "column_label": "Acc.",
+                "value": "51.5"
+              },
+              {
+                "table": 3,
+                "row_label": "LUFFY (Yan et al., 2025)",
+                "column_label": "Acc.",
+                "value": "55.2"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P11-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-R2",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P11-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P11-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P11-S3",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P11-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P11-S7",
+      "actual_index": 28
+    },
+    {
+      "expected_id": "P11-S8",
+      "actual_index": null
+    }
+  ]
+}

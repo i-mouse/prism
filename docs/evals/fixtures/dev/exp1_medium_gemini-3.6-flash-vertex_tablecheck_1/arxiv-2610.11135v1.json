@@ -1,0 +1,1310 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:29.079577+00:00",
+    "paper_id": "arxiv-2610.11135v1",
+    "filename": "2610.11135v1.pdf",
+    "extraction_run_id": "fa82bf24-0a94-4c5f-8ae2-2b29843751b8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-11-17T08:27:25Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      }
+    },
+    "claims_scope": [
+      3,
+      13,
+      15,
+      18,
+      29,
+      32,
+      37
+    ]
+  },
+  "claims": [
+    {
+      "index": 3,
+      "label": "partially_supported",
+      "claim_summary": "Jev holds an advantage on new learners, while deep KT leads on unseen items.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "For new learners the advantage holds from their first interactions, whereas on unseen items with all learners logged, deep KT remains ahead.",
+      "evidence_spans": [
+        {
+          "source_text": "Figure 3a scores the same N=8 predictions by the position of the target in a new learner\u2019s sequence. JevKT is above the best deep KT model at every position, already for the second to fifth interactions (.714 vs. .691), when the new learner has shown little evidence, and in 33/35 dataset\u2013position cells (Table 9).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Here every training learner is available, so this setting isolates new items rather than few learners. JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          9,
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "partially_supported",
+        "fallback_reason": null,
+        "n_pieces": 4,
+        "n_failed": 1,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "advantage holds for new learners",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 9,
+                "row_label": "JevKT",
+                "column_label": "Mean",
+                "value": ".714"
+              },
+              {
+                "table": 9,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Mean",
+                "value": ".691"
+              },
+              {
+                "table": 9,
+                "row_label": "JevKT",
+                "column_label": "Mean",
+                "value": ".726"
+              },
+              {
+                "table": 9,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Mean",
+                "value": ".695"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "advantage holds starting from the very first interactions",
+            "kind": "plural",
+            "answer": "not_backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 9,
+                "row_label": "JevKT",
+                "column_label": "A09",
+                "value": ".709\u00b1.059"
+              },
+              {
+                "table": 9,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "A09",
+                "value": ".749\u00b1.049"
+              },
+              {
+                "table": 9,
+                "row_label": "JevKT",
+                "column_label": "XES3G5M",
+                "value": ".512\u00b1.057"
+              },
+              {
+                "table": 9,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "XES3G5M",
+                "value": ".542\u00b1.049"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "deep KT remains ahead across all learners",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Avg",
+                "value": ".798"
+              },
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Avg",
+                "value": ".770"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "deep KT remains ahead on unseen items",
+            "kind": "plural",
+            "answer": "not_backed",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "Junyi",
+                "value": ".731\u00b1.039"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Junyi",
+                "value": ".728\u00b1.026"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 13,
+      "label": "supported",
+      "claim_summary": "Jev0-shot outperforms both LOKT and the top 8-learner deep KT baseline.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "This is above the strongest training-free LLM-KT baseline, LOKT (.671), and above the best deep KT model trained on 8 learners (.689; higher on 5/7 datasets).",
+      "evidence_spans": [
+        {
+          "source_text": "Without any data from the target platform, Jev0-shot reaches .706 mean AUC (first block of Table 1).",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": ".738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": ".715 .662 .699 .688 .656 .671 .608 .671",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": ".700 .653 .689 .793 .711 .652 .624 .689",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 3,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the baseline comparison applies to the best deep KT model that was trained on a set of 8 learners",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Avg",
+                "value": ".689"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the superior performance holds across 5 out of 7 specific datasets",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "ASSIST09",
+                "value": ".738"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "ASSIST09",
+                "value": ".700"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "NIPS34",
+                "value": ".691"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "NIPS34",
+                "value": ".653"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "XES3G5M",
+                "value": ".725"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "XES3G5M",
+                "value": ".689"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "DBE-KT22",
+                "value": ".742"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "DBE-KT22",
+                "value": ".793"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "Alg05",
+                "value": ".698"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Alg05",
+                "value": ".711"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "Junyi",
+                "value": ".700"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Junyi",
+                "value": ".652"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "ASSIST17",
+                "value": ".648"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "ASSIST17",
+                "value": ".624"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "the result holds across multiple datasets evaluated in the benchmark",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "ASSIST09",
+                "value": ".738"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "ASSIST09",
+                "value": ".700"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "NIPS34",
+                "value": ".691"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "NIPS34",
+                "value": ".653"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "XES3G5M",
+                "value": ".725"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "XES3G5M",
+                "value": ".689"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "Junyi",
+                "value": ".700"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Junyi",
+                "value": ".652"
+              },
+              {
+                "table": 1,
+                "row_label": "Jev0-shot",
+                "column_label": "ASSIST17",
+                "value": ".648"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "ASSIST17",
+                "value": ".624"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "JevKT outperforms deep KT across all datasets at N=8, 16, and 32.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT is ahead of the best deep KT model by +.033, +.023 and +.016 mean AUC at N=8, 16 and 32 (on 7/7, 7/7 and 7/7 datasets); the mean difference is +.004 at N=64, \u2212.002 at N=128, \u2212.008 at N=256 and \u2212.028 with the full training data.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 15: JevKT \u2212best DLKT under cold start (P1): mean \u2206AUC over 7 datasets",
+          "source_section": "Table 15",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1,
+          15
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 4,
+        "n_failed": 0,
+        "n_could_not_check": 4,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The performance gains hold at N=8, N=16, and N=32.",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Avg",
+                "value": ".722"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Avg",
+                "value": ".689"
+              },
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Avg",
+                "value": ".730"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Avg",
+                "value": ".707"
+              },
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Avg",
+                "value": ".739"
+              },
+              {
+                "table": 1,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Avg",
+                "value": ".723"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "The performance gains hold across all 7 out of 7 datasets for each specified N value.",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Wins",
+                "value": "7/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "Results apply across 7 datasets.",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Wins",
+                "value": "7/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "The comparison holds across all datasets tested.",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "JevKT",
+                "column_label": "Wins",
+                "value": "7/7"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 18,
+      "label": "supported",
+      "claim_summary": "On unseen items, Jev beats LOKT but lags behind fully-trained deep KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "JevKT (.713) and Jev0-shot (.704) stay well above LOKT (.664), but the best deep KT model, trained on all learners and chosen on test, is ahead (.729; JevKT is better on 1/7 datasets; Table 10).",
+      "evidence_spans": [
+        {
+          "source_text": "JevKT .728\u00b1.029 .725\u00b1.014 .707\u00b1.021 .687\u00b1.047 .775\u00b1.015 .731\u00b1.039 .639\u00b1.012 .713",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Jev0-shot .706\u00b1.034 .717\u00b1.018 .718\u00b1.016 .705\u00b1.048 .737\u00b1.018 .714\u00b1.034 .629\u00b1.013 .704",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "LOKT\u2021 .688\u00b1.036 .683\u00b1.027 .692\u00b1.015 .682\u00b1.054 .649\u00b1.030 .653\u00b1.020 .599\u00b1.012 .664",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Best deep KT\u2020 .746\u00b1.019 .739\u00b1.015 .725\u00b1.003 .697\u00b1.014 .806\u00b1.002 .728\u00b1.026 .665\u00b1.016 .729",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 3,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the finding involves a comparison against the best deep KT model",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "Mean",
+                "value": ".713"
+              },
+              {
+                "table": 10,
+                "row_label": "Jev0-shot",
+                "column_label": "Mean",
+                "value": ".704"
+              },
+              {
+                "table": 10,
+                "row_label": "LOKT\u2021",
+                "column_label": "Mean",
+                "value": ".664"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Mean",
+                "value": ".729"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "training of the best deep KT model encompasses all learners",
+            "kind": "quantifier",
+            "answer": "not_a_table_piece",
+            "state": "could_not_check",
+            "reason": "not_a_table_piece",
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 3,
+            "text": "the comparison spans seven datasets, with JevKT being superior on exactly 1 out of the 7",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "A09",
+                "value": ".728\u00b1.029"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "A09",
+                "value": ".746\u00b1.019"
+              },
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "NIPS34",
+                "value": ".725\u00b1.014"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "NIPS34",
+                "value": ".739\u00b1.015"
+              },
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "XES3G5M",
+                "value": ".707\u00b1.021"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "XES3G5M",
+                "value": ".725\u00b1.003"
+              },
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "DBE",
+                "value": ".687\u00b1.047"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "DBE",
+                "value": ".697\u00b1.014"
+              },
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "Alg05",
+                "value": ".775\u00b1.015"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Alg05",
+                "value": ".806\u00b1.002"
+              },
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "Junyi",
+                "value": ".731\u00b1.039"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "Junyi",
+                "value": ".728\u00b1.026"
+              },
+              {
+                "table": 10,
+                "row_label": "JevKT",
+                "column_label": "A17",
+                "value": ".639\u00b1.012"
+              },
+              {
+                "table": 10,
+                "row_label": "Best deep KT\u2020",
+                "column_label": "A17",
+                "value": ".665\u00b1.016"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 29,
+      "label": "supported",
+      "claim_summary": "Similar-learner statistics account for most of JevKT's performance boost at N=16.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At N=16 the similar-learner statistic alone raises Jev0-shot from .706 to .729, 64 KC-matched shots alone to .724, and both together to .730.",
+      "evidence_spans": [
+        {
+          "source_text": "Jev0-shot (no evidence, no shots) .738 .691 .725 .742 .698 .700 .648 .706",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ similar-learner kNN .738 .733 .730 .816 .733 .702 .649 .729",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ 64 KC-matched shots .739 .724 .720 .813 .727 .703 .643 .724",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ 64 shots + kNN (JevKT) .737 .734 .720 .834 .738 .704 .646 .730",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          6
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "results hold specifically when N equals 16",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 6,
+                "row_label": "Jev0-shot (no evidence, no shots)",
+                "column_label": "Mean",
+                "value": ".706"
+              },
+              {
+                "table": 6,
+                "row_label": "+ similar-learner kNN",
+                "column_label": "Mean",
+                "value": ".729"
+              },
+              {
+                "table": 6,
+                "row_label": "+ 64 KC-matched shots",
+                "column_label": "Mean",
+                "value": ".724"
+              },
+              {
+                "table": 6,
+                "row_label": "+ 64 shots + kNN (JevKT)",
+                "column_label": "Mean",
+                "value": ".730"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "both the similar-learner statistic and the 64 KC-matched shots combined",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 6,
+                "row_label": "Jev0-shot (no evidence, no shots)",
+                "column_label": "Mean",
+                "value": ".706"
+              },
+              {
+                "table": 6,
+                "row_label": "+ 64 shots + kNN (JevKT)",
+                "column_label": "Mean",
+                "value": ".730"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 32,
+      "label": "supported",
+      "claim_summary": "Reasoning tokens fail to raise Qwen's AUC, whereas single-pass Jev significantly outperforms Thinking-KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "A reasoning budget of 1024 or 2048 tokens never improves AUC significantly over the same model without reasoning, while one Jev pass beats Thinking-KT on all seven datasets (Holm-corrected, \u2206AUC +.038 to +.073 against the budget of 2048).",
+      "evidence_spans": [
+        {
+          "source_text": "Significant 0/7 0/7 7/7",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 3: Reasoning does not help Qwen3.5-9B on KT; a single System-One pass does better.",
+          "source_section": "Table 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "DBE-KT22 \u2212.016 \u2212.026 +.073\u2217",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          3
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 7,
+        "n_failed": 0,
+        "n_could_not_check": 4,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the lack of significant AUC improvement applies to both the 1024 and 2048 reasoning budgets",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 1024",
+                "value": "0/7"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 2048",
+                "value": "0/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the lack of significant AUC improvement applies to both budget settings specified (1024 or 2048)",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 1024",
+                "value": "0/7"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 2048",
+                "value": "0/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "holds for both budget values mentioned (1024 and 2048)",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 1024",
+                "value": "0/7"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 2048",
+                "value": "0/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "the lack of AUC improvement applies without exception to the specified reasoning budgets",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 1024",
+                "value": "0/7"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "budget 2048",
+                "value": "0/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 5,
+            "text": "the single Jev pass beats Thinking-KT across all seven datasets without exception",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "ASSIST09",
+                "column_label": "(budget 2048)",
+                "value": "+.038\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "NIPS34",
+                "column_label": "(budget 2048)",
+                "value": "+.038\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "XES3G5M",
+                "column_label": "(budget 2048)",
+                "value": "+.072\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "DBE-KT22",
+                "column_label": "(budget 2048)",
+                "value": "+.073\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Algebra05",
+                "column_label": "(budget 2048)",
+                "value": "+.053\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Junyi",
+                "column_label": "(budget 2048)",
+                "value": "+.068\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "ASSIST17",
+                "column_label": "(budget 2048)",
+                "value": "+.048\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "(budget 2048)",
+                "value": "7/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 6,
+            "text": "the result must hold across the total count of seven datasets",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "ASSIST09",
+                "column_label": "(budget 2048)",
+                "value": "+.038\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "NIPS34",
+                "column_label": "(budget 2048)",
+                "value": "+.038\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "XES3G5M",
+                "column_label": "(budget 2048)",
+                "value": "+.072\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "DBE-KT22",
+                "column_label": "(budget 2048)",
+                "value": "+.073\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Algebra05",
+                "column_label": "(budget 2048)",
+                "value": "+.053\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Junyi",
+                "column_label": "(budget 2048)",
+                "value": "+.068\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "ASSIST17",
+                "column_label": "(budget 2048)",
+                "value": "+.048\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "(budget 2048)",
+                "value": "7/7"
+              }
+            ]
+          },
+          {
+            "piece_id": 7,
+            "text": "the advantage of one Jev pass over Thinking-KT must hold for every dataset in the evaluated group",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "ASSIST09",
+                "column_label": "(budget 2048)",
+                "value": "+.038\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "NIPS34",
+                "column_label": "(budget 2048)",
+                "value": "+.038\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "XES3G5M",
+                "column_label": "(budget 2048)",
+                "value": "+.072\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "DBE-KT22",
+                "column_label": "(budget 2048)",
+                "value": "+.073\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Algebra05",
+                "column_label": "(budget 2048)",
+                "value": "+.053\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Junyi",
+                "column_label": "(budget 2048)",
+                "value": "+.068\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "ASSIST17",
+                "column_label": "(budget 2048)",
+                "value": "+.048\u2217"
+              },
+              {
+                "table": 3,
+                "row_label": "Significant",
+                "column_label": "(budget 2048)",
+                "value": "7/7"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 37,
+      "label": "supported",
+      "claim_summary": "JevKT delivers single predictions in 325ms at 20% the API cost of Thinking-KT.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+      "evidence_spans": [
+        {
+          "source_text": "One JevKT prediction takes 325 ms in a single call and costs $886 per million predictions, about 1/5 of Thinking-KT, which needs $4,360 and 41.7 s per prediction even with its ten votes issued in parallel; Jev0-shot costs $44.",
+          "source_section": "Section 5.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "JevKT \u2717 0 / 0 \u2013 325 ms 72.23 $886",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          4
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "supported",
+        "fallback_reason": null,
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The prediction costs and times hold for both JevKT and Thinking-KT",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 4,
+                "row_label": "JevKT",
+                "column_label": "Latency",
+                "value": "325 ms"
+              },
+              {
+                "table": 4,
+                "row_label": "JevKT",
+                "column_label": "$/1M",
+                "value": "$886"
+              },
+              {
+                "table": 4,
+                "row_label": "Thinking-KT",
+                "column_label": "Latency",
+                "value": "41.7 s"
+              },
+              {
+                "table": 4,
+                "row_label": "Thinking-KT",
+                "column_label": "$/1M",
+                "value": "$4,360"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P3-R1",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P3-R2",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P3-S1",
+      "actual_index": 13
+    },
+    {
+      "expected_id": "P3-S2",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P3-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P3-S5",
+      "actual_index": 37
+    },
+    {
+      "expected_id": "P3-S6",
+      "actual_index": 29
+    },
+    {
+      "expected_id": "P3-S7",
+      "actual_index": 18
+    }
+  ]
+}
