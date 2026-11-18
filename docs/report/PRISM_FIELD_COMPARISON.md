@@ -115,7 +115,7 @@ The 13 extraction misses, by paper section: introduction 2, conclusion 3, body 5
 
 | | Now | Next expected | Release bar |
 |---|---|---|---|
-| Bad claims caught (dev) | 8 of 31 | 9 to 11, if the table checker test passes (estimate) | 22 of 31, under review |
+| Bad claims caught (dev) | 8 of 31 | Table checker failed (2026-11-18); no change | 22 of 31 (restated unchanged 2026-11-18) |
 | Cost per paper, 2027 prices | About INR 196 (estimate) | Must stay at or below INR 200 | At or below INR 200 |
 
 Planned outside measurements (step 5, only if the table checker passes on the dev set):

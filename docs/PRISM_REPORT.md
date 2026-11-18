@@ -1,5 +1,5 @@
 # Prism - Engineering Report
-Nitin Yadav - 2026-11-09
+Nitin Yadav - 2026-11-18
 
 ![Prism pipeline: current path vs approaches tried](diagrams/prism_hero.drawio.svg)
 
@@ -27,13 +27,13 @@ Nitin Yadav - 2026-11-09
 - Every attempt so far to close this gap failed its pre-registered
   marks. The latest swapped in a newer model (gemini-3.8-flash): stricter
   judging caught more unsupported claims but also rejected more
-  supported ones (up to 7/88).
+  supported ones (up to 7/88). (Superseded 2026-11-18: Step 4 table checker tested 2026-11-18; FAIL on M2, M3, M5, M7; product auditor stays gemini-3.6-flash, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18'.)
 - Cost is about INR 87-101 per paper against an INR 130 gate. Gemini
   Flash prices double on 2027-01-01 (about INR 87 -> 174 per paper),
-  which would exceed the gate.
+  which would exceed the gate. (Superseded 2026-11-18: cost gate raised to INR 200 per paper at 2027 list prices, set for step 4 changes (decisions.md 2026-11-12); revisited before any release, decisions.md 'Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12' and 'Release bar restated (unchanged) - 2026-11-18'.)
 - Prism runs locally on .NET Aspire. The Azure deployment was
   decommissioned on 2026-09-28 to control cost. Next: this report and
-  the pipeline diagram, then one new approach, pre-registered on its own.
+  the pipeline diagram, then one new approach, pre-registered on its own. (Superseded 2026-11-18: 6-step path executed; step 4 failed; core auditor work stops; report stands as hiring artifact; remaining Prism polish is two chat fixes, demo video, blog post; then separate projects: Warrantum fine-tuning, MCP practice, resume/LinkedIn, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18' and 'Release bar restated (unchanged) - 2026-11-18'.)
 
 ### Key terms
 
@@ -679,15 +679,20 @@ in its decisions.md entry.
 | 2026-10-20 | Clean-Extraction Attempt | Pass-2 clean filter on Exp 3 outputs | K1 FAIL (5/13, 6/13); K2 PASS (18/18); K3 r 2.50/2.47; K4 FAIL (INR 230.52/227.55); K5 PASS (0.991); K6 PASS (0.81-0.95); K7 FAIL (43/18 not-same); K8 FAIL (INR 64.25/58.31 vs 40) | REJECTED | INR 311.04 | |
 | 2026-10-26 | Stage A0 | Explicit context caching on 18 frozen claims | M1 PASS (0 failed calls, 414,204 tokens cached); M2 PASS (INR 1.30 vs 3.79, 66% below); M3 PASS (8/31) | PASS | INR 36.86 (Google SKU report) | |
 | 2026-10-27 | Cache + Schema Probe | Single cached request with response_schema + thinking low | PASS: parsed ProbeOut, 13,125 cached tokens | PASS | INR 0.21 | |
-| 2026-10-28 | Stage A1 | Scope lister + checker (3 repeats, 18 claims) | A1-fixed FAIL (5/10 miss rows PS/NS, but always-missed 1/6); A1-lost PASS (1/7); A1-quote PASS (0 violations) | FAIL | INR 136.16 (tool) | |
-| 2026-10-28 | A1 diagnosis | Trace diagnosis of 10 miss rows x 3 repeats (30 cells) | Code R in 3 of 5 (P5-R2, P4-R2, P6-R2); S1 in 1 (P11-R2); P3-R2 mixed; 3 < 4 (no single clear cause); checker reading summaries in 9 of 15 cells; lister named breaking element in 13 of 15 cells | Ship-honest (decisions.md option B) | INR 0 | trace diagnosis of 30 cells, not a full pipeline run [D: "A1 diagnosis results: Ship-honest (decisions.md option B)" - 2026-10-28] |
-| 2026-10-29 | Auditor v2 T1 | Table extraction fidelity (pymupdf4llm vs Docling) | pymupdf4llm: 5/8 usable, 13/21 breaking cells; Docling: 5/8 usable, 14/21 breaking cells | FAIL, no winner | INR 0 | |
+| 2026-10-28 | Stage A1 | Scope lister + checker (3 repeats, 18 claims) | A1-fixed FAIL: 5/10 counted (3 from the scope check); always-missed 1/6, need 4 | FAIL | INR 136.16 (tool) | the checker read prose and caption summaries, not the breaking table rows [D: "A1 diagnosis results: Ship-honest (decisions.md option B)" - 2026-10-28] |
+| 2026-10-28 | A1 diagnosis | Trace diagnosis of 10 miss rows x 3 repeats (30 cells) | the checker read prose and caption summaries, not the breaking table rows | Ship-honest (decisions.md option B) | INR 0 | trace diagnosis of 30 cells, not a full pipeline run [D: "A1 diagnosis results: Ship-honest (decisions.md option B)" - 2026-10-28] |
+| 2026-10-29 | Auditor v2 T1 | Table extraction fidelity (pymupdf4llm (inside pymupdf 2.0) and Docling 2.144.0) | pymupdf4llm: 5/8 usable, 13/21 breaking cells; Docling: 5/8 usable, 14/21 breaking cells | FAIL, no winner | INR 0 | |
 | 2026-10-31 | Auditor v2 T2-R | Code checks on LaTeX reference tables | M1 FAIL (4/10 misses, but 2/5 hard); M2 FAIL (2/5 hard); M3 PASS (0/10 lowered); M4 PASS (2/10 Needs review); M5 PASS (43 tests) | FAIL | INR 0 | ceiling measured with hand-written forms on LaTeX reference tables, not a pipeline score [D: "Record: T2-R wording correction and two input notes" - 2026-10-31] |
 | 2026-11-04 | Vertex Smoke 1 | Probe cache schema on gemini-3.8-flash via Vertex AI | CACHE_NOT_CREATED: 403 PERMISSION_DENIED aiplatform.endpoints.predict | FAIL (mechanics) | INR 0 | |
 | 2026-11-06 | Vertex Smoke 2 | Probe cache schema on gemini-3.8-flash via Vertex AI | PASS: 13,124 cached tokens read, schema parsed, thinking low accepted | PASS | INR 0.24 (list) / INR 1.11 billed | |
 | 2026-11-06 | 3.8 Screen (Attempt 1) | Replay audit: 3.6 med (Arm 1), 3.8 med (Arm 2), 3.8 high (Arm 3) | Arm 1 completed; Arm 2 crashed in repeat 2 (JSON control char \x10, \x11 in structurer); Arm 3 not started | VOID | in the combined figure on the Attempt 2 row | screen filter numbers are not quoted as a Prism score [D: "Pre-registration: gemini-3.8-flash auditor screen on Vertex AI" - 2026-11-06] |
 | 2026-11-06 | 3.8 Screen (Attempt 2) | Re-run Arm 2 & Arm 3 on fixed code vs Arm 1 | Arm 1: 0 fixed, 2 lost, 2 fallback audits. Arm 2: 2 fixed, 0 lost. Arm 3: 5 fixed, 0 lost. V3/V4 triggered | VOID | INR 842.86 billed, both attempts combined | screen filter numbers are not quoted as a Prism score [D: "Pre-registration: gemini-3.8-flash auditor screen on Vertex AI" - 2026-11-06] |
 | 2026-11-08/09 | Full No-Regression Check | 106 claims (84 dev, 22 golden) x 3 repeats: B (3.6 med) vs C1 (3.8 med) vs C2 (3.8 high) | B: 0 fixes, 1 lost, 1 FR, golden 6/16 ref, 13/21 pos. C1: 2 fixes (PASS), 0 lost (PASS), 4 FR (FAIL), golden 7/16, 12/21 (PASS), cost INR 104.0 (PASS). C2: 4 fixes (PASS), 0 lost (PASS), 7 FR (FAIL), golden 9/16, 10/21 pos (FAIL), cost INR 194.4 (FAIL) | FAIL (both C1 and C2) | INR 4,111.48 billed (INR 3,542.75 counted audit calls at list price) | eval replay check under 2-of-3 majority vote, product recorded scores unchanged [D: "Full no-regression check result: FAIL for both 3.8 candidates; no auditor change" - 2026-11-09] |
+| 2026-11-12 | Step 1 (6-step path) | Free checks on saved data: 1a votes, 1b noise T = 3, 1c miss locations, 1d cost estimate | T = 3; cost estimate ~INR 102 today, INR 196 at 2027 list prices; ceiling 5 of 13 | Completed | INR 0 | decisions.md "Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12" |
+| 2026-11-13 | Step 2 (6-step path) | Today's auditor on 7 pass-2-recovered claims (Vertex, 3 repeats) | Caught 2/7 (P9-R1, P11-R3); 5 supported (P2-R3, P2-R4, P3-R1, P5-R3, P8-R3) | Auditor change first | about INR 74 total by tool count (cap 117.6) | decisions.md "Step 2 result: auditor caught 2/7 pass-2-recovered claims -> auditor first in step 4 - 2026-11-13" |
+| 2026-11-13 | Step 3 (6-step path) | Read-only look at public datasets (SciTab, SciClaimEval, PRISMM-Bench, CLAIMCHECK) | Format and licences recorded; PRISM_FIELD_COMPARISON.md written | Completed | INR 0 | decisions.md "Step 3: public datasets checked (read-only, INR 0) - 2026-11-13" |
+| 2026-11-15 | Table-finding check | Plain code table finder on 6 tables, 5 target rows | PASS: 5 of 5 rows ready (P1-R1, P3-R2, P4-R1, P4-R2, P11-R2); 100% reference values in block | PASS | INR 0 | decisions.md "Table-finding check result: PASS (5 of 5 rows) - 2026-11-15" |
+| 2026-11-18 | Step 4 (6-step path) | Table checker over routed table claims (Vertex, 3 repeats) | M1 1/8 PASS (P4-R2); M2 lost P12-R2 FAIL; M3 8/88 FAIL; M4 5/16, 11/21 PASS; M5 FAIL; M6 met; M7 INR 214.92 > 200 FAIL; M8 not void | FAIL (M2, M3, M5, M7) | about INR 1,074 (cap counter; grounding excluded); billed figure pending | 1 layout misread in 1 run (P1-R1); trigger n [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"] |
 
 ### Table B: Early history (before 2026-10-07, not comparable)
 
@@ -715,9 +720,56 @@ vote. C1 fixed 2 of the 8 targeted misses and C2 fixed 4, and neither
 lost a caught row. But C1 wrongly rejected 4 of 88 supported claims and
 C2 rejected 7, against 1 for the baseline in the same check. C2 also
 dropped golden positive hits to 10/21 (floor 11) and cost INR 194.4 per
-paper (gate 130). Both failed, so the auditor stays gemini-3.6-flash.
+paper (gate 130). Both failed, so the auditor stays gemini-3.6-flash. (Superseded 2026-11-18: Step 4 table checker is the latest test; see Section 6.2, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18'.)
 
 Sources: docs/decisions.md - Three-call claim extraction pipeline (2026-08-20); docs/decisions.md - De-leak: eval-paper text and answer-key wording removed from prompts (2026-10-05); docs/decisions.md - Dev run 1 - fixture dump and pre-registered adjudication rules (2026-10-12); docs/decisions.md - Pre-registration: full 3-run no-regression check, gemini-3.8-flash medium and high vs gemini-3.6-flash, Vertex (2026-11-08); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
+
+
+### 6.1 The 6-step path (2026-11-11)
+
+Following outside reviews, Nitin set a 6-step path on 2026-11-11 to test whether targeted changes could close the gap without full model swaps:
+- **Step 1 (2026-11-12):** Free checks on saved data (T = 3; about INR 196 per paper at 2027 list prices; extractor ceiling 5 of 13) [decisions.md "Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12"].
+- **Step 2 (2026-11-13):** Small paid test on the 7 pass-2-recovered claims; today's auditor caught 2 of 7 (P9-R1, P11-R3), so the auditor change went first in step 4 [decisions.md "Step 2 result: auditor caught 2/7 pass-2-recovered claims -> auditor first in step 4 - 2026-11-13"].
+- **Step 3 (2026-11-13):** Read-only look at public datasets (SciTab, SciClaimEval, PRISMM-Bench, CLAIMCHECK); formats and licences recorded [decisions.md "Step 3: public datasets checked (read-only, INR 0) - 2026-11-13"].
+- **Step 4 (2026-11-18):** Table checker over routed table claims; FAIL on M2, M3, M5, M7 [decisions.md "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"].
+- **Step 5:** Outside check on a public set; not run (allowed only if step 4 passed) [decisions.md "6-step path after outside reviews - 2026-11-11"].
+- **Step 6:** Update PRISM_REPORT.md and PRISM_STATUS.md with the outcome (this update) [decisions.md "6-step path after outside reviews - 2026-11-11"].
+
+
+### 6.2 Step 4 in plain words
+
+The checker routed claims that cite "Table N", cut out the exact table text using the frozen code finder, split the claim into pieces with the scope lister, and called Gemini 3.6 Flash to verify each piece against the table block. A code guard checked quoted labels and values, and claims with failed pieces were marked unsupported or partially supported.
+
+The M1–M8 marks table from the step 4 evaluation:
+
+| Mark | Result | Verdict |
+|---|---|---|
+| M1 targets fixed /8 | D 1 (P4-R2) vs B 0 | PASS |
+| M2 real hits lost /7 | D lost P12-R2 (B lost P6-R1) | FAIL |
+| M3 false rejections /88 | D 8 (P1-S1, P1-S2, P1-S4, P2-S3, P2-S8, P6-S4, P8-S7, P9-S4) vs B 1 (P4-S4) | FAIL |
+| M4 golden | refusal-family 5/16; positives 11/21 (both at the floor) | PASS |
+| M5 grounding-negative | REFLEX-M08, REACT-M14 refused by B, affirmed by D | FAIL |
+| M6 Needs review | 0 | met |
+| M7 cost | D 2.7211, Bc 2.4075 INR/claim; 196 + 0.3136 x 2 x 30.17 = INR 214.92 > 200 (215.96 with cache creation and storage, reported) | FAIL |
+| M8 void | V1 no cap; V2 no INVALID; V3 fallback-served 0; V6 lister + checker failures 0/231 = 0.00% | not void |
+
+Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on its own.
+
+Two design errors in plain words:
+1. The safety check needed the claim piece and the table labels to share a word, and they almost never do (269 name-check failures), so the checker gave up on about 80% of routed claims and fell back to today's auditor.
+2. Routing sent the wrong claims: it missed the two target claims that never say "Table N" (P4-R1, P11-R2), and it sent claims whose cited table was not found (P1 Table 1), which lowered good claims (P1-S1, P1-S2, P1-S4).
+
+Other causes:
+- Model errors on facts stated in prose: checker rejected claims whose numbers were stated in prose (P2-S3, P6-S4).
+- Today's auditor varying from run to run: lost catch P12-R2 (unrouted) and M5 grounding-negative flips came from today's auditor, not the checker.
+
+Verdict: fair test, genuine design fail; no code bug found (guard re-run 373 of 373 identical).
+
+P8-S7: label supported in 3 of 3 D runs; counted as a false rejection because grounding returned Fail (missing = true) in all 3; same scorer code path as B. Why grounding failed in D and not in B was not investigated; it cannot change any mark (M3 is 7/88 without it).
+
+Picture trigger: 1 layout misread in 1 run (P1-R1); trigger n. No picture work.
+
+Sources: docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
 
 
 ## 7. Where it fails
@@ -764,7 +816,20 @@ The system faces hard individual ceiling constraints on both sides of the pipeli
 - **Table reading vs claim meaning:** Code checks on reference tables are precise but narrow; the hardest misses stem from what a claim means and covers (scope, semantic duplicates, multiple interpretations) rather than table reading mechanics.
 - **Scope-checking LLMs repeat summary bias:** Scope checkers and auditors naturally accept author summary framing and bold averages rather than examining individual table rows.
 
-Sources: docs/decisions.md - Experiment 1 result - Stage A FAIL, rejected (2026-10-12); docs/decisions.md - Experiment 3 c1/c6 result (AI-proposed, human-verified) (2026-10-16); docs/decisions.md - Clean-extraction attempt revised: extraction-only marks (2026-10-17); docs/decisions.md - 10-miss analysis: failure types and scope (2026-11-02); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
+### 7.1 Auditor attempts and verdicts
+
+| What it tried | Result | Main reason |
+|---|---|---|
+| A1 scope checker | A1-fixed FAIL: 5/10 counted (3 from the scope check); always-missed 1/6, need 4 | The checker read prose and caption summaries, not the breaking table rows |
+| T1 table extraction | pymupdf4llm (inside pymupdf 2.0) and Docling 2.144.0: 5/8 usable tables each | Lost row-group headers and breaking cells in complex layouts |
+| T2-R code checks on hand-built tables | FAIL (4/10 misses fixed, 2/5 hard, 0 false rejections) | Perfect tables fix only 2 of 5 hard rows; hardest misses are claim meaning and scope |
+| gemini-3.8-flash screen | VOID (Arm 1 fallback audits triggered V3->V4; Arm 2 crashed on control chars) | Fragile response parsing and fallback threshold triggered |
+| Full 3-run check of 3.8 medium and high | FAIL for both C1 and C2 (C1: M3 4/88; C2: M3 7/88, M4 10/21, M7 INR 194.4) | Stricter judging caught more misses but rejected more supported claims |
+| Step 4 table checker | FAIL on M2, M3, M5, M7 | Safety check word overlap blocked 80% of claims; routing missed targets and lowered good claims |
+
+Across every auditor attempt, stricter judging catches more misses but rejects more good claims.
+
+Sources: docs/decisions.md - Stage A1 results: FAIL (2026-10-28); docs/decisions.md - A1 diagnosis results: Ship-honest (decisions.md option B) (2026-10-28); docs/decisions.md - Auditor v2 T1 result, Ship-honest removed, new order (T2-R first) (2026-10-29); docs/decisions.md - T2-R result: FAIL (4/10 misses, 2/5 hard, 0 false rejections) (2026-10-31); docs/decisions.md - Screen attempt 2: void (V3 -> V4), robustness note, decision to take gemini-3.8-flash high to the full check (2026-11-07); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09); docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
 
 
 ## 8. Current scores
@@ -787,6 +852,15 @@ refusal-family 6/16, golden positive hits 13/21, dev false rejections
 1/88, dev targeted misses fixed 0/8, dev caught rows lost 1/7 (P6-R1).
 
 Sources: docs/decisions.md - De-leak: eval-paper text and answer-key wording removed from prompts (2026-10-05); docs/decisions.md - Dev run 1 - fixture dump and pre-registered adjudication rules (2026-10-12); docs/decisions.md - Auditor redesign agreed: caching + scope check, marks and caps (2026-10-22); docs/decisions.md - Auditor no-regression rule (2026-10-28); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
+
+
+### 8.1 Release bar (restated 2026-11-18, unchanged)
+
+- Nitin (2026-11-18): the release bar stays dev >= 22/31 with false rejections <= 8/88 (auditor-only ceiling 18/31).
+- Cost: the INR 200 per paper gate at 2027 list prices (2026-11-12) was set for step 4 changes; it is revisited before any release.
+- Current product: run 1, 8/31 caught, false rejections 4/88, golden 5/16, positives 11/21.
+- No release with the current auditor (2026-10-29). Core auditor work stopped after step 4 (2026-11-18).
+Sources: docs/decisions.md - Release bar restated (unchanged) - 2026-11-18
 
 
 ## 9. Costs
@@ -820,6 +894,8 @@ The table below details all recorded expenditures across paid experimental evalu
 | Vertex smoke attempt 2 | INR 0.24 list price / INR 1.11 charged | Charged across both smoke attempts for cache schema probe on gemini-3.8-flash |
 | 3.8 Screen (both attempts) | INR 842.86 billed | Billed across both screening attempts on Vertex AI, including void arm 2 |
 | Full no-regression check | INR 4,111.48 billed | Under INR 6,403.3 cap; INR 3,542.75 counted audit calls at list price (difference reflects structurer and grounding calls) |
+| Step 2 (6-step path) | about INR 74 total by tool count (cap 117.6) | 7 pass-2-recovered claims audited on Vertex AI |
+| Step 4 (6-step path) | about INR 1,074 (cap counter; grounding excluded) | Table checker over routed table claims (billed figure pending) |
 | Total eval spend on GCP Free Credit since 2026-11-02 | INR 4,955.45 | Credit balance declined from INR 28,693.88 to INR 23,738.43 on 2026-11-09 at 15:37 IST |
 
 ### Credits and Expiry
@@ -836,7 +912,7 @@ The table below details all recorded expenditures across paid experimental evalu
 
 ### The 2027 Price Change and the Cost Gate
 
-Gemini Flash prices ($0.75 in / $3.75 out per 1M tokens through 2026-12-31) double on 2027-01-01, about INR 87 -> 174 per paper, which is above the INR 130 cost gate; the release-bar restatement at the end of the auditor phase must cover the cost gate too.
+Gemini Flash prices ($0.75 in / $3.75 out per 1M tokens through 2026-12-31) double on 2027-01-01, about INR 87 -> 174 per paper, which is above the INR 130 cost gate; the release-bar restatement at the end of the auditor phase must cover the cost gate too. (Superseded 2026-11-18: cost gate raised to INR 200 per paper at 2027 list prices, set for step 4 changes (decisions.md 2026-11-12); revisited before any release, decisions.md 'Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12' and 'Release bar restated (unchanged) - 2026-11-18'.)
 
 ### Sealed Reserve
 
@@ -868,6 +944,23 @@ that Prism is better than any of them.
 Sources: docs/decisions.md - Tier 2 (Verdict view) and Tier 3 (Overstated Claims + Questions to Scrutinize) collapsed into paper-scoped chat (2026-08-22); docs/decisions.md - One paper per chat, enforced at upload endpoint (2026-08-22); docs/decisions.md - Cost caps, run procedure and marks for the dev baseline (2026-10-11); docs/decisions.md - Auditor no-regression rule (2026-10-28)
 
 
+### 10.1 What the field says
+
+Outside research (2026-11-18, PRISM_FIELD_COMPARISON.md and decisions.md) shows that reading tables from scientific PDFs is an unsolved limit across the field. On SciTab, models other than GPT-4 score barely above random, and chain-of-thought prompting adds little. Flattened PDF tables lose row and column structure, and decompose-then-verify methods add noise and false refutations unless evidence aligns cleanly with sub-claims. But our checks show PDF table reading was not the primary cause of Prism's failure here:
+- Table-finding check: 100% of reference values were present in the extracted blocks (5 of 5 rows ready);
+- Picture trigger: 1 layout misread in 1 run (P1-R1), trigger n;
+- T2-R: perfect hand-built tables fixed only 2 of 5 hard rows, showing that the core difficulty is claim meaning and scope rather than table mechanics.
+
+Sources: docs/report/PRISM_FIELD_COMPARISON.md; docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+
+### 10.2 Why not a small checker
+
+MiniCheck (EMNLP 2024), a small fine-tuned checker, reaches 74.7 balanced accuracy on 13K general test cases, about GPT-4 level, and is over 400 times cheaper than GPT-4 at inference. It only judges a claim against given evidence; it does not find claims or evidence in a whole paper. However, fine-tuning is a separate learning project (Warrantum), not part of Prism.
+
+Sources: docs/report/PRISM_FIELD_COMPARISON.md; docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+
 ## 11. Patterns not yet tried
 
 These ideas from docs/decisions.md are recorded, not decided:
@@ -887,11 +980,35 @@ These ideas from docs/decisions.md are recorded, not decided:
 Sources: docs/decisions.md - 2026-10-05 - Grounding Stage-1 text normalisation (2026-10-05); docs/decisions.md - Clean-extraction attempt: K6/K7 labelling method, caching dropped, K4 path (2026-10-19); docs/decisions.md - K1 diagnostics and filter status (exploratory) (2026-10-20); docs/decisions.md - T2-R result: FAIL (4/10 misses, 2/5 hard, 0 false rejections) (2026-10-31); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
 
 
+### 11.1 What a v2 would need (recorded, not decided)
+
+Recorded from the step 4 diagnosis (not decided):
+- Structured tables (for example parsed from arXiv LaTeX sources rather than extracted from PDF text);
+- An explicit unsure state instead of falling back to the standard auditor;
+- Code-side comparisons instead of relying on LLM arithmetic;
+- Removal of the word-overlap name check in the safety guard;
+- Routing that does not depend exclusively on "Table N" mentions;
+- Evaluation on a fresh test set.
+The expected ceiling for such a v2 remains small: T2-R proved that even with perfect tables, only 2 of 5 hard rows are fixed.
+
+Sources: docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+
 ## 12. Where Prism stands
 
-Following the failure of both 3.8 candidates on 2026-11-09, the decided next step is writing this report and the pipeline diagram. Auditor and extraction work will continue without new hand labelling; the next approach will be chosen after the report and pre-registered on its own. Until the core works, several actions are forbidden: tuning prompts to move numbers, lowering thresholds, opening held-out text, and building MCP v1. The ship-honest fallback was removed on 2026-10-29. There is no release with the current auditor.
+Following the failure of both 3.8 candidates on 2026-11-09, the decided next step is writing this report and the pipeline diagram. Auditor and extraction work will continue without new hand labelling; the next approach will be chosen after the report and pre-registered on its own. Until the core works, several actions are forbidden: tuning prompts to move numbers, lowering thresholds, opening held-out text, and building MCP v1. The ship-honest fallback was removed on 2026-10-29. There is no release with the current auditor. (Superseded 2026-11-18: 6-step path completed; step 4 table checker failed; core auditor work stops; report stands as hiring artifact, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18' and 'Release bar restated (unchanged) - 2026-11-18'.)
 
 Sources: docs/decisions.md - MCP v1 scope and tenancy decisions (design intent only) (2026-09-28); docs/decisions.md - Held-out eval paper sealed (eval chain step 1) (2026-10-03); docs/decisions.md - Release targets, order of work and stop rule amended (2026-10-10); docs/decisions.md - Auditor redesign agreed: caching + scope check, marks and caps (2026-10-22); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
+
+
+### 12.1 Decision gate outcome
+
+Under the 6-step path decision gate (2026-11-11, 2026-11-18):
+- Core auditor work stops; the report stands as the hiring artifact.
+- Remaining Prism polish (not core): two small chat fixes, then a demo video and a blog post.
+- Separate projects next: the fine-tuning learning project (Warrantum), hands-on MCP practice, and resume/LinkedIn rewrite.
+
+Sources: docs/decisions.md - 6-step path after outside reviews - 2026-11-11; docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18; docs/decisions.md - Release bar restated (unchanged) - 2026-11-18
 
 
 ## Appendix: Engineering state
@@ -913,12 +1030,13 @@ Evaluation infrastructure is automated via specialized scripts:
 - **Match-map adjudication gate:** `matrix_runner.py` enforces 100% human match-map coverage; unadjudicated rows suppress headline percentage and force exit code 1.
 - **Match-map fixture consistency (`eval/tests/test_match_map_fixture_consistency.py`):** Offline test ensuring human `match_map.json` pairings match fixture frozen actual indices.
 - **Matcher gold calibration:** 15-pair hand-authored test (`docs/evals/matcher_gold.json`), pass rate (93.3% / 100%) frozen into fixture headers offline via `eval/verify_matcher_gold.py`; live integration test in CI was reverted to prevent quota burn and secrets exposure.
-- **Unit test suite:** 187 tests passed at PR-B; 1,006 tests passed at commit `bc2f575` after structurer JSON parse fix.
+- **Unit test suite:** 187 tests passed at PR-B; 1,006 tests passed at commit `bc2f575` after structurer JSON parse fix; 1,200 passed in Step 1 (full suite 1,200 passed, 3 skipped, 1 deselected) and 1,428 passed at the step 4 build (branch eval/step1-free-checks).
 - **Pydantic configuration validation in CI:** Dummy environment variables configured in `eval.yml` so `PrismSettings` BaseSettings validates at process start.
 
 ### Branch and Merge State
 
-- **`main` branch state:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`); the active extraction path is single-pass only; prompt hash confirmed `cb3272cce551`.
+- **`main` branch state:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`, `table_check=False`); the active extraction path is single-pass only; prompt hash confirmed `cb3272cce551`.
+- **Branch state for steps 1-4:** Work for steps 1-4 is on branch `eval/step1-free-checks` and is not merged to main yet [D: "6-step path after outside reviews - 2026-11-11"].
 - **Merged pull requests:**
   - PR #1: Azure pre-deploy foundation merged 2026-08-29.
   - PR #5: First Azure deploy merged 2026-09-01.
@@ -938,5 +1056,9 @@ Evaluation infrastructure is automated via specialized scripts:
   - `smoke-vertex-38-2026-11-04`
   - `screen-vertex-38-2026-11-06` on commit `b62e6af`
   - `fullcheck-38-2026-11-08` on commit `49bae11`
+  - `prereg-step2-2026-11-12`
+  - `prereg/tablefind-notes-2026-11-14`
+  - `prereg/step4-2026-11-15`
+  - `prereg/step4-build-2026-11-17`
 
 Sources: docs/decisions.md - Freeze matcher output into fixtures (2026-08-13); docs/decisions.md - Azure pre-deploy foundation (PR 1) (2026-08-29); docs/decisions.md - First Azure deploy (2026-09-01); docs/decisions.md - De-leak: eval-paper text and answer-key wording removed from prompts (2026-10-05); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
