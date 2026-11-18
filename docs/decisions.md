@@ -5076,3 +5076,54 @@ Values are compared with the shared T1/T2-R cell parser, token by token.
 Outputs are committed unscored before scoring. Scoring: score_full_check (D vs baseline B 2026-11-08 folders), then picture_trigger.
 
 **Money:** INR 0 so far (smoke about INR 0.1 on AI Studio). Sealed reserve INR 300 untouched.
+
+## Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+**Run facts:** pre-registration tag prereg/step4-2026-11-15; build and caps tag prereg/step4-build-2026-11-17. Arm D: 3 dev + 3 golden folders (exp1_medium_gemini-3.6-flash-vertex_tablecheck_1 to _3), all with _summary.json; checker 0d9b5dfaf827 and lister e6acbe55cdfc in all 6; no cap hit. Spend (cap counter, grounding excluded): dev INR 863.38 of 1094.8; golden INR 210.30 of 303.0. Baseline B = the 2026-11-08 arm B folders exp1_medium_gemini-3.6-flash-vertex_1 to _3 (dev + golden), confirmed by commit 362cbcd (2026-11-09, in archive/vertex-auditor-option-history) and claim counts 84 / 22.
+
+**Ruling 10:** run_config identical on every saved field (backend, project, location, auditor, level, structurer, audit fallback, grounding primary and fallback, google_genai 1.64.0, litellm 1.98.0); only table_check differs (cache is not recorded). Claims file and prompt hash are not saved in run_config or _summary.json: not verifiable from saved outputs; claim counts match. Reading fixed before scoring (2026-11-18): a library-version-only difference would be a recorded deviation, not void (it did not arise).
+
+**Result (score_full_check, worst-case D vs best-case B):**
+
+| Mark | Result | Verdict |
+|---|---|---|
+| M1 targets fixed /8 | D 1 (P4-R2) vs B 0 | PASS |
+| M2 real hits lost /7 | D lost P12-R2 (B lost P6-R1) | FAIL |
+| M3 false rejections /88 | D 8 (P1-S1, P1-S2, P1-S4, P2-S3, P2-S8, P6-S4, P8-S7, P9-S4) vs B 1 (P4-S4) | FAIL |
+| M4 golden | refusal-family 5/16; positives 11/21 (both at the floor) | PASS |
+| M5 grounding-negative | REFLEX-M08, REACT-M14 refused by B, affirmed by D | FAIL |
+| M6 Needs review | 0 | met |
+| M7 cost | D 2.7211, Bc 2.4075 INR/claim; 196 + 0.3136 x 2 x 30.17 = INR 214.92 > 200 (215.96 with cache creation and storage, reported) | FAIL |
+| M8 void | V1 no cap; V2 no INVALID; V3 fallback-served 0; V6 lister + checker failures 0/231 = 0.00% | not void |
+
+Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on its own.
+
+**Found -> routed -> failed -> caught (voted, report only):** of the 8 targets, routed P3-R2, P4-R2, P1-R1; caught P4-R2 only (runs: supported, partially_supported, not_supported). Not routed (no_table_mention): P4-R1, P11-R2, P6-R2, P7-R1, P8-R2. S rows routed 54; lowered by the checker (voted) 5: P1-S1, P1-S2, P1-S4, P2-S3, P6-S4. All D folders: 231 routed claims, 582 pieces (backed 391, no_row 75, not_a_table_piece 101, not_backed 15); guard failures 273; fallback audits 182; checker-decided claims 49 (supported 18, partially_supported 17, not_supported 14). The gain of 1 target is inside noise (T = 3).
+
+**Picture trigger:** n (1 layout misread, P1-R1, in 1 run; 3 of 8 targets have no reference table). No picture work.
+
+**Diagnosis (INR 0; read-only Claude Code check plus a script Nitin ran; verdict rules fixed before the diagnosis):**
+- Spec vs code: routing, finder join, lister, checker, guard value and row checks, claim result, M7 and V6 match the written rules, with tests. Guard re-run on saved inputs: 373 of 373 identical. No code bug found.
+- DESIGN, name check: 269 name-check failures across the 6 runs, 257 on pieces the checker answered backed. Scope pieces ("holds across all benchmarks") rarely share a word with table labels ("MASA", "Avg."), so the guard blocked most checker decisions and about 80% of routed claims fell back to today's auditor. The other reading of ruling 3 (substring) clears 19 of 269 pieces and 9 of 133 claims: the wording gap is small.
+- DESIGN, routing: P4-R1 and P11-R2 never mention "Table N" in the claim or its spans. Build plan A1 (approved 2026-11-17) routes a claim even when a cited table is not found; P1 Table 1 is not found, so P1-S1, P1-S2 and P1-S4 got no_row pieces and were lowered (3 of the 5 checker false rejections).
+- MODEL: P2-S3 and P6-S4 lowered by no_row on facts stated in prose (accepted risk, ruling 5). The P4-R2 catch is unstable across runs.
+- Auditor noise: M2 (P12-R2, no_found_table, unrouted) and M5 (REFLEX-M08 unrouted; REACT-M14 routed, all pieces not_a_table_piece, fallback audit) came from today's auditor, not the checker.
+- P8-S7: label supported in 3 of 3 D runs; counted as a false rejection because grounding returned Fail (missing = true) in all 3; same scorer code path as B. Why grounding failed in D and not in B was not investigated; it cannot change any mark (M3 is 7/88 without it).
+- Cost: checker mean input about 16,100 to 16,500 tokens per call vs about 9,605 estimated (+70%).
+- Verdict: fair test, genuine fail (design). No reading of the rules changes Overall: M2, M5 and M7 fail independently of the checker, and M3 stays above 1/88 without the P1 Table 1 rows.
+
+**Outside research (2026-11-18, report only):** on SciTab, models other than GPT-4 score barely above random and chain-of-thought adds little. Decompose-then-verify helps only when evidence is aligned to each sub-claim and sub-claim labels are reliable; otherwise it adds noise and false refutations, and abstaining when unsure is recommended. Flattened PDF tables lose row and column structure, and table extraction from scientific PDFs is still unsolved. Program-aided reasoning does not consistently beat chain-of-thought. Small fine-tuned checkers (MiniCheck) reach GPT-4-level grounding checks at much lower cost: relevant to Warrantum, not Prism.
+
+**What a v2 would need (recorded, not decided):** structured tables (for example from arXiv LaTeX), an unsure state instead of falling back, code-side comparisons, no name check, routing that does not depend on "Table N", and a fresh test set. Expected ceiling is small (T2-R: 2 of 5 hard rows with perfect tables).
+
+**Decision:** no auditor change; the product stays flag-off (cb3272cce551). Nitin (2026-11-18): if the failure is genuine, stop and move forward. Under the 6-step path decision gate, step 4 did not pass: core auditor work stops after step 6. No rescue, no re-run.
+
+**Money:** step 4 paid run about INR 1,074 (cap counter; grounding excluded). Scoring and diagnosis INR 0. Billed figure at the next GCP credit check. Sealed reserve INR 300 untouched.
+
+**Files:** scoring output, the diagnosis script and its output are kept outside the repo (H:\Work projects\prism_scoring\); the diagnosis output holds claim text.
+
+## Release bar restated (unchanged) - 2026-11-18
+- Nitin (2026-11-18): the release bar stays dev >= 22/31 with false rejections <= 8/88 (auditor-only ceiling 18/31).
+- Cost: the INR 200 per paper gate at 2027 list prices (2026-11-12) was set for step 4 changes; it is revisited before any release.
+- No release with the current auditor (2026-10-29). Core auditor work stopped after step 4 (2026-11-18).
+- Money: INR 0.
