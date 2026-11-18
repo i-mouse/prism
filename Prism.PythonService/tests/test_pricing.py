@@ -72,13 +72,15 @@ def test_rates_cached_defaults_to_input_rate():
 
 def test_rate_table_holds_only_the_priced_models():
     assert set(pricing.RATES_BY_MODEL) == {
-        "gemini-3.6-flash", "gemini-3.1-flash-lite", "gpt-oss-20b", "gemini-3.8-flash",
+        "gemini-3.6-flash", "gemini-3.1-flash-lite", "gpt-oss-20b", "gemini-3.8-flash", "gemini-4-carbon",
     }
     assert pricing.RATES_BY_MODEL["gemini-3.6-flash"] == pricing.Rates(0.75, 3.75, 0.075)
     assert pricing.RATES_BY_MODEL["gemini-3.1-flash-lite"] == pricing.Rates(0.25, 1.50, 0.025)
     assert pricing.RATES_BY_MODEL["gpt-oss-20b"] == pricing.Rates(0.075, 0.30, 0.037)
     # through 2026-12-31 (50% promotion); 1.50 / 7.50 / 0.15 from 2027-01-01 is a code comment only
     assert pricing.RATES_BY_MODEL["gemini-3.8-flash"] == pricing.Rates(0.75, 3.75, 0.075)
+    # intro price through 2026-11-30; 4.00 / 20.00 / 0.20 from 2026-12-01 is a code comment only
+    assert pricing.RATES_BY_MODEL["gemini-4-carbon"] == pricing.Rates(2.00, 10.00, 0.10)
 
 
 def test_gemini_38_flash_cost_uses_its_own_rates():

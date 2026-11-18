@@ -54,6 +54,7 @@ RATES_BY_MODEL: dict[str, Rates] = {
     "gemini-3.1-flash-lite": Rates(in_usd=0.25, out_usd=1.50, cached_usd=0.025),
     "gpt-oss-20b": Rates(in_usd=0.075, out_usd=0.30, cached_usd=0.037),
     "gemini-3.8-flash": Rates(in_usd=0.75, out_usd=3.75, cached_usd=0.075),
+    "gemini-4-carbon": Rates(in_usd=2.00, out_usd=10.00, cached_usd=0.10),  # intro price to 2026-11-30; $4/$20/$0.20 from 2026-12-01 (Google)
 }
 
 # Explicit-cache storage, USD per 1M tokens per hour, for the models that can be cached.
