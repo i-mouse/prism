@@ -5127,3 +5127,91 @@ Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on
 - Cost: the INR 200 per paper gate at 2027 list prices (2026-11-12) was set for step 4 changes; it is revisited before any release.
 - No release with the current auditor (2026-10-29). Core auditor work stopped after step 4 (2026-11-18).
 - Money: INR 0.
+
+## Pre-registration: test A - gemini-4-carbon as auditor (capacity probe), Vertex, 3 runs - 2026-11-18
+
+**Status:** written before any gemini-4-carbon audit call. Test A of the two Carbon tests agreed in chat on 2026-11-18 (claude/handoff_2026-11-18c.md). Test B (one-call whole-paper baseline) gets its own entry.
+
+**Question:** with nothing else changed, does a much stronger model in today's auditor slot pass the 2026-10-28 no-regression marks? In other words: are the auditor misses mainly a model-capacity limit?
+
+**What this is not:**
+- Not an adoption test. Carbon cannot be adopted whatever the result: its cost is expected well over the INR 200 gate, and core auditor work stopped at the 2026-11-18 decision gate. This entry does not reopen it.
+- Not a return to model swaps as the fix (outside reviews, 2026-11-11). It is one reference point for the report: a strong model in Prism's auditor slot.
+- No product change. Flags off; the product auditor stays gemini-3.6-flash.
+
+**Model (verified 2026-11-18):** gemini-4-carbon, GA 2026-11-10, location global, normal generateContent. Thinking levels LOW / MEDIUM / HIGH, default MEDIUM (Vertex thinking docs). Price (Nitin, Vertex pricing page, Gemini 4 table, Global): USD 2.00 in / 0.10 cached / 10.00 out per 1M tokens through 2026-11-30; 4.00 / 0.20 / 20.00 from 2026-12-01. Implicit caching only; no explicit cache, so no --cache. Build: pricing.py RATES_BY_MODEL entry and test_pricing.py (20/20 pass), commit "eval: add gemini-4-carbon price (intro rate to 2026-11-30)". No other code change.
+
+**Arm E (the only new arm):** baseline B settings with one change, the auditor model.
+- --backend vertex, location global, --auditor-model gemini-4-carbon, --level medium, --repeat 3, no --cache, no --scope-check, no --table-check, flag-off prompt hash cb3272cce551, structurer gemini-3.6-flash, audit fallback gemini-3.1-flash-lite, LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite.
+- Claims: docs/evals/exp1_full_check_claims.json (84) and docs/evals/exp1_golden_claims.json (22).
+
+**Baseline:** arm B of "Pre-registration: full 3-run no-regression check ... - 2026-11-08" (scored 2026-11-09): 3 dev + 3 golden folders, gemini-3.6-flash medium. Reused, not re-run (as step 4). Same claims files and settings except the auditor model.
+
+**Pass marks (all required; worst-case candidate vs best-case baseline, score_full_check, per-row 2-of-3 vote; unchanged from 2026-11-08):**
+- M1 Fixes: of the 8 targets, E fixed >= baseline fixed + 1 (RAW). Parked P5-R1, P5-R2 reported only.
+- M2 Catches: E loses 0 of the 7 real hits (RAW). P1-R3 reported only (2026-11-07).
+- M3 False rejections (EFFECTIVE): E <= baseline (1/88) and <= 8/88.
+- M4 Golden: refusal-family >= 5/16 and positive hits >= 11/21.
+- M5 Grounding-negative: no golden negative row refused by the baseline vote and affirmed by E.
+- M6 Needs review: 0 (auditor-only replay); the 2026-10-28 ceilings are met by construction.
+- E is not void.
+- Fallback-served audits are scored worst case for E and best case for B (score_full_check D9).
+
+**Cost (reported only, not a mark):**
+- C = mean dev audit INR per claim over E's 3 dev folders (run-date price, INR 100 per USD). Bc = 2.4075 (B, 2026-11-09).
+- Per paper at run-date prices: 102 + (C - Bc) x 30.17 (102 = step 1d estimate at today's prices).
+- Per paper from 2026-12-01: 196 + (C - Bc) x 2 x 30.17 (Carbon's price doubles on 2026-12-01 and Flash's in 2027; 196 = step 1d estimate at 2027 prices). Shown beside the INR 200 gate for information.
+- Also reported: mean thought and output tokens per dev claim, E vs B.
+- The scorer's own cost line (the 87 / 130 formula of 2026-11-08) and its Overall line are printed as they come. The test A verdict is M1-M6 plus not void, nothing else.
+
+**Known rule flaws (stated now; marks unchanged after the tag, kept for comparability with 2026-11-09 and step 4):**
+1. M2 and M5 can fail on one noise flip; the baseline itself lost P6-R1.
+2. M3 compares against B's 1/88, a low draw (product-auditor single runs: 4, 1, 1; T = 3, step 1b).
+3. The /88 includes 21 NO_MATCH S rows that can never be false rejections.
+4. Label agreement is unmeasured (one labeller), and the dev rows have been reused by many tests. A dev result is not a fresh-set claim.
+5. Auditor-only ceiling 18/31: 13 refusal rows are extraction misses that no auditor can catch.
+
+**Report-only views (cannot change the verdict):**
+- R1: M3 also against run 1's 4/88, and inside/outside T = 3.
+- R2: false rejections out of 67 matched S rows, beside /88.
+- R3: for each row failing M2 or M5, B's and E's per-run labels (is the failure on a split baseline vote?).
+- R4: refusal rows caught out of 31 (baseline run 1: 8; ceiling 18).
+- R5: which targets were fixed, by failure type A-E (2026-11-02).
+
+**Reading (fixed now):**
+- PASS: on reused dev rows, a stronger model in the same slot fixes more misses without the regressions the marks measure. Part of the gap is model capacity, at a cost Prism cannot pay. Not adopted.
+- FAIL: even gemini-4-carbon fails the no-regression marks in this slot. Model size alone does not close the gap. This supports the 2026-11-18 stop.
+- Either way, the report states it as a capacity probe on reused dev rows, not a release or fresh-set claim. Any follow-up needs Nitin's decision in its own dated entry.
+
+**Caps (deviation from the 1.3x rule, stated before any paid call):**
+- The free --estimate (2026-11-18) uses gemini-3.6-flash token averages (audit prompt 37,389; output 345; thought 2,279): dev 252 replays USD 26.768 (INR 2,676.8); golden 66 replays USD 7.011 (INR 701.1).
+- Carbon's thought use is unknown. With about 3x the thought tokens or more, a 1.3x cap on that estimate would stop the run (void).
+- Cap assumption: thought tokens 4x the estimate (9,116 per claim; gemini-3.8-flash high measured about 9,100 per dev claim on 2026-11-09). Extra USD 0.06837 per replay. Re-estimate: dev USD 43.997 (INR 4,399.7); golden USD 11.523 (INR 1,152.3).
+- Caps = 1.3x the re-estimate: dev --max-inr 5719.6; golden --max-inr 1498.0. Total 7,217.6.
+- Hard ceiling for test A: INR 8,000 counted by the tool, V5 re-runs included. A re-run that could pass the ceiling is not started; that arm is void.
+- Structurer and grounding calls are not counted (full check: billed INR 4,111.48 vs 3,542.75 counted, about +16%). Paid from the GCP Free Credit (about INR 22,600, unchecked estimate; expires 2026-11-26). Sealed reserve INR 300 untouched.
+
+**Before the paid run (free):** each command run once with --estimate in place of the paid run. Its run_config must show auditor gemini-4-carbon, level medium, backend vertex, location global, grounding_primary gemini/gemini-3.1-flash-lite, prompt hash cb3272cce551 and the claims file below. On any mismatch, fix the terminal settings and re-check. No paid call until it matches.
+
+**Run:** two terminals, both started on the same calendar day, before 2026-11-26, each in Prism.PythonService:
+
+    $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite"
+
+    uv run python -m eval.replay_audit --level medium --auditor-model gemini-4-carbon --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 5719.6 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+
+    uv run python -m eval.replay_audit --set golden --level medium --auditor-model gemini-4-carbon --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 1498.0 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+
+**Void rules:**
+- V1: a run (set) that stops at its cap is void.
+- V2: score_full_check reports INVALID -> void.
+- V3: more than 16 fallback-served audits in arm E (dev + golden, all 3 repeats; 5% of 318) -> void.
+- V4 (baseline void) does not apply: B was scored valid on 2026-11-09.
+- V5 Crash: a repeat K that stops without _summary.json may be re-run once, the same day, after its partial folder is moved out of the repo, with "--repeat 3" replaced by "--repeat-index K" and --max-inr set to one third of that run's cap (dev 1906.5, golden 499.3), within the INR 8,000 ceiling. A second crash -> void.
+- V6: the run_config printed by a paid run differs from the checked one (model, level, backend or location, grounding model, prompt hash, claims file) -> void.
+- A void arm gives no result. A re-run needs a new dated entry.
+
+**Scoring:** outputs committed unscored before scoring. score_full_check, E vs B (3 dev + 3 golden folders each), --json-out outside the repo. R1-R5 come from the scorer's JSON output; no new labels.
+
+**Expected (not a mark):** 2-4 targets fixed (informal chatbot check, 2026-11-18: strong models caught P4-R1 and P4-R2). Main risk M3: B's 1/88 is a low draw, and both gemini-3.8-flash arms failed it by judging more strictly. FAIL on M3 is the most likely outcome; R1 and R2 then show by how much.
+
+**Closed:** held-out and sealed sets, raw_text_cache, LABEL_RUBRIC.md, exp3_targets.json, .env. No rescue: no prompt, rule, cap or threshold change after the tag; no extra runs; results recorded as they fall.
