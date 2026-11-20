@@ -5215,3 +5215,77 @@ Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on
 **Expected (not a mark):** 2-4 targets fixed (informal chatbot check, 2026-11-18: strong models caught P4-R1 and P4-R2). Main risk M3: B's 1/88 is a low draw, and both gemini-3.8-flash arms failed it by judging more strictly. FAIL on M3 is the most likely outcome; R1 and R2 then show by how much.
 
 **Closed:** held-out and sealed sets, raw_text_cache, LABEL_RUBRIC.md, exp3_targets.json, .env. No rescue: no prompt, rule, cap or threshold change after the tag; no extra runs; results recorded as they fall.
+
+## Test A blocked; pre-registration: test B - one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs - 2026-11-20
+
+**Status:** written after the test B build and its free estimate, before any test B run on a real paper. Closes test A. Test B is the last Prism core test: Prism core closes after its result entry, whatever the verdict.
+
+**Test A: blocked, not run, no result**
+- Pre-registration 2026-11-18 (tag prereg/carbon-probe-2026-11-18). Dev and golden runs started 2026-11-18 about 19:00 IST on Vertex (global). After 1-2 successful Carbon audit calls each, Vertex returned 403 PERMISSION_DENIED: "Access requires an eligible paid billing account in a supported region". Both runs stopped without _summary.json.
+- The V5 same-day re-run was not used: the block would repeat. The partial folders were moved out of the repo, not read and not scored. Test A gives no result. Spend: a few calls (estimate under INR 50).
+- A Carbon auditor-slot run on AI Studio was estimated at INR 3,400+ of real money (outside budget) and cannot be adopted (cost gate INR 200). Not planned.
+
+**Billing check (2026-11-19):** GCP Free Credit INR 22,491.07 remaining (of 28,693.88; expires 2026-11-26). Since 2026-11-09 (INR 23,738.43): INR 1,247.36 billed (step 2, step 4, test A attempt). Google Developer Program credit: INR 952.30 (from 2026-11-13) + INR 160.43.
+
+**Question:** on the 12 dev papers, does one strong model reading the whole paper once (finding the claims and judging them) beat Prism's pipeline (extract -> audit -> ground)?
+
+**What this is not:** no product change; it does not reopen auditor or extractor work. The result goes to the report as a reference point. If the verdict is "ONE CALL BETTER", Prism still closes; any product follow-up needs Nitin's decision in its own dated entry, after Warrantum.
+
+**Access (2026-11-19/20):** Carbon works on the AI Studio paid-tier key (settings.ai_api_key): access check OK (34 in, 50 thought, 5 out tokens). Smoke on a made-up 3-sentence text (2026-11-20): status OK, 1 claim parsed, finish STOP, model_version gemini-4-carbon, INR 1.35 (632 in, 1,089 thought, 130 out tokens).
+
+**Build (frozen at this entry's tag):**
+- Code: Prism.PythonService/eval/testb/ (one_call.py, one_call_schemas.py, one_call_prompt.md, manifest.py, score_one_call.py) + tests/test_testb_one_call.py, test_testb_one_call_schemas.py, test_testb_manifest.py, test_testb_score_one_call.py. No existing file changed; flag-off prompt hash cb3272cce551 unchanged.
+- prompt_hash eba98e26aa2c (prompt file + schema file). A run printing another hash is void.
+- Checks: testb tests 65 passed; full suite 1493 passed, 3 skipped; ruff --select F clean; pyright 0 errors on the new files.
+
+**Config:** model gemini-4-carbon only (no fallback model); AI Studio (startup check vertexai False, else WRONG_BACKEND); thinking MEDIUM (Carbon's default); JSON output with response_schema OneCallResult (claim_quote, location, evidence, verdict, reason); max_output_tokens 32768; no temperature set. Errors: 403 -> run stops (ACCESS_DENIED); other 4xx except 429 -> run stops (API_ERROR); 429/5xx/timeout, invalid or empty JSON, or finish MAX_TOKENS -> one retry after 30 s, then that paper is FAILED for the run.
+
+**Input:** the 12 dev papers in dev_eval.json order. Text from eval/exp3_b4.py _resolve_pdf + _extract_pdf_text (PDF sha256 pinned): the same flat text Prism's auditor reads. Golden papers are not used: they are famous papers (Reflexion, CoT, ReAct) that Carbon has likely seen in training.
+
+**Prompt:** eval/testb/one_call_prompt.md. Based on the 2026-11-18 informal chatbot prompt; changes: all of the paper's own claims about results and contributions, not only headline ones; JSON fields; evidence quote at most 25 words; not_supported defined. Written once, before any real-paper call.
+
+**Matching (code only; recorded deviation):**
+- Automatic matching was rejected for official numbers (2026-10-12, 2026-11-14). Test B uses it, so its numbers are a rough comparison, not an official Prism score.
+- Row anchor: claim_text_verbatim split on "..." and "…"; the longest piece if >= 30 chars, else the whole text without the gaps.
+- Score = extraction/grounding._stage1_score(anchor, claim_quote, normalize=True) (rapidfuzz partial_ratio; argument order checked not to matter). The shorter string under 30 chars -> score 0. Matched if score >= RAPIDFUZZ_THRESHOLD (88). Best score wins; tie -> earliest claim.
+- Row status per run: not_found, supported, or flagged (partially_supported or not_supported). A FAILED paper-run -> its rows not_found.
+
+**Measures (scorer score_one_call.py):**
+- 3 runs: a row counts if flagged in >= 2 of 3. 1 run: flagged in that run (SINGLE-RUN). 2 runs: INVALID.
+- Caught = refusal rows flagged, out of 31. False rejections (FR) = S rows flagged, out of 88. Found = rows matched in a majority of runs, out of 119.
+
+**Verdict (fixed now; checked in this order):**
+1. caught >= 12 and FR <= 8 -> ONE CALL BETTER
+2. caught >= 12 and FR > 8 -> STRICTER, NOT BETTER
+3. caught <= 4 or FR > 8 -> PRISM BETTER
+4. otherwise -> NO CLEAR DIFFERENCE
+- Comparator: Prism run 1, 8/31 caught and 4/88 FR. 12 = 8 + T + 1 and 4 = 8 - T - 1, with T = 3 (step 1b). 8/88 = the release-bar FR ceiling.
+- Known mismatch: Prism's figures are one run; test B uses a 2-of-3 vote. T was measured on single runs.
+- VOID: more than 2 FAILED paper-runs across all runs -> no verdict.
+
+**Report only (cannot change the verdict):** caught split into Prism-caught / auditor-miss (score_a1.MISS_ROWS) / extraction-miss (score_exp2.ROW_ID_TO_SHAPE), Prism-caught derived only if those sets are disjoint and leave exactly 8, else NOT AVAILABLE; release bar (caught >= 22 and FR <= 8) yes/no; Carbon claims matching no row, counted by verdict (not judged; no new hand labelling); rows matched by the same claim; quote grounding rate (claim_quotes scoring >= 88 against the paper text); tokens and INR per paper, and x2 for the 2026-12-01 price; per-row table (ids, statuses, scores).
+
+**Known limits:** automatic matching; dev rows reused by many tests; one labeller; Carbon reads flat text (the chat apps saw the PDF); Carbon's training cutoff unknown, so the dev papers (arXiv 2610.x) may have been seen; Prism's comparator is a single run.
+
+**Money:**
+- Estimate (2026-11-20, count_tokens, no generation): 395,211 input tokens for the 12 papers. ASSUMPTION 8,000-24,000 output+thought tokens per call: run 1 INR 175.04-367.04; 3 runs INR 525.13-1,101.13 (INR 100 per USD, intro price USD 2 in / 10 out per 1M).
+- Run-1 cap --max-inr 600: a recorded deviation from 1.3 x high (477.15), because the smoke used 1,089 thought tokens on 3 sentences, so the high assumption may be low.
+- Runs 2 and 3 start only if run-1 cost <= INR 305, each with --max-inr = 1.3 x run-1 cost. Worst case then = 305 + 2 x 1.3 x 305 = INR 1,098, inside the Developer Program credit (about INR 1,110). Otherwise the result is run 1 alone (SINGLE-RUN).
+- Paid from the Google Developer Program credit through the AI Studio key. Before run 1, AI Studio billing must show the access and smoke calls charged to that credit, not a card; if a card was charged, stop: Nitin decides in a new entry. Sealed reserve INR 300 untouched. All runs before 2026-11-30 (intro price).
+
+**Void and re-run rules:**
+- A run that stops at its cap is void. Run 1 void -> test B void.
+- Run 2 or 3 void -> the result is run 1 alone (SINGLE-RUN).
+- A run ending ACCESS_DENIED, WRONG_BACKEND or API_ERROR may be re-run once, the same day, after its run_K folder is moved out; a second failure -> that run is void.
+- A void test gives no result; a re-run needs a new dated entry.
+
+**Run (Prism.PythonService):**
+
+    uv run python -m eval.testb.one_call --run-index 1 --max-inr 600 --out "H:\Work projects\prism_scoring\testb"
+
+- Runs 2 and 3: the same command with --run-index 2 / 3 and --max-inr = 1.3 x run-1 cost.
+- Raw outputs stay outside the repo (they hold paper text). Before scoring, eval.testb.manifest writes the sha256 of every output file to docs/evals/testb_2026-11-19/manifest.json, and that is committed. Then score_one_call writes ids, labels, scores and counts only.
+
+**Expected (not a mark):** the informal P4 check (2026-11-18) suggests a strong model catches table misses but flags many claims. Most likely STRICTER, NOT BETTER; ONE CALL BETTER is possible.
+
+**No rescue:** no prompt, matching rule, threshold or verdict change after the tag; no extra runs; results recorded as they fall.
