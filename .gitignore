@@ -45,9 +45,10 @@ node_modules/
 
 Prism.Web/.vite/
 
-Prism.Web/.vite/
-
 Prism.PythonService/logs/
+raw_text_cache/
+.ruff_cache/
+Prism.Web/dist/
 
 # Local smoke test scripts (may contain hardcoded API keys)
 Prism.PythonService/smoke_test_extraction.py

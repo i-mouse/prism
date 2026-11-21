@@ -127,7 +127,7 @@ Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
 - P8-S7: label supported in 3 of 3 D runs; counted as false rejection because grounding returned Fail (missing = true) in all 3.
 - Picture trigger: 1 layout misread in 1 run (P1-R1); trigger n.
 
-## Known risks (code-sourced, `docs/premerge_review_2026-10-20.md` section 3)
+## Known risks (code-sourced, `docs/archive/premerge_review_2026-10-20.md` section 3)
 
 All three risks below are inside code currently gated off by default (`extractor_pass2_clean` / `extractor_second_pass`), so they carry no live-pipeline risk today — but should be fixed before either flag is turned on for real traffic.
 
@@ -178,4 +178,4 @@ All three risks below are inside code currently gated off by default (`extractor
 
 ## Links
 
-Engineering report: `docs/PRISM_REPORT.md`. Fact sheet: `docs/report/PRISM_FACTS.md`. Field comparison: `docs/report/PRISM_FIELD_COMPARISON.md`. Hero diagram: `docs/diagrams/prism_hero.drawio.svg`. Decisions log: `docs/decisions.md`. Code review: `docs/premerge_review_2026-10-20.md`. Dev adjudication: `docs/evals/dev_adjudication_run1.md`. Clean-extraction scoring: `docs/evals/clean_labels/clean_attempt_score.md`.
+Engineering report: `docs/PRISM_REPORT.md`. Fact sheet: `docs/report/PRISM_FACTS.md`. Field comparison: `docs/report/PRISM_FIELD_COMPARISON.md`. Hero diagram: `docs/diagrams/prism_hero.drawio.svg`. Decisions log: `docs/decisions.md`. Code review: `docs/archive/premerge_review_2026-10-20.md`. Dev adjudication: `docs/evals/dev_adjudication_run1.md`. Clean-extraction scoring: `docs/evals/clean_labels/clean_attempt_score.md`.

@@ -246,7 +246,7 @@ A failed run must stop reporting itself as a completed one.
 * **Done when:** not before the REST API readiness blocker, the extractor
   `by_omission` gap, and the proof pack are all closed. See
   `(archived audit, see git history)` (standing recommendation: do not build now) and
-  `docs/mcp-integration-plan.md` (scope and tenancy, design intent only).
+  `docs/archive/mcp-integration-plan.md` (scope and tenancy, design intent only).
 * **Eval impact:** none - read-only tools over already-audited data.
 * **Status:** [ ] gated
 
