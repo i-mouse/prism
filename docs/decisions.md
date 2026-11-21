@@ -5289,3 +5289,43 @@ Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on
 **Expected (not a mark):** the informal P4 check (2026-11-18) suggests a strong model catches table misses but flags many claims. Most likely STRICTER, NOT BETTER; ONE CALL BETTER is possible.
 
 **No rescue:** no prompt, matching rule, threshold or verdict change after the tag; no extra runs; results recorded as they fall.
+
+## Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20
+
+**Run facts**
+- Pre-registration: "Test A blocked; pre-registration: test B ... - 2026-11-20" (tag prereg/testb-2026-11-20). All 3 runs on 2026-11-20: gemini-4-carbon, thinking medium, prompt_hash eba98e26aa2c, status OK, 12/12 papers each, 0 failed paper-runs of 36. Not void.
+- Cost (tool count, INR 100 per USD, intro price): run 1 INR 230.68 (<= 305, so runs 2 and 3 went ahead), run 2 INR 243.23, run 3 INR 208.30; total INR 682.21. Caps: run 1 600; runs 2 and 3 299.88 (1.3 x run 1). None capped.
+- Manifest (39 files) committed before scoring (commit d08f958). Raw outputs stay outside the repo. Score: docs/evals/testb_2026-11-19/result.md (ids, statuses and scores only).
+
+**Result (2-of-3 vote; verdict rules applied as written)**
+
+| Measure | Test B (Carbon, one call) | Prism run 1 |
+|---|---|---|
+| Refusal rows caught /31 | 9 | 8 |
+| False rejections /88 | 17 | 4 |
+| Verdict | PRISM BETTER (rule 3: FR 17 > 8) | - |
+
+- Release bar (caught >= 22 and FR <= 8): no.
+
+**Report only (cannot change the verdict)**
+- Caught split: Prism-caught 5 (P2-R5, P6-R1, P10-R1, P10-R2, P10-R3); auditor misses 3 (P3-R2, P4-R2, P7-R1); extraction miss 1 (P8-R3). 3 of Prism's 8 run-1 catches were not caught.
+- Refusal rows found (matched in a majority of runs): 10 of 31; 9 of those 10 flagged. 21 refusal rows not found under the automatic matching.
+- S rows found: 69 of 88 (Prism's hand map: 67 of 88, similar coverage); 17 of the 69 flagged (25%). All 17 flagged S rows matched at score 100, so the false rejections are not matching artifacts; a better matcher could add found rows but not remove these.
+- P10: 8 of its 11 rows flagged, including 5 of the 17 false rejections (S1, S2, S5, S6, S7).
+- P1-S3 and P9-S4 (both gemini-3.8-flash arms, 2026-11-09) and P10-S2 (3.8 high) are also false rejections here. A label check under the label rubric may be done later by Nitin; it cannot change this result.
+- Unmatched Carbon claims over 3 runs: 781 (supported 564, partially_supported 205, not_supported 12). Not judged (no new hand labelling).
+- Quote grounding: 95.0% of Carbon's claim quotes found in the paper text (score >= 88). Duplicate matches (one claim to 2+ rows): 10.
+- Per paper (mean of 36 calls): prompt 33,236, output 5,472, thought 6,831 tokens; INR 18.95 (INR 37.90 from 2026-12-01). Prism's pipeline: about INR 102 per paper at today's prices (step 1d, ESTIMATED).
+
+**What it means (analysis, not a rescue)**
+- Same pattern as gemini-3.8-flash (2026-11-09): a stronger model is stricter, not better. Catches about equal to Prism (9 vs 8, inside T = 3); false rejections about 4x (17 vs 4).
+- When Carbon found a bad claim it flagged it (9 of 10), including P3-R2, never flagged in 9 earlier audits (step 1a). It also flagged 1 in 4 found good claims.
+- Some of the 21 not-found refusal rows may be Carbon quoting a different sentence for the same claim. Not checked (no new hand labelling); a known limit of automatic matching.
+- Rough comparison, not an official Prism score. No product change; no release.
+
+**Correction to the 2026-11-20 pre-registration**
+- Test A spend was INR 70.16 (GCP billing, Vertex: Gemini 4 Carbon input 26.85 + output 43.31), not "under INR 50". The entry was tagged before the billing page was read.
+
+**Money:** test B INR 682.21 by the tool's count, paid from the Google Developer Program credit through the AI Studio key (AI Studio spend page, 2026-11-20 14:20 IST: credits covered all usage, INR 0 to card). The billed figure is recorded at the next check.
+
+**Decision (as pre-registered):** Prism core closes. Next, in order: report and status update with tests A and B; handoff; merge eval/carbon-probe (includes eval/step1-free-checks) to main through a PR; cleanup by archiving, not deleting; portfolio snapshot tag (not a quality release); two chat fixes; demo video; blog; resume. Then Warrantum.
