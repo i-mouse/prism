@@ -1,0 +1,2395 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:15:48.732914+00:00",
+    "paper_id": "arxiv-2610.10871v1",
+    "filename": "2610.10871v1.pdf",
+    "extraction_run_id": "4ae30589-6680-499c-bef5-8630897d3770",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-17T10:01:27Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      }
+    },
+    "claims_scope": [
+      2,
+      14,
+      15,
+      16,
+      17,
+      19,
+      20,
+      21,
+      30,
+      31
+    ]
+  },
+  "claims": [
+    {
+      "index": 2,
+      "label": "supported",
+      "claim_summary": "MASA achieves consistent accuracy gains across multiple sparse methods, benchmarks, and backbones",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Extensive experiments across multiple sparse attention methods, benchmarks, and LLM backbones show consistent accuracy gains, supporting both MASA and the matrix-approximation view of sparse attention.",
+      "evidence_spans": [
+        {
+          "source_text": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Extensive experiments across multiple sparse attention methods, benchmarks, and LLM backbones show consistent accuracy gains, supporting both MASA and the matrix-approximation view of sparse attention.",
+          "source_section": "Abstract",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "MASA improves all eight matched average scores across evaluated methods, benchmarks, and backbones",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+      "evidence_spans": [
+        {
+          "source_text": "MASA improves all eight matched average scores across three sparse methods, three benchmark suites, and both Llama- and Qwen-family backbones.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Original 87.0 ... MASA 87.27 ... Original 87.60 ... MASA 88.09 ... Original 89.18 ... MASA 89.94 ... Original 70.75 ... MASA 72.16",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Original 38.8 ... MASA 39.20 ... Original 47.14 ... MASA 47.99 ... Original 30.07 ... MASA 30.42",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Original 54.20 ... MASA 54.37",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 5,
+        "n_failed": 0,
+        "n_could_not_check": 5,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the improvement must apply to all eight matched average scores",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "87.0"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "87.27"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "87.60"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "88.09"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "89.18"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "89.94"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "70.75"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "72.16"
+              },
+              {
+                "table": 2,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "38.8"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "39.20"
+              },
+              {
+                "table": 2,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "47.14"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "47.99"
+              },
+              {
+                "table": 2,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "30.07"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "30.42"
+              },
+              {
+                "table": 3,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "54.20"
+              },
+              {
+                "table": 3,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "54.37"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the claim specifies exactly eight matched average scores",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "87.27"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "88.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "89.94"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "72.16"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "39.20"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "47.99"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "30.42"
+              },
+              {
+                "table": 3,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "54.37"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "the improvement holds across a set of three sparse methods",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "87.27"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "88.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "89.94"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "the improvement holds across a set of three benchmark suites",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "87.27"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "39.20"
+              },
+              {
+                "table": 3,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "54.37"
+              }
+            ]
+          },
+          {
+            "piece_id": 5,
+            "text": "the improvement holds for both Llama-family and Qwen-family backbones",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "89.18"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "89.94"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "70.75"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "72.16"
+              },
+              {
+                "table": 2,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "47.14"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "47.99"
+              },
+              {
+                "table": 2,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "30.07"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "30.42"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "MASA recovers 92% of FlexPrefill-Llama's score deficit relative to full attention on InfiniteBench",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On InfiniteBench, MASA raises FlexPrefill-Llama from 47.14 to 47.99 against a full-attention score of 48.06, recovering approximately 92% of the original average-score deficit.",
+      "evidence_spans": [
+        {
+          "source_text": "On InfiniteBench, MASA raises FlexPrefill-Llama from 47.14 to 47.99 against a full-attention score of 48.06, recovering approximately 92% of the original average-score deficit.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Full Attention 48.06",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Original 47.14",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "MASA 47.99",
+          "source_section": "Table 2",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the performance improvement is evaluated on the InfiniteBench benchmark",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "47.14"
+              },
+              {
+                "table": 2,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "47.99"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "MASA boosts SeerAttention on RULER from 87.60 to 88.09, surpassing full attention",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On RULER, MASA raises SeerAttention from 87.60 to 88.09, moving it from below the dense reference to above it.",
+      "evidence_spans": [
+        {
+          "source_text": "Full Attention 95.53 92.37 92.01 87.63 84.39 76.26 88.01",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Original 95.53 92.71 92.02 88.49 83.48 73.37 87.60",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "MASA 95.53 92.74 92.84 89.56 84.01 73.85 88.09",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the result holds on the RULER benchmark",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "Avg.",
+                "value": "87.60"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "Avg.",
+                "value": "88.09"
+              },
+              {
+                "table": 1,
+                "row_label": "Full Attention",
+                "column_label": "Avg.",
+                "value": "88.01"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "MASA adds 0.76 points to FlexPrefill-Llama on RULER, extending its lead over full attention",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For FlexPrefill-Llama on RULER, replacing the ranking score adds 0.76 points, exceeding the original method\u2019s 0.48-point advantage over full attention and increasing that advantage to 1.24 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Full Attention 95.67 93.75 93.03 87.26 84.37 78.13 88.70 0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Original 95.43 93.51 94.71 89.42 82.93 79.09 89.18 +0.48",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "MASA 95.43 93.99 94.95 89.66 85.09 80.54 89.94 +1.24",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "zero_pieces",
+        "n_pieces": 0,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": []
+      }
+    },
+    {
+      "index": 19,
+      "label": "supported",
+      "claim_summary": "MASA improves 11 of 12 RULER evaluation scores at 32K, 64K, and 128K context lengths",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Across the four RULER configurations at 32K, 64K, and 128K, MASA improves 11 of 12 matched length-level scores.",
+      "evidence_spans": [
+        {
+          "source_text": "Across the four RULER configurations at 32K, 64K, and 128K, MASA improves 11 of 12 matched length-level scores.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At 128K, MASA improves MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen by 1.28, 0.48, 1.45, and 2.16 points, respectively.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 5,
+        "n_failed": 0,
+        "n_could_not_check": 5,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The finding must hold across all specified RULER configurations.",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "85.0"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.3"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "88.49"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.56"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "83.48"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "84.01"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "89.42"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.66"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.93"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "85.09"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "81.25"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "82.64"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "59.14"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "62.79"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "The claim applies to the four RULER configurations.",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.56"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.66"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "82.64"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "The evaluation covers specific sequence lengths: 32K, 64K, and 128K.",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "The improvement is observed on 11 of 12 matched length-level scores.",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "85.0"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.3"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "88.49"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.56"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "83.48"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "84.01"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "89.42"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.66"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.93"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "85.09"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "81.25"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "82.64"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "59.14"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "62.79"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          },
+          {
+            "piece_id": 5,
+            "text": "The improvement applies to length-level scores.",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 20,
+      "label": "supported",
+      "claim_summary": "MASA's accuracy gains are larger at 32K\u2013128K contexts than at 4K\u201316K contexts",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "For every configuration, the mean gain over these longer contexts at 32K\u2013128K exceeds that at 4K\u201316K.",
+      "evidence_spans": [
+        {
+          "source_text": "Across the four RULER configurations at 32K, 64K, and 128K, MASA improves 11 of 12 matched length-level scores. For every configuration, the mean gain over these longer contexts at 32K\u2013128K exceeds that at 4K\u201316K.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 1: RULER (Hsieh et al., 2024) results under matched sparse-attention settings.",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 3,
+        "n_failed": 0,
+        "n_could_not_check": 3,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The comparative gain condition must hold for every configuration without exception",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "97.7"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "91.2"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "88.5"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "85.0"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.3"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "97.93"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "91.29"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "88.50"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "95.53"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "92.71"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "92.02"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "88.49"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "83.48"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "95.53"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "92.74"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "92.84"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.56"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "84.01"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "95.43"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "93.51"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "94.71"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "89.42"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.93"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "95.43"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "93.99"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "94.95"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.66"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "85.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "90.39"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "89.91"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "83.17"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "81.25"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "59.14"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "90.88"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "88.94"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "84.85"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "82.64"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "62.79"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "The gain is evaluated across and holds for these longer contexts",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "85.0"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.3"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "88.49"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "83.48"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.56"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "84.01"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "89.42"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.93"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.66"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "85.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "81.25"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "59.14"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "82.64"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "62.79"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "The comparative gain condition applies to both the 32K-128K range and the 4K-16K range",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "97.7"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "91.2"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "88.5"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "85.0"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.3"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "97.93"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "91.29"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "88.50"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "85.45"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "81.57"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "95.53"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "92.71"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "92.02"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "88.49"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "83.48"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "95.53"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "92.74"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "92.84"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.56"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "84.01"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "95.43"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "93.51"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "94.71"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "89.42"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "82.93"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "95.43"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "93.99"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "94.95"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "89.66"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "85.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "4K",
+                "value": "90.39"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "8K",
+                "value": "89.91"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "16K",
+                "value": "83.17"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "32K",
+                "value": "81.25"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "64K",
+                "value": "59.14"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "4K",
+                "value": "90.88"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "8K",
+                "value": "88.94"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "16K",
+                "value": "84.85"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "32K",
+                "value": "82.64"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "64K",
+                "value": "62.79"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 21,
+      "label": "supported",
+      "claim_summary": "At 128K length on RULER, MASA improves all four framework configurations by up to 2.16 points",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "At 128K, MASA improves MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen by 1.28, 0.48, 1.45, and 2.16 points, respectively.",
+      "evidence_spans": [
+        {
+          "source_text": "At 128K, MASA improves MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen by 1.28, 0.48, 1.45, and 2.16 points, respectively.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Original 97.7 91.2 88.5 85.0 82.3 77.6 87.0",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "MASA 97.93 91.29 88.50 85.45 81.57 78.88 87.27",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "improvements must hold at the 128K context length",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the specific point improvements must hold for each named method: MInference, SeerAttention, FlexPrefill-Llama, and FlexPrefill-Qwen",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "77.6"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "78.88"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "73.37"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "73.85"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "79.09"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "80.54"
+              },
+              {
+                "table": 1,
+                "row_label": "Original",
+                "column_label": "128K",
+                "value": "20.67"
+              },
+              {
+                "table": 1,
+                "row_label": "MASA",
+                "column_label": "128K",
+                "value": "22.83"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 30,
+      "label": "not_supported",
+      "claim_summary": "Norm clipping benefits SeerAttention and FlexPrefill-Llama, while norm balancing helps FlexPrefill",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Norm clipping is helpful for SeerAttention and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.",
+      "evidence_spans": [
+        {
+          "source_text": "Second, norm control can further improve the score in settings where value-norm outliers affect sparse-unit ranking. Norm clipping is helpful for SeerAttention and FlexPrefill-Llama, while soft norm balancing is useful in some FlexPrefill settings.",
+          "source_section": "Section 4.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "SeerAttention \u2013 \u2013 87.88",
+          "source_section": "Table 4",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "SeerAttention 90 \u2013 88.09",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "FlexPrefill-Llama 97.5 \u2013 89.94",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "FlexPrefill-Llama \u2013 0.5 47.99",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          4,
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "not_supported",
+        "fallback_reason": null,
+        "n_pieces": 2,
+        "n_failed": 2,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "applies to both SeerAttention and FlexPrefill-Llama",
+            "kind": "pair",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 2,
+            "text": "applies across multiple FlexPrefill settings",
+            "kind": "plural",
+            "answer": "not_backed",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 9,
+                "row_label": "FlexPrefill-Qwen",
+                "column_label": "Avg.",
+                "value": "72.16"
+              },
+              {
+                "table": 9,
+                "row_label": "FlexPrefill-Qwen",
+                "column_label": "Avg.",
+                "value": "70.75"
+              },
+              {
+                "table": 10,
+                "row_label": "FlexPrefill-Qwen",
+                "column_label": "Avg.",
+                "value": "30.42"
+              },
+              {
+                "table": 10,
+                "row_label": "FlexPrefill-Qwen",
+                "column_label": "Avg.",
+                "value": "30.31"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 31,
+      "label": "supported",
+      "claim_summary": "MASA significantly reduces attention-output approximation error across all tested model frameworks",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Table 8 shows lower attention-output error in every evaluated framework\u2013backbone pair, with all four reported paired confidence intervals above zero.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 8: Attention-output error decreases across all four evaluated framework\u2013backbone pairs.",
+          "source_section": "Appendix E (Table 8)",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "MInference Llama Original 1.095985 MASA 1.091532 [+0.14, +0.70]",
+          "source_section": "Table 8",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          8
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 4,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The finding holds for every evaluated framework\u2013backbone pair without exception.",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "E \u2193",
+                "value": "1.095985"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "E \u2193",
+                "value": "1.091532"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "E \u2193",
+                "value": "1.843 \u00d7 10\u22123"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "E \u2193",
+                "value": "1.805 \u00d7 10\u22123"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "E \u2193",
+                "value": "4.9059 \u00d7 10\u22122"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "E \u2193",
+                "value": "4.7909 \u00d7 10\u22122"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "E \u2193",
+                "value": "4.2009 \u00d7 10\u22122"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "E \u2193",
+                "value": "3.8997 \u00d7 10\u22122"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "The finding applies across all four reported paired confidence intervals.",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+0.14, +0.70]"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+0.69, +4.44]"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+0.50, +4.18]"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+2.33, +10.82]"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "There are exactly four reported paired confidence intervals that must be above zero.",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+0.14, +0.70]"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+0.69, +4.44]"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+0.50, +4.18]"
+              },
+              {
+                "table": 8,
+                "row_label": "MASA",
+                "column_label": "Paired 98.75% interval (%)",
+                "value": "[+2.33, +10.82]"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "The claim specifies framework and backbone combinations as the pairs being evaluated.",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Framework",
+                "value": "MInference"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Backbone",
+                "value": "Llama"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Framework",
+                "value": "SeerAttention"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Backbone",
+                "value": "Llama"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Framework",
+                "value": "FlexPrefill"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Backbone",
+                "value": "Llama"
+              },
+              {
+                "table": 8,
+                "row_label": "Original",
+                "column_label": "Backbone",
+                "value": "Qwen"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P4-R1",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P4-R2",
+      "actual_index": 30
+    },
+    {
+      "expected_id": "P4-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P4-S1",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P4-S2",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "P4-S3",
+      "actual_index": 20
+    },
+    {
+      "expected_id": "P4-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P4-S5",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P4-S6",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P4-S7",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P4-S8",
+      "actual_index": 24
+    }
+  ]
+}

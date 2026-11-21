@@ -1,0 +1,2007 @@
+{
+  "first_line": "Descriptive only. No cut-off is chosen from this data.",
+  "self_check": {
+    "B": {
+      "fixed": [],
+      "lost": [
+        "P6-R1"
+      ],
+      "false_rejections": [
+        "P4-S4"
+      ],
+      "golden": [
+        6,
+        13
+      ]
+    },
+    "C1": {
+      "fixed": [
+        "P4-R2",
+        "P8-R2"
+      ],
+      "lost": [],
+      "false_rejections": [
+        "P1-S3",
+        "P11-S2",
+        "P2-S7",
+        "P9-S4"
+      ],
+      "golden": [
+        7,
+        12
+      ],
+      "as_scored": {
+        "fixed": [
+          "P4-R2",
+          "P8-R2"
+        ],
+        "lost": [],
+        "false_rejections": [
+          "P1-S3",
+          "P11-S2",
+          "P2-S7",
+          "P9-S4"
+        ],
+        "golden": [
+          7,
+          12
+        ]
+      }
+    },
+    "C2": {
+      "fixed": [
+        "P4-R1",
+        "P4-R2",
+        "P7-R1",
+        "P8-R2"
+      ],
+      "lost": [],
+      "false_rejections": [
+        "P1-S3",
+        "P1-S8",
+        "P10-S2",
+        "P12-S4",
+        "P12-S5",
+        "P8-S7",
+        "P9-S4"
+      ],
+      "golden": [
+        9,
+        10
+      ],
+      "as_scored": {
+        "fixed": [
+          "P4-R1",
+          "P4-R2",
+          "P7-R1",
+          "P8-R2"
+        ],
+        "lost": [],
+        "false_rejections": [
+          "P1-S3",
+          "P1-S8",
+          "P10-S2",
+          "P12-S4",
+          "P12-S5",
+          "P8-S7",
+          "P9-S4"
+        ],
+        "golden": [
+          9,
+          10
+        ]
+      }
+    }
+  },
+  "claims": [
+    {
+      "claim": "arxiv-2610.11135v1#3",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P3-R2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#2",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P4-R1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 1,
+      "C1_effective": 1,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 4,
+      "total_effective": 4,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#30",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P4-R2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 6,
+      "total_effective": 6,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#3",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P6-R2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#7",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P11-R2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 1
+    },
+    {
+      "claim": "arxiv-2610.11519v1#32",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P1-R1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 1,
+      "C2_effective": 1,
+      "total_raw": 1,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#5",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P7-R1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 2,
+      "C2_effective": 2,
+      "total_raw": 2,
+      "total_effective": 2,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#7",
+      "set": "dev",
+      "class": "R target",
+      "rows": [
+        "P8-R2"
+      ],
+      "note": "",
+      "B_raw": 1,
+      "B_effective": 1,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 7,
+      "total_effective": 7,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#1",
+      "set": "dev",
+      "class": "R parked",
+      "rows": [
+        "P5-R2",
+        "P5-S1"
+      ],
+      "note": "shared claim: P5-R2 = P5-S1",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#33",
+      "set": "dev",
+      "class": "R parked",
+      "rows": [
+        "P5-R1"
+      ],
+      "note": "",
+      "B_raw": 2,
+      "B_effective": 2,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 8,
+      "total_effective": 8,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11132v1#24",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P2-R5"
+      ],
+      "note": "",
+      "B_raw": 2,
+      "B_effective": 2,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 8,
+      "total_effective": 8,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#4",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P6-R1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 6,
+      "total_effective": 6,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#6",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P8-R1"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12176v1#3",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P10-R1"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12176v1#4",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P10-R2"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12176v1#16",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P10-R3"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12168v1#0",
+      "set": "dev",
+      "class": "R real hit",
+      "rows": [
+        "P12-R2"
+      ],
+      "note": "",
+      "B_raw": 2,
+      "B_effective": 2,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 8,
+      "total_effective": 8,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#7",
+      "set": "dev",
+      "class": "P1-R3",
+      "rows": [
+        "P1-R3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#8",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#3",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#4",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 6,
+      "total_effective": 6,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#14",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#17",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 1,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#22",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11519v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P1-S8"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 3,
+      "total_effective": 3,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11132v1#2",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P2-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11132v1#9",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P2-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11132v1#22",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P2-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 2,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 2,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11132v1#25",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P2-S8"
+      ],
+      "note": "",
+      "B_raw": 1,
+      "B_effective": 1,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 1,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11135v1#13",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P3-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11135v1#15",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P3-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11135v1#32",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P3-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11135v1#37",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P3-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11135v1#29",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P3-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11135v1#18",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P3-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#14",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#19",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#20",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#21",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 2,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 2,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#15",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#17",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10871v1#31",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P4-S8"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P5-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#21",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P5-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 1,
+      "C2_effective": 1,
+      "total_raw": 1,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#18",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P5-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#19",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P5-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11291v1#20",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P5-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 1,
+      "C2_effective": 1,
+      "total_raw": 1,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#2",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P6-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#15",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P6-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#13",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P6-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 1,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#14",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P6-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.11312v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P6-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#1",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#2",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#3",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#20",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 1,
+      "C2_effective": 1,
+      "total_raw": 1,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#27",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.10590v1#34",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P7-S8"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#9",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#10",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#14",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 1,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#15",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#26",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 3,
+      "total_effective": 3,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12124v1#27",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P8-S8"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12375v1#1",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P9-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12375v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P9-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12375v1#2",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P9-S4"
+      ],
+      "note": "",
+      "B_raw": 1,
+      "B_effective": 1,
+      "C1_raw": 2,
+      "C1_effective": 2,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 6,
+      "total_effective": 6,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12375v1#14",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P9-S6"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12375v1#11",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P9-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12176v1#2",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P10-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12176v1#19",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P10-S2"
+      ],
+      "note": "",
+      "B_raw": 1,
+      "B_effective": 1,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 4,
+      "total_effective": 4,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12176v1#20",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P10-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#6",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P11-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#16",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P11-S2"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 2,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 2,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#17",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P11-S3"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#19",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P11-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#28",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P11-S7"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12114v1#11",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P11-S8"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12168v1#3",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P12-S1"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12168v1#15",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P12-S4"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 3,
+      "total_effective": 3,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2610.12168v1#5",
+      "set": "dev",
+      "class": "S",
+      "rows": [
+        "P12-S5"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 1,
+      "C1_effective": 1,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 4,
+      "total_effective": 4,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#8",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REFLEX-M08"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#17",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REFLEX-M09"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 2,
+      "C2_effective": 2,
+      "total_raw": 2,
+      "total_effective": 2,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#7",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REFLEX-M12"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#0",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REFLEX-M13"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 3,
+      "total_effective": 3,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2201.11903v6#6",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "COT-M02"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2201.11903v6#22",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "COT-M08"
+      ],
+      "note": "",
+      "B_raw": 1,
+      "B_effective": 1,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 7,
+      "total_effective": 7,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#2",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REACT-M11"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#1",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REACT-M13"
+      ],
+      "note": "",
+      "B_raw": 3,
+      "B_effective": 3,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 9,
+      "total_effective": 9,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#32",
+      "set": "golden",
+      "class": "golden negative",
+      "rows": [
+        "REACT-M14"
+      ],
+      "note": "",
+      "B_raw": 2,
+      "B_effective": 2,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 8,
+      "total_effective": 8,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#3",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REFLEX-M01"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#9",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REFLEX-M02"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2303.11366v4#26",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REFLEX-M05"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 1,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 1,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2201.11903v6#2",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "COT-M01"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2201.11903v6#14",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "COT-M03"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 3,
+      "C1_effective": 3,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 6,
+      "total_effective": 6,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2201.11903v6#16",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "COT-M04"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 1,
+      "C1_effective": 1,
+      "C2_raw": 3,
+      "C2_effective": 3,
+      "total_raw": 4,
+      "total_effective": 4,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2201.11903v6#9",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "COT-M05"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#28",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REACT-M01"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#19",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REACT-M02"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#16",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REACT-M03"
+      ],
+      "note": "",
+      "B_raw": 1,
+      "B_effective": 1,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 2,
+      "C2_effective": 2,
+      "total_raw": 3,
+      "total_effective": 3,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#29",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REACT-M05"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#18",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REACT-M08"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 0,
+      "C2_effective": 0,
+      "total_raw": 0,
+      "total_effective": 0,
+      "fallback_served": 0
+    },
+    {
+      "claim": "arxiv-2210.03629v3#21",
+      "set": "golden",
+      "class": "golden positive",
+      "rows": [
+        "REACT-M10"
+      ],
+      "note": "",
+      "B_raw": 0,
+      "B_effective": 0,
+      "C1_raw": 0,
+      "C1_effective": 0,
+      "C2_raw": 1,
+      "C2_effective": 1,
+      "total_raw": 1,
+      "total_effective": 1,
+      "fallback_served": 0
+    }
+  ]
+}

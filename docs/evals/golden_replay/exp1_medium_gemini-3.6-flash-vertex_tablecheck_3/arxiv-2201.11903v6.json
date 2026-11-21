@@ -1,0 +1,961 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "match_map:cb3272cce551",
+    "generated_at": "2026-10-07T10:02:47.794691+00:00",
+    "paper_id": "arxiv-2201.11903v6",
+    "filename": "cot.pdf",
+    "extraction_run_id": "59bda754-f7e9-4b42-9544-72cc71057878",
+    "matcher_gold_pass_rate": 0.9333333333333333,
+    "matcher_gold_verified_at": "2026-09-10T09:08:07.481248+00:00",
+    "matcher_gold_note": "matcher_gold_pass_rate and matcher_gold_verified_at carried over, not re-measured: copied on 2026-10-07 from the archived fixture header (archive/2026-10-07_pre-cb3272cce551) because matcher_fingerprint is unchanged. This fixture's matches come from the human match map, not the matcher.",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-17T08:40:17Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      },
+      "set": "golden"
+    },
+    "claims_scope": [
+      2,
+      6,
+      9,
+      14,
+      16,
+      22
+    ]
+  },
+  "claims": [
+    {
+      "index": 2,
+      "label": "not_supported",
+      "claim_summary": "PaLM 540B with eight chain-of-thought exemplars sets new GSM8K state-of-the-art accuracy.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "For instance, prompting a PaLM 540B with just eight chain-of-thought exemplars achieves state-of-the-art accuracy on the GSM8K benchmark of math word problems, surpassing even \ufb01netuned GPT-3 with a veri\ufb01er.",
+      "evidence_spans": [
+        {
+          "source_text": "As most of the datasets only have an evaluation split, we manually composed a set of eight few-shot exemplars with chains of thought for prompting\u2014Figure 1 (right) shows one chain of thought exemplar, and the full set of exemplars is given in Appendix Table 20.",
+          "source_section": "Section 3.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Prior best N/A (\ufb01netuning) 55a",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "PaLM 540B Chain of thought 56.9",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          1,
+          20
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "not_supported",
+        "fallback_reason": null,
+        "n_pieces": 1,
+        "n_failed": 1,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the result uses a specific count of eight exemplars",
+            "kind": "count",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "label": "partially_supported",
+      "claim_summary": "Chain-of-thought prompting improves performance only in models with around 100B+ parameters.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "That is, chain-of-thought prompting does not positively impact performance for small models, and only yields performance gains when used with models of \u223c100B parameters.",
+      "evidence_spans": [
+        {
+          "source_text": "That is, chain-of-thought prompting does not positively impact performance for small models, and only yields performance gains when used with models of \u223c100B parameters.",
+          "source_section": "Section 3.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "chain of thought actually hurts performance for most models smaller than 10B parameters.",
+          "source_section": "Appendix A.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "PaLM 8B standard 55.1 CoT 75.2",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          4
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 3,
+        "n_failed": 0,
+        "n_could_not_check": 3,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "results hold across both small models and models of ~100B parameters",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "LaMDA 420M",
+                "column_label": "standard",
+                "value": "2.6"
+              },
+              {
+                "table": 2,
+                "row_label": "LaMDA 420M",
+                "column_label": "CoT",
+                "value": "0.4"
+              },
+              {
+                "table": 2,
+                "row_label": "137B",
+                "column_label": "standard",
+                "value": "6.5"
+              },
+              {
+                "table": 2,
+                "row_label": "137B",
+                "column_label": "CoT",
+                "value": "14.3"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "finding applies generally to small models",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "LaMDA 420M",
+                "column_label": "standard",
+                "value": "2.6"
+              },
+              {
+                "table": 2,
+                "row_label": "LaMDA 420M",
+                "column_label": "CoT",
+                "value": "0.4"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "finding applies generally to models of ~100B parameters",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "137B",
+                "column_label": "standard",
+                "value": "6.5"
+              },
+              {
+                "table": 2,
+                "row_label": "137B",
+                "column_label": "CoT",
+                "value": "14.3"
+              },
+              {
+                "table": 2,
+                "row_label": "175B",
+                "column_label": "standard",
+                "value": "15.6"
+              },
+              {
+                "table": 2,
+                "row_label": "175B",
+                "column_label": "CoT",
+                "value": "46.9"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting gives negligible or negative gains on simple single-step MAWPS problems.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On the other hand, for SingleOp, the easiest subset of MAWPS which only requires a single step to solve, performance improvements were either negative or very small (see Appendix Table 3).",
+      "evidence_spans": [
+        {
+          "source_text": "The point of stratifying the MAWPS benchmark is to show that performance gains are minimal on easy one-step or two-step problems where large language models already achieve high performance (e.g., SingleOp, SingleEq, and AddSub).",
+          "source_section": "Table 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "PaLM 540B standard 94.1 CoT 94.1",
+          "source_section": "Table 3",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          3
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 3,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the finding applies specifically to SingleOp, a subset of the MAWPS dataset",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 12,
+                "row_label": "MAWPS: SingleOp",
+                "column_label": "Dataset",
+                "value": "MAWPS: SingleOp"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the subset is defined as requiring exactly a single step to solve",
+            "kind": "count",
+            "answer": "not_a_table_piece",
+            "state": "could_not_check",
+            "reason": "not_a_table_piece",
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 3,
+            "text": "the outcome for performance improvements falls into either negative or very small",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 3,
+                "row_label": "UL2 20B",
+                "column_label": "standard",
+                "value": "24.9"
+              },
+              {
+                "table": 3,
+                "row_label": "UL2 20B",
+                "column_label": "CoT",
+                "value": "27.2"
+              },
+              {
+                "table": 3,
+                "row_label": "LaMDA 420M",
+                "column_label": "standard",
+                "value": "2.8"
+              },
+              {
+                "table": 3,
+                "row_label": "LaMDA 420M",
+                "column_label": "CoT",
+                "value": "1.0"
+              },
+              {
+                "table": 3,
+                "row_label": "2B",
+                "column_label": "standard",
+                "value": "4.6"
+              },
+              {
+                "table": 3,
+                "row_label": "2B",
+                "column_label": "CoT",
+                "value": "4.1"
+              },
+              {
+                "table": 3,
+                "row_label": "8B",
+                "column_label": "standard",
+                "value": "8.0"
+              },
+              {
+                "table": 3,
+                "row_label": "8B",
+                "column_label": "CoT",
+                "value": "7.0"
+              },
+              {
+                "table": 3,
+                "row_label": "68B",
+                "column_label": "standard",
+                "value": "36.5"
+              },
+              {
+                "table": 3,
+                "row_label": "68B",
+                "column_label": "CoT",
+                "value": "40.8"
+              },
+              {
+                "table": 3,
+                "row_label": "137B",
+                "column_label": "standard",
+                "value": "73.2"
+              },
+              {
+                "table": 3,
+                "row_label": "137B",
+                "column_label": "CoT",
+                "value": "76.2"
+              },
+              {
+                "table": 3,
+                "row_label": "GPT 350M",
+                "column_label": "standard",
+                "value": "3.2"
+              },
+              {
+                "table": 3,
+                "row_label": "GPT 350M",
+                "column_label": "CoT",
+                "value": "1.8"
+              },
+              {
+                "table": 3,
+                "row_label": "1.3B",
+                "column_label": "standard",
+                "value": "5.3"
+              },
+              {
+                "table": 3,
+                "row_label": "1.3B",
+                "column_label": "CoT",
+                "value": "3.0"
+              },
+              {
+                "table": 3,
+                "row_label": "6.7B",
+                "column_label": "standard",
+                "value": "13.5"
+              },
+              {
+                "table": 3,
+                "row_label": "6.7B",
+                "column_label": "CoT",
+                "value": "3.9"
+              },
+              {
+                "table": 3,
+                "row_label": "175B",
+                "column_label": "standard",
+                "value": "90.9"
+              },
+              {
+                "table": 3,
+                "row_label": "175B",
+                "column_label": "CoT",
+                "value": "88.8"
+              },
+              {
+                "table": 3,
+                "row_label": "Codex -",
+                "column_label": "standard",
+                "value": "93.1"
+              },
+              {
+                "table": 3,
+                "row_label": "Codex -",
+                "column_label": "CoT",
+                "value": "91.8"
+              },
+              {
+                "table": 3,
+                "row_label": "PaLM 8B",
+                "column_label": "standard",
+                "value": "41.8"
+              },
+              {
+                "table": 3,
+                "row_label": "PaLM 8B",
+                "column_label": "CoT",
+                "value": "46.6"
+              },
+              {
+                "table": 3,
+                "row_label": "62B",
+                "column_label": "standard",
+                "value": "87.9"
+              },
+              {
+                "table": 3,
+                "row_label": "62B",
+                "column_label": "CoT",
+                "value": "85.6"
+              },
+              {
+                "table": 3,
+                "row_label": "540B",
+                "column_label": "standard",
+                "value": "94.1"
+              },
+              {
+                "table": 3,
+                "row_label": "540B",
+                "column_label": "CoT",
+                "value": "94.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Equation-only prompting fails on GSM8K because question semantics require intermediate natural language.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Figure 5 shows that equation only prompting does not help much for GSM8K, which implies that the semantics of the questions in GSM8K are too challenging to directly translate into an equation without the natural language reasoning steps in chain of thought.",
+      "evidence_spans": [
+        {
+          "source_text": "\u00b7 equation only 5.4 \u00b10.2",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "For datasets of one-step or two-step problems, however, we \ufb01nd that equation only prompting does improve performance, since the equation can be easily derived from the question (see Appendix Table 6).",
+          "source_section": "Section 3.3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "For GSM8K, however, using the equation only did not improve performance substantially. Based on qualitative analysis, we believe that these questions are too semantically challenging for the model to directly translate them into a math equation.",
+          "source_section": "Appendix A.4",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          6
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "supported",
+        "fallback_reason": null,
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "equation only prompting effect is observed for the GSM8K dataset specifically",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "GSM8K",
+                "value": "6.5 \u00b10.4"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 equation only",
+                "column_label": "GSM8K",
+                "value": "5.4 \u00b10.2"
+              },
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "SVAMP",
+                "value": "29.5 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 equation only",
+                "column_label": "SVAMP",
+                "value": "35.1 \u00b10.4"
+              },
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "ASDiv",
+                "value": "40.1 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 equation only",
+                "column_label": "ASDiv",
+                "value": "45.9 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "MAWPS",
+                "value": "43.2 \u00b10.9"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 equation only",
+                "column_label": "MAWPS",
+                "value": "50.1 \u00b11.0"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Chain-of-thought prompting consistently outperforms standard prompting across all annotators' prompt sets.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Although there is variance among different chain of thought annotations, as would be expected when using exemplar-based prompting (Le Scao and Rush, 2021; Reynolds and McDonell, 2021; Zhao et al., 2021), all sets of chain of thought prompts outperform the standard baseline by a large margin.",
+      "evidence_spans": [
+        {
+          "source_text": "Although there is notable variance in performance (which we will discuss later), chain of thought performed better than the baseline by a large margin for all three annotators on eight datasets in arithmetic, commonsense, and symbolic reasoning (Table 6 and Table 7).",
+          "source_section": "Appendix A.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Standard prompting 6.5 \u00b10.4",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "\u00b7 different annotator (B) 15.5 \u00b10.6",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "\u00b7 different annotator (C) 17.6 \u00b11.0",
+          "source_section": "Table 6",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          6,
+          7
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The outperformance must hold for every set of chain of thought prompts without exception",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "GSM8K",
+                "value": "6.5 \u00b10.4"
+              },
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "SVAMP",
+                "value": "29.5 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "ASDiv",
+                "value": "40.1 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "MAWPS",
+                "value": "43.2 \u00b10.9"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (B)",
+                "column_label": "GSM8K",
+                "value": "15.5 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (B)",
+                "column_label": "SVAMP",
+                "value": "35.2 \u00b10.4"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (B)",
+                "column_label": "ASDiv",
+                "value": "46.5 \u00b10.4"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (B)",
+                "column_label": "MAWPS",
+                "value": "58.2 \u00b11.0"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (C)",
+                "column_label": "GSM8K",
+                "value": "17.6 \u00b11.0"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (C)",
+                "column_label": "SVAMP",
+                "value": "37.5 \u00b12.0"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (C)",
+                "column_label": "ASDiv",
+                "value": "48.7 \u00b10.7"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (C)",
+                "column_label": "MAWPS",
+                "value": "60.1 \u00b12.0"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 intentionally concise style",
+                "column_label": "GSM8K",
+                "value": "11.1 \u00b10.3"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 intentionally concise style",
+                "column_label": "SVAMP",
+                "value": "38.7 \u00b10.8"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 intentionally concise style",
+                "column_label": "ASDiv",
+                "value": "48.0 \u00b10.3"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 intentionally concise style",
+                "column_label": "MAWPS",
+                "value": "59.6 \u00b10.7"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b1)",
+                "column_label": "GSM8K",
+                "value": "12.6 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b1)",
+                "column_label": "SVAMP",
+                "value": "32.8 \u00b11.1"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b1)",
+                "column_label": "ASDiv",
+                "value": "44.1 \u00b10.9"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b1)",
+                "column_label": "MAWPS",
+                "value": "53.9 \u00b11.1"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b2)",
+                "column_label": "GSM8K",
+                "value": "12.7 \u00b10.5"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b2)",
+                "column_label": "SVAMP",
+                "value": "34.8 \u00b11.1"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b2)",
+                "column_label": "ASDiv",
+                "value": "46.9 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b2)",
+                "column_label": "MAWPS",
+                "value": "60.9 \u00b10.8"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b3)",
+                "column_label": "GSM8K",
+                "value": "12.6 \u00b10.7"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b3)",
+                "column_label": "SVAMP",
+                "value": "35.6 \u00b10.5"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b3)",
+                "column_label": "ASDiv",
+                "value": "44.4 \u00b12.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b3)",
+                "column_label": "MAWPS",
+                "value": "54.2 \u00b14.7"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "The finding applies across multiple sets of prompts",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 6,
+                "row_label": "Standard prompting",
+                "column_label": "GSM8K",
+                "value": "6.5 \u00b10.4"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (B)",
+                "column_label": "GSM8K",
+                "value": "15.5 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 different annotator (C)",
+                "column_label": "GSM8K",
+                "value": "17.6 \u00b11.0"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 intentionally concise style",
+                "column_label": "GSM8K",
+                "value": "11.1 \u00b10.3"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b1)",
+                "column_label": "GSM8K",
+                "value": "12.6 \u00b10.6"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b2)",
+                "column_label": "GSM8K",
+                "value": "12.7 \u00b10.5"
+              },
+              {
+                "table": 6,
+                "row_label": "\u00b7 exemplars from GSM8K (\u03b3)",
+                "column_label": "GSM8K",
+                "value": "12.6 \u00b10.7"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "Sufficiently large language models generalize to longer sequence lengths using chain-of-thought prompting.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hence, chain-of-thought prompting facilitates length generalization beyond seen chains of thought for language models of suf\ufb01cient scale.",
+      "evidence_spans": [
+        {
+          "source_text": "For last letter concatenation, the model only sees exemplars of names with two words, and then performs last letter concatenation on names with 3 and 4 words.",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "As for the OOD evaluations, standard prompting fails for both tasks. With chain-of-thought prompting, language models achieve upward scaling curves (though performance is lower than in the in-domain setting).",
+          "source_section": "Section 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 5: Standard prompting versus chain of thought prompting enables length generalization to longer inference examples on two symbolic manipulation tasks.",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "COT-M01",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "COT-M02",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "COT-M03",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "COT-M04",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "COT-M05",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "COT-M06",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M07",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M08",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "COT-M09",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M10",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M11",
+      "actual_index": null
+    },
+    {
+      "expected_id": "COT-M12",
+      "actual_index": null
+    }
+  ]
+}

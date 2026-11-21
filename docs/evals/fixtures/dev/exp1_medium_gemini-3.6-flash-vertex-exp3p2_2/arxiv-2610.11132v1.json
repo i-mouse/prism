@@ -1,0 +1,117 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-11T18:16:08.108000+00:00",
+    "paper_id": "arxiv-2610.11132v1",
+    "filename": "2610.11132v1.pdf",
+    "extraction_run_id": "18fea726-4814-47d3-a60f-94a01faee4d8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-11-12T11:41:34Z",
+      "inline_claims": true
+    },
+    "claims_scope": [
+      1096,
+      1081
+    ]
+  },
+  "claims": [
+    {
+      "index": 1096,
+      "label": "supported",
+      "claim_summary": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Overall, these results suggest that the additional generation overhead introduced by SFT-as-context is modest.",
+      "evidence_spans": [
+        {
+          "source_text": "Specifically, the ratio of second-pass to first-pass response tokens is at most 13.0%.",
+          "source_section": "Appendix I",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 10: SFT-as-context incurs modest overhead compared with SFT.",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    },
+    {
+      "index": 1081,
+      "label": "supported",
+      "claim_summary": "However, consistent with prior work (Chen et al., 2026), we find that RL post-training induces negligible forgetting of instruction-following capabilities, as measured by IFEval.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "However, consistent with prior work (Chen et al., 2026), we find that RL post-training induces negligible forgetting of instruction-following capabilities, as measured by IFEval.",
+      "evidence_spans": [
+        {
+          "source_text": "Average (11 pairs) | 42.78 | 42.56 | \u22120.22",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": null
+        },
+        {
+          "source_text": "Table 5: RL-trained models do not show forgetting of instruction-following capability compared to their parent, as measured by IFEval.",
+          "source_section": "Table 5",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P2-R1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-R5",
+      "actual_index": 24
+    },
+    {
+      "expected_id": "P2-S2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S3",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P2-S4",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S6",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P2-S7",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P2-S8",
+      "actual_index": 25
+    }
+  ]
+}

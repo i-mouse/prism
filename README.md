@@ -12,8 +12,8 @@ Prism checks whether a research paper's own claims are supported by the evidence
 |---|---|
 | **What it does** | Upload one paper. Prism extracts its claims, audits each one against the full paper, verifies the quoted evidence, and shows a Claim-Support Matrix with a paper-scoped chat. |
 | **Current result** | Dev Run 1 (12 papers): flagged 8 of 31 unsupported claims, wrongly flagged 4 of 88 supported ones. Release bar: at least 22/31 with at most 8/88. **Not met; no release with the current auditor.** |
-| **What is notable** | Every change is pre-registered with pass/fail marks and a spend cap before it runs; a failed mark rejects it. 24 alternatives have been tested and measured this way. |
-| **Status** | Runs locally on .NET Aspire. The Azure deployment was decommissioned on 2026-09-28 to control cost; there is no live URL. |
+| **What is notable** | Every change is pre-registered with pass/fail marks and a spend cap before it runs; a failed mark rejects it. Each alternative was pre-registered, tested and measured this way; see the report. |
+| **Status** | Runs locally on .NET Aspire. The Azure deployment was decommissioned on 2026-09-28 to control cost; there is no live URL. Core auditor work stopped after step 4 (2026-11-18); no release with the current auditor. |
 | **Stack** | .NET 10 / ASP.NET Core, Python / FastAPI / LangGraph, Gemini 3.6 Flash, PostgreSQL, Qdrant, RabbitMQ, React. |
 
 ## Read the report
@@ -27,13 +27,13 @@ The full story is in the **[engineering report](docs/PRISM_REPORT.md)**. Every f
 | [3. Architecture and pipeline](docs/PRISM_REPORT.md#3-architecture-and-pipeline) | Every stage, what runs, what was tried at each stage and why |
 | [4. Models](docs/PRISM_REPORT.md#4-models) | Models per role, and models tested but not adopted |
 | [5. Evaluation design](docs/PRISM_REPORT.md#5-evaluation-design) | Eval sets, metrics, pre-registration and no-rescue rules |
-| [6. Every test and its result](docs/PRISM_REPORT.md#6-every-test-and-its-result) | Each test with its marks, result, verdict and cost |
-| [7. Where it fails](docs/PRISM_REPORT.md#7-where-it-fails) | The 10 auditor misses by type, the 13 extraction misses, the lessons |
-| [8. Current scores](docs/PRISM_REPORT.md#8-current-scores) | Dev, golden and held-out scores against the release bar |
+| [6. Every test and its result](docs/PRISM_REPORT.md#6-every-test-and-its-result) | Each test with its marks, result, verdict and cost; the 6-step path and step 4 |
+| [7. Where it fails](docs/PRISM_REPORT.md#7-where-it-fails) | The 10 auditor misses by type, 13 extraction misses, auditor attempts and verdicts |
+| [8. Current scores](docs/PRISM_REPORT.md#8-current-scores) | Dev, golden and held-out scores against the release bar (restated 2026-11-18) |
 | [9. Costs](docs/PRISM_REPORT.md#9-costs) | Cost per paper, spend per test, the 2027 price change |
-| [10. How others approach this problem](docs/PRISM_REPORT.md#10-how-others-approach-this-problem) | Related tools and benchmarks, and how Prism differs |
-| [11. Patterns not yet tried](docs/PRISM_REPORT.md#11-patterns-not-yet-tried) | Recorded ideas, not decided |
-| [12. Where Prism stands](docs/PRISM_REPORT.md#12-where-prism-stands) | What is decided next and what is off limits |
+| [10. How others approach this problem](docs/PRISM_REPORT.md#10-how-others-approach-this-problem) | Related tools and benchmarks, field comparison, small checkers |
+| [11. Patterns not yet tried](docs/PRISM_REPORT.md#11-patterns-not-yet-tried) | Recorded ideas, what a v2 would need |
+| [12. Where Prism stands](docs/PRISM_REPORT.md#12-where-prism-stands) | Decision gate outcome, remaining polish, next separate projects |
 | [Appendix: Engineering state](docs/PRISM_REPORT.md#appendix-engineering-state) | Eval tooling, CI checks, branches and tags |
 
 ## How it works

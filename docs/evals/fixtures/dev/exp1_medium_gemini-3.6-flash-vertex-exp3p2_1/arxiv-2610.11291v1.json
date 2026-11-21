@@ -1,0 +1,89 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:21:45.818342+00:00",
+    "paper_id": "arxiv-2610.11291v1",
+    "filename": "2610.11291v1.pdf",
+    "extraction_run_id": "ce761dd0-6291-4e3d-81c2-387d40d90ea8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-11-12T11:39:26Z",
+      "inline_claims": true
+    },
+    "claims_scope": [
+      1048
+    ]
+  },
+  "claims": [
+    {
+      "index": 1048,
+      "label": "supported",
+      "claim_summary": "Thus, both covering all reasoning stages and maintaining on-policyness w.r.t. the teacher are important.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Thus, both covering all reasoning stages and maintaining on-policyness w.r.t. the teacher are important.",
+      "evidence_spans": [
+        {
+          "source_text": "To isolate the value of reasoning-stage coverage, we perform an ablation by truncating the cached Semi-OPD traces to the first 1/4, 1/2, or 3/4 of their length, while scaling the number of rollouts per prompt to keep the total training token budget fixed. As shown in Fig. 5(c, d), restricting supervision to the first quarter substantially slows convergence and reduces final accuracy, whereas training on full trajectories achieves the best peak accuracy.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Semi-OPD maintains a larger fraction of such tokens than OPD throughout training. This indicates that Semi-OPD exposes the student to more teacher-preferred tokens, i.e., more on-policy w.r.t. the teacher, whereas OPD more often produces signals that suppress the student\u2019s own sampled tokens.",
+          "source_section": "Section 4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P5-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P5-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P5-R3",
+      "actual_index": 27
+    },
+    {
+      "expected_id": "P5-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P5-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P5-S3",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P5-S4",
+      "actual_index": 21
+    },
+    {
+      "expected_id": "P5-S5",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P5-S6",
+      "actual_index": 19
+    },
+    {
+      "expected_id": "P5-S7",
+      "actual_index": 20
+    }
+  ]
+}

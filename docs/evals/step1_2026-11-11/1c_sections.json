@@ -1,0 +1,169 @@
+{
+  "rows": [
+    {
+      "row_id": "P7-R2",
+      "paper_id": "arxiv-2610.10590v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 72.1,
+      "bucket": "body",
+      "underneath": "body",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "Discussion"
+    },
+    {
+      "row_id": "P2-R1",
+      "paper_id": "arxiv-2610.11132v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 30.5,
+      "bucket": "body",
+      "underneath": "body",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "RELATED WORK"
+    },
+    {
+      "row_id": "P1-R2",
+      "paper_id": "arxiv-2610.11519v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 26.6,
+      "bucket": "conclusion",
+      "underneath": "conclusion",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "CONCLUSION"
+    },
+    {
+      "row_id": "P12-R1",
+      "paper_id": "arxiv-2610.12168v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 1.6,
+      "bucket": "introduction",
+      "underneath": "introduction",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "Introduction"
+    },
+    {
+      "row_id": "P2-R3",
+      "paper_id": "arxiv-2610.11132v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 91.9,
+      "bucket": "appendix",
+      "underneath": "appendix",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "results are underlined."
+    },
+    {
+      "row_id": "P2-R4",
+      "paper_id": "arxiv-2610.11132v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 74.5,
+      "bucket": "appendix",
+      "underneath": "appendix",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "APPENDIX"
+    },
+    {
+      "row_id": "P9-R1",
+      "paper_id": "arxiv-2610.12375v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 71.4,
+      "bucket": "body",
+      "underneath": "body",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "Evaluation protocol."
+    },
+    {
+      "row_id": "P4-R3",
+      "paper_id": "arxiv-2610.10871v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 52.3,
+      "bucket": "conclusion",
+      "underneath": "conclusion",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "CONCLUSION"
+    },
+    {
+      "row_id": "P3-R1",
+      "paper_id": "arxiv-2610.11135v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 19.7,
+      "bucket": "conclusion",
+      "underneath": "conclusion",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "Conclusion"
+    },
+    {
+      "row_id": "P5-R3",
+      "paper_id": "arxiv-2610.11291v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 10.7,
+      "bucket": "introduction",
+      "underneath": "introduction",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "1. Introduction"
+    },
+    {
+      "row_id": "P8-R3",
+      "paper_id": "arxiv-2610.12124v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 21.6,
+      "bucket": "body",
+      "underneath": "body",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "Method"
+    },
+    {
+      "row_id": "P11-R1",
+      "paper_id": "arxiv-2610.12114v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 21.4,
+      "bucket": "body",
+      "underneath": "body",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "Evaluation"
+    },
+    {
+      "row_id": "P11-R3",
+      "paper_id": "arxiv-2610.12114v1",
+      "found_whole": true,
+      "score": 100.0,
+      "position_pct": 58.8,
+      "bucket": "appendix",
+      "underneath": "appendix",
+      "confidence": "high",
+      "reasons": [],
+      "heading": "METHOD AND BASELINE CONFIGURATIONS"
+    }
+  ],
+  "totals": {
+    "abstract": 0,
+    "introduction": 2,
+    "body": 5,
+    "conclusion": 3,
+    "appendix": 3,
+    "table or figure caption": 0,
+    "not found whole": 0
+  }
+}

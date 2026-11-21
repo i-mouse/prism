@@ -4584,3 +4584,748 @@ Next
 - The "Report, hero diagram, docs refresh and merge to main - 2026-11-10" entry said eval/vertex-auditor-option would be merged with a merge commit. It was squash-merged into one commit on main.
 - Consequence: individual commit hashes cited in this log (for example 49bae11, b62e6af, bc2f575) are not in main's history. They stay reachable through tags: the experiment tags already recorded in this log, and archive/vertex-auditor-option-history at the branch tip, which also contains auditor/caching-scope-check and docs/auditor-diagnostic-2026-10-22.
 - Archive tags created before deleting branches: archive/vertex-auditor-option-history, archive/docs-label-rubric, archive/pr1-fewshot-loader (PR #115 closed), archive/dev-baseline-run1.
+
+## 6-step path after outside reviews - 2026-11-11
+
+Context
+- Four outside reviews of the Prism report (Fable 5.2 blind, Gemini,
+  ChatGPT, DeepSeek) were merged on 2026-11-11. They agree on: stop
+  model and thinking-level swaps; both stages need work; past decisions
+  sit inside run-to-run noise; the auditor trusts summary wording; no
+  release claim without a fresh test set.
+- Follows Nitin's decision of 2026-11-09 (auditor and extraction work
+  continue; no new hand labelling; the next approach is pre-registered
+  on its own).
+
+Decision (Nitin, 2026-11-11)
+- Run these 6 steps, strictly in order, before any other Prism work:
+  1. Free checks on saved data (INR 0):
+     a. for each of the 106 full-check claims, count how many of the 9
+        saved audits flagged it;
+     b. noise: compare saved no-change runs and set a tolerance T
+        (max 3);
+     c. which paper section each of the 13 extraction misses sits in
+        (Nitin runs the script; agents never open raw_text_cache or
+        exp3_targets.json);
+     d. real cost per stage from saved usage data, caching included, at
+        2027 prices.
+  2. Small paid test (about INR 100 estimate): the 7 pass-2-recovered
+     claims go to today's auditor, 3 runs. Pass 2 stays off. The result
+     sets the order in step 4 (auditor catches few -> auditor first;
+     catches most -> extractor first).
+  3. Read-only look at CLAIMCHECK and SciClaimEval: format, licence,
+     size, mapping to Prism. No runs.
+  4. One change, chosen by step 2:
+     - Auditor: the checker sees only the detailed rows or sentences
+       for each lister item and answers one narrow question; the score
+       is built from counts of failed checks.
+     - Extractor: a second small pass over abstract, introduction and
+       conclusion, sentence by sentence, yes/no "is this the paper's
+       own claim?"; joined with pass 1; dedup in code.
+  5. Outside check on a public set, only if the step 4 change passes
+     on dev.
+  6. Update PRISM_REPORT.md and PRISM_STATUS.md with the outcome, pass
+     or fail.
+- Each paid step is pre-registered on its own: a dated entry with marks
+  and a cap, committed and tagged before the run. Work happens on a new
+  branch off main.
+- The GCP Free Credit expiry (2026-11-26) sets when we run, never what
+  we pick.
+- CLAIMCHECK and SciClaimEval may serve as outside labels and a fresh
+  test set, pending the licence and fit check in step 3.
+
+Decision gate after step 6
+- Continue Prism only if a step 4 change passed and the next step is
+  clear.
+- Otherwise Prism core work stops (the report stands as the hiring
+  artifact) and work moves, in order, to: a small separate fine-tuning
+  (LoRA) learning project; MCP hands-on practice; resume and LinkedIn
+  rewrite. All three are separate from the Prism repo.
+
+Rulings Nitin must give before step 4 is pre-registered
+- (i) Does matching new claims to benchmark rows count as "new hand
+  labelling"?
+- (ii) Score direction, and how the cut-off is chosen.
+
+Step 1 reading rules (written before any step 1 output)
+- Step 1 is descriptive. It changes no recorded verdict, label, prompt,
+  flag or threshold. Outputs go to docs/evals/step1_2026-11-11/.
+- 1a: flagged = partially_supported or not_supported. Counts are
+  reported per arm (0-3) and over all 9 audits, on the RAW label and on
+  the EFFECTIVE status. Fallback-served audits are counted separately.
+  The script must first reproduce the recorded 2026-11-09 votes. No
+  cut-off is chosen from this data; any cut-off belongs to the step 4
+  pre-registration.
+- 1b: a no-change group = repeats with the same auditor model, thinking
+  level, backend, prompt hash, flags, grounding model and claims file.
+  Spread = highest minus lowest count across the repeats of one group.
+  T = the largest spread in non-void groups that use the product
+  auditor (gemini-3.6-flash, flags off), over four counts: refusal-row
+  claims flagged (RAW), S-row false rejections (EFFECTIVE), golden
+  refusal-family, golden positive hits. If the largest spread is above
+  3, T = 3 and the measured value is recorded beside it. Void runs and
+  the gemini-3.8-flash arms are reported beside, never used to set T.
+- T is measured on single runs, so it is an upper bound for 2-of-3
+  voted counts. How T enters a mark is written in each future test's
+  own pre-registration. T applies to future tests only; recorded
+  verdicts and the 2026-10-28 no-regression rule stand. Until a
+  pre-registration uses T, the earlier noise rule (a change of 2
+  refusal rows or fewer is not a win) stays.
+- 1c: buckets are fixed now: abstract, introduction, body, conclusion,
+  appendix (after the last References heading), table or figure
+  caption, not found whole. The number of the 13 in abstract +
+  introduction + conclusion is the ceiling for the step 4 extractor
+  option. Rows the script marks low-confidence are checked by Nitin
+  against the PDF.
+- 1d: each stage figure is tagged MEASURED (saved usage data),
+  ESTIMATED or NOT FOUND. Prices: run-date list price and 2027 list
+  price (gemini-3.6-flash USD 1.50 in / 7.50 out per 1M tokens, cached
+  rates doubled; re-checked 2026-11-11), INR 100 per USD. No gate is
+  applied here; the INR 130 gate is unchanged.
+
+Expectation (estimate, recorded before the work)
+- 22/31 is not expected by 2026-11-26. Realistic best case is about
+  13-15 of 31.
+
+Money: INR 0 for this entry and for step 1.
+
+## Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12
+
+Step 1 (scripts in Prism.PythonService/eval/step1/, outputs in
+docs/evals/step1_2026-11-11/; full suite 1200 passed, 3 skipped,
+1 deselected; Ruff and Pyright clean)
+- 1a: re-running the product auditor adds little. Over 3 baseline runs,
+  bad claims flagged in >= 1 run 15/27 (good 4/79); in >= 2 runs 13/27
+  (good 0/79). 7 of 8 auditor targets never flagged by the baseline;
+  P3-R2, P6-R2, P11-R2 never flagged in any of 9 audits. A score must
+  come from narrower checks, not repeats. B's one false rejection
+  (P4-S4) is grounding-only.
+- 1b: T = 3, set by baseline S-row false rejections per run [4, 1, 1].
+  Refusal-row spread 1, golden spreads 2. Recorded verdicts stand; T
+  applies to future tests only. Each future pre-registration states
+  which spread applies to each mark.
+- 1c: of the 13 extraction misses, introduction 2, conclusion 3, body
+  5, appendix 3. Nitin checked 4 rows against the PDFs (2026-11-12),
+  all confirmed. Ceiling for the abstract/introduction/conclusion
+  extractor option: 5 of 13. P3-R1's introduction holds a softer
+  sibling of the same claim (pattern E3).
+- 1d (estimated): about INR 102 per paper today, INR 196 at 2027
+  prices; with explicit caching INR 136 (Vertex) or 130 (AI Studio) at
+  2027 prices. Auditor is about 71% of cost. Metadata and embedding
+  cost not found.
+
+Cost gate (Nitin, 2026-11-12, set before any step 2 or step 4 result)
+- The per-paper cost gate for step 4 changes is raised from INR 130 to
+  INR 200 at 2027 list prices. Reason: leave room for fixes; caching
+  and cost work come later.
+- Revisit before any release.
+
+Next: step 2 pre-registration (the 7 pass-2-recovered claims ->
+today's auditor, 3 runs).
+
+Money: INR 0.
+
+## Pre-registration: step 2 - today's auditor on the 7 pass-2-recovered claims, Vertex, 3 runs - 2026-11-12
+
+Purpose
+- Step 2 of the 6-step path (2026-11-11). Sets the order in step 4:
+  auditor change first, or extractor change first.
+- No product change. Pass 2 stays off. No recorded product number
+  changes from this test.
+
+Set
+- docs/evals/exp3_pass2_7_claims.json, 7 claims, one per row:
+  P2-R3, P2-R4, P3-R1, P5-R3, P8-R3, P9-R1, P11-R3 (recovered in both
+  Exp 3 runs, 2026-10-16).
+- Built by eval/step2/build_exp3_p2_claims.py from:
+  docs/evals/exp3_b4/c1_adjudication.csv
+    SHA256 060775312C02CC4998960D0B19FF28304AC80F091C10D7CD31C850A4846035CE
+  docs/evals/exp3_b4/c1_key.json
+    SHA256 CEB11A81669CEC0CF7B365971B1DC4F8ABE64E56269E7CD56817E8A5F9D2AD7E
+  and the Exp 3 pass2_r1 / pass2_r2 *_merged.json fixtures.
+  Claims file SHA256
+    FE1D543D214B6E903C5390596102BB7089FD9A5F5E6C0D714BB84F94CD66807F
+- Pick rule: pass-2 matches only; the one present in both runs; lowest
+  candidate id if several. Picks: P2-R3 C0233, P2-R4 C0308, P3-R1 C0309,
+  P5-R3 C0816, P8-R3 C0742, P9-R1 C0671, P11-R3 C0572. No row flagged.
+- Text check (INR 0): 7/7 claims found in the cached paper text that
+  replay_audit sends (partial_ratio 100 each).
+- No new hand labelling.
+
+Known limits (stated before the run)
+- The row-to-claim matches are the Exp 3 c1 adjudication: AI-proposed,
+  human-verified, exploratory (2026-10-16). No lock.json exists, although
+  the 2026-10-16 entry says attribution was read after locking. The two
+  input hashes above pin the files used.
+- P5-R3: the matched sentence (C0816) does not read as the same claim as
+  the row text. Kept by the rule; reported both with and without it.
+- P2-R3 and P2-R4 each have a second matched claim (C0496, C0637) that is
+  not audited.
+- A pass-2 claim's summary is the copied sentence (pass 1 uses a short
+  paraphrase), so the audit input differs in shape from pass 1.
+- 7 claims give a direction, not a score. All 7 are bad claims, so the
+  test cannot measure false rejections.
+
+Config (same as full-check arm B, 2026-11-08)
+- --backend vertex, location global, auditor gemini-3.6-flash, thinking
+  medium, --repeat 3, no --cache, no --scope-check, flag-off prompt hash
+  cb3272cce551, structurer gemini-3.6-flash, audit fallback
+  gemini-3.1-flash-lite, LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite.
+- Output folders: docs/evals/fixtures/dev/
+  exp1_medium_gemini-3.6-flash-vertex-exp3p2_{1,2,3}.
+- Tooling: replay_audit inline claims + --out-tag; eval/step2/
+  vote_claims.py. New tests 72 passed; ruff clean on new files.
+
+Cost
+- Estimate (replay_audit --estimate, 2026-11-12): INR 90.5, grounding not
+  counted. Cap --max-inr 117.6 (1.3x). Paid from the GCP Free Credit.
+
+Command (Prism.PythonService, PowerShell)
+
+    $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite"
+    uv run python -m eval.replay_audit --backend vertex --vertex-project gen-lang-client-0520352487 --auditor-model gemini-3.6-flash --level medium --repeat 3 --out-tag exp3p2 --max-inr 117.6 --claims ..\docs\evals\exp3_pass2_7_claims.json
+
+Measure
+- Caught = RAW label partially_supported or not_supported in >= 2 of 3
+  runs, from eval/step2/vote_claims.py over the 3 folders.
+- EFFECTIVE vote: report only.
+
+Split rule (primary, on all 7)
+- Caught >= 5/7 -> extractor change first in step 4.
+- Caught <= 4/7 -> auditor change first in step 4.
+- Noise: refusal spread is 1 row (step 1b). 4 and 5 cannot be told apart,
+  so 4 stays with the earlier recorded order (auditor first, 2026-10-20).
+
+Report only (cannot change the split)
+- Caught without P5-R3, out of 6.
+- Appendix rows (P2-R3, P2-R4, P11-R3) and other rows (P3-R1, P5-R3,
+  P8-R3, P9-R1) separately; the step 4 extractor option cannot reach the
+  appendix rows.
+- Per-claim RAW and EFFECTIVE labels for all 3 runs.
+
+Void rules
+- V1: the run stops at its cap -> void.
+- V2: vote_claims reports INVALID -> void.
+- V3: any fallback-served audit (of 21) -> void.
+- V4 crash: a repeat K that stops without _summary.json may be re-run
+  once, the same day, after its partial folder is moved out of the repo,
+  with "--repeat 3" replaced by "--repeat-index K" and --max-inr 39.2.
+  A second crash -> void.
+- A void run gives no result. A re-run needs a new dated entry.
+
+No rescue
+- No prompt, threshold, claim or rule change after the run starts. No
+  extra runs. Outputs committed unscored before scoring.
+
+  ## Step 2 result: auditor caught 2/7 pass-2-recovered claims -> auditor first in step 4 - 2026-11-13
+
+Run facts
+- Pre-registration 2026-11-12 (tag prereg-step2-2026-11-12). Run
+  2026-11-12, 17:08-17:17 IST. All 3 repeats finished; not capped
+  (about INR 74 total by the tool's own counts: 33.0 + 20.83 + 20.15,
+  grounding included; cap 117.6). Fallback-served audits 0 of 21.
+  vote_claims reported no INVALID. Not void.
+- Outputs: docs/evals/fixtures/dev/
+  exp1_medium_gemini-3.6-flash-vertex-exp3p2_{1,2,3}, committed before
+  scoring.
+
+Result (RAW, 2-of-3 vote; EFFECTIVE identical)
+
+| Row | Runs 1-3 | Caught |
+|---|---|---|
+| P2-R3 | S S S | no |
+| P2-R4 | S S S | no |
+| P3-R1 | S S S | no |
+| P5-R3 | S S S | no |
+| P8-R3 | S S S | no |
+| P9-R1 | P P P | yes |
+| P11-R3 | N N N | yes |
+
+- Caught 2/7 (supported 5, split 0).
+- Report only: without P5-R3, 2/6. Appendix rows (P2-R3, P2-R4,
+  P11-R3) 1/3; other rows (P3-R1, P5-R3, P8-R3, P9-R1) 1/4.
+- All 7 claims got the same label in all 3 runs.
+
+Decision (split rule, mechanical)
+- Caught <= 4/7 -> the auditor change comes first in step 4.
+  Same order as recorded on 2026-10-20.
+
+Reading (not a rescue)
+- Even when extraction finds these bad claims, today's auditor passes
+  5 of 7 as supported. Extraction gains on these rows would mostly be
+  lost until the auditor improves.
+- Not tested: why the auditor passes them. The pass-2 claim summary is
+  the copied sentence, which differs from pass 1's short summary. Left
+  for the step 4 design.
+- Spend from the GCP Free Credit; billed amount recorded at the next
+  credit check.
+
+Next
+- Step 3: read-only look at CLAIMCHECK and SciClaimEval (format,
+  licence, size, fit). No runs.
+
+
+## Step 3: public datasets checked (read-only, INR 0) - 2026-11-13
+**Context:** Step 3 of the 6-step path ("6-step path after outside reviews - 2026-11-11"). Read-only look at public expert-labelled sets: format, licence, size and fit with Prism. No runs, no spend. Checked by web search and Nitin's screenshots of licences, READMEs, sample records and stats tables.
+
+**Findings:**
+
+| Dataset | Licence | Size / usable part | Truth quality | Use |
+|---|---|---|---|---|
+| SciTab (github.com/XinyuanLu00/SciTab, EMNLP 2023) | MIT (verified) | 1,225 claims; JSON with table caption, columns, rows, claim, label (supports / refutes / NEI) | Expert-verified; supported claims real, refuted/NEI model-written then expert-checked | Test the narrow table checker |
+| SciClaimEval (HF alabnii/sciclaimeval-shared-task, LREC 2026) | CC BY 4.0, per-row licence field | 727 dev rows; Supported / Refuted; full paper text | Expert; Refuted rows made by editing the table/figure image, so unusable for a text reader | Supported table claims only: false-rejection test |
+| PRISMM-Bench (HF daluggas/PRISMM-Bench, ICLR 2026, 384 rows; not the older 262-row wlin21at v1) | Apache-2.0 (code repo verified; HF card states Apache-2.0) | 384 cases / 353 papers; text-usable: table-text 46 (+ table-table 19, table-caption 6, equation-text 8); figure cases unusable | Reviewer-flagged, human-verified | About 46 table-text cases: real bad claims in new papers (catch test) |
+| CLAIMCHECK (github.com/JHU-CLSP/CLAIMCHECK) | None (no LICENSE file) | 41 papers, 154 disputed claims | Low expert agreement | Backup only; local use, never committed |
+| SciVer, RIGOURATE, SPOT | - | - | SciVer needs images; RIGOURATE labelled by LLMs; SPOT mostly maths/figure errata | Cited only, not used. SPOT: best model 21% recall on whole-paper error finding (supports the narrow-checker design) |
+
+**Sample row check (PRISMM-Bench zwcRnM8lD6_0, category table-only):**
+- parts holds an image only; content_text is empty. There is no paper text to audit.
+- The claim side is the reviewer's expectation (1000-epoch results should be reported), not a sentence the paper states. The problem is missing results, not a claim wider than its evidence.
+- The row disagrees with itself: review_text says 300 epochs; description and the answer choice say 30.
+- Not settled by reading the paper: that would be new hand labelling (decision 2026-11-09).
+- Lessons: (a) rows need an automatic filter written before any run; (b) public labels can contain errors, so outside-set scores are rough checks, never ground truth; (c) PRISMM-Bench's "inconsistency" is wider than Prism's job; only rows where the paper's own text states the claim fit.
+
+**Decision:**
+- The hand-labelled dev set stays the main test. Public sets are outside checks only, used in step 5 and only if the step 4 change passes on dev. Never tune prompts, cut-offs or filters on them.
+- Use plan for step 5 (marks pre-registered then): SciTab sample for the narrow table checker; SciClaimEval Supported table claims for false rejections; PRISMM-Bench table-text cases for catches.
+- Outside data lives in a local git-ignored folder. Only row ids and scores are committed. Licences and attribution go in the report.
+- Draft PRISMM-Bench filter (final version fixed in the step 5 pre-registration): keep a row only if (1) its category is text-based (table-text first; table-table, table-caption and equation-text reported separately); (2) content_text is not empty and an automatic check finds it in the paper text; (3) the row's own fields show the claim comes from the paper's text, not a reviewer expectation (field to be confirmed in step 5). Any row that would need a person to decide something is dropped, not judged.
+- Open points for step 5: the uid prefix is assumed to be an OpenReview forum id (not verified); the PDF must be the version the reviewer saw (ICLR 2025 submission), not a revised one; content_text may be a fragment rather than a full sentence.
+- Field comparison written: docs/report/PRISM_FIELD_COMPARISON.md (published benchmark and tool results next to Prism's numbers). It feeds the step 6 report update. Its figures are checked against their sources before it is quoted.
+
+**Alternatives:** Use a public set as the main test (rejected: none matches Prism's job of real overclaims, expert agreement and text-only evidence). Resolve row errors such as 300 vs 30 by reading the paper (rejected: new hand labelling). Use CLAIMCHECK as a main outside set (rejected: no licence, low expert agreement).
+
+**Consequences:** No change to the product or to dev numbers. Rulings (i) and (ii) are still open; they are recorded in their own entry before the step 4 pre-registration. Whether to restate the release bar (dev >= 22/31) in light of the field comparison is Nitin's decision, in its own dated entry.
+
+
+## Rulings (i) and (ii) before the step 4 pre-registration - 2026-11-14
+**Context:** The 6-step path ("6-step path after outside reviews - 2026-11-11") requires two rulings from Nitin before step 4 is pre-registered. Nitin agreed both on 2026-11-14.
+
+**Ruling (i): outside datasets are not new hand labelling.**
+- Claims from public sets (SciTab, SciClaimEval, PRISMM-Bench) are fed to the auditor as text, using each dataset's own claim text and its own expert label. Prism's extractor is skipped for these tests.
+- Rows are chosen only by a fixed filter rule written in the step 5 pre-registration, before any run.
+- No person judges, matches or corrects any row. A row that would need a person to decide something is dropped, not judged.
+- This keeps Nitin's 2026-11-09 decision (no new hand labelling).
+
+**Ruling (ii): score direction and cut-off.**
+- Score = the number of failed pieces. The step 4 checker splits a claim into pieces and answers yes or no for each piece. A higher score means more problems.
+- Cut-off, fixed from what each label means, not chosen from results, checked in this order: 0 failed pieces = supported; all pieces failed = not_supported (a one-piece claim that fails is not_supported); otherwise (at least 1 failed, not all) = partially_supported.
+- The cut-off is never tuned on the dev set or on any public set. Trying several cut-offs and keeping the best is rejected as tuning on the test.
+- A 0-1 support score (pieces backed / all pieces) may be shown in the app later. It is never used to choose the cut-off.
+- Caught stays as before: partially_supported or not_supported in at least 2 of 3 runs (RAW; EFFECTIVE reported).
+
+**Alternatives:** (i) Run the full pipeline on public papers and match claims to rows by hand (rejected: new hand labelling) or by automatic matching (rejected: silent matching errors; official numbers come only from the hand-made match map, never the live matcher, 2026-10-12). (ii) Ask the model for a number (rejected: model-stated numbers are unstable); choose the cut-off on dev (rejected: tuning on the test); choose it on a public set first (rejected: breaks the step order).
+
+**Consequences:** Step 4 can be pre-registered only if the free table-finding check passes; if it fails, no paid step 4 run (go to step 6). The step 4 pre-registration states the remaining design rules (how pieces are made, how a table is found, what counts as "could not check") before any paid run.
+
+
+## Pre-registration: table-finding check before step 4 (code only, INR 0) - 2026-11-14
+
+**Status:** written before any run. Step 1 of NEXT in claude/handoff_2026-11-14.md. Decides only this free check and how it is read; step 4 gets its own entry.
+
+**Question:** for the 5 table-number misses routed to the step 4 checker, can plain code cut the right table out of the text the auditor receives?
+
+**Targets (6 tables, 5 rows):**
+
+| Row | Table(s) needed |
+|---|---|
+| P1-R1 | P1 T4 |
+| P3-R2 | P3 T9 |
+| P4-R1 | P4 T1, P4 T2 |
+| P4-R2 | P4 T9 (failing piece = missing raw FlexPrefill-Llama row; T2-R C04, pin P4-T9-S1) |
+| P11-R2 | P11 T3 |
+
+**Input:** product text (PyMuPDF page.get_text, pages joined; the text the auditor receives), made from the 12 dev PDFs by the product's own extract function. Truth: T2-R reference tables (from arXiv LaTeX) and docs/evals/auditor_rd/t1_pins_2026-10-28.json. No pin or reference table is edited.
+
+**Finder rule (fixed now; no LLM):**
+1. Caption line = a line that starts with "Table N" followed by ":", "." or "|". Found = exactly one such line for N. Zero, or two or more = not found (no tie-break).
+2. Block = from the caption line up to (not including) the next caption line of any Table / Figure / Fig., or a "References" line, or 12,000 characters, whichever comes first.
+
+**Table usable (all required):**
+- caption found;
+- every T1 pin marked breaking for that table has its value in the block;
+- >= 90% of the reference table's distinct numeric values are in the block (90% as in T1).
+Values are compared with the shared T1/T2-R cell parser, token by token.
+
+**Row ready:** all its tables usable.
+**PASS:** >= 4 of 5 rows ready. Basis: T2-R fixed 4 of these 5 with perfect tables. With 3 or fewer reachable, the expected gain (+1 to +3) falls to 2 rows or fewer, which the noise rule (a change of 2 refusal rows or fewer is not a win) does not count.
+**FAIL:** no paid step 4 run; result recorded; go to step 6.
+
+**Reported, not gated:**
+- label coverage: reference header and row labels found in the block (NFKC, casefold, spaces removed);
+- block size in chars, and tokens as chars/4 (ESTIMATED); cap hit y/n;
+- all-tables view: for every table number mentioned in each of the 12 dev papers, caption found exactly once y/n. This guards against a rule that only fits the 6 known tables.
+
+**What it does not test:** whether the checker reads a flattened table correctly (row groups, column order); figures; papers outside dev.
+
+**Open gap for the step 4 pre-registration:** P4-R2 cannot fail by the absence rule ("name found nowhere in the paper"), because FlexPrefill-Llama and raw MASA are both named in the paper; it is caught only if the checker sees Table 9's missing row.
+
+**Run rules:** INR 0; no LLM or network calls. Unit tests use made-up strings only. Nitin runs the script. Output holds ids, counts and y/n only, never paper text. Agents read only the output file; raw_text_cache, held-out, sealed, LABEL_RUBRIC.md, exp3_targets.json and .env stay closed. The rule, cap and thresholds are frozen once this entry is tagged. A code bug found after the run counts as FAIL, not a re-run (same as the T2-R form-bug rule).
+
+**Expected (not a mark):** 4-5 of 5. Risks: a prose line that starts "Table N.", a caption printed below its table, two-column text order.
+
+**Money:** INR 0.
+
+
+## Reading notes for the table-finding check (before any run) - 2026-11-14
+**Status:** written before the script reads any paper text. Fixes how the tagged entry "Pre-registration: table-finding check before step 4 (code only, INR 0) - 2026-11-14" is read where its words leave a detail open. No mark, threshold or target changes.
+- Text source: the eval/exp3_b4.py copy of the product extract loop (_resolve_pdf with pinned PDF sha256, then _extract_pdf_text; same loop as main.py:102-115), as used in step 1c. main.py is not imported (import side effects). The 2026-10-22 trace found no change between that text and the auditor prompt.
+- Breaking pins: "has its value in the block" applies to breaking pins that have a value (cell pins). Structural breaking pins (P4-T9-S1 row_absent; P11-T3-S1 caption) have no value; they are reported, not gated (caption fragments are reported y/n; a text block cannot show a missing row). P11 T3 has no breaking cell pin, so its gate is caption found plus the 90% value test.
+- Caption line: optional leading spaces or tabs, then "Table", spaces, the number, then optional spaces, then ":", "." or "|" (P5 prints "Table 3 | ..."); case-sensitive. "Table 10:" never matches N = 1.
+- Block end: the same pattern for Table, Figure or Fig. with any number; or a line whose stripped text equals "References" (any case; a numbered "7 References" does not end a block); or the 12,000-character cap.
+- Values: the block is split on whitespace and each token goes to the shared parse_cell unchanged (no stripping of brackets or commas). A number gives its value; a pair gives both members; SD is ignored. Reference distinct values are read the same way over every reference cell. Equal means numerically equal (values_equal without SD).
+- All-tables view (report only): a mention is "Table", spaces, then digits; "Table A1" and "Table 1a" are not counted.
+- Label coverage (report only): NFKC, casefold, all whitespace removed.
+- Accepted risks, not fixed after the run: a caption printed below its table; a caption split across two lines; values glued to punctuation; chance matches of small integers.
+- This check does not judge any claim. Open gap 4 for the step 4 pre-registration: pieces that need arithmetic (comparisons across cells, margins, counts) - state whether code or the model does it. The 2026-10-28 v2 design rule was: the model never counts or compares; code does.
+
+
+## Table-finding check result: PASS (5 of 5 rows) - 2026-11-15
+**Result (applied as written):** docs/evals/step4_tablefind_2026-11-14/4_tablefind.md and .json. INR 0. Code, tests and reading notes frozen at commit f7ca8a3, tag prereg/tablefind-notes-2026-11-14, pushed before the run. Unit tests 52 passed; preflight OK.
+- Rows ready 5 of 5 (mark >= 4): P1-R1, P3-R2, P4-R1, P4-R2, P11-R2.
+- All 6 tables: caption line found exactly once; breaking cell pins in the block 10 of 10; reference values in the block 100% in every table (P1 T4 14/14, P3 T9 105/105, P4 T1 88/88, P4 T2 92/92, P4 T9 82/82, P11 T3 18/18); no cap hit.
+- Block size 1,039 to 6,870 chars (about 260 to 1,720 tokens, ESTIMATED), against about 37K average audit prompt tokens for a whole paper (2026-10-22 diagnostic).
+- Reported only: label coverage 80-100% (lowest P1 T4, 8/10); P11-T3-S1 caption fragments in the block: yes; P4-T9-S1: not checkable. All-tables view: 158 of 162 mentioned table numbers across the 12 dev papers have exactly one caption line; the other 4 are P1 T1, P3 T12, P9 T2, P10 T12 (zero vs two lines not reported).
+
+**What it means:** given the table number, plain code cuts the whole right table out of the text the auditor reads, at a small fraction of the whole-paper size. It does not show that code can pick the table from the claim (routing), that a checker reads a flattened table correctly, or that step 4 catches more misses. The 100% value matches may include chance matches of small numbers (accepted risk).
+
+**Next:** step 4 pre-registration, in its own dated entry, committed and tagged before any paid run. It must settle: (1) the routing rule; (2) the "could not check" fallback; (3) the found-vs-caught split in the scorer printout (report only); (4) who does arithmetic, code or model; (5) how a missing-row piece such as P4-R2 can fail, since the absence rule cannot catch it. Cost gate INR 200 per paper at 2027 prices. GCP Free Credit expires 2026-11-26.
+
+**Money:** INR 0.
+
+## Pre-registration: step 4 - table checker for table claims (text only), Vertex, 3 runs - 2026-11-15
+
+**Status:** written before any step 4 code or run. Step 4 of "6-step path after outside reviews - 2026-11-11". Follows "Table-finding check result: PASS (5 of 5 rows) - 2026-11-15". Nitin agreed the rulings below on 2026-11-15.
+
+**Why this change:** failure type R (the auditor trusts summary wording and misses a breaking table cell or a claim wider than its tables; miss types A and B, 2026-11-02). Targets by type, not by row. No code or prompt names or special-cases an eval row (no-regression rule check 6).
+
+**What changes (behind a new flag, default off):**
+- Flag `table_check` (default off). Flag-off prompt hash stays cb3272cce551; product unchanged until a kept result and its own entry.
+- Text only. No page images in this step (see "Picture trigger").
+
+**Rulings (Nitin, 2026-11-15):**
+1. Routing: a claim is routed if its claim text, or any evidence span's source_section or source_text, contains "Table", spaces, then digits (same pattern as the table-finding all-tables view). The checker gets every table block the frozen finder (commit f7ca8a3) finds exactly once in that paper, joined in table-number order, each headed "=== Table N ===". If the joined blocks exceed 60,000 chars, later tables are dropped and listed; a claim citing a dropped table is not routed. A paper with no found table routes nothing. Unrouted claims: today's auditor, unchanged.
+2. Pieces and answers: the A1 scope lister (prompt unchanged, hash recorded at the round 2 tag) splits the claim into pieces. One checker call per routed claim (gemini-3.6-flash, same thinking level as the auditor) gets the claim, its pieces and the table blocks. Per piece it answers one of: backed, not_backed, no_row, not_a_table_piece. For backed and not_backed it quotes the cells used (table number, row label, column label, value).
+3. Code guard (code, not the model): for backed and not_backed, every quoted value must be found in that table's block (shared parse_cell / values_equal, token by token) and every quoted row label must be found in that block (NFKC, casefold, whitespace removed); at least one word of 3+ letters from a quoted row or column label must appear in the piece text (name check). Guard fails -> the piece is "could not check". Code does not redo comparisons.
+4. Could not check: a piece is could-not-check if the lister or checker call fails or returns invalid JSON (after one retry), the answer is not_a_table_piece, or the code guard fails. Could-not-check never counts as failed and never lowers a label.
+5. Missing row: no_row counts as failed (the model found no row in any table for the piece). This is how type B (claim wider than its tables, e.g. P4-R2, P11-R2) can fail. It replaces the earlier "name nowhere in the paper" absence rule for routed claims. Accepted risk: the value exists only in prose -> a false rejection, measured by M3.
+6. Claim result (ruling (ii), 2026-11-14): failed = not_backed or no_row. All pieces checked and all failed -> not_supported; >= 1 failed -> partially_supported; 0 failed and all checked -> supported; 0 failed and >= 1 could-not-check -> today's auditor runs on that claim (same settings as the baseline) and its label is final. The checker result replaces today's audit for routed claims; today's audit runs only in that fallback case.
+7. Arithmetic: the model compares cells; code guards quotes and counts failed pieces. This is a recorded deviation from the 2026-10-28 v2 rule ("the model never compares; code does"). Reason: T1 failed (2026-10-29), so code has no table structure to compare from flat text; v2 stopped after T2-R. Risk: the model misses one breaking cell among many (P4-R1, P1-R1); M1 measures it.
+8. Found vs caught (report only, no mark): scorer printout per refusal row, per run and voted: found (a matching claim exists) -> routed -> checker failed >= 1 piece -> caught. S rows: routed -> lowered. Also: routed claim count, pieces, answers by kind, guard failures, fallback count.
+9. Gain mark follows the 2026-10-28 no-regression rule (3 runs, 2-of-3 vote). The "<= 2 rows is not a win" noise rule applies to single-run comparisons only; it is not a mark here. The gain is reported beside T = 3 (step 1b) as inside or outside noise.
+10. Baseline: reuse arm B of "Full no-regression check result - 2026-11-09" (gemini-3.6-flash medium, Vertex, flag-off, 3 dev + 3 golden folders, grounding gemini-3.1-flash-lite). Valid only if the step 4 arm uses the same claims files and settings except the flag and caching; otherwise this entry is void and a new baseline needs its own entry.
+
+**Arm D (the only new arm):** same as baseline B (--backend vertex, location global, --level medium, --auditor-model gemini-3.6-flash, --repeat 3, structurer gemini-3.6-flash, audit fallback gemini-3.1-flash-lite, LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite) plus --table-check and explicit caching on (cost only; label-neutral per the 2026-10-27 cache probe PASS). Claims: docs/evals/exp1_full_check_claims.json (84) and docs/evals/exp1_golden_claims.json (22).
+
+**Pass marks (all required; worst-case candidate vs best-case baseline, as score_full_check):**
+- M1 Fixes: of the 8 targets, D fixed >= baseline fixed + 1 (RAW). Parked P5-R1, P5-R2 reported only.
+- M2 Catches: D loses 0 of the 7 real hits (RAW). P1-R3 reported only (2026-11-07).
+- M3 False rejections (EFFECTIVE): D <= baseline (1/88) and <= 8/88.
+- M4 Golden: refusal-family >= 5/16 and positive hits >= 11/21.
+- M5 Grounding-negative: no golden negative row refused by the baseline vote and affirmed by D.
+- M6 Needs review: the checker makes no Needs review label (could-not-check falls back); ceilings met by construction; reported.
+- M7 Cost gate: projected INR per paper at 2027 prices = 196 + (D - Bc) x 2 x 30.17 <= 200, where D and Bc are mean dev audit INR per claim (run-date list price) over each arm's 3 dev folders, counting every lister, checker and fallback-audit call in D. 196 = step 1d estimate at 2027 prices; x 2 = 2027 price doubling; 30.17 claims per paper.
+- M8 D is not void.
+
+**Void rules:** as the 2026-11-08 entry V1-V5 (cap stop, INVALID scorer, > 16 fallback-served audits, crash re-run once with --repeat-index), plus V6: lister + checker call failures after retry > 5% of routed claims across all D runs -> void. A void run gives no result; a re-run needs a new entry.
+
+**Money:** caps set in a short round 2 note, committed and tagged with the code before any paid call: per-run cap = 1.3x the --estimate; total hard ceiling for step 4 INR 3,000 (dev + golden, 3 runs). Paid runs stop at the cap; a capped run is void. Sealed reserve INR 300 untouched. Development checks use made-up tables only; no dev, golden, held-out or sealed text before the paid run.
+
+**Picture trigger (report only; decides the next entry, not this result):** after scoring, a script compares each quoted cell on the 8 target rows with the T2-R reference tables. A layout misread = a quoted value that exists in the block but sits in a different row group or column in the reference table. If >= 1 target row has a layout misread in >= 2 of 3 runs, the next change is "checker + page image", in its own pre-registered entry. Otherwise no picture work.
+
+**Expected (not a mark):** 1 to 3 targets fixed (likely P1-R1, P4-R1; P11-R2 possible; P4-R2 uncertain because Table 2 holds FlexPrefill-Llama MASA rows on another benchmark). Main risk: M3, since the baseline is 1/88.
+
+**Closed:** held-out and sealed sets, raw_text_cache, LABEL_RUBRIC.md, exp3_targets.json, .env. No rescue: no prompt, rule or threshold change after the round 2 tag; results recorded as they fall.
+
+**Next:** round 2 - Claude Code builds the flag, finder join, lister/checker call, code guard, scorer printout and tests; Nitin runs tests and --estimate; caps note; commit and tag; then the paid run.
+
+## Step 4 build, caps and readings before the paid run - 2026-11-17
+
+**Status:** written after the build and the free --estimate, before any paid step 4 call. Follows "Pre-registration: step 4 - table checker ... - 2026-11-15" (tag prereg/step4-2026-11-15). No mark, threshold or ruling changes.
+
+**Build (frozen at this entry's tag):**
+- Code: Prism.PythonService/eval/step4/ (table_check.py, table_check_calls.py, table_check_schemas.py, table_check_system.md, score_table_check.py, picture_trigger.py, smoke_checker.py); eval/replay_audit.py (--table-check, default off); eval/score_full_check.py (flagged candidate only); 5 new test files. extraction/, prompts/, schemas.py, prompt_version.py and eval/step4/tablefind.py unchanged.
+- Hashes: checker 0d9b5dfaf827 (table_check_system.md + table_check_schemas.py); lister e6acbe55cdfc (prompts/scope_list_system.md + extraction/scope_schemas.py); finder commit f7ca8a3; flag-off prompt hash cb3272cce551 (unchanged). The hashes printed by the paid run must match these; a mismatch voids the run.
+- Checks: pytest 1428 passed, 3 skipped, 1 deselected; ruff --select F clean on new files; pyright 32 errors before and after (no new errors; the 32 pre-existing ones are a later cleanup PR). Smoke: one real checker call on a made-up table gave the expected answers (backed, not_backed -> partially_supported), guard pass.
+- Checker prompt: written once. One line added before freezing: a missing cell (empty, dash, n/a) cannot back a piece; if no other printed value settles the piece, the answer is no_row (same as ruling 5).
+
+**Readings and deviations (approved by Nitin, 2026-11-16 to 2026-11-17):**
+1. Routed claims keep their frozen run-1 evidence_spans for grounding; the label comes from the checker.
+2. Code lives in eval/step4/, not the product package; moving it is a separate step.
+3. --estimate prints the fallback rate as a 0%-100% range (ASSUMPTION).
+4. Lister returns 0 pieces -> could-not-check -> today's auditor.
+5. A1-A10 of the build plan as written (routing regex = the finder's mention pattern; 60,000-char prefix cap; guard details; invalid output -> one retry; claim-result order; checker uncached; M7 excludes cache overhead, printed beside; --table-check cannot combine with --scope-check; _tablecheck folder suffix).
+6. A routed claim with no frozen spans is treated as unrouted (reason no_spans) and goes to today's auditor; it is out of the V6 denominator.
+7. M7's D counts every audit call in the folder (unrouted audits, fallback audits, lister, checker) per claim, matching the baseline definition (all audit calls).
+8. --dry-run prints no routing counts (--estimate does).
+9. The scorer's Overall includes M7 for a flagged candidate. V6 is printed separately; a V6 VOID voids the arm whatever Overall says.
+10. The picture trigger can test 5 of the 8 targets (the other 3 have no T2-R reference table and print "no reference table"). Target ids come from score_a1.MISS_ROWS minus score_screen.PARKED_ROWS.
+
+**Free --estimate (2026-11-17, --table-check --cache, 3 repeats, grounding not included):**
+- Dev: 84 claims, 60 routed, 24 unrouted (no_table_mention 19, no_found_table 4, cites_dropped_table 1). Mean checker input ~9,605 tokens (ESTIMATED). Total INR 514.8-842.2 (low = 0% fallback, high = 100%).
+- Golden: 22 claims, 17 routed, 5 unrouted (no_table_mention 5). Total INR 140.3-233.1.
+- The checker's thought and output tokens are ASSUMPTIONS (no checker call measured on real papers).
+
+**Caps (fixed now):** dev --max-inr 1094.8; golden --max-inr 303.0 (1.3x the high end). Total 1,397.8, under the INR 3,000 step 4 ceiling. A run that stops at its cap is void.
+
+**Expectation recorded before the run (not a mark):** with the baseline at INR 2.4075 audit per claim, M7 passes only if D <= about INR 2.47 per claim. From the estimate, that holds only if fewer than about one in three routed claims fall back to today's auditor. M7 may fail on cost even if M1-M5 pass. M3 (baseline 1/88) remains the main quality risk.
+
+**Run:** two terminals, same day, each in Prism.PythonService with $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite":
+- Dev: uv run python -m eval.replay_audit --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --table-check --cache --max-inr 1094.8 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+- Golden: uv run python -m eval.replay_audit --set golden --level medium --auditor-model gemini-3.6-flash --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --table-check --cache --max-inr 303.0 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+Outputs are committed unscored before scoring. Scoring: score_full_check (D vs baseline B 2026-11-08 folders), then picture_trigger.
+
+**Money:** INR 0 so far (smoke about INR 0.1 on AI Studio). Sealed reserve INR 300 untouched.
+
+## Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+**Run facts:** pre-registration tag prereg/step4-2026-11-15; build and caps tag prereg/step4-build-2026-11-17. Arm D: 3 dev + 3 golden folders (exp1_medium_gemini-3.6-flash-vertex_tablecheck_1 to _3), all with _summary.json; checker 0d9b5dfaf827 and lister e6acbe55cdfc in all 6; no cap hit. Spend (cap counter, grounding excluded): dev INR 863.38 of 1094.8; golden INR 210.30 of 303.0. Baseline B = the 2026-11-08 arm B folders exp1_medium_gemini-3.6-flash-vertex_1 to _3 (dev + golden), confirmed by commit 362cbcd (2026-11-09, in archive/vertex-auditor-option-history) and claim counts 84 / 22.
+
+**Ruling 10:** run_config identical on every saved field (backend, project, location, auditor, level, structurer, audit fallback, grounding primary and fallback, google_genai 1.64.0, litellm 1.98.0); only table_check differs (cache is not recorded). Claims file and prompt hash are not saved in run_config or _summary.json: not verifiable from saved outputs; claim counts match. Reading fixed before scoring (2026-11-18): a library-version-only difference would be a recorded deviation, not void (it did not arise).
+
+**Result (score_full_check, worst-case D vs best-case B):**
+
+| Mark | Result | Verdict |
+|---|---|---|
+| M1 targets fixed /8 | D 1 (P4-R2) vs B 0 | PASS |
+| M2 real hits lost /7 | D lost P12-R2 (B lost P6-R1) | FAIL |
+| M3 false rejections /88 | D 8 (P1-S1, P1-S2, P1-S4, P2-S3, P2-S8, P6-S4, P8-S7, P9-S4) vs B 1 (P4-S4) | FAIL |
+| M4 golden | refusal-family 5/16; positives 11/21 (both at the floor) | PASS |
+| M5 grounding-negative | REFLEX-M08, REACT-M14 refused by B, affirmed by D | FAIL |
+| M6 Needs review | 0 | met |
+| M7 cost | D 2.7211, Bc 2.4075 INR/claim; 196 + 0.3136 x 2 x 30.17 = INR 214.92 > 200 (215.96 with cache creation and storage, reported) | FAIL |
+| M8 void | V1 no cap; V2 no INVALID; V3 fallback-served 0; V6 lister + checker failures 0/231 = 0.00% | not void |
+
+Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on its own.
+
+**Found -> routed -> failed -> caught (voted, report only):** of the 8 targets, routed P3-R2, P4-R2, P1-R1; caught P4-R2 only (runs: supported, partially_supported, not_supported). Not routed (no_table_mention): P4-R1, P11-R2, P6-R2, P7-R1, P8-R2. S rows routed 54; lowered by the checker (voted) 5: P1-S1, P1-S2, P1-S4, P2-S3, P6-S4. All D folders: 231 routed claims, 582 pieces (backed 391, no_row 75, not_a_table_piece 101, not_backed 15); guard failures 273; fallback audits 182; checker-decided claims 49 (supported 18, partially_supported 17, not_supported 14). The gain of 1 target is inside noise (T = 3).
+
+**Picture trigger:** n (1 layout misread, P1-R1, in 1 run; 3 of 8 targets have no reference table). No picture work.
+
+**Diagnosis (INR 0; read-only Claude Code check plus a script Nitin ran; verdict rules fixed before the diagnosis):**
+- Spec vs code: routing, finder join, lister, checker, guard value and row checks, claim result, M7 and V6 match the written rules, with tests. Guard re-run on saved inputs: 373 of 373 identical. No code bug found.
+- DESIGN, name check: 269 name-check failures across the 6 runs, 257 on pieces the checker answered backed. Scope pieces ("holds across all benchmarks") rarely share a word with table labels ("MASA", "Avg."), so the guard blocked most checker decisions and about 80% of routed claims fell back to today's auditor. The other reading of ruling 3 (substring) clears 19 of 269 pieces and 9 of 133 claims: the wording gap is small.
+- DESIGN, routing: P4-R1 and P11-R2 never mention "Table N" in the claim or its spans. Build plan A1 (approved 2026-11-17) routes a claim even when a cited table is not found; P1 Table 1 is not found, so P1-S1, P1-S2 and P1-S4 got no_row pieces and were lowered (3 of the 5 checker false rejections).
+- MODEL: P2-S3 and P6-S4 lowered by no_row on facts stated in prose (accepted risk, ruling 5). The P4-R2 catch is unstable across runs.
+- Auditor noise: M2 (P12-R2, no_found_table, unrouted) and M5 (REFLEX-M08 unrouted; REACT-M14 routed, all pieces not_a_table_piece, fallback audit) came from today's auditor, not the checker.
+- P8-S7: label supported in 3 of 3 D runs; counted as a false rejection because grounding returned Fail (missing = true) in all 3; same scorer code path as B. Why grounding failed in D and not in B was not investigated; it cannot change any mark (M3 is 7/88 without it).
+- Cost: checker mean input about 16,100 to 16,500 tokens per call vs about 9,605 estimated (+70%).
+- Verdict: fair test, genuine fail (design). No reading of the rules changes Overall: M2, M5 and M7 fail independently of the checker, and M3 stays above 1/88 without the P1 Table 1 rows.
+
+**Outside research (2026-11-18, report only):** on SciTab, models other than GPT-4 score barely above random and chain-of-thought adds little. Decompose-then-verify helps only when evidence is aligned to each sub-claim and sub-claim labels are reliable; otherwise it adds noise and false refutations, and abstaining when unsure is recommended. Flattened PDF tables lose row and column structure, and table extraction from scientific PDFs is still unsolved. Program-aided reasoning does not consistently beat chain-of-thought. Small fine-tuned checkers (MiniCheck) reach GPT-4-level grounding checks at much lower cost: relevant to Warrantum, not Prism.
+
+**What a v2 would need (recorded, not decided):** structured tables (for example from arXiv LaTeX), an unsure state instead of falling back, code-side comparisons, no name check, routing that does not depend on "Table N", and a fresh test set. Expected ceiling is small (T2-R: 2 of 5 hard rows with perfect tables).
+
+**Decision:** no auditor change; the product stays flag-off (cb3272cce551). Nitin (2026-11-18): if the failure is genuine, stop and move forward. Under the 6-step path decision gate, step 4 did not pass: core auditor work stops after step 6. No rescue, no re-run.
+
+**Money:** step 4 paid run about INR 1,074 (cap counter; grounding excluded). Scoring and diagnosis INR 0. Billed figure at the next GCP credit check. Sealed reserve INR 300 untouched.
+
+**Files:** scoring output, the diagnosis script and its output are kept outside the repo (H:\Work projects\prism_scoring\); the diagnosis output holds claim text.
+
+## Release bar restated (unchanged) - 2026-11-18
+- Nitin (2026-11-18): the release bar stays dev >= 22/31 with false rejections <= 8/88 (auditor-only ceiling 18/31).
+- Cost: the INR 200 per paper gate at 2027 list prices (2026-11-12) was set for step 4 changes; it is revisited before any release.
+- No release with the current auditor (2026-10-29). Core auditor work stopped after step 4 (2026-11-18).
+- Money: INR 0.
+
+## Pre-registration: test A - gemini-4-carbon as auditor (capacity probe), Vertex, 3 runs - 2026-11-18
+
+**Status:** written before any gemini-4-carbon audit call. Test A of the two Carbon tests agreed in chat on 2026-11-18 (claude/handoff_2026-11-18c.md). Test B (one-call whole-paper baseline) gets its own entry.
+
+**Question:** with nothing else changed, does a much stronger model in today's auditor slot pass the 2026-10-28 no-regression marks? In other words: are the auditor misses mainly a model-capacity limit?
+
+**What this is not:**
+- Not an adoption test. Carbon cannot be adopted whatever the result: its cost is expected well over the INR 200 gate, and core auditor work stopped at the 2026-11-18 decision gate. This entry does not reopen it.
+- Not a return to model swaps as the fix (outside reviews, 2026-11-11). It is one reference point for the report: a strong model in Prism's auditor slot.
+- No product change. Flags off; the product auditor stays gemini-3.6-flash.
+
+**Model (verified 2026-11-18):** gemini-4-carbon, GA 2026-11-10, location global, normal generateContent. Thinking levels LOW / MEDIUM / HIGH, default MEDIUM (Vertex thinking docs). Price (Nitin, Vertex pricing page, Gemini 4 table, Global): USD 2.00 in / 0.10 cached / 10.00 out per 1M tokens through 2026-11-30; 4.00 / 0.20 / 20.00 from 2026-12-01. Implicit caching only; no explicit cache, so no --cache. Build: pricing.py RATES_BY_MODEL entry and test_pricing.py (20/20 pass), commit "eval: add gemini-4-carbon price (intro rate to 2026-11-30)". No other code change.
+
+**Arm E (the only new arm):** baseline B settings with one change, the auditor model.
+- --backend vertex, location global, --auditor-model gemini-4-carbon, --level medium, --repeat 3, no --cache, no --scope-check, no --table-check, flag-off prompt hash cb3272cce551, structurer gemini-3.6-flash, audit fallback gemini-3.1-flash-lite, LLM_GROUNDING_MODEL=gemini/gemini-3.1-flash-lite.
+- Claims: docs/evals/exp1_full_check_claims.json (84) and docs/evals/exp1_golden_claims.json (22).
+
+**Baseline:** arm B of "Pre-registration: full 3-run no-regression check ... - 2026-11-08" (scored 2026-11-09): 3 dev + 3 golden folders, gemini-3.6-flash medium. Reused, not re-run (as step 4). Same claims files and settings except the auditor model.
+
+**Pass marks (all required; worst-case candidate vs best-case baseline, score_full_check, per-row 2-of-3 vote; unchanged from 2026-11-08):**
+- M1 Fixes: of the 8 targets, E fixed >= baseline fixed + 1 (RAW). Parked P5-R1, P5-R2 reported only.
+- M2 Catches: E loses 0 of the 7 real hits (RAW). P1-R3 reported only (2026-11-07).
+- M3 False rejections (EFFECTIVE): E <= baseline (1/88) and <= 8/88.
+- M4 Golden: refusal-family >= 5/16 and positive hits >= 11/21.
+- M5 Grounding-negative: no golden negative row refused by the baseline vote and affirmed by E.
+- M6 Needs review: 0 (auditor-only replay); the 2026-10-28 ceilings are met by construction.
+- E is not void.
+- Fallback-served audits are scored worst case for E and best case for B (score_full_check D9).
+
+**Cost (reported only, not a mark):**
+- C = mean dev audit INR per claim over E's 3 dev folders (run-date price, INR 100 per USD). Bc = 2.4075 (B, 2026-11-09).
+- Per paper at run-date prices: 102 + (C - Bc) x 30.17 (102 = step 1d estimate at today's prices).
+- Per paper from 2026-12-01: 196 + (C - Bc) x 2 x 30.17 (Carbon's price doubles on 2026-12-01 and Flash's in 2027; 196 = step 1d estimate at 2027 prices). Shown beside the INR 200 gate for information.
+- Also reported: mean thought and output tokens per dev claim, E vs B.
+- The scorer's own cost line (the 87 / 130 formula of 2026-11-08) and its Overall line are printed as they come. The test A verdict is M1-M6 plus not void, nothing else.
+
+**Known rule flaws (stated now; marks unchanged after the tag, kept for comparability with 2026-11-09 and step 4):**
+1. M2 and M5 can fail on one noise flip; the baseline itself lost P6-R1.
+2. M3 compares against B's 1/88, a low draw (product-auditor single runs: 4, 1, 1; T = 3, step 1b).
+3. The /88 includes 21 NO_MATCH S rows that can never be false rejections.
+4. Label agreement is unmeasured (one labeller), and the dev rows have been reused by many tests. A dev result is not a fresh-set claim.
+5. Auditor-only ceiling 18/31: 13 refusal rows are extraction misses that no auditor can catch.
+
+**Report-only views (cannot change the verdict):**
+- R1: M3 also against run 1's 4/88, and inside/outside T = 3.
+- R2: false rejections out of 67 matched S rows, beside /88.
+- R3: for each row failing M2 or M5, B's and E's per-run labels (is the failure on a split baseline vote?).
+- R4: refusal rows caught out of 31 (baseline run 1: 8; ceiling 18).
+- R5: which targets were fixed, by failure type A-E (2026-11-02).
+
+**Reading (fixed now):**
+- PASS: on reused dev rows, a stronger model in the same slot fixes more misses without the regressions the marks measure. Part of the gap is model capacity, at a cost Prism cannot pay. Not adopted.
+- FAIL: even gemini-4-carbon fails the no-regression marks in this slot. Model size alone does not close the gap. This supports the 2026-11-18 stop.
+- Either way, the report states it as a capacity probe on reused dev rows, not a release or fresh-set claim. Any follow-up needs Nitin's decision in its own dated entry.
+
+**Caps (deviation from the 1.3x rule, stated before any paid call):**
+- The free --estimate (2026-11-18) uses gemini-3.6-flash token averages (audit prompt 37,389; output 345; thought 2,279): dev 252 replays USD 26.768 (INR 2,676.8); golden 66 replays USD 7.011 (INR 701.1).
+- Carbon's thought use is unknown. With about 3x the thought tokens or more, a 1.3x cap on that estimate would stop the run (void).
+- Cap assumption: thought tokens 4x the estimate (9,116 per claim; gemini-3.8-flash high measured about 9,100 per dev claim on 2026-11-09). Extra USD 0.06837 per replay. Re-estimate: dev USD 43.997 (INR 4,399.7); golden USD 11.523 (INR 1,152.3).
+- Caps = 1.3x the re-estimate: dev --max-inr 5719.6; golden --max-inr 1498.0. Total 7,217.6.
+- Hard ceiling for test A: INR 8,000 counted by the tool, V5 re-runs included. A re-run that could pass the ceiling is not started; that arm is void.
+- Structurer and grounding calls are not counted (full check: billed INR 4,111.48 vs 3,542.75 counted, about +16%). Paid from the GCP Free Credit (about INR 22,600, unchecked estimate; expires 2026-11-26). Sealed reserve INR 300 untouched.
+
+**Before the paid run (free):** each command run once with --estimate in place of the paid run. Its run_config must show auditor gemini-4-carbon, level medium, backend vertex, location global, grounding_primary gemini/gemini-3.1-flash-lite, prompt hash cb3272cce551 and the claims file below. On any mismatch, fix the terminal settings and re-check. No paid call until it matches.
+
+**Run:** two terminals, both started on the same calendar day, before 2026-11-26, each in Prism.PythonService:
+
+    $env:LLM_GROUNDING_MODEL = "gemini/gemini-3.1-flash-lite"
+
+    uv run python -m eval.replay_audit --level medium --auditor-model gemini-4-carbon --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 5719.6 --claims "H:\Work projects\Prism\docs\evals\exp1_full_check_claims.json"
+
+    uv run python -m eval.replay_audit --set golden --level medium --auditor-model gemini-4-carbon --backend vertex --vertex-project gen-lang-client-0520352487 --repeat 3 --max-inr 1498.0 --claims "H:\Work projects\Prism\docs\evals\exp1_golden_claims.json"
+
+**Void rules:**
+- V1: a run (set) that stops at its cap is void.
+- V2: score_full_check reports INVALID -> void.
+- V3: more than 16 fallback-served audits in arm E (dev + golden, all 3 repeats; 5% of 318) -> void.
+- V4 (baseline void) does not apply: B was scored valid on 2026-11-09.
+- V5 Crash: a repeat K that stops without _summary.json may be re-run once, the same day, after its partial folder is moved out of the repo, with "--repeat 3" replaced by "--repeat-index K" and --max-inr set to one third of that run's cap (dev 1906.5, golden 499.3), within the INR 8,000 ceiling. A second crash -> void.
+- V6: the run_config printed by a paid run differs from the checked one (model, level, backend or location, grounding model, prompt hash, claims file) -> void.
+- A void arm gives no result. A re-run needs a new dated entry.
+
+**Scoring:** outputs committed unscored before scoring. score_full_check, E vs B (3 dev + 3 golden folders each), --json-out outside the repo. R1-R5 come from the scorer's JSON output; no new labels.
+
+**Expected (not a mark):** 2-4 targets fixed (informal chatbot check, 2026-11-18: strong models caught P4-R1 and P4-R2). Main risk M3: B's 1/88 is a low draw, and both gemini-3.8-flash arms failed it by judging more strictly. FAIL on M3 is the most likely outcome; R1 and R2 then show by how much.
+
+**Closed:** held-out and sealed sets, raw_text_cache, LABEL_RUBRIC.md, exp3_targets.json, .env. No rescue: no prompt, rule, cap or threshold change after the tag; no extra runs; results recorded as they fall.
+
+## Test A blocked; pre-registration: test B - one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs - 2026-11-20
+
+**Status:** written after the test B build and its free estimate, before any test B run on a real paper. Closes test A. Test B is the last Prism core test: Prism core closes after its result entry, whatever the verdict.
+
+**Test A: blocked, not run, no result**
+- Pre-registration 2026-11-18 (tag prereg/carbon-probe-2026-11-18). Dev and golden runs started 2026-11-18 about 19:00 IST on Vertex (global). After 1-2 successful Carbon audit calls each, Vertex returned 403 PERMISSION_DENIED: "Access requires an eligible paid billing account in a supported region". Both runs stopped without _summary.json.
+- The V5 same-day re-run was not used: the block would repeat. The partial folders were moved out of the repo, not read and not scored. Test A gives no result. Spend: a few calls (estimate under INR 50).
+- A Carbon auditor-slot run on AI Studio was estimated at INR 3,400+ of real money (outside budget) and cannot be adopted (cost gate INR 200). Not planned.
+
+**Billing check (2026-11-19):** GCP Free Credit INR 22,491.07 remaining (of 28,693.88; expires 2026-11-26). Since 2026-11-09 (INR 23,738.43): INR 1,247.36 billed (step 2, step 4, test A attempt). Google Developer Program credit: INR 952.30 (from 2026-11-13) + INR 160.43.
+
+**Question:** on the 12 dev papers, does one strong model reading the whole paper once (finding the claims and judging them) beat Prism's pipeline (extract -> audit -> ground)?
+
+**What this is not:** no product change; it does not reopen auditor or extractor work. The result goes to the report as a reference point. If the verdict is "ONE CALL BETTER", Prism still closes; any product follow-up needs Nitin's decision in its own dated entry, after Warrantum.
+
+**Access (2026-11-19/20):** Carbon works on the AI Studio paid-tier key (settings.ai_api_key): access check OK (34 in, 50 thought, 5 out tokens). Smoke on a made-up 3-sentence text (2026-11-20): status OK, 1 claim parsed, finish STOP, model_version gemini-4-carbon, INR 1.35 (632 in, 1,089 thought, 130 out tokens).
+
+**Build (frozen at this entry's tag):**
+- Code: Prism.PythonService/eval/testb/ (one_call.py, one_call_schemas.py, one_call_prompt.md, manifest.py, score_one_call.py) + tests/test_testb_one_call.py, test_testb_one_call_schemas.py, test_testb_manifest.py, test_testb_score_one_call.py. No existing file changed; flag-off prompt hash cb3272cce551 unchanged.
+- prompt_hash eba98e26aa2c (prompt file + schema file). A run printing another hash is void.
+- Checks: testb tests 65 passed; full suite 1493 passed, 3 skipped; ruff --select F clean; pyright 0 errors on the new files.
+
+**Config:** model gemini-4-carbon only (no fallback model); AI Studio (startup check vertexai False, else WRONG_BACKEND); thinking MEDIUM (Carbon's default); JSON output with response_schema OneCallResult (claim_quote, location, evidence, verdict, reason); max_output_tokens 32768; no temperature set. Errors: 403 -> run stops (ACCESS_DENIED); other 4xx except 429 -> run stops (API_ERROR); 429/5xx/timeout, invalid or empty JSON, or finish MAX_TOKENS -> one retry after 30 s, then that paper is FAILED for the run.
+
+**Input:** the 12 dev papers in dev_eval.json order. Text from eval/exp3_b4.py _resolve_pdf + _extract_pdf_text (PDF sha256 pinned): the same flat text Prism's auditor reads. Golden papers are not used: they are famous papers (Reflexion, CoT, ReAct) that Carbon has likely seen in training.
+
+**Prompt:** eval/testb/one_call_prompt.md. Based on the 2026-11-18 informal chatbot prompt; changes: all of the paper's own claims about results and contributions, not only headline ones; JSON fields; evidence quote at most 25 words; not_supported defined. Written once, before any real-paper call.
+
+**Matching (code only; recorded deviation):**
+- Automatic matching was rejected for official numbers (2026-10-12, 2026-11-14). Test B uses it, so its numbers are a rough comparison, not an official Prism score.
+- Row anchor: claim_text_verbatim split on "..." and "…"; the longest piece if >= 30 chars, else the whole text without the gaps.
+- Score = extraction/grounding._stage1_score(anchor, claim_quote, normalize=True) (rapidfuzz partial_ratio; argument order checked not to matter). The shorter string under 30 chars -> score 0. Matched if score >= RAPIDFUZZ_THRESHOLD (88). Best score wins; tie -> earliest claim.
+- Row status per run: not_found, supported, or flagged (partially_supported or not_supported). A FAILED paper-run -> its rows not_found.
+
+**Measures (scorer score_one_call.py):**
+- 3 runs: a row counts if flagged in >= 2 of 3. 1 run: flagged in that run (SINGLE-RUN). 2 runs: INVALID.
+- Caught = refusal rows flagged, out of 31. False rejections (FR) = S rows flagged, out of 88. Found = rows matched in a majority of runs, out of 119.
+
+**Verdict (fixed now; checked in this order):**
+1. caught >= 12 and FR <= 8 -> ONE CALL BETTER
+2. caught >= 12 and FR > 8 -> STRICTER, NOT BETTER
+3. caught <= 4 or FR > 8 -> PRISM BETTER
+4. otherwise -> NO CLEAR DIFFERENCE
+- Comparator: Prism run 1, 8/31 caught and 4/88 FR. 12 = 8 + T + 1 and 4 = 8 - T - 1, with T = 3 (step 1b). 8/88 = the release-bar FR ceiling.
+- Known mismatch: Prism's figures are one run; test B uses a 2-of-3 vote. T was measured on single runs.
+- VOID: more than 2 FAILED paper-runs across all runs -> no verdict.
+
+**Report only (cannot change the verdict):** caught split into Prism-caught / auditor-miss (score_a1.MISS_ROWS) / extraction-miss (score_exp2.ROW_ID_TO_SHAPE), Prism-caught derived only if those sets are disjoint and leave exactly 8, else NOT AVAILABLE; release bar (caught >= 22 and FR <= 8) yes/no; Carbon claims matching no row, counted by verdict (not judged; no new hand labelling); rows matched by the same claim; quote grounding rate (claim_quotes scoring >= 88 against the paper text); tokens and INR per paper, and x2 for the 2026-12-01 price; per-row table (ids, statuses, scores).
+
+**Known limits:** automatic matching; dev rows reused by many tests; one labeller; Carbon reads flat text (the chat apps saw the PDF); Carbon's training cutoff unknown, so the dev papers (arXiv 2610.x) may have been seen; Prism's comparator is a single run.
+
+**Money:**
+- Estimate (2026-11-20, count_tokens, no generation): 395,211 input tokens for the 12 papers. ASSUMPTION 8,000-24,000 output+thought tokens per call: run 1 INR 175.04-367.04; 3 runs INR 525.13-1,101.13 (INR 100 per USD, intro price USD 2 in / 10 out per 1M).
+- Run-1 cap --max-inr 600: a recorded deviation from 1.3 x high (477.15), because the smoke used 1,089 thought tokens on 3 sentences, so the high assumption may be low.
+- Runs 2 and 3 start only if run-1 cost <= INR 305, each with --max-inr = 1.3 x run-1 cost. Worst case then = 305 + 2 x 1.3 x 305 = INR 1,098, inside the Developer Program credit (about INR 1,110). Otherwise the result is run 1 alone (SINGLE-RUN).
+- Paid from the Google Developer Program credit through the AI Studio key. Before run 1, AI Studio billing must show the access and smoke calls charged to that credit, not a card; if a card was charged, stop: Nitin decides in a new entry. Sealed reserve INR 300 untouched. All runs before 2026-11-30 (intro price).
+
+**Void and re-run rules:**
+- A run that stops at its cap is void. Run 1 void -> test B void.
+- Run 2 or 3 void -> the result is run 1 alone (SINGLE-RUN).
+- A run ending ACCESS_DENIED, WRONG_BACKEND or API_ERROR may be re-run once, the same day, after its run_K folder is moved out; a second failure -> that run is void.
+- A void test gives no result; a re-run needs a new dated entry.
+
+**Run (Prism.PythonService):**
+
+    uv run python -m eval.testb.one_call --run-index 1 --max-inr 600 --out "H:\Work projects\prism_scoring\testb"
+
+- Runs 2 and 3: the same command with --run-index 2 / 3 and --max-inr = 1.3 x run-1 cost.
+- Raw outputs stay outside the repo (they hold paper text). Before scoring, eval.testb.manifest writes the sha256 of every output file to docs/evals/testb_2026-11-19/manifest.json, and that is committed. Then score_one_call writes ids, labels, scores and counts only.
+
+**Expected (not a mark):** the informal P4 check (2026-11-18) suggests a strong model catches table misses but flags many claims. Most likely STRICTER, NOT BETTER; ONE CALL BETTER is possible.
+
+**No rescue:** no prompt, matching rule, threshold or verdict change after the tag; no extra runs; results recorded as they fall.
+
+## Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20
+
+**Run facts**
+- Pre-registration: "Test A blocked; pre-registration: test B ... - 2026-11-20" (tag prereg/testb-2026-11-20). All 3 runs on 2026-11-20: gemini-4-carbon, thinking medium, prompt_hash eba98e26aa2c, status OK, 12/12 papers each, 0 failed paper-runs of 36. Not void.
+- Cost (tool count, INR 100 per USD, intro price): run 1 INR 230.68 (<= 305, so runs 2 and 3 went ahead), run 2 INR 243.23, run 3 INR 208.30; total INR 682.21. Caps: run 1 600; runs 2 and 3 299.88 (1.3 x run 1). None capped.
+- Manifest (39 files) committed before scoring (commit d08f958). Raw outputs stay outside the repo. Score: docs/evals/testb_2026-11-19/result.md (ids, statuses and scores only).
+
+**Result (2-of-3 vote; verdict rules applied as written)**
+
+| Measure | Test B (Carbon, one call) | Prism run 1 |
+|---|---|---|
+| Refusal rows caught /31 | 9 | 8 |
+| False rejections /88 | 17 | 4 |
+| Verdict | PRISM BETTER (rule 3: FR 17 > 8) | - |
+
+- Release bar (caught >= 22 and FR <= 8): no.
+
+**Report only (cannot change the verdict)**
+- Caught split: Prism-caught 5 (P2-R5, P6-R1, P10-R1, P10-R2, P10-R3); auditor misses 3 (P3-R2, P4-R2, P7-R1); extraction miss 1 (P8-R3). 3 of Prism's 8 run-1 catches were not caught.
+- Refusal rows found (matched in a majority of runs): 10 of 31; 9 of those 10 flagged. 21 refusal rows not found under the automatic matching.
+- S rows found: 69 of 88 (Prism's hand map: 67 of 88, similar coverage); 17 of the 69 flagged (25%). All 17 flagged S rows matched at score 100, so the false rejections are not matching artifacts; a better matcher could add found rows but not remove these.
+- P10: 8 of its 11 rows flagged, including 5 of the 17 false rejections (S1, S2, S5, S6, S7).
+- P1-S3 and P9-S4 (both gemini-3.8-flash arms, 2026-11-09) and P10-S2 (3.8 high) are also false rejections here. A label check under the label rubric may be done later by Nitin; it cannot change this result.
+- Unmatched Carbon claims over 3 runs: 781 (supported 564, partially_supported 205, not_supported 12). Not judged (no new hand labelling).
+- Quote grounding: 95.0% of Carbon's claim quotes found in the paper text (score >= 88). Duplicate matches (one claim to 2+ rows): 10.
+- Per paper (mean of 36 calls): prompt 33,236, output 5,472, thought 6,831 tokens; INR 18.95 (INR 37.90 from 2026-12-01). Prism's pipeline: about INR 102 per paper at today's prices (step 1d, ESTIMATED).
+
+**What it means (analysis, not a rescue)**
+- Same pattern as gemini-3.8-flash (2026-11-09): a stronger model is stricter, not better. Catches about equal to Prism (9 vs 8, inside T = 3); false rejections about 4x (17 vs 4).
+- When Carbon found a bad claim it flagged it (9 of 10), including P3-R2, never flagged in 9 earlier audits (step 1a). It also flagged 1 in 4 found good claims.
+- Some of the 21 not-found refusal rows may be Carbon quoting a different sentence for the same claim. Not checked (no new hand labelling); a known limit of automatic matching.
+- Rough comparison, not an official Prism score. No product change; no release.
+
+**Correction to the 2026-11-20 pre-registration**
+- Test A spend was INR 70.16 (GCP billing, Vertex: Gemini 4 Carbon input 26.85 + output 43.31), not "under INR 50". The entry was tagged before the billing page was read.
+
+**Money:** test B INR 682.21 by the tool's count, paid from the Google Developer Program credit through the AI Studio key (AI Studio spend page, 2026-11-20 14:20 IST: credits covered all usage, INR 0 to card). The billed figure is recorded at the next check.
+
+**Decision (as pre-registered):** Prism core closes. Next, in order: report and status update with tests A and B; handoff; merge eval/carbon-probe (includes eval/step1-free-checks) to main through a PR; cleanup by archiving, not deleting; portfolio snapshot tag (not a quality release); two chat fixes; demo video; blog; resume. Then Warrantum.

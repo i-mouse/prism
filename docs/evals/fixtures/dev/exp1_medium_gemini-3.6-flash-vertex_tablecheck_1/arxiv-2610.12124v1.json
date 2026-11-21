@@ -1,0 +1,987 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:56.041576+00:00",
+    "paper_id": "arxiv-2610.12124v1",
+    "filename": "2610.12124v1.pdf",
+    "extraction_run_id": "7f67ee3d-7a39-4d81-a6c2-10c89fec4715",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 1,
+      "generated_at": "2026-11-17T08:51:46Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      }
+    },
+    "claims_scope": [
+      6,
+      7,
+      9,
+      10,
+      14,
+      15,
+      16,
+      26,
+      27
+    ]
+  },
+  "claims": [
+    {
+      "index": 6,
+      "label": "supported",
+      "claim_summary": "Unused details recede naturally without explicit importance scores or decay rules.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Experience that remains unused continues to recede in detail through recursive consolidation, without separately assigned importance scores or time-based forgetting rules.",
+      "evidence_spans": [
+        {
+          "source_text": "These thresholds control when context is consolidated, rather than assigning importance or decay scores to individual memories.",
+          "source_section": "Appendix A",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Meanwhile, details of a routine placement episode recede through recursive consolidation (Fig. 7).",
+          "source_section": "Section 5.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "an ordinary remotecontrol episode is first retained with its destination, then reduced to an item in a list of completed tasks, after which its episode-specific details no longer occur in the narrative.",
+          "source_section": "Appendix A.7",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "Use and disuse dynamics unify memory recall with continuous learning and capability expansion.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "This natural dynamic of use and disuse unifies the recovery of past experience with learning that deepens what the agent knows, refines how it acts, and expands what it can accomplish.",
+      "evidence_spans": [
+        {
+          "source_text": "These observations show how use and disuse sustain a continuous cycle of learning through work.",
+          "source_section": "Section 5.2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam improves across all three benchmarks, achieving 97.8% ALFWorld success and tying ACE for the best result. Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods. On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 9,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 81.9% mean progress on ScienceWorld, outperforming most baselines.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods.",
+      "evidence_spans": [
+        {
+          "source_text": "Its 81.9% mean ScienceWorld progress exceeds four of the six compared methods.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 1: Task performance (%) on ALFWorld, ScienceWorld, and StreamBench.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "HiAgent 85.1 56.7 69.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "mem0 87.3 58.6 69.3",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "A-Mem 95.5 87.2 79.0",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Letta 85.1 71.2 81.3",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ReasoningBank 85.1 66.9 68.3",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ACE 97.8 91.9 75.0",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 97.8 81.9 81.7",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "progress is higher than four specific compared methods",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Hippocam",
+                "column_label": "Sci.",
+                "value": "81.9"
+              },
+              {
+                "table": 1,
+                "row_label": "HiAgent",
+                "column_label": "Sci.",
+                "value": "56.7"
+              },
+              {
+                "table": 1,
+                "row_label": "mem0",
+                "column_label": "Sci.",
+                "value": "58.6"
+              },
+              {
+                "table": 1,
+                "row_label": "ReasoningBank",
+                "column_label": "Sci.",
+                "value": "66.9"
+              },
+              {
+                "table": 1,
+                "row_label": "Letta",
+                "column_label": "Sci.",
+                "value": "71.2"
+              },
+              {
+                "table": 1,
+                "row_label": "A-Mem",
+                "column_label": "Sci.",
+                "value": "87.2"
+              },
+              {
+                "table": 1,
+                "row_label": "ACE",
+                "column_label": "Sci.",
+                "value": "91.9"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "comparison involves a total set of six methods",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "HiAgent",
+                "column_label": "Sci.",
+                "value": "56.7"
+              },
+              {
+                "table": 1,
+                "row_label": "mem0",
+                "column_label": "Sci.",
+                "value": "58.6"
+              },
+              {
+                "table": 1,
+                "row_label": "A-Mem",
+                "column_label": "Sci.",
+                "value": "87.2"
+              },
+              {
+                "table": 1,
+                "row_label": "Letta",
+                "column_label": "Sci.",
+                "value": "71.2"
+              },
+              {
+                "table": 1,
+                "row_label": "ReasoningBank",
+                "column_label": "Sci.",
+                "value": "66.9"
+              },
+              {
+                "table": 1,
+                "row_label": "ACE",
+                "column_label": "Sci.",
+                "value": "91.9"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "label": "supported",
+      "claim_summary": "Hippocam hits 81.7% mean accuracy on StreamBench, outperforming all competitors.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+      "evidence_spans": [
+        {
+          "source_text": "On StreamBench, it achieves the highest mean accuracy of 81.7%, narrowly ahead of Letta\u2019s 81.3%.",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Table 1: Task performance (%) on ALFWorld, ScienceWorld, and StreamBench.",
+          "source_section": "Table 1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 87.3 76.0 81.7",
+          "source_section": "Table 6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The highest mean accuracy result specifically applies to the StreamBench benchmark.",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 1,
+                "row_label": "Hippocam",
+                "column_label": "Stream.",
+                "value": "81.7"
+              },
+              {
+                "table": 1,
+                "row_label": "Letta",
+                "column_label": "Stream.",
+                "value": "81.3"
+              },
+              {
+                "table": 1,
+                "row_label": "A-Mem",
+                "column_label": "Stream.",
+                "value": "79.0"
+              },
+              {
+                "table": 1,
+                "row_label": "ACE",
+                "column_label": "Stream.",
+                "value": "75.0"
+              },
+              {
+                "table": 1,
+                "row_label": "mem0",
+                "column_label": "Stream.",
+                "value": "69.3"
+              },
+              {
+                "table": 1,
+                "row_label": "Plain",
+                "column_label": "Stream.",
+                "value": "69.0"
+              },
+              {
+                "table": 1,
+                "row_label": "HiAgent",
+                "column_label": "Stream.",
+                "value": "69.0"
+              },
+              {
+                "table": 1,
+                "row_label": "ReasoningBank",
+                "column_label": "Stream.",
+                "value": "68.3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 14,
+      "label": "supported",
+      "claim_summary": "Hippocam reaches 78.9% frozen transfer progress on ScienceWorld, beating ACE by 16.2 points.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+      "evidence_spans": [
+        {
+          "source_text": "Hippocam achieves 78.9% mean progress, improving over Plain by 30.1 pp and exceeding the strongest baseline, ACE, by 16.2 pp.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Plain 48.8",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ACE 62.7",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Hippocam 78.9",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "zero_pieces",
+        "n_pieces": 0,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": []
+      }
+    },
+    {
+      "index": 15,
+      "label": "supported",
+      "claim_summary": "Hippocam achieves 61.8% accuracy on FEVER under frozen cross-domain evaluation.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+      "evidence_spans": [
+        {
+          "source_text": "HotpotQA \u2192FEVER",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "On FEVER, Frozen scores cluster around Plain\u2019s 59.3%, with Hippocam and HiAgent reaching 61.8%.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "FEVER dataset where the evaluation takes place",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Plain",
+                "column_label": "Frozen",
+                "value": "59.3"
+              },
+              {
+                "table": 2,
+                "row_label": "HiAgent",
+                "column_label": "Frozen",
+                "value": "61.8"
+              },
+              {
+                "table": 2,
+                "row_label": "mem0",
+                "column_label": "Frozen",
+                "value": "59.9"
+              },
+              {
+                "table": 2,
+                "row_label": "A-Mem",
+                "column_label": "Frozen",
+                "value": "55.8"
+              },
+              {
+                "table": 2,
+                "row_label": "Letta",
+                "column_label": "Frozen",
+                "value": "59.9"
+              },
+              {
+                "table": 2,
+                "row_label": "ReasoningBank",
+                "column_label": "Frozen",
+                "value": "55.8"
+              },
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "Frozen",
+                "value": "57.9"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "Frozen",
+                "value": "61.8"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "Hippocam and HiAgent models that achieve the higher score",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "HiAgent",
+                "column_label": "Frozen",
+                "value": "61.8"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "Frozen",
+                "value": "61.8"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Hippocam and ACE are the only methods showing consistent positive gains across both cross-domain transitions.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Only Hippocam and ACE achieve positive gains on both domain transitions, while the remaining methods show mixed, unchanged, or reduced performance.",
+      "evidence_spans": [
+        {
+          "source_text": "Only Hippocam and ACE achieve positive gains on both domain transitions, while the remaining methods show mixed, unchanged, or reduced performance.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "ACE improves ScienceWorld progress by 14.0 pp and FEVER accuracy by 2.0 pp. Hippocam achieves larger gains of 19.2 and 6.0 pp, respectively",
+          "source_section": "Section 4.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 4,
+        "n_failed": 0,
+        "n_could_not_check": 3,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "only Hippocam and ACE achieve positive gains, excluding all other methods",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "HiAgent",
+                "column_label": "\u2206stream",
+                "value": "+0.1"
+              },
+              {
+                "table": 2,
+                "row_label": "HiAgent",
+                "column_label": "\u2206stream",
+                "value": "-5.8"
+              },
+              {
+                "table": 2,
+                "row_label": "mem0",
+                "column_label": "\u2206stream",
+                "value": "-28.1"
+              },
+              {
+                "table": 2,
+                "row_label": "mem0",
+                "column_label": "\u2206stream",
+                "value": "+0.0"
+              },
+              {
+                "table": 2,
+                "row_label": "A-Mem",
+                "column_label": "\u2206stream",
+                "value": "-8.0"
+              },
+              {
+                "table": 2,
+                "row_label": "A-Mem",
+                "column_label": "\u2206stream",
+                "value": "+0.0"
+              },
+              {
+                "table": 2,
+                "row_label": "Letta",
+                "column_label": "\u2206stream",
+                "value": "-4.8"
+              },
+              {
+                "table": 2,
+                "row_label": "Letta",
+                "column_label": "\u2206stream",
+                "value": "-9.9"
+              },
+              {
+                "table": 2,
+                "row_label": "ReasoningBank",
+                "column_label": "\u2206stream",
+                "value": "-11.2"
+              },
+              {
+                "table": 2,
+                "row_label": "ReasoningBank",
+                "column_label": "\u2206stream",
+                "value": "-2.1"
+              },
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "\u2206stream",
+                "value": "+14.0"
+              },
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "\u2206stream",
+                "value": "+2.0"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "\u2206stream",
+                "value": "+19.2"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "\u2206stream",
+                "value": "+6.0"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "positive gains must occur on both of the two specified domain transitions",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "\u2206stream",
+                "value": "+14.0"
+              },
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "\u2206stream",
+                "value": "+2.0"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "\u2206stream",
+                "value": "+19.2"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "\u2206stream",
+                "value": "+6.0"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "positive gains hold for the pair of domain transitions",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "\u2206stream",
+                "value": "+14.0"
+              },
+              {
+                "table": 2,
+                "row_label": "ACE",
+                "column_label": "\u2206stream",
+                "value": "+2.0"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "\u2206stream",
+                "value": "+19.2"
+              },
+              {
+                "table": 2,
+                "row_label": "Hippocam",
+                "column_label": "\u2206stream",
+                "value": "+6.0"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "the performance outcomes apply across all remaining methods",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "HiAgent",
+                "column_label": "\u2206stream",
+                "value": "+0.1"
+              },
+              {
+                "table": 2,
+                "row_label": "HiAgent",
+                "column_label": "\u2206stream",
+                "value": "-5.8"
+              },
+              {
+                "table": 2,
+                "row_label": "mem0",
+                "column_label": "\u2206stream",
+                "value": "-28.1"
+              },
+              {
+                "table": 2,
+                "row_label": "mem0",
+                "column_label": "\u2206stream",
+                "value": "+0.0"
+              },
+              {
+                "table": 2,
+                "row_label": "A-Mem",
+                "column_label": "\u2206stream",
+                "value": "-8.0"
+              },
+              {
+                "table": 2,
+                "row_label": "A-Mem",
+                "column_label": "\u2206stream",
+                "value": "+0.0"
+              },
+              {
+                "table": 2,
+                "row_label": "Letta",
+                "column_label": "\u2206stream",
+                "value": "-4.8"
+              },
+              {
+                "table": 2,
+                "row_label": "Letta",
+                "column_label": "\u2206stream",
+                "value": "-9.9"
+              },
+              {
+                "table": 2,
+                "row_label": "ReasoningBank",
+                "column_label": "\u2206stream",
+                "value": "-11.2"
+              },
+              {
+                "table": 2,
+                "row_label": "ReasoningBank",
+                "column_label": "\u2206stream",
+                "value": "-2.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 26,
+      "label": "supported",
+      "claim_summary": "Prefix consolidation maintains task efficiency while drastically shrinking working context size.",
+      "missing": true,
+      "grounding_status": "Fail",
+      "claim_text_verbatim": "Prefix consolidation thus supports more effective subsequent work with a smaller active context.",
+      "evidence_spans": [
+        {
+          "source_text": "ToolBench accuracy falls from 78.7% to 65.7% (Table 4). ALFWorld success remains near perfect, but mean actions increase from 9.62 to 11.74, and episode-start context grows from 19.7k to 50.7k tokens in the inspected stream.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          4
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "zero_pieces",
+        "n_pieces": 0,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": []
+      }
+    },
+    {
+      "index": 27,
+      "label": "supported",
+      "claim_summary": "Disabling progressive recall drops MemoryAgentBench 64k accuracy from 41.0% to 27.0%.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+      "evidence_spans": [
+        {
+          "source_text": "Disabling recall on the same post-ingestion MemoryAgentBench 64k snapshot reduces accuracy from 41.0% to 27.0%.",
+          "source_section": "Section 5.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Recall | MAB-64k Acc. \u2191 | Hippocam: 41.0 | w/o: 27.0",
+          "source_section": "Table 4",
+          "grounding_status": "Fail",
+          "stance": null
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          4
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "results are stated specifically for the MemoryAgentBench 64k snapshot",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 4,
+                "row_label": "MAB-64k",
+                "column_label": "Hippocam",
+                "value": "41.0"
+              },
+              {
+                "table": 4,
+                "row_label": "MAB-64k",
+                "column_label": "w/o",
+                "value": "27.0"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P8-R1",
+      "actual_index": 6
+    },
+    {
+      "expected_id": "P8-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-R3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S1",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P8-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P8-S3",
+      "actual_index": 10
+    },
+    {
+      "expected_id": "P8-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P8-S5",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P8-S6",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P8-S7",
+      "actual_index": 26
+    },
+    {
+      "expected_id": "P8-S8",
+      "actual_index": 27
+    }
+  ]
+}

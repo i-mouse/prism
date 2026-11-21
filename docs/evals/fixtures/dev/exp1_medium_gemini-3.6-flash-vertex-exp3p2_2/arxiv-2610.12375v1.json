@@ -1,0 +1,81 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:24:09.041433+00:00",
+    "paper_id": "arxiv-2610.12375v1",
+    "filename": "2610.12375v1.pdf",
+    "extraction_run_id": "85f3c02f-8564-47e2-8c1e-e6e2905f81b8",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 2,
+      "generated_at": "2026-11-12T11:44:16Z",
+      "inline_claims": true
+    },
+    "claims_scope": [
+      1054
+    ]
+  },
+  "claims": [
+    {
+      "index": 1054,
+      "label": "partially_supported",
+      "claim_summary": "Third, LinUOT tracks OnTrack within 0.003\u20130.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full system, confirming the mask\u2019s null ranking effect here as well.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Third, LinUOT tracks OnTrack within 0.003\u20130.010 AUROC everywhere: the quadratic term contributes essentially nothing to ranking on this corpus, consistent with its role as a false-alarm suppressor rather than a ranker (Table 4); the mask-free variant is AUROC-identical to the full system, confirming the mask\u2019s null ranking effect here as well.",
+      "evidence_spans": [
+        {
+          "source_text": "5 .612 .595 .552 .622 .574 +.060 [.037, .083]",
+          "source_section": "Table 5",
+          "grounding_status": "Partial",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "8 .631 .628 .574 .613 .576 +.057 [.033, .080]",
+          "source_section": "Table 5",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash"
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P9-R1",
+      "actual_index": 15
+    },
+    {
+      "expected_id": "P9-S1",
+      "actual_index": 1
+    },
+    {
+      "expected_id": "P9-S2",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P9-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P9-S4",
+      "actual_index": 2
+    },
+    {
+      "expected_id": "P9-S6",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P9-S7",
+      "actual_index": 11
+    },
+    {
+      "expected_id": "P9-S8",
+      "actual_index": null
+    }
+  ]
+}

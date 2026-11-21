@@ -54,6 +54,7 @@ from eval.score_replay import (
     AdjudicatedRow, _load_fixture, resolve_adjudicated_rows, row_details,
 )
 from eval.scorer import score
+from eval.step4 import score_table_check
 from eval.types import ActualClaim, Match
 
 REPO_ROOT = Path(__file__).parent.parent.parent
@@ -172,6 +173,9 @@ def _config_differences_between(label_a: str, config_a: dict, label_b: str, conf
 def _folder_cost(meta: FolderMeta, invalid: list[str]) -> dict | None:
     """Audit calls only (D10): means per audited claim and the audit cost in INR, each call priced at the model
     that served it."""
+    if meta.summary is not None and score_table_check.is_flagged(meta.summary):
+        # A --table-check folder (step 4, M7): audit + fallback audit + lister + table checker, per claim.
+        return score_table_check.folder_cost(meta.path, meta.summary, invalid)
     records = meta.summary.get("records") if meta.summary else None
     if not isinstance(records, list):
         invalid.append(f"{meta.path}: _summary.json has no records")
@@ -579,6 +583,19 @@ def _print_results(r: dict) -> None:
         print(f"  {c['arm']:<13} {c['folder']}: {c['audit_calls']} audit calls, mean tokens prompt {c['mean_prompt_tokens']} "
               f"(cached {c['mean_cached_tokens']}) / output {c['mean_output_tokens']} / thought {c['mean_thought_tokens']}; "
               f"INR {c['audit_inr_per_claim']} per claim, INR {c['audit_inr_total']} total")
+        if c.get("table_check"):
+            print(f"    table-check folder: {c['claims']} claims; the means and INR above are per claim over audit + "
+                  f"fallback audit + lister + table checker calls; calls {c['calls_by_kind']}, INR {c['inr_by_kind']}; "
+                  f"cache creation + storage INR {c['cache_overhead_inr']} (not included; with it INR "
+                  f"{c['audit_inr_per_claim_incl_cache_overhead']} per claim)")
+
+    if "table_check" in r:
+        score_table_check.print_report(r["table_check"])
+        print(f"\nOverall: {r['overall']}  "
+              f"(D4 {_verdict(m['D4']['pass'])}, D5 {_verdict(m['D5']['pass'])}, D6 {_verdict(m['D6']['pass'])}, "
+              f"D7 {_verdict(m['D7']['pass'])}, grounding-negative {_verdict(gn['pass'])}, "
+              f"M7 cost gate {_verdict(r['table_check']['m7']['pass'])}; V6 is a void rule, printed above)")
+        return
 
     print(f"\nOverall: {r['overall']}  "
           f"(D4 {_verdict(m['D4']['pass'])}, D5 {_verdict(m['D5']['pass'])}, D6 {_verdict(m['D6']['pass'])}, "
@@ -659,6 +676,18 @@ def run(
                 if cost is not None:
                     costs.append({"arm": name, **cost})
 
+    # Step 4: a --table-check candidate (every candidate folder flagged, no baseline folder flagged).
+    candidate_metas = [m for name in ("dev candidate", "golden candidate") for m in metas[name] if m.summary is not None]
+    flagged = [m for m in candidate_metas if score_table_check.is_flagged(m.summary)]
+    table_folders: list[dict] = []
+    if flagged:
+        if len(flagged) != len(candidate_metas):
+            invalid.append("table_check: some candidate folders are --table-check runs and some are not")
+        if any(score_table_check.is_flagged(m.summary) for name in ("dev baseline", "golden baseline") for m in metas[name]):
+            invalid.append("table_check: a baseline folder is a --table-check run")
+        table_folders = [score_table_check.folder_totals(m.path, m.summary) for m in flagged if m.summary is not None]
+        invalid.extend(score_table_check.config_differences(table_folders))
+
     invalid = _unique(invalid)
     if invalid:
         for reason in invalid:
@@ -687,6 +716,21 @@ def run(
         ),
         "overall": "PASS" if overall else "FAIL",
     }
+    if table_folders:
+        refusal_ids = score_screen._scored_ids()
+        by_id = {r.row_id: r for r in rows_r}
+        table_report = {
+            "m7": score_table_check.m7(
+                [c for c in costs if c["arm"] == "dev candidate"], [c for c in costs if c["arm"] == "dev baseline"],
+            ),
+            "rows": score_table_check.row_report(
+                [by_id[rid] for rid in refusal_ids if rid in by_id], rows_s, arms["dev candidate"],
+            ),
+            "per_folder": table_folders,
+            "totals": score_table_check.totals(table_folders),
+        }
+        results["table_check"] = table_report
+        results["overall"] = "PASS" if overall and table_report["m7"]["pass"] else "FAIL"
     _print_results(results)
     if json_out is not None:
         json_out = Path(json_out)

@@ -75,11 +75,26 @@ each claim carries the scope trace fields (auditor_label, label, scope_lowered,
 scope_item, scope_item_kind, scope_quote, scope_items), the replay header records
 the flag-on prompt hash, and _summary.json has a "scope_check" block. With the flag
 off none of that exists and the output is byte-identical to before the flag.
+
+--table-check (default off; not with --scope-check) is the step 4 table checker
+(eval/step4/table_check.py, table_check_calls.py; docs/decisions.md "Pre-registration:
+step 4 - table checker ... 2026-11-15"). A claim whose text or frozen evidence spans
+mention "Table N" is routed: the scope lister splits it into pieces, one checker call
+answers each piece against the paper's table blocks (cut by the frozen finder), a code
+guard checks the quoted cells, and the claim's label comes from the pieces. Today's
+audit runs on a routed claim only when the result is "could not check" (stage
+"audit_fallback"); unrouted claims run today's audit unchanged. Every lister, checker
+and audit call is priced, recorded under its own call kind and counted against
+--max-inr. Output goes to exp1_{level}[_{tag}]_tablecheck_{n}; each claim carries a
+"table_check" trace and audit_model_served; _summary.json has a "table_check" block and
+run_config a "table_check" entry (flag, lister hash, checker hash, finder commit, cap
+hits). With the flag off none of that exists.
 """
 import argparse
 import asyncio
 import contextlib
 import json
+import re
 import time
 from collections import defaultdict
 from dataclasses import asdict, dataclass, field
@@ -88,6 +103,7 @@ from pathlib import Path
 from eval import backend_options, pricing
 from eval.legacy_paper_text import PDF_DIR, _hash_check_and_load_text  # noqa: F401 - re-exported for replay_exp3/replay_clean/replay_extract; unused here
 from eval.matrix_loader import load_matrix
+from eval.step4 import table_check, table_check_calls
 from eval.pricing import (
     INR_PER_USD,
     USD_PER_1M_CACHED_INPUT,
@@ -109,7 +125,7 @@ from extraction.context_cache import (
     ttl_for_claims,
 )
 from extraction.prompt_version import get_prompt_version
-from extraction.schemas import ClaimLLM, ClaimsExtractionResponse
+from extraction.schemas import ClaimLabel, ClaimLLM, ClaimsExtractionResponse, EvidenceSpanLLM
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 SERVICE_ROOT = Path(__file__).parent.parent
@@ -128,6 +144,11 @@ GOLDEN_OUTPUT_ROOT = REPO_ROOT / "docs" / "evals" / "golden_replay"
 GOLDEN_TEXT_CACHE_DIR = SERVICE_ROOT / "scratch" / "auditor_rd" / "golden_text_cache"
 
 EXPECTED_PROMPT_HASH = "cb3272cce551"
+TABLE_CHECK_DIR_PART = "_tablecheck"
+# --table-check: the stage of today's audit when it runs as the fallback of a routed claim (its own call kind
+# in the records). The lister and the checker carry their own call_kind tags.
+STAGE_AUDIT = "audit"
+STAGE_AUDIT_FALLBACK = "audit_fallback"
 
 _ARXIV_PREFIX = "arxiv-"
 STATUS_OK = "OK"
@@ -150,6 +171,10 @@ ASSUMED_CHECKER_UNCACHED_TOKENS = 900  # scope_check_user.md + the claim + its i
 ASSUMED_CHECKER_OUTPUT_TOKENS = 700  # verbatim quotes per item
 ASSUMED_CHECKER_THOUGHT_TOKENS = 800
 ASSUMED_SCOPE_SECONDS_PER_CLAIM = 25  # lister + checker latency added to the cache's lifetime
+
+# --estimate --table-check: no table-checker call has been measured, so these are ASSUMPTIONS and printed as such.
+ASSUMED_TABLE_CHECKER_OVERHEAD_TOKENS = 1500  # table_check_system.md + the claim + its pieces
+ASSUMED_TABLE_CHECKER_OUTPUT_TOKENS = 600     # one answer per piece with its quoted cells
 
 _STORAGE_NOTE = (
     "observed on A0 (inferred from one run: 3,980 token-hours, about 35 s average lifetime); "
@@ -301,18 +326,22 @@ class _RunOptions:
     files, summary and request bytes are the ones from before the options existed.
 
     auditor_model None = engine.settings.llm_claim_audit_model. tag is the folder-name part
-    of a non-default run; run_config is the block written to its _summary.json."""
+    of a non-default run (with --out-tag it ends in "-<out_tag>"); run_config is the block
+    written to its _summary.json."""
     backend: backend_options.Backend
     auditor_model: str | None = None
     tag: str | None = None
     run_config: dict | None = None
+    out_tag: str | None = None
 
     @property
     def non_default(self) -> bool:
         return self.tag is not None
 
-    def out_dir(self, level: str, repeat_index: int, scope: bool) -> Path:
+    def out_dir(self, level: str, repeat_index: int, scope: bool, table_check_on: bool = False) -> Path:
         scope_part = "_scope" if scope else ""
+        if table_check_on:
+            scope_part += TABLE_CHECK_DIR_PART
         if self.tag is None:
             return _output_root() / f"exp1_{level}{scope_part}_{repeat_index}"
         return _output_root() / f"exp1_{level}_{self.tag}{scope_part}_{repeat_index}"
@@ -324,6 +353,43 @@ def _validate_scope_flags(scope_check_on: bool, cache: bool) -> None:
             "scope_check=True requires cache=True (--scope-check needs --cache): the scope checker reads the "
             "paper from the context cache and has no other copy of it"
         )
+
+
+def _validate_table_check_flags(table_check_on: bool, scope_check_on: bool) -> None:
+    if table_check_on and scope_check_on:
+        raise ValueError(
+            "table_check=True cannot be combined with scope_check=True (--table-check and --scope-check are "
+            "separate experiments; both reuse the scope lister)"
+        )
+
+
+@dataclass
+class _TableLedger:
+    """Table-check bookkeeping for one --table-check repeat: the counters, each paper's table blocks (built once,
+    before the first paid call) and the config block recorded in the header, the summary and run_config."""
+    stats: table_check.TableCheckStats
+    blocks: dict[str, table_check.TableBlocks]
+    config: dict
+
+
+def _table_check_config(blocks: dict[str, table_check.TableBlocks]) -> dict:
+    """The block recorded for a flagged run: the flag, the two hashes, the finder commit and the cap hits
+    (counts per paper: tables whose own block hit the finder's per-table cap, and found tables dropped by the
+    joined-text cap)."""
+    return {
+        "enabled": True,
+        "lister_hash": table_check.lister_hash(),
+        "checker_hash": table_check.checker_hash(),
+        "finder_commit": table_check.FINDER_COMMIT,
+        "lister_model": table_check_calls.LISTER_MODEL,
+        "checker_model": table_check_calls.CHECKER_MODEL,
+        "join_cap_chars": table_check.JOIN_CAP_CHARS,
+        "block_cap_hits": {
+            "per_table_cap_tables": {p: len(b.block_cap_hits) for p, b in sorted(blocks.items()) if b.block_cap_hits},
+            "join_cap_dropped_tables": {p: len(b.dropped) for p, b in sorted(blocks.items()) if b.dropped},
+            "papers_with_no_found_table": sum(1 for b in blocks.values() if not b.included),
+        },
+    }
 
 
 def _stop_on_cache_failure(reason: str) -> None:
@@ -338,12 +404,19 @@ def _new_cache_ledger() -> _CacheLedger:
     )
 
 
+INLINE_MIN_INDEX = 1000   # an inline claim's index must be above every run-1 index, so the two can never collide
+_OUT_TAG_RE = re.compile(r"[A-Za-z0-9-]+")
+
+
 @dataclass
 class ReplayTarget:
     paper_id: str
     claim_index: int
     claim_text_verbatim: str
     claim_summary: str
+    inline: bool = False   # True: text and summary came from the claims file, not from the run-1 fixture
+    # The fixture claim's frozen evidence spans ({source_text, source_section, ...}); read only by --table-check.
+    evidence_spans: tuple = ()
 
 
 def _load_claims_file(path: Path) -> list[dict]:
@@ -364,13 +437,48 @@ def _read_fixture(paper_id: str) -> dict:
     return fixture
 
 
+def _inline_target(entry: dict) -> ReplayTarget | None:
+    """The target of a claims-file entry that carries its own claim_text_verbatim and claim_summary (an
+    "inline" claim, one that is not in the run-1 fixture), or None for an ordinary {paper_id, claim_index}
+    entry. Only one of the two texts, a non-string or empty text, or a claim_index below INLINE_MIN_INDEX is a
+    ValueError naming the entry."""
+    has_text, has_summary = "claim_text_verbatim" in entry, "claim_summary" in entry
+    if not has_text and not has_summary:
+        return None
+    ref = f"claims-file entry paper_id={entry.get('paper_id')!r} claim_index={entry.get('claim_index')!r}"
+    if has_text != has_summary:
+        raise ValueError(f"{ref}: an inline claim needs both claim_text_verbatim and claim_summary, got only one")
+    for key in ("claim_text_verbatim", "claim_summary"):
+        if not isinstance(entry[key], str) or not entry[key].strip():
+            raise ValueError(f"{ref}: {key} must be a non-empty string")
+    index = entry["claim_index"]
+    if isinstance(index, bool) or not isinstance(index, int) or index < INLINE_MIN_INDEX:
+        raise ValueError(f"{ref}: an inline claim needs an integer claim_index >= {INLINE_MIN_INDEX}")
+    return ReplayTarget(
+        paper_id=entry["paper_id"], claim_index=index,
+        claim_text_verbatim=entry["claim_text_verbatim"], claim_summary=entry["claim_summary"], inline=True,
+    )
+
+
 def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[ReplayTarget]:
     targets: list[ReplayTarget] = []
     if claims_path is not None:
         entries = _load_claims_file(claims_path)
-        by_paper: dict[str, list[int]] = defaultdict(list)
+        # (claim_index, inline target or None) per paper, in file order.
+        by_paper: dict[str, list[tuple[int, ReplayTarget | None]]] = defaultdict(list)
+        inline_seen = False
         for entry in entries:
-            by_paper[entry["paper_id"]].append(entry["claim_index"])
+            inline = _inline_target(entry)
+            inline_seen = inline_seen or inline is not None
+            by_paper[entry["paper_id"]].append((entry["claim_index"], inline))
+        if inline_seen:
+            # Only a file with inline claims is checked for repeats; an indexed-only file loads as it always did.
+            seen: set[tuple[str, int]] = set()
+            for paper_id, items in by_paper.items():
+                for idx, _ in items:
+                    if (paper_id, idx) in seen:
+                        raise ValueError(f"claims file lists {paper_id} claim_index {idx} more than once")
+                    seen.add((paper_id, idx))
         paper_ids = sorted(by_paper)
         if _ACTIVE_DATASET is not None:
             # Every id is checked before any fixture is read.
@@ -392,16 +500,37 @@ def _load_targets(claims_path: Path | None, papers_filter: str | None) -> list[R
             _check_paper_id(paper_id)
 
     for paper_id in paper_ids:
+        items = by_paper[paper_id] if by_paper is not None else None
+        if items is not None and all(inline is not None for _, inline in items):
+            targets.extend(inline for _, inline in items)   # no indexed entry: the run-1 fixture is not read
+            continue
         fixture = _read_fixture(paper_id)
         claims_by_index = {c["index"]: c for c in fixture["claims"]}
-        indices = by_paper[paper_id] if by_paper is not None else sorted(claims_by_index)
-        for idx in indices:
+        if items is None:
+            items = [(idx, None) for idx in sorted(claims_by_index)]
+        for idx, inline in items:
+            if inline is not None:
+                targets.append(inline)
+                continue
             claim = claims_by_index[idx]
             targets.append(ReplayTarget(
                 paper_id=paper_id, claim_index=idx,
                 claim_text_verbatim=claim["claim_text_verbatim"], claim_summary=claim["claim_summary"],
+                evidence_spans=_frozen_spans(claim),
             ))
     return targets
+
+
+def _frozen_spans(claim: dict) -> tuple:
+    """The fixture claim's evidence spans that have a non-empty source_text, as a tuple of dicts; () when the
+    fixture carries none."""
+    spans = claim.get("evidence_spans")
+    if not isinstance(spans, list):
+        return ()
+    return tuple(
+        s for s in spans
+        if isinstance(s, dict) and isinstance(s.get("source_text"), str) and s["source_text"].strip()
+    )
 
 
 _HIGH_THOUGHT_MULTIPLIER_RANGE = (2.0, 4.0)
@@ -739,10 +868,10 @@ async def _cancel_stray_tasks(preexisting: set[asyncio.Task]) -> None:
 
 async def _replay_claim(
     target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation,
-    paper_cache: PaperCache | None = None, audit_model: str | None = None,
+    paper_cache: PaperCache | None = None, audit_model: str | None = None, stage: str = STAGE_AUDIT,
 ) -> ClaimLLM:
     semaphore = asyncio.Semaphore(1)
-    instrumentation.set_context("audit", target.paper_id, target.claim_index, level)
+    instrumentation.set_context(stage, target.paper_id, target.claim_index, level)
     claim_dict = {"claim_text_verbatim": target.claim_text_verbatim, "claim_summary": target.claim_summary}
 
     # _audit_and_structure_claim's own tracer spans don't distinguish
@@ -759,6 +888,55 @@ async def _replay_claim(
         correlation_id=None, claim_number=target.claim_index + 1, total_claims=1, thinking_level=level,
         **cache_kwargs,
     )
+
+
+async def _table_check_claim(
+    target: ReplayTarget, paper_text: str, level: str, instrumentation: _Instrumentation,
+    table_ledger: _TableLedger, replay_kwargs: dict,
+) -> tuple[ClaimLLM, dict, str | None]:
+    """One claim of a --table-check run. Returns (claim, trace fields, served checker model or None).
+
+    Unrouted claim: today's audit, unchanged. Routed claim: lister + checker; the checker's label with the
+    claim's frozen evidence spans replaces today's audit, unless the result is "could not check", in which case
+    today's audit runs with the same settings (stage STAGE_AUDIT_FALLBACK) and its label is final. The served
+    model is None whenever an audit call decided the claim (the caller then reads it from the audit record)."""
+    blocks = table_ledger.blocks[target.paper_id]
+    decision = table_check.route(target.claim_text_verbatim, target.evidence_spans, blocks)
+    unrouted_reason = None
+    if not decision.routed:
+        unrouted_reason = decision.reason
+    elif not target.evidence_spans:
+        unrouted_reason = table_check.NO_SPANS   # no span to carry into grounding: the auditor supplies them
+    if unrouted_reason is not None:
+        table_ledger.stats.record_unrouted(unrouted_reason)
+        claim_llm = await _replay_claim(target, paper_text, level, instrumentation, **replay_kwargs)
+        return claim_llm, table_check.unrouted_fields(decision, unrouted_reason), None
+
+    instrumentation.set_context("table_check", target.paper_id, target.claim_index, level)
+    trace = await table_check_calls.check_claim(
+        target.claim_text_verbatim, decision.cited, blocks, level, f"replay-{target.paper_id}",
+        claim_ref=f"{target.paper_id}#{target.claim_index}",
+    )
+    table_ledger.stats.record_routed(trace)
+    if trace.use_fallback:
+        instrumentation.raise_if_capped()
+        claim_llm = await _replay_claim(
+            target, paper_text, level, instrumentation, stage=STAGE_AUDIT_FALLBACK, **replay_kwargs,
+        )
+        return claim_llm, trace.to_fields(), None
+    assert trace.label is not None   # claim_result: no fallback means the checker gave a label
+    claim_llm = ClaimLLM(
+        claim_text_verbatim=target.claim_text_verbatim, claim_summary=target.claim_summary,
+        label=ClaimLabel(trace.label),
+        evidence_spans=[
+            EvidenceSpanLLM(
+                source_text=span["source_text"], source_section=str(span.get("source_section") or ""),
+                section_header=None, page_number=None,
+            )
+            for span in target.evidence_spans
+        ],
+    )
+    return claim_llm, trace.to_fields(), trace.checker_model_served
 
 
 def _claim_final_to_fixture_dict(claim_final, index: int) -> dict:
@@ -825,7 +1003,7 @@ async def _run_once(
     targets: list[ReplayTarget], level: str, repeat_index: int, dry_run: bool,
     paper_texts: dict[str, str] | None = None, guard: _CostGuard | None = None,
     cache_ledger: _CacheLedger | None = None, scope_ledger: _ScopeLedger | None = None,
-    run_options: _RunOptions | None = None,
+    run_options: _RunOptions | None = None, table_ledger: _TableLedger | None = None,
 ) -> tuple[Path, list[CallRecord], list[dict], str]:
     """Returns (out_dir, gemini records, grounding records, status). status is
     STATUS_VOID_CAP_HIT when the guard's cap stopped the run, or
@@ -845,10 +1023,19 @@ async def _run_once(
     run_options (None = a default run) carries --auditor-model: the audit call and
     the cache then use that model, a non-default run writes to its own
     exp1_{level}_{tag}[_scope]_{n} folder, and each claim records the model that
-    actually served its audit call (audit_model_served)."""
+    actually served its audit call (audit_model_served).
+
+    A table_ledger (not with scope_ledger, else ValueError) turns the table check on: a routed claim is decided
+    by the lister + table checker, and today's audit runs on it only as the "could not check" fallback
+    (_table_check_claim). Output goes to a ..._tablecheck_{n} folder; every claim carries a "table_check" trace
+    and audit_model_served (the checker's served model when the checker decided the claim)."""
     _validate_scope_flags(scope_ledger is not None, cache_ledger is not None)
+    _validate_table_check_flags(table_ledger is not None, scope_ledger is not None)
     run_options = run_options or _RunOptions(backend=llm_backend.AISTUDIO)
-    out_dir = run_options.out_dir(level, repeat_index, scope_ledger is not None)
+    if table_ledger is not None:
+        out_dir = run_options.out_dir(level, repeat_index, False, table_check_on=True)
+    else:
+        out_dir = run_options.out_dir(level, repeat_index, scope_ledger is not None)
     audit_model = run_options.auditor_model
     cache_model = audit_model or engine.settings.llm_claim_audit_model
     by_paper: dict[str, list[ReplayTarget]] = defaultdict(list)
@@ -873,6 +1060,7 @@ async def _run_once(
                 audited: list[ClaimLLM] = []
                 audit_models_served: list[str | None] = []
                 scope_results: list[scope_check.ClaimScope] = []
+                table_traces: list[dict] = []
                 ttl_kwargs = {"ttl_s": MAX_TTL_S} if scope_ledger is not None else {}
                 cache_scope = (
                     paper_context_cache(
@@ -893,11 +1081,19 @@ async def _run_once(
                             instrumentation.raise_if_capped()
                             # audit_model is passed only when --auditor-model is set (default call unchanged).
                             audit_kwargs = {"audit_model": audit_model} if audit_model is not None else {}
-                            claim_llm = await _replay_claim(
-                                target, paper_text, level, instrumentation, **cache_kwargs, **audit_kwargs,
-                            )
+                            checker_served = None
+                            if table_ledger is not None:
+                                claim_llm, table_fields, checker_served = await _table_check_claim(
+                                    target, paper_text, level, instrumentation, table_ledger,
+                                    {**cache_kwargs, **audit_kwargs},
+                                )
+                                table_traces.append(table_fields)
+                            else:
+                                claim_llm = await _replay_claim(
+                                    target, paper_text, level, instrumentation, **cache_kwargs, **audit_kwargs,
+                                )
                             audited.append(claim_llm)
-                            audit_models_served.append(next((
+                            audit_models_served.append(checker_served or next((
                                 r.model_used for r in reversed(instrumentation.records)
                                 if r.is_audit and r.paper_id == paper_id and r.claim_index == target.claim_index
                             ), None))
@@ -923,11 +1119,14 @@ async def _run_once(
                     _claim_final_to_fixture_dict(claim_final, target.claim_index)
                     for claim_final, target in zip(grounded, paper_targets)
                 ]
-                if run_options.non_default:
+                if run_options.non_default or table_ledger is not None:
                     # The model that actually served each audit call (the fallback model after a primary
                     # failure). Default runs do not carry the field, so their files are unchanged.
                     for claim_dict, served in zip(claims_out, audit_models_served):
                         claim_dict["audit_model_served"] = served
+                if table_ledger is not None:
+                    for claim_dict, table_fields in zip(claims_out, table_traces):
+                        claim_dict["table_check"] = table_fields
                 if scope_ledger is not None:
                     # Last step, paper level: the scope result may lower a "supported" label.
                     for claim_dict, claim_final, target, scope in zip(claims_out, grounded, paper_targets, scope_results):
@@ -944,6 +1143,13 @@ async def _run_once(
                 }
                 if scope_ledger is not None:
                     header["replay"]["scope_check_prompt_hash"] = scope_ledger.prompt_hash
+                if table_ledger is not None:
+                    header["replay"]["table_check"] = {
+                        key: table_ledger.config[key] for key in ("lister_hash", "checker_hash", "finder_commit")
+                    }
+                if any(t.inline for t in targets):
+                    # Claims given in the claims file, not in the run-1 fixture; "matches" below is still run 1's.
+                    header["replay"]["inline_claims"] = True
                 if _ACTIVE_DATASET is not None:
                     header["replay"]["set"] = _ACTIVE_DATASET.name  # a named set marks its files; dev files do not change
                 header["claims_scope"] = [t.claim_index for t in paper_targets]
@@ -1052,6 +1258,88 @@ def _print_scope_estimate(
           f"(INR {total_low * INR_PER_USD:.1f}-{total_high * INR_PER_USD:.1f})")
     print(f"[replay_audit] suggested --max-inr with --cache --scope-check (1.3x the high end): "
           f"{total_high * INR_PER_USD * 1.3:.1f} (the estimate excludes grounding calls)")
+
+
+def _print_table_check_estimate(
+    targets: list[ReplayTarget], level: str, repeats: int, blocks: dict[str, table_check.TableBlocks],
+    cache: bool = False, audit_model: str | None = None, struct_model: str | None = None,
+) -> tuple[float, float]:
+    """The --estimate --table-check section. Free: no network; the routing and the table-block sizes are computed
+    from the local paper text and the fixture claims, so the routed count is exact for this claims file.
+
+    Per routed claim-replay: one lister call and one checker call (uncached; input = the paper's joined table
+    blocks at chars / 4, ESTIMATED, plus an assumed overhead). The fallback rate (share of routed claims that
+    also run today's audit + structure) is not known before a run: the LOW end assumes 0%, the HIGH end 100%.
+    Unrouted claims cost today's audit + structure. With cache=True the audit part uses the cached estimate and
+    the cache creation + storage overhead is added for every paper, as --cache does today. Returns (low, high)
+    in USD."""
+    stats = _load_measured_token_stats()
+    cached_tokens = max(0.0, stats["audit_prompt"] - ASSUMED_UNCACHED_TOKENS_PER_CLAIM) if cache else 0.0
+    claim_low, claim_high = _estimate_one_claim_cost_usd(
+        stats, level, cached_audit_tokens=cached_tokens, audit_model=audit_model, struct_model=struct_model,
+    )
+    thought = stats["audit_thought_medium"]
+    thought_low, thought_high = (
+        (thought * _HIGH_THOUGHT_MULTIPLIER_RANGE[0], thought * _HIGH_THOUGHT_MULTIPLIER_RANGE[1])
+        if level == "high" else (thought, thought)
+    )
+    lister_usd = cost_usd(ASSUMED_LISTER_INPUT_TOKENS, ASSUMED_LISTER_OUTPUT_TOKENS, ASSUMED_LISTER_THOUGHT_TOKENS)
+
+    claims_per_paper: dict[str, int] = defaultdict(int)
+    routed_per_paper: dict[str, int] = defaultdict(int)
+    unrouted_reasons: dict[str, int] = defaultdict(int)
+    checker_low = checker_high = 0.0
+    block_tokens_total = 0.0
+    for t in targets:
+        claims_per_paper[t.paper_id] += 1
+        paper_blocks = blocks[t.paper_id]
+        decision = table_check.route(t.claim_text_verbatim, t.evidence_spans, paper_blocks)
+        reason = decision.reason if not decision.routed else (None if t.evidence_spans else table_check.NO_SPANS)
+        if reason is not None:
+            unrouted_reasons[reason] += 1
+            continue
+        routed_per_paper[t.paper_id] += 1
+        prompt_tokens = len(paper_blocks.text) / 4 + ASSUMED_TABLE_CHECKER_OVERHEAD_TOKENS
+        block_tokens_total += len(paper_blocks.text) / 4
+        checker_low += cost_usd(prompt_tokens, ASSUMED_TABLE_CHECKER_OUTPUT_TOKENS, thought_low)
+        checker_high += cost_usd(prompt_tokens, ASSUMED_TABLE_CHECKER_OUTPUT_TOKENS, thought_high)
+
+    routed = sum(routed_per_paper.values())
+    unrouted = len(targets) - routed
+    overhead = 0.0
+    if cache:
+        overhead = sum(
+            cache_creation_cost_usd(cached_tokens)
+            + storage_cost_usd(cached_tokens, n * PER_CLAIM_SECONDS / 3600, model=audit_model)
+            for n in claims_per_paper.values()
+        )
+    low = (unrouted * claim_low + routed * lister_usd + checker_low + overhead) * repeats
+    high = (len(targets) * claim_high + routed * lister_usd + checker_high + overhead) * repeats
+
+    print(f"[replay_audit] --estimate --table-check: {len(targets)} claims, {routed} routed, {unrouted} unrouted "
+          f"{dict(sorted(unrouted_reasons.items()))}; x {repeats} repeats")
+    print(f"[replay_audit] table check hashes: lister {table_check.lister_hash()}, checker {table_check.checker_hash()}, "
+          f"finder commit {table_check.FINDER_COMMIT}")
+    print(f"[replay_audit] routed claims per paper: {dict(sorted(routed_per_paper.items()))}")
+    print(f"[replay_audit] ASSUMPTION (lister, uncached, thinking low): {ASSUMED_LISTER_INPUT_TOKENS} input / "
+          f"{ASSUMED_LISTER_OUTPUT_TOKENS} output / {ASSUMED_LISTER_THOUGHT_TOKENS} thought tokens per routed claim")
+    print(f"[replay_audit] ESTIMATED (checker input): the paper's joined table blocks at chars / 4 "
+          f"(mean {block_tokens_total / routed if routed else 0:.0f} tokens per routed claim), not cached")
+    print(f"[replay_audit] ASSUMPTION (checker, thinking {level}): + {ASSUMED_TABLE_CHECKER_OVERHEAD_TOKENS} input tokens "
+          f"(prompt, claim, pieces) / {ASSUMED_TABLE_CHECKER_OUTPUT_TOKENS} output tokens / thought tokens = the "
+          f"measured audit average ({thought_low:.0f}-{thought_high:.0f}); no checker call has been measured")
+    print("[replay_audit] ASSUMPTION (fallback rate): unknown before a run. LOW end = 0% of routed claims fall back "
+          "to today's audit; HIGH end = 100% (every routed claim also pays audit + structure)")
+    if cache:
+        print(f"[replay_audit] --cache: audit calls use the cached estimate; cache creation + storage for every paper "
+              f"(upper bound) USD {overhead * repeats:.3f}; {_creation_note()}")
+    print(f"[replay_audit] lister USD {routed * lister_usd * repeats:.3f} + checker USD "
+          f"{checker_low * repeats:.3f}-{checker_high * repeats:.3f}")
+    print(f"[replay_audit] table-check total: USD {low:.3f}-{high:.3f} "
+          f"(INR {low * INR_PER_USD:.1f}-{high * INR_PER_USD:.1f})")
+    print(f"[replay_audit] suggested --max-inr with --table-check (1.3x the high end): {high * INR_PER_USD * 1.3:.1f} "
+          f"(the estimate excludes grounding calls)")
+    return low, high
 
 
 def _print_estimate(
@@ -1207,11 +1495,62 @@ def _print_scope_summary(block: dict) -> None:
               f"checker; those claims' verdicts were left unchanged ***")
 
 
+TABLE_CHECK_CALL_KINDS = (
+    STAGE_AUDIT, STAGE_AUDIT_FALLBACK, table_check_calls.LISTER_CALL_KIND, table_check_calls.CHECKER_CALL_KIND,
+)
+
+
+def _table_record_kind(record: CallRecord) -> str | None:
+    """The call kind a --table-check summary books a record under: "audit" (an unrouted claim's audit),
+    "audit_fallback" (a routed claim's fallback audit), "lister", "table_checker"; None for the structurer."""
+    if record.stage in (table_check_calls.LISTER_CALL_KIND, table_check_calls.CHECKER_CALL_KIND):
+        return record.stage
+    if record.is_audit:
+        return STAGE_AUDIT_FALLBACK if record.stage == STAGE_AUDIT_FALLBACK else STAGE_AUDIT
+    return None
+
+
+def _table_check_summary(table_ledger: _TableLedger, records: list[CallRecord]) -> dict:
+    """The summary's "table_check" block: the config, the counters, and tokens + cost per call kind (each call
+    priced at the model that served it, like the audit calls)."""
+    by_call: dict[str, dict] = {}
+    for kind in TABLE_CHECK_CALL_KINDS:
+        kind_records = [r for r in records if _table_record_kind(r) == kind]
+        usd = sum(_gemini_record_cost_usd(r)[0] for r in kind_records)
+        by_call[kind] = {
+            "calls": len(kind_records),
+            "prompt_tokens": sum(r.prompt_tokens for r in kind_records),
+            "cached_tokens": sum(r.cached_tokens for r in kind_records),
+            "output_tokens": sum(r.output_tokens for r in kind_records),
+            "thought_tokens": sum(r.thought_tokens for r in kind_records),
+            "cost_usd": round(usd, 4),
+            "cost_inr": round(usd * INR_PER_USD, 2),
+        }
+    return {"config": table_ledger.config, **asdict(table_ledger.stats), "by_call": by_call}
+
+
+def _print_table_check_summary(block: dict) -> None:
+    config = block["config"]
+    print(f"[replay_audit] table check: lister hash {config['lister_hash']}, checker hash {config['checker_hash']}, "
+          f"finder commit {config['finder_commit']}, cap hits {config['block_cap_hits']}")
+    print(f"[replay_audit] table check: {block['claims']} claims, {block['routed_claims']} routed "
+          f"(unrouted {block['unrouted']}), {block['pieces']} pieces, answers {block['answers']}, "
+          f"guard failures {block['guard_failures']}, checker labels {block['checker_labels']}, "
+          f"fallback audits {block['fallback_claims']} {block['fallback_reasons']}")
+    for kind, usage in block["by_call"].items():
+        print(f"[replay_audit] table check {kind}: {usage['calls']} calls, {usage['prompt_tokens']} prompt "
+              f"({usage['cached_tokens']} cached) / {usage['output_tokens']} output / {usage['thought_tokens']} thought "
+              f"tokens, INR {usage['cost_inr']}")
+    if block["lister_failures"] or block["checker_failures"]:
+        print(f"[replay_audit] *** TABLE CHECK FAILURES after retry: {block['lister_failures']} lister, "
+              f"{block['checker_failures']} checker of {block['routed_claims']} routed claims (V6 counts these) ***")
+
+
 def _print_summary(
     out_dir: Path, records: list[CallRecord], grounding_records: list[dict] | None = None,
     status: str = STATUS_OK, guard: _CostGuard | None = None,
     cache_ledger: _CacheLedger | None = None, scope_ledger: _ScopeLedger | None = None,
-    run_options: _RunOptions | None = None,
+    run_options: _RunOptions | None = None, table_ledger: _TableLedger | None = None,
 ) -> None:
     grounding_records = grounding_records or []
     total_prompt = sum(r.prompt_tokens for r in records)
@@ -1258,6 +1597,8 @@ def _print_summary(
         summary["cache"] = _cache_summary(cache_ledger, records, total_cached)
     if scope_ledger is not None:
         summary["scope_check"] = _scope_summary(scope_ledger, records)
+    if table_ledger is not None:
+        summary["table_check"] = _table_check_summary(table_ledger, records)
     if guard is not None and guard.max_inr is not None:
         summary["cap"] = {
             "max_inr": guard.max_inr,
@@ -1269,6 +1610,8 @@ def _print_summary(
         }
     if run_options is not None and run_options.non_default:
         summary["run_config"] = run_options.run_config
+        if table_ledger is not None:
+            summary["run_config"] = {**(run_options.run_config or {}), "table_check": table_ledger.config}
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(f"[replay_audit] {len(records)} Gemini calls, {total_prompt} prompt ({total_cached} cached) / {total_output} output / "
@@ -1291,6 +1634,8 @@ def _print_summary(
         _print_cache_summary(summary["cache"])
     if scope_ledger is not None:
         _print_scope_summary(summary["scope_check"])
+    if table_ledger is not None:
+        _print_table_check_summary(summary["table_check"])
     if "run_config" in summary:
         print(f"[replay_audit] run config: {summary['run_config']}")
     if status == STATUS_VOID_CACHE_FAILED:
@@ -1318,10 +1663,16 @@ def _prepare_run_options(args: argparse.Namespace, scope_check_on: bool) -> _Run
     a default _RunOptions and checks nothing beyond the thinking level."""
     backend = backend_options.backend_from_args(args)
     auditor_model = getattr(args, "auditor_model", None)
+    out_tag = getattr(args, "out_tag", None)
+    if out_tag is not None and not _OUT_TAG_RE.fullmatch(out_tag):
+        raise ValueError(f"--out-tag {out_tag!r}: use only letters, digits and '-'")
     structurer_model = engine.settings.llm_claim_audit_model
     effective_auditor = auditor_model or structurer_model
     backend_options.validate_thinking(effective_auditor, getattr(args, "level", None))
     if backend.name == llm_backend.BACKEND_AISTUDIO and auditor_model is None:
+        if out_tag is not None:
+            raise ValueError("--out-tag needs a non-default run (--backend vertex or --auditor-model): "
+                             "a default run's folders are not tagged")
         return _RunOptions(backend=backend)
 
     if (
@@ -1347,9 +1698,11 @@ def _prepare_run_options(args: argparse.Namespace, scope_check_on: bool) -> _Run
     backend_options.check_grounding_routes(
         backend, engine.settings.llm_grounding_model, engine.settings.llm_grounding_fallback_model,
     )
+    tag = backend_options.output_slug(auditor_model, backend, structurer_model)
+    if out_tag is not None:
+        tag = f"{tag}-{out_tag}"
     return _RunOptions(
-        backend=backend, auditor_model=auditor_model,
-        tag=backend_options.output_slug(auditor_model, backend, structurer_model),
+        backend=backend, auditor_model=auditor_model, tag=tag, out_tag=out_tag,
         run_config=backend_options.run_config(backend, effective_auditor, other_models, getattr(args, "level", None)),
     )
 
@@ -1365,6 +1718,8 @@ async def _main(args: argparse.Namespace) -> int:
 
     scope_check_on = getattr(args, "scope_check", False)
     _validate_scope_flags(scope_check_on, getattr(args, "cache", False))
+    table_check_on = getattr(args, "table_check", False)
+    _validate_table_check_flags(table_check_on, scope_check_on)
 
     if getattr(args, "repeat_index", None) is not None and getattr(args, "repeat", 1) > 1:
         print("[replay_audit] ABORT: --repeat-index runs exactly one repeat; it cannot be combined with --repeat > 1")
@@ -1381,6 +1736,12 @@ async def _main(args: argparse.Namespace) -> int:
     # --backend / --vertex-project / --auditor-model: every check here runs before any request.
     try:
         run_options = _prepare_run_options(args, scope_check_on)
+        if table_check_on:
+            # The lister and the checker must be priced before any request (run_config.other_models is untouched).
+            backend_options.require_priced({
+                "table_lister": table_check_calls.LISTER_MODEL, "table_checker": table_check_calls.CHECKER_MODEL,
+            })
+            backend_options.validate_thinking(table_check_calls.CHECKER_MODEL, getattr(args, "level", None))
     except (ValueError, backend_options.BackendRoutingError) as exc:
         print(f"[replay_audit] ABORT: {exc}")
         return 1
@@ -1407,13 +1768,20 @@ def _repeat_indices(args: argparse.Namespace) -> list[int]:
     return list(range(1, args.repeat + 1))
 
 
+def _existing_out_dirs(run_options: _RunOptions, args: argparse.Namespace, scope_check_on: bool) -> list[str]:
+    """The output folders of this invocation's repeats that already exist."""
+    table_check_on = getattr(args, "table_check", False)
+    dirs = [run_options.out_dir(args.level, n, scope_check_on, table_check_on=table_check_on) for n in _repeat_indices(args)]
+    return [str(d) for d in dirs if d.exists()]
+
+
 async def _run_replay(
     args: argparse.Namespace, scope_check_on: bool, scope_prompt_hash: str | None, run_options: _RunOptions,
 ) -> int:
     claims_path = Path(args.claims) if args.claims else None
     try:
         targets = _load_targets(claims_path, args.papers)
-    except PaperTextError as exc:  # only a named set raises it here; the dev set behaves as before
+    except (PaperTextError, ValueError) as exc:  # PaperTextError: a named set only; ValueError: a bad inline claim
         print(f"[replay_audit] ABORT: {exc}")
         return 1
     if not targets:
@@ -1423,6 +1791,15 @@ async def _run_replay(
     if run_options.non_default:
         print(f"[replay_audit] run config: {run_options.run_config}")
 
+    if args.estimate and run_options.out_tag is not None:
+        # A tagged run names its own folders up front, so --estimate also refuses when they exist.
+        existing = _existing_out_dirs(run_options, args, scope_check_on)
+        if existing:
+            print(f"[replay_audit] ABORT: output folder(s) already exist, refusing to overwrite: {existing}")
+            return 1
+
+    table_check_on = getattr(args, "table_check", False)
+
     if args.estimate:
         estimate_kwargs = {"scope_check": True} if scope_check_on else {}
         if run_options.auditor_model is not None:
@@ -1431,14 +1808,28 @@ async def _run_replay(
         _print_estimate(targets, args.level, args.repeat, cache=getattr(args, "cache", False), **estimate_kwargs)
         if scope_check_on:
             print(f"[replay_audit] scope-check prompt hash (recorded in the replay header): {scope_prompt_hash}")
+        if table_check_on:
+            # The routing needs each paper's tables: the local text is read by code, no request is made.
+            try:
+                estimate_texts = _load_paper_texts(sorted({t.paper_id for t in targets}))
+            except PaperTextError as exc:
+                print(f"[replay_audit] ABORT: {exc}")
+                return 1
+            model_kwargs: dict[str, str | None] = {}
+            if run_options.auditor_model is not None:
+                model_kwargs = {
+                    "audit_model": run_options.auditor_model, "struct_model": engine.settings.llm_claim_audit_model,
+                }
+            _print_table_check_estimate(
+                targets, args.level, args.repeat,
+                {paper_id: table_check.build_table_blocks(text) for paper_id, text in estimate_texts.items()},
+                cache=getattr(args, "cache", False), **model_kwargs,
+            )
         return 0
 
-    if run_options.non_default and not args.dry_run:
+    if (run_options.non_default or table_check_on) and not args.dry_run:
         # A non-default run never overwrites an existing folder (the baselines included).
-        existing = [
-            str(run_options.out_dir(args.level, n, scope_check_on)) for n in _repeat_indices(args)
-            if run_options.out_dir(args.level, n, scope_check_on).exists()
-        ]
+        existing = _existing_out_dirs(run_options, args, scope_check_on)
         if existing:
             print(f"[replay_audit] ABORT: output folder(s) already exist, refusing to overwrite: {existing}")
             return 1
@@ -1458,6 +1849,14 @@ async def _run_replay(
             print(f"[replay_audit] ABORT: {exc}")
             return 1
 
+    table_blocks: dict[str, table_check.TableBlocks] = {}
+    table_config: dict = {}
+    if table_check_on and not args.dry_run:
+        # Built once from the loaded texts, before the first paid call.
+        table_blocks = {paper_id: table_check.build_table_blocks(text) for paper_id, text in paper_texts.items()}
+        table_config = _table_check_config(table_blocks)
+        print(f"[replay_audit] table check: {table_config}")
+
     guard = _CostGuard(getattr(args, "max_inr", None))
     use_cache = getattr(args, "cache", False) and not args.dry_run
     for repeat_index in _repeat_indices(args):
@@ -1470,15 +1869,22 @@ async def _run_replay(
             run_kwargs["scope_ledger"] = scope_ledger
         if run_options.non_default:
             run_kwargs["run_options"] = run_options
+        table_ledger = None
+        if table_check_on and not args.dry_run:
+            table_ledger = _TableLedger(stats=table_check.TableCheckStats(), blocks=table_blocks, config=table_config)
         out_dir, records, grounding_records, status = await _run_once(
             targets, args.level, repeat_index, args.dry_run, paper_texts, guard, **run_kwargs,
+            table_ledger=table_ledger,
         )
         if args.dry_run:
             continue
         summary_kwargs = {"scope_ledger": scope_ledger} if scope_ledger is not None else {}
         if run_options.non_default:
             summary_kwargs["run_options"] = run_options
-        _print_summary(out_dir, records, grounding_records, status, guard, cache_ledger, **summary_kwargs)
+        _print_summary(
+            out_dir, records, grounding_records, status, guard, cache_ledger, **summary_kwargs,
+            table_ledger=table_ledger,
+        )
         if status != STATUS_OK:
             return EXIT_CAP_HIT
     return 0
@@ -1494,7 +1900,12 @@ def _positive_float(value: str) -> float:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--level", required=True, choices=["low", "medium", "high"])
-    parser.add_argument("--claims", help="JSON file of [{paper_id, claim_index}, ...] (omit for all 12 papers/362 claims)")
+    parser.add_argument(
+        "--claims",
+        help="JSON file of [{paper_id, claim_index}, ...] (omit for all 12 papers/362 claims). An entry may also carry "
+             "claim_text_verbatim + claim_summary (an inline claim, not in the run-1 fixture): its claim_index must "
+             "then be >= 1000",
+    )
     parser.add_argument(
         "--set", dest="dataset", choices=[SET_DEV, SET_GOLDEN], default=SET_DEV,
         help="which papers: dev (default, the run1 dev fixtures and raw_text_cache - nothing changes) or golden "
@@ -1521,6 +1932,13 @@ def _build_parser() -> argparse.ArgumentParser:
              "Cache TTL becomes 3600 s; output goes to exp1_{level}_scope_{n}",
     )
     parser.add_argument(
+        "--table-check", action="store_true",
+        help="step 4 table checker (default off; not with --scope-check). A claim that cites a table is decided by "
+             "the scope lister + the table checker on the paper's table blocks; today's audit runs on it only when "
+             "the result is 'could not check'. Unrouted claims: today's audit, unchanged. --cache applies to the "
+             "audit calls as it does today. Output goes to exp1_{level}[_{tag}]_tablecheck_{n}",
+    )
+    parser.add_argument(
         "--max-inr", type=_positive_float, default=None,
         help="stop (status VOID_CAP_HIT, exit 2) once the running cost passes this many INR; default no cap",
     )
@@ -1529,6 +1947,12 @@ def _build_parser() -> argparse.ArgumentParser:
         help="model of the auditor call ONLY (default: the configured llm_claim_audit_model). The structurer, the "
              "fallback models and every other call keep their configured models; with --cache the cache is created "
              "with this model. Not valid with --scope-check. Output goes to exp1_{level}_{model}[-vertex]_{n}",
+    )
+    parser.add_argument(
+        "--out-tag", default=None, metavar="TAG",
+        help="non-default runs only (--backend vertex / --auditor-model): add -TAG to the output folder names, "
+             "exp1_{level}_{model}[-vertex]-TAG_{n}, so a run never meets an earlier run's folders. Letters, digits "
+             "and '-'. With the tag, --estimate also refuses when the tagged folders exist",
     )
     backend_options.add_backend_args(parser)
     return parser

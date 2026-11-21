@@ -1,0 +1,1019 @@
+{
+  "header": {
+    "prompt_hash": "cb3272cce551",
+    "matcher_fingerprint": "52401482adf2",
+    "model_name": "gemini-3.6-flash",
+    "matcher_model": "gemini-3.6-flash",
+    "generated_at": "2026-10-12T09:25:36.833661+00:00",
+    "paper_id": "arxiv-2610.11519v1",
+    "filename": "2610.11519v1.pdf",
+    "extraction_run_id": "56f63278-216b-4632-8dfb-a6e9b7557da2",
+    "replay": {
+      "thinking_level": "medium",
+      "base_run": "run1",
+      "repeat_index": 3,
+      "generated_at": "2026-11-17T10:26:30Z",
+      "table_check": {
+        "lister_hash": "e6acbe55cdfc",
+        "checker_hash": "0d9b5dfaf827",
+        "finder_commit": "f7ca8a3"
+      }
+    },
+    "claims_scope": [
+      3,
+      4,
+      7,
+      8,
+      14,
+      16,
+      17,
+      22,
+      32
+    ]
+  },
+  "claims": [
+    {
+      "index": 3,
+      "label": "partially_supported",
+      "claim_summary": "RA improves base algorithms in all 24 benchmark comparisons across models.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "With Qwen3-1.7B-Base and Qwen3-4B-Base students and a Qwen3-8B teacher, RA combined with GRPO or REINFORCE++ improves the underlying sequence-advantage algorithm in all 24 comparisons on three mathematical benchmarks, raising macro Avg@8 by 1.7\u20133.6 points and Pass@8 by 3.9\u20136.3 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means. The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points (Table 10).",
+          "source_section": "Section 3 (RA improves all matched comparisons)",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "1.7B RA+REINFORCE++ \u2212 REINFORCE++ +3.58 +5.76",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "refutes"
+        },
+        {
+          "source_text": "4B RA+GRPO \u2212 GRPO +1.74 +3.89",
+          "source_section": "Table 10",
+          "grounding_status": "Pass",
+          "stance": "refutes"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          1,
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "partially_supported",
+        "fallback_reason": null,
+        "n_pieces": 6,
+        "n_failed": 2,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The claim covers specific student models (Qwen3-1.7B-Base and Qwen3-4B-Base) and a teacher model (Qwen3-8B)",
+            "kind": "named_set",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 9,
+                "row_label": "Students",
+                "column_label": "Configuration",
+                "value": "Qwen3-1.7B-Base and Qwen3-4B-Base"
+              },
+              {
+                "table": 9,
+                "row_label": "Teacher backbone / inference mode",
+                "column_label": "Configuration",
+                "value": "Qwen3-8B (post-trained) / non-thinking"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "RA is combined with either GRPO or REINFORCE++",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "1.7B RA+REINFORCE++ \u2212REINFORCE++",
+                "column_label": "Comparison (macro, pp)",
+                "value": "RA+REINFORCE++ \u2212REINFORCE++"
+              },
+              {
+                "table": 10,
+                "row_label": "1.7B RA+GRPO \u2212GRPO",
+                "column_label": "Comparison (macro, pp)",
+                "value": "RA+GRPO \u2212GRPO"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "The improvement applies across all 24 comparisons without exception",
+            "kind": "quantifier",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 4,
+            "text": "The evaluation spans a total count of 24 comparisons",
+            "kind": "count",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 5,
+            "text": "The evaluation is conducted on a count of three mathematical benchmarks",
+            "kind": "count",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 9,
+                "row_label": "MATH-500 / AIME24 / AIME25 problems",
+                "column_label": "Setting",
+                "value": "MATH-500 / AIME24 / AIME25 problems"
+              }
+            ]
+          },
+          {
+            "piece_id": 6,
+            "text": "The claim specifies results across three mathematical benchmarks",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "1.7B RA+REINFORCE++ \u2212REINFORCE++",
+                "column_label": "\u2206Avg@8",
+                "value": "+3.58"
+              },
+              {
+                "table": 10,
+                "row_label": "1.7B RA+REINFORCE++ \u2212REINFORCE++",
+                "column_label": "\u2206Pass@8",
+                "value": "+5.76"
+              },
+              {
+                "table": 10,
+                "row_label": "1.7B RA+GRPO \u2212GRPO",
+                "column_label": "\u2206Avg@8",
+                "value": "+2.37"
+              },
+              {
+                "table": 10,
+                "row_label": "1.7B RA+GRPO \u2212GRPO",
+                "column_label": "\u2206Pass@8",
+                "value": "+4.35"
+              },
+              {
+                "table": 10,
+                "row_label": "4B RA+REINFORCE++ \u2212REINFORCE++",
+                "column_label": "\u2206Avg@8",
+                "value": "+3.26"
+              },
+              {
+                "table": 10,
+                "row_label": "4B RA+REINFORCE++ \u2212REINFORCE++",
+                "column_label": "\u2206Pass@8",
+                "value": "+6.33"
+              },
+              {
+                "table": 10,
+                "row_label": "4B RA+GRPO \u2212GRPO",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.74"
+              },
+              {
+                "table": 10,
+                "row_label": "4B RA+GRPO \u2212GRPO",
+                "column_label": "\u2206Pass@8",
+                "value": "+3.89"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "label": "supported",
+      "claim_summary": "RA outperforms teacher-only OPD, and Co-RA provides additional performance gains.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+      "evidence_spans": [
+        {
+          "source_text": "Both RA combinations exceed teacher-only OPD in macro Avg@8 and Pass@8 at both sizes, by 1.80\u20132.96 and 2.73\u20133.90 points (Table 10).",
+          "source_section": "Section 3",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Both combinations surpass teacher-only OPD, and Co-RA adds a further 1.0\u20131.5 Avg@8 points.",
+          "source_section": "Abstract",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 2,
+        "n_failed": 0,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "The claim applies to two specific combinations",
+            "kind": "pair",
+            "answer": "not_a_table_piece",
+            "state": "could_not_check",
+            "reason": "not_a_table_piece",
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 2,
+            "text": "Surpassing teacher-only OPD must hold for both combinations",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "RA+REINFORCE++ \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.80"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+REINFORCE++ \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+3.25"
+              },
+              {
+                "table": 10,
+                "row_label": "RA+GRPO \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+2.40"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+GRPO \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+3.63"
+              },
+              {
+                "table": 10,
+                "row_label": "RA+REINFORCE++ \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+2.51"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+REINFORCE++ \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+3.78"
+              },
+              {
+                "table": 10,
+                "row_label": "RA+GRPO \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+2.96"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+GRPO \u2212OPD",
+                "column_label": "\u2206Avg@8",
+                "value": "+3.99"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "label": "supported",
+      "claim_summary": "RA guidance naturally fades as student and teacher distributions converge.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "And it is bounded by the student\u2013teacher distance times the probability the student leaves to other tokens, so guidance fades on its own as the two converge.",
+      "evidence_spans": [
+        {
+          "source_text": "The second bounds the guidance amplitude by the student\u2013teacher distance on the visited prefixes (Appendix A.6), so teacher guidance fades as the two converge, at a fixed weight and without a schedule; Appendix C.1 shows the mean absolute guidance declining over a training run.",
+          "source_section": "Section 2.2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At a fixed guidance weight, the guidance term therefore vanishes uniformly when student and teacher agree uniformly at the scored prefixes.",
+          "source_section": "Appendix A.6",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "At the fixed weight \u03bb = 10, the recorded mean absolute guidance term falls from about 0.43 to about 0.30 over training (Figure 5a).",
+          "source_section": "Appendix C.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 8,
+      "label": "not_supported",
+      "claim_summary": "RA improves three-seed benchmark means in all 24 evaluated settings.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed means.",
+      "evidence_spans": [
+        {
+          "source_text": "Residual guidance improves both RLVR estimators on every benchmark and metric, and the adapted teacher raises accuracy further. Three-seed means in %. Student rows are untrained, rows marked + add RA or Co-RA to the estimator above, bold marks the best per column and student, and the last row is the Qwen3-8B teacher; per-seed scores and SD are in Appendix D.",
+          "source_section": "Table 1",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Table 1 contains 24 comparisons of RA with its base estimator (two students, two estimators, three benchmarks, two metrics), and RA improves all 24 three-seed benchmark means. The macro gains are 1.74\u20133.58 Avg@8 and 3.89\u20136.33 Pass@8 points",
+          "source_section": "Section 3",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          1
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "not_supported",
+        "fallback_reason": null,
+        "n_pieces": 4,
+        "n_failed": 4,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the claim covers 24 specific comparisons of RA with its base estimator",
+            "kind": "count",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 2,
+            "text": "the named set includes two students, two estimators, three benchmarks, and two metrics",
+            "kind": "named_set",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 3,
+            "text": "improvement must hold for all 24 comparisons without exception",
+            "kind": "quantifier",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 4,
+            "text": "the result must hold across three-seed means",
+            "kind": "count",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          }
+        ]
+      }
+    },
+    {
+      "index": 14,
+      "label": "partially_supported",
+      "claim_summary": "Co-RA further raises macro Avg@8 across all benchmark settings.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+      "evidence_spans": [
+        {
+          "source_text": "Co-RA+REINFORCE++ \u2212 RA+REINFORCE++ +1.45",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA+GRPO \u2212 RA+GRPO +1.03",
+          "source_section": "Table 10",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "+ Co-RA 71.13 85.80 14.17 33.33 6.81 20.00 30.70 46.38",
+          "source_section": "Table 1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          1,
+          10
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "partially_supported",
+        "fallback_reason": null,
+        "n_pieces": 5,
+        "n_failed": 3,
+        "n_could_not_check": 1,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the increase in macro Avg@8 points applies across four specific RA runs",
+            "kind": "count",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "Co-RA+REINFORCE++ \u2212RA+REINFORCE++",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.45"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+GRPO \u2212RA+GRPO",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.23"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+REINFORCE++ \u2212RA+REINFORCE++",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.27"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+GRPO \u2212RA+GRPO",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.03"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the rise in Avg@8 applies to all twelve benchmark means without exception",
+            "kind": "quantifier",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 3,
+            "text": "the improvement holds for twelve benchmark means",
+            "kind": "count",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          },
+          {
+            "piece_id": 4,
+            "text": "the gain applies to the specified set of four RA runs",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 10,
+                "row_label": "Co-RA+REINFORCE++ \u2212RA+REINFORCE++",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.45"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+GRPO \u2212RA+GRPO",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.23"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+REINFORCE++ \u2212RA+REINFORCE++",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.27"
+              },
+              {
+                "table": 10,
+                "row_label": "Co-RA+GRPO \u2212RA+GRPO",
+                "column_label": "\u2206Avg@8",
+                "value": "+1.03"
+              }
+            ]
+          },
+          {
+            "piece_id": 5,
+            "text": "the gain applies across multiple benchmark means",
+            "kind": "plural",
+            "answer": "no_row",
+            "state": "failed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": []
+          }
+        ]
+      }
+    },
+    {
+      "index": 16,
+      "label": "supported",
+      "claim_summary": "Co-RA's adapted teacher becomes a worse solver but a better guide.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Yet each adapted teacher scores 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points below the frozen teacher (Appendix D.9), while the students it guides improve: it is a better guide, not a better solver.",
+      "evidence_spans": [
+        {
+          "source_text": "Every adapted teacher scores below the frozen teacher, by 0.8\u20132.3 macro Avg@8 and 0.7\u20133.5 Pass@8 points, and the drop is larger for the adapters trained with the 1.7B student than for those trained with the 4B student.",
+          "source_section": "Appendix D.9",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Co-RA adds 1.03\u20131.45 macro Avg@8 points to the four RA runs, and Avg@8 rises in all twelve benchmark means.",
+          "source_section": "Section 3",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "no_table_mention",
+        "cited": []
+      }
+    },
+    {
+      "index": 17,
+      "label": "supported",
+      "claim_summary": "RA's advantage over baselines expands significantly up to Pass@512.",
+      "missing": false,
+      "grounding_status": "Partial",
+      "claim_text_verbatim": "From K = 8 to K = 512 for the 1.7B REINFORCE++ runs (Appendix D.7), the macro margin of RA over the untrained student grows from 13.4 to 16.9 points, and its margins over REINFORCE++ and OPD from 5.8 to 10.4 and from 3.9 to 6.8, while that of verifier-only training narrows from 7.6 to 6.6, as Yue et al. (2025) report for RLVR.",
+      "evidence_spans": [
+        {
+          "source_text": "the margins over the untrained student at K = 8 and K = 512 are 7.6 and 6.6 points for REINFORCE++, 9.5 and 10.2 for OPD, and 13.4 and 16.9 for RA.",
+          "source_section": "Appendix D.7",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Table 28: Macro Pass@K up to K = 512, Qwen3-1.7B-Base with REINFORCE++. Three-seed means in %, with the increment from the previous K in gray.",
+          "source_section": "Table 28",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": false,
+        "source": "audit",
+        "reason": "cites_dropped_table",
+        "cited": [
+          28
+        ]
+      }
+    },
+    {
+      "index": 22,
+      "label": "supported",
+      "claim_summary": "RA improves performance over verifier-only training across all tested weights.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "All tested weights improve both macro scores over verifier-only training (Table 2).",
+      "evidence_spans": [
+        {
+          "source_text": "Every residual variant improves on verifier-only training at every tested weight, and full RA stays above every control at every matched weight.",
+          "source_section": "Table 2",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Verifier only (REINFORCE++) 25.67 39.44",
+          "source_section": "Table 2",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "fallback_audit",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": null,
+        "fallback_reason": "could_not_check",
+        "n_pieces": 4,
+        "n_failed": 0,
+        "n_could_not_check": 2,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the improvement holds for all tested weights without exception",
+            "kind": "quantifier",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "28.84"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "10",
+                "value": "29.25"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "20",
+                "value": "29.29"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "44.94"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "10",
+                "value": "45.20"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "20",
+                "value": "45.29"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Avg@8 at weight",
+                "value": "25.67"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Pass@8 at weight",
+                "value": "39.44"
+              }
+            ]
+          },
+          {
+            "piece_id": 2,
+            "text": "the improvement applies to both macro scores",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "28.84"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "44.94"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Avg@8 at weight",
+                "value": "25.67"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Pass@8 at weight",
+                "value": "39.44"
+              }
+            ]
+          },
+          {
+            "piece_id": 3,
+            "text": "the result holds across the multiple tested weights",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "could_not_check",
+            "reason": "guard_failed",
+            "guard_reasons": [
+              "name_check"
+            ],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "28.84"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "10",
+                "value": "29.25"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "20",
+                "value": "29.29"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Avg@8 at weight",
+                "value": "25.67"
+              }
+            ]
+          },
+          {
+            "piece_id": 4,
+            "text": "the result holds across the multiple macro scores",
+            "kind": "plural",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "28.84"
+              },
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "5",
+                "value": "44.94"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Avg@8 at weight",
+                "value": "25.67"
+              },
+              {
+                "table": 2,
+                "row_label": "Verifier only (REINFORCE++)",
+                "column_label": "Macro Pass@8 at weight",
+                "value": "39.44"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 32,
+      "label": "supported",
+      "claim_summary": "Ablating RA baselines or adding direct peak supervision reduces accuracy.",
+      "missing": false,
+      "grounding_status": "Pass",
+      "claim_text_verbatim": "Removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher\u2019s top token lowers performance.",
+      "evidence_spans": [
+        {
+          "source_text": "Removing the student value baseline lowers both macro scores, by 2.09 Avg@8 and 3.58 Pass@8 points at the reference weight and similarly at weights 5 and 20 (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        },
+        {
+          "source_text": "Restoring response centering at the same weight adds 0.54 Avg@8 and 0.46 Pass@8 points, a smaller gain that holds at all three weights (Table 2).",
+          "source_section": "Section 4.1",
+          "grounding_status": "Pass",
+          "stance": "supports"
+        },
+        {
+          "source_text": "and the probability residual is better still, by 1.21 Avg@8 and 1.70 Pass@8 points over the best log variant.",
+          "source_section": "Section 4.2",
+          "grounding_status": "Fail",
+          "stance": "neutral"
+        },
+        {
+          "source_text": "Added to RA, it lowers macro Avg@8 by 2.05\u20132.16 points and Pass@8 by 3.41\u20133.91 points, and at every weight each seed falls below the same seed of RA",
+          "source_section": "Section 4.4",
+          "grounding_status": "Partial",
+          "stance": "supports"
+        }
+      ],
+      "audit_model_served": "gemini-3.6-flash",
+      "table_check": {
+        "routed": true,
+        "source": "checker",
+        "cited": [
+          2
+        ],
+        "lister_failed": false,
+        "checker_failed": false,
+        "checker_label": "supported",
+        "fallback_reason": null,
+        "n_pieces": 1,
+        "n_failed": 0,
+        "n_could_not_check": 0,
+        "pieces": [
+          {
+            "piece_id": 1,
+            "text": "the performance drop applies when removing either baseline, replacing the residual by the log ratio, or adding direct supervision of the teacher's top token",
+            "kind": "pair",
+            "answer": "backed",
+            "state": "passed",
+            "reason": null,
+            "guard_reasons": [],
+            "cells": [
+              {
+                "table": 2,
+                "row_label": "Full RA (\u03bb)",
+                "column_label": "10",
+                "value": "29.25"
+              },
+              {
+                "table": 2,
+                "row_label": "w/o student value baseline (\u03b3x)",
+                "column_label": "10",
+                "value": "27.16"
+              },
+              {
+                "table": 2,
+                "row_label": "w/o response centering (\u03bb)",
+                "column_label": "10",
+                "value": "28.71"
+              },
+              {
+                "table": 3,
+                "row_label": "Full RA",
+                "column_label": "Avg@8",
+                "value": "29.25\u00b10.25"
+              },
+              {
+                "table": 3,
+                "row_label": "Centered log ratio",
+                "column_label": "Avg@8",
+                "value": "27.85\u00b10.37"
+              },
+              {
+                "table": 4,
+                "row_label": "\u2206macro Avg@8",
+                "column_label": "\u03bb=10",
+                "value": "\u22122.07"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "matches": [
+    {
+      "expected_id": "P1-R1",
+      "actual_index": 32
+    },
+    {
+      "expected_id": "P1-R2",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-R3",
+      "actual_index": 7
+    },
+    {
+      "expected_id": "P1-S1",
+      "actual_index": 3
+    },
+    {
+      "expected_id": "P1-S2",
+      "actual_index": 9
+    },
+    {
+      "expected_id": "P1-S3",
+      "actual_index": null
+    },
+    {
+      "expected_id": "P1-S4",
+      "actual_index": 14
+    },
+    {
+      "expected_id": "P1-S5",
+      "actual_index": 17
+    },
+    {
+      "expected_id": "P1-S6",
+      "actual_index": 22
+    },
+    {
+      "expected_id": "P1-S7",
+      "actual_index": 23
+    },
+    {
+      "expected_id": "P1-S8",
+      "actual_index": 16
+    },
+    {
+      "expected_id": "P1-S9",
+      "actual_index": null
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "lines": [
+    {
+      "stage": "metadata",
+      "tag": "NOT FOUND",
+      "source": "Prism.PythonService\\logs\\metadata",
+      "files": 122,
+      "calls": null,
+      "prompt": null,
+      "cached": null,
+      "out_thought": null,
+      "inr_2026": null,
+      "inr_2027": null,
+      "note": "the metadata logs carry no usage key (checked 2026-11-11 by counting keys; file contents are not read here)"
+    },
+    {
+      "stage": "extractor pass 1",
+      "tag": "MEASURED",
+      "source": "docs\\evals\\fixtures\\dev\\exp2\\control_r1\\_summary.json",
+      "files": 1,
+      "calls": 1.0,
+      "prompt": 39051.88888888889,
+      "cached": null,
+      "out_thought": 8953.777777777777,
+      "inr_2026": 6.286558333333334,
+      "inr_2027": 12.573116666666667,
+      "note": "proxy (exp2 control: loader fix on, shapes off), 9 calls over 9 papers; cached tokens are not saved, so all input is priced uncached (an upper bound)"
+    },
+    {
+      "stage": "embedding",
+      "tag": "NOT FOUND",
+      "source": "Prism.PythonService/RAGService.py:21",
+      "files": 0,
+      "calls": null,
+      "prompt": null,
+      "cached": null,
+      "out_thought": null,
+      "inr_2026": null,
+      "inr_2027": null,
+      "note": "local fastembed model (BAAI/bge-small-en-v1.5): no usage saved and no API price in pricing.py"
+    },
+    {
+      "stage": "auditor, no explicit cache",
+      "tag": "ESTIMATED",
+      "source": "docs\\evals\\fixtures\\dev/exp1_medium_gemini-3.6-flash-vertex_1..3/_summary.json",
+      "files": 3,
+      "calls": 30.166666666666668,
+      "prompt": 1109437.7043650793,
+      "cached": 526920.6878306878,
+      "out_thought": 66626.79431216931,
+      "inr_2026": 72.6257292658729,
+      "inr_2027": 145.2514585317458,
+      "note": "product today; per-claim means MEASURED over 252 claim audits (252 calls), cached tokens are the implicit cache hits the API reported"
+    },
+    {
+      "stage": "structurer",
+      "tag": "ESTIMATED",
+      "source": "docs\\evals\\fixtures\\dev/exp1_medium_gemini-3.6-flash-vertex_1..3/_summary.json",
+      "files": 3,
+      "calls": 30.166666666666668,
+      "prompt": 57611.629629629635,
+      "cached": 0.0,
+      "out_thought": 28926.242063492064,
+      "inr_2026": 15.168212996031752,
+      "inr_2027": 30.336425992063504,
+      "note": "per-claim means MEASURED over 252 claims (252 calls)"
+    },
+    {
+      "stage": "grounding",
+      "tag": "ESTIMATED",
+      "source": "docs\\evals\\fixtures\\dev/exp1_medium_gemini-3.6-flash-vertex_1..3/_summary.json",
+      "files": 3,
+      "calls": 74.21957671957672,
+      "prompt": 229713.66005291007,
+      "cached": 0.0,
+      "out_thought": 11513.132275132277,
+      "inr_2026": 7.4698113425925925,
+      "inr_2027": 7.4698113425925925,
+      "note": "eval setup (gemini-3.1-flash-lite primary); product uses Groq primary with flash-lite fallback; thought tokens are not recorded for grounding calls"
+    },
+    {
+      "stage": "auditor, explicit cache, creation billed (Vertex)",
+      "tag": "ESTIMATED",
+      "source": "Prism.PythonService\\scratch\\a0_output_2026-10-24\\_summary.json",
+      "files": 1,
+      "calls": 30.166666666666668,
+      "prompt": 1127839.490740741,
+      "cached": 1125866.9259259258,
+      "out_thought": 81604.18518518518,
+      "inr_2026": 42.822244121212115,
+      "inr_2027": 85.64448824242423,
+      "note": "A0 per-claim means x 30.17 claims + one cache of 37,655 tokens (mean of 11), storage for 30.17 x 51 s; A0 ran only 18 claims on 11 caches"
+    },
+    {
+      "stage": "auditor, explicit cache, creation not billed (AI Studio, observed once)",
+      "tag": "ESTIMATED",
+      "source": "Prism.PythonService\\scratch\\a0_output_2026-10-24\\_summary.json",
+      "files": 1,
+      "calls": 30.166666666666668,
+      "prompt": 1127839.490740741,
+      "cached": 1125866.9259259258,
+      "out_thought": 81604.18518518518,
+      "inr_2026": 39.99812593939394,
+      "inr_2027": 79.99625187878787,
+      "note": "A0 per-claim means x 30.17 claims + one cache of 37,655 tokens (mean of 11), storage for 30.17 x 51 s; A0 ran only 18 claims on 11 caches"
+    }
+  ],
+  "totals": {
+    "today: no explicit caching": {
+      "inr_2026": 101.55031193783059,
+      "inr_2027": 195.63081253306856,
+      "missing": []
+    },
+    "explicit caching, creation billed (Vertex)": {
+      "inr_2026": 71.74682679316979,
+      "inr_2027": 136.023842243747,
+      "missing": []
+    },
+    "explicit caching, creation not billed (AI Studio, observed once)": {
+      "inr_2026": 68.92270861135161,
+      "inr_2027": 130.37560588011064,
+      "missing": []
+    }
+  },
+  "detail": {
+    "claims_per_paper": 30.166666666666668,
+    "per_claim": {
+      "audit": {
+        "calls": 252,
+        "claims": 252,
+        "prompt": 9267789.0,
+        "cached": 4401680.0,
+        "output": 85573.0,
+        "thought": 471000.0,
+        "tool_use": 0.0,
+        "usd_2026": 6.06685649999999,
+        "usd_2027": 12.13371299999998
+      },
+      "structure": {
+        "calls": 252,
+        "claims": 252,
+        "prompt": 481264.0,
+        "cached": 0.0,
+        "output": 65692.0,
+        "thought": 175946.0,
+        "tool_use": 0.0,
+        "usd_2026": 1.2670905000000003,
+        "usd_2027": 2.5341810000000007
+      }
+    },
+    "explicit_cache": {
+      "cache_tokens_mean": 37654.90909090909,
+      "caches": 11,
+      "audit_calls": 18
+    }
+  }
+}

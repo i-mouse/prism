@@ -1,0 +1,32 @@
+Real cost per stage, per paper, from saved usage data. INR 100 per USD.
+Run-date price = eval/pricing.py (3.6-flash USD 0.75 in / 3.75 out / 0.075 cached per 1M; storage 0.50 per 1M-hour).
+2027 price = gemini-3.6-flash rates x 2 (in 1.50 / out 7.50 / cached 0.15 / storage 1.00); gemini-3.8-flash x2 as well (pricing.py comment); all other models unchanged because pricing.py says nothing else.
+Tags: MEASURED = saved usage, ESTIMATED = measured per-claim means scaled by claims per paper (or a proxy), NOT FOUND = no usage saved; a NOT FOUND stage has no figure and is left out of the sums.
+claims per paper: 30.17 (362 claims / 12 papers in docs\evals\fixtures\dev\run1)
+
+stage                                                  tag        calls     input    cached out+thought  INR 2026  INR 2027
+metadata                                               NOT FOUND      -         -         -           -         -         -
+extractor pass 1                                       MEASURED     1.0    39,052         -       8,954       6.3      12.6
+embedding                                              NOT FOUND      -         -         -           -         -         -
+auditor, no explicit cache                             ESTIMATED   30.2 1,109,438   526,921      66,627      72.6     145.3
+structurer                                             ESTIMATED   30.2    57,612         0      28,926      15.2      30.3
+grounding                                              ESTIMATED   74.2   229,714         0      11,513       7.5       7.5
+auditor, explicit cache, creation billed (Vertex)      ESTIMATED   30.2 1,127,839 1,125,867      81,604      42.8      85.6
+auditor, explicit cache, creation not billed (AI Studio, observed once) ESTIMATED   30.2 1,127,839 1,125,867      81,604      40.0      80.0
+(tokens per paper; input includes cached; '-' = not found or not saved)
+
+- metadata: source Prism.PythonService\logs\metadata; files 122. the metadata logs carry no usage key (checked 2026-11-11 by counting keys; file contents are not read here)
+- extractor pass 1: source docs\evals\fixtures\dev\exp2\control_r1\_summary.json; files 1. proxy (exp2 control: loader fix on, shapes off), 9 calls over 9 papers; cached tokens are not saved, so all input is priced uncached (an upper bound)
+- embedding: source Prism.PythonService/RAGService.py:21; files 0. local fastembed model (BAAI/bge-small-en-v1.5): no usage saved and no API price in pricing.py
+- auditor, no explicit cache: source docs\evals\fixtures\dev/exp1_medium_gemini-3.6-flash-vertex_1..3/_summary.json; files 3. product today; per-claim means MEASURED over 252 claim audits (252 calls), cached tokens are the implicit cache hits the API reported
+- structurer: source docs\evals\fixtures\dev/exp1_medium_gemini-3.6-flash-vertex_1..3/_summary.json; files 3. per-claim means MEASURED over 252 claims (252 calls)
+- grounding: source docs\evals\fixtures\dev/exp1_medium_gemini-3.6-flash-vertex_1..3/_summary.json; files 3. eval setup (gemini-3.1-flash-lite primary); product uses Groq primary with flash-lite fallback; thought tokens are not recorded for grounding calls
+- auditor, explicit cache, creation billed (Vertex): source Prism.PythonService\scratch\a0_output_2026-10-24\_summary.json; files 1. A0 per-claim means x 30.17 claims + one cache of 37,655 tokens (mean of 11), storage for 30.17 x 51 s; A0 ran only 18 claims on 11 caches
+- auditor, explicit cache, creation not billed (AI Studio, observed once): source Prism.PythonService\scratch\a0_output_2026-10-24\_summary.json; files 1. A0 per-claim means x 30.17 claims + one cache of 37,655 tokens (mean of 11), storage for 30.17 x 51 s; A0 ran only 18 claims on 11 caches
+
+Per-paper total of the stages that have a figure (metadata and embedding are NOT FOUND and are not in it):
+  today: no explicit caching: INR 101.6 at run-date price, INR 195.6 at 2027 price; recorded INR 87 -> gap INR -14.6 (-17% of the recorded figure); against the recorded figure doubled (INR 174) the 2027 gap is INR -21.6
+  explicit caching, creation billed (Vertex): INR 71.7 at run-date price, INR 136.0 at 2027 price; recorded INR 87 -> gap INR +15.3 (+18% of the recorded figure); against the recorded figure doubled (INR 174) the 2027 gap is INR +38.0
+  explicit caching, creation not billed (AI Studio, observed once): INR 68.9 at run-date price, INR 130.4 at 2027 price; recorded INR 87 -> gap INR +18.1 (+21% of the recorded figure); against the recorded figure doubled (INR 174) the 2027 gap is INR +43.6
+  Recorded: INR 87 per paper = INR 1,048.40 / 12 papers, run-1 ingestion billing (the other recorded figure is about INR 101). A positive gap = recorded is higher than the sum of the stages found (metadata, embedding, retries and failed calls are not in the saved usage).
+  INR 130 gate, for reference only (no pass or fail is applied here).
