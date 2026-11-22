@@ -5329,3 +5329,50 @@ Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on
 **Money:** test B INR 682.21 by the tool's count, paid from the Google Developer Program credit through the AI Studio key (AI Studio spend page, 2026-11-20 14:20 IST: credits covered all usage, INR 0 to card). The billed figure is recorded at the next check.
 
 **Decision (as pre-registered):** Prism core closes. Next, in order: report and status update with tests A and B; handoff; merge eval/carbon-probe (includes eval/step1-free-checks) to main through a PR; cleanup by archiving, not deleting; portfolio snapshot tag (not a quality release); two chat fixes; demo video; blog; resume. Then Warrantum.
+
+## Prism closing: outside reviews, what is not being done, doc pass, next work - 2026-11-21
+
+**Outside reviews (2026-11-18; Claude, Gemini, ChatGPT):** all agreed with the step 4 verdict and the stop. Rule-design flaws raised: M2 and M5 can fail on one noise flip; M3 compared against a low 1/88 baseline draw; the /88 counts 21 never-extracted S rows (4/67 on extracted rows); label agreement is unmeasured; dev rows are reused. Report errors raised: most fixed on 2026-11-18 and in the 2026-11-21 doc pass; the report still carries many "(Superseded ...)" notes (a clean rewrite is not done). Main missing piece for hiring: a strong single-model baseline (done as test B, 2026-11-20).
+
+**Known defect left on main:** with extractor_fewshot_fix off (the default, config.py), prompt_loader treats a top-level "note" field as a negative-example marker, so 8 of the extractor's 9 claim-bearing examples are read as negatives (prompt_loader.py _is_negative_example). The fix is on main behind that flag; it measured no gain (PR-1, 2026-10-08; Experiment 2, 2026-10-14), and turning it on would change the prompt hash and fixtures, so it stays off. PR #115 is not open (checked 2026-11-21). Documented in PRISM_REPORT.md (section 7 and section 12.2).
+
+**Decided earlier, not being done:**
+
+| Decided | Not doing because |
+|---|---|
+| Release targets: dev floor 70% (stretch 80%); bar 22/31 with FR <= 8/88 | Not met (8/31); no release with the current auditor; core closed |
+| 3-run dev baseline | Dropped 2026-10-11 for cost; single run 1 used |
+| Sealed-set release run | Runs only once the bar is met; never met, so the set stays sealed |
+| Observability steps 3-8 (caps and 429, see the spend, guards, demo mode, local alerts) | Not hosted, no users; job search comes first |
+| Live hosting, demo tunnel, Azure relaunch | Cost; a recorded video is the proof |
+| MCP server in Prism (plan step 8, MCP v1) | Gated on the core working; MCP practice moves into Warrantum (one tool, check_claim) |
+| Extractor change (step 4 extractor option, pass 2) | Pass 2 failed on cost; step 2 showed extractor gains are lost while the auditor misses them |
+| Claim-count R&D (what counts as a claim) | Core closed before it started |
+| Step 5 outside check (SciTab, SciClaimEval, PRISMM-Bench) | Ran only if step 4 passed; it failed |
+| Page-image checker | Its trigger fired "no" |
+| Graded severity score; two-auditor agreement | Ideas only; core closed |
+| Carbon as Prism's auditor (test A) | Blocked on Vertex; INR 500+ per paper vs the INR 200 gate |
+| Turning on the few-shot loader fix (flag extractor_fewshot_fix) | No measured gain; changes the prompt hash and fixtures; kept as a documented defect |
+| Turning on any other switched-off feature | None passed its test (table in PRISM_REPORT.md section 12.2) |
+| Label check of P1-S3, P9-S4, P10-S2 | No new hand labelling; cannot change recorded results |
+| P4 chatbot scoring | Test B answered the same question properly |
+| Tier 2 and 3 chat (multi-paper, web) | Forbidden until the core works; it never did |
+| Clean rewrite of the patched report | Large; README, summary and video matter more for hiring |
+| 32 pre-existing pyright errors | No effect on behaviour or hiring |
+| Removing PDFs from git history | Would change commit hashes cited in this log |
+
+**Unbuilt plan steps:** the plan found no inbound rate limiting in the API gateway (finding A1.1, 2026-09-29); confirmed absent in code on 2026-11-21 (no AddRateLimiter or RequireRateLimiting). The project instructions are corrected to match. docs/observability-and-cost-plan.md stays as the record of known gaps.
+
+**Doc pass (2026-11-21):** tests A and B added to PRISM_REPORT.md, PRISM_FACTS.md, PRISM_STATUS.md and README.md; docs/evals/README.md added; docs/README.md rewritten as a map (current, evidence, history, archive); switched-off features table added (PRISM_REPORT.md section 12.2). Fixed: A1 5/10 (3 by the scope check), Experiment 2 "3 of 4 marks", cost-gate note, two "no alternatives" lines, step 4 row in the audit-stage table, stale branch and PR #115 lines, field comparison section 8, CI gate stated as 0.70 (live value 0.30), PRODUCT_BRIEF metric source, hero-diagram date note. Prism.Web/README.md (stock template) removed. Prism.PythonService/README.md filled with a short note (pyproject.toml references it). docs/FINDINGS.md and docs/eval-harness-design.md moved to docs/archive/ (covered by the report / written before the build). Raw model outputs that contain paper text stay outside the repo; their sha256 hashes are committed.
+
+**Repo:** PR #124 (steps 1-4, tests A and B) and PR #125 (cleanup) merged 2026-11-21 with merge commits (merge commits enabled on the repo that day). Archive tags: archive/eval-carbon-probe, archive/eval-step1-free-checks, archive/chore-repo-cleanup. No open pull requests (checked 2026-11-21).
+
+**Billing:** GCP Free Credit INR 22,491.07 on 2026-11-19 (expires 2026-11-26; no further Vertex runs planned). AI Studio: credits covered all usage as of 2026-11-20 14:20 IST; the test B billed figure is read at the next check.
+
+**Snapshot:** a git tag portfolio-2026-11 (not a GitHub Release, not a quality release) after the two chat fixes and one end-to-end UI run on a new paper. Release tags v1.0 to v2.0.1 already exist, so the snapshot does not use a version number.
+
+**Research PDFs:** the 15 committed PDFs (18.1 MB) are third-party. Proposed: remove them from HEAD and add a download-and-verify script using the existing sha256 pins; git history keeps old copies. Decided in its own step.
+
+**Next, in order:** doc pass PR; project instructions; PDFs; two chat fixes; one end-to-end UI run on a new paper; snapshot tag; demo video; blog (prism-landing repo); resume, LinkedIn and interview prep. Then Warrantum. Applications continue throughout.
+
+**Money:** INR 0.

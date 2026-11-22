@@ -66,7 +66,7 @@ What this means:
 
 ## What we already tried on the auditor
 
-Auditor v2 must not repeat any of these. Each one is recorded in decisions.md or FINDINGS.md.
+Auditor v2 must not repeat any of these. Each one is recorded in decisions.md or archive/FINDINGS.md.
 
 | Attempt | What it tried | Result | Lesson for v2 |
 | --- | --- | --- | --- |

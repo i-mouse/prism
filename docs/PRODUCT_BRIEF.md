@@ -24,7 +24,7 @@ Prism audits **whether a single paper's claims are supported by its own evidence
 
 A claim-auditing tool that invents support is worse than no tool. The core engineering bet is **correct refusal**: the grounding checker vetoes any assessment not supported by the paper's own text, and the system says "the paper provides no evidence for this" instead of fabricating support.
 
-This is measured by the golden evaluation set (`docs/golden_eval.json`), specifically the grounding-negative cases (claims the system must refuse to affirm). **The single most important output of this project is a clean number:**
+This is measured by the golden evaluation set (`docs/evals/matrix_eval.json` (golden set, CI gate) and `docs/evals/dev_eval.json` (dev set)), specifically the grounding-negative cases (claims the system must refuse to affirm). **The single most important output of this project is a clean number:**
 
 > **correct-refusal rate: X% across N grounding-negative cases.**
 

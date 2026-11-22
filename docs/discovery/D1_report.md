@@ -12,8 +12,8 @@
 |---|---|---|
 | False rejections | 0/21 | **1/21** (COT-M01) [HISTORICAL PRISM_STATUS.md:20,35] |
 | Exp 1 archive | branch `exp/1-scoped-auditor` | No such branch; it is a **tag**, `archive/exp1-scoped-auditor` [VERIFIED git tag -l] |
-| Stop rule | in force | Matches PRISM_STATUS / decisions.md:1614. But FINDINGS.md:53 says "Decision 9 Oct: stop core changes; ship with honest numbers". That decision is not recorded in decisions.md |
-| Prior diagnosis | auditor narrows scope | FINDINGS.md:31 says "5 of 6 wrongly affirmed", but only 4 rows are wrongly affirmed now. decisions.md:1607 says only **REACT-M14** is a clear auditor mistake, and withdraws "the auditor is the main lever" |
+| Stop rule | in force | Matches PRISM_STATUS / decisions.md:1614. But archive/FINDINGS.md:53 says "Decision 9 Oct: stop core changes; ship with honest numbers". That decision is not recorded in decisions.md |
+| Prior diagnosis | auditor narrows scope | archive/FINDINGS.md:31 says "5 of 6 wrongly affirmed", but only 4 rows are wrongly affirmed now. decisions.md:1607 says only **REACT-M14** is a clear auditor mistake, and withdraws "the auditor is the main lever" |
 | `--estimate` | assumed on main | Only on the tag `archive/exp1-scoped-auditor` (`eval/exp1_replay.py`, $0.75 in / $3.75 out per 1M tokens, ₹95/$, prices unverified) [VERIFIED git diff] |
 | Models | 3.6 Flash for extraction and audit | True, and the structurer also uses it. The grounding judge is Groq gpt-oss-20b, which fails, so **gemini-3.1-flash-lite** does that work in practice [HISTORICAL PRISM_STATUS.md:58] |
 | Held-out | used 6× | Confirmed. It also has only **2 refusal rows**, and 9 rows rest on 4 claims [HISTORICAL PRISM_STATUS.md:21,39] |
@@ -23,7 +23,7 @@
 **Q1a — scope policy for the labels: unwritten.** Only fragments exist:
 - decisions.md:24 has the rule "wording gap → partial only if it makes the claim stronger than the evidence".
 - decisions.md:1265 has the rule "change a label only where the paper contradicts it".
-- matrix_eval.json metadata and eval-harness-design.md:13 define the metric, not a label rubric.
+- matrix_eval.json metadata and archive/eval-harness-design.md:13 define the metric, not a label rubric.
 
 The labels follow an implicit policy [VERIFIED matrix_eval.json]:
 - A subset loss the claim doesn't carve out is labelled **partially_supported**, never not_supported (REFLEX-M08, COT-M02/M07/M09, REACT-M11/M13/M14).

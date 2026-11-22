@@ -25,15 +25,23 @@ Nitin Yadav - 2026-11-18
   alone would reach 18/31 and perfect extraction alone 21/31, so both
   stages must improve.
 - Every attempt so far to close this gap failed its pre-registered
-  marks. The latest swapped in a newer model (gemini-3.8-flash): stricter
-  judging caught more unsupported claims but also rejected more
-  supported ones (up to 7/88). (Superseded 2026-11-18: Step 4 table checker tested 2026-11-18; FAIL on M2, M3, M5, M7; product auditor stays gemini-3.6-flash, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18'.)
+  marks, including a newer model (gemini-3.8-flash: stricter, up to 7/88
+  false rejections) and a table checker (step 4, 2026-11-18).
+  Strong-model baselines (tests A and B) evaluated gemini-4-carbon:
+  Test A was blocked on Vertex by a 403 (needs paid billing account;
+  INR 70.16 spend); Test B (one Carbon call per whole paper) caught 9 of 31
+  refusal rows and had 17 of 88 false rejections, giving verdict PRISM BETTER
+  (pre-registered rule: FR 17 > 8). A stronger model is stricter, not better.
 - Cost is about INR 87-101 per paper against an INR 130 gate. Gemini
   Flash prices double on 2027-01-01 (about INR 87 -> 174 per paper),
   which would exceed the gate. (Superseded 2026-11-18: cost gate raised to INR 200 per paper at 2027 list prices, set for step 4 changes (decisions.md 2026-11-12); revisited before any release, decisions.md 'Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12' and 'Release bar restated (unchanged) - 2026-11-18'.)
 - Prism runs locally on .NET Aspire. The Azure deployment was
-  decommissioned on 2026-09-28 to control cost. Next: this report and
-  the pipeline diagram, then one new approach, pre-registered on its own. (Superseded 2026-11-18: 6-step path executed; step 4 failed; core auditor work stops; report stands as hiring artifact; remaining Prism polish is two chat fixes, demo video, blog post; then separate projects: Warrantum fine-tuning, MCP practice, resume/LinkedIn, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18' and 'Release bar restated (unchanged) - 2026-11-18'.)
+  decommissioned on 2026-09-28 to control cost. Prism core closed
+  2026-11-20 (pre-registered stop rule). Flags off; auditor gemini-3.6-flash.
+  No release with the current auditor. Release bar unchanged (dev >= 22/31,
+  FR <= 8/88). Next work (outside Prism core): two chat fixes, demo video,
+  blog, resume; then Warrantum (a separate fine-tuning project). The research
+  PDFs licence fix is a later step.
 
 ### Key terms
 
@@ -238,7 +246,7 @@ Green: current path. Red dashed: tried and failed or rejected. Grey: context.
 
 ### 3.3 Chunk
 
-The chunk stage uses `RecursiveCharacterTextSplitter` (`chunk_size = 1200`, `chunk_overlap = 200`, separators `["\n\n", "\n", r"(?<=\. )", " ", ""]`, length `len`). It creates character-based chunks with deterministic `uuid5(NAMESPACE_DNS, f"{file_id}:{i}")` chunk IDs in Qdrant. This enables clean delete-then-insert idempotency. No alternatives were tested.
+The chunk stage uses `RecursiveCharacterTextSplitter` (`chunk_size = 1200`, `chunk_overlap = 200`, separators `["\n\n", "\n", r"(?<=\. )", " ", ""]`, length `len`). It creates character-based chunks with deterministic `uuid5(NAMESPACE_DNS, f"{file_id}:{i}")` chunk IDs in Qdrant. This enables clean delete-then-insert idempotency. No alternative chunker was compared end to end (the Experiment 3 pre-checks compared text splitters and PDF readers for sentence finding only, 2026-10-14).
 
 ```mermaid
 flowchart TB
@@ -270,7 +278,7 @@ Green: current path. Red dashed: tried and failed or rejected. Grey: context.
 
 ### 3.4 Embed
 
-Prism computes dense embeddings locally using Fastembed `TextEmbedding(model_name="BAAI/bge-small-en-v1.5")`. Vectors have 384 dimensions and are compared using cosine distance. No alternatives were tested.
+Prism computes dense embeddings locally using Fastembed `TextEmbedding(model_name="BAAI/bge-small-en-v1.5")`. Vectors have 384 dimensions and are compared using cosine distance. No alternative embedding model was compared.
 
 ```mermaid
 flowchart TB
@@ -374,7 +382,7 @@ Green: current path. Red dashed: tried and failed or rejected. Grey: context.
 | Gemini 3.6 Flash two-prompt sequential execution | in use | Sequential metadata and claim extraction; ceiling 25-45 | Current |
 | Single-call extraction | 2026-08-20 | Failed to emit refusal labels (0 by_label); short-circuited reasoning; replaced by 3-call pipeline | Replaced |
 | Section-by-section extraction | 2026-10-08 | Evaluated; parked due to 3.1x cost and miss rows sitting in early sections | Parked |
-| Few-shot claim-shape repair (Exp 2) | 2026-10-14 | Evaluated; all 4 required marks failed; flags `EXTRACTOR_FEWSHOT_FIX` and `EXTRACTOR_FEWSHOT_SHAPES` stay off | Failed |
+| Few-shot claim-shape repair (Exp 2) | 2026-10-14 | Evaluated; 3 of 4 required marks failed (A4 passed); flags `EXTRACTOR_FEWSHOT_FIX` and `EXTRACTOR_FEWSHOT_SHAPES` stay off | Failed |
 | Sentence splitting for pass-2 windows (pysbd and regex, Exp 3 pre-checks) | 2026-10-14 | Check A: best regex 75.6% WHOLE; rejected for fixed windowing | Rejected |
 | Windowed pass-2 re-extraction (Exp 3) | 2026-10-16 | Evaluated; rejected on cost gate c4 | Rejected |
 | Clean-extraction attempt (Exp 3 + pass-2 clean filter) | 2026-10-20 | Evaluated; rejected on K1, K4, K7, K8; `EXTRACTOR_PASS2_CLEAN` stays off | Rejected |
@@ -430,9 +438,10 @@ Green: current path. Red dashed: tried and failed or rejected. Grey: context.
 | B5.1 auditor checklist + deterministic verdict cap | 2026-10-02 | Evaluated; failed pre-registered marks; archived on tag `archive/b5.1-checklist-attempt` | Failed |
 | Auditor `thinking_level=high` (Exp 1) | 2026-10-12 | Evaluated; fixed only 1 of 10 rows (needed >= 3); rejected; `AUDITOR_THINKING_LEVEL` stays unset | Rejected |
 | Scoped-auditor pilot | 2026-10-15 | 1 run, 44 claims, ~INR 204; failed P3 (4 of 11 baseline refusals flipped to supported); archived on tag `archive/exp1-scoped-auditor` | Failed |
-| Auditor Stage A1 (caching + scope lister + scope checker) | 2026-10-28 | Evaluated; failed (fixed 3/10 misses, 1/6 always-missed vs 4 needed); flags stay off | Failed |
+| Auditor Stage A1 (caching + scope lister + scope checker) | 2026-10-28 | Evaluated; failed (fixed 5/10 misses (3 by the scope check), 1/6 always-missed vs 4 needed); flags stay off | Failed |
 | Auditor v2 T1 & T2-R (code checks on tables) | 2026-10-31 | T1 failed 2026-10-29 (extractor infidelity); T2-R on LaTeX reference tables failed 2026-10-31 (fixed 4/10 misses, 2/5 hard vs 3 needed) | Failed |
 | Gemini 3.8 Flash auditor (medium & high) | 2026-11-09 | Full check failed on M3, M4, M7; auditor stays Gemini 3.6 Flash | Failed |
+| Step 4 table checker (eval option `--table-check`) | 2026-11-18 | Evaluated; failed M2, M3, M5, M7; option stays off | Failed |
 
 **Open issues:**
 - Full-scope checking gap: auditor does not verify claim scope against reported evidence and accepts bold summary averages.
@@ -606,7 +615,7 @@ Every technical experiment in Prism is governed by a numbered sequence of operat
      - *Bounded fallback scoring and crash recovery (2026-11-08):* Fallback-served audits are scored bounded as worst-case for candidate and best-case for baseline (D9 rule); an evaluation arm is void if > 16 fallback-served audits occur (V3); rule V5 permits re-running a single failed repeat $K$ with `--repeat-index K` and `--max-inr` capped at one-third of the run's cap.
      - *Cost gate addition (2026-11-08):* Mark M7 requires projected full-pipeline cost per paper to remain <= INR 130.
 4. **Release bar (restated 2026-10-22):** For development: one full 12-paper run reaches >= 22/31 refusal-family rows with false rejections <= 8/88, and all fixes remain stable under the auditor no-regression rule. The final release score must be measured on a single sealed-set run only, never development or golden numbers.
-5. **Cost gate:** Projected full-pipeline cost per paper must be <= INR 130.
+5. **Cost gate:** Projected full-pipeline cost per paper must be <= INR 130 (raised to INR 200 at 2027 list prices on 2026-11-12).
 6. **Paid-run stop rule (1.3x estimate):** Stop any paid run immediately if actual spend exceeds 1.3x its estimate.
 7. **Capped run = void:** A run stopped by a budget cap is void and provides no result; rescue re-runs are prohibited without a new dated decisions log entry.
 8. **Sealed reserve:** An untouchable allocation of INR 300 is reserved exclusively for final evaluation on unseen papers, protected from development pushes.
@@ -693,6 +702,8 @@ in its decisions.md entry.
 | 2026-11-13 | Step 3 (6-step path) | Read-only look at public datasets (SciTab, SciClaimEval, PRISMM-Bench, CLAIMCHECK) | Format and licences recorded; PRISM_FIELD_COMPARISON.md written | Completed | INR 0 | decisions.md "Step 3: public datasets checked (read-only, INR 0) - 2026-11-13" |
 | 2026-11-15 | Table-finding check | Plain code table finder on 6 tables, 5 target rows | PASS: 5 of 5 rows ready (P1-R1, P3-R2, P4-R1, P4-R2, P11-R2); 100% reference values in block | PASS | INR 0 | decisions.md "Table-finding check result: PASS (5 of 5 rows) - 2026-11-15" |
 | 2026-11-18 | Step 4 (6-step path) | Table checker over routed table claims (Vertex, 3 repeats) | M1 1/8 PASS (P4-R2); M2 lost P12-R2 FAIL; M3 8/88 FAIL; M4 5/16, 11/21 PASS; M5 FAIL; M6 met; M7 INR 214.92 > 200 FAIL; M8 not void | FAIL (M2, M3, M5, M7) | about INR 1,074 (cap counter; grounding excluded); billed figure pending | 1 layout misread in 1 run (P1-R1); trigger n [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"] |
+| 2026-11-18 | Test A | gemini-4-carbon as Prism's auditor on Vertex (3 runs) | Blocked by 403 (Vertex needs an eligible paid billing account) | Not run, no result | INR 70.16 | tag prereg/carbon-probe-2026-11-18; stopped without _summary.json [D: "Test A blocked; pre-registration: test B ... - 2026-11-20"] |
+| 2026-11-20 | Test B | One gemini-4-carbon call per whole dev paper (AI Studio, 3 runs, 2-of-3 vote) | Caught 9/31 refusal rows (Prism run 1: 8/31); false rejections 17/88 (Prism run 1: 4/88) | PRISM BETTER (rule 3: FR 17 > 8) | INR 682.21 total (~INR 18.95/paper) | tag prereg/testb-2026-11-20; manifest d08f958; result 11bae00; 36/36 calls OK; rough comparison (automatic matching); Prism core closed [D: "Test B result: PRISM BETTER ... - 2026-11-20"] |
 
 ### Table B: Early history (before 2026-10-07, not comparable)
 
@@ -720,7 +731,7 @@ vote. C1 fixed 2 of the 8 targeted misses and C2 fixed 4, and neither
 lost a caught row. But C1 wrongly rejected 4 of 88 supported claims and
 C2 rejected 7, against 1 for the baseline in the same check. C2 also
 dropped golden positive hits to 10/21 (floor 11) and cost INR 194.4 per
-paper (gate 130). Both failed, so the auditor stays gemini-3.6-flash. (Superseded 2026-11-18: Step 4 table checker is the latest test; see Section 6.2, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18'.)
+paper (gate 130). Both failed, so the auditor stays gemini-3.6-flash. (Superseded 2026-11-20: followed by the step 4 table checker (2026-11-18), test A (2026-11-18, blocked) and test B (2026-11-20, verdict PRISM BETTER); see Sections 6.2 and 6.3.)
 
 Sources: docs/decisions.md - Three-call claim extraction pipeline (2026-08-20); docs/decisions.md - De-leak: eval-paper text and answer-key wording removed from prompts (2026-10-05); docs/decisions.md - Dev run 1 - fixture dump and pre-registered adjudication rules (2026-10-12); docs/decisions.md - Pre-registration: full 3-run no-regression check, gemini-3.8-flash medium and high vs gemini-3.6-flash, Vertex (2026-11-08); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
 
@@ -770,6 +781,40 @@ P8-S7: label supported in 3 of 3 D runs; counted as a false rejection because gr
 Picture trigger: 1 layout misread in 1 run (P1-R1); trigger n. No picture work.
 
 Sources: docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+
+### 6.3 Strong-model baselines (tests A and B)
+
+To determine whether Prism's gap was simply model capacity, two tests evaluated Google's frontier model, `gemini-4-carbon`.
+
+- **Test A (2026-11-18, tag `prereg/carbon-probe-2026-11-18`):** `gemini-4-carbon` as Prism's auditor on Vertex (3 runs). Blocked by a 403 (`PERMISSION_DENIED`: Vertex needs an eligible paid billing account). Both runs stopped without `_summary.json`. Not run, no result. Spend: INR 70.16.
+- **Test B (pre-registered 2026-11-20, tag `prereg/testb-2026-11-20`; manifest commit `d08f958`; result commit `11bae00`):** One `gemini-4-carbon` call per whole dev paper (finds and judges claims itself), run on AI Studio for 3 runs across all 12 dev papers. 36/36 calls OK, evaluated under a 2-of-3 vote.
+
+| Measure | Test B (Carbon, one call per paper) | Prism (dev run 1, full pipeline) |
+|---|---|---|
+| Refusal rows caught /31 | 9 | 8 |
+| False rejections /88 | 17 | 4 |
+| Cost per paper | About INR 18.95 (INR 37.90 from 2026-12-01) | About INR 102 (estimate, step 1d) |
+| Spend | INR 682.21 for 3 runs of 12 papers | INR 1,048.40 for 1 run of 12 papers (dev run 1) |
+| Verdict | **PRISM BETTER** (pre-registered rule: FR 17 > 8) | - |
+
+**Detailed results:**
+- Found 10/31 refusal rows (9 of them flagged) and 69/88 S rows (17 flagged; all 17 exact-quote matches, score 100).
+- New catches Prism never made: P3-R2, P4-R2, P7-R1 (auditor misses), and P8-R3 (extraction miss). 3 of Prism's 8 run-1 catches were not caught.
+- P1-S3, P9-S4, and P10-S2 were also false rejections for gemini-3.8-flash (2026-11-09).
+
+**Limits:**
+- Automatic matching (rough comparison, not an official Prism score);
+- Dev rows reused by many tests;
+- One labeller;
+- Flat text (Carbon read plain text from the PDF, not layout);
+- Carbon's training cutoff is unknown (dev papers may have been seen);
+- Prism's figure is a single run vs a 3-run vote.
+
+**Lesson in plain words:**
+A stronger model is stricter, not better (same pattern as gemini-3.8-flash, 2026-11-09). Catches were about equal to Prism (9 vs 8, inside noise T = 3), but false rejections were roughly four times higher (17 vs 4).
+
+Sources: docs/decisions.md - Test A blocked; pre-registration: test B - one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs - 2026-11-20; docs/decisions.md - Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20
 
 
 ## 7. Where it fails
@@ -830,6 +875,12 @@ The system faces hard individual ceiling constraints on both sides of the pipeli
 Across every auditor attempt, stricter judging catches more misses but rejects more good claims.
 
 Sources: docs/decisions.md - Stage A1 results: FAIL (2026-10-28); docs/decisions.md - A1 diagnosis results: Ship-honest (decisions.md option B) (2026-10-28); docs/decisions.md - Auditor v2 T1 result, Ship-honest removed, new order (T2-R first) (2026-10-29); docs/decisions.md - T2-R result: FAIL (4/10 misses, 2/5 hard, 0 false rejections) (2026-10-31); docs/decisions.md - Screen attempt 2: void (V3 -> V4), robustness note, decision to take gemini-3.8-flash high to the full check (2026-11-07); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09); docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18
+
+### Known defect: few-shot loader
+
+With extractor_fewshot_fix off (the default), the prompt loader treats a top-level "note" field in a few-shot example as a negative-example marker, so 8 of the extractor's 9 claim-bearing examples are read as negatives (extraction/prompt_loader.py, _is_negative_example). The fix is on main behind that flag; it was measured (PR-1 and Experiment 2) with no gain, and turning it on would change the prompt hash and fixtures, so it stays off.
+
+Sources: docs/decisions.md - PR-1 result (negative): few-shot loader fix, no coverage gain (2026-10-08); docs/decisions.md - Experiment 2 - Stage A result (2026-10-14)
 
 
 ## 8. Current scores
@@ -996,20 +1047,39 @@ Sources: docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fai
 
 ## 12. Where Prism stands
 
-Following the failure of both 3.8 candidates on 2026-11-09, the decided next step is writing this report and the pipeline diagram. Auditor and extraction work will continue without new hand labelling; the next approach will be chosen after the report and pre-registered on its own. Until the core works, several actions are forbidden: tuning prompts to move numbers, lowering thresholds, opening held-out text, and building MCP v1. The ship-honest fallback was removed on 2026-10-29. There is no release with the current auditor. (Superseded 2026-11-18: 6-step path completed; step 4 table checker failed; core auditor work stops; report stands as hiring artifact, decisions.md 'Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18' and 'Release bar restated (unchanged) - 2026-11-18'.)
+Prism core closed on 2026-11-20 under the pre-registered stop rule following the Test B result. No product changes were made; all experimental flags remain default off; the auditor remains gemini-3.6-flash (prompt hash `cb3272cce551`). There is no release with the current auditor. The release bar remains unchanged: dev >= 22/31 refusal catches with false rejections <= 8/88; the release number comes from one sealed-set run only. Prism is not hosted (Azure environment was decommissioned on 2026-09-28 to control cost; steps 3-8 of `docs/observability-and-cost-plan.md` for caps and 429, spend visibility, guards, demo mode, local alerts, and MCP were never built and remain "not started").
 
-Sources: docs/decisions.md - MCP v1 scope and tenancy decisions (design intent only) (2026-09-28); docs/decisions.md - Held-out eval paper sealed (eval chain step 1) (2026-10-03); docs/decisions.md - Release targets, order of work and stop rule amended (2026-10-10); docs/decisions.md - Auditor redesign agreed: caching + scope check, marks and caps (2026-10-22); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
+Sources: docs/decisions.md - MCP v1 scope and tenancy decisions (design intent only) (2026-09-28); docs/decisions.md - Held-out eval paper sealed (eval chain step 1) (2026-10-03); docs/decisions.md - Release targets, order of work and stop rule amended (2026-10-10); docs/decisions.md - Auditor redesign agreed: caching + scope check, marks and caps (2026-10-22); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09); docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18; docs/decisions.md - Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20
 
 
 ### 12.1 Decision gate outcome
 
-Under the 6-step path decision gate (2026-11-11, 2026-11-18):
-- Core auditor work stops; the report stands as the hiring artifact.
-- Remaining Prism polish (not core): two small chat fixes, then a demo video and a blog post.
-- Separate projects next: the fine-tuning learning project (Warrantum), hands-on MCP practice, and resume/LinkedIn rewrite.
+Prism core closed on 2026-11-20. The decision gate outcome:
+- Core auditor work is stopped; the engineering report stands as the hiring artifact.
+- Remaining Prism polish (outside core): two chat fixes, demo video, blog post, resume.
+- Separate project next: Warrantum (fine-tuning; its one MCP tool covers MCP practice).
+- Research PDFs licence fix is a later step.
 
-Sources: docs/decisions.md - 6-step path after outside reviews - 2026-11-11; docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18; docs/decisions.md - Release bar restated (unchanged) - 2026-11-18
+Sources: docs/decisions.md - 6-step path after outside reviews - 2026-11-11; docs/decisions.md - Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18; docs/decisions.md - Release bar restated (unchanged) - 2026-11-18; docs/decisions.md - Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20
 
+
+### 12.2 Switched-off features
+
+Every experimental feature is off on main. Each one was built and tested; none passed its pre-registered test.
+
+| Flag | What it does | Test result | Why it stays off |
+|---|---|---|---|
+| extractor_fewshot_fix | Fixes the few-shot "note" bug (section 7) | PR-1 (2026-10-08): no gain; grounding-negative 9.6 -> 8.8 | Not proven better; changes the prompt hash and fixtures |
+| extractor_fewshot_shapes | Extra claim-shape examples | Experiment 2 (2026-10-14): 3 of 4 marks failed | Failed |
+| extractor_second_pass | Second extraction pass | Experiment 3 (2026-10-16): rejected on cost | Failed on cost |
+| extractor_pass2_clean | Cleaning filter on pass 2 | Clean-extraction attempt (2026-10-20): FAIL | Failed |
+| auditor_thinking_level | Higher auditor thinking | Experiment 1 (2026-10-12): FAIL | Failed |
+| pass2_thinking_level | Thinking level for pass 2 | Part of Experiment 3 | Pass 2 is off |
+| --table-check (eval replay option) | Step 4 table checker | Step 4 (2026-11-18): FAIL | Failed |
+
+Caching and the scope check exist only in the eval replay tool, not in the app. Caching passed (Stage A0, 2026-10-26: audit cost about 66% lower, hits kept); the scope check failed (Stage A1, 2026-10-28).
+
+Sources: docs/decisions.md entries named in the table.
 
 ## Appendix: Engineering state
 
@@ -1030,24 +1100,24 @@ Evaluation infrastructure is automated via specialized scripts:
 - **Match-map adjudication gate:** `matrix_runner.py` enforces 100% human match-map coverage; unadjudicated rows suppress headline percentage and force exit code 1.
 - **Match-map fixture consistency (`eval/tests/test_match_map_fixture_consistency.py`):** Offline test ensuring human `match_map.json` pairings match fixture frozen actual indices.
 - **Matcher gold calibration:** 15-pair hand-authored test (`docs/evals/matcher_gold.json`), pass rate (93.3% / 100%) frozen into fixture headers offline via `eval/verify_matcher_gold.py`; live integration test in CI was reverted to prevent quota burn and secrets exposure.
-- **Unit test suite:** 187 tests passed at PR-B; 1,006 tests passed at commit `bc2f575` after structurer JSON parse fix; 1,200 passed in Step 1 (full suite 1,200 passed, 3 skipped, 1 deselected) and 1,428 passed at the step 4 build (branch eval/step1-free-checks).
+- **Unit test suite:** 187 tests passed at PR-B; 1,006 tests passed at commit `bc2f575` after structurer JSON parse fix; 1,200 passed in Step 1 (full suite 1,200 passed, 3 skipped, 1 deselected) and 1,428 passed at the step 4 build (branch eval/step1-free-checks); 1,493 passed at the test B build (2026-11-20).
 - **Pydantic configuration validation in CI:** Dummy environment variables configured in `eval.yml` so `PrismSettings` BaseSettings validates at process start.
 
 ### Branch and Merge State
 
-- **`main` branch state:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`, `table_check=False`); the active extraction path is single-pass only; prompt hash confirmed `cb3272cce551`.
-- **Branch state for steps 1-4:** Work for steps 1-4 is on branch `eval/step1-free-checks` and is not merged to main yet [D: "6-step path after outside reviews - 2026-11-11"].
+- **`main` branch state:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`; `--table-check` off (eval replay option only, not an app setting)); the active extraction path is single-pass only; prompt hash confirmed `cb3272cce551`. Prism core closed 2026-11-20.
 - **Merged pull requests:**
   - PR #1: Azure pre-deploy foundation merged 2026-08-29.
   - PR #5: First Azure deploy merged 2026-09-01.
   - PR #113 (PR-B): Prompt de-leak merged 2026-10-07 on commit `e0dd56a`.
   - PR #122: Development eval baseline and extraction experiments merged to `main` 2026-10-21 on commit `4be1cc4`.
+  - `eval/vertex-auditor-option` (contains `auditor/caching-scope-check`): squash-merged to `main` 2026-11-10; full history on tag `archive/vertex-auditor-option-history`.
+  - PR #124: Steps 1-4, Test A and Test B merged to `main` 2026-11-21 with a merge commit.
+  - PR #125: Cleanup (scratch untracked, .gitignore gaps, 3 dated docs moved to `docs/archive/`) merged to `main` 2026-11-21 with a merge commit.
 - **Unmerged branches and draft pull requests:**
-  - PR #115 (PR-1): Few-shot loader fix, draft PR, unmerged due to hash mismatch pending fixture re-dump.
+  - PR #115 (PR-1): few-shot loader fix; not open (checked 2026-11-21); the fix code is on main behind extractor_fewshot_fix, default off.
   - `fix/b5.1-auditor-checklist`: B5.1 auditor checklist attempt; failed marks, unmerged, preserved on tag `archive/b5.1-checklist-attempt`.
   - `archive/exp1-scoped-auditor`: Exp 1 scoped-auditor pilot; failed marks, unmerged, preserved on tag `archive/exp1-scoped-auditor`.
-  - `auditor/caching-scope-check`: Work branch pushed 2026-10-31, not merged.
-  - `eval/vertex-auditor-option`: Branch for Vertex AI gemini-3.8-flash probe and smoke testing, recorded 2026-11-04.
 - **Pushed Git tags:**
   - `archive/b5.1-checklist-attempt`
   - `archive/exp1-scoped-auditor`
@@ -1060,5 +1130,10 @@ Evaluation infrastructure is automated via specialized scripts:
   - `prereg/tablefind-notes-2026-11-14`
   - `prereg/step4-2026-11-15`
   - `prereg/step4-build-2026-11-17`
+  - `prereg/carbon-probe-2026-11-18`
+  - `prereg/testb-2026-11-20`
+  - `archive/eval-carbon-probe`
+  - `archive/eval-step1-free-checks`
+  - `archive/chore-repo-cleanup`
 
 Sources: docs/decisions.md - Freeze matcher output into fixtures (2026-08-13); docs/decisions.md - Azure pre-deploy foundation (PR 1) (2026-08-29); docs/decisions.md - First Azure deploy (2026-09-01); docs/decisions.md - De-leak: eval-paper text and answer-key wording removed from prompts (2026-10-05); docs/decisions.md - Full no-regression check result: FAIL for both 3.8 candidates; no auditor change (2026-11-09)
