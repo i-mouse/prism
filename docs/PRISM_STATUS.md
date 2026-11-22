@@ -1,21 +1,23 @@
-# PRISM STATUS — 2026-11-18 (single source for new chats)
+# PRISM STATUS — 2026-11-21 (single source for new chats)
 
 ## Current state
 
-Prism runs locally only (Aspire). The Azure demo was decommissioned 2026-09-28; cancellation not yet confirmed complete. Main holds PR #122 (dev eval baseline + extraction experiments, merged 2026-10-21, commit 4be1cc4) and the work of `eval/vertex-auditor-option` (which contains `auditor/caching-scope-check` and `docs/auditor-diagnostic-2026-10-22`): caching and scope-check code (flags off, replay only), the Vertex AI eval backend, the auditor model option for evals, golden replay, `--repeat-index`, `score_screen` and `score_full_check`, the structurer JSON control-character fix (`engine.py`, `strict=False`), all test records, the fact sheet, the engineering report and the hero diagram. The steps 1-4 work is on branch `eval/step1-free-checks` and is not merged to main yet.
+Prism runs locally only (Aspire). Not hosted (Azure decommissioned 2026-09-28; steps 3-8 of docs/observability-and-cost-plan.md for caps and 429, spend visibility, guards, demo mode, local alerts, and MCP were never built; their status stays "not started"). Main holds PR #122 (dev eval baseline + extraction experiments, merged 2026-10-21, commit 4be1cc4), PR #124 (steps 1-4, tests A and B, merged 2026-11-21 with a merge commit), and PR #125 (cleanup: scratch untracked, .gitignore gaps, 3 dated docs moved to docs/archive/, merged 2026-11-21 with a merge commit).
 
 Product behaviour is unchanged: auditor gemini-3.6-flash, all experiment flags off, flag-off prompt hash `cb3272cce551`.
 
-Not released: the dev refusal rate (8/31, 26%, single run) is well below the release bar, and there is no release with the current auditor (decisions.md 2026-10-29; Ship-honest removed).
+Prism core closed 2026-11-20 (pre-registered stop rule). No product change; no release with the current auditor. Release bar unchanged (dev >= 22/31, FR <= 8/88).
 
-Auditor phase: Stage A1 FAILED (2026-10-28); A1 diagnosis found no single clear cause (2026-10-28); auditor no-regression rule set (2026-10-28); Auditor v2 T1 FAILED (2026-10-29); T2-R FAILED (2026-10-31); 10-miss analysis (2026-11-02): 8 auditor targets, P5-R1 and P5-R2 parked, P1-R3 is run-to-run noise; Vertex smoke attempt 1 FAIL on mechanics (2026-11-04), attempt 2 PASS (2026-11-06); gemini-3.8-flash screen VOID (attempt 1 2026-11-06, attempt 2 2026-11-07); full 3-run no-regression check (2026-11-08/09): both 3.8 candidates FAIL, no auditor change. 6-step path (2026-11-11): step 1 free checks completed (noise T = 3, cost estimate INR 196 at 2027 list prices, extractor ceiling 5 of 13); step 2 auditor caught 2 of 7 pass-2-recovered claims, directing auditor change first; step 3 public datasets checked; table-finding check PASS (5 of 5 rows); step 4 table checker FAIL on M2, M3, M5, M7 (2026-11-18). Core auditor work stopped after step 4 (decisions.md 2026-11-18).
+Auditor phase: Stage A1 FAILED (2026-10-28); A1 diagnosis found no single clear cause (2026-10-28); auditor no-regression rule set (2026-10-28); Auditor v2 T1 FAILED (2026-10-29); T2-R FAILED (2026-10-31); 10-miss analysis (2026-11-02): 8 auditor targets, P5-R1 and P5-R2 parked, P1-R3 is run-to-run noise; Vertex smoke attempt 1 FAIL on mechanics (2026-11-04), attempt 2 PASS (2026-11-06); gemini-3.8-flash screen VOID (attempt 1 2026-11-06, attempt 2 2026-11-07); full 3-run no-regression check (2026-11-08/09): both 3.8 candidates FAIL, no auditor change. 6-step path (2026-11-11): step 1 free checks completed (noise T = 3, cost estimate INR 196 at 2027 list prices, extractor ceiling 5 of 13); step 2 auditor caught 2 of 7 pass-2-recovered claims, directing auditor change first; step 3 public datasets checked; table-finding check PASS (5 of 5 rows); step 4 table checker FAIL on M2, M3, M5, M7 (2026-11-18). Test A (2026-11-18, tag prereg/carbon-probe-2026-11-18): gemini-4-carbon as auditor on Vertex, blocked by 403 (needs paid billing account); not run, no result; spend INR 70.16. Test B (pre-registered 2026-11-20, tag prereg/testb-2026-11-20; manifest commit d08f958; result commit 11bae00): one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs, 36/36 calls OK, 2-of-3 vote; caught 9/31 refusal rows (Prism run 1: 8/31), false rejections 17/88 (Prism run 1: 4/88); verdict: PRISM BETTER (pre-registered rule: FR 17 > 8); total spend INR 682.21 (~INR 18.95/paper). Prism core closed 2026-11-20.
 
 Report: `docs/PRISM_REPORT.md` (fact sheet `docs/report/PRISM_FACTS.md`, field comparison `docs/report/PRISM_FIELD_COMPARISON.md`, hero diagram `docs/diagrams/prism_hero.drawio.svg`).
 
-Next items in order (decision gate outcome, 2026-11-18):
-1. Core auditor work stops; the engineering report stands as the hiring artifact.
-2. Remaining Prism polish (not core): two small chat fixes, then a demo video and a blog post.
-3. Separate projects next: the fine-tuning learning project (Warrantum), hands-on MCP practice, and resume and LinkedIn rewrite (all separate from the Prism repo).
+Next items in order (outside Prism core):
+1. Core auditor work stopped 2026-11-20; the engineering report stands as the hiring artifact.
+2. Project instructions refresh; research PDFs out of the repo (download-and-verify script), decided in its own step.
+3. Two small chat fixes, one end-to-end UI run on a new paper, then the snapshot tag portfolio-2026-11.
+4. Demo video, blog post (prism-landing repo), resume, LinkedIn and interview prep.
+5. Warrantum (separate fine-tuning project; includes the MCP practice).
 
 ## Scoreboard
 
@@ -48,14 +50,14 @@ Flags (all default off/unset, each pinned by a test; flag-off prompt hash confir
 | `extractor_second_pass` | `False` | `config.py:121` |
 | `pass2_thinking_level` | `None` | `config.py:130` |
 | `extractor_pass2_clean` | `False` | `config.py:152` |
-| `table_check` | `False` | `eval/replay_audit.py` (branch `eval/step1-free-checks`) |
+| `--table-check` | off | eval replay option only, not an app setting; `eval/replay_audit.py` (branch `eval/step1-free-checks`) |
 
 Existing flags (pre-date this branch):
 
 | Flag | Default | Note |
 |---|---|---|
-| `GROUNDING_NORMALIZE` | on | Stage-1 text normalisation, merged 2026-10-05 (docs/FINDINGS.md:72) |
-| `AUDIT_MODE` | legacy | The scoped auditor was a separate pilot (Exp 1 scoped-auditor, not decisions.md's "Experiment 1"), archived on tag `archive/exp1-scoped-auditor`, never merged (docs/FINDINGS.md:27) |
+| `GROUNDING_NORMALIZE` | on | Stage-1 text normalisation, merged 2026-10-05 (docs/archive/FINDINGS.md:72) |
+| `AUDIT_MODE` | legacy | The scoped auditor was a separate pilot (Exp 1 scoped-auditor, not decisions.md's "Experiment 1"), archived on tag `archive/exp1-scoped-auditor`, never merged (docs/archive/FINDINGS.md:27) |
 
 Eval-only options (replay and eval tools, never product defaults): `--cache`, `--scope-check`, `--table-check`, `--backend vertex`, `--vertex-project`, `--set golden`, `--repeat-index`, and the auditor model choice used for eval runs.
 
@@ -64,7 +66,7 @@ Eval-only options (replay and eval tools, never product defaults): `--cache`, `-
 | Experiment | Change | Verdict | Spend |
 |---|---|---|---|
 | 1 | Auditor `thinking_level=high` | REJECTED — fixed 1/10 rows (needed >=3); auditor noise ~±3 rows run-to-run at default | INR 411.95 (decisions.md:1807-1831) |
-| 2 | Extractor few-shot claim-shape repair | REJECTED — all 4 required marks failed; evidence leans toward a task-design problem, not proven | INR 177.93 (decisions.md, "Experiment 2 - Stage A result - 2026-10-14") |
+| 2 | Extractor few-shot claim-shape repair | REJECTED — 3 of 4 required marks failed (A4 passed); evidence leans toward a task-design problem, not proven | INR 177.93 (decisions.md, "Experiment 2 - Stage A result - 2026-10-14") |
 | 3 | Windowed pass-2 re-extraction (`extractor_second_pass`) | REJECTED on cost gate c4: projected INR 237.59/paper (pooled) / 243.75 (mean) vs INR 130 cap. c7, c2 passed. c1/c6/c8 not measured (human labelling deviation) | INR 185.79 (Exp-3-specific, meter) (decisions.md:2600-2606) |
 | Clean-extraction attempt | Claim-cleaning filter on top of Exp 3 (`extractor_pass2_clean`) | REJECTED — K1 (recall) FAIL 5-6/13; K4 (cost) FAIL ~INR 230/paper vs 130 cap; K7 (dedup safety) FAIL; K8 FAIL on the filter sub-cap (INR 64.25 / 58.31 vs 40). K2, K5, K6 PASS | INR 311.04 of a separate INR 350 cap (decisions.md:3005-3018, 2621) |
 | Stage A0 | Explicit context caching on 18 frozen claims | PASS — audit cost 66% below baseline (INR 1.30 vs 3.79), refusal hits 8/31 kept | INR 36.86 (decisions.md, "Stage A0 results - 2026-10-26") |
@@ -77,6 +79,8 @@ Eval-only options (replay and eval tools, never product defaults): `--cache`, `-
 | Step 2 (6-step path) | 7 pass-2-recovered claims to today's auditor (Vertex, 3 runs) | Auditor change first — caught 2/7 (<= 4/7 split rule); P9-R1, P11-R3 caught | About INR 74 total by tool count (cap 117.6) (decisions.md 2026-11-13) |
 | Table-finding check | Plain code table finder on 6 tables, 5 target rows | PASS — 5 of 5 rows ready; 100% reference values in blocks | INR 0 (decisions.md 2026-11-15) |
 | Step 4 (6-step path) | Table checker over routed table claims (Vertex, 3 runs) | FAIL (M2, M3, M5, M7) — M1 1/8 PASS (P4-R2); M2 lost P12-R2; M3 8/88 FAIL; M4 5/16, 11/21 PASS; M5 FAIL; M7 INR 214.92 > 200 FAIL; not void | About INR 1,074 (cap counter; grounding excluded); billed figure pending (decisions.md 2026-11-18) |
+| Test A | gemini-4-carbon as auditor on Vertex (3 runs) | BLOCKED by 403 (Vertex needs an eligible paid billing account); not run, no result | INR 70.16 (decisions.md 2026-11-18, 2026-11-20) |
+| Test B | One gemini-4-carbon call per whole dev paper (AI Studio, 3 runs, 2-of-3 vote) | PRISM BETTER (pre-registered rule: FR 17 > 8; Carbon caught 9/31, FR 17/88 vs Prism run 1: 8/31, 4/88); Prism core closed | INR 682.21 total (~INR 18.95/paper) (decisions.md 2026-11-20) |
 
 Exploratory-only note: Experiment 3's c1/c6 recall result (8/13 both runs) was AI-proposed, human-verified — not the pre-registered blind adjudication — so no recall claim is made for Experiment 3 itself. (decisions.md:2607-2616)
 
@@ -138,8 +142,8 @@ All three risks below are inside code currently gated off by default (`extractor
 
 ## Budget status
 
-- GCP Free Credit (Vertex AI eval runs only; cannot pay AI Studio): INR 23,738.43 on 2026-11-09 at 15:37 IST; expires 2026-11-26. Eval spend on it since 2026-11-02: INR 4,955.45 through the full check (smoke tests INR 1.11, 3.8 screen INR 842.86, full check INR 4,111.48). Subsequent eval runs: Step 2 spent about INR 74 total by tool count; Step 4 spent about INR 1,074 (cap counter; grounding excluded); billed figure pending next GCP credit check.
-- Product and dev run on AI Studio: Google Developer Program credit (about INR 955-960 around the 13th of each month; INR 160.94 left on 2026-11-02), then prepay (INR 341.81 on 2026-11-02).
+- GCP Free Credit (Vertex AI eval runs only; cannot pay AI Studio): INR 23,738.43 on 2026-11-09 at 15:37 IST; expires 2026-11-26. Eval spend on it since 2026-11-02: INR 4,955.45 through the full check (smoke tests INR 1.11, 3.8 screen INR 842.86, full check INR 4,111.48). Subsequent eval runs: Step 2 spent about INR 74 total by tool count; Step 4 spent about INR 1,074 (cap counter; grounding excluded); Test A attempt spent INR 70.16 (GCP billing).
+- Product and dev run on AI Studio: Google Developer Program credit (about INR 955-960 around the 13th of each month; INR 160.94 left on 2026-11-02), then prepay (INR 341.81 on 2026-11-02). Test B spent INR 682.21 total by tool count, paid from the Google Developer Program credit through AI Studio.
 - Spend is counted at list price; each test sets its own cap; paid runs stop at 1.3x the estimate; a capped run is void.
 - Gemini Flash prices double on 2027-01-01 (estimated about INR 102 today, INR 196 at 2027 list prices). Cost gate: INR 200 per paper at 2027 list prices, set for step 4 changes (decisions.md 2026-11-12); revisited before any release.
 - Sealed reserve: INR 300, untouched throughout.

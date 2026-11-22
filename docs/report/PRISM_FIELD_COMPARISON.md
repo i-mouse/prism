@@ -118,10 +118,9 @@ The 13 extraction misses, by paper section: introduction 2, conclusion 3, body 5
 | Bad claims caught (dev) | 8 of 31 | Table checker failed (2026-11-18); no change | 22 of 31 (restated unchanged 2026-11-18) |
 | Cost per paper, 2027 prices | About INR 196 (estimate) | Must stay at or below INR 200 | At or below INR 200 |
 
-Planned outside measurements (step 5, only if the table checker passes on the dev set):
-- SciTab sample: judging with the table given, scored the same way as the field.
-- SciClaimEval Supported table claims: good claims wrongly rejected.
-- PRISMM-Bench table-text cases (about 46): bad claims caught.
+Outside measurements (step 5) were not run: step 5 ran only if step 4 passed, and step 4 failed (2026-11-18).
+
+One-call strong-model baseline (test B, 2026-11-20): 9 of 31 bad claims caught and 17 of 88 good claims wrongly rejected, against Prism's 8 of 31 and 4 of 88; Prism better under the pre-registered rule.
 
 No release with the current auditor.
 

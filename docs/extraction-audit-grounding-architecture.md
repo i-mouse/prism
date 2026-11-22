@@ -101,7 +101,7 @@ The architecture uses a two-layer Pydantic design to separate LLM outputs from f
 The evaluation harness operates primarily in a secretless, offline mode for CI to avoid live LLM calls and API quota burn.
 
 ### Golden Sets
-- `docs/evals/matrix_eval.json`: 3 papers, 37 expected claim rows (13 Reflexion, 12 CoT, 12 ReAct). 
+- `docs/evals/matrix_eval.json`: 3 papers, 37 expected claim rows (12 Reflexion, 12 CoT, 13 ReAct). 
 - `docs/evals/matcher_gold.json`: 15 hand-authored gold pairs to calibrate the LLM judge.
 - `docs/evals/golden_eval.json`: 21 questions across 3 papers.
 
@@ -113,7 +113,7 @@ The evaluation harness operates primarily in a secretless, offline mode for CI t
 | `positive_hits` | (count). The grounder correctly affirmed claims the paper does support. |
 | `false_rejection_rate` | (false_rejections / positive_total). The grounder incorrectly refused claims the paper DOES support. |
 
-**Thresholds:** `refusal_rate` must be >= `0.70`, and `positive_hits` must be >= `10`.
+**Thresholds:** `refusal_rate` must be >= `0.30` (re-baselined 0.70 -> 0.35 on 2026-09-30, then 0.30 on 2026-10-07), and `positive_hits` must be >= `10`.
 
 ### Frozen-Fixture CI Pattern
 CI uses `--source fixture` to read claims and matches already frozen into JSON fixtures (`docs/evals/fixtures/*.json`) by `dump_fixture.py`. The eval harness is fully offline in CI. Fixtures now freeze `evidence_spans`.

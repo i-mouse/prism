@@ -123,7 +123,7 @@
 - **Tried and failed or rejected:**
   - Single-call extraction: failed to emit refusal labels (0 by_label); short-circuited reasoning; replaced by 3-call pipeline 2026-08-20 [D: "Three-call claim extraction pipeline" - 2026-08-20].
   - Section-by-section extraction: evaluated 2026-10-08; PARKED due to 3.1x cost and miss rows sitting in early sections [D: "Section-by-section extraction: feasibility confirmed, then PARKED" - 2026-10-08].
-  - Few-shot claim-shape repair (Exp 2): evaluated 2026-10-14; all 4 required marks FAILED; flags `EXTRACTOR_FEWSHOT_FIX` and `EXTRACTOR_FEWSHOT_SHAPES` stay off [D: "Experiment 2 - Stage A result" - 2026-10-14].
+  - Few-shot claim-shape repair (Exp 2): evaluated 2026-10-14; 3 of 4 required marks FAILED (A4 passed); flags `EXTRACTOR_FEWSHOT_FIX` and `EXTRACTOR_FEWSHOT_SHAPES` stay off [D: "Experiment 2 - Stage A result" - 2026-10-14].
   - Windowed pass-2 re-extraction (Exp 3): evaluated 2026-10-16; REJECTED on cost gate c4 [D: "Experiment 3 B4 result" - 2026-10-16].
   - Clean-extraction attempt (Exp 3 + pass-2 clean filter): evaluated 2026-10-20; REJECTED on K1, K4, K7, K8; `EXTRACTOR_PASS2_CLEAN` stays off [D: "Clean-extraction attempt result: FAIL, pass 2 stays off" - 2026-10-20].
 - **Open issues on record:** `prompt_loader.py:58` treats few-shot examples with `"note"` field as negative, blanking 8 of 9 examples (PR #115 unmerged) [D: "prompt_loader few-shot "note" field bug" - 2026-10-06] [D: "PR-1 result (negative): few-shot loader fix, no coverage gain" - 2026-10-08]; extractor misses 13 dev refusal rows [S: ## Scoreboard]; 3 known risks in clean extraction code ("same"-relation chain-drop, unvalidated neighbor ids, positional answer mapping) [R: ## What I tried and why it failed] [S: ## Known risks (code-sourced, `docs/archive/premerge_review_2026-10-20.md` section 3)].
@@ -135,7 +135,7 @@
   - Scoped-auditor pilot: 1 run, 44 claims, ~INR 204; failed P3 (4 of 11 baseline refusals flipped to supported); negative result; archived on tag `archive/exp1-scoped-auditor` [D: "Backfill: records missing from this log" - 2026-10-15].
   - B5.1 auditor checklist + deterministic verdict cap: evaluated 2026-10-02; FAILED pre-registered marks; net effect neutral (18 vs 18 vs 18); branch unmerged, archived on tag `archive/b5.1-checklist-attempt` [D: "B5.1 auditor checklist - measured, not merged" - 2026-10-02].
   - Auditor `thinking_level=high` (Exp 1): evaluated 2026-10-12; fixed only 1 of 10 rows (needed >=3); REJECTED; `AUDITOR_THINKING_LEVEL` stays unset [D: "Experiment 1 result - Stage A FAIL, rejected" - 2026-10-12].
-  - Auditor Stage A1 (caching + scope lister + scope checker): evaluated 2026-10-28; FAILED (fixed 3/10 misses, 1/6 always-missed vs 4 needed); flags stay off [D: "Stage A1 results: FAIL" - 2026-10-28].
+  - Auditor Stage A1 (caching + scope lister + scope checker): evaluated 2026-10-28; FAILED (fixed 5/10 misses (3 by the scope check), 1/6 always-missed vs 4 needed); flags stay off [D: "Stage A1 results: FAIL" - 2026-10-28].
   - Auditor v2 T1 & T2-R (code checks on tables): T1 FAILED 2026-10-29 (extractor infidelity); T2-R on LaTeX reference tables FAILED 2026-10-31 (fixed 4/10 misses, 2/5 hard vs 3 needed) [D: "Auditor v2 T1 result, Ship-honest removed, new order (T2-R first)" - 2026-10-29] [D: "T2-R result: FAIL (4/10 misses, 2/5 hard, 0 false rejections)" - 2026-10-31].
   - Gemini 3.8 Flash auditor (medium & high): evaluated 2026-11-06/09; Full check FAILED on M3, M4, M7; auditor stays Gemini 3.6 Flash [D: "Full no-regression check result: FAIL for both 3.8 candidates; no auditor change" - 2026-11-09].
   - Table checker for table claims (text only, Step 4): evaluated 2026-11-18; FAILED on M2, M3, M5, M7; auditor stays Gemini 3.6 Flash; flag table_check stays default off [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"].
@@ -265,6 +265,8 @@
 | 2026-11-13 | Step 3 (6-step path) | Read-only look at public datasets (SciTab, SciClaimEval, PRISMM-Bench, CLAIMCHECK) | Licence, size, and fit check | Format and licences recorded; PRISM_FIELD_COMPARISON.md written | Completed | Yes - read-only inspection | INR 0 | None | [D: "Step 3: public datasets checked (read-only, INR 0) - 2026-11-13"] |
 | 2026-11-15 | Table-finding check | Plain code table finder on 6 tables, 5 target rows | Rows ready >= 4 of 5; caption found; breaking cell pins in block; >= 90% values in block | PASS: 5 of 5 rows ready (P1-R1, P3-R2, P4-R1, P4-R2, P11-R2); 100% reference values in block | PASS | Yes - code-only pre-check | INR 0 | None | [D: "Table-finding check result: PASS (5 of 5 rows) - 2026-11-15"] |
 | 2026-11-18 | Step 4 (6-step path) | Table checker over routed table claims (Vertex, 3 repeats) | M1 fixes >= B+1; M2 lost = 0; M3 FR <= B & <= 8/88; M4 golden ref >= 5/16, pos >= 11/21; M5 GN; M6 NR = 0; M7 cost <= 200; M8 not void | M1 1/8 PASS (P4-R2); M2 lost P12-R2 FAIL; M3 8/88 FAIL; M4 5/16, 11/21 PASS; M5 FAIL; M6 met; M7 INR 214.92 > 200 FAIL; M8 not void | FAIL (M2, M3, M5, M7) | Yes - full 3-run eval check vs baseline B | About INR 1,074 (cap counter; grounding excluded); billed figure pending | 1 layout misread in 1 run (P1-R1); trigger n | [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"] |
+| 2026-11-18 | Test A | gemini-4-carbon as Prism's auditor on Vertex (3 runs) | Auditor no-regression marks (M1-M6) | Blocked by 403 (Vertex needs an eligible paid billing account); stopped without _summary.json | Not run, no result | Yes - attempted eval run on Vertex | INR 70.16 | tag prereg/carbon-probe-2026-11-18; stopped after 1-2 calls | [D: "Test A blocked; pre-registration: test B - one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs - 2026-11-20"] |
+| 2026-11-20 | Test B | One gemini-4-carbon call per whole dev paper (AI Studio, 3 runs, 2-of-3 vote) | 1. caught >= 12 & FR <= 8 -> ONE CALL BETTER; 2. caught >= 12 & FR > 8 -> STRICTER, NOT BETTER; 3. caught <= 4 or FR > 8 -> PRISM BETTER; 4. otherwise -> NO CLEAR DIFFERENCE | Caught 9/31 refusal rows (Prism run 1: 8/31); false rejections 17/88 (Prism run 1: 4/88); found 10/31 refusal rows, 69/88 S rows | PRISM BETTER (pre-registered rule 3: FR 17 > 8) | Yes - 3 runs, 36/36 calls OK, rough comparison (automatic matching) | INR 682.21 total (~INR 18.95/paper; INR 37.90 from 2026-12-01) | tag prereg/testb-2026-11-20; manifest d08f958; result 11bae00; Prism core closed | [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"] |
 
 ---
 
@@ -296,6 +298,7 @@
 - Clean-extraction attempt projected per-paper cost: projected INR 230.52 (mean) / 227.55 (pooled) [D: "Clean-extraction attempt result: FAIL, pass 2 stays off" - 2026-10-20].
 - Full no-regression check projected per-paper cost: C1 (3.8 medium) = INR 104.0; C2 (3.8 high) = INR 194.4 [D: "Full no-regression check result: FAIL for both 3.8 candidates; no auditor change" - 2026-11-09].
 - Step 1d estimated per-paper cost: ~INR 102 today, INR 196 at 2027 list prices [D: "Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12"].
+- Test B (one Carbon call per paper) cost: about INR 18.95 per paper (INR 37.90 from 2026-12-01) vs Prism about INR 102 per paper (estimate, step 1d) [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"].
 - Cost gate: INR 200 per paper at 2027 list prices, set for step 4 changes (decisions.md 2026-11-12); revisited before any release [D: "Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12"] [D: "Release bar restated (unchanged) - 2026-11-18"].
 
 ### Spend per Paid Test
@@ -311,6 +314,8 @@
 - Full no-regression check: INR 4,111.48 billed (under INR 6,403.3 cap; INR 3,542.75 counted audit calls at list price, difference reflects structurer and grounding calls) [D: "Full no-regression check result: FAIL for both 3.8 candidates; no auditor change" - 2026-11-09] [D: "Billing check: screen and full-check spend on the GCP Free Credit" - 2026-11-09].
 - Step 2 (6-step path): about INR 74 total by tool count (cap 117.6) [D: "Step 2 result: auditor caught 2/7 pass-2-recovered claims -> auditor first in step 4 - 2026-11-13"].
 - Step 4 (6-step path): about INR 1,074 (cap counter; grounding excluded); billed figure pending [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"].
+- Test A: INR 70.16 (GCP billing, Vertex: Gemini 4 Carbon input 26.85 + output 43.31) [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"].
+- Test B: INR 682.21 total by tool count (run 1 INR 230.68, run 2 INR 243.23, run 3 INR 208.30), paid from Google Developer Program credit through AI Studio [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"].
 - Total eval spend on GCP Free Credit since 2026-11-02: INR 4,955.45 (credit balance INR 28,693.88 -> 23,738.43 on 2026-11-09 at 15:37 IST) [D: "Billing check: screen and full-check spend on the GCP Free Credit" - 2026-11-09].
 
 ### Credits and Expiry
@@ -671,6 +676,9 @@
 | Step 4 build, caps and readings before the paid run | 2026-11-17 | Cited in Section 6, 15 |
 | Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail | 2026-11-18 | Cited in Section 4.6, 6, 8, 9, 10, 15 |
 | Release bar restated (unchanged) | 2026-11-18 | Cited in Section 5, 7, 8, 10 |
+| Pre-registration: test A - gemini-4-carbon as auditor (capacity probe), Vertex, 3 runs | 2026-11-18 | not used: Pre-registration entry for Test A |
+| Test A blocked; pre-registration: test B - one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs | 2026-11-20 | Cited in Section 6 |
+| Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes | 2026-11-20 | Cited in Section 6, 8, 15 |
 | PRISM.Web Deployment | Stray heading (undated) | not used: Stray unpopulated heading at line 1 of decisions.md |
 | Deferred / Won't Do (for now) | Undated summary section | Cited in Section 4.1, 4.2, 4.4, 4.8 |
 | Known Limitations | Undated summary section | Cited in Section 2 |
@@ -732,19 +740,19 @@ Source: Claude checked each link on 2026-11-09. Not in the repo.
 - **Other CI checks (linters, formatters, frontend build workflows):** UNSOURCED [not recorded in the source files].
 
 ### Branch and Merge State
-- **`main` branch:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`, `table_check=False`); shipping extraction path is single-pass only; prompt hash confirmed `cb3272cce551` [S: ## Current state] [S: ## Flags and their defaults] [D: "Clean-extraction attempt result: FAIL, pass 2 stays off" - 2026-10-20] [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"].
-- **Branch state for steps 1-4:** Work for steps 1-4 is on branch `eval/step1-free-checks` and is not merged to main yet [D: "6-step path after outside reviews - 2026-11-11"].
+- **`main` branch:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`; `--table-check` off (eval replay option only, not an app setting)); shipping extraction path is single-pass only; prompt hash confirmed `cb3272cce551` [S: ## Current state] [S: ## Flags and their defaults] [D: "Clean-extraction attempt result: FAIL, pass 2 stays off" - 2026-10-20] [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"]. Prism core closed 2026-11-20 (pre-registered stop rule) [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"].
 - **Merged PRs on record:**
   - PR #1: Azure pre-deploy foundation merged 2026-08-29 [D: "Azure pre-deploy foundation (PR 1)" - 2026-08-29].
   - PR #5: First Azure deploy merged 2026-09-01 [D: "First Azure deploy" - 2026-09-01] [D: "PR 5 code port verification + reactUI JS app migration" - 2026-09-02].
   - PR #113 (PR-B): Prompt de-leak merged 2026-10-07 on commit `e0dd56a` [D: "De-leak: eval-paper text and answer-key wording removed from prompts" - 2026-10-05].
   - PR #122: Dev eval baseline + extraction experiments merged to `main` 2026-10-21 on commit `4be1cc4` [S: ## Current state].
+  - `eval/vertex-auditor-option` (contains `auditor/caching-scope-check`): squash-merged to `main` 2026-11-10; full history on tag `archive/vertex-auditor-option-history` [D: "Correction: merge to main was a squash merge - 2026-11-10"].
+  - PR #124: Steps 1-4, Test A and Test B merged to `main` 2026-11-21 with a merge commit [D: "Prism closing: outside reviews, what is not being done, doc pass, next work - 2026-11-21"].
+  - PR #125: Cleanup (scratch untracked, .gitignore gaps, 3 dated docs moved to `docs/archive/`) merged to `main` 2026-11-21 with a merge commit [D: "Prism closing: outside reviews, what is not being done, doc pass, next work - 2026-11-21"].
 - **Unmerged branches and draft PRs:**
-  - PR #115 (PR-1): Few-shot loader fix, draft PR, unmerged due to hash mismatch pending fixture re-dump [D: "PR-1 result (negative): few-shot loader fix, no coverage gain" - 2026-10-08].
+  - PR #115 (PR-1): few-shot loader fix; not open (checked 2026-11-21); the fix code is on main behind extractor_fewshot_fix, default off [D: "PR-1 result (negative): few-shot loader fix, no coverage gain" - 2026-10-08].
   - `fix/b5.1-auditor-checklist`: B5.1 auditor checklist attempt; failed marks, unmerged, preserved on tag `archive/b5.1-checklist-attempt` [D: "B5.1 auditor checklist - measured, not merged" - 2026-10-02].
   - `archive/exp1-scoped-auditor`: Exp 1 scoped-auditor pilot; failed marks, unmerged, preserved on tag `archive/exp1-scoped-auditor` [D: "Backfill: records missing from this log" - 2026-10-15] [S: ## Flags and their defaults].
-  - `auditor/caching-scope-check`: Work branch pushed 2026-10-31, not merged [S: ## Current state].
-  - `eval/vertex-auditor-option`: Branch for Vertex AI gemini-3.8-flash probe and smoke testing, recorded 2026-11-04 [D: "Vertex smoke test, attempt 1: FAIL (mechanics)" - 2026-11-04].
 - **Pushed Git tags on record:**
   - `archive/b5.1-checklist-attempt` [D: "B5.1 auditor checklist - measured, not merged" - 2026-10-02].
   - `archive/exp1-scoped-auditor` [D: "Backfill: records missing from this log" - 2026-10-15].
@@ -757,4 +765,9 @@ Source: Claude checked each link on 2026-11-09. Not in the repo.
   - `prereg/tablefind-notes-2026-11-14` [D: "Table-finding check result: PASS (5 of 5 rows) - 2026-11-15"].
   - `prereg/step4-2026-11-15` [D: "Step 4 build, caps and readings before the paid run - 2026-11-17"].
   - `prereg/step4-build-2026-11-17` [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"].
+  - `prereg/carbon-probe-2026-11-18` [D: "Test A blocked; pre-registration: test B - one gemini-4-carbon call per whole dev paper, AI Studio, 3 runs - 2026-11-20"].
+  - `prereg/testb-2026-11-20` [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"].
+  - `archive/eval-carbon-probe` [D: "Prism closing: outside reviews, what is not being done, doc pass, next work - 2026-11-21"].
+  - `archive/eval-step1-free-checks` [D: "Prism closing: outside reviews, what is not being done, doc pass, next work - 2026-11-21"].
+  - `archive/chore-repo-cleanup` [D: "Prism closing: outside reviews, what is not being done, doc pass, next work - 2026-11-21"].
 - **Other branch and repo status:** UNSOURCED [not recorded in the source files].

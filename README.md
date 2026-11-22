@@ -4,7 +4,7 @@ Prism checks whether a research paper's own claims are supported by the evidence
 
 ![Prism pipeline: current path vs approaches tried](docs/diagrams/prism_hero.drawio.svg)
 
-*Green: what runs today. Amber: earlier versions it replaced, or ideas parked. Red: alternatives tested and rejected.*
+*Green: what runs today. Amber: earlier versions it replaced, or ideas parked. Red: alternatives tested and rejected (diagram as of 2026-11-10; the later table checker and the Gemini 4 Carbon tests are in the report, section 6).*
 
 ## At a glance
 
@@ -55,6 +55,10 @@ Stage-by-stage detail: [report section 3](docs/PRISM_REPORT.md#3-architecture-an
 | **Held-out** (1 paper, small sample, used 6 times) | 2026-10-07 | 1/2 | 7/10 | 0/10 |
 
 **Release bar:** one full 12-paper dev run with at least 22/31 refusal-family rows and at most 8/88 false rejections, stable under the auditor no-regression rule; the release number comes from one sealed-set run only. **Not met.** Details: [report section 8](docs/PRISM_REPORT.md#8-current-scores).
+
+**Test B baseline (Gemini 4 Carbon, one call per paper):** caught 9 vs 8, false rejections 17 vs 4, verdict Prism better. Details: [report section 6.3](docs/PRISM_REPORT.md#63-strong-model-baselines-tests-a-and-b).
+
+**Switched-off features:** every experimental feature is off on main; what each does and why it stays off: [report section 12.2](docs/PRISM_REPORT.md#122-switched-off-features).
 
 ## Architecture
 

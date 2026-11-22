@@ -1,5 +1,7 @@
 # Deployment & Environment Architecture
 
+> Status 2026-11-21: the Azure deployment was decommissioned on 2026-09-28. Kept as the relaunch blueprint.
+
 > **Status — offline since 2026-09-28.** All seven Container Apps were stopped and cancellation of the Azure subscription was initiated on the same date. Nothing described below is currently running; this document is now the record of the last deployed state and the basis for a relaunch. See `docs/decisions.md`, "Live environment decommissioned — 2026-09-28", and the cost-safe relaunch checklist in [docs/RUNBOOK.md](RUNBOOK.md#decommissioned-state-and-relaunch).
 
 > **Single source of truth** for how Prism is deployed, configured, and operated.

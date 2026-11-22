@@ -1,5 +1,7 @@
 # Observability and Cost Plan
 
+> Status 2026-11-21: Prism is not hosted; steps 3-8 were never built and are not planned. Kept as the record of known gaps.
+
 > As of 2026-09-29. Derived from a read-only discovery pass over the codebase
 > and a verification pass against pinned package sources and the local logs.
 > Every row is tagged VERIFIED (read in source), INFERRED (reasoned from source,
