@@ -5376,3 +5376,12 @@ Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on
 **Next, in order:** doc pass PR; project instructions; PDFs; two chat fixes; one end-to-end UI run on a new paper; snapshot tag; demo video; blog (prism-landing repo); resume, LinkedIn and interview prep. Then Warrantum. Applications continue throughout.
 
 **Money:** INR 0.
+
+## Docs slim-down and repo map - 2026-11-23
+
+- Moved to docs/archive/ with the same names and structure: PRISM_STATUS.md, PRODUCT_BRIEF.md, discovery/, research/, experiments/. No content changed. Old paths in earlier entries refer to the same name under docs/archive/.
+- PRISM_STATUS.md lines not in the report were folded into PRISM_REPORT section 12.3 before the move. Stale lines (next items, scratch cleanup, config.py line numbers, internal git rules) were dropped. Source order on any conflict: decisions.md, then PRISM_REPORT section 12.
+- Kept in docs/ although the draft plan archived them, because each still describes code that exists and code comments point to it: design/ (live UI theme), deployment-and-environment-architecture.md (AppHost publish code), observability-and-cost-plan.md (a known UI limitation and manual test steps). Both docs already carry a 2026-11-21 status note.
+- Check before the move (read-only inventory, 2026-11-22): no Dockerfile, workflow, CI script or build file reads the moved paths or docs/ as a whole. research_papers/ untouched (PDF step).
+- RUNBOOK: Gemini quota section replaced (old free-tier numbers); the tsconfig sourceMap line corrected (Vite owns source maps); the Azure failure-mode block marked historical. No gateway rate-limit claim found: RUNBOOK lists the inbound rate limiter as a relaunch prerequisite not yet built, which matches the code.
+- Root README gains a Repo map. Short READMEs added to Prism.ApiService, Prism.AppHost and Prism.Web. No code folder moved.
