@@ -337,6 +337,7 @@ async def main():
                                             on_detail=lambda d: emitter.emit_stage_detail("extracting", d),
                                             on_audit_start=_on_audit_start,
                                             on_audit_detail=lambda d: emitter.emit_stage_detail("auditing", d),
+                                            context_cache=settings.audit_explicit_cache,
                                         )
 
                                     current_stage = "grounding"

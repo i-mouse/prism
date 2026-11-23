@@ -741,6 +741,7 @@ Source: Claude checked each link on 2026-11-09. Not in the repo.
 
 ### Branch and Merge State
 - **`main` branch:** All experimental feature flags default to off or unset (`auditor_thinking_level=None`, `extractor_fewshot_fix=False`, `extractor_fewshot_shapes=False`, `extractor_second_pass=False`, `pass2_thinking_level=None`, `extractor_pass2_clean=False`; `--table-check` off (eval replay option only, not an app setting)); shipping extraction path is single-pass only; prompt hash confirmed `cb3272cce551` [S: ## Current state] [S: ## Flags and their defaults] [D: "Clean-extraction attempt result: FAIL, pass 2 stays off" - 2026-10-20] [D: "Step 4 result: FAIL (table checker); diagnosis: fair test, genuine design fail - 2026-11-18"]. Prism core closed 2026-11-20 (pre-registered stop rule) [D: "Test B result: PRISM BETTER (one Carbon call: 9/31 caught, 17/88 false rejections); Prism core closes - 2026-11-20"].
+- **Explicit audit caching:** on in the app (`audit_explicit_cache=True`, default on) since 2026-11-23 [D: "Explicit audit caching moves into the app (audit_explicit_cache, default on) - 2026-11-23"].
 - **Merged PRs on record:**
   - PR #1: Azure pre-deploy foundation merged 2026-08-29 [D: "Azure pre-deploy foundation (PR 1)" - 2026-08-29].
   - PR #5: First Azure deploy merged 2026-09-01 [D: "First Azure deploy" - 2026-09-01] [D: "PR 5 code port verification + reactUI JS app migration" - 2026-09-02].
