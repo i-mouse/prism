@@ -1065,7 +1065,7 @@ Sources: docs/decisions.md - 6-step path after outside reviews - 2026-11-11; doc
 
 ### 12.2 Switched-off features
 
-Every experimental feature is off on main. Each one was built and tested; none passed its pre-registered test.
+Every feature in the table below is off on main. Each one was built and tested; none passed its pre-registered test.
 
 | Flag | What it does | Test result | Why it stays off |
 |---|---|---|---|
@@ -1077,7 +1077,7 @@ Every experimental feature is off on main. Each one was built and tested; none p
 | pass2_thinking_level | Thinking level for pass 2 | Part of Experiment 3 | Pass 2 is off |
 | --table-check (eval replay option) | Step 4 table checker | Step 4 (2026-11-18): FAIL | Failed |
 
-Caching and the scope check exist only in the eval replay tool, not in the app. Caching passed (Stage A0, 2026-10-26: audit cost about 66% lower, hits kept); the scope check failed (Stage A1, 2026-10-28).
+Explicit caching of the paper for audit calls is on in the app (setting audit_explicit_cache, default on; added 2026-11-23; Stage A0, 2026-10-26: audit cost about 66% lower, hits kept; false rejections with caching not measured). The scope check exists only in the eval replay tool and failed (Stage A1, 2026-10-28).
 
 Sources: docs/decisions.md entries named in the table.
 

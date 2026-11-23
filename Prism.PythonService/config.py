@@ -74,6 +74,9 @@ class PrismSettings(BaseSettings):
     llm_claim_audit_model: str
     llm_claim_audit_fallback_model: str
 
+    # docs/decisions.md, "Explicit audit caching moves into the app (audit_explicit_cache, default on) - 2026-11-23"
+    audit_explicit_cache: bool = True
+
     # Experiment 1 - auditor thinking level override for the live service. Unset
     # means no thinking_config is sent (today's behavior, API default medium on
     # 3.6-flash). Auditor call only - every other Gemini call is untouched. The

@@ -5385,3 +5385,66 @@ Overall: FAIL (M2, M3, M5, M7). The grounding-negative FAIL blocks the change on
 - Check before the move (read-only inventory, 2026-11-22): no Dockerfile, workflow, CI script or build file reads the moved paths or docs/ as a whole. research_papers/ untouched (PDF step).
 - RUNBOOK: Gemini quota section replaced (old free-tier numbers); the tsconfig sourceMap line corrected (Vite owns source maps); the Azure failure-mode block marked historical. No gateway rate-limit claim found: RUNBOOK lists the inbound rate limiter as a relaunch prerequisite not yet built, which matches the code.
 - Root README gains a Repo map. Short READMEs added to Prism.ApiService, Prism.AppHost and Prism.Web. No code folder moved.
+
+## Explicit audit caching moves into the app (audit_explicit_cache, default on) - 2026-11-23
+Supersedes: the line "Moving caching (A0 passed) to main stays a separate
+decision" in "A1 diagnosis results: Ship-honest (decisions.md option B) -
+2026-10-28". This entry is that decision. It also replaces the earlier
+lines that keep caching eval-only (docs/decisions.md lines 2891-2892,
+4067 and 4216-4219 at commit aa99241).
+
+Context
+- Prism core is closed. Cost per paper matters for the step 6 UI run and
+  the demo; Gemini Flash prices double on 2027-01-01.
+- Read-only discovery (Claude Code, 2026-11-23) found the cache code
+  already in the app path, switched off: extraction/context_cache.py and
+  extract_claims(context_cache=False) in extraction/engine.py. No
+  production caller turns it on. Report section 12.2 ("exist only in the
+  eval replay tool") was inaccurate about where the code lives.
+
+Decision
+- New setting audit_explicit_cache, default True. The production caller
+  passes it to extract_claims; the function default stays False, so eval
+  tools and tests are unchanged.
+- No change to the cache logic, prompts or prompt hash cb3272cce551. The
+  only allowed exception: one cache-failure log line may be raised to
+  WARNING (level only).
+
+Why this is not an auditor change under the 2026-10-28 rule
+- The model receives the same bytes: system prompt and paper prefix in
+  the cache, claim suffix in the request. Only storage and billing
+  change. It targets no failure type and claims no accuracy gain.
+
+Evidence
+- Stage A0 (2026-10-26) ran this same code path (replay_audit ->
+  _audit_and_structure_claim with paper_cache): audit cost per claim
+  INR 1.30 vs 3.79 (-66%); catches 8 on the 18 Stage A claims, inside the
+  pre-registered 5-8 band; 1 run.
+- Not measured: false rejections with caching on (the 2026-11-08 full
+  check ran without --cache); the explicit-vs-implicit caching gain.
+
+Behaviour on errors (existing code)
+- Cache creation fails (including papers under Google's minimum cache
+  size): the paper runs uncached.
+- Non-retryable cached-call error: cache off for that paper, one uncached
+  retry. Retryable error: fallback model, uncached. The fallback model is
+  never cached.
+- Known gap, not fixed: a second cancellation during delete could leave
+  a cache alive until its TTL (max 3600 s; storage only).
+
+Check: step 6 (one new, never-test-set paper through the UI, AI Studio)
+- PASS = every primary audit call shows cached tokens > 0, except calls
+  after a logged cache fallback, AND no failed paper AND cost per paper
+  below INR 87 (dev run 1, eval/score_clean.py:50). A new paper has a
+  different length, so the cost mark is a sanity check, not a measure of
+  the saving.
+- Expected INR 50-90. No in-app cap; the AI Studio monthly spend cap is
+  the hard limit. Run only if November headroom covers it, else after
+  1 Dec. Tag the commit before the run.
+- FAIL on any mark: set the default to False in a new dated entry. No
+  rescue, no re-run to pass.
+
+Money record (Nitin's billing screenshots, 2026-11-23 ~13:30 IST)
+- GCP Free Credit: INR 22,491.07 left of 28,693.88; expires 2026-11-26;
+  no more Vertex runs planned, so this is the expected final balance.
+- AI Studio November: INR 1,302.51 of the INR 1,500 cap used.

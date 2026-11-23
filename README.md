@@ -58,7 +58,7 @@ Stage-by-stage detail: [report section 3](docs/PRISM_REPORT.md#3-architecture-an
 
 **Test B baseline (Gemini 4 Carbon, one call per paper):** caught 9 vs 8, false rejections 17 vs 4, verdict Prism better. Details: [report section 6.3](docs/PRISM_REPORT.md#63-strong-model-baselines-tests-a-and-b).
 
-**Switched-off features:** every experimental feature is off on main; what each does and why it stays off: [report section 12.2](docs/PRISM_REPORT.md#122-switched-off-features).
+**Switched-off features:** every experimental feature in the report table is off on main (explicit audit caching is on); what each does and why it stays off: [report section 12.2](docs/PRISM_REPORT.md#122-switched-off-features).
 
 ## Architecture
 

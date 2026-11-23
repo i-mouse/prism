@@ -660,9 +660,8 @@ async def extract_claims(
     context_cache (default False) turns on explicit context caching of the
     system prompt + paper for the audit calls: one cache is created before
     the claim fan-out and deleted after it (extraction/context_cache.py,
-    BETA). It is an explicit parameter, not a config.py setting; wiring it to
-    a settings field is a later follow-up. With it False nothing cache-related
-    runs.
+    BETA). The app (main.py) passes settings.audit_explicit_cache for this
+    argument. With it False nothing cache-related runs.
     """
     with tracer.start_as_current_span("extractor") as span:
         span.set_attribute("correlation_id", correlation_id or "")
