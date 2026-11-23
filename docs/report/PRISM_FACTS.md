@@ -1,6 +1,6 @@
 # PRISM Project Sourced Fact Sheet
 
-*Generated from docs/decisions.md, docs/PRISM_STATUS.md, README.md, plus current-state code facts from Prism.PythonService/main.py, Prism.PythonService/config.py, Prism.PythonService/extraction/engine.py, Prism.PythonService/extraction/grounding.py, and Prism.PythonService/RAGService.py, cited as [C: path:line]. Date: 2026-11-18.*  
+*Generated from docs/decisions.md, docs/PRISM_STATUS.md (now docs/archive/PRISM_STATUS.md), README.md, plus current-state code facts from Prism.PythonService/main.py, Prism.PythonService/config.py, Prism.PythonService/extraction/engine.py, Prism.PythonService/extraction/grounding.py, and Prism.PythonService/RAGService.py, cited as [C: path:line]. Date: 2026-11-18.*  
 *Rules applied: No terminal commands, subagents, or git used; facts taken solely from the authorized documentation files and five authorized code files; decisions.md takes precedence on conflict, followed by PRISM_STATUS.md, then README.md.*  
 *Meaning of UNSOURCED: Any item required by the reporting specification that is not stated in the authorized source files is marked UNSOURCED and logged in Section 12.*  
 *Note on characters: Broken character sequences such as "â€”" in source headings are normalized to "—" in citations.*

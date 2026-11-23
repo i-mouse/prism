@@ -1081,6 +1081,21 @@ Caching and the scope check exist only in the eval replay tool, not in the app. 
 
 Sources: docs/decisions.md entries named in the table.
 
+### 12.3 Open items and detail carried over from PRISM_STATUS (2026-11-23)
+
+PRISM_STATUS.md was folded into this section and moved to docs/archive/ on 2026-11-23. The items below were in it and nowhere else in this report.
+
+- Dev run 1 false rejections (4/88): P1-S5 (via grounding), P8-S7, P9-S4, P10-S2. Of the 88 S rows, 67 matched a claim and 21 were NO_MATCH. A weak P5 match was resolved as not a match.
+- Where the 13 extraction misses sit (step 1c): introduction 2, conclusion 3, body 5, appendix 3. An abstract/introduction/conclusion extractor option could reach at most 5 of 13.
+- Auditor diagnostic (2026-10-22): PDF reading, retrieval and missing evidence are not the main cause of auditor misses. Higher thinking alone, majority voting and sentence selection cannot fix the 6 unanimous misses. Evidence: docs/evals/auditor_rd/diagnostic_2026-10-22.md.
+- A fourth known risk in the clean-extraction code (flag off): the thinking level is not stored in fixture headers, although the replay tool passes it on every call.
+- The eval matcher, like grounding, sends temperature=0 (Google advises 1.0 for Gemini 3); parked.
+- Label open items: REFLEX-M13 claim/notes mismatch; REFLEX-M09 flagged unsure; COT-M08 pairing doubtful (carried over automatically, not hand-adjudicated); COT-M01 false rejection may already be fixed by Stage-1 normalisation (unverified; frozen fixtures predate it).
+- dev_eval.json scoring-note wording (P5-R2 row letters, P6-R2 Figure 3 count) is imprecise; labels unchanged.
+- Held-out eval files (heldout_eval.json, heldout_match_map.json and an archive copy) and exp3_targets.json are public on main from earlier merges; left as is.
+
+Sources: docs/decisions.md - Corrections - 2026-10-22; docs/decisions.md - Stage A1 marks and cap re-confirmed - 2026-10-28; docs/decisions.md - K1 diagnostics and filter status (exploratory) - 2026-10-20; docs/decisions.md - Step 1 results (INR 0) and cost gate raised to INR 200 - 2026-11-12; docs/decisions.md 2026-11-10 (held-out files); docs/decisions.md lines 1543, 1561, 1607 (label open items). Items without a named entry come from the archived PRISM_STATUS.md.
+
 ## Appendix: Engineering state
 
 ### Evaluation Tooling

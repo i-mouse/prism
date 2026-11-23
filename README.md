@@ -99,6 +99,20 @@ uv run python -m eval.matrix_runner --source fixture
 
 <!-- Demo video: TODO — no walkthrough recorded yet -->
 
+## Repo map
+
+| Folder | What it is |
+|---|---|
+| `Prism.Web/` | React + TypeScript + Vite UI (upload, Claim-Support Matrix, chat) |
+| `Prism.ApiService/` | ASP.NET Core API gateway (uploads, chat stream, SignalR progress, EF Core) |
+| `Prism.ApiService.Tests/` | xUnit tests for the API gateway |
+| `Prism.AppHost/` | .NET Aspire orchestrator; starts everything locally |
+| `Prism.ServiceDefaults/` | Shared Aspire defaults (telemetry, health checks) |
+| `Prism.PythonService/` | Python worker: parse, extract, audit, ground, persist; paper chat agent; eval harness (`eval/`) |
+| `docs/` | Report, decisions log, runbook, eval sets; start at [docs/README.md](docs/README.md) |
+| `.github/` | CI: offline fixture eval (`workflows/eval.yml`) |
+| `.claude/` | Claude Code project settings (shared permission rules) and launch config |
+
 ## Tech stack
 
 | Layer | Technologies |
@@ -116,7 +130,7 @@ uv run python -m eval.matrix_runner --source fixture
 - [Engineering report](docs/PRISM_REPORT.md): the full story.
 - [Fact sheet](docs/report/PRISM_FACTS.md): every fact in the report, traced to its source.
 - [Decisions log](docs/decisions.md): append-only record of every decision and test.
-- [Status](docs/PRISM_STATUS.md): detailed current-state snapshot.
+- [Current state](docs/PRISM_REPORT.md#12-where-prism-stands): report section 12.
 - [Developer runbook](docs/RUNBOOK.md): local setup and gotchas.
 
 ## License

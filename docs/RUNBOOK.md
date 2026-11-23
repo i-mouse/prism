@@ -20,15 +20,12 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 
 ---
 
-## 2. Gemini Free Tier Quota Limits
-* **Symptom:** Worker logs show `429 ResourceExhausted` errors or extraction runs freeze halfway through.
-* **Gotcha:** The Gemini free tier has strict rate limits:
-  - **Gemini Flash (Extractor/Auditor):** 15 Requests Per Minute (RPM), 1,500 Requests Per Day (RPD).
-  - **Gemini Flash Lite (Grounding/Summary):** 15 RPM, 1,500 RPD.
-  Because a single PDF ingestion invokes a three-call claim extraction pipeline (~2 Flash calls) plus per-claim grounding audits (~14 Flash Lite calls), you can easily exhaust the free quota after auditing ~10-15 papers in a day.
-* **Quota Check:** 
-  - Log in to the [Google AI Studio Console](https://aistudio.google.com/) to view active quota charts and check API keys status.
-  - If you hit a hard block, wait for the daily quota reset or configure a paid/pay-as-you-go key.
+## 2. Gemini API quota limits
+
+- Rate limits depend on the API key's tier and the model, and Google changes them. Check the current limits for your key in Google AI Studio before a large run; do not rely on numbers written here.
+- Product and dev runs use the AI Studio API key (gemini-3.6-flash for extraction and audit, gemini-3.1-flash-lite as fallback). Paid eval runs use Vertex AI with the same model ids.
+- Grounding's primary model runs on Groq's free tier (8K TPM), so most grounding calls fall back to gemini-3.1-flash-lite (report section 3.8).
+- If you hit a 429 or a hard block, wait for the quota window to reset or move the key to a higher tier.
 
 ---
 
@@ -62,7 +59,7 @@ This guide covers common gotchas, troubleshooting steps, and configurations for 
 * **Solution:**
   - Launch the stack using the configured Aspire launcher in VS Code (`Ctrl+Shift+D` -> choose the Aspire launch configuration -> press `F5`).
   - Make sure the `C# Dev Kit` extension is installed for C# debugging.
-  - For Vite/TypeScript UI debugging, breakpoints bind automatically when debugging via the Aspire launcher on Aspire versions 13.4+. If they fail, verify that `sourceMap: true` is enabled in `tsconfig.json` or debug via Chrome DevTools (`F12` in browser).
+  - For Vite/TypeScript UI debugging, breakpoints bind automatically when debugging via the Aspire launcher on Aspire versions 13.4+. If they fail, check that the Vite dev server is serving source maps (it does by default; `sourceMap` in tsconfig has no effect because `noEmit` is true) or debug via Chrome DevTools (`F12` in browser).
 
 ## 6. Eval Fixture Regeneration (`check_fixture_freshness` failures)
 
@@ -197,6 +194,8 @@ plan to come back.
    how a stopped environment quietly becomes a running one again.
 
 ## Common deployment failure modes (as observed on the last deployment)
+
+> Historical: these commands target the Azure environment decommissioned on 2026-09-28 (see "Decommissioned state and relaunch"). None of these resources exist now; kept for a future relaunch.
 
 ### PrismSettings field rename crashes on boot
 Two-step deploy required. See "Deploying a PR that changes PrismSettings fields" below.
